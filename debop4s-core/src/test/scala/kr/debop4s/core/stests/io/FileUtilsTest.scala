@@ -85,9 +85,9 @@ class FileUtilsTest extends AssertionsForJUnit {
 
         try {
             val writeResult = FileUtils.writeAsync(path,
-                                                      Strings.replicate(TEST_TEXT, lineCount).getBytes(FileUtils.UTF8),
-                                                      StandardOpenOption.CREATE,
-                                                      StandardOpenOption.WRITE)
+                                                   Strings.replicate(TEST_TEXT, lineCount).getBytes(FileUtils.UTF8),
+                                                   StandardOpenOption.CREATE,
+                                                   StandardOpenOption.WRITE)
             Promises.await(writeResult)
             val readResult = FileUtils.readAllLinesAsync(path, FileUtils.UTF8, StandardOpenOption.READ)
             val lines = Promises.await(readResult, 60 seconds)

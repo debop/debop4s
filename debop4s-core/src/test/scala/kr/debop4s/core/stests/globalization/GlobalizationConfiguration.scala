@@ -13,9 +13,9 @@ import org.springframework.context.support.{MessageSourceAccessor, ReloadableRes
 class GlobalizationConfiguration {
 
     /**
-    * NOTE: classpath에 있는 messages 를 xml configuration 에서 똑같이 정의하면 제대로 읽어드리는데,
-    * NOTE: java config에서 작업하면 파일을 찾지 못한다!!!
-    */
+     * NOTE: classpath에 있는 messages 를 xml configuration 에서 똑같이 정의하면 제대로 읽어드리는데,
+     * NOTE: java config에서 작업하면 파일을 찾지 못한다!!!
+     */
     @Bean
     def resourceBundleMessageSource() = {
         val rbms = new ReloadableResourceBundleMessageSource()

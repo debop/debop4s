@@ -20,10 +20,10 @@ trait SymmetricEncryptor {
     byteEncryptor.setPassword(DEFAULT_PASSWORD)
 
     /**
-    * 대칭형 암호화 알고리즘
-    *
-    * @return 대칭형 암호화 알고리즘
-    */
+     * 대칭형 암호화 알고리즘
+     *
+     * @return 대칭형 암호화 알고리즘
+     */
     def algorithm: String
 
     /** 초기화 여부 */
@@ -71,16 +71,16 @@ trait SymmetricEncryptor {
 
 
 /**
-* RC2 대칭형 알고리즘을 사용한 암호화 클래스
-*/
+ * RC2 대칭형 알고리즘을 사용한 암호화 클래스
+ */
 class RC2Encryptor extends SymmetricEncryptor {
 
     def algorithm: String = "PBEwithSHA1andRC2_40"
 }
 
 /**
-* DES 대칭형 알고리즘을 사용한 암호화 클래스
-*/
+ * DES 대칭형 알고리즘을 사용한 암호화 클래스
+ */
 class DESEncryptor extends SymmetricEncryptor {
 
     def algorithm: String = "PBEwithMD5andDES"

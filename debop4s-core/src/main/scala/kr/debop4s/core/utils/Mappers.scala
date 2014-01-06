@@ -36,14 +36,14 @@ object Mappers {
     }
 
     def mapAsync[D: ClassTag](src: AnyRef): Future[D] = future {
-        map[D](src)
-    }
+                                                                   map[D](src)
+                                                               }
 
     def mapArrayAsync[D: ClassTag](srcs: AnyRef*): Future[Array[D]] = future {
-        mapList(srcs.toIterable).toArray
-    }
+                                                                                 mapList(srcs.toIterable).toArray
+                                                                             }
 
     def mapListAsync[D: ClassTag](srcs: Iterable[_]): Future[List[D]] = future {
-        mapList[D](srcs).toList
-    }
+                                                                                   mapList[D](srcs).toList
+                                                                               }
 }

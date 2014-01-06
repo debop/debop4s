@@ -49,14 +49,14 @@ object Promises {
     }
 
     /**
-    * Future 값을 가져옵니다. 최대 5초 동안 기다립니다.
-    */
+     * Future 값을 가져옵니다. 최대 5초 동안 기다립니다.
+     */
     def await[T](awaitable: Awaitable[T]): T =
         Await.result(awaitable, 15 seconds)
 
     /**
-    * 주어진 timeout 을 가다리다가 작업이 완료되면 값을 반환합니다.
-        */
+     * 주어진 timeout 을 가다리다가 작업이 완료되면 값을 반환합니다.
+     */
     def await[T](awaitable: Awaitable[T], timeoutMillis: Long): T =
         Await.result(awaitable, timeoutMillis millis)
 

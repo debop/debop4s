@@ -5,7 +5,7 @@ import kr.debop4s.core.utils.{ToStringHelper, Hashs}
 import scala.collection.mutable
 
 /**
- *  구글 GCM 푸시 메시지
+ * 구글 GCM 푸시 메시지
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 2:18

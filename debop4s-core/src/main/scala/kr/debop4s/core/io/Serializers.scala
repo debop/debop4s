@@ -9,7 +9,7 @@ import kr.debop4s.core.utils.{Arrays, Streams, Strings}
 import scala.concurrent.Future
 
 /**
-*
+ *
  * [[Serializer]] 를 위한 Object 입니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
@@ -57,24 +57,24 @@ object Serializers {
         if (Objects.equals(graph, null))
             Asyncs.getTaskHasResult(Array.emptyByteArray)
         else Asyncs.startNew {
-            serializer.serialize(graph)
-        }
+                                 serializer.serialize(graph)
+                             }
     }
 
     def deserializeObjectAsync[T <: AnyRef](bytes: Array[Byte], clazz: Class[T]): Future[T] = {
         if (Arrays.isEmpty(bytes))
             Asyncs.getTaskHasResult(null.asInstanceOf[T])
         else Asyncs.startNew {
-            serializer.deserialize(bytes, clazz)
-        }
+                                 serializer.deserialize(bytes, clazz)
+                             }
     }
 
     def copyObjectAsync[T <: AnyRef](graph: T): Future[T] = {
         if (Objects.equals(graph, null))
             Asyncs.getTaskHasResult(null.asInstanceOf[T])
         else Asyncs.startNew {
-            val bytes = serializer.serialize(graph)
-            serializer.deserialize(bytes, graph.getClass)
-        }
+                                 val bytes = serializer.serialize(graph)
+                                 serializer.deserialize(bytes, graph.getClass)
+                             }
     }
 }

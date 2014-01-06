@@ -13,8 +13,8 @@ object Tasks {
     lazy val log = Logger(getClass)
 
     /**
-    * 지정된 block을 성공할 때까지 수행햅니다.
-    */
+     * 지정된 block을 성공할 때까지 수행햅니다.
+     */
     def runWithRetry(attempts: Int, waitTime: Long = 1)(block: => Unit) {
         var remains = attempts
         while (remains > 0) {
@@ -31,8 +31,8 @@ object Tasks {
     }
 
     /**
-    * 지정된 func을 성공할 때까지 수행햅니다.
-    */
+     * 지정된 func을 성공할 때까지 수행햅니다.
+     */
     def callWithRetry[T](attempts: Int, waitTime: Long = 1)(func: () => T): T = {
         var remains = attempts
         while (remains > 0) {

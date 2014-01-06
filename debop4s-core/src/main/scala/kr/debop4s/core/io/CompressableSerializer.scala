@@ -27,10 +27,10 @@ class CompressableSerializer(serializer: Serializer, val compressor: Compressor)
         compressor.compress(super.serialize(graph))
 
     /**
-    * 직렬화된 바이트 배열을 역직렬화하여 객체로 변환합니다.
-    * @param bytes 직렬화된 바이트 배열
-    * @return 역직렬화된 객체 정보
-    */
+     * 직렬화된 바이트 배열을 역직렬화하여 객체로 변환합니다.
+     * @param bytes 직렬화된 바이트 배열
+     * @return 역직렬화된 객체 정보
+     */
     override def deserialize[T <: AnyRef](bytes: Array[Byte], clazz: Class[T]): T =
         super.deserialize(compressor.decompress(bytes), clazz)
 }

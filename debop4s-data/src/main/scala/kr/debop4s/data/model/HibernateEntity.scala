@@ -4,7 +4,7 @@ import javax.persistence.{PostLoad, PostPersist}
 import kr.debop4s.core.utils.{ToStringHelper, Hashs}
 
 /**
- *  Hibernate, JPA 의 모든 엔티티의 기본 클래스입니다.
+ * Hibernate, JPA 의 모든 엔티티의 기본 클래스입니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 24. 오후 2:41

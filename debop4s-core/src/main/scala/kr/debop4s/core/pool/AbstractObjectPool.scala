@@ -18,9 +18,9 @@ abstract class AbstractObjectPool[T <: AnyRef](val config: AbstractObjectPoolCon
     protected val pool = new GenericObjectPool[T](factory, config)
 
     /**
-    * 풀에서 리소스를 얻습니다.
-    * @return 제공된 리소스
-    */
+     * 풀에서 리소스를 얻습니다.
+     * @return 제공된 리소스
+     */
     def getResource: T = {
         pool.borrowObject().asInstanceOf[T]
     }

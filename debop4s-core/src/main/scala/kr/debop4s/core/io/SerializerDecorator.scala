@@ -20,10 +20,10 @@ abstract class SerializerDecorator(val serializer: Serializer) extends Serialize
     }
 
     /**
-         * 직렬화된 바이트 배열을 역직렬화하여 객체로 변환합니다.
-         * @param bytes 직렬화된 바이트 배열
-         * @return 역직렬화된 객체 정보
-         */
+     * 직렬화된 바이트 배열을 역직렬화하여 객체로 변환합니다.
+     * @param bytes 직렬화된 바이트 배열
+     * @return 역직렬화된 객체 정보
+     */
     def deserialize[T <: AnyRef](bytes: Array[Byte], clazz: Class[T]): T = {
         serializer.deserialize(bytes, clazz)
     }

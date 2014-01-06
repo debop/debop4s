@@ -59,7 +59,7 @@ object Strings {
             false
         else
             util.Arrays.equals(MULTI_BYTES_PREFIX,
-                                  util.Arrays.copyOf(bytes, MULTI_BYTES_PREFIX.length)) //.asInstanceOf[Array[Byte]])
+                               util.Arrays.copyOf(bytes, MULTI_BYTES_PREFIX.length)) //.asInstanceOf[Array[Byte]])
     }
 
     def isMultiByteString(str: String): Boolean = {

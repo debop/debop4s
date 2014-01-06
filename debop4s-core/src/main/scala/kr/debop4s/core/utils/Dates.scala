@@ -4,7 +4,7 @@ import kr.debop4s.core.logging.Logger
 import org.joda.time.{DateTimeConstants, DateTime}
 
 /**
- *  날짜 관련 헬퍼 클래스. (더 만은 메소드는 [[Times]] 클래스를 사용하세요)
+ * 날짜 관련 헬퍼 클래스. (더 만은 메소드는 [[Times]] 클래스를 사용하세요)
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 12. 오전 11:30
@@ -34,8 +34,8 @@ object Dates {
     def endOfYear(year: Int): DateTime = startOfYear(year + 1).minusMillis(1)
 
     /**
-    * 월 주차.
-    */
+     * 월 주차.
+     */
     def getWeekOfMonth(moment: DateTime): Int =
         moment.getWeekOfWeekyear - startOfMonth(moment).getWeekOfWeekyear + 1
 

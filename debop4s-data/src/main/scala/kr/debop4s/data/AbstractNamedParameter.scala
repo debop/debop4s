@@ -16,6 +16,6 @@ abstract class AbstractNamedParameter(val name: String, val value: Any) extends 
 
     override protected def buildStringHelper =
         super.buildStringHelper
-        .add("name", name)
-        .add("value", value)
+            .add("name", name)
+            .add("value", value)
 }

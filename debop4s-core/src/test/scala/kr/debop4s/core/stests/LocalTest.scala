@@ -19,10 +19,10 @@ class LocalTest extends AssertionsForJUnit {
     @Test
     def multithreadTest() {
         Testing.run(15) {
-            saveAndLoadValueType()
-            saveAndLoadReferenceType()
-            getOrCreate()
-        }
+                            saveAndLoadValueType()
+                            saveAndLoadReferenceType()
+                            getOrCreate()
+                        }
     }
 
     @Test

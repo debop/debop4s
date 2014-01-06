@@ -19,8 +19,8 @@ class TestingTest extends AssertionsForJUnit {
     @Test
     def run() {
         Testing.run(100) {
-            range.foreach(x => Hero.findRoot(x))
-        }
+                             range.foreach(x => Hero.findRoot(x))
+                         }
     }
 
     @Test

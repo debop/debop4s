@@ -59,8 +59,8 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
             TimeBlock(this)
         else
             TimeBlock(if (hasStart) start.plus(offset) else start,
-                         if (hasEnd) end.plus(offset) else end,
-                         readonly)
+                      if (hasEnd) end.plus(offset) else end,
+                      readonly)
     }
 
     def setup(start: DateTime, duration: Duration) {

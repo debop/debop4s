@@ -149,9 +149,9 @@ class AsyncHttpClient {
                     .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy)
                     .build
             new SSLIOSessionStrategy(sslcontext,
-                                        Array[String]("TLSv1"),
-                                        null,
-                                        SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER)
+                                     Array[String]("TLSv1"),
+                                     null,
+                                     SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER)
         }
         catch {
             case e: Exception =>

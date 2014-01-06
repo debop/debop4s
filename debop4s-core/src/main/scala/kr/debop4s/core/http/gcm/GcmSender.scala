@@ -13,7 +13,7 @@ import scala.Predef.String
 import scala.collection.mutable.ArrayBuffer
 
 /**
- *  구글 GCM 서버에 푸시 메시지 전송에 사용됩니다.
+ * 구글 GCM 서버에 푸시 메시지 전송에 사용됩니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 2:28
@@ -35,9 +35,9 @@ class GcmSender(val serverApiKey: String) {
         val asyncHttp = new AsyncHttpClient()
 
         Tasks.runWithRetry(retry) {
-            val response = asyncHttp.post(post)
-            isSent = response.getStatusLine.getStatusCode == HttpStatus.SC_OK
-        }
+                                      val response = asyncHttp.post(post)
+                                      isSent = response.getStatusLine.getStatusCode == HttpStatus.SC_OK
+                                  }
         if (!isSent)
             throw new RuntimeException(s"could not send message after $retry attempts")
     }
