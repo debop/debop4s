@@ -1,0 +1,50 @@
+package kr.debop4s.core.compress
+
+import kr.debop4s.core.logging.Logger
+
+/**
+ * 데이터를 압축/복원을 수행합니다.
+ * @author 배성혁 sunghyouk.bae@gmail.com
+ * @since  2013. 12. 9. 오후 10:52
+ */
+trait Compressor {
+
+    val log = Logger[Compressor]
+    val BUFFER_SIZE = 4096
+
+    protected def doCompress(plainBytes: Array[Byte]): Array[Byte]
+
+    protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte]
+
+    /**
+     * 데이터를 압축합니다.
+     * @param plainBytes 압축할 데이터
+     * @return 압축된 데이터
+     */
+    def compress(plainBytes: Array[Byte]): Array[Byte] = {
+        if (plainBytes == null || plainBytes.length == 0)
+            return Array.emptyByteArray
+
+        val result = doCompress(plainBytes)
+
+        log.trace("데이터를 압축했습니다. 압축률=[{}], original=[{}], compressed=[{}]",
+                     result.length * 100.0 / plainBytes.length, plainBytes.length, result.length)
+        result
+    }
+
+    /**
+     * 압축된 데이터를 복원합니다.
+     * @param compressedBytes 압축된 데이터
+     * @return 복원된 데이터
+     */
+    def decompress(compressedBytes: Array[Byte]): Array[Byte] = {
+        if (compressedBytes == null || compressedBytes.length == 0)
+            return Array.emptyByteArray
+
+        val result = doDecompress(compressedBytes)
+
+        log.trace("데이터를 복했습니다. 압축률=[{}], 압축=[{}], 원본=[{}]",
+                     result.length * 100.0 / result.length, compressedBytes.length, result.length)
+        result
+    }
+}
