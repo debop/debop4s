@@ -6,7 +6,7 @@ import org.apache.tomcat.jdbc.pool.PoolProperties
 import scala.Predef.String
 
 /**
- * [[DataSource]] 를 생성, 제공하는 Object 입니다.
+ * [[javax.sql.DataSource]] 를 생성, 제공하는 Object 입니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 24. 오후 2:22
@@ -19,40 +19,40 @@ object DataSources {
     final val H2_DRIVER_CLASS_NAME: String = "org.h2.Driver"
 
     /**
-         * [[DataSource]] 를 빌드합니다. 기본적으로 Tomcat DataSource 를 사용합니다.
-         *
-         * @param driverClass DriverClass 명
-         * @param url         Database 주소
-         * @return [[DataSource]] 인스턴스
-         */
+     * [[javax.sql.DataSource]] 를 빌드합니다. 기본적으로 Tomcat DataSource 를 사용합니다.
+     *
+     * @param driverClass DriverClass 명
+     * @param url         Database 주소
+     * @return [[javax.sql.DataSource]] 인스턴스
+     */
     def getDataSource(driverClass: String, url: String): DataSource =
         getDataSource(driverClass, url, "", "")
 
 
     /**
-         * [[DataSource]] 를 빌드합니다. 기본적으로 Tomcat DataSource 를 사용합니다.
-         *
-         * @param driverClass DriverClass 명
-         * @param url         Database 주소
-         * @param username    사용자 명
-         * @param passwd      사용자 패스워드
-         * @return [[javax.sql.DataSource]] 인스턴스
-         */
+     * [[javax.sql.DataSource]] 를 빌드합니다. 기본적으로 Tomcat DataSource 를 사용합니다.
+     *
+     * @param driverClass DriverClass 명
+     * @param url         Database 주소
+     * @param username    사용자 명
+     * @param passwd      사용자 패스워드
+     * @return [[javax.sql.DataSource]] 인스턴스
+     */
     def getDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource =
         getTomcatDataSource(driverClass, url, username, passwd)
 
     /**
-         * Tomcat DataSource 를 빌드합니다.
-         *
-         * @param driverClass DriverClass 명
-         * @param url         Database 주소
-         * @param username    사용자 명
-         * @param passwd      사용자 패스워드
-         * @return [[javax.sql.DataSource]] 인스턴스
-         */
+     * Tomcat DataSource 를 빌드합니다.
+     *
+     * @param driverClass DriverClass 명
+     * @param url         Database 주소
+     * @param username    사용자 명
+     * @param passwd      사용자 패스워드
+     * @return [[javax.sql.DataSource]] 인스턴스
+     */
     def getTomcatDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource = {
         log.debug("Tomcat DataSource를 빌드합니다... driverClass=[{}], url=[{}], username=[{}], passwd=[{}]",
-                     driverClass, url, username, passwd)
+                  driverClass, url, username, passwd)
 
         val p: PoolProperties = new PoolProperties
         p.setUrl(url)

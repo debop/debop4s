@@ -1,6 +1,5 @@
 package kr.debop4s.time
 
-import kr.debop4s.time.Implicits._
 import org.joda.time._
 import org.joda.time.format.DateTimeFormatter
 

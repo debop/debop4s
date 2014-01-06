@@ -2,12 +2,10 @@ package kr.debop4s.timeperiod
 
 import kr.debop4s.core.ValueObject
 import org.joda.time.DateTime
+import kr.debop4s.timeperiod.utils.Times
+import kr.debop4s.core.utils.Hashs
+import kr.debop4s.time._
 
-/**
- * kr.debop4s.timeperiod.Datepart
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 14. 오후 7:31
- */
 @SerialVersionUID(-2730296141281632596L)
 class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
@@ -25,28 +23,30 @@ class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
     def dayOfMonth = value.getDayOfMonth
 
-    def getDateTime(time: Timepart): DateTime = value.plus(time.value.getMillis)
+    def getDateTime(time: Timepart): DateTime = {
+        if (time != null) value + time.value.getMillis
+        else value
+    }
 
     def getDateTime(hourOfDay: Int, minuteOfHour: Int = 0, secondOfMinute: Int = 0, millisOfSecond: Int = 0): DateTime =
         getDateTime(Timepart(hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond))
 
     def getDateTime(millis: Long): DateTime =
-        getDateTime(Timepart(new DateTime(millis)))
+        getDateTime(Timepart(millis.toDateTime))
 
     def compare(that: Datepart) = value.compareTo(that.value)
 
-    override def hashCode() = (value.getMillis / MillisPerDay).toInt
+    override def hashCode() = Hashs.compute(value)
 
     override protected def buildStringHelper =
-        super.buildStringHelper.add("value", value)
+        super.buildStringHelper
+            .add("value", value)
 }
 
 object Datepart {
 
-    def apply() = new Datepart(DateTime.now().withTimeAtStartOfDay())
-
+    def apply() = new Datepart(Times.today)
     def apply(moment: DateTime) = new Datepart(moment.withTimeAtStartOfDay())
-
     def today() = apply()
 }
 

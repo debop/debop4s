@@ -19,7 +19,6 @@ package kr.debop4s.time
 
 import java.util.{Calendar, Date}
 import org.joda.time._
-import Implicits._
 
 object StaticLocalDateTime extends StaticLocalDateTime
 

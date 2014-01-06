@@ -8,7 +8,8 @@ import kr.debop4s.core.utils.Hashs
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 4. 오후 11:14
  */
-class HourRangeInDay(private val _startHourOfDay: Int, private val _endHourOfDay: Int) extends ValueObject with Ordered[HourRangeInDay] {
+class HourRangeInDay(private val _startHourOfDay: Int,
+                     private val _endHourOfDay: Int) extends ValueObject with Ordered[HourRangeInDay] {
 
     val start = Timepart(Math.min(_startHourOfDay, _endHourOfDay))
     val end = Timepart(Math.max(_startHourOfDay, _endHourOfDay))

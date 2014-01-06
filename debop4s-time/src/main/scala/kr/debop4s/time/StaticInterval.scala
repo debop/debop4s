@@ -1,6 +1,5 @@
 package kr.debop4s.time
 
-import Implicits._
 import org.joda.time._
 
 object StaticInterval extends StaticInterval

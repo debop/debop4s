@@ -1,7 +1,7 @@
 package kr.debop4s.timeperiod
 
 import kr.debop4s.core.logging.Logger
-import kr.debop4s.core.utils.Hashs
+import kr.debop4s.core.utils.{Options, Hashs}
 import kr.debop4s.core.{ValueObject, Guard}
 import kr.debop4s.timeperiod.PeriodRelation.PeriodRelation
 import kr.debop4s.timeperiod.utils.Times
@@ -96,8 +96,8 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
                           private var _end: DateTime = MaxPeriodTime,
                           private var _readonly: Boolean = false) extends ITimePeriod {
 
-    val (ns, ne) = Times.adjustPeriod(if (_start != null) _start else MinPeriodTime,
-                                      if (_end != null) _end else MaxPeriodTime)
+    val (ns, ne) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
+                                      Options.get(_end).getOrElse(MaxPeriodTime))
     _start = ns
     _end = ns
 
@@ -155,9 +155,9 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
             end = start.plus(duration)
     }
 
-    def hasStart = getStart != MinPeriodTime
+    def hasStart = start != MinPeriodTime
 
-    def hasEnd = getEnd != MaxPeriodTime
+    def hasEnd = end != MaxPeriodTime
 
     def hasPeriod = hasStart && hasEnd
 

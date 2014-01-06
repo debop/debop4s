@@ -10,8 +10,8 @@ import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
  */
 @SerialVersionUID(2595125864993419600L)
 class DayHourRange(val dayOfWeek: DayOfWeek,
-                   private val _startHourOfDay: Int,
-                   private val _endHourOfDay: Int)
+                   private[this] val _startHourOfDay: Int,
+                   private[this] val _endHourOfDay: Int)
     extends HourRangeInDay(_startHourOfDay, _endHourOfDay) {
 
     override def hashCode() = Hashs.compute(dayOfWeek, start, end)

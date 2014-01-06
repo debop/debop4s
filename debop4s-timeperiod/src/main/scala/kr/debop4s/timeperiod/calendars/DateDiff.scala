@@ -3,6 +3,7 @@ package kr.debop4s.timeperiod.calendars
 import java.util.Objects
 import kr.debop4s.core.ValueObject
 import kr.debop4s.core.utils.Hashs
+import kr.debop4s.time._
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
@@ -70,11 +71,11 @@ class DateDiff(val start: DateTime,
 
         val compareDay = Math.min(end.getDayOfMonth, calendar.getDaysInMonth(startYear, endMonthOfYear))
         var compareDate = Times.asDate(startYear, endMonthOfYear, compareDay).plusMillis(end.getMillisOfDay)
-        if (end.compareTo(start) > 0) {
-            if (compareDate.compareTo(start) < 0)
-                compareDate = compareDate.plusYears(1)
-        } else if (compareDate.compareTo(start) > 0) {
-            compareDate = compareDate.minusYears(1)
+        if (end > start) {
+            if (compareDate < start)
+                compareDate = compareDate + 1.year
+        } else if (compareDate > start) {
+            compareDate = compareDate - 1.year
         }
         endYear - calendar.getYear(compareDate)
     }
@@ -97,11 +98,11 @@ class DateDiff(val start: DateTime,
         val compareDay = Math.min(end.getDayOfMonth, calendar.getDaysInMonth(startYear, startMonthOfYear))
         var compareDate = Times.asDate(startYear, startMonthOfYear, compareDay).plusMillis(end.getMillisOfDay)
 
-        if (end.compareTo(start) > 0) {
-            if (compareDate.compareTo(start) < 0)
-                compareDate = compareDate.plusMonths(1)
-        } else if (compareDate.compareTo(start) > 0) {
-            compareDate = compareDate.minusMonths(1)
+        if (end > start) {
+            if (compareDate < start)
+                compareDate = compareDate + 1.month
+        } else if (compareDate > start) {
+            compareDate = compareDate - 1.month
         }
 
         (endYear * MonthsPerYear + endMonthOfYear) -
@@ -115,14 +116,13 @@ class DateDiff(val start: DateTime,
         val w2 = Times.getStartOfWeek(end)
 
         if (Objects.equals(w1, w2)) 0
-
-        (new Duration(w1, w2).getStandardDays / DaysPerWeek).toInt
+        else (new Duration(w1, w2).getStandardDays / DaysPerWeek).toInt
     }
 
     private def roundEx(n: Double): Double =
         if (n >= 0.0) Math.round(n) else -Math.round(-n)
 
-    override def hashCode() =
+    override def hashCode(): Int =
         Hashs.compute(start, end, difference, calendar)
 
     override protected def buildStringHelper =

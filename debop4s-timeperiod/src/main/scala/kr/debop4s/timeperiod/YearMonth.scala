@@ -28,6 +28,5 @@ class YearMonth(var year: Int = 0, var monthOfYear: Int = 1) extends ValueObject
 object YearMonth {
 
     def apply(year: Int, monthOfYear: Int): YearMonth = new YearMonth(year, monthOfYear)
-
     def apply(src: YearMonth): YearMonth = new YearMonth(src.year, src.monthOfYear)
 }

@@ -614,8 +614,8 @@ object Times {
             case PeriodUnit.Minute => getMinuteRanges(moment, periodCount, calendar)
             case PeriodUnit.Second =>
                 new CalendarTimeRange(trimToMillis(moment),
-                                         trimToMillis(moment).plusSeconds(periodCount),
-                                         calendar)
+                                      trimToMillis(moment).plusSeconds(periodCount),
+                                      calendar)
 
             case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
         }
@@ -757,9 +757,9 @@ object Times {
     }
 
     val NotOverlapedRelations = Array(PeriodRelation.After,
-                                         PeriodRelation.StartTouching,
-                                         PeriodRelation.EndTouching,
-                                         PeriodRelation.Before)
+                                      PeriodRelation.StartTouching,
+                                      PeriodRelation.EndTouching,
+                                      PeriodRelation.Before)
 
     def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
         assert(period != null)
@@ -831,7 +831,7 @@ object Times {
     def assertValidPeriod(start: DateTime, end: DateTime) {
         if (start != null && end != null) {
             assert(start.compareTo(end) <= 0,
-                      s"시작시각이 완료시각보다 이전이어야 합니다. start=[$start], end=[$end]")
+                   s"시작시각이 완료시각보다 이전이어야 합니다. start=[$start], end=[$end]")
         }
     }
 

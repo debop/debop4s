@@ -1,43 +1,26 @@
-package kr.debop4s.time
+package kr.debop4s
 
-import java.sql.Timestamp
 import org.joda.time._
-import org.joda.time.base._
-import org.joda.time.field._
-import org.joda.time.format._
-import scala.language.implicitConversions
+import java.sql.Timestamp
+import org.joda.time.base.{BaseSingleFieldPeriod, AbstractPartial, AbstractInstant, AbstractDateTime}
+import org.joda.time.field.AbstractReadableInstantFieldProperty
+import org.joda.time.format.DateTimeFormatter
 
-object Implicits extends Implicits
+/**
+ * kr.debop4s.time.package
+ * @author 배성혁 sunghyouk.bae@gmail.com
+ * @since  2014. 1. 6. 오후 11:07
+ */
+package object time {
 
-object BuilderImplicits extends Implicits
-
-object IntImplicits extends IntImplicits
-
-object JodaImplicits extends JodaImplicits
-
-trait Implicits extends BuilderImplicits
-                        with IntImplicits
-                        with JavaImplicits
-                        with JodaImplicits
-                        with OrderingImplicits
-                        with XmlImplicits
-                        with TupleImplicits
-
-trait BuilderImplicits {
     implicit def forcePeriod(builder: DurationBuilder): Period = builder.underlying
     implicit def forceDuration(builder: DurationBuilder): Duration = builder.underlying.toStandardDuration
-}
 
-trait IntImplicits {
     implicit def richInt(n: Int): RichInt = new kr.debop4s.time.RichInt(n)
     implicit def richLong(n: Long): RichLong = new kr.debop4s.time.RichLong(n)
-}
 
-trait JavaImplicits {
     implicit def richTimestamp(self: Timestamp): RichTimestamp = new RichTimestamp(self)
-}
 
-trait JodaImplicits {
     implicit def richAbstractDateTime(v: AbstractDateTime): RichAbstractDateTime = new RichAbstractDateTime(v)
     implicit def richAbstractInstant(v: AbstractInstant): RichAbstractInstant = new RichAbstractInstant(v)
     implicit def richAbstractPartial(v: AbstractPartial): RichAbstractPartial = new RichAbstractPartial(v)
@@ -67,39 +50,30 @@ trait JodaImplicits {
     implicit def richReadableInterval(v: ReadableInterval): RichReadableInterval = new RichReadableInterval(v)
     implicit def richReadablePartial(v: ReadablePartial): RichReadablePartial = new RichReadablePartial(v)
     implicit def richReadablePeriod(v: ReadablePeriod): RichReadablePeriod = new RichReadablePeriod(v)
-}
 
-trait OrderingImplicits extends LowPriorityOrderingImplicits {
-    implicit val DateTimeOrdering = ReadableInstantOrdering[DateTime]
-    implicit val DateMidnightOrdering = ReadableInstantOrdering[DateMidnight]
-    implicit val LocalDateOrdering = ReadablePartialOrdering[LocalDate]
-    implicit val LocalTimeOrdering = ReadablePartialOrdering[LocalTime]
-    implicit val LocalDateTimeOrdering = ReadablePartialOrdering[LocalDateTime]
-    implicit val DurationOrdering = ReadableDurationOrdering[Duration]
-}
+    implicit val DateTimeOrdering: Ordering[DateTime] = ReadableInstantOrdering[DateTime]
+    implicit val DateMidnightOrdering: Ordering[DateMidnight] = ReadableInstantOrdering[DateMidnight]
+    implicit val LocalDateOrdering: Ordering[LocalDate] = ReadablePartialOrdering[LocalDate]
+    implicit val LocalTimeOrdering: Ordering[LocalTime] = ReadablePartialOrdering[LocalTime]
+    implicit val LocalDateTimeOrdering: Ordering[LocalDateTime] = ReadablePartialOrdering[LocalDateTime]
+    implicit val DurationOrdering: Ordering[Duration] = ReadableDurationOrdering[Duration]
 
-trait LowPriorityOrderingImplicits {
-    implicit def ReadableInstantOrdering[A <: ReadableInstant] = order[A, ReadableInstant]
-    implicit def ReadablePartialOrdering[A <: ReadablePartial] = order[A, ReadablePartial]
-    implicit def BaseSingleFieldPeriodOrdering[A <: BaseSingleFieldPeriod] = order[A, BaseSingleFieldPeriod]
-    implicit def ReadableDurationOrdering[A <: ReadableDuration] = order[A, ReadableDuration]
+    implicit def ReadableInstantOrdering[A <: ReadableInstant]: Ordering[A] = order[A, ReadableInstant]
+    implicit def ReadablePartialOrdering[A <: ReadablePartial]: Ordering[A] = order[A, ReadablePartial]
+    implicit def BaseSingleFieldPeriodOrdering[A <: BaseSingleFieldPeriod]: Ordering[A] = order[A, BaseSingleFieldPeriod]
+    implicit def ReadableDurationOrdering[A <: ReadableDuration]: Ordering[A] = order[A, ReadableDuration]
     private def order[A, B <: Comparable[B]](implicit ev: A <:< B): Ordering[A] = Ordering.by[A, B](ev)
-}
-
-trait XmlImplicits {
 
     import javax.xml.datatype.{XMLGregorianCalendar, DatatypeFactory}
 
-    lazy val factory = DatatypeFactory.newInstance
+    lazy val factory: DatatypeFactory = DatatypeFactory.newInstance
 
-    implicit def dateTime2XmlGregCalendar(dt: DateTime) =
+    implicit def dateTime2XmlGregCalendar(dt: DateTime): XMLGregorianCalendar =
         factory.newXMLGregorianCalendar(dt.toGregorianCalendar)
 
-    implicit def xmlGregCalendar2DateTime(calendar: XMLGregorianCalendar) =
+    implicit def xmlGregCalendar2DateTime(calendar: XMLGregorianCalendar): DateTime =
         new DateTime(calendar.toGregorianCalendar.getTimeInMillis)
-}
 
-trait TupleImplicits {
     type Year = Int
     type Month = Int
     type Day = Int
@@ -128,4 +102,5 @@ trait TupleImplicits {
         val (year, month, day, hour, minute, second, millis) = t
         new DateTime(year, month, day, hour, minute, second, millis)
     }
+
 }
