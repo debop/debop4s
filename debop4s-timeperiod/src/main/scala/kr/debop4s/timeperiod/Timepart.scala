@@ -1,6 +1,7 @@
 package kr.debop4s.timeperiod
 
 import kr.debop4s.core.ValueObject
+import kr.debop4s.time._
 import org.joda.time.{Duration, DateTime}
 
 /**
@@ -20,22 +21,20 @@ class Timepart(val value: DateTime) extends ValueObject with Ordered[Timepart] {
 
     def millis: Int = value.getMillisOfSecond
 
-    def totalHours: Double = millisOfDay / MillisPerHour
+    def totalHours: Double = totalMillis / MillisPerHour
 
-    def totalMinutes: Double = millisOfDay / MillisPerMinute
+    def totalMinutes: Double = totalMillis / MillisPerMinute
 
-    def totalSeconds: Double = millisOfDay / MillisPerSecond
+    def totalSeconds: Double = totalMillis / MillisPerSecond
 
-    def totalMillis: Long = millisOfDay
-
-    def millisOfDay: Long = value.getMillisOfDay
+    def totalMillis: Long = value.getMillisOfDay
 
     def getDateTime(moment: DateTime): DateTime =
-        moment.withTimeAtStartOfDay().plus(millisOfDay)
+        moment.withTimeAtStartOfDay() + totalMillis
 
     def compare(that: Timepart) = value.compareTo(that.value)
 
-    override def hashCode() = millisOfDay.toInt
+    override def hashCode() = totalMillis.toInt
 
     override protected def buildStringHelper =
         super.buildStringHelper.add("value", value)
@@ -45,7 +44,7 @@ object Timepart {
 
     def now(): Timepart = apply(DateTime.now())
 
-    def apply() = new Timepart(new DateTime(0))
+    def apply() = new Timepart(DateTime.now.withTimeAtStartOfDay())
 
     def apply(moment: DateTime) = new Timepart(new DateTime(0).withMillisOfDay(moment.getMillisOfDay))
 

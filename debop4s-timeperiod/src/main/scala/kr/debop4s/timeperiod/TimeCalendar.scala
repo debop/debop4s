@@ -1,8 +1,8 @@
 package kr.debop4s.timeperiod
 
 import java.util.Locale
-import kr.debop4s.core.utils.{ToStringHelper, Hashs}
-import kr.debop4s.core.{Guard, ValueObject}
+import kr.debop4s.core.ValueObject
+import kr.debop4s.core.utils.{Options, ToStringHelper, Hashs}
 import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
@@ -84,9 +84,9 @@ class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCa
     assert(cfg.startOffset != null && cfg.startOffset.getMillis >= 0, "startOffset must be greater than or equal zero.")
     assert(cfg.endOffset != null && cfg.startOffset.getMillis <= 0, "startOffset must be less than or equal zero.")
 
-    val locale: Locale = Guard.firstNotNull(cfg.locale, Locale.getDefault)
-    val startOffset: Duration = Guard.firstNotNull(cfg.startOffset, DefaultStartOffset)
-    val endOffset: Duration = Guard.firstNotNull(cfg.endOffset, DefaultEndOffset)
+    val locale: Locale = Options.get(cfg.locale).getOrElse(Locale.getDefault)
+    val startOffset: Duration = Options.get(cfg.startOffset).getOrElse(DefaultStartOffset)
+    val endOffset: Duration = Options.get(cfg.endOffset).getOrElse(DefaultEndOffset)
     val firstDayOfWeek: DayOfWeek = cfg.firstDayOfWeek
 
     def getLocale: Locale = locale
