@@ -1,6 +1,6 @@
 package kr.debop4s.time
 
-import org.joda.time.{DateTime, ReadableInterval}
+import org.joda.time.{Duration, Chronology, DateTime, ReadableInterval}
 import scala.annotation.tailrec
 
 /**
@@ -10,12 +10,12 @@ import scala.annotation.tailrec
  */
 class RichReadableInterval(val self: ReadableInterval) extends AnyVal {
 
-    def chronology = self.getChronology
-    def start = self.getStart
-    def end = self.getEnd
+    def chronology: Chronology = self.getChronology
+    def start: DateTime = self.getStart
+    def end: DateTime = self.getEnd
 
-    def duration = self.toDuration
-    def millis = self.toDuration.getMillis
+    def duration: Duration = self.toDuration
+    def millis: Long = self.toDuration.getMillis
 
     def days: List[DateTime] = {
         val from = start

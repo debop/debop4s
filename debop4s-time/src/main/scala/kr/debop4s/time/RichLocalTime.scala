@@ -21,11 +21,10 @@ class RichLocalTime(val self: LocalTime) extends AnyVal with Ordered[LocalTime] 
     def minute: Property = self.minuteOfHour()
     def hour: Property = self.hourOfDay()
 
-    def withMillisOfSecond(millis: Int): LocalTime = self.withMillisOfSecond(millis)
-    def withMillisOfDay(millis: Int): LocalTime = self.withMillisOfDay(millis)
-    def withSecondOfMinute(second: Int): LocalTime = self.withSecondOfMinute(second)
-    def withMinuteOfHour(minute: Int): LocalTime = self.withMinuteOfHour(minute)
-    def withHourOfDay(hour: Int): LocalTime = self.withHourOfDay(hour)
+    def withMillis(millis: Int): LocalTime = self.withMillisOfSecond(millis)
+    def withSecond(second: Int): LocalTime = self.withSecondOfMinute(second)
+    def withMinute(minute: Int): LocalTime = self.withMinuteOfHour(minute)
+    def withHour(hour: Int): LocalTime = self.withHourOfDay(hour)
 
     def compare(that: LocalTime) = self.compareTo(that)
 }

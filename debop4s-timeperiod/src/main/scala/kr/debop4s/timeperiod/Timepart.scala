@@ -12,30 +12,30 @@ import org.joda.time.{Duration, DateTime}
 class Timepart(val value: DateTime) extends ValueObject with Ordered[Timepart] {
     assert(value != null)
 
-    def hourOfDay = value.getHourOfDay
+    def hour: Int = value.getHourOfDay
 
-    def minuteOfHour = value.getMinuteOfHour
+    def minute: Int = value.getMinuteOfHour
 
-    def secondOfMinute = value.getSecondOfMinute
+    def second: Int = value.getSecondOfMinute
 
-    def millisOfSecond = value.getMillisOfSecond
+    def millis: Int = value.getMillisOfSecond
 
-    def totalHours: Double = millis / MillisPerHour
+    def totalHours: Double = millisOfDay / MillisPerHour
 
-    def totalMinutes: Double = millis / MillisPerMinute
+    def totalMinutes: Double = millisOfDay / MillisPerMinute
 
-    def totalSeconds: Double = millis / MillisPerSecond
+    def totalSeconds: Double = millisOfDay / MillisPerSecond
 
-    def totalMillis: Long = millis
+    def totalMillis: Long = millisOfDay
 
-    def millis: Long = value.getMillisOfDay
+    def millisOfDay: Long = value.getMillisOfDay
 
     def getDateTime(moment: DateTime): DateTime =
-        moment.withTimeAtStartOfDay().plus(millis)
+        moment.withTimeAtStartOfDay().plus(millisOfDay)
 
     def compare(that: Timepart) = value.compareTo(that.value)
 
-    override def hashCode() = millis.toInt
+    override def hashCode() = millisOfDay.toInt
 
     override protected def buildStringHelper =
         super.buildStringHelper.add("value", value)

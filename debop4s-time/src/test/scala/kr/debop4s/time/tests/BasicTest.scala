@@ -1,7 +1,7 @@
 package kr.debop4s.time.tests
 
-import kr.debop4s.time.StaticDateTime
-import org.joda.time.DateTime
+import kr.debop4s.time._
+import org.joda.time.{Interval, DateTime}
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 
@@ -34,6 +34,16 @@ class BasicTest extends AssertionsForJUnit {
 
         val expected = DateTime.parse("2013-03-02T07:08:09.123+0900")
         assert(actual === expected)
+    }
+
+    @Test
+    def basicTest() {
+        assert(TDateTime.nextMonth < TDateTime.now + 2.months)
+
+        val x: Interval = TDateTime.now to TDateTime.tomorrow
+        print(s"x=[$x]")
+
+        assert( (TDateTime.now to TDateTime.nextSecond).millis == 1000)
     }
 
 }

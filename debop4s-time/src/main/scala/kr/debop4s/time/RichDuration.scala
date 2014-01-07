@@ -21,5 +21,7 @@ class RichDuration(val self: Duration) extends AnyVal with Ordered[Duration] {
     def +(amount: Long): Duration = self.plus(amount)
     def +(amount: ReadableDuration): Duration = self.plus(amount)
 
+    def isZero: Boolean = self.getMillis == 0
+
     def compare(that: Duration): Int = self.compareTo(that)
 }

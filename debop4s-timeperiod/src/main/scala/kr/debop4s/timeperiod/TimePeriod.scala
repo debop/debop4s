@@ -1,8 +1,9 @@
 package kr.debop4s.timeperiod
 
+import kr.debop4s.core.ValueObject
 import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.{Options, Hashs}
-import kr.debop4s.core.{ValueObject, Guard}
+import kr.debop4s.time._
 import kr.debop4s.timeperiod.PeriodRelation.PeriodRelation
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
@@ -16,7 +17,7 @@ trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializabl
 
     lazy val log = Logger[ITimePeriod]
 
-    def compare(that: ITimePeriod): Int = start.compareTo(that.start)
+    def compare(that: ITimePeriod): Int = if (that != null) start.compareTo(that.start) else 1
 
     /** 시작 시각 */
     def start: DateTime
@@ -94,12 +95,10 @@ trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializabl
 
 abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
                           private var _end: DateTime = MaxPeriodTime,
-                          private var _readonly: Boolean = false) extends ITimePeriod {
+                          var readonly: Boolean = false) extends ITimePeriod {
 
-    val (ns, ne) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
-                                      Options.get(_end).getOrElse(MaxPeriodTime))
-    _start = ns
-    _end = ns
+    private var (startTime, endTime) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
+                                                             Options.get(_end).getOrElse(MaxPeriodTime))
 
     def this(start: DateTime, duration: Duration, readonly: Boolean) {
         this(start, start.plus(duration), readonly)
@@ -109,48 +108,44 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
         this(start, duration, false)
     }
 
-    def start = _start
+    def start = startTime
 
     protected def start_=(v: DateTime) {
         assertMutable()
-        _start = v
+        startTime = v
     }
 
     protected def setStart(v: DateTime) {
         assertMutable()
-        _start = v
+        startTime = v
     }
 
-    def end = _end
+    def end = endTime
 
     protected def end_=(v: DateTime) {
         assertMutable()
-        _end = v
+        endTime = v
     }
 
     protected def setEnd(v: DateTime) {
         assertMutable()
-        _end = v
+        endTime = v
     }
 
-    def readonly = _readonly
+    def isReadonly = readonly
 
-    def readonly_=(v: Boolean) = { _readonly = v }
+    protected def setReadonly(v: Boolean) { readonly = v }
 
-    def isReadonly = _readonly
-
-    protected def setReadonly(v: Boolean) { _readonly = v }
-
-    def duration = new Duration(_start, _end)
+    def duration = new Duration(start, end)
 
     def duration_=(v: Duration) {
-        assert(duration.compareTo(Duration.ZERO) >= 0, "Duration 은 0 이상이어야 합니다.")
+        assert(duration.getMillis >= 0, "Duration 은 0 이상이어야 합니다.")
         if (hasStart)
             end = start.plus(duration)
     }
 
     def setDuration(duration: Duration) {
-        assert(duration.compareTo(Duration.ZERO) >= 0, "Duration 은 0 이상이어야 합니다.")
+        assert(duration.getMillis >= 0, "Duration 은 0 이상이어야 합니다.")
         if (hasStart)
             end = start.plus(duration)
     }
@@ -167,30 +162,31 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     def setup(start: DateTime, end: DateTime) {
         log.trace(s"기간을 새로 설정합니다. newStart=[$start], newEnd=[$end]")
-        val ns = Guard.firstNotNull(start, MinPeriodTime)
-        val ne = Guard.firstNotNull(end, MaxPeriodTime)
+        assertMutable()
+        val ns: DateTime = Options.get(start).getOrElse(MinPeriodTime)
+        val ne: DateTime = Options.get(end).getOrElse(MaxPeriodTime)
 
-        if (ns.compareTo(ne) < 0) {
-            this.start = ns
-            this.end = ne
+        if (ns < ne) {
+            this.startTime = ns
+            this.endTime = ne
         } else {
-            this.start = ne
-            this.end = ns
+            this.startTime = ne
+            this.endTime = ns
         }
     }
 
     override def copy(offset: Duration = Duration.ZERO): ITimePeriod = {
         log.trace(s"기간[$this]에 offset[$offset]을 준 기간을 반환합니다...")
-        if (offset == Duration.ZERO)
+        if (offset.isZero)
             return TimeRange(this)
 
-        TimeRange(if (hasStart) start.plus(offset.getMillis) else start,
-                  if (hasEnd) end.plus(offset.getMillis) else end,
-                  readonly)
+        val s = if (hasStart) start + offset else start
+        val e = if (hasEnd) end + offset else end
+        TimeRange(s, e, readonly)
     }
 
     def move(offset: Duration = Duration.ZERO) {
-        if (offset == Duration.ZERO) return
+        if (offset.isZero) return
 
         assertMutable()
 
@@ -230,13 +226,11 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
         assert(!isReadonly, "일기전용 인스턴스입니다.")
     }
 
-    def compare(x: ITimePeriod, y: ITimePeriod) = x.getStart.compareTo(y.getStart)
-
-    override def hashCode() = Hashs.compute(getStart, getEnd, isReadonly)
+    override def hashCode() = Hashs.compute(start, end, readonly)
 
     override protected def buildStringHelper =
         super.buildStringHelper
-            .add("start", getStart)
-            .add("end", getEnd)
-            .add("readonly", isReadonly)
+            .add("start", start)
+            .add("end", end)
+            .add("readonly", readonly)
 }

@@ -22,39 +22,25 @@ class RichDateTime(val self: DateTime) extends AnyVal with Ordered[DateTime] {
     def +(period: ReadablePeriod): DateTime = self.plus(period)
     def +(builder: DurationBuilder): DateTime = self.plus(builder.underlying)
 
-    def millisOfSecond: Property = self.millisOfSecond()
-    def millisOfDay: Property = self.millisOfDay()
-
-    def secondOfMinute: Property = self.secondOfMinute()
-    def secondOfDay: Property = self.secondOfDay()
-
-    def minuteOfHour: Property = self.minuteOfHour()
-    def minuteOfDay: Property = self.minuteOfDay()
-
-    def hourOfDay: Property = self.hourOfDay()
-
-    def dayOfMonth: Property = self.dayOfMonth()
-    def dayOfWeek: Property = self.dayOfWeek()
-    def dayOfYear: Property = self.dayOfYear()
-
-    def weekyear: Property = self.weekyear()
-    def weekOfWeekyear: Property = self.weekOfWeekyear()
-
+    def millis: Property = self.millisOfSecond()
+    def second: Property = self.secondOfMinute()
+    def minute: Property = self.minuteOfHour()
+    def hour: Property = self.hourOfDay()
+    def day: Property = self.dayOfMonth()
+    def week: Property = self.weekOfWeekyear()
     def month: Property = self.monthOfYear()
     def year: Property = self.year()
     def century: Property = self.centuryOfEra()
     def era: Property = self.era()
 
     def withMillis(newMillis: Long): DateTime = self.withMillis(newMillis)
-    def withMillisOfSecond(millis: Int): DateTime = self.withMillisOfSecond(millis)
-    def withMillisOfDay(millis: Int): DateTime = self.withMillisOfDay(millis)
-    def withSecondOfMinute(second: Int): DateTime = self.withSecondOfMinute(second)
-    def withMinuteOfHour(minute: Int): DateTime = self.withMinuteOfHour(minute)
-    def withHourOfDay(hour: Int): DateTime = self.withHourOfDay(hour)
-    def withDayOfMonth(day: Int): DateTime = self.withDayOfMonth(day)
+    def withSecond(second: Int): DateTime = self.withSecondOfMinute(second)
+    def withMinute(minute: Int): DateTime = self.withMinuteOfHour(minute)
+    def withHour(hour: Int): DateTime = self.withHourOfDay(hour)
+    def withDay(day: Int): DateTime = self.withDayOfMonth(day)
     def withWeekyear(weekyear: Int): DateTime = self.withWeekyear(weekyear)
-    def withWeekOfWeekyear(week: Int): DateTime = self.withWeekOfWeekyear(week)
-    def withMonthOfYear(month: Int): DateTime = self.withMonthOfYear(month)
+    def withWeek(week: Int): DateTime = self.withWeekOfWeekyear(week)
+    def withMonth(month: Int): DateTime = self.withMonthOfYear(month)
     def withYear(year: Int): DateTime = self.withYear(year)
     def withCentury(century: Int): DateTime = self.withCenturyOfEra(century)
     def withEra(era: Int): DateTime = self.withEra(era)
@@ -64,7 +50,7 @@ class RichDateTime(val self: DateTime) extends AnyVal with Ordered[DateTime] {
     // def toJsonString:String = self.withZone(DateTimeZone.UTC).toString(StaticISODateTimeFormat.dateTime)
 
     def monthInterval: Interval = {
-        val start = withDayOfMonth(1).withTimeAtStartOfDay()
+        val start = withDay(1).withTimeAtStartOfDay()
         new Interval(start, start.plusMonths(1))
     }
 

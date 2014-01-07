@@ -25,5 +25,4 @@ class RichDateTimeZone(val self: DateTimeZone) extends AnyVal {
     def nameKey(instant:Long): String = self.getNameKey(instant)
     def shortName(instant:Long): String = self.getShortName(instant)
 
-
 }

@@ -64,15 +64,15 @@ package object time {
     implicit def ReadableDurationOrdering[A <: ReadableDuration]: Ordering[A] = order[A, ReadableDuration]
     private def order[A, B <: Comparable[B]](implicit ev: A <:< B): Ordering[A] = Ordering.by[A, B](ev)
 
-    import javax.xml.datatype.{XMLGregorianCalendar, DatatypeFactory}
+    // import javax.xml.datatype.{XMLGregorianCalendar, DatatypeFactory}
 
-    lazy val factory: DatatypeFactory = DatatypeFactory.newInstance
+    // lazy val factory: DatatypeFactory = DatatypeFactory.newInstance
 
-    implicit def dateTime2XmlGregCalendar(dt: DateTime): XMLGregorianCalendar =
-        factory.newXMLGregorianCalendar(dt.toGregorianCalendar)
-
-    implicit def xmlGregCalendar2DateTime(calendar: XMLGregorianCalendar): DateTime =
-        new DateTime(calendar.toGregorianCalendar.getTimeInMillis)
+//    implicit def dateTime2XmlGregCalendar(dt: DateTime): XMLGregorianCalendar =
+//        factory.newXMLGregorianCalendar(dt.toGregorianCalendar)
+//
+//    implicit def xmlGregCalendar2DateTime(calendar: XMLGregorianCalendar): DateTime =
+//        new DateTime(calendar.toGregorianCalendar.getTimeInMillis)
 
     type Year = Int
     type Month = Int
@@ -103,4 +103,16 @@ package object time {
         new DateTime(year, month, day, hour, minute, second, millis)
     }
 
+
+    val TDateTime = kr.debop4s.time.StaticDateTime
+    val TDateTimeFormat = kr.debop4s.time.StaticDateTimeFormat
+    val TISODateTimeFormat = kr.debop4s.time.StaticISODateTimeFormat
+    val TDateTimeZone = kr.debop4s.time.StaticDateTimeZone
+    val TDuration = kr.debop4s.time.StaticDuration
+    val TInterval = kr.debop4s.time.StaticInterval
+    val TLocalDate = kr.debop4s.time.StaticLocalDate
+    val TLocalDateTime = kr.debop4s.time.StaticLocalDateTime
+    val TLocalTime = kr.debop4s.time.StaticLocalTime
+    val TPeriod = kr.debop4s.time.StaticPeriod
+    val TPartial = kr.debop4s.time.StaticPartial
 }

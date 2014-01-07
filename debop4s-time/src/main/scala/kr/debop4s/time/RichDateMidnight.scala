@@ -8,7 +8,7 @@ import org.joda.time.{ReadablePeriod, ReadableDuration, DateMidnight}
  * @since  2014. 1. 6. 오후 8:21
  */
 @Deprecated
-class RichDateMidnight(val self: DateMidnight) extends AnyVal with Ordered[RichDateMidnight] {
+class RichDateMidnight(val self: DateMidnight) extends AnyVal with Ordered[DateMidnight] {
 
     def -(duration: Long): DateMidnight = self.minus(duration)
     def -(duration: ReadableDuration): DateMidnight = self.minus(duration)
@@ -20,5 +20,5 @@ class RichDateMidnight(val self: DateMidnight) extends AnyVal with Ordered[RichD
     def +(period: ReadablePeriod): DateMidnight = self.plus(period)
     def +(builder: DurationBuilder): DateMidnight = self.plus(builder.underlying)
 
-    def compare(that: RichDateMidnight): Int = self.compare(that.self)
+    def compare(that: DateMidnight): Int = self.compare(that)
 }
