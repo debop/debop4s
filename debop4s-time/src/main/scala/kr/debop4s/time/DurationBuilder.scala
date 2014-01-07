@@ -8,6 +8,7 @@ private[time] object DurationBuilder {
 
 sealed private[time] class DurationBuilder(val underlying: Period) {
 
+    def -(that: DurationBuilder): DurationBuilder = DurationBuilder(this.underlying.minus(that.underlying))
     def +(that: DurationBuilder): DurationBuilder = DurationBuilder(this.underlying.plus(that.underlying))
 
     def ago: DateTime = StaticDateTime.now.minus(underlying)

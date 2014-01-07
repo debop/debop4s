@@ -1,6 +1,7 @@
 package kr.debop4s.time
 
 import java.sql.Timestamp
+import java.util.Date
 import org.joda.time.DateTime.Property
 import org.joda.time._
 
@@ -9,7 +10,7 @@ import org.joda.time._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오후 10:51
  */
-class RichDateTime(val self: DateTime) extends AnyVal with Ordered[RichDateTime] {
+class RichDateTime(val self: DateTime) extends AnyVal with Ordered[DateTime] {
 
     def -(duration: Long): DateTime = self.minus(duration)
     def -(duration: ReadableDuration): DateTime = self.minus(duration)
@@ -21,34 +22,49 @@ class RichDateTime(val self: DateTime) extends AnyVal with Ordered[RichDateTime]
     def +(period: ReadablePeriod): DateTime = self.plus(period)
     def +(builder: DurationBuilder): DateTime = self.plus(builder.underlying)
 
-    def millis: Property = self.millisOfSecond()
-    def second: Property = self.secondOfMinute()
-    def minute: Property = self.minuteOfHour()
-    def hour: Property = self.hourOfDay()
-    def day: Property = self.dayOfMonth()
-    def week: Property = self.weekOfWeekyear()
+    def millisOfSecond: Property = self.millisOfSecond()
+    def millisOfDay: Property = self.millisOfDay()
+
+    def secondOfMinute: Property = self.secondOfMinute()
+    def secondOfDay: Property = self.secondOfDay()
+
+    def minuteOfHour: Property = self.minuteOfHour()
+    def minuteOfDay: Property = self.minuteOfDay()
+
+    def hourOfDay: Property = self.hourOfDay()
+
+    def dayOfMonth: Property = self.dayOfMonth()
+    def dayOfWeek: Property = self.dayOfWeek()
+    def dayOfYear: Property = self.dayOfYear()
+
+    def weekyear: Property = self.weekyear()
+    def weekOfWeekyear: Property = self.weekOfWeekyear()
+
     def month: Property = self.monthOfYear()
     def year: Property = self.year()
     def century: Property = self.centuryOfEra()
     def era: Property = self.era()
 
-    def withMillis(millis: Int) = self.withMillisOfSecond(millis)
-    def withSecond(second: Int) = self.withSecondOfMinute(second)
-    def withMinute(minute: Int) = self.withMinuteOfHour(minute)
-    def withHour(hour: Int) = self.withHourOfDay(hour)
-    def withDay(day: Int) = self.withDayOfMonth(day)
-    def withWeek(week: Int) = self.withWeekOfWeekyear(week)
-    def withMonth(month: Int) = self.withMonthOfYear(month)
-    def withYear(year: Int) = self.withYear(year)
-    def withCentury(century: Int) = self.withCenturyOfEra(century)
-    def withEra(era: Int) = self.withEra(era)
+    def withMillis(newMillis: Long): DateTime = self.withMillis(newMillis)
+    def withMillisOfSecond(millis: Int): DateTime = self.withMillisOfSecond(millis)
+    def withMillisOfDay(millis: Int): DateTime = self.withMillisOfDay(millis)
+    def withSecondOfMinute(second: Int): DateTime = self.withSecondOfMinute(second)
+    def withMinuteOfHour(minute: Int): DateTime = self.withMinuteOfHour(minute)
+    def withHourOfDay(hour: Int): DateTime = self.withHourOfDay(hour)
+    def withDayOfMonth(day: Int): DateTime = self.withDayOfMonth(day)
+    def withWeekyear(weekyear: Int): DateTime = self.withWeekyear(weekyear)
+    def withWeekOfWeekyear(week: Int): DateTime = self.withWeekOfWeekyear(week)
+    def withMonthOfYear(month: Int): DateTime = self.withMonthOfYear(month)
+    def withYear(year: Int): DateTime = self.withYear(year)
+    def withCentury(century: Int): DateTime = self.withCenturyOfEra(century)
+    def withEra(era: Int): DateTime = self.withEra(era)
 
-    def compare(that: RichDateTime): Int = self.compareTo(that.self)
+    def compare(that: DateTime): Int = self.compareTo(that)
 
     // def toJsonString:String = self.withZone(DateTimeZone.UTC).toString(StaticISODateTimeFormat.dateTime)
 
     def monthInterval: Interval = {
-        val start = withDay(1).withTimeAtStartOfDay()
+        val start = withDayOfMonth(1).withTimeAtStartOfDay()
         new Interval(start, start.plusMonths(1))
     }
 
@@ -57,5 +73,6 @@ class RichDateTime(val self: DateTime) extends AnyVal with Ordered[RichDateTime]
         new Interval(start, start.plusDays(1))
     }
 
+    def toDate: Date = self.toDate
     def toTimestamp: Timestamp = new Timestamp(self.getMillis)
 }

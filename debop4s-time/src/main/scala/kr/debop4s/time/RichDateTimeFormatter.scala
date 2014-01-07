@@ -25,4 +25,5 @@ class RichDateTimeFormatter(val self: DateTimeFormatter) extends AnyVal {
         case _: IllegalArgumentException => None
     }
 
+    def defaultYear: Int = self.getDefaultYear
 }

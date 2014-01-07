@@ -8,10 +8,11 @@ import org.joda.time._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 6. 오전 12:35
  */
-class RichLocalTime(val self: LocalTime) extends AnyVal with Ordered[RichLocalTime] {
+class RichLocalTime(val self: LocalTime) extends AnyVal with Ordered[LocalTime] {
 
     def -(period: ReadablePeriod): LocalTime = self.minus(period)
     def -(builder: DurationBuilder): LocalTime = self.minus(builder.underlying)
+
     def +(period: ReadablePeriod): LocalTime = self.plus(period)
     def +(builder: DurationBuilder): LocalTime = self.plus(builder.underlying)
 
@@ -20,10 +21,11 @@ class RichLocalTime(val self: LocalTime) extends AnyVal with Ordered[RichLocalTi
     def minute: Property = self.minuteOfHour()
     def hour: Property = self.hourOfDay()
 
-    def withMillis(millis: Int): LocalTime = self.withMillisOfSecond(millis)
-    def withSecond(second: Int): LocalTime = self.withSecondOfMinute(second)
-    def withMinute(minute: Int): LocalTime = self.withMinuteOfHour(minute)
-    def withHour(hour: Int): LocalTime = self.withHourOfDay(hour)
+    def withMillisOfSecond(millis: Int): LocalTime = self.withMillisOfSecond(millis)
+    def withMillisOfDay(millis: Int): LocalTime = self.withMillisOfDay(millis)
+    def withSecondOfMinute(second: Int): LocalTime = self.withSecondOfMinute(second)
+    def withMinuteOfHour(minute: Int): LocalTime = self.withMinuteOfHour(minute)
+    def withHourOfDay(hour: Int): LocalTime = self.withHourOfDay(hour)
 
-    def compare(that: RichLocalTime) = self.compareTo(that.self)
+    def compare(that: LocalTime) = self.compareTo(that)
 }

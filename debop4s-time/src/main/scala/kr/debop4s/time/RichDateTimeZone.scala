@@ -17,6 +17,13 @@ class RichDateTimeZone(val self: DateTimeZone) extends AnyVal {
 
     def offset(instant: Long): Int = self.getOffset(instant)
     def offset(instant: ReadableInstant): Int = self.getOffset(instant)
+    def offsetFromLocal(instantLocal:Long) = self.getOffsetFromLocal(instantLocal)
 
     def standardOffset(instant: Long): Int = self.getStandardOffset(instant)
+    def isStandardOffset(instant:Long) = self.standardOffset(instant)
+
+    def nameKey(instant:Long): String = self.getNameKey(instant)
+    def shortName(instant:Long): String = self.getShortName(instant)
+
+
 }

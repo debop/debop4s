@@ -1,6 +1,7 @@
 package kr.debop4s.time
 
 import org.joda.time.base.AbstractPartial
+import org.joda.time.{DateTimeFieldType, DateTimeField}
 
 /**
  * kr.debop4s.time.RichAbstractPartial
@@ -9,9 +10,10 @@ import org.joda.time.base.AbstractPartial
  */
 class RichAbstractPartial(val self: AbstractPartial) extends AnyVal with Ordered[AbstractPartial] {
 
-    def fields = self.getFields
-    def fieldTypes = self.getFieldTypes
-    def values = self.getValues
+    def field(idx: Int): DateTimeField = self.getField(idx)
+    def fields: Array[DateTimeField] = self.getFields
+    def fieldTypes: Array[DateTimeFieldType] = self.getFieldTypes
+    def values: Array[Int] = self.getValues
 
     override def compare(that: AbstractPartial): Int = self.compareTo(that)
 }

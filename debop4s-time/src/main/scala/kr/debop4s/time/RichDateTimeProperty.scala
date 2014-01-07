@@ -20,5 +20,4 @@ class RichDateTimeProperty(val self: DateTime.Property) extends AnyVal {
     def apply(value: Int): DateTime = self.setCopy(value)
     def apply(text: String): DateTime = self.setCopy(text)
     def apply(text: String, locale: Locale): DateTime = self.setCopy(text, locale)
-
 }

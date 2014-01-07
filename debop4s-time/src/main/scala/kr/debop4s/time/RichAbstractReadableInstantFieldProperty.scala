@@ -16,15 +16,18 @@ class RichAbstractReadableInstantFieldProperty(val self: AbstractReadableInstant
     def shortText(locale: Locale): String = self.getAsShortText(locale)
     def asShortText(locale: Locale): String = self.getAsShortText(locale)
     def asString: String = self.getAsString
+
     def text: String = self.getAsText
     def asText: String = self.getAsText
     def text(locale: Locale): String = self.getAsText(locale)
     def asText(locale: Locale): String = self.getAsText(locale)
+
     def durationField: DurationField = self.getDurationField
     def field: DateTimeField = self.getField
     def fieldType: DateTimeFieldType = self.getFieldType
     def leapAmount: Int = self.getLeapAmount
     def leapDurationField: DurationField = self.getLeapDurationField
+
     def maximumValue: Int = self.getMaximumValue
     def maxValue: Int = self.getMaximumValue
     def maximumValueOverall: Int = self.getMaximumValueOverall
@@ -33,6 +36,7 @@ class RichAbstractReadableInstantFieldProperty(val self: AbstractReadableInstant
     def minValue: Int = self.getMinimumValue
     def minimumValueOverall: Int = self.getMinimumValueOverall
     def minValueOverall: Int = self.getMinimumValueOverall
+
     def name: String = self.getName
     def rangeDurationField: DurationField = self.getRangeDurationField
 
