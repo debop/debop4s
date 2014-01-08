@@ -39,7 +39,12 @@ trait ITimePeriodContainer extends util.List[ITimePeriod] with ITimePeriod {
         else periods.contains(target)
     }
 
-    def addAll(elems: Iterable[_ <: ITimePeriod]) = {
+    def addAll(elems: Iterable[_ <: ITimePeriod]): Boolean = {
+        periods ++= elems
+        true
+    }
+
+    def addAll(elems: ITimePeriod*): Boolean = {
         periods ++= elems
         true
     }

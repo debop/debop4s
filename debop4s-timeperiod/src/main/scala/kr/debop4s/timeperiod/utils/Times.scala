@@ -41,6 +41,8 @@ object Times {
 
     def noon(moment: DateTime): DateTime = moment.withTimeAtStartOfDay().plusHours(12)
 
+    def zero: DateTime = new DateTime(0, DateTimeZone.UTC)
+
     def todayUtc(): DateTime = nowUtc().withTimeAtStartOfDay()
 
     def asLocal(utc: DateTime): DateTime = utc.toDateTime(DateTimeZone.getDefault)

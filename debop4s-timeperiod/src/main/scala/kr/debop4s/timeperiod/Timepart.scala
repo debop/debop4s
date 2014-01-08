@@ -2,6 +2,7 @@ package kr.debop4s.timeperiod
 
 import kr.debop4s.core.ValueObject
 import kr.debop4s.time._
+import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
 
 /**
@@ -13,43 +14,36 @@ import org.joda.time.{Duration, DateTime}
 class Timepart(val value: DateTime) extends ValueObject with Ordered[Timepart] {
     assert(value != null)
 
+    def this() {
+        this(Times.zero)
+    }
+
     def hour: Int = value.getHourOfDay
-
     def minute: Int = value.getMinuteOfHour
-
     def second: Int = value.getSecondOfMinute
-
     def millis: Int = value.getMillisOfSecond
-
     def totalHours: Double = totalMillis / MillisPerHour
-
     def totalMinutes: Double = totalMillis / MillisPerMinute
-
     def totalSeconds: Double = totalMillis / MillisPerSecond
-
     def totalMillis: Long = value.getMillisOfDay
-
-    def getDateTime(moment: DateTime): DateTime =
-        moment.withTimeAtStartOfDay() + totalMillis
-
+    def getDateTime(moment: DateTime): DateTime = moment.withTimeAtStartOfDay() + totalMillis
     def compare(that: Timepart) = value.compareTo(that.value)
-
     override def hashCode() = totalMillis.toInt
-
-    override protected def buildStringHelper =
-        super.buildStringHelper.add("value", value)
+    override protected def buildStringHelper = {
+        super.buildStringHelper
+            .add("value", value)
+    }
 }
 
 object Timepart {
 
-    def now(): Timepart = apply(DateTime.now())
-
-    def apply() = new Timepart(DateTime.now.withTimeAtStartOfDay())
-
-    def apply(moment: DateTime) = new Timepart(new DateTime(0).withMillisOfDay(moment.getMillisOfDay))
-
-    def apply(hourOfDay: Int, minuteOfHour: Int = 0, secondOfMinute: Int = 0, millisOfSecond: Int = 0) =
-        new Timepart(new DateTime(0).withTime(hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond))
-
-    def apply(duration: Duration) = new Timepart(new DateTime(0).withMillisOfDay(duration.getMillis.toInt))
+    def now(): Timepart = new Timepart(Times.now)
+    def apply(): Timepart = new Timepart()
+    def apply(moment: DateTime): Timepart = new Timepart(Times.zero.withMillisOfDay(moment.getMillisOfDay))
+    def apply(hourOfDay: Int, minuteOfHour: Int = 0, secondOfMinute: Int = 0, millisOfSecond: Int = 0): Timepart = {
+        new Timepart(Times.zero.withTime(hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond))
+    }
+    def apply(duration: Option[Duration]): Timepart = {
+        new Timepart(Times.zero + duration.getOrElse(Duration.ZERO))
+    }
 }

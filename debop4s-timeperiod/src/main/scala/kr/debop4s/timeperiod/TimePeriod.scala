@@ -59,10 +59,10 @@ trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializabl
     def setup(ns: DateTime, ne: DateTime)
 
     /** 기간을 offset만큼 이동한 새로운 인스턴스를 반환합니다. */
-    def copy(offset: Duration): ITimePeriod
+    def copy(offset: Duration = Duration.ZERO): ITimePeriod
 
     /** 기간을 offset만큼 이동시킵니다. */
-    def move(offset: Duration)
+    def move(offset: Duration = Duration.ZERO)
 
     /** 시작과 완료 시각이 같은지 여부 */
     def isSamePeriod(other: ITimePeriod): Boolean
@@ -98,7 +98,7 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
                           var readonly: Boolean = false) extends ITimePeriod {
 
     private var (startTime, endTime) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
-                                                             Options.get(_end).getOrElse(MaxPeriodTime))
+                                                          Options.get(_end).getOrElse(MaxPeriodTime))
 
     def this(start: DateTime, duration: Duration, readonly: Boolean) {
         this(start, start.plus(duration), readonly)

@@ -116,6 +116,8 @@ object TimeRange {
     def apply(readonly: Boolean): TimeRange =
         new TimeRange(MinPeriodTime, MaxPeriodTime, readonly)
 
+    def apply(moment: DateTime): TimeRange = apply(moment, moment, readonly = false)
+
     def apply(start: DateTime, end: DateTime): TimeRange = apply(start, end, readonly = false)
 
     def apply(start: DateTime, end: DateTime, readonly: Boolean): TimeRange =
