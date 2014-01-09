@@ -19,10 +19,10 @@ class LocalTest extends AssertionsForJUnit {
     @Test
     def multithreadTest() {
         Testing.run(15) {
-                            saveAndLoadValueType()
-                            saveAndLoadReferenceType()
-                            getOrCreate()
-                        }
+            saveAndLoadValueType()
+            saveAndLoadReferenceType()
+            getOrCreate()
+        }
     }
 
     @Test
@@ -42,6 +42,7 @@ class LocalTest extends AssertionsForJUnit {
 
         val storedUser = Local.get(key).asInstanceOf[User]
         assert(storedUser != null)
+        assert(storedUser == user)
         assert(user.name == storedUser.name)
         assert(user.password == storedUser.password)
         assert(user.age == storedUser.age)

@@ -13,6 +13,20 @@ object Testing {
 
     lazy val log = Logger(this.getClass)
 
+    def run(count: Int, runnable: Runnable) {
+        log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
+        try {
+            Range(0, count).par.foreach(x => {
+                runnable.run();
+                log.trace(s"작업을 수행했습니다. [$x]")
+            })
+        } catch {
+            case e: InterruptedException => log.warn("작업 중 interrupted 되었습니다.")
+            case e: Exception => log.error("작업 중 예외가 발생했습니다.", e)
+        }
+        log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
+    }
+
     def run(count: Int)(block: => Unit) {
         log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
         try {

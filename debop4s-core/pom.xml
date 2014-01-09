@@ -49,6 +49,13 @@
             <artifactId>spring-beans</artifactId>
         </dependency>
 
+        <!-- Guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
+        </dependency>
+
         <!-- 암호화 -->
         <dependency>
             <groupId>org.jasypt</groupId>
