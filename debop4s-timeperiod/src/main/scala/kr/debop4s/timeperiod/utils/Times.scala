@@ -2,6 +2,7 @@ package kr.debop4s.timeperiod.utils
 
 import kr.debop4s.core.NotSupportedException
 import kr.debop4s.core.logging.Logger
+import kr.debop4s.time._
 import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import kr.debop4s.timeperiod.Halfyear.Halfyear
 import kr.debop4s.timeperiod.Month.Month
@@ -176,7 +177,7 @@ object Times {
 
     def addMonth(year: Int, monthOfYear: Int, count: Int): YearMonth = {
         if (count == 0)
-            YearMonth(year, monthOfYear)
+            return YearMonth(year, monthOfYear)
 
         val offset = Math.abs(count) / MonthsPerYear + 1
         val startMonths = (year + offset) * MonthsPerYear + monthOfYear - 1
@@ -223,7 +224,7 @@ object Times {
     def previousDayOfWeek(day: DayOfWeek): DayOfWeek = addDayOfWeek(day, -1)
 
     def addDayOfWeek(day: DayOfWeek, days: Int): DayOfWeek = {
-        if (days == 0) day
+        if (days == 0) return day
 
         val weeks = Math.abs(days) / DaysPerWeek + 1
         val offset = weeks * DaysPerWeek + day.id - 1 + days
@@ -531,7 +532,7 @@ object Times {
 
     def min(a: DateTime, b: DateTime): DateTime = {
         if (a != null && b != null) {
-            if (a.compareTo(b) < 0) a else b
+            if (a < b) a else b
         } else {
             null
         }
@@ -539,7 +540,7 @@ object Times {
 
     def max(a: DateTime, b: DateTime): DateTime = {
         if (a != null && b != null) {
-            if (a.compareTo(b) > 0) a else b
+            if (a > b) a else b
         } else {
             null
         }
@@ -547,7 +548,7 @@ object Times {
 
     def min(a: Duration, b: Duration): Duration = {
         if (a != null && b != null) {
-            if (a.compareTo(b) < 0) a else b
+            if (a < b) a else b
         } else {
             null
         }
@@ -555,7 +556,7 @@ object Times {
 
     def max(a: Duration, b: Duration): Duration = {
         if (a != null && b != null) {
-            if (a.compareTo(b) > 0) a else b
+            if (a > b) a else b
         } else {
             null
         }
@@ -674,25 +675,25 @@ object Times {
 
 
     def hasInside(period: ITimePeriod, target: DateTime): Boolean = {
-        val isInside = target.compareTo(period.getStart) >= 0 && target.compareTo(period.getEnd) <= 0
-        log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=$isInside")
+        val isInside = target >= period.start && target <= period.end
+        log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=[$isInside]")
         isInside
     }
 
     def hasInside(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        val isInside = hasInside(period, target.getStart) && hasInside(period, target.getEnd)
+        val isInside = hasInside(period, target.start) && hasInside(period, target.end)
         log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=$isInside")
         isInside
     }
 
     def hasPureInside(period: ITimePeriod, target: DateTime): Boolean = {
-        val isInside = target.compareTo(period.getStart) > 0 && target.compareTo(period.getEnd) < 0
+        val isInside = target > period.start && target < period.end
         log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=$isInside")
         isInside
     }
 
     def hasPureInside(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        val isInside = hasPureInside(period, target.getStart) && hasPureInside(period, target.getEnd)
+        val isInside = hasPureInside(period, target.start) && hasPureInside(period, target.end)
         log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=$isInside")
         isInside
     }
@@ -707,32 +708,32 @@ object Times {
 
         var relation = PeriodRelation.NoRelation
 
-        if (period.getStart.compareTo(target.getEnd) > 0) {
+        if (period.start > target.end) {
             relation = PeriodRelation.After
-        } else if (period.getEnd.compareTo(target.getStart) < 0) {
+        } else if (period.end < target.start) {
             relation = PeriodRelation.Before
-        } else if (period.getStart.equals(target.getStart) && period.getEnd.equals(target.getEnd)) {
+        } else if (period.start == target.start && period.end == target.end) {
             relation = PeriodRelation.ExactMatch
-        } else if (period.getStart.equals(target.getEnd)) {
+        } else if (period.start == target.end) {
             relation = PeriodRelation.StartTouching
-        } else if (period.getEnd.equals(target.getEnd)) {
+        } else if (period.end == target.start) {
             relation = PeriodRelation.EndTouching
         } else if (hasInside(period, target)) {
-            if (period.getStart.equals(target.getStart)) {
+            if (period.start == target.start) {
                 relation = PeriodRelation.EnclosingStartTouching
-            } else if (period.getEnd.equals(target.getEnd)) {
+            } else if (period.end == target.end) {
                 relation = PeriodRelation.EnclosingEndTouching
             } else {
                 relation = PeriodRelation.Enclosing
             }
         } else {
-            val insideStart = hasInside(target, period.getStart)
-            val insideEnd = hasInside(target, period.getEnd)
+            val insideStart = hasInside(target, period.start)
+            val insideEnd = hasInside(target, period.end)
 
             if (insideStart && insideEnd) {
-                if (period.getStart.equals(target.getStart)) {
+                if (period.start == target.start) {
                     relation = PeriodRelation.InsideStartTouching
-                } else if (period.getEnd.equals(target.getEnd)) {
+                } else if (period.end == target.end) {
                     relation = PeriodRelation.InsideEndTouching
                 } else {
                     relation = PeriodRelation.Inside
@@ -743,7 +744,7 @@ object Times {
                 relation = PeriodRelation.EndInside
             }
         }
-        log.debug(s"Period=[$period], target=[$target], relation=[$relation]")
+        log.debug(s"relation=[$relation], period=[$period], target=[$target]")
         relation
     }
 
@@ -751,10 +752,10 @@ object Times {
         assert(period != null)
         assert(target != null)
 
-        val isIntersect = hasInside(period, target.getStart) ||
-                          hasInside(period, target.getEnd) ||
+        val isIntersect = hasInside(period, target.start) ||
+                          hasInside(period, target.end) ||
                           hasPureInside(target, period)
-        log.trace(s"period=[$period], target=[$target]이 교차 구간인가? intersect=[$isIntersect]")
+        log.debug(s"period=[$period], target=[$target]이 교차 구간인가? intersect=[$isIntersect]")
         isIntersect
     }
 
@@ -767,42 +768,57 @@ object Times {
         assert(period != null)
         assert(target != null)
 
-
         val relation = getRelation(period, target)
-
         !NotOverlapedRelations.contains(relation)
     }
 
     def getIntersectionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
-        if (intersectWith(period, target)) {
-            val start = max(period.getStart, target.getStart)
-            val end = min(period.getEnd, target.getEnd)
+        assert(period != null)
+        assert(target != null)
 
-            TimeBlock(start, end, period.isReadonly)
+        var intersection: TimeBlock = null
+        if (intersectWith(period, target)) {
+            val start = max(period.start, target.start)
+            val end = min(period.end, target.end)
+
+            intersection = TimeBlock(start, end, period.isReadonly)
+
         }
-        null.asInstanceOf[TimeBlock]
+        log.debug(s"기간의 교집합. period=[$period], target=[$target], result=[$intersection]")
+        intersection
     }
 
     def getUnionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
-        val start = min(period.getStart, target.getStart)
-        val end = max(period.getEnd, target.getEnd)
+        assert(period != null)
+        assert(target != null)
+
+        val start = min(period.start, target.start)
+        val end = max(period.end, target.end)
 
         TimeBlock(start, end, period.isReadonly)
     }
 
     def getIntersectionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
-        if (intersectWith(period, target)) {
-            val start = max(period.getStart, target.getStart)
-            val end = min(period.getEnd, target.getEnd)
+        assert(period != null)
+        assert(target != null)
 
-            TimeRange(start, end, period.isReadonly)
+        var intersection: TimeRange = null
+        if (intersectWith(period, target)) {
+            val start = max(period.start, target.start)
+            val end = min(period.end, target.end)
+
+            intersection = TimeRange(start, end, period.isReadonly)
         }
-        null.asInstanceOf[TimeRange]
+        log.debug(s"기간의 교집합. period=[$period], target=[$target], result=[$intersection]")
+        intersection
     }
 
     def getUnionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
-        val start = min(period.getStart, target.getStart)
-        val end = max(period.getEnd, target.getEnd)
+        assert(period != null)
+        assert(target != null)
+
+        val start = min(period.start, target.start)
+        val end = max(period.end, target.end)
 
         TimeRange(start, end, period.isReadonly)
     }
@@ -832,7 +848,7 @@ object Times {
 
     def assertValidPeriod(start: DateTime, end: DateTime) {
         if (start != null && end != null) {
-            assert(start.compareTo(end) <= 0,
+            assert(start <= end,
                    s"시작시각이 완료시각보다 이전이어야 합니다. start=[$start], end=[$end]")
         }
     }
@@ -847,7 +863,7 @@ object Times {
         assert(right != null)
 
         if (left.size != right.size)
-            false
+            return false
 
         for (x <- left; y <- right) {
             if (x != y)
@@ -884,15 +900,15 @@ object Times {
         if (period.isAnytime)
             return years
 
-        if (isSameYear(period.getStart, period.getEnd)) {
+        if (isSameYear(period.start, period.end)) {
             years += TimeRange(period)
             return years
         }
 
-        years += TimeRange(period.getStart, endTimeOfYear(period.getStart))
+        years += TimeRange(period.start, endTimeOfYear(period.start))
 
-        var current = startTimeOfYear(period.getStart).plusYears(1)
-        val endYear = period.getEnd.getYear
+        var current = startTimeOfYear(period.start).plusYears(1)
+        val endYear = period.end.getYear
         val calendar = DefaultTimeCalendar
 
         while (current.getYear < endYear) {
@@ -900,8 +916,8 @@ object Times {
             current = current.plusYears(1)
         }
 
-        if (current.compareTo(period.getEnd) < 0) {
-            years += TimeRange(startTimeOfYear(current), period.getEnd)
+        if (current < period.end) {
+            years += TimeRange(startTimeOfYear(current), period.end)
         }
 
         years
@@ -918,15 +934,15 @@ object Times {
 
         assertHasPeriod(period)
 
-        if (isSameHalfyear(period.getStart, period.getEnd)) {
+        if (isSameHalfyear(period.start, period.end)) {
             halfyears :+ TimeRange(period)
             return halfyears
         }
 
-        var current = endTimeOfHalfyear(period.getStart)
-        halfyears += TimeRange(period.getStart, current)
+        var current = endTimeOfHalfyear(period.start)
+        halfyears += TimeRange(period.start, current)
 
-        val endHashcode = period.getEnd.getYear * 10 + halfyearOf(period.getEnd).id
+        val endHashcode = period.end.getYear * 10 + halfyearOf(period.end).id
         current = current.plusDays(1)
         val calendar = DefaultTimeCalendar
 
@@ -935,8 +951,8 @@ object Times {
             current = current.plusMonths(MonthsPerHalfyear)
         }
 
-        if (current.compareTo(period.getEnd) < 0) {
-            halfyears += TimeRange(startTimeOfHalfyear(current), period.getEnd)
+        if (current < period.end) {
+            halfyears += TimeRange(startTimeOfHalfyear(current), period.end)
         }
 
         halfyears
@@ -953,16 +969,16 @@ object Times {
 
         assertHasPeriod(period)
 
-        if (isSameQuarter(period.getStart, period.getEnd)) {
+        if (isSameQuarter(period.start, period.end)) {
             quarters += TimeRange(period)
             return quarters
         }
 
-        var current = endTimeOfQuarter(period.getStart)
-        quarters += TimeRange(period.getStart, current)
+        var current = endTimeOfQuarter(period.start)
+        quarters += TimeRange(period.start, current)
 
-        val endHashcode = period.getEnd.getYear * 10 + quarterOf(period.getEnd).id
-        current = current.plusDays(1)
+        val endHashcode = period.end.getYear * 10 + quarterOf(period.end).id
+        current = current + 1.days
         val calendar = DefaultTimeCalendar
 
         while (current.getYear * 10 + quarterOf(current).id < endHashcode) {
@@ -970,8 +986,8 @@ object Times {
             current = current.plusMonths(MonthsPerQuarter)
         }
 
-        if (current.compareTo(period.getEnd) < 0) {
-            quarters += TimeRange(startTimeOfQuarter(current), period.getEnd)
+        if (current < period.end) {
+            quarters += TimeRange(startTimeOfQuarter(current), period.end)
         }
 
         quarters
@@ -987,26 +1003,26 @@ object Times {
 
         assertHasPeriod(period)
 
-        if (isSameMonth(period.getStart, period.getEnd)) {
+        if (isSameMonth(period.start, period.end)) {
             months += TimeRange(period)
             return months
         }
 
-        var current = endTimeOfMonth(period.getStart)
-        months += TimeRange(period.getStart, current)
+        var current = endTimeOfMonth(period.start)
+        months += TimeRange(period.start, current)
 
-        val monthEnd = startTimeOfMonth(period.getEnd)
+        val monthEnd = startTimeOfMonth(period.end)
         val calendar = DefaultTimeCalendar
 
         current = current.plusDays(1)
-        while (current.compareTo(monthEnd) < 0) {
+        while (current < monthEnd) {
             months += getMonthRange(current, calendar)
             current = current.plusMonths(1)
         }
 
         current = startTimeOfMonth(current)
-        if (current.compareTo(period.getEnd) < 0) {
-            months += TimeRange(current, period.getEnd)
+        if (current < period.end) {
+            months += TimeRange(current, period.end)
         }
         months
     }
@@ -1021,15 +1037,15 @@ object Times {
 
         assertHasPeriod(period)
 
-        if (isSameWeek(period.getStart, period.getEnd)) {
+        if (isSameWeek(period.start, period.end)) {
             weeks :+ TimeRange(period)
             return weeks
         }
 
-        var current = period.getStart
+        var current = period.start
         val endWeek = endTimeOfWeek(current)
-        if (endWeek.compareTo(period.getEnd) >= 0) {
-            weeks += TimeRange(current, period.getEnd)
+        if (endWeek >= period.end) {
+            weeks += TimeRange(current, period.end)
             return weeks
         }
 
@@ -1037,14 +1053,14 @@ object Times {
         current = endWeek.plusWeeks(1)
         val calendar = DefaultTimeCalendar
 
-        while (current.compareTo(period.getEnd) < 0) {
+        while (current < period.end) {
             weeks += getWeekRange(current, calendar)
             current = current.plusWeeks(1)
         }
 
         current = startTimeOfWeek(current)
-        if (current.compareTo(period.getEnd) < 0) {
-            weeks += TimeRange(current, period.getEnd)
+        if (current < period.end) {
+            weeks += TimeRange(current, period.end)
         }
         weeks
     }
@@ -1059,22 +1075,22 @@ object Times {
 
         assertHasPeriod(period)
 
-        if (isSameDay(period.getStart, period.getEnd)) {
+        if (isSameDay(period.start, period.end)) {
             days += TimeRange(period)
             return days
         }
 
-        days += TimeRange(period.getStart, endTimeOfDay(period.getStart))
-        val endDay = period.getEnd.withTimeAtStartOfDay()
-        var current = period.getStart.withTimeAtStartOfDay().plusDays(1)
+        days += TimeRange(period.start, endTimeOfDay(period.start))
+        val endDay = period.end.withTimeAtStartOfDay()
+        var current = period.start.withTimeAtStartOfDay().plusDays(1)
 
-        while (current.compareTo(endDay) < 0) {
+        while (current < endDay) {
             days += getDayRange(current, DefaultTimeCalendar)
             current = current.plusDays(1)
         }
 
-        if (period.getEnd.getMillisOfDay > 0)
-            days += TimeRange(endDay, period.getEnd)
+        if (period.end.getMillisOfDay > 0)
+            days += TimeRange(endDay, period.end)
 
         days
     }
@@ -1089,18 +1105,18 @@ object Times {
 
         assertHasPeriod(period)
 
-        if (isSameHour(period.getStart, period.getEnd)) {
+        if (isSameHour(period.start, period.end)) {
             hours += TimeRange(period)
             return hours
         }
 
-        hours += TimeRange(period.getStart, endTimeOfHour(period.getStart))
+        hours += TimeRange(period.start, endTimeOfHour(period.start))
 
-        val endHour = period.getEnd
-        var current = trimToHour(period.getStart, period.getStart.getHourOfDay + 1)
+        val endHour = period.end
+        var current = trimToHour(period.start, period.start.getHourOfDay + 1)
         val maxHour = endHour.minusHours(1)
 
-        while (current.compareTo(maxHour) <= 0) {
+        while (current <= maxHour) {
             hours += getHourRange(current, DefaultTimeCalendar)
             current = current.plusHours(1)
         }
@@ -1121,24 +1137,24 @@ object Times {
 
         assertHasPeriod(period)
 
-        if (isSameMinute(period.getStart, period.getEnd)) {
+        if (isSameMinute(period.start, period.end)) {
             minutes += TimeRange(period)
             return minutes
         }
 
-        minutes += TimeRange(period.getStart, endTimeOfMinute(period.getStart))
+        minutes += TimeRange(period.start, endTimeOfMinute(period.start))
 
-        val endMin = period.getEnd
-        var current = trimToMinute(period.getStart, period.getStart.getMinuteOfHour + 1)
-        val maxMin = endMin.minusMinutes(1)
+        val endMin = period.end
+        var current = trimToMinute(period.start, period.start.getMinuteOfHour + 1)
+        val maxMin = endMin - 1.minutes
 
-        while (current.compareTo(maxMin) <= 0) {
+        while (current <= maxMin) {
             minutes += getMinuteRange(current, DefaultTimeCalendar)
             current = current.plusMinutes(1)
         }
 
         if (endMin.minusMinutes(endMin.getMinuteOfHour).getMillisOfDay > 0) {
-            minutes += TimeRange(startTimeOfMinute(endMin), period.getEnd)
+            minutes += TimeRange(startTimeOfMinute(endMin), period.end)
         }
 
         minutes

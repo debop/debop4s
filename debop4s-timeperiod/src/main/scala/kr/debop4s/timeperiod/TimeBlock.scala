@@ -1,5 +1,7 @@
 package kr.debop4s.timeperiod
 
+import kr.debop4s.core.logging.Logger
+import kr.debop4s.time._
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
 
@@ -32,12 +34,25 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
                 _readonly: Boolean = false)
     extends TimePeriod(_start, _end, _readonly) with ITimeBlock {
 
+    override lazy val log = Logger[TimeBlock]
+
+    override def start_=(v: DateTime) {
+        assertMutable()
+        assert(v <= end, "시작시각이 완료시각보다 클 수 없습니다.")
+        super.start_=(v)
+    }
     override def setStart(v: DateTime) {
-        super.setStart(v)
+        start = v
     }
 
+    override def end_=(v: DateTime) {
+        assertMutable()
+        assert(v >= start, "완료시각이 시작시각보다 작을 수 없습니다.")
+        super.end_=(v)
+
+    }
     override def setEnd(v: DateTime) {
-        super.setEnd(v)
+        end = v
     }
 
     var _duration: Duration = new Duration(start, end)
@@ -47,6 +62,8 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
     override def duration_=(v: Duration) {
         setDuration(v)
     }
+
+    override def getDuration = _duration
 
     override def setDuration(v: Duration) {
         assertMutable()
@@ -153,7 +170,10 @@ object TimeBlock {
         new TimeBlock(ns, ne, readonly)
     }
 
-    def apply(source: ITimePeriod): TimeBlock = apply(source, readonly = false)
+    def apply(source: ITimePeriod): TimeBlock = {
+        assert(source != null)
+        apply(source, source.isReadonly)
+    }
 
     def apply(source: ITimePeriod, readonly: Boolean): TimeBlock = {
         assert(source != null)

@@ -1,11 +1,11 @@
 package kr.debop4s.timeperiod.tests.base
 
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.time._
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import kr.debop4s.timeperiod.tests.samples.TimeRangePeriodRelationTestData
 import kr.debop4s.timeperiod.utils.{Times, Durations}
-import org.fest.assertions.Assertions
 import org.joda.time.{DateTime, Duration}
 import org.junit.Test
 
@@ -15,6 +15,8 @@ import org.junit.Test
  * @since  2014. 1. 8. 오후 11:29
  */
 class TimeRangeTest extends AbstractTimePeriodTest {
+
+    override lazy val log = Logger[TimeRangeTest]
 
     val duration = 1.hours.toDuration
     val offset = Durations.Second
@@ -38,12 +40,12 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         val range = new TimeRange
         assert(range != TimeRange.Anytime)
         assert(Times.getRelation(range, TimeRange.Anytime) == PeriodRelation.ExactMatch)
-        Assertions.assertThat(range.isAnytime).isTrue()
-        Assertions.assertThat(range.isReadonly).isFalse()
-        Assertions.assertThat(range.hasPeriod).isFalse()
-        Assertions.assertThat(range.hasStart).isFalse()
-        Assertions.assertThat(range.hasEnd).isFalse()
-        Assertions.assertThat(range.isMoment).isFalse()
+        assert(range.isAnytime)
+        assert(!range.isReadonly)
+        assert(!range.hasPeriod)
+        assert(!range.hasStart)
+        assert(!range.hasEnd)
+        assert(!range.isMoment)
     }
     @Test def momentTest() {
         val moment = Times.now
@@ -66,109 +68,112 @@ class TimeRangeTest extends AbstractTimePeriodTest {
     }
     @Test def hasStartTest() {
         val range = TimeRange(Times.now, null.asInstanceOf[DateTime])
-        Assertions.assertThat(range.hasStart).isTrue()
-        Assertions.assertThat(range.hasEnd).isFalse()
+        assert(range.hasStart)
+        assert(!range.hasEnd)
     }
     @Test def hasEndTest() {
         val range = TimeRange(null, Times.now)
         assert(!range.hasStart)
         assert(range.hasEnd)
     }
-    @Test def startEndTest {
+    @Test def startEndTest() {
         val range = TimeRange(start, end)
         assert(range.start == start)
         assert(range.end == end)
         assert(range.getDuration == duration)
-        Assertions.assertThat(range.hasPeriod).isTrue
-        Assertions.assertThat(range.isAnytime).isFalse
-        Assertions.assertThat(range.isMoment).isFalse
-        Assertions.assertThat(range.isReadonly).isFalse
+        assert(range.hasPeriod)
+        assert(!range.isAnytime)
+        assert(!range.isMoment)
+        assert(!range.isReadonly)
     }
-    @Test def startEndSwapTest {
+    @Test def startEndSwapTest() {
         val range = TimeRange(end, start)
         assert(range.start == start)
         assert(range.end == end)
         assert(range.getDuration == duration)
-        Assertions.assertThat(range.hasPeriod).isTrue
-        Assertions.assertThat(range.isAnytime).isFalse
-        Assertions.assertThat(range.isMoment).isFalse
-        Assertions.assertThat(range.isReadonly).isFalse
+        assert(range.hasPeriod)
+        assert(!range.isAnytime)
+        assert(!range.isMoment)
+        assert(!range.isReadonly)
     }
-    @Test def startAndDurationTest {
+    @Test def startAndDurationTest() {
         val range = TimeRange(start, duration)
-        Assertions.assertThat(range.start == start)
-        Assertions.assertThat(range.end == end)
-        Assertions.assertThat(range.getDuration == duration)
-        Assertions.assertThat(range.hasPeriod).isTrue
-        Assertions.assertThat(range.isAnytime).isFalse
-        Assertions.assertThat(range.isMoment).isFalse
-        Assertions.assertThat(range.isReadonly).isFalse
+        assert(range.start == start)
+        assert(range.end == end)
+        assert(range.getDuration == duration)
+        assert(range.hasPeriod)
+        assert(!range.isAnytime)
+        assert(!range.isMoment)
+        assert(!range.isReadonly)
     }
-    @Test def startAndNegateDurationTest {
+    @Test def startAndNegateDurationTest() {
         val range = TimeRange(start, Durations.negate(duration))
-        Assertions.assertThat(range.start == start.minus(duration))
-        Assertions.assertThat(range.end == end.minus(duration))
-        Assertions.assertThat(range.getDuration == duration)
-        Assertions.assertThat(range.hasPeriod).isTrue
-        Assertions.assertThat(range.isAnytime).isFalse
-        Assertions.assertThat(range.isMoment).isFalse
-        Assertions.assertThat(range.isReadonly).isFalse
+        assert(range.start == start.minus(duration))
+        assert(range.end == end.minus(duration))
+        assert(range.getDuration == duration)
+        assert(range.hasPeriod)
+        assert(!range.isAnytime)
+        assert(!range.isMoment)
+        assert(!range.isReadonly)
     }
-    @Test def copyConstructorTest {
-        val source = TimeRange(start, start.plusHours(1), true)
+    @Test def copyConstructorTest() {
+        val source = TimeRange(start, start.plusHours(1), readonly = true)
         val copy = TimeRange(source)
 
         assert(copy.start == source.start)
-        assert(copy.end == source.getEnd)
+        assert(copy.end == source.end)
         assert(copy.getDuration == source.getDuration)
         assert(copy.isReadonly == source.isReadonly)
-        Assertions.assertThat(copy.hasPeriod).isTrue
-        Assertions.assertThat(copy.isAnytime).isFalse
-        Assertions.assertThat(copy.isMoment).isFalse
+        assert(copy.hasPeriod)
+        assert(!copy.isAnytime)
+        assert(!copy.isMoment)
     }
-    @Test def startTest {
+    @Test def startTest() {
         val range = TimeRange(start, start + 1.hour)
         assert(range.start == start)
-        val chanedStart = start.plusHours(1)
-        range.setStart(chanedStart)
+
+        val chanedStart = start + 1.hours
+        range.start = chanedStart
         assert(range.start == chanedStart)
     }
-    @Test(expected = classOf[AssertionError]) def startReadonlyTest {
-        val range = TimeRange(Times.now, 1.hour, true)
-        range.setStart(range.start.minusHours(2))
+    @Test(expected = classOf[AssertionError])
+    def startReadonlyTest() {
+        val range = TimeRange(Times.now, 1.hour, readonly = true)
+        range.start = range.start.minusHours(2)
     }
-    @Test(expected = classOf[AssertionError]) def startOutOfRangeTest {
-        val range = TimeRange(Times.now, 1.hour, false)
-        range.setStart(range.start.plusHours(2))
+    @Test(expected = classOf[AssertionError])
+    def startOutOfRangeTest() {
+        val range = TimeRange(Times.now, 1.hour, readonly = false)
+        range.start = range.start.plusHours(2)
     }
 
-    @Test def endTest {
+    @Test def endTest() {
         val range = TimeRange(end.minusHours(1), end)
         assert(range.end == end)
 
         val changedEnd = end + 1.hour
-        range.setEnd(changedEnd)
+        range.end = changedEnd
         assert(range.end == changedEnd)
     }
     @Test(expected = classOf[AssertionError])
-    def endReadonlyTest {
-        val range = TimeRange(Times.now, 1.hour, true)
-        range.setEnd(range.getEnd.plusHours(1))
+    def endReadonlyTest() {
+        val range = TimeRange(Times.now, 1.hour, readonly = true)
+        range.end = range.end.plusHours(1)
     }
     @Test(expected = classOf[AssertionError])
-    def endOutOfRangeTest {
-        val range = TimeRange(Times.now, 1.hour, false)
-        range.setEnd(range.getEnd.minusHours(2))
+    def endOutOfRangeTest() {
+        val range = TimeRange(Times.now, 1.hour, readonly = false)
+        range.end = range.end.minusHours(2)
     }
     @Test def hasInsideDateTimeTest() {
         val range = TimeRange(start, end)
         assert(range.end == end)
-        Assertions.assertThat(range.hasInside(start.minus(duration))).isFalse
-        Assertions.assertThat(range.hasInside(start)).isTrue
-        Assertions.assertThat(range.hasInside(start.plus(duration))).isTrue
-        Assertions.assertThat(range.hasInside(end.minus(duration))).isTrue
-        Assertions.assertThat(range.hasInside(end)).isTrue
-        Assertions.assertThat(range.hasInside(end.plus(duration))).isFalse
+        assert(!range.hasInside(start.minus(duration)))
+        assert(range.hasInside(start))
+        assert(range.hasInside(start.plus(duration)))
+        assert(range.hasInside(end.minus(duration)))
+        assert(range.hasInside(end))
+        assert(!range.hasInside(end.plus(duration)))
     }
     @Test def hasInsidePeriodTest {
         val range = TimeRange(start, end)
@@ -177,24 +182,24 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         val before1 = TimeRange(start.minusHours(2), start.minusHours(1))
         val before2 = TimeRange(start.minusMillis(1), end)
         val before3 = TimeRange(start.minusMillis(1), start)
-        Assertions.assertThat(range.hasInside(before1)).isFalse
-        Assertions.assertThat(range.hasInside(before2)).isFalse
-        Assertions.assertThat(range.hasInside(before3)).isFalse
+        assert(!range.hasInside(before1))
+        assert(!range.hasInside(before2))
+        assert(!range.hasInside(before3))
 
         val after1 = TimeRange(start.plusHours(1), end.plusHours(1))
         val after2 = TimeRange(start, end.plusMillis(1))
         val after3 = TimeRange(end, end.plusMillis(1))
-        Assertions.assertThat(range.hasInside(after1)).isFalse
-        Assertions.assertThat(range.hasInside(after2)).isFalse
-        Assertions.assertThat(range.hasInside(after3)).isFalse
-        Assertions.assertThat(range.hasInside(range)).isTrue
+        assert(!range.hasInside(after1))
+        assert(!range.hasInside(after2))
+        assert(!range.hasInside(after3))
+        assert(range.hasInside(range))
 
         val inside1 = TimeRange(start.plusMillis(1), end)
         val inside2 = TimeRange(start.plusMillis(1), end.minusMillis(1))
         val inside3 = TimeRange(start, end.minusMillis(1))
-        Assertions.assertThat(range.hasInside(inside1)).isTrue
-        Assertions.assertThat(range.hasInside(inside2)).isTrue
-        Assertions.assertThat(range.hasInside(inside3)).isTrue
+        assert(range.hasInside(inside1))
+        assert(range.hasInside(inside2))
+        assert(range.hasInside(inside3))
     }
     @Test def copyTest {
         val readonlyTimeRange = TimeRange(start, end)
@@ -207,7 +212,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
 
         val noMove = range.copy(Durations.Zero)
         assert(noMove.start == range.start)
-        assert(noMove.end == range.getEnd)
+        assert(noMove.end == range.end)
         assert(noMove.getDuration == range.getDuration)
         assert(noMove == noMove)
 
@@ -233,6 +238,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         val forward = TimeRange(start, end)
         val forwardOffset = Durations.hours(2, 30, 15)
         forward.move(forwardOffset)
+
         assert(forward.start == start.plus(forwardOffset))
         assert(forward.end == end.plus(forwardOffset))
         assert(forward.getDuration == duration)
@@ -250,7 +256,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.start == start)
 
         range.expandStartTo(start - 1.millis)
-        Assertions.assertThat(range.start == start - 1.millis)
+        assert(range.start == start - 1.millis)
     }
     @Test def expandEndToTest() {
         val range = TimeRange(start, end)
@@ -357,196 +363,246 @@ class TimeRangeTest extends AbstractTimePeriodTest {
     @Test def isSamePeriodTest() {
         val range1 = TimeRange(start, end)
         val range2 = TimeRange(start, end)
-        Assertions.assertThat(range1.isSamePeriod(range1)).isTrue
-        Assertions.assertThat(range2.isSamePeriod(range2)).isTrue
-        Assertions.assertThat(range1.isSamePeriod(range2)).isTrue
-        Assertions.assertThat(range2.isSamePeriod(range1)).isTrue
-        Assertions.assertThat(range1.isSamePeriod(TimeRange.Anytime)).isFalse
-        Assertions.assertThat(range2.isSamePeriod(TimeRange.Anytime)).isFalse
+
+        assert(range1.isSamePeriod(range1))
+        assert(range2.isSamePeriod(range2))
+
+        assert(range1.isSamePeriod(range2))
+        assert(range2.isSamePeriod(range1))
+
+        assert(!range1.isSamePeriod(TimeRange.Anytime))
+        assert(!range2.isSamePeriod(TimeRange.Anytime))
 
         range1.move(Durations.Millisecond)
-        Assertions.assertThat(range1.isSamePeriod(range2)).isFalse
-        Assertions.assertThat(range2.isSamePeriod(range1)).isFalse
+        assert(!range1.isSamePeriod(range2))
+        assert(!range2.isSamePeriod(range1))
 
         range1.move(Durations.millis(-1))
-        Assertions.assertThat(range1.isSamePeriod(range2)).isTrue
-        Assertions.assertThat(range2.isSamePeriod(range1)).isTrue
+        log.debug(s"range1=$range1, range2=$range2")
+        assert(range1.isSamePeriod(range2))
+        assert(range2.isSamePeriod(range1))
     }
     @Test def hasInsideTest() {
-        Assertions.assertThat(testData.reference.hasInside(testData.before)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.startTouching)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.startInside)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.insideStartTouching)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.enclosingStartTouching)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.enclosing)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.enclosingEndTouching)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.exactMatch)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.inside)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.insideEndTouching)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.endTouching)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.after)).isFalse
+        assert(!testData.reference.hasInside(testData.before))
+        assert(!testData.reference.hasInside(testData.startTouching))
+        assert(!testData.reference.hasInside(testData.startInside))
+        assert(!testData.reference.hasInside(testData.insideStartTouching))
+        assert(testData.reference.hasInside(testData.enclosingStartTouching))
+        assert(testData.reference.hasInside(testData.enclosing))
+        assert(testData.reference.hasInside(testData.enclosingEndTouching))
+        assert(testData.reference.hasInside(testData.exactMatch))
+        assert(!testData.reference.hasInside(testData.inside))
+        assert(!testData.reference.hasInside(testData.insideEndTouching))
+        assert(!testData.reference.hasInside(testData.endTouching))
+        assert(!testData.reference.hasInside(testData.after))
     }
     @Test def intersectsWithTest {
-        Assertions.assertThat(testData.reference.intersectsWith(testData.before)).isFalse
-        Assertions.assertThat(testData.reference.intersectsWith(testData.startTouching)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.startInside)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.insideStartTouching)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.enclosingStartTouching)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.enclosing)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.enclosingEndTouching)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.exactMatch)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.inside)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.insideEndTouching)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.endTouching)).isTrue
-        Assertions.assertThat(testData.reference.intersectsWith(testData.after)).isFalse
+        assert(!testData.reference.intersectsWith(testData.before))
+        assert(testData.reference.intersectsWith(testData.startTouching))
+        assert(testData.reference.intersectsWith(testData.startInside))
+        assert(testData.reference.intersectsWith(testData.insideStartTouching))
+        assert(testData.reference.intersectsWith(testData.enclosingStartTouching))
+        assert(testData.reference.intersectsWith(testData.enclosing))
+        assert(testData.reference.intersectsWith(testData.enclosingEndTouching))
+        assert(testData.reference.intersectsWith(testData.exactMatch))
+        assert(testData.reference.intersectsWith(testData.inside))
+        assert(testData.reference.intersectsWith(testData.insideEndTouching))
+        assert(testData.reference.intersectsWith(testData.endTouching))
+        assert(!testData.reference.intersectsWith(testData.after))
     }
     @Test def overlapsWithTest {
-        Assertions.assertThat(testData.reference.overlapsWith(testData.before)).isFalse
-        Assertions.assertThat(testData.reference.overlapsWith(testData.startTouching)).isFalse
-        Assertions.assertThat(testData.reference.overlapsWith(testData.startInside)).isTrue
-        Assertions.assertThat(testData.reference.overlapsWith(testData.insideStartTouching)).isTrue
-        Assertions.assertThat(testData.reference.overlapsWith(testData.enclosingStartTouching)).isTrue
-        Assertions.assertThat(testData.reference.overlapsWith(testData.enclosing)).isTrue
-        Assertions.assertThat(testData.reference.overlapsWith(testData.enclosingEndTouching)).isTrue
-        Assertions.assertThat(testData.reference.overlapsWith(testData.exactMatch)).isTrue
-        Assertions.assertThat(testData.reference.overlapsWith(testData.inside)).isTrue
-        Assertions.assertThat(testData.reference.overlapsWith(testData.insideEndTouching)).isTrue
-        Assertions.assertThat(testData.reference.overlapsWith(testData.endTouching)).isFalse
-        Assertions.assertThat(testData.reference.overlapsWith(testData.after)).isFalse
+        assert(!testData.reference.overlapsWith(testData.before))
+        assert(!testData.reference.overlapsWith(testData.startTouching))
+        assert(testData.reference.overlapsWith(testData.startInside))
+        assert(testData.reference.overlapsWith(testData.insideStartTouching))
+        assert(testData.reference.overlapsWith(testData.enclosingStartTouching))
+        assert(testData.reference.overlapsWith(testData.enclosing))
+        assert(testData.reference.overlapsWith(testData.enclosingEndTouching))
+        assert(testData.reference.overlapsWith(testData.exactMatch))
+        assert(testData.reference.overlapsWith(testData.inside))
+        assert(testData.reference.overlapsWith(testData.insideEndTouching))
+        assert(!testData.reference.overlapsWith(testData.endTouching))
+        assert(!testData.reference.overlapsWith(testData.after))
     }
     @Test def intersectsWithDateTimeTest {
         val range = TimeRange(start, end)
-        Assertions.assertThat(range.intersectsWith(TimeRange(start.minusHours(2), start.minusHours(1)))).isFalse
-        Assertions.assertThat(range.intersectsWith(TimeRange(start.minusHours(1), start))).isTrue
-        Assertions.assertThat(range.intersectsWith(TimeRange(start.minusHours(1), start.plusMillis(1)))).isTrue
-        Assertions.assertThat(range.intersectsWith(TimeRange(end.plusHours(1), end.plusHours(2)))).isFalse
-        Assertions.assertThat(range.intersectsWith(TimeRange(end, end.plusMillis(1)))).isTrue
-        Assertions.assertThat(range.intersectsWith(TimeRange(end.minusMillis(1), end.plusMillis(1)))).isTrue
-        Assertions.assertThat(range.intersectsWith(range)).isTrue
-        Assertions.assertThat(range.intersectsWith(TimeRange(start.minusMillis(1), end.plusHours(2)))).isTrue
-        Assertions.assertThat(range.intersectsWith(TimeRange(start.minusMillis(1), start.plusMillis(1)))).isTrue
-        Assertions.assertThat(range.intersectsWith(TimeRange(end.minusMillis(1), end.plusMillis(1)))).isTrue
+        assert(!range.intersectsWith(TimeRange(start.minusHours(2), start.minusHours(1))))
+        assert(range.intersectsWith(TimeRange(start.minusHours(1), start)))
+        assert(range.intersectsWith(TimeRange(start.minusHours(1), start.plusMillis(1))))
+        assert(!range.intersectsWith(TimeRange(end.plusHours(1), end.plusHours(2))))
+        assert(range.intersectsWith(TimeRange(end, end.plusMillis(1))))
+        assert(range.intersectsWith(TimeRange(end.minusMillis(1), end.plusMillis(1))))
+        assert(range.intersectsWith(range))
+        assert(range.intersectsWith(TimeRange(start.minusMillis(1), end.plusHours(2))))
+        assert(range.intersectsWith(TimeRange(start.minusMillis(1), start.plusMillis(1))))
+        assert(range.intersectsWith(TimeRange(end.minusMillis(1), end.plusMillis(1))))
     }
-    @Test def getIntersectionTest {
+    @Test def getIntersectionTest() {
         val range = TimeRange(start, end)
+
+        // before
         assert(range.getIntersection(TimeRange(start.minusHours(2), start.minusHours(1))) == null)
         assert(range.getIntersection(TimeRange(start.minusMillis(1), start)) == TimeRange(start))
         assert(range.getIntersection(TimeRange(start.minusHours(1), start.plusMillis(1))) == TimeRange(start, start.plusMillis(1)))
+
+        // after
         assert(range.getIntersection(TimeRange(end.plusHours(1), end.plusHours(2))) == null)
         assert(range.getIntersection(TimeRange(end, end.plusMillis(1))) == TimeRange(end))
         assert(range.getIntersection(TimeRange(end.minusMillis(1), end.plusMillis(1))) == TimeRange(end.minusMillis(1), end))
+
+        // intersect
         assert(range.getIntersection(range) == range)
         assert(range.getIntersection(TimeRange(start.minusMillis(1), end.plusMillis(1))) == range)
         assert(range.getIntersection(TimeRange(start.plusMillis(1), end.minusMillis(1))) == TimeRange(start.plusMillis(1), end
             .minusMillis(1)))
     }
     @Test def getRelationTest {
-        Assertions.assertThat(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
-        Assertions.assertThat(testData.reference.getRelation(testData.startTouching) == PeriodRelation.StartTouching)
-        Assertions.assertThat(testData.reference.getRelation(testData.startInside) == PeriodRelation.StartInside)
-        Assertions.assertThat(testData.reference.getRelation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
-        Assertions.assertThat(testData.reference.getRelation(testData.enclosing) == PeriodRelation.Enclosing)
-        Assertions.assertThat(testData.reference.getRelation(testData.exactMatch) == PeriodRelation.ExactMatch)
-        Assertions.assertThat(testData.reference.getRelation(testData.inside) == PeriodRelation.Inside)
-        Assertions.assertThat(testData.reference.getRelation(testData.insideEndTouching) == PeriodRelation.InsideEndTouching)
-        Assertions.assertThat(testData.reference.getRelation(testData.endInside) == PeriodRelation.EndInside)
-        Assertions.assertThat(testData.reference.getRelation(testData.endTouching) == PeriodRelation.EndTouching)
-        Assertions.assertThat(testData.reference.getRelation(testData.after) == PeriodRelation.After)
-        Assertions.assertThat(testData.reference.start == start)
-        Assertions.assertThat(testData.reference.end == end)
-        Assertions.assertThat(testData.reference.isReadonly).isTrue
-        Assertions.assertThat(testData.after.isReadonly).isTrue
-        Assertions.assertThat(testData.after.start.compareTo(start)).isLessThan(0)
-        Assertions.assertThat(testData.after.getEnd.compareTo(start)).isLessThan(0)
-        Assertions.assertThat(testData.reference.hasInside(testData.after.start)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.after.getEnd)).isFalse
-        Assertions.assertThat(testData.reference.getRelation(testData.after) == PeriodRelation.After)
-        Assertions.assertThat(testData.startTouching.isReadonly).isTrue
-        Assertions.assertThat(testData.startTouching.start.getMillis).isLessThan(start.getMillis)
-        Assertions.assertThat(testData.startTouching.end == start)
-        Assertions.assertThat(testData.reference.hasInside(testData.startTouching.start)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.startTouching.getEnd)).isTrue
-        Assertions.assertThat(testData.reference.getRelation(testData.startTouching) == PeriodRelation.StartTouching)
-        Assertions.assertThat(testData.startInside.isReadonly).isTrue
-        Assertions.assertThat(testData.startInside.start.getMillis).isLessThan(start.getMillis)
-        Assertions.assertThat(testData.startInside.getEnd.getMillis).isLessThan(end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.startInside.start)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.startInside.getEnd)).isTrue
-        Assertions.assertThat(testData.reference.getRelation(testData.startInside) == PeriodRelation.StartInside)
-        Assertions.assertThat(testData.insideStartTouching.isReadonly).isTrue
-        Assertions.assertThat(testData.insideStartTouching.start.getMillis == start.getMillis)
-        Assertions.assertThat(testData.insideStartTouching.getEnd.getMillis).isGreaterThan(end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.insideStartTouching.start)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.insideStartTouching.getEnd)).isFalse
-        Assertions.assertThat(testData.reference.getRelation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
-        Assertions.assertThat(testData.insideStartTouching.isReadonly).isTrue
-        Assertions.assertThat(testData.insideStartTouching.start.getMillis == start.getMillis)
-        Assertions.assertThat(testData.insideStartTouching.getEnd.getMillis).isGreaterThan(end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.insideStartTouching.start)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.insideStartTouching.getEnd)).isFalse
-        Assertions.assertThat(testData.reference.getRelation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
-        Assertions.assertThat(testData.enclosing.isReadonly).isTrue
-        Assertions.assertThat(testData.enclosing.start.getMillis).isGreaterThan(start.getMillis)
-        Assertions.assertThat(testData.enclosing.getEnd.getMillis).isLessThan(end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.enclosing.start)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.enclosing.getEnd)).isTrue
-        Assertions.assertThat(testData.reference.getRelation(testData.enclosing) == PeriodRelation.Enclosing)
-        Assertions.assertThat(testData.enclosingEndTouching.isReadonly).isTrue
-        Assertions.assertThat(testData.enclosingEndTouching.start.getMillis).isGreaterThan(start.getMillis)
-        Assertions.assertThat(testData.enclosingEndTouching.getEnd.getMillis == end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.enclosingEndTouching.start)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.enclosingEndTouching.getEnd)).isTrue
+        assert(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
+        assert(testData.reference.getRelation(testData.startTouching) == PeriodRelation.StartTouching)
+        assert(testData.reference.getRelation(testData.startInside) == PeriodRelation.StartInside)
+        assert(testData.reference.getRelation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
+        assert(testData.reference.getRelation(testData.enclosing) == PeriodRelation.Enclosing)
+        assert(testData.reference.getRelation(testData.exactMatch) == PeriodRelation.ExactMatch)
+        assert(testData.reference.getRelation(testData.inside) == PeriodRelation.Inside)
+        assert(testData.reference.getRelation(testData.insideEndTouching) == PeriodRelation.InsideEndTouching)
+        assert(testData.reference.getRelation(testData.endInside) == PeriodRelation.EndInside)
+        assert(testData.reference.getRelation(testData.endTouching) == PeriodRelation.EndTouching)
+        assert(testData.reference.getRelation(testData.after) == PeriodRelation.After)
+
+        // reference
+        assert(testData.reference.start == start)
+        assert(testData.reference.end == end)
+        assert(testData.reference.isReadonly)
+
+        // after
+        assert(testData.after.isReadonly)
+        assert(testData.after.start.compareTo(start) < 0)
+        assert(testData.after.end.compareTo(start) < 0)
+
+        assert(!testData.reference.hasInside(testData.after.start))
+        assert(!testData.reference.hasInside(testData.after.end))
+        assert(testData.reference.getRelation(testData.after) == PeriodRelation.After)
+
+        // start touching
+        assert(testData.startTouching.isReadonly)
+        assert(testData.startTouching.start < start)
+        assert(testData.startTouching.end == start)
+
+        assert(!testData.reference.hasInside(testData.startTouching.start))
+        assert(testData.reference.hasInside(testData.startTouching.end))
+        assert(testData.reference.getRelation(testData.startTouching) == PeriodRelation.StartTouching)
+
+        // start inside
+        assert(testData.startInside.isReadonly)
+        assert(testData.startInside.start < start)
+        assert(testData.startInside.end < end)
+
+        assert(!testData.reference.hasInside(testData.startInside.start))
+        assert(testData.reference.hasInside(testData.startInside.end))
+        assert(testData.reference.getRelation(testData.startInside) == PeriodRelation.StartInside)
+
+        // inside start touching
+        assert(testData.insideStartTouching.isReadonly)
+        assert(testData.insideStartTouching.start == start)
+        assert(testData.insideStartTouching.end > end)
+
+        assert(testData.reference.hasInside(testData.insideStartTouching.start))
+        assert(!testData.reference.hasInside(testData.insideStartTouching.end))
+        assert(testData.reference.getRelation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
+
+        // enclosing start touch
+        assert(testData.enclosingStartTouching.isReadonly)
+        assert(testData.enclosingStartTouching.start == start)
+        assert(testData.enclosingStartTouching.end < end)
+
+        assert(testData.reference.hasInside(testData.enclosingStartTouching.start))
+        assert(testData.reference.hasInside(testData.enclosingStartTouching.end))
+        assert(testData.reference.getRelation(testData.enclosingStartTouching) == PeriodRelation.EnclosingStartTouching)
+
+        // enclosing
+        assert(testData.enclosing.isReadonly)
+        assert(testData.enclosing.start > start)
+        assert(testData.enclosing.end < end)
+
+        assert(testData.reference.hasInside(testData.enclosing.start))
+        assert(testData.reference.hasInside(testData.enclosing.end))
+        assert(testData.reference.getRelation(testData.enclosing) == PeriodRelation.Enclosing)
+
+        // enclosing end touching
+        assert(testData.enclosingEndTouching.isReadonly)
+        assert(testData.enclosingEndTouching.start > start)
+        assert(testData.enclosingEndTouching.end == end)
+
+        assert(testData.reference.hasInside(testData.enclosingEndTouching.start))
+        assert(testData.reference.hasInside(testData.enclosingEndTouching.end))
         assert(testData.reference.getRelation(testData.enclosingEndTouching) == PeriodRelation.EnclosingEndTouching)
-        Assertions.assertThat(testData.exactMatch.isReadonly).isTrue
-        Assertions.assertThat(testData.exactMatch.start.getMillis == start.getMillis)
-        Assertions.assertThat(testData.exactMatch.getEnd.getMillis == end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.exactMatch.start)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.exactMatch.getEnd)).isTrue
-        Assertions.assertThat(testData.reference.getRelation(testData.exactMatch) == PeriodRelation.ExactMatch)
-        Assertions.assertThat(testData.inside.isReadonly).isTrue
-        Assertions.assertThat(testData.inside.start.getMillis).isLessThan(start.getMillis)
-        Assertions.assertThat(testData.inside.getEnd.getMillis).isGreaterThan(end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.inside.start)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.inside.getEnd)).isFalse
-        Assertions.assertThat(testData.reference.getRelation(testData.inside) == PeriodRelation.Inside)
-        Assertions.assertThat(testData.insideEndTouching.isReadonly).isTrue
-        Assertions.assertThat(testData.insideEndTouching.start.getMillis).isLessThan(start.getMillis)
-        Assertions.assertThat(testData.insideEndTouching.getEnd.getMillis == end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.insideEndTouching.start)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.insideEndTouching.getEnd)).isTrue
-        Assertions.assertThat(testData.reference.getRelation(testData.insideEndTouching) == PeriodRelation.InsideEndTouching)
-        Assertions.assertThat(testData.endInside.isReadonly).isTrue
-        Assertions.assertThat(testData.endInside.start.getMillis).isGreaterThan(start.getMillis)
-        Assertions.assertThat(testData.endInside.start.getMillis).isLessThan(end.getMillis)
-        Assertions.assertThat(testData.endInside.getEnd.getMillis).isGreaterThan(end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.endInside.start)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.endInside.getEnd)).isFalse
-        Assertions.assertThat(testData.reference.getRelation(testData.endInside) == PeriodRelation.EndInside)
-        Assertions.assertThat(testData.endTouching.isReadonly).isTrue
-        Assertions.assertThat(testData.endTouching.start.getMillis == end.getMillis)
-        Assertions.assertThat(testData.endTouching.getEnd.getMillis).isGreaterThan(end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.endTouching.start)).isTrue
-        Assertions.assertThat(testData.reference.hasInside(testData.endTouching.getEnd)).isFalse
-        Assertions.assertThat(testData.reference.getRelation(testData.endTouching) == PeriodRelation.EndTouching)
-        Assertions.assertThat(testData.before.isReadonly).isTrue
-        Assertions.assertThat(testData.before.start.getMillis).isGreaterThan(end.getMillis)
-        Assertions.assertThat(testData.before.getEnd.getMillis).isGreaterThan(end.getMillis)
-        Assertions.assertThat(testData.reference.hasInside(testData.before.start)).isFalse
-        Assertions.assertThat(testData.reference.hasInside(testData.before.getEnd)).isFalse
-        Assertions.assertThat(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
+
+        // exact match
+        assert(testData.exactMatch.isReadonly)
+        assert(testData.exactMatch.start == start)
+        assert(testData.exactMatch.end == end)
+
+        assert(testData.reference.hasInside(testData.exactMatch.start))
+        assert(testData.reference.hasInside(testData.exactMatch.end))
+        assert(testData.reference.getRelation(testData.exactMatch) == PeriodRelation.ExactMatch)
+
+        // inside
+        assert(testData.inside.isReadonly)
+        assert(testData.inside.start < start)
+        assert(testData.inside.end > end)
+
+        assert(!testData.reference.hasInside(testData.inside.start))
+        assert(!testData.reference.hasInside(testData.inside.end))
+        assert(testData.reference.getRelation(testData.inside) == PeriodRelation.Inside)
+
+        // inside end touching
+        assert(testData.insideEndTouching.isReadonly)
+        assert(testData.insideEndTouching.start < start)
+        assert(testData.insideEndTouching.end == end)
+
+        assert(!testData.reference.hasInside(testData.insideEndTouching.start))
+        assert(testData.reference.hasInside(testData.insideEndTouching.end))
+        assert(testData.reference.getRelation(testData.insideEndTouching) == PeriodRelation.InsideEndTouching)
+
+        // end inside
+        assert(testData.endInside.isReadonly)
+        assert(testData.endInside.start > start)
+        assert(testData.endInside.start < end)
+        assert(testData.endInside.end > end)
+        assert(testData.reference.hasInside(testData.endInside.start))
+        assert(!testData.reference.hasInside(testData.endInside.end))
+        assert(testData.reference.getRelation(testData.endInside) == PeriodRelation.EndInside)
+
+        // end touching
+        assert(testData.endTouching.isReadonly)
+        assert(testData.endTouching.start == end)
+        assert(testData.endTouching.end > end)
+
+        assert(testData.reference.hasInside(testData.endTouching.start))
+        assert(!testData.reference.hasInside(testData.endTouching.end))
+        assert(testData.reference.getRelation(testData.endTouching) == PeriodRelation.EndTouching)
+
+        // before
+        assert(testData.before.isReadonly)
+        assert(testData.before.start > end)
+        assert(testData.before.end > end)
+
+        assert(!testData.reference.hasInside(testData.before.start))
+        assert(!testData.reference.hasInside(testData.before.end))
+        assert(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
     }
 
     @Test def resetTest() {
         val range = TimeRange(start, end)
-        Assertions.assertThat(range.start == start)
-        Assertions.assertThat(range.hasStart).isTrue
-        Assertions.assertThat(range.end == end)
-        Assertions.assertThat(range.hasEnd).isTrue
+        assert(range.start == start)
+        assert(range.hasStart)
+        assert(range.end == end)
+        assert(range.hasEnd)
         range.reset
-        Assertions.assertThat(range.start == MinPeriodTime)
-        Assertions.assertThat(range.hasStart).isFalse
-        Assertions.assertThat(range.end == MaxPeriodTime)
-        Assertions.assertThat(range.hasEnd).isFalse
+        assert(range.start == MinPeriodTime)
+        assert(!range.hasStart)
+        assert(range.end == MaxPeriodTime)
+        assert(!range.hasEnd)
     }
     @Test def equalsTest() {
         val range1 = TimeRange(start, end)

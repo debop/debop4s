@@ -23,19 +23,19 @@ trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializabl
     def start: DateTime
 
     /** 시작 시각 */
-    def getStart: DateTime = start
+    def getStart: DateTime
 
     /** 종료 시각 */
     def end: DateTime
 
     /** 종료 시각 */
-    def getEnd: DateTime = end
+    def getEnd: DateTime
 
     /** 기간 */
     def duration: Duration
 
     /** 기간 */
-    def getDuration: Duration = duration
+    def getDuration: Duration
 
     /** 시작 시각이 있는지 여부 */
     def hasStart: Boolean
@@ -97,6 +97,8 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
                           private var _end: DateTime = MaxPeriodTime,
                           var readonly: Boolean = false) extends ITimePeriod {
 
+    override lazy val log = Logger[TimePeriod]
+
     private var (startTime, endTime) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
                                                           Options.get(_end).getOrElse(MaxPeriodTime))
 
@@ -110,17 +112,20 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     def start = startTime
 
+    def getStart = startTime
+
     protected def start_=(v: DateTime) {
         assertMutable()
         startTime = v
     }
 
     protected def setStart(v: DateTime) {
-        assertMutable()
-        startTime = v
+        start = v
     }
 
     def end = endTime
+
+    def getEnd = endTime
 
     protected def end_=(v: DateTime) {
         assertMutable()
@@ -128,8 +133,7 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
     }
 
     protected def setEnd(v: DateTime) {
-        assertMutable()
-        endTime = v
+        end = v
     }
 
     def isReadonly = readonly
@@ -138,16 +142,18 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     def duration = new Duration(start, end)
 
+    def getDuration = new Duration(startTime, endTime)
+
     def duration_=(v: Duration) {
-        assert(duration.getMillis >= 0, "Duration 은 0 이상이어야 합니다.")
+        assert(duration >= 0.millis, "Duration 은 0 이상이어야 합니다.")
         if (hasStart)
-            end = start.plus(duration)
+            end = start + duration
     }
 
     def setDuration(duration: Duration) {
-        assert(duration.getMillis >= 0, "Duration 은 0 이상이어야 합니다.")
+        assert(duration >= 0.millis, "Duration 은 0 이상이어야 합니다.")
         if (hasStart)
-            end = start.plus(duration)
+            end = start + duration
     }
 
     def hasStart = start != MinPeriodTime
@@ -156,7 +162,7 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     def hasPeriod = hasStart && hasEnd
 
-    def isMoment = start eq end
+    def isMoment = start == end
 
     def isAnytime = !hasStart && !hasEnd
 
@@ -177,6 +183,7 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     override def copy(offset: Duration = Duration.ZERO): ITimePeriod = {
         log.trace(s"기간[$this]에 offset[$offset]을 준 기간을 반환합니다...")
+
         if (offset.isZero)
             return TimeRange(this)
 
@@ -191,15 +198,14 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
         assertMutable()
 
         if (hasStart)
-            start = start.plus(offset.getMillis)
+            startTime = startTime + offset
+
         if (hasEnd)
-            end = end.plus(offset.getMillis)
+            endTime = endTime + offset
     }
 
     def isSamePeriod(other: ITimePeriod): Boolean =
-        (other != null) &&
-        (start eq other.start) &&
-        (end eq other.end)
+        (other != null) && (start == other.start) && (end == other.end)
 
     def hasInside(moment: DateTime) = Times.hasInside(this, moment)
 
@@ -211,8 +217,8 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     def reset() {
         assertMutable()
-        start = MinPeriodTime
-        end = MaxPeriodTime
+        startTime = MinPeriodTime
+        endTime = MaxPeriodTime
         log.trace(s"기간을 리셋했습니다. start=[$start], end=[$end]")
     }
 

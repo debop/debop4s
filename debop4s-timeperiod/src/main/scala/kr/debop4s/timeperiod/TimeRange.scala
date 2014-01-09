@@ -1,5 +1,6 @@
 package kr.debop4s.timeperiod
 
+import kr.debop4s.time._
 import org.joda.time.{Duration, DateTime}
 
 /**
@@ -9,11 +10,15 @@ import org.joda.time.{Duration, DateTime}
  */
 trait ITimeRange extends ITimePeriod {
 
+    def start_=(v: DateTime)
+
     /** 시작시각을 설정합니다. */
-    def setStart(start: DateTime)
+    def setStart(v: DateTime)
+
+    def end_=(v: DateTime)
 
     /** 완료시각을 설정합니다. */
-    def setEnd(end: DateTime)
+    def setEnd(v: DateTime)
 
     /** 시작시각을 기준으로 기간을 설정합니다. */
     def setDuration(duration: Duration)
@@ -47,12 +52,23 @@ class TimeRange(_start: DateTime = MinPeriodTime,
                 _end: DateTime = MaxPeriodTime,
                 _readonly: Boolean = false) extends TimePeriod(_start, _end, _readonly) with ITimeRange {
 
+    override def start_=(v: DateTime) {
+        assertMutable()
+        assert(v <= end, "시작시각이 완료시각보다 클 수 없습니다.")
+        super.start_=(v)
+    }
     override def setStart(v: DateTime) {
-        super.setStart(v)
+        start = v
     }
 
+    override def end_=(v: DateTime) {
+        assertMutable()
+        assert(v >= start, "완료시각이 시작시각보다 작을 수 없습니다.")
+        super.end_=(v)
+
+    }
     override def setEnd(v: DateTime) {
-        super.setEnd(v)
+        end = v
     }
 
     def expandStartTo(moment: DateTime) {
@@ -76,20 +92,24 @@ class TimeRange(_start: DateTime = MinPeriodTime,
     def expandTo(period: ITimePeriod) {
         assert(period != null)
         assertMutable()
-        expandStartTo(period.getStart)
-        expandEndTo(period.getEnd)
+
+        if (period.hasStart)
+            expandStartTo(period.start)
+
+        if (period.hasEnd)
+            expandEndTo(period.end)
     }
 
     def shrinkStartTo(moment: DateTime) {
         assertMutable()
-        if (start.compareTo(moment) < 0)
-            setStart(moment)
+        if (hasInside(moment) && start < moment)
+            start = moment
     }
 
     def shrinkEndTo(moment: DateTime) {
         assertMutable()
-        if (end.compareTo(moment) > 0)
-            setEnd(moment)
+        if (hasInside(moment) && end > moment)
+            end = moment
     }
 
     def shrinkTo(moment: DateTime) {
@@ -101,8 +121,12 @@ class TimeRange(_start: DateTime = MinPeriodTime,
     def shrinkTo(period: ITimePeriod) {
         assert(period != null)
         assertMutable()
-        shrinkStartTo(period.getStart)
-        shrinkEndTo(period.getEnd)
+
+        if (period.hasStart)
+            shrinkStartTo(period.start)
+
+        if (period.hasEnd)
+            shrinkEndTo(period.end)
     }
 }
 
@@ -128,7 +152,7 @@ object TimeRange {
     def apply(start: DateTime, duration: Duration, readonly: Boolean): TimeRange =
         new TimeRange(start, start.plus(duration), readonly)
 
-    def apply(period: ITimePeriod): TimeRange = apply(period, readonly = false)
+    def apply(period: ITimePeriod): TimeRange = apply(period, period.isReadonly)
 
     def apply(period: ITimePeriod, readonly: Boolean): TimeRange = {
         assert(period != null)

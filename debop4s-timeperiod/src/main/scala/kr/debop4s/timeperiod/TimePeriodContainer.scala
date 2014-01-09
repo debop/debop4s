@@ -205,10 +205,14 @@ class TimePeriodContainer extends ITimePeriodContainer {
         periods.minBy(x => x.start).start
     }
 
+    def getStart = start
+
     def end: DateTime = {
         if (size == 0) MaxPeriodTime
         else periods.maxBy(x => x.end).end
     }
+
+    def getEnd = end
 
     def start_=(x: DateTime) {
         if (size > 0)
@@ -229,8 +233,9 @@ class TimePeriodContainer extends ITimePeriodContainer {
         end_=(x)
     }
 
-
     def duration: Duration = if (hasPeriod) new Duration(start, end) else MaxDuration
+
+    def getDuration = duration
 
     def hasStart = start != MinPeriodTime
 
