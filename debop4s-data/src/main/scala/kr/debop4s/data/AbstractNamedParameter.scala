@@ -9,7 +9,8 @@ import kr.debop4s.core.utils.Hashs
  * @since  2013. 12. 19. 오후 9:44
  */
 @SerialVersionUID(-5640275306788648337L)
-abstract class AbstractNamedParameter(val name: String, val value: Any) extends ValueObject {
+abstract class AbstractNamedParameter(val name: String,
+                                      val value: Any) extends ValueObject {
 
     override def hashCode(): Int =
         Hashs.compute(name)

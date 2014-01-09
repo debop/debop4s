@@ -51,8 +51,8 @@ object DataSources {
      * @return [[javax.sql.DataSource]] 인스턴스
      */
     def getTomcatDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource = {
-        log.debug("Tomcat DataSource를 빌드합니다... driverClass=[{}], url=[{}], username=[{}], passwd=[{}]",
-                  driverClass, url, username, passwd)
+        log.debug(s"Tomcat DataSource를 빌드합니다... " +
+                  s"driverClass=[$driverClass], url=[$url], username=[$username], passwd=[$passwd]")
 
         val p: PoolProperties = new PoolProperties
         p.setUrl(url)

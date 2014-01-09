@@ -9,7 +9,9 @@ import org.hibernate.`type`.StandardBasicTypes
  * @since  2013. 12. 19. 오후 9:56
  */
 @SerialVersionUID(2672746608417519438L)
-class JpaParameter(name: String, value: Any, paramType: org.hibernate.`type`.Type = StandardBasicTypes.SERIALIZABLE)
+class JpaParameter(override val name: String,
+                   override val value: Any,
+                   val paramType: org.hibernate.`type`.Type = StandardBasicTypes.SERIALIZABLE)
     extends AbstractNamedParameter(name, value) {
 
     def this(name: String, value: Any) {
