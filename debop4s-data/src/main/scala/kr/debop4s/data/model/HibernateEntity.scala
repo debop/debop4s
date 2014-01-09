@@ -1,6 +1,6 @@
 package kr.debop4s.data.model
 
-import javax.persistence.{PostLoad, PostPersist}
+import javax.persistence.{MappedSuperclass, PostLoad, PostPersist}
 import kr.debop4s.core.utils.{ToStringHelper, Hashs}
 
 /**
@@ -9,6 +9,7 @@ import kr.debop4s.core.utils.{ToStringHelper, Hashs}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 24. 오후 2:41
  */
+@MappedSuperclass
 trait HibernateEntity[TId <: java.io.Serializable] extends PersistentObject {
 
     def getId: TId
