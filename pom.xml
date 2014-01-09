@@ -902,21 +902,21 @@
                 <configuration>
                     <scalaVersion>${scala.version}</scalaVersion>
                     <!--<recompileMode>incremental</recompileMode>-->
-                    <useZincServer>true</useZincServer>
+                    <!--<useZincServer>true</useZincServer>-->
                     <analysisCacheFile>${project.build.outputDirectory}/analysis-cache-file</analysisCacheFile>
                     <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
                     </testAnalysisCacheFile>
                     <!--<encoding>${project.build.sourceEncoding}</encoding>-->
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
+                    <!--<execution>-->
+                    <!--<id>scala-compile-first</id>-->
+                    <!--<phase>process-resources</phase>-->
+                    <!--<goals>-->
+                    <!--<goal>add-source</goal>-->
+                    <!--<goal>compile</goal>-->
+                    <!--</goals>-->
+                    <!--</execution>-->
                     <execution>
                         <id>compile</id>
                         <goals>
