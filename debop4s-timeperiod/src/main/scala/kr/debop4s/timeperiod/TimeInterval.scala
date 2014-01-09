@@ -264,7 +264,7 @@ object TimeInterval {
               startEdge: IntervalEdge,
               endEdge: IntervalEdge,
               intervalEnabled: Boolean): TimeInterval =
-        apply(period, startEdge, endEdge, intervalEnabled, readonly = false)
+        apply(period, startEdge, endEdge, intervalEnabled, period.isReadonly)
 
     def apply(period: ITimePeriod,
               startEdge: IntervalEdge,

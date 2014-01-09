@@ -37,7 +37,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!TimeRange.Anytime.isMoment)
     }
     @Test def defaultContructorTest() {
-        val range = new TimeRange
+        val range = TimeRange()
         assert(range != TimeRange.Anytime)
         assert(Times.getRelation(range, TimeRange.Anytime) == PeriodRelation.ExactMatch)
         assert(range.isAnytime)

@@ -46,7 +46,7 @@ class CalendarDateAdd extends DateAdd {
         log.trace(s"Add... start=[$start] + offset=[$offset] 시각을 계산합니다. seekBoundary=$seekBoundary")
 
         if (weekDays.size == 0 && excludePeriods.size == 0 && workingHours.size == 0)
-            start.plus(offset)
+            return start.plus(offset)
 
         val (end, remaining) =
             if (offset.compareTo(Duration.ZERO) < 0)
@@ -55,14 +55,14 @@ class CalendarDateAdd extends DateAdd {
                 calculateEnd(start, offset, SeekDirection.Forward, seekBoundary)
 
         log.trace(s"Add finished. start=[$start] + offset=[$offset] => end=[$end] seekBoundary=[$seekBoundary]")
-        end
+        return end
     }
 
     override def subtract(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
         log.trace(s"subtract... start=[$start] - offset=[$offset] 시각을 계산합니다. seekBoundary=$seekBoundary")
 
         if (weekDays.size == 0 && excludePeriods.size == 0 && workingHours.size == 0)
-            start.minus(offset)
+            return start.minus(offset)
 
         val (end, remaining) =
             if (offset.compareTo(Duration.ZERO) < 0)
@@ -71,7 +71,7 @@ class CalendarDateAdd extends DateAdd {
                 calculateEnd(start, offset, SeekDirection.Backward, seekBoundary)
 
         log.trace(s"Subtract finished. start=[$start] - offset=[$offset] => end=[$end] seekBoundary=[$seekBoundary]")
-        end
+        return end
     }
 
     override def calculateEnd(start: DateTime,
@@ -98,7 +98,7 @@ class CalendarDateAdd extends DateAdd {
             log.trace(s"완료기간을 구했습니다. end=[$end], remaining=[$remaining]")
 
             if (end != null || remaining == null)
-                (end, remaining)
+                return (end, remaining)
 
             if (seekDir == SeekDirection.Forward) {
                 week = findNextWeek(week)
@@ -125,7 +125,7 @@ class CalendarDateAdd extends DateAdd {
         if (getExcludePeriods.size == 0) {
             next = current.nextWeek
         } else {
-            val limits = new TimeRange(current.end.plusMillis(1))
+            val limits = TimeRange(current.end.plusMillis(1))
             val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
             val remainingPeriods = gapCalculator.getGaps(getExcludePeriods, limits)
 

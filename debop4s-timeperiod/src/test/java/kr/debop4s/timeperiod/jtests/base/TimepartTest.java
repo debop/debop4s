@@ -44,14 +44,14 @@ public class TimepartTest extends TimePeriodTestBase {
         DateTime now = DateTime.now();
         Timepart time = new Timepart(now);
 
-        TimepartTest.log.debug("now=[{}], time=[{}]", now, time);
+        log.debug("now=[{}], time=[{}]", now, time);
 
         assertThat(time.hour()).isEqualTo(now.getHourOfDay());
         assertThat(time.minute()).isEqualTo(now.getMinuteOfHour());
         assertThat(time.second()).isEqualTo(now.getSecondOfMinute());
         assertThat(time.millis()).isEqualTo(now.getMillisOfSecond());
 
-        assertThat(time.millis()).isEqualTo(now.getMillisOfDay());
+        assertThat(time.totalMillis()).isEqualTo(now.getMillisOfDay());
     }
 
     @Test
@@ -109,7 +109,7 @@ public class TimepartTest extends TimePeriodTestBase {
         assertThat(time.second()).isEqualTo(56);
         assertThat(time.millis()).isEqualTo(344);
 
-        assertThat(time.millis()).isEqualTo((int) test.getMillis());
+        assertThat(time.totalMillis()).isEqualTo(test.getMillis());
     }
 
     @Test

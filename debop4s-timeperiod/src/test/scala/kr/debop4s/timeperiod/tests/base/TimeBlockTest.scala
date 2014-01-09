@@ -1,13 +1,13 @@
 package kr.debop4s.timeperiod.tests.base
 
+import kr.debop4s.core.logging.Logger
+import kr.debop4s.time._
+import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
+import kr.debop4s.timeperiod.tests.samples.TimeBlockPeriodRelationTestData
 import kr.debop4s.timeperiod.utils.{Times, Durations}
 import org.joda.time.{Duration, DateTime}
-import kr.debop4s.timeperiod.tests.samples.TimeBlockPeriodRelationTestData
 import org.junit.Test
-import kr.debop4s.timeperiod._
-import kr.debop4s.time._
-import kr.debop4s.core.logging.Logger
 
 /**
  * kr.debop4s.timeperiod.tests.base.TimeBlockTest
@@ -37,7 +37,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         assert(!TimeBlock.Anytime.isMoment)
     }
     @Test def defaultContructorTest() {
-        val block = new TimeBlock
+        val block = TimeBlock()
         assert(block != TimeBlock.Anytime)
         assert(Times.getRelation(block, TimeBlock.Anytime) == PeriodRelation.ExactMatch)
         assert(block.isAnytime)
@@ -80,7 +80,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         val block = TimeBlock(start, end)
         assert(block.start == start)
         assert(block.end == end)
-        assert(block.getDuration == duration)
+        assert(block.duration == duration)
         assert(block.hasPeriod)
         assert(!block.isAnytime)
         assert(!block.isMoment)
@@ -90,7 +90,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         val block = TimeBlock(end, start)
         assert(block.start == start)
         assert(block.end == end)
-        assert(block.getDuration == duration)
+        assert(block.duration == duration)
         assert(block.hasPeriod)
         assert(!block.isAnytime)
         assert(!block.isMoment)
@@ -100,30 +100,28 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         val block = TimeBlock(start, duration)
         assert(block.start == start)
         assert(block.end == end)
-        assert(block.getDuration == duration)
+        assert(block.duration == duration)
         assert(block.hasPeriod)
         assert(!block.isAnytime)
         assert(!block.isMoment)
         assert(!block.isReadonly)
     }
-    @Test def startAndNegateDurationTest() {
+
+    @Test(expected = classOf[AssertionError])
+    def startAndNegateDurationTest() {
         val block = TimeBlock(start, Durations.negate(duration))
-        assert(block.start == start.minus(duration))
-        assert(block.end == end.minus(duration))
-        assert(block.getDuration == duration)
-        assert(block.hasPeriod)
-        assert(!block.isAnytime)
-        assert(!block.isMoment)
-        assert(!block.isReadonly)
     }
+
     @Test def copyConstructorTest() {
         val source = TimeBlock(start, start.plusHours(1), readonly = true)
         val copy = TimeBlock(source)
 
         assert(copy.start == source.start)
         assert(copy.end == source.end)
-        assert(copy.getDuration == source.getDuration)
+        assert(copy.duration == source.duration)
+
         assert(copy.isReadonly == source.isReadonly)
+
         assert(copy.hasPeriod)
         assert(!copy.isAnytime)
         assert(!copy.isMoment)
@@ -139,7 +137,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
     @Test(expected = classOf[AssertionError])
     def startReadonlyTest() {
         val block = TimeBlock(Times.now, 1.hour, readonly = true)
-        block.start =block.start.minusHours(2)
+        block.start = block.start.minusHours(2)
     }
     @Test(expected = classOf[AssertionError])
     def startOutOfblockTest() {
@@ -213,27 +211,27 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         val noMove = block.copy(Durations.Zero)
         assert(noMove.start == block.start)
         assert(noMove.end == block.end)
-        assert(noMove.getDuration == block.getDuration)
+        assert(noMove.duration == block.duration)
         assert(noMove == noMove)
 
         val forwardOffset = Durations.hours(2, 30, 15)
         val forward = block.copy(forwardOffset)
         assert(forward.start == start.plus(forwardOffset))
         assert(forward.end == end.plus(forwardOffset))
-        assert(forward.getDuration == duration)
+        assert(forward.duration == duration)
 
         val backwardOffset = Durations.hours(-1, 10, 30)
         val backward = block.copy(backwardOffset)
         assert(backward.start == start.plus(backwardOffset))
         assert(backward.end == end.plus(backwardOffset))
-        assert(backward.getDuration == duration)
+        assert(backward.duration == duration)
     }
     @Test def moveTest {
         val moveZero = TimeBlock(start, end)
         moveZero.move(Durations.Zero)
         assert(moveZero.start == start)
         assert(moveZero.end == end)
-        assert(moveZero.getDuration == duration)
+        assert(moveZero.duration == duration)
 
         val forward = TimeBlock(start, end)
         val forwardOffset = Durations.hours(2, 30, 15)
@@ -241,14 +239,14 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(forward.start == start.plus(forwardOffset))
         assert(forward.end == end.plus(forwardOffset))
-        assert(forward.getDuration == duration)
+        assert(forward.duration == duration)
 
         val backward = TimeBlock(start, end)
         val backwardOffset = Durations.hours(-1, 10, 30)
         backward.move(backwardOffset)
         assert(backward.start == start.plus(backwardOffset))
         assert(backward.end == end.plus(backwardOffset))
-        assert(backward.getDuration == duration)
+        assert(backward.duration == duration)
     }
 
     @Test def isSamePeriodTest() {
@@ -287,7 +285,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         assert(!testData.reference.hasInside(testData.endTouching))
         assert(!testData.reference.hasInside(testData.after))
     }
-    @Test def intersectsWithTest {
+    @Test def intersectsWithTest() {
         assert(!testData.reference.intersectsWith(testData.before))
         assert(testData.reference.intersectsWith(testData.startTouching))
         assert(testData.reference.intersectsWith(testData.startInside))
@@ -301,7 +299,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         assert(testData.reference.intersectsWith(testData.endTouching))
         assert(!testData.reference.intersectsWith(testData.after))
     }
-    @Test def overlapsWithTest {
+    @Test def overlapsWithTest() {
         assert(!testData.reference.overlapsWith(testData.before))
         assert(!testData.reference.overlapsWith(testData.startTouching))
         assert(testData.reference.overlapsWith(testData.startInside))
@@ -315,7 +313,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         assert(!testData.reference.overlapsWith(testData.endTouching))
         assert(!testData.reference.overlapsWith(testData.after))
     }
-    @Test def intersectsWithDateTimeTest {
+    @Test def intersectsWithDateTimeTest() {
         val block = TimeBlock(start, end)
         assert(!block.intersectsWith(TimeBlock(start.minusHours(2), start.minusHours(1))))
         assert(block.intersectsWith(TimeBlock(start.minusHours(1), start)))
@@ -328,7 +326,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         assert(block.intersectsWith(TimeBlock(start.minusMillis(1), start.plusMillis(1))))
         assert(block.intersectsWith(TimeBlock(end.minusMillis(1), end.plusMillis(1))))
     }
-    @Test def getIntersectionTest() {
+    @Test def intersectionTest() {
         val block = TimeBlock(start, end)
 
         // before
@@ -347,7 +345,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         assert(block.getIntersection(TimeBlock(start.plusMillis(1), end.minusMillis(1))) == TimeBlock(start.plusMillis(1), end
             .minusMillis(1)))
     }
-    @Test def getRelationTest {
+    @Test def relationTest() {
         assert(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
         assert(testData.reference.getRelation(testData.startTouching) == PeriodRelation.StartTouching)
         assert(testData.reference.getRelation(testData.startInside) == PeriodRelation.StartInside)
@@ -489,7 +487,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         assert(block.hasStart)
         assert(block.end == end)
         assert(block.hasEnd)
-        block.reset
+        block.reset()
         assert(block.start == MinPeriodTime)
         assert(!block.hasStart)
         assert(block.end == MaxPeriodTime)

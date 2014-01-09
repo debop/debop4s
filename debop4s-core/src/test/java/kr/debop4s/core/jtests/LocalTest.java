@@ -36,7 +36,7 @@ public class LocalTest {
 
     @Test
     public void saveAndLoadValueType() {
-        final String key = "Local.Value.Key";
+        final String key = "Local.Value.Key.Java";
         final String value = UUID.randomUUID().toString();
         Local.put(key, value);
         assertThat(Local.get(key)).isEqualTo(value);
@@ -44,7 +44,7 @@ public class LocalTest {
 
     @Test
     public void saveAndLoadReferenceType() throws Exception {
-        final String key = "Local.Reference.Key";
+        final String key = "Local.Reference.Key.Java";
         final User user = new User("user", "P" + Thread.currentThread().getId(), 1);
         Local.put(key, user);
 
@@ -59,7 +59,7 @@ public class LocalTest {
 
     @Test
     public void getOrCreate() throws Exception {
-        String key = "Local.GetOrCreate.Key";
+        String key = "Local.GetOrCreate.Key.Java";
         User user = Local.getOrCreate(key, new Callable<User>() {
             @Override
             public User call() throws Exception {

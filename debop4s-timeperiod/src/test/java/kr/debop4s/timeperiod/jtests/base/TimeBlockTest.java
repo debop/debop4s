@@ -92,13 +92,13 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void momentByPeriod() {
-        TimeBlock block = new TimeBlock(Times.now(), Duration.ZERO);
+        TimeBlock block = TimeBlock.apply(Times.now(), Duration.ZERO);
         assertThat(block.isMoment()).isTrue();
     }
 
     @Test
     public void nonMomentTest() {
-        TimeBlock block = new TimeBlock(Times.now(), MODULE$.MinPositiveDuration());
+        TimeBlock block = TimeBlock.apply(Times.now(), MODULE$.MinPositiveDuration());
         assertThat(block.isMoment()).isFalse();
         assertThat(block.getDuration()).isEqualTo(MODULE$.MinPositiveDuration());
     }
@@ -106,7 +106,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
     @Test
     public void hasStartTest() {
         // 현재부터 ~
-        TimeBlock block = new TimeBlock(Times.now(), (DateTime) null);
+        TimeBlock block = TimeBlock.apply(Times.now(), (DateTime) null);
         assertThat(block.hasStart()).isTrue();
         assertThat(block.hasEnd()).isFalse();
     }
@@ -114,14 +114,14 @@ public class TimeBlockTest extends TimePeriodTestBase {
     @Test
     public void hasEndTest() {
         //  ~ 현재까지
-        TimeBlock range = new TimeBlock((DateTime) null, Times.now());
+        TimeBlock range = TimeBlock.apply((DateTime) null, Times.now());
         assertThat(range.hasStart()).isFalse();
         assertThat(range.hasEnd()).isTrue();
     }
 
     @Test
     public void startEndTest() {
-        TimeBlock range = new TimeBlock(start, end);
+        TimeBlock range = TimeBlock.apply(start, end);
 
         assertThat(range.getStart()).isEqualTo(start);
         assertThat(range.getEnd()).isEqualTo(end);
@@ -135,7 +135,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void startEndSwapTest() {
-        TimeBlock range = new TimeBlock(end, start);
+        TimeBlock range = TimeBlock.apply(end, start);
 
         assertThat(range.getStart()).isEqualTo(start);
         assertThat(range.getEnd()).isEqualTo(end);
@@ -149,7 +149,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void startAndDurationTest() {
-        TimeBlock range = new TimeBlock(start, duration);
+        TimeBlock range = TimeBlock.apply(start, duration);
 
         assertThat(range.getStart()).isEqualTo(start);
         assertThat(range.getEnd()).isEqualTo(end);
@@ -163,12 +163,12 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test(expected = AssertionError.class)
     public void startAndNegateDurationTest() {
-        TimeBlock block = new TimeBlock(start, Durations.negate(duration));
+        TimeBlock block = TimeBlock.apply(start, Durations.negate(duration));
     }
 
     @Test
     public void copyConstructorTest() {
-        TimeBlock source = new TimeBlock(start, start.plusHours(1), true);
+        TimeBlock source = TimeBlock.apply(start, start.plusHours(1), true);
         TimeBlock copy = TimeBlock.apply(source);
 
         assertThat(copy.getStart()).isEqualTo(source.getStart());
@@ -184,7 +184,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void startTest() {
-        TimeBlock block = new TimeBlock(start, start.plusHours(1));
+        TimeBlock block = TimeBlock.apply(start, start.plusHours(1));
         assertThat(block.getStart()).isEqualTo(start);
         assertThat(block.getDuration().getStandardHours()).isEqualTo(1);
 
@@ -201,7 +201,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void endTest() throws Exception {
-        TimeBlock block = new TimeBlock(end.minusHours(1), end);
+        TimeBlock block = TimeBlock.apply(end.minusHours(1), end);
         assertThat(block.getEnd()).isEqualTo(end);
 
         DateTime changedEnd = end.plusHours(1);
@@ -217,7 +217,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void durationTest() {
-        TimeBlock block = new TimeBlock(start, duration);
+        TimeBlock block = TimeBlock.apply(start, duration);
         assertThat(block.getStart()).isEqualTo(start);
         assertThat(block.getEnd()).isEqualTo(end);
         assertThat(block.getDuration()).isEqualTo(duration);
@@ -236,13 +236,13 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test(expected = AssertionError.class)
     public void durationOutOfRangeTest() {
-        TimeBlock block = new TimeBlock(start, duration);
+        TimeBlock block = TimeBlock.apply(start, duration);
         block.setDuration(Durations.negate(Durations.millis(1)));
     }
 
     @Test
     public void durationFromStartTest() {
-        TimeBlock block = new TimeBlock(start, duration);
+        TimeBlock block = TimeBlock.apply(start, duration);
         assertThat(block.getStart()).isEqualTo(start);
         assertThat(block.getEnd()).isEqualTo(end);
         assertThat(block.getDuration()).isEqualTo(duration);
@@ -261,7 +261,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void durationFromEndTest() {
-        TimeBlock block = new TimeBlock(start, duration);
+        TimeBlock block = TimeBlock.apply(start, duration);
         assertThat(block.getStart()).isEqualTo(start);
         assertThat(block.getEnd()).isEqualTo(end);
         assertThat(block.getDuration()).isEqualTo(duration);
@@ -270,7 +270,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
         Duration newDuration = block.getDuration().plus(delta);
         block.durationFromEnd(newDuration);
 
-        assertThat(block.getStart()).isEqualTo(start.minus(delta));
+        assertThat(block.start()).isEqualTo(start.minus(delta));
         assertThat(block.getEnd()).isEqualTo(end);
         assertThat(block.getDuration()).isEqualTo(newDuration);
 
@@ -280,7 +280,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void hasInsideDateTimeTest() {
-        TimeBlock range = new TimeBlock(start, end);
+        TimeBlock range = TimeBlock.apply(start, end);
 
         assertThat(range.getEnd()).isEqualTo(end);
 
@@ -295,23 +295,23 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void hasInsidePeriodTest() {
-        TimeBlock range = new TimeBlock(start, duration);
+        TimeBlock range = TimeBlock.apply(start, duration);
 
         assertThat(range.getEnd()).isEqualTo(end);
 
         // before
-        TimeBlock before1 = new TimeBlock(start.minusHours(2), start.minusHours(1));
-        TimeBlock before2 = new TimeBlock(start.minusMillis(1), end);
-        TimeBlock before3 = new TimeBlock(start.minusMillis(1), start);
+        TimeBlock before1 = TimeBlock.apply(start.minusHours(2), start.minusHours(1));
+        TimeBlock before2 = TimeBlock.apply(start.minusMillis(1), end);
+        TimeBlock before3 = TimeBlock.apply(start.minusMillis(1), start);
 
         assertThat(range.hasInside(before1)).isFalse();
         assertThat(range.hasInside(before2)).isFalse();
         assertThat(range.hasInside(before3)).isFalse();
 
         // after
-        TimeBlock after1 = new TimeBlock(start.plusHours(1), end.plusHours(1));
-        TimeBlock after2 = new TimeBlock(start, end.plusMillis(1));
-        TimeBlock after3 = new TimeBlock(end, end.plusMillis(1));
+        TimeBlock after1 = TimeBlock.apply(start.plusHours(1), end.plusHours(1));
+        TimeBlock after2 = TimeBlock.apply(start, end.plusMillis(1));
+        TimeBlock after3 = TimeBlock.apply(end, end.plusMillis(1));
 
         assertThat(range.hasInside(after1)).isFalse();
         assertThat(range.hasInside(after2)).isFalse();
@@ -320,9 +320,9 @@ public class TimeBlockTest extends TimePeriodTestBase {
         // inside
         assertThat(range.hasInside(range)).isTrue();
 
-        TimeBlock inside1 = new TimeBlock(start.plusMillis(1), end);
-        TimeBlock inside2 = new TimeBlock(start.plusMillis(1), end.minusMillis(1));
-        TimeBlock inside3 = new TimeBlock(start, end.minusMillis(1));
+        TimeBlock inside1 = TimeBlock.apply(start.plusMillis(1), end);
+        TimeBlock inside2 = TimeBlock.apply(start.plusMillis(1), end.minusMillis(1));
+        TimeBlock inside3 = TimeBlock.apply(start, end.minusMillis(1));
 
         assertThat(range.hasInside(inside1)).isTrue();
         assertThat(range.hasInside(inside2)).isTrue();
@@ -331,11 +331,11 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void copyTest() {
-        TimeBlock readonlyTimeBlock = new TimeBlock(start, duration);
+        TimeBlock readonlyTimeBlock = TimeBlock.apply(start, duration);
         assertThat(readonlyTimeBlock.copy(Duration.ZERO)).isEqualTo(readonlyTimeBlock);
         assertThat(readonlyTimeBlock.copy(Duration.ZERO)).isEqualTo(readonlyTimeBlock);
 
-        TimeBlock range = new TimeBlock(start, end);
+        TimeBlock range = TimeBlock.apply(start, end);
 
         assertThat(range.getStart()).isEqualTo(start);
         assertThat(range.getEnd()).isEqualTo(end);
@@ -364,13 +364,13 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void moveTest() {
-        TimeBlock moveZero = new TimeBlock(start, end);
+        TimeBlock moveZero = TimeBlock.apply(start, end);
         moveZero.move(Durations.Zero());
         assertThat(moveZero.getStart()).isEqualTo(start);
         assertThat(moveZero.getEnd()).isEqualTo(end);
         assertThat(moveZero.getDuration()).isEqualTo(duration);
 
-        TimeBlock forward = new TimeBlock(start, end);
+        TimeBlock forward = TimeBlock.apply(start, end);
         Duration forwardOffset = Durations.hours(2, 30, 15, 0);
         forward.move(forwardOffset);
 
@@ -378,7 +378,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
         assertThat(forward.getEnd()).isEqualTo(end.plus(forwardOffset));
         assertThat(forward.getDuration()).isEqualTo(duration);
 
-        TimeBlock backward = new TimeBlock(start, end);
+        TimeBlock backward = TimeBlock.apply(start, end);
         Duration backwardOffset = Durations.hours(-1, 10, 30, 0);
         backward.move(backwardOffset);
 
@@ -390,8 +390,8 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void isSamePeriodTest() {
-        TimeBlock range1 = new TimeBlock(start, end);
-        TimeBlock range2 = new TimeBlock(start, end);
+        TimeBlock range1 = TimeBlock.apply(start, end);
+        TimeBlock range2 = TimeBlock.apply(start, end);
 
         assertThat(range1.isSamePeriod(range1)).isTrue();
         assertThat(range2.isSamePeriod(range2)).isTrue();
@@ -470,43 +470,43 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void intersectsWithDateTimeTest() {
-        TimeBlock range = new TimeBlock(start, end);
+        TimeBlock range = TimeBlock.apply(start, end);
 
         // before
-        assertThat(range.intersectsWith(new TimeBlock(start.minusHours(2), start.minusHours(1)))).isFalse();
-        assertThat(range.intersectsWith(new TimeBlock(start.minusHours(1), start))).isTrue();
-        assertThat(range.intersectsWith(new TimeBlock(start.minusHours(1), start.plusMillis(1)))).isTrue();
+        assertThat(range.intersectsWith(TimeBlock.apply(start.minusHours(2), start.minusHours(1)))).isFalse();
+        assertThat(range.intersectsWith(TimeBlock.apply(start.minusHours(1), start))).isTrue();
+        assertThat(range.intersectsWith(TimeBlock.apply(start.minusHours(1), start.plusMillis(1)))).isTrue();
 
         // after
-        assertThat(range.intersectsWith(new TimeBlock(end.plusHours(1), end.plusHours(2)))).isFalse();
-        assertThat(range.intersectsWith(new TimeBlock(end, end.plusMillis(1)))).isTrue();
-        assertThat(range.intersectsWith(new TimeBlock(end.minusMillis(1), end.plusMillis(1)))).isTrue();
+        assertThat(range.intersectsWith(TimeBlock.apply(end.plusHours(1), end.plusHours(2)))).isFalse();
+        assertThat(range.intersectsWith(TimeBlock.apply(end, end.plusMillis(1)))).isTrue();
+        assertThat(range.intersectsWith(TimeBlock.apply(end.minusMillis(1), end.plusMillis(1)))).isTrue();
 
         // intersect
         assertThat(range.intersectsWith(range)).isTrue();
-        assertThat(range.intersectsWith(new TimeBlock(start.minusMillis(1), end.plusHours(2)))).isTrue();
-        assertThat(range.intersectsWith(new TimeBlock(start.minusMillis(1), start.plusMillis(1)))).isTrue();
-        assertThat(range.intersectsWith(new TimeBlock(end.minusMillis(1), end.plusMillis(1)))).isTrue();
+        assertThat(range.intersectsWith(TimeBlock.apply(start.minusMillis(1), end.plusHours(2)))).isTrue();
+        assertThat(range.intersectsWith(TimeBlock.apply(start.minusMillis(1), start.plusMillis(1)))).isTrue();
+        assertThat(range.intersectsWith(TimeBlock.apply(end.minusMillis(1), end.plusMillis(1)))).isTrue();
     }
 
     @Test
     public void getIntersectionTest() {
-        TimeBlock range = new TimeBlock(start, end);
+        TimeBlock range = TimeBlock.apply(start, end);
 
         // before
-        assertThat(range.getIntersection(new TimeBlock(start.minusHours(2), start.minusHours(1)))).isNull();
-        assertThat(range.getIntersection(new TimeBlock(start.minusMillis(1), start))).isEqualTo(TimeBlock.apply(start));
-        assertThat(range.getIntersection(new TimeBlock(start.minusHours(1), start.plusMillis(1)))).isEqualTo(new TimeBlock(start, start.plusMillis(1)));
+        assertThat(range.getIntersection(TimeBlock.apply(start.minusHours(2), start.minusHours(1)))).isNull();
+        assertThat(range.getIntersection(TimeBlock.apply(start.minusMillis(1), start))).isEqualTo(TimeBlock.apply(start));
+        assertThat(range.getIntersection(TimeBlock.apply(start.minusHours(1), start.plusMillis(1)))).isEqualTo(TimeBlock.apply(start, start.plusMillis(1)));
 
         // after
-        assertThat(range.getIntersection(new TimeBlock(end.plusHours(1), end.plusHours(2)))).isNull();
-        assertThat(range.getIntersection(new TimeBlock(end, end.plusMillis(1)))).isEqualTo(TimeBlock.apply(end));
-        assertThat(range.getIntersection(new TimeBlock(end.minusMillis(1), end.plusMillis(1)))).isEqualTo(new TimeBlock(end.minusMillis(1), end));
+        assertThat(range.getIntersection(TimeBlock.apply(end.plusHours(1), end.plusHours(2)))).isNull();
+        assertThat(range.getIntersection(TimeBlock.apply(end, end.plusMillis(1)))).isEqualTo(TimeBlock.apply(end));
+        assertThat(range.getIntersection(TimeBlock.apply(end.minusMillis(1), end.plusMillis(1)))).isEqualTo(TimeBlock.apply(end.minusMillis(1), end));
 
         // intersect
         assertThat(range.getIntersection(range)).isEqualTo(range);
-        assertThat(range.getIntersection(new TimeBlock(start.minusMillis(1), end.plusMillis(1)))).isEqualTo(range);
-        assertThat(range.getIntersection(new TimeBlock(start.plusMillis(1), end.minusMillis(1)))).isEqualTo(new TimeBlock(start.plusMillis(1), end.minusMillis(1)));
+        assertThat(range.getIntersection(TimeBlock.apply(start.minusMillis(1), end.plusMillis(1)))).isEqualTo(range);
+        assertThat(range.getIntersection(TimeBlock.apply(start.plusMillis(1), end.minusMillis(1)))).isEqualTo(TimeBlock.apply(start.plusMillis(1), end.minusMillis(1)));
     }
 
     @Test
@@ -649,7 +649,7 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void resetTest() {
-        TimeBlock range = new TimeBlock(start, duration);
+        TimeBlock range = TimeBlock.apply(start, duration);
 
         assertThat(range.getStart()).isEqualTo(start);
         assertThat(range.hasStart()).isTrue();
@@ -666,10 +666,10 @@ public class TimeBlockTest extends TimePeriodTestBase {
 
     @Test
     public void equalsTest() {
-        TimeBlock range1 = new TimeBlock(start, end);
-        TimeBlock range2 = new TimeBlock(start, end);
-        TimeBlock range3 = new TimeBlock(start.plusMillis(-1), end.plusMillis(1));
-        TimeBlock range4 = new TimeBlock(start, end, true);
+        TimeBlock range1 = TimeBlock.apply(start, end);
+        TimeBlock range2 = TimeBlock.apply(start, end);
+        TimeBlock range3 = TimeBlock.apply(start.plusMillis(-1), end.plusMillis(1));
+        TimeBlock range4 = TimeBlock.apply(start, end, true);
 
         assertThat(range1).isEqualTo(range2);
         assertThat(range1).isNotEqualTo(range3);

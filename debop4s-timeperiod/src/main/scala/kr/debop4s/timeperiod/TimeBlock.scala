@@ -31,8 +31,12 @@ trait ITimeBlock extends ITimePeriod {
 
 class TimeBlock(_start: DateTime = MinPeriodTime,
                 _end: DateTime = MaxPeriodTime,
-                _readonly: Boolean = false)
+                _readonly: Boolean)
     extends TimePeriod(_start, _end, _readonly) with ITimeBlock {
+
+    def this(_start: DateTime, _end: DateTime) {
+        this(_start, _end, false)
+    }
 
     override lazy val log = Logger[TimeBlock]
 
@@ -94,10 +98,10 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
         assertValidDuration(nd)
 
         if (nd.isEqual(MaxDuration)) {
-            this.duration = nd
+            _duration = nd
             this.end = MaxPeriodTime
         } else {
-            this.duration = nd
+            _duration = nd
             this.end = start.plus(nd)
         }
     }
@@ -105,18 +109,18 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
     def durationFromEnd(nd: Duration) {
         assertMutable()
         assertValidDuration(nd)
-        this.duration = nd
+        _duration = nd
         this.start = this.end.minus(nd)
     }
 
     def previousBlock(offset: Duration = Duration.ZERO): ITimeBlock = {
-        val endOffset = if (offset.compareTo(Duration.ZERO) > 0) new Duration(-offset.getMillis) else offset
-        TimeBlock(duration, start.plus(endOffset), readonly)
+        val endOffset = if (offset > Duration.ZERO) new Duration(-offset.getMillis) else offset
+        TimeBlock(duration, start + endOffset, readonly)
     }
 
     def nextBlock(offset: Duration = Duration.ZERO): ITimeBlock = {
-        val startOffset = if (offset.compareTo(Duration.ZERO) > 0) offset else new Duration(-offset.getMillis)
-        TimeBlock(end.plus(startOffset), duration, readonly)
+        val startOffset = if (offset > Duration.ZERO) offset else new Duration(-offset.getMillis)
+        TimeBlock(end + startOffset, duration, readonly)
     }
 
     override def getIntersection(other: ITimePeriod): TimeBlock = {
@@ -156,18 +160,24 @@ object TimeBlock {
 
     def apply(moment: DateTime, readonly: Boolean): TimeBlock = apply(moment, moment, readonly)
 
-    def apply(start: DateTime, duration: Duration): TimeBlock = apply(start, duration, readonly = false)
-
-    def apply(start: DateTime, duration: Duration, readonly: Boolean): TimeBlock = {
-        val (ns, ne) = Times.adjustPeriod(start, duration)
-        new TimeBlock(ns, ne, readonly)
+    def apply(start: DateTime, duration: Duration): TimeBlock = {
+        assertValidDuration(duration)
+        apply(start, duration, readonly = false)
     }
 
-    def apply(duration: Duration, end: DateTime): TimeBlock = apply(duration, end, readonly = false)
+    def apply(start: DateTime, duration: Duration, readonly: Boolean): TimeBlock = {
+        assertValidDuration(duration)
+        new TimeBlock(start, start + duration, readonly)
+    }
+
+    def apply(duration: Duration, end: DateTime): TimeBlock = {
+        assertValidDuration(duration)
+        apply(duration, end, readonly = false)
+    }
 
     def apply(duration: Duration, end: DateTime, readonly: Boolean): TimeBlock = {
-        val (ns, ne) = Times.adjustPeriod(end, duration)
-        new TimeBlock(ns, ne, readonly)
+        assertValidDuration(duration)
+        new TimeBlock(end - duration, end, readonly)
     }
 
     def apply(source: ITimePeriod): TimeBlock = {
@@ -181,5 +191,13 @@ object TimeBlock {
             Anytime
         else
             new TimeBlock(source.getStart, source.getEnd, readonly)
+    }
+
+    def toRange(block: TimeBlock): TimeRange = TimeRange(block.start, block.end, block.isReadonly)
+
+    def toInterval(block: TimeBlock): TimeInterval = TimeInterval(block)
+
+    private def assertValidDuration(v: Duration) {
+        assert(v != null && v.getMillis >= 0, "duration은 0 이상의 값을 가져야 합니다.")
     }
 }

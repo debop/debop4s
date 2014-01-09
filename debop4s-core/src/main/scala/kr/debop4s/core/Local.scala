@@ -46,12 +46,11 @@ object Local {
         get(key).asInstanceOf[T]
     }
 
-    def getOrCreate[T](key: Any, factory: Callable[T]): T = {
-        if (!getStorage.contains(key)) {
-            assert(factory != null)
-            val result: T = factory.call()
-            put(key, result)
-        }
-        get(key).asInstanceOf[T]
-    }
+    def getOrCreate[T](key: Any, factory: Callable[T]): T = synchronized {
+                                                                             if (!getStorage.contains(key)) {
+                                                                                 assert(factory != null)
+                                                                                 put(key, factory.call())
+                                                                             }
+                                                                             get(key).asInstanceOf[T]
+                                                                         }
 }
