@@ -1,6 +1,6 @@
 package kr.debop4s.core.compress
 
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * 데이터를 압축/복원을 수행합니다.
@@ -9,7 +9,7 @@ import kr.debop4s.core.logging.Logger
  */
 trait Compressor {
 
-    val log = Logger[Compressor]
+    lazy val log = LoggerFactory.getLogger(getClass)
     val BUFFER_SIZE = 4096
 
     protected def doCompress(plainBytes: Array[Byte]): Array[Byte]
@@ -27,8 +27,8 @@ trait Compressor {
 
         val result = doCompress(plainBytes)
 
-        log.trace("데이터를 압축했습니다. 압축률=[{}], original=[{}], compressed=[{}]",
-                  result.length * 100.0 / plainBytes.length, plainBytes.length, result.length)
+        log.trace(s"데이터를 압축했습니다. 압축률=[${result.length * 100.0 / plainBytes.length}], " +
+                  s"original=[${plainBytes.length}], compressed=[${result.length}]")
         result
     }
 
@@ -43,8 +43,8 @@ trait Compressor {
 
         val result = doDecompress(compressedBytes)
 
-        log.trace("데이터를 복했습니다. 압축률=[{}], 압축=[{}], 원본=[{}]",
-                  result.length * 100.0 / result.length, compressedBytes.length, result.length)
+        log.trace(s"데이터를 복했습니다. 압축률=[${result.length * 100.0 / result.length}], " +
+                  s"압축=[${compressedBytes.length}}], 원본=[${result.length}]")
         result
     }
 }

@@ -5,6 +5,7 @@ import java.util
 import kr.debop4s.core.BinaryStringFormat
 import kr.debop4s.core.BinaryStringFormat.BinaryStringFormat
 import org.apache.commons.codec.binary.{Base64, Hex, StringUtils}
+import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -15,6 +16,8 @@ import scala.collection.mutable.ArrayBuffer
  * @since  2013. 12. 9. 오후 10:06
  */
 object Strings {
+
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     val MULTI_BYTES_PREFIX = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
     val TRIMMING_STR = "..."
@@ -59,7 +62,7 @@ object Strings {
             false
         else
             util.Arrays.equals(MULTI_BYTES_PREFIX,
-                               util.Arrays.copyOf(bytes, MULTI_BYTES_PREFIX.length)) //.asInstanceOf[Array[Byte]])
+                util.Arrays.copyOf(bytes, MULTI_BYTES_PREFIX.length)) //.asInstanceOf[Array[Byte]])
     }
 
     def isMultiByteString(str: String): Boolean = {

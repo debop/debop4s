@@ -160,15 +160,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- Specs for Scala Test -->
-            <dependency>
-                <groupId>org.specs2</groupId>
-                <artifactId>specs2_2.10</artifactId>
-                <version>2.2.2</version>
-                <scope>test</scope>
-            </dependency>
-
-
             <!-- Apache Commons -->
             <dependency>
                 <groupId>commons-codec</groupId>
@@ -785,7 +776,7 @@
             <dependency>
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest_2.10</artifactId>
-                <version>2.0.M8</version>
+                <version>2.0</version>
                 <scope>test</scope>
             </dependency>
 
@@ -890,11 +881,13 @@
                 </executions>
             </plugin>
 
+            <!-- scalatest 를 사용하도록 하고, surefire는 사용하지 않도록 합니다. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.15</version>
                 <configuration>
+                    <skipTests>true</skipTests>
                     <argLine>-Xmx8192m</argLine>
                     <argLine>-XX:+UseCompressedOops</argLine>
                     <argLine>-XX:+UseParallelOldGC</argLine>
@@ -983,6 +976,27 @@
                                 <arg>-explaintypes</arg>
                             </args>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <!-- enable scalatest -->
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <version>1.0-RC2</version>
+                <configuration>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <junitxml>.</junitxml>
+                    <filereports>WDF TestSuite.txt</filereports>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

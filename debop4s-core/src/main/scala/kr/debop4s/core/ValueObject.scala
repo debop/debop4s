@@ -25,6 +25,4 @@ trait ValueObject extends AnyRef with Serializable {
     protected def buildStringHelper: ToStringHelper = ToStringHelper(this)
 }
 
-abstract class AbstractValueObject extends ValueObject {
-
-}
+abstract class AbstractValueObject extends ValueObject

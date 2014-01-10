@@ -5,7 +5,6 @@ import java.security.KeyStore
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import kr.debop4s.core.http.{AsyncHttpClient, HttpAsyncs}
-import kr.debop4s.core.logging.Logger
 import org.apache.http.client.methods.{HttpGet, HttpPost}
 import org.apache.http.client.utils.URIBuilder
 import org.apache.http.conn.ssl.{TrustSelfSignedStrategy, SSLContexts}
@@ -15,6 +14,7 @@ import org.apache.http.util.EntityUtils
 import org.apache.http.{HttpException, HttpHeaders, HttpResponse, HttpStatus}
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.http.AsyncHttpClientTest
@@ -24,7 +24,7 @@ import org.scalatest.junit.AssertionsForJUnit
  */
 class AsyncHttpClientTest extends AssertionsForJUnit {
 
-    lazy val log = Logger[AsyncHttpClientTest]
+    implicit lazy val log = LoggerFactory.getLogger(classOf[AsyncHttpClientTest])
 
     val URI_STRING = "https://www.google.co.kr"
     val TEST_COUNT = 30

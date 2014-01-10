@@ -3,10 +3,10 @@ package kr.debop4s.core.stests.io
 import kr.debop4s.core.compress.{Compressor, DeflateCompressor, GZipCompressor}
 import kr.debop4s.core.cryptography.{TripleDESEncryptor, DESEncryptor, RC2Encryptor, SymmetricEncryptor}
 import kr.debop4s.core.io.{EncryptableSerializer, CompressableSerializer, BinarySerializer, Serializer}
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.stests.io.model.{User, Company}
 import org.junit.{Test, Before}
 import org.scalatest.junit.AssertionsForJUnit
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.io.SerializerTest
@@ -16,7 +16,7 @@ import org.scalatest.junit.AssertionsForJUnit
  */
 class SerializerTest extends AssertionsForJUnit {
 
-    lazy val log = Logger[SerializerTest]
+    implicit lazy val log = LoggerFactory.getLogger(classOf[SerializerTest])
 
     var company: Company = _
 

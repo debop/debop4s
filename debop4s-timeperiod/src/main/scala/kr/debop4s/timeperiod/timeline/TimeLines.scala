@@ -1,8 +1,8 @@
 package kr.debop4s.timeperiod.timeline
 
 import kr.debop4s.core.Guard
-import kr.debop4s.core.logging.Logger
-import kr.debop4s.timeperiod.{ITimePeriod, TimeRange, TimePeriodCollection, ITimePeriodCollection}
+import kr.debop4s.timeperiod._
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.timeline.TimeLines
@@ -11,7 +11,7 @@ import kr.debop4s.timeperiod.{ITimePeriod, TimeRange, TimePeriodCollection, ITim
  */
 object TimeLines {
 
-    lazy val log = Logger(getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     def combinePeriods(moments: ITimeLineMomentCollection): ITimePeriodCollection = {
 

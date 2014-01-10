@@ -2,8 +2,8 @@ package kr.debop4s.core.utils
 
 import java.io.{ByteArrayOutputStream, OutputStream, InputStream}
 import java.nio.charset.Charset
-import kr.debop4s.core.logging.Logger
 import lombok.Cleanup
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tools.Streams
@@ -12,7 +12,7 @@ import lombok.Cleanup
  */
 object Streams {
 
-    lazy val log = Logger(this.getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     val BUFFER_SIZE = 4096
 

@@ -1,6 +1,7 @@
 package kr.debop4s.core.cryptography
 
 import java.security.SecureRandom
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.cryptography.Cryptos
@@ -8,6 +9,8 @@ import java.security.SecureRandom
  * @since  2013. 12. 9. 오후 11:08
  */
 object Cryptos {
+
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     val RANDOM_NUMBER_GENERATION = "SHA1PRNG"
     lazy val random: SecureRandom = SecureRandom.getInstance(RANDOM_NUMBER_GENERATION)

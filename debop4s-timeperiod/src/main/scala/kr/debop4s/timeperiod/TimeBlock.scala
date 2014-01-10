@@ -1,9 +1,9 @@
 package kr.debop4s.timeperiod
 
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.time._
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.TimeBlock
@@ -34,11 +34,11 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
                 _readonly: Boolean)
     extends TimePeriod(_start, _end, _readonly) with ITimeBlock {
 
+    override implicit lazy val log = LoggerFactory.getLogger(getClass)
+
     def this(_start: DateTime, _end: DateTime) {
         this(_start, _end, false)
     }
-
-    override lazy val log = Logger[TimeBlock]
 
     override def start_=(v: DateTime) {
         assertMutable()
@@ -80,8 +80,8 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
             TimeBlock(this)
         else
             TimeBlock(if (hasStart) start.plus(offset) else start,
-                      if (hasEnd) end.plus(offset) else end,
-                      readonly)
+                if (hasEnd) end.plus(offset) else end,
+                readonly)
     }
 
     def setup(start: DateTime, duration: Duration) {

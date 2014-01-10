@@ -2,9 +2,8 @@ package kr.debop4s.core.stests.compressor
 
 import kr.debop4s.core.compress.{DeflateCompressor, Compressor, GZipCompressor}
 import kr.debop4s.core.utils.Charsets
-import lombok.extern.slf4j.Slf4j
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -12,17 +11,17 @@ import org.scalatest.junit.AssertionsForJUnit
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 10. 오후 9:31
  */
-@Slf4j
-class CompressorTest extends AssertionsForJUnit {
+class CompressorTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    @Test
-    def gzipTest() {
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
+
+    test("gzip test") {
+
         val gzip = new GZipCompressor()
         compressorTest(gzip)
     }
 
-    @Test
-    def deflateTest() {
+    test("deflate test") {
         val deflater = new DeflateCompressor()
         compressorTest(deflater)
     }

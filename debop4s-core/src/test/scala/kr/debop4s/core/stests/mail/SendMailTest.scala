@@ -3,6 +3,7 @@ package kr.debop4s.core.stests.mail
 import javax.mail.internet.{MimeBodyPart, MimeMultipart, InternetAddress, MimeMessage}
 import javax.mail.{MessagingException, Transport, Message, Session}
 import org.junit.Test
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.stests.mail.SendMailTest 
@@ -11,6 +12,8 @@ import org.junit.Test
  * @since 2014. 1. 10. 오후 4:20
  */
 class SendMailTest {
+
+    implicit lazy val log = LoggerFactory.getLogger(classOf[SendMailTest])
 
     val to = "debop@hconnect.co.kr"
     val from = "noreply@hconnect.co.kr"

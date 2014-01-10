@@ -17,8 +17,8 @@ class HalfyearTimeRange(val year: Int,
                         val halfyearCount: Int,
                         private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(new TimeRange(Times.startTimeOfHalfyear(year, halfyear),
-                                            Times.addHalfyear(year, halfyear, halfyearCount).end),
-                              _calendar) {
+        Times.addHalfyear(year, halfyear, halfyearCount).end),
+        _calendar) {
     def this(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar) {
         this(moment.getYear, Times.getHalfyearOfMonth(moment.getMonthOfYear), halfyearCount, calendar)
     }

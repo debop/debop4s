@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 import scala.reflect._
 
 /**
@@ -11,7 +11,7 @@ import scala.reflect._
  */
 class Reflects {
 
-    lazy val log = Logger(this.getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     /**
      * Java의 Primitive 수형에 대한 Box된 Scala 클래스를 Unbox한 Java Primitive 수형 타입을 구합니다.

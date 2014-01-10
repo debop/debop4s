@@ -219,11 +219,11 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
     /** 현재 IInterval에서 오프셋만큼 이동한 {@link ITimeInterval}을 반환합니다. */
     override def copy(offset: Duration = Duration.ZERO): ITimeInterval = {
         new TimeInterval(getStartInterval.plus(offset),
-                         getEndInterval.plus(offset),
-                         getStartEdge,
-                         getEndEdge,
-                         isIntervalEnabled,
-                         isReadonly)
+            getEndInterval.plus(offset),
+            getStartEdge,
+            getEndEdge,
+            isIntervalEnabled,
+            isReadonly)
     }
 
     override def reset() {

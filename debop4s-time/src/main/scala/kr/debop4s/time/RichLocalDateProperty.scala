@@ -1,7 +1,7 @@
 package kr.debop4s.time
 
-import org.joda.time.LocalDate
 import java.util.Locale
+import org.joda.time.LocalDate
 
 /**
  * kr.debop4s.time.RichLocalDateProperty

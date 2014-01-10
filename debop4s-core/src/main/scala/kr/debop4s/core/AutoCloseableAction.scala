@@ -1,6 +1,6 @@
 package kr.debop4s.core
 
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * JDK 7 의 try 리소스 정리 작업을 수행할 수 있도록 해주는 클래스입니다.
@@ -10,7 +10,7 @@ import kr.debop4s.core.logging.Logger
  */
 class AutoCloseableAction(val actionWhenClosing: Runnable) extends AutoCloseable {
 
-    val log = Logger[AutoCloseableAction]
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     private var closed = false
 

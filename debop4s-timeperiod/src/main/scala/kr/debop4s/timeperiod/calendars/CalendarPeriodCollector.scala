@@ -15,9 +15,9 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                               private[this] val _seekDir: SeekDirection = SeekDirection.Forward,
                               private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarVisitor[CalendarPeriodCollectorFilter, CalendarPeriodCollectorContext](_filter,
-                                                                                           _limits,
-                                                                                           _seekDir,
-                                                                                           _calendar) {
+        _limits,
+        _seekDir,
+        _calendar) {
 
     val periods: ITimePeriodCollection = TimePeriodCollection()
 
@@ -99,9 +99,9 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                     }
                 } else {
                     val months = new MonthRangeCollection(year.year,
-                                                          m.startMonthOfYear,
-                                                          m.endMonthOfYear - m.startMonthOfYear,
-                                                          year.calendar);
+                        m.startMonthOfYear,
+                        m.endMonthOfYear - m.startMonthOfYear,
+                        year.calendar);
                     val isMatching = months.getMonths.forall(m => isMatchingMonth(m, context))
                     if (isMatching && checkLimits(months)) {
                         periods.addAll(months.getMonths)
@@ -131,10 +131,10 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                     }
                 } else {
                     val days = new DayRangeCollection(month.year,
-                                                      month.monthOfYear,
-                                                      day.startDayOfMonth,
-                                                      day.endDayOfMonth - day.startDayOfMonth,
-                                                      month.calendar)
+                        month.monthOfYear,
+                        day.startDayOfMonth,
+                        day.endDayOfMonth - day.startDayOfMonth,
+                        month.calendar)
                     val isMatching = days.getDays.forall(d => isMatchingDay(d, context))
                     if (isMatching && checkLimits(days)) {
                         periods.addAll(days.getDays)

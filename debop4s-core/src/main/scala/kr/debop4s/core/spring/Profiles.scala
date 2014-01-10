@@ -10,11 +10,11 @@ class Profiles extends Enumeration {
 
     type Profiles = Value
 
-    val LOCAL = Value("LOCAL")
+    val LOCAL = Value(0, "LOCAL")
 
-    val DEVELOP = Value("DEVELOP")
+    val DEVELOP = Value(1, "DEVELOP")
 
-    val TEST = Value("TEST")
+    val TEST = Value(2, "TEST")
 
-    val PRODUCTION = Value("PRODUCTION")
+    val PRODUCTION = Value(3, "PRODUCTION")
 }

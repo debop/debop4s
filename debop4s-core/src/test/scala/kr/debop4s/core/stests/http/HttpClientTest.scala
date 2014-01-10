@@ -2,7 +2,6 @@ package kr.debop4s.core.stests.http
 
 import java.net.URI
 import kr.debop4s.core.http.HttpClient
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Parallels
 import kr.debop4s.core.utils.{Strings, Charsets}
 import lombok.Cleanup
@@ -20,6 +19,7 @@ import org.apache.http.{NameValuePair, HttpStatus, HttpResponse}
 import org.fest.assertions.Assertions._
 import org.junit.{Ignore, Test}
 import org.scalatest.junit.AssertionsForJUnit
+import org.slf4j.LoggerFactory
 import scala.Predef.String
 import scala.collection.mutable.ArrayBuffer
 
@@ -31,7 +31,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class HttpClientTest extends AssertionsForJUnit {
 
-    lazy val log = Logger[HttpClientTest]
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     private final val URI_STRING: String = "https://www.google.co.kr"
 
@@ -127,20 +127,20 @@ class HttpClientTest extends AssertionsForJUnit {
         try {
             client.start
             Parallels.runAction(10) {
-                                        try {
-                                            val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁")
-                                                .setParameter("oq", "배성혁").build
-                                            val httpGet: HttpGet = new HttpGet(uri)
-                                            val futureResponse = client.execute(httpGet, null)
-                                            val response = futureResponse.get
-                                            assert(response != null)
-                                            log.debug(EntityUtils.toString(response.getEntity))
-                                        }
-                                        catch {
-                                            case e: Exception =>
-                                                log.error("예외가 발생했습니다.", e)
-                                        }
-                                    }
+                try {
+                    val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁")
+                        .setParameter("oq", "배성혁").build
+                    val httpGet: HttpGet = new HttpGet(uri)
+                    val futureResponse = client.execute(httpGet, null)
+                    val response = futureResponse.get
+                    assert(response != null)
+                    log.debug(EntityUtils.toString(response.getEntity))
+                }
+                catch {
+                    case e: Exception =>
+                        log.error("예외가 발생했습니다.", e)
+                }
+            }
         }
         finally {
             client.close()

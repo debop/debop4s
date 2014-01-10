@@ -1,8 +1,8 @@
 package kr.debop4s.data.jdbc
 
 import javax.sql.DataSource
-import kr.debop4s.core.logging.Logger
 import org.apache.tomcat.jdbc.pool.PoolProperties
+import org.slf4j.LoggerFactory
 import scala.Predef.String
 
 /**
@@ -13,7 +13,7 @@ import scala.Predef.String
  */
 object DataSources {
 
-    lazy val log = Logger(getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     final val HSQL_DRIVER_CLASS_NAME: String = "org.hsql.jdbcDriver"
     final val H2_DRIVER_CLASS_NAME: String = "org.h2.Driver"

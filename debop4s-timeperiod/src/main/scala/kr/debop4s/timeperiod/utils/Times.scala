@@ -1,7 +1,6 @@
 package kr.debop4s.timeperiod.utils
 
 import kr.debop4s.core.NotSupportedException
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.time._
 import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import kr.debop4s.timeperiod.Halfyear.Halfyear
@@ -12,6 +11,7 @@ import kr.debop4s.timeperiod.Quarter.Quarter
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.timerange._
 import org.joda.time.{Duration, DateTimeZone, DateTime}
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.parallel.ParSeq
@@ -23,7 +23,7 @@ import scala.collection.parallel.ParSeq
  */
 object Times {
 
-    lazy val log = Logger(getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     val NullString = "<null>"
     val UnixEpoch = new DateTime(1970, 1, 1, 0, 0)
@@ -617,8 +617,8 @@ object Times {
             case PeriodUnit.Minute => getMinuteRanges(moment, periodCount, calendar)
             case PeriodUnit.Second =>
                 new CalendarTimeRange(trimToMillis(moment),
-                                      trimToMillis(moment).plusSeconds(periodCount),
-                                      calendar)
+                    trimToMillis(moment).plusSeconds(periodCount),
+                    calendar)
 
             case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
         }
@@ -760,9 +760,9 @@ object Times {
     }
 
     val NotOverlapedRelations = Array(PeriodRelation.After,
-                                      PeriodRelation.StartTouching,
-                                      PeriodRelation.EndTouching,
-                                      PeriodRelation.Before)
+        PeriodRelation.StartTouching,
+        PeriodRelation.EndTouching,
+        PeriodRelation.Before)
 
     def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
         assert(period != null)
@@ -849,7 +849,7 @@ object Times {
     def assertValidPeriod(start: DateTime, end: DateTime) {
         if (start != null && end != null) {
             assert(start <= end,
-                   s"시작시각이 완료시각보다 이전이어야 합니다. start=[$start], end=[$end]")
+                s"시작시각이 완료시각보다 이전이어야 합니다. start=[$start], end=[$end]")
         }
     }
 

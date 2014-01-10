@@ -1,10 +1,10 @@
 package kr.debop4s.timeperiod
 
 import kr.debop4s.core.ValueObject
-import org.joda.time.DateTime
-import kr.debop4s.timeperiod.utils.Times
 import kr.debop4s.core.utils.Hashs
 import kr.debop4s.time._
+import kr.debop4s.timeperiod.utils.Times
+import org.joda.time.DateTime
 
 @SerialVersionUID(-2730296141281632596L)
 class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {

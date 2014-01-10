@@ -18,8 +18,8 @@ class QuarterTimeRange(private val _year: Int,
                        val quarterCount: Int,
                        private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(TimeRange(Times.startTimeOfQuarter(_year, _quarter),
-                                        Times.addQuarter(_year, _quarter, quarterCount).end),
-                              _calendar) {
+        Times.addQuarter(_year, _quarter, quarterCount).end),
+        _calendar) {
 
     val startQuarter: Quarter = _quarter
     val endQuarter: Quarter = Times.getQuarterOfMonth(end.getMonthOfYear)

@@ -35,9 +35,9 @@ class GcmSender(val serverApiKey: String) {
         val asyncHttp = new AsyncHttpClient()
 
         Tasks.runWithRetry(retry) {
-                                      val response = asyncHttp.post(post)
-                                      isSent = response.getStatusLine.getStatusCode == HttpStatus.SC_OK
-                                  }
+            val response = asyncHttp.post(post)
+            isSent = response.getStatusLine.getStatusCode == HttpStatus.SC_OK
+        }
         if (!isSent)
             throw new RuntimeException(s"could not send message after $retry attempts")
     }

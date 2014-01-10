@@ -131,10 +131,10 @@ trait ITimePeriodContainer extends util.List[ITimePeriod] with ITimePeriod {
     def retainAll(elems: util.Collection[_]): Boolean = {
         periods.clear()
         elems.asScala.foreach {
-                                  case elem: ITimePeriod =>
-                                      periods += elem
-                                  case _ =>
-                              }
+            case elem: ITimePeriod =>
+                periods += elem
+            case _ =>
+        }
         true
     }
 

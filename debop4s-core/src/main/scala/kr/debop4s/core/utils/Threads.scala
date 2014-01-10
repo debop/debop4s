@@ -1,7 +1,7 @@
 package kr.debop4s.core.utils
 
 import java.util.concurrent.Callable
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tools.Threads
@@ -11,7 +11,7 @@ import kr.debop4s.core.logging.Logger
  */
 object Threads {
 
-    lazy val log = Logger(this.getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     implicit def makeRunnable(action: => Unit): Runnable = {
         new Runnable {

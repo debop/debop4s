@@ -1,7 +1,7 @@
 package kr.debop4s
 
-import org.joda.time._
 import java.sql.Timestamp
+import org.joda.time._
 import org.joda.time.base.{BaseSingleFieldPeriod, AbstractPartial, AbstractInstant, AbstractDateTime}
 import org.joda.time.field.AbstractReadableInstantFieldProperty
 import org.joda.time.format.DateTimeFormatter
@@ -68,11 +68,11 @@ package object time {
 
     // lazy val factory: DatatypeFactory = DatatypeFactory.newInstance
 
-//    implicit def dateTime2XmlGregCalendar(dt: DateTime): XMLGregorianCalendar =
-//        factory.newXMLGregorianCalendar(dt.toGregorianCalendar)
-//
-//    implicit def xmlGregCalendar2DateTime(calendar: XMLGregorianCalendar): DateTime =
-//        new DateTime(calendar.toGregorianCalendar.getTimeInMillis)
+    //    implicit def dateTime2XmlGregCalendar(dt: DateTime): XMLGregorianCalendar =
+    //        factory.newXMLGregorianCalendar(dt.toGregorianCalendar)
+    //
+    //    implicit def xmlGregCalendar2DateTime(calendar: XMLGregorianCalendar): DateTime =
+    //        new DateTime(calendar.toGregorianCalendar.getTimeInMillis)
 
     type Year = Int
     type Month = Int

@@ -1,10 +1,10 @@
 package kr.debop4s.core.globalization
 
 import java.util.{ResourceBundle, Locale}
-import kr.debop4s.core.logging.Logger
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.scalatest.junit.AssertionsForJUnit
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.{MessageSource, ApplicationContext}
 import org.springframework.test.context.ContextConfiguration
@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 // @ContextConfiguration(classes = Array(classOf[GlobalizationConfiguration]))
 class GlobalizationTest extends AssertionsForJUnit {
 
-    lazy val log = Logger[GlobalizationTest]
+    implicit lazy val log = LoggerFactory.getLogger(classOf[GlobalizationTest])
 
     @Autowired
     var applicationContext: ApplicationContext = _

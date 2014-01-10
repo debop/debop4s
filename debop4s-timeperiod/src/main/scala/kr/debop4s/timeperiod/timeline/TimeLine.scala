@@ -1,9 +1,9 @@
 package kr.debop4s.timeperiod.timeline
 
 import java.util
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod._
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 
 /**
@@ -16,7 +16,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
                                  private val aLimits: ITimePeriod = null,
                                  private val mapper: ITimePeriodMapper = null) extends ITimeLine {
 
-    lazy val log = Logger[TimeLine[_]]
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     val limits = if (aLimits != null) TimeRange(aLimits) else TimeRange(periods)
 
@@ -80,7 +80,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
                 if (intersection != null && !intersection.isMoment) {
                     if (mapper != null) {
                         intersection.setup(mapPeriodStart(intersection.getStart),
-                                           mapPeriodEnd(intersection.getEnd))
+                            mapPeriodEnd(intersection.getEnd))
                     }
                     intersections.add(intersection)
                 }

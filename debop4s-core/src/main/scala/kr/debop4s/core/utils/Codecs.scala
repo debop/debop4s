@@ -1,6 +1,7 @@
 package kr.debop4s.core.utils
 
 import org.apache.commons.codec.binary.Base64
+import org.slf4j.LoggerFactory
 
 /**
  * Codec helper object
@@ -9,6 +10,8 @@ import org.apache.commons.codec.binary.Base64
  * @since  2013. 12. 9. 오후 10:27
  */
 object Codecs {
+
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     def encodeBase64(input: Array[Byte], isChucked: Boolean = false, urlSafe: Boolean = true): Array[Byte] =
         Base64.encodeBase64(input, isChucked, urlSafe)

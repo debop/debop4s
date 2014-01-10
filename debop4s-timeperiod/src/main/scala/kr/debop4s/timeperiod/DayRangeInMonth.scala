@@ -18,7 +18,7 @@ class DayRangeInMonth(val startDayOfMonth: Int, val endDayOfMonth: Int) extends 
 
     def assertValidDayRange(dayOfMonth: Int) {
         assert(dayOfMonth > 0 && dayOfMonth <= MaxDaysPerMonth,
-               s"dayOfMonth=[$dayOfMonth] 는 1~$MaxDaysPerMonth 사이여야 합니다.")
+            s"dayOfMonth=[$dayOfMonth] 는 1~$MaxDaysPerMonth 사이여야 합니다.")
     }
 
     def compare(x: DayRangeInMonth, y: DayRangeInMonth) =

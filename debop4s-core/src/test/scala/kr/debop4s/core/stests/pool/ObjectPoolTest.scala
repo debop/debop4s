@@ -1,10 +1,10 @@
 package kr.debop4s.core.stests.pool
 
 import java.util.Properties
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Parallels
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.pool.ObjectPoolTest
@@ -14,7 +14,7 @@ import org.scalatest.junit.AssertionsForJUnit
  */
 class ObjectPoolTest extends AssertionsForJUnit {
 
-    lazy val log = Logger[ObjectPoolTest]
+    implicit lazy val log = LoggerFactory.getLogger(classOf[ObjectPoolTest])
 
     def getProperties(): Properties = {
         val props = new Properties()

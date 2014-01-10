@@ -1,5 +1,6 @@
 package kr.debop4s.core.utils
 
+import org.slf4j.LoggerFactory
 import scala.collection.mutable
 
 /**
@@ -10,9 +11,11 @@ import scala.collection.mutable
  */
 object Graphs {
 
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
+
     def breadthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
-        assert(source != null)
-        assert(getAdjacent != null)
+        require(source != null)
+        require(getAdjacent != null)
 
         val toScan = mutable.Queue[T](source)
         val scanned = mutable.HashSet[T]()
@@ -28,8 +31,8 @@ object Graphs {
     }
 
     def depthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
-        assert(source != null)
-        assert(getAdjacent != null)
+        require(source != null)
+        require(getAdjacent != null)
 
         val toScan = mutable.Stack[T](source)
         val scanned = mutable.HashSet[T]()

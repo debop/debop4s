@@ -38,7 +38,7 @@ trait JsonSerializer {
     /**
      * Json Text 형식의 문자열을 역직렬화하여, 객체로 빌드합니다.
      *
-     * @param jsonText    JSON으로 직렬화한 문자열
+     * @param text    JSON으로 직렬화한 문자열
      * @return 역직렬화 한 객체
      */
     def deserializeFromText[T <: AnyRef](text: String, clazz: Class[T]): T

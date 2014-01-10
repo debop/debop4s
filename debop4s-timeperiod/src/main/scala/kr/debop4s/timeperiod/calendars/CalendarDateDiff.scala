@@ -1,11 +1,11 @@
 package kr.debop4s.timeperiod.calendars
 
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.timeline.TimeGapCalculator
 import kr.debop4s.timeperiod.utils.{Durations, Times}
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -17,7 +17,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset) {
 
-    lazy val log = Logger[CalendarDateDiff]
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     assert(calendar.getStartOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
     assert(calendar.getEndOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
@@ -61,11 +61,11 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
 
         val differenceRange = new TimeRange(fromTime, toTime)
         val limits = new TimeRange(Times.startTimeOfDay(differenceRange.start),
-                                   Times.startTimeOfDay(differenceRange.end.plusDays(1)))
+            Times.startTimeOfDay(differenceRange.end.plusDays(1)))
         val collector = new CalendarPeriodCollector(collectorFilter,
-                                                    limits,
-                                                    SeekDirection.Forward,
-                                                    calendar)
+            limits,
+            SeekDirection.Forward,
+            calendar)
 
         // Gap을 계산합니다.
         val gapCalculator = new TimeGapCalculator[TimeRange](calendar)

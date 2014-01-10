@@ -1,7 +1,7 @@
 package kr.debop4s.core.io
 
 import kr.debop4s.core.cryptography.{RC2Encryptor, SymmetricEncryptor}
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.io.EncryptableSerializer
@@ -11,7 +11,7 @@ import kr.debop4s.core.logging.Logger
 class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncryptor = new RC2Encryptor())
     extends SerializerDecorator(serializer) {
 
-    val log = Logger[EncryptableSerializer]
+    implicit lazy val log = LoggerFactory.getLogger(classOf[EncryptableSerializer])
 
     /**
      * 객체를 직렬화 합니다.

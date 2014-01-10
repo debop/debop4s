@@ -43,7 +43,7 @@ class BasicTest extends AssertionsForJUnit {
         val x: Interval = TDateTime.now to TDateTime.tomorrow
         print(s"x=[$x]")
 
-        assert( (TDateTime.now to TDateTime.nextSecond).millis == 1000)
+        assert((TDateTime.now to TDateTime.nextSecond).millis == 1000)
     }
 
 }

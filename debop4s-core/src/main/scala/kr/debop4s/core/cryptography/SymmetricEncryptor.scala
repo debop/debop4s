@@ -1,7 +1,7 @@
 package kr.debop4s.core.cryptography
 
-import kr.debop4s.core.logging.Logger
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor
+import org.slf4j.LoggerFactory
 
 /**
  * 대칭형 암호화 클래스
@@ -11,7 +11,7 @@ import org.jasypt.encryption.pbe.StandardPBEByteEncryptor
  */
 trait SymmetricEncryptor {
 
-    lazy val log = Logger[SymmetricEncryptor]
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     private val DEFAULT_PASSWORD = "sunghyouk.bae@gmail.com-21011"
 
@@ -41,7 +41,7 @@ trait SymmetricEncryptor {
     /**
      * 데이터를 암호화합니다.
      *
-     * @param plainBytes 암호화할 데이터
+     * @param input 암호화할 데이터
      * @return 암호화된 데이터
      */
     def encrypt(input: Array[Byte]): Array[Byte] = {
@@ -56,7 +56,7 @@ trait SymmetricEncryptor {
     /**
      * 암호화된 데이터를 복원합니다.
      *
-     * @param encryptedBytes 암호화된 정보
+     * @param input 암호화된 정보
      * @return 복원된 데이터
      */
     def decrypt(input: Array[Byte]): Array[Byte] = {

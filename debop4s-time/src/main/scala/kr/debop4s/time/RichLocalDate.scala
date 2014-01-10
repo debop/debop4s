@@ -25,7 +25,7 @@ class RichLocalDate(val self: LocalDate) extends AnyVal with Ordered[LocalDate] 
 
     def withDay(day: Int) = self.withDayOfMonth(day)
     def withWeek(week: Int) = self.withWeekOfWeekyear(week)
-    def withWeekyear(weekyear:Int) = self.withWeekyear(weekyear)
+    def withWeekyear(weekyear: Int) = self.withWeekyear(weekyear)
     def withMonth(month: Int) = self.withMonthOfYear(month)
     def withYear(year: Int) = self.withYear(year)
     def withCentury(century: Int) = self.withCenturyOfEra(century)

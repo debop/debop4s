@@ -2,7 +2,7 @@ package kr.debop4s.core.utils
 
 import java.io.InputStream
 import kr.debop4s.core.Guard
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tools.Resources
@@ -12,7 +12,7 @@ import kr.debop4s.core.logging.Logger
  */
 object Resources {
 
-    lazy val log = Logger(getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     /**
      * 지정한 경로의 리소스를 읽기위한 InputStream 을 반환합니다.

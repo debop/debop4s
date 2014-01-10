@@ -3,11 +3,11 @@ package kr.debop4s.data.hibernate.usertype
 import java.io.Serializable
 import java.sql.{ResultSet, PreparedStatement}
 import java.util.{Objects, Date}
-import kr.debop4s.core.logging.Logger
 import org.hibernate.`type`.StandardBasicTypes
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 
 /**
  * Joda-Time 라이브러리의 [[org.joda.time.DateTime]] 수형을 표현하는 UserType 입니다.
@@ -18,7 +18,7 @@ import org.joda.time.DateTime
  */
 class JodaDateTimeUserType extends UserType {
 
-    private lazy val log = Logger[JodaDateTimeUserType]
+    implicit lazy val log = LoggerFactory.getLogger(classOf[JodaDateTimeUserType])
 
     private def asDateTime(value: Any): DateTime = {
         log.trace(s"DB 값을 DateTime으로 변환합니다. value=[$value]")

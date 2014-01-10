@@ -1,7 +1,7 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tools.Converts
@@ -11,7 +11,7 @@ import org.joda.time.DateTime
  */
 object Converts {
 
-    lazy val log = Logger(this.getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     def toInt(x: Any): Int = {
         try {

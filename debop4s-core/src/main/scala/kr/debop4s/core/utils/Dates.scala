@@ -1,17 +1,17 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
 import org.joda.time.{DateTimeConstants, DateTime}
+import org.slf4j.LoggerFactory
 
 /**
- * 날짜 관련 헬퍼 클래스. (더 만은 메소드는 [[Times]] 클래스를 사용하세요)
+ * 날짜 관련 헬퍼 클래스. (더 만은 메소드는 [[kr.debop4s.timeperiod.Times]] 클래스를 사용하세요)
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 12. 오전 11:30
  */
 object Dates {
 
-    lazy val log = Logger(this.getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     def startOfDay(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 

@@ -1,9 +1,9 @@
 package kr.debop4s.core.stests.io
 
 import kr.debop4s.core.io.BinarySerializer
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.stests.io.model.{User, Company}
 import org.junit.Test
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.io.BinarySerializerTest
@@ -13,7 +13,7 @@ import org.junit.Test
  */
 class BinarySerializerTest {
 
-    lazy val log = Logger[BinarySerializerTest]
+    implicit lazy val log = LoggerFactory.getLogger(classOf[BinarySerializerTest])
 
     @Test
     def serializeAndDeserialize() {

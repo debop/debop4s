@@ -1,9 +1,9 @@
 package kr.debop4s.core.stests.testing
 
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.testing.Testing
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.testing.TestingTest
@@ -12,15 +12,15 @@ import org.scalatest.junit.AssertionsForJUnit
  */
 class TestingTest extends AssertionsForJUnit {
 
-    val log = Logger[TestingTest]
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     val range = Range(0, 9)
 
     @Test
     def run() {
         Testing.run(100) {
-                             range.foreach(x => Hero.findRoot(x))
-                         }
+            range.foreach(x => Hero.findRoot(x))
+        }
     }
 
     @Test

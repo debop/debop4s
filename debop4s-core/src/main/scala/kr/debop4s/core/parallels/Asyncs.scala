@@ -1,7 +1,7 @@
 package kr.debop4s.core.parallels
 
 import java.util.concurrent.Callable
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.concurrent
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,8 +15,7 @@ import scala.concurrent.duration._
  */
 object Asyncs {
 
-    lazy val log = Logger(this.getClass)
-
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     val EMPTY_RUNNABLE = new Runnable {
         def run() {
@@ -27,55 +26,55 @@ object Asyncs {
     def newTask[T](callable: Callable[T]): Future[T] = future {callable.call()}
 
     def newTask[T](function: => T): Future[T] = future {
-                                                           function
-                                                       }
+        function
+    }
 
     def newTask[T](runnable: Runnable, result: T): Future[T] = future {
-                                                                          runnable.run()
-                                                                          result
-                                                                      }
+        runnable.run()
+        result
+    }
 
     def newTask(runnable: Runnable) = future {runnable.run()}
 
     def newTaskBlock[T](result: T)(block: => Unit): Future[T] = future {
-                                                                           block
-                                                                           result
-                                                                       }
+        block
+        result
+    }
 
     def newTaskBlock(block: => Unit): Future[Unit] = future {
-                                                                block
-                                                            }
+        block
+    }
 
     def startNew[V](callable: Callable[V]): concurrent.Future[V] = future {
-                                                                              callable.call()
-                                                                          }
+        callable.call()
+    }
 
     def startNew[V](block: => V): concurrent.Future[V] = future {
-                                                                    block
-                                                                }
+        block
+    }
 
     def startNew[V](runnable: Runnable, result: V): Future[V] = future {
-                                                                           runnable.run()
-                                                                           result
-                                                                       }
+        runnable.run()
+        result
+    }
 
     def startNewBlock[V](result: V)(block: => Unit): Future[V] = future {
-                                                                            block
-                                                                            result
-                                                                        }
+        block
+        result
+    }
 
     def startNewBlock(block: => Unit): Future[Void] = startNewBlock[Void](null)(block)
 
 
     def continueTask[T, V](prevTask: Future[T], result: V)(block: T => Unit): Future[V] = future {
-                                                                                                     block(Await
-                                                                                                               .result(prevTask, 60 seconds))
-                                                                                                     result
-                                                                                                 }
+        block(Await
+            .result(prevTask, 60 seconds))
+        result
+    }
 
     def continueTask[T, V](prevTask: Future[T])(block: T => V): Future[V] = future {
-                                                                                       block(Await.result(prevTask, 60 seconds))
-                                                                                   }
+        block(Await.result(prevTask, 60 seconds))
+    }
 
     def getTaskHasResult[T](result: T): Future[T] = newTask(EMPTY_RUNNABLE, result)
 
@@ -85,8 +84,8 @@ object Asyncs {
         assert(function != null)
 
         elements.map(x => future {
-                                     function(x)
-                                 }).toList
+            function(x)
+        }).toList
     }
 
     def invokeAll[T](tasks: Seq[_ <: Callable[T]]) = {

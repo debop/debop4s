@@ -2,6 +2,7 @@ package kr.debop4s.core.compress
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.util.zip.{InflaterInputStream, DeflaterOutputStream}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.compress.DeflateCompressor
@@ -9,6 +10,8 @@ import java.util.zip.{InflaterInputStream, DeflaterOutputStream}
  * @since  2013. 12. 9. 오후 10:56
  */
 class DeflateCompressor extends Compressor {
+
+    override implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
 

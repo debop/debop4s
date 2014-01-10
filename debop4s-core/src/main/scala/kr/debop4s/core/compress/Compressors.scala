@@ -3,9 +3,9 @@ package kr.debop4s.core.compress
 import java.io.{OutputStream, InputStream}
 import kr.debop4s.core.BinaryStringFormat
 import kr.debop4s.core.BinaryStringFormat.BinaryStringFormat
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Asyncs
 import kr.debop4s.core.utils.{Streams, Strings}
+import org.slf4j.LoggerFactory
 import scala.concurrent.Future
 
 /**
@@ -15,7 +15,7 @@ import scala.concurrent.Future
  */
 object Compressors {
 
-    val log = Logger(getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     def compressString(compressor: Compressor,
                        plainText: String,
@@ -31,8 +31,8 @@ object Compressors {
                             plainText: String,
                             stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): Future[String] = {
         Asyncs.startNew {
-                            compressString(compressor, plainText, stringFormat)
-                        }
+            compressString(compressor, plainText, stringFormat)
+        }
     }
 
     def decompressString(compressor: Compressor,
@@ -49,8 +49,8 @@ object Compressors {
                               compressedText: String,
                               stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): Future[String] = {
         Asyncs.startNew {
-                            decompressString(compressor, compressedText, stringFormat)
-                        }
+            decompressString(compressor, compressedText, stringFormat)
+        }
     }
 
     def compressStream(compressor: Compressor, inputStream: InputStream): OutputStream = {
@@ -60,8 +60,8 @@ object Compressors {
 
     def compressStreamAsync(compressor: Compressor, inputStream: InputStream): Future[OutputStream] = {
         Asyncs.startNew {
-                            compressStream(compressor, inputStream)
-                        }
+            compressStream(compressor, inputStream)
+        }
     }
 
     def decompressStream(compressor: Compressor, inputStream: InputStream): OutputStream = {
@@ -71,7 +71,7 @@ object Compressors {
 
     def decompressStreamAsync(compressor: Compressor, inputStream: InputStream): Future[OutputStream] = {
         Asyncs.startNew {
-                            decompressStream(compressor, inputStream)
-                        }
+            decompressStream(compressor, inputStream)
+        }
     }
 }

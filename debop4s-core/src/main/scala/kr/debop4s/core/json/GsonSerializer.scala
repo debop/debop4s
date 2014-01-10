@@ -1,7 +1,7 @@
 package kr.debop4s.core.json
 
 import com.google.gson.Gson
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.json.GsonSerializer
@@ -11,6 +11,8 @@ import kr.debop4s.core.logging.Logger
  */
 class GsonSerializer(val gson: Gson) extends JsonSerializer {
 
+    implicit lazy val log = LoggerFactory.getLogger(classOf[GsonSerializer])
+
     def this() {
         this(new Gson())
     }
@@ -19,8 +21,5 @@ class GsonSerializer(val gson: Gson) extends JsonSerializer {
 
     override def deserializeFromText[T <: AnyRef](text: String, clazz: Class[T]): T =
         gson.fromJson[T](text, clazz)
-
-    lazy val log = Logger[GsonSerializer]
-
 }
 

@@ -1,8 +1,8 @@
 package kr.debop4s.core.io
 
-import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
-import kr.debop4s.core.logging.Logger
+import java.io._
 import kr.debop4s.core.utils.Arrays
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.io.BinarySerializer
@@ -12,7 +12,7 @@ import kr.debop4s.core.utils.Arrays
  */
 class BinarySerializer extends Serializer {
 
-    val log = Logger[BinarySerializer]
+    implicit lazy val log = LoggerFactory.getLogger(classOf[BinarySerializer])
 
     /**
      * 객체를 직렬화 합니다.

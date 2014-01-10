@@ -1,7 +1,7 @@
 package kr.debop4s.core.testing
 
 import java.util.concurrent.Callable
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.testing.Testing
@@ -11,13 +11,13 @@ import kr.debop4s.core.logging.Logger
  */
 object Testing {
 
-    lazy val log = Logger(this.getClass)
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     def run(count: Int, runnable: Runnable) {
         log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
         try {
             Range(0, count).par.foreach(x => {
-                runnable.run();
+                runnable.run()
                 log.trace(s"작업을 수행했습니다. [$x]")
             })
         } catch {

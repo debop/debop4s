@@ -2,7 +2,7 @@ package kr.debop4s.core.parallels
 
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicLong
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * 실행 시각 제한이 있는 메소드를 수행하도록 해준다.
@@ -12,7 +12,7 @@ import kr.debop4s.core.logging.Logger
  */
 class TimedExecutor(val timeout: Long, val checkMillis: Option[Long] = None) {
 
-    val log = Logger[TimedExecutor]
+    implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     def this(timeout: Long) {
         this(timeout, None)
