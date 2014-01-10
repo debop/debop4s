@@ -8,7 +8,9 @@ import kr.debop4s.core.utils.ToStringHelper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
+import org.scalatest.junit.JUnitSuite;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -16,7 +18,12 @@ import java.util.concurrent.Callable;
 import static org.fest.assertions.Assertions.assertThat;
 
 @Slf4j
-public class LocalTest {
+public class LocalTest extends JUnitSuite {
+
+    @Before
+    public void before() {
+        Local.clear();
+    }
 
     @Test
     public void multiThread() throws Exception {

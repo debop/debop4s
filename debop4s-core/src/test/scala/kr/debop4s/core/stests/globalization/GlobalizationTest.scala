@@ -34,7 +34,7 @@ class GlobalizationTest extends FunSuite with Matchers {
         require(messageSource != null, "messageSource should not be null")
 
         val intro = messageSource.getMessage("intro", null, Locale.getDefault)
-        assert(intro === "안녕하세요.")
+        intro shouldEqual "안녕하세요."
         log.debug(s"intro=[$intro]")
 
         val english = messageSource.getMessage("intro", null, Locale.US)
