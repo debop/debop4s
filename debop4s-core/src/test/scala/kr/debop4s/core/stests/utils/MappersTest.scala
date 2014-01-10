@@ -1,8 +1,7 @@
 package kr.debop4s.core.stests.utils
 
 import kr.debop4s.core.utils.Mappers
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
@@ -12,17 +11,15 @@ import scala.util.{Failure, Success}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오전 10:24
  */
-class MappersTest extends AssertionsForJUnit {
+class MappersTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    @Test
-    def map() {
+    test("map") {
         val a = new A(100)
         val b = Mappers.map[B](a)
         assert(b.x == a.x)
     }
 
-    @Test
-    def mapList() {
+    test("map list") {
         val as = Range(0, 100).map(x => new A(x)) // for (x <- 0 until 100) yield new A(x)
         val bs = Mappers.mapList[B](as)
         assert(bs.size == as.size)
@@ -34,8 +31,7 @@ class MappersTest extends AssertionsForJUnit {
 
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    @Test
-    def mapArray() {
+    test("map array") {
         val bs = Mappers.mapArray[B](new A(0), new A(1), new A(2))
         assert(bs.size == 3)
 

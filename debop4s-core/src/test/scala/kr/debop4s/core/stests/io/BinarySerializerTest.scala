@@ -2,7 +2,7 @@ package kr.debop4s.core.stests.io
 
 import kr.debop4s.core.io.BinarySerializer
 import kr.debop4s.core.stests.io.model.{User, Company}
-import org.junit.Test
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 
 /**
@@ -11,12 +11,11 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 8:06
  */
-class BinarySerializerTest {
+class BinarySerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
     implicit lazy val log = LoggerFactory.getLogger(classOf[BinarySerializerTest])
 
-    @Test
-    def serializeAndDeserialize() {
+    test("serialize/deserialize") {
         val ser = new BinarySerializer()
         val yearWeek = new YearWeek(2000, 1)
         val copied = ser.deserialize[YearWeek](ser.serialize(yearWeek), classOf[YearWeek])
@@ -25,8 +24,7 @@ class BinarySerializerTest {
         assert(copied.equals(yearWeek))
     }
 
-    @Test
-    def deepReferenceSerialize() {
+    test("deep serialize reference type") {
         val serializer: BinarySerializer = new BinarySerializer
         val company: Company = new Company
         company.code = "HCT"

@@ -1,8 +1,7 @@
 package kr.debop4s.core.stests.utils
 
 import kr.debop4s.core.utils.Arrays
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 import scala.collection.mutable.ArrayBuffer
 
@@ -11,15 +10,14 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오전 12:04
  */
-class ArraysTest extends AssertionsForJUnit {
+class ArraysTest extends FunSuite with Matchers with BeforeAndAfter {
 
     implicit lazy val log = LoggerFactory.getLogger(getClass)
 
-    @Test
-    def iterableToArray() {
+    test("iterable to array") {
         val buffer = new ArrayBuffer[Int](100)
         Range(0, 100).foreach(i => buffer += i)
-        val array = Arrays.asArray(buffer)
+        val array = Arrays.asArray[Int](buffer)
 
         assert(array.length == buffer.length)
         assert(array(0) == 0)

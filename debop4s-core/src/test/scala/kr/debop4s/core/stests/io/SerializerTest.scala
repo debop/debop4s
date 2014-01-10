@@ -4,8 +4,7 @@ import kr.debop4s.core.compress.{Compressor, DeflateCompressor, GZipCompressor}
 import kr.debop4s.core.cryptography.{TripleDESEncryptor, DESEncryptor, RC2Encryptor, SymmetricEncryptor}
 import kr.debop4s.core.io.{EncryptableSerializer, CompressableSerializer, BinarySerializer, Serializer}
 import kr.debop4s.core.stests.io.model.{User, Company}
-import org.junit.{Test, Before}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 
 /**
@@ -14,14 +13,13 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 8:52
  */
-class SerializerTest extends AssertionsForJUnit {
+class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
     implicit lazy val log = LoggerFactory.getLogger(classOf[SerializerTest])
 
     var company: Company = _
 
-    @Before
-    def before() {
+    before {
         company = new Company()
         company.code = "HCT"
         company.name = "HealthConnect"
@@ -38,8 +36,7 @@ class SerializerTest extends AssertionsForJUnit {
     }
 
 
-    @Test
-    def compressableSerialize() {
+    test("comparessable serialize") {
         val compressors = Array[Compressor](new GZipCompressor(), new DeflateCompressor())
         val serializers = Array[Serializer](new BinarySerializer())
 
@@ -58,8 +55,7 @@ class SerializerTest extends AssertionsForJUnit {
         })
     }
 
-    @Test
-    def encryptableSerialize() {
+    test("encryptable serialize") {
         val encryptors = Array[SymmetricEncryptor](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
         val serializers = Array[Serializer](new BinarySerializer())
 

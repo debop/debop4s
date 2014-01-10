@@ -1,8 +1,7 @@
 package kr.debop4s.core.stests.testing
 
 import kr.debop4s.core.testing.Testing
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 
 /**
@@ -10,28 +9,25 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 3:33
  */
-class TestingTest extends AssertionsForJUnit {
+class TestingTest extends FunSuite with Matchers with BeforeAndAfter {
 
     implicit lazy val log = LoggerFactory.getLogger(getClass)
 
     val range = Range(0, 9)
 
-    @Test
-    def run() {
+    test("run") {
         Testing.run(100) {
             range.foreach(x => Hero.findRoot(x))
         }
     }
 
-    @Test
-    def runAction() {
+    test("runAction") {
         Testing.runAction(100)(x => {
             range.foreach(_ => Hero.findRoot(x))
         })
     }
 
-    @Test
-    def runFunc() {
+    test("runFunc") {
         Testing.runFunc(100)(x => {
             range.map(_ => Hero.findRoot(x))
         })

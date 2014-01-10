@@ -2,7 +2,7 @@ package kr.debop4s.timeperiod.tests
 
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 
 /**
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 2. 오전 11:12
  */
-abstract class AbstractTimePeriodTest extends AssertionsForJUnit {
+abstract class AbstractTimePeriodTest extends FunSuite with Matchers with BeforeAndAfter {
 
     implicit lazy val log = LoggerFactory.getLogger(getClass)
 

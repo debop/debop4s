@@ -25,8 +25,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
 
     var testData = new TimeRangePeriodRelationTestData(start, end, offset)
 
-    @Test
-    def anytimeTest() {
+    test("TimeRange anytime") {
         assert(TimeRange.Anytime.start == MinPeriodTime)
         assert(TimeRange.Anytime.end == MaxPeriodTime)
         assert(TimeRange.Anytime.isAnytime)
@@ -36,7 +35,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!TimeRange.Anytime.hasEnd)
         assert(!TimeRange.Anytime.isMoment)
     }
-    @Test def defaultContructorTest() {
+
+    test("default constructor") {
         val range = TimeRange()
         assert(range != TimeRange.Anytime)
         assert(Times.getRelation(range, TimeRange.Anytime) == PeriodRelation.ExactMatch)
@@ -47,7 +47,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!range.hasEnd)
         assert(!range.isMoment)
     }
-    @Test def momentTest() {
+
+    test("create with moment") {
         val moment = Times.now
         val range = TimeRange(moment)
         assert(range.hasStart)
@@ -57,26 +58,28 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.isMoment)
         assert(range.hasPeriod)
     }
-    @Test def momentByPeriod() {
+    test("create with moment is moment") {
         val range = TimeRange(Times.now, Duration.ZERO)
         assert(range.isMoment)
     }
-    @Test def nonMomentTest() {
+    test("create with some duration is not moment") {
         val range = TimeRange(Times.now, MinPositiveDuration)
         assert(!range.isMoment)
         assert(range.getDuration == MinPositiveDuration)
     }
-    @Test def hasStartTest() {
+
+    test("create with empty end") {
         val range = TimeRange(Times.now, null.asInstanceOf[DateTime])
         assert(range.hasStart)
         assert(!range.hasEnd)
     }
-    @Test def hasEndTest() {
+    test("create with some end") {
         val range = TimeRange(null, Times.now)
         assert(!range.hasStart)
         assert(range.hasEnd)
     }
-    @Test def startEndTest() {
+
+    test("create with start and end") {
         val range = TimeRange(start, end)
         assert(range.start == start)
         assert(range.end == end)
@@ -86,7 +89,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!range.isMoment)
         assert(!range.isReadonly)
     }
-    @Test def startEndSwapTest() {
+
+    test("create with end and start") {
         val range = TimeRange(end, start)
         assert(range.start == start)
         assert(range.end == end)
@@ -96,7 +100,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!range.isMoment)
         assert(!range.isReadonly)
     }
-    @Test def startAndDurationTest() {
+
+    test("create with start and duration") {
         val range = TimeRange(start, duration)
         assert(range.start == start)
         assert(range.end == end)
@@ -106,7 +111,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!range.isMoment)
         assert(!range.isReadonly)
     }
-    @Test def startAndNegateDurationTest() {
+
+    test("create with start and negate duration") {
         val range = TimeRange(start, Durations.negate(duration))
         assert(range.start == start.minus(duration))
         assert(range.end == end.minus(duration))
@@ -116,7 +122,9 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!range.isMoment)
         assert(!range.isReadonly)
     }
-    @Test def copyConstructorTest() {
+
+
+    test("create with copy constructor") {
         val source = TimeRange(start, start.plusHours(1), readonly = true)
         val copy = TimeRange(source)
 
@@ -128,7 +136,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!copy.isAnytime)
         assert(!copy.isMoment)
     }
-    @Test def startTest() {
+
+    test("set start") {
         val range = TimeRange(start, start + 1.hour)
         assert(range.start == start)
 
@@ -136,36 +145,43 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         range.start = chanedStart
         assert(range.start == chanedStart)
     }
-    @Test(expected = classOf[AssertionError])
-    def startReadonlyTest() {
+
+    test("readonly range with set start") {
         val range = TimeRange(Times.now, 1.hour, readonly = true)
-        range.start = range.start.minusHours(2)
+        intercept[AssertionError] {
+            range.start = range.start.minusHours(2)
+        }
     }
-    @Test(expected = classOf[AssertionError])
-    def startOutOfRangeTest() {
+    test("start has out of range") {
         val range = TimeRange(Times.now, 1.hour, readonly = false)
-        range.start = range.start.plusHours(2)
+        intercept[AssertionError] {
+            range.start = range.start.plusHours(2)
+        }
     }
 
-    @Test def endTest() {
+    test("set end") {
         val range = TimeRange(end.minusHours(1), end)
         assert(range.end == end)
 
         val changedEnd = end + 1.hour
         range.end = changedEnd
-        assert(range.end == changedEnd)
+        range.end should be eq changedEnd
     }
-    @Test(expected = classOf[AssertionError])
-    def endReadonlyTest() {
+
+    test("readonly instance set end") {
         val range = TimeRange(Times.now, 1.hour, readonly = true)
-        range.end = range.end.plusHours(1)
+        intercept[AssertionError] {
+            range.end = range.end.plusHours(1)
+        }
     }
-    @Test(expected = classOf[AssertionError])
-    def endOutOfRangeTest() {
+    test("end has out of range") {
         val range = TimeRange(Times.now, 1.hour, readonly = false)
-        range.end = range.end.minusHours(2)
+        intercept[AssertionError] {
+            range.end = range.end.minusHours(2)
+        }
     }
-    @Test def hasInsideDateTimeTest() {
+
+    test("hasInside with DateTime") {
         val range = TimeRange(start, end)
         assert(range.end == end)
         assert(!range.hasInside(start.minus(duration)))
@@ -175,7 +191,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.hasInside(end))
         assert(!range.hasInside(end.plus(duration)))
     }
-    @Test def hasInsidePeriodTest {
+
+    test("hasPeriod with TimeRange") {
         val range = TimeRange(start, end)
         assert(range.end == end)
 
@@ -201,7 +218,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.hasInside(inside2))
         assert(range.hasInside(inside3))
     }
-    @Test def copyTest {
+
+    test("copy TimeRange") {
         val readonlyTimeRange = TimeRange(start, end)
         assert(readonlyTimeRange.copy() == readonlyTimeRange)
         assert(readonlyTimeRange.copy(Duration.ZERO) == readonlyTimeRange)
@@ -228,7 +246,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(backward.end == end.plus(backwardOffset))
         assert(backward.getDuration == duration)
     }
-    @Test def moveTest {
+
+    test("move TimeRange") {
         val moveZero = TimeRange(start, end)
         moveZero.move(Durations.Zero)
         assert(moveZero.start == start)
@@ -250,7 +269,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(backward.end == end.plus(backwardOffset))
         assert(backward.getDuration == duration)
     }
-    @Test def expandStartToTest() {
+
+    test("expandStartTo") {
         val range = TimeRange(start, end)
         range.expandStartTo(start + 1.millis)
         assert(range.start == start)
@@ -258,7 +278,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         range.expandStartTo(start - 1.millis)
         assert(range.start == start - 1.millis)
     }
-    @Test def expandEndToTest() {
+
+    test("expandEndTo") {
         val range = TimeRange(start, end)
         range.expandEndTo(end - 1.millis)
         assert(range.end == end)
@@ -266,7 +287,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         range.expandEndTo(end + 1.millis)
         assert(range.end == end + 1.millis)
     }
-    @Test def expandToDateTimeTest() {
+
+    test("expand with DateTime") {
         val range = TimeRange(start, end)
         range.expandTo(start + 1.millis)
         assert(range.start == start)
@@ -281,7 +303,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.end == end.plusMillis(1))
     }
 
-    @Test def expandToPeriodTest() {
+    test("expand with Period") {
         val range = TimeRange(start, end)
         range.expandTo(TimeRange(start + 1.millis, end - 1.millis))
         assert(range.start == start)
@@ -303,7 +325,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.start == changedStart)
         assert(range.end == changedEnd)
     }
-    @Test def shrinkStartToTest() {
+
+    test("shrinkStartTo") {
         val range = TimeRange(start, end)
 
         range.shrinkStartTo(start - 1.millis)
@@ -312,7 +335,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         range.shrinkStartTo(start + 1.millis)
         assert(range.start == start + 1.millis)
     }
-    @Test def shrinkEndToTest() {
+
+    test("shrinkEndTo") {
         val range = TimeRange(start, end)
 
         range.shrinkEndTo(end + 1.millis)
@@ -338,7 +362,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         range.shrinkTo(end.minusMillis(1))
         assert(range.end == end.minusMillis(1))
     }
-    @Test def shrinkToPeriodTest() {
+
+    test("shrinkToPeriod") {
         val range = TimeRange(start, end)
         range.shrinkTo(TimeRange(start.minusMillis(1), end.plusMillis(1)))
         assert(range.start == start)
@@ -360,7 +385,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.start == changedStart)
         assert(range.end == changedEnd)
     }
-    @Test def isSamePeriodTest() {
+
+    test("is same period") {
         val range1 = TimeRange(start, end)
         val range2 = TimeRange(start, end)
 
@@ -382,7 +408,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range1.isSamePeriod(range2))
         assert(range2.isSamePeriod(range1))
     }
-    @Test def hasInsideTest() {
+
+    test("hasInside with Period") {
         assert(!testData.reference.hasInside(testData.before))
         assert(!testData.reference.hasInside(testData.startTouching))
         assert(!testData.reference.hasInside(testData.startInside))
@@ -396,7 +423,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!testData.reference.hasInside(testData.endTouching))
         assert(!testData.reference.hasInside(testData.after))
     }
-    @Test def intersectsWithTest {
+    test("intersectsWith period") {
         assert(!testData.reference.intersectsWith(testData.before))
         assert(testData.reference.intersectsWith(testData.startTouching))
         assert(testData.reference.intersectsWith(testData.startInside))
@@ -410,7 +437,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(testData.reference.intersectsWith(testData.endTouching))
         assert(!testData.reference.intersectsWith(testData.after))
     }
-    @Test def overlapsWithTest {
+    test("overlapsWith period") {
         assert(!testData.reference.overlapsWith(testData.before))
         assert(!testData.reference.overlapsWith(testData.startTouching))
         assert(testData.reference.overlapsWith(testData.startInside))
@@ -424,7 +451,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(!testData.reference.overlapsWith(testData.endTouching))
         assert(!testData.reference.overlapsWith(testData.after))
     }
-    @Test def intersectsWithDateTimeTest {
+    test("intersectsWith DateTime") {
         val range = TimeRange(start, end)
         assert(!range.intersectsWith(TimeRange(start.minusHours(2), start.minusHours(1))))
         assert(range.intersectsWith(TimeRange(start.minusHours(1), start)))
@@ -437,7 +464,9 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.intersectsWith(TimeRange(start.minusMillis(1), start.plusMillis(1))))
         assert(range.intersectsWith(TimeRange(end.minusMillis(1), end.plusMillis(1))))
     }
-    @Test def getIntersectionTest() {
+
+    test("getIntersection with Period") {
+
         val range = TimeRange(start, end)
 
         // before
@@ -456,7 +485,8 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(range.getIntersection(TimeRange(start.plusMillis(1), end.minusMillis(1))) == TimeRange(start.plusMillis(1), end
             .minusMillis(1)))
     }
-    @Test def getRelationTest {
+
+    test("getRelation with Period") {
         assert(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
         assert(testData.reference.getRelation(testData.startTouching) == PeriodRelation.StartTouching)
         assert(testData.reference.getRelation(testData.startInside) == PeriodRelation.StartInside)
@@ -592,29 +622,29 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         assert(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
     }
 
-    @Test def resetTest() {
+    test("reset Period") {
         val range = TimeRange(start, end)
         assert(range.start == start)
         assert(range.hasStart)
         assert(range.end == end)
         assert(range.hasEnd)
-        range.reset
+        range reset()
         assert(range.start == MinPeriodTime)
         assert(!range.hasStart)
         assert(range.end == MaxPeriodTime)
         assert(!range.hasEnd)
     }
-    @Test def equalsTest() {
+
+    test("equals TimeRange") {
         val range1 = TimeRange(start, end)
         val range2 = TimeRange(start, end)
         val range3 = TimeRange(start - 1.millis, end + 1.millis)
         val range4 = TimeRange(start, end, readonly = true)
 
-        assert(range1 == range2)
-        assert(range1 != range3)
-        assert(range2 == range1)
-        assert(range2 != range3)
-        assert(range1 != range4)
+        assert(range1 === range2)
+        assert(range1 !== range3)
+        assert(range2 === range1)
+        assert(range2 !== range3)
+        assert(range1 !== range4)
     }
-
 }

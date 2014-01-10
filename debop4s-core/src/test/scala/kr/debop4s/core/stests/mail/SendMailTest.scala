@@ -1,17 +1,18 @@
 package kr.debop4s.core.stests.mail
 
 import javax.mail.internet.{MimeBodyPart, MimeMultipart, InternetAddress, MimeMessage}
-import javax.mail.{MessagingException, Transport, Message, Session}
-import org.junit.Test
+import javax.mail.{Transport, Message, Session}
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 
 /**
- * kr.debop4s.core.stests.mail.SendMailTest 
+ * 메일 발송 테스트를 위해서는 OSX에서는 sendemail 을 설치하세요.
+ * SMTP 시작 : $sudo postfix start
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 10. 오후 4:20
  */
-class SendMailTest {
+class SendMailTest extends FunSuite with Matchers with BeforeAndAfter {
 
     implicit lazy val log = LoggerFactory.getLogger(classOf[SendMailTest])
 
@@ -21,53 +22,40 @@ class SendMailTest {
     val properties = System.getProperties
     properties.setProperty("mail.smtp.host", host)
 
-    @Test
-    def sendTextMailTest() {
+    test("send plain text mail") {
 
         val session = Session.getDefaultInstance(properties)
 
-        try {
-            val message = new MimeMessage(session)
-            message.setFrom(new InternetAddress(from))
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to))
+        val message = new MimeMessage(session)
+        message.setFrom(new InternetAddress(from))
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(to))
 
-            message.setSubject("This is the Subject Line!")
-            message.setText("This is actual message\r\n This is second line.")
+        message.setSubject("This is the Subject Line!")
+        message.setText("This is actual message\r\n This is second line.")
 
-            // send message
-            Transport.send(message)
-            System.out.println("Sent message successfully...")
-        } catch {
-            case mex: MessagingException => System.err.print(mex)
-            case e: Exception => System.err.print(e)
-        }
+        // send message
+        Transport.send(message)
+        log.debug("Sent message successfully...")
     }
 
-    @Test
-    def sendHtmlMailTest() {
+    test("send html mail") {
         val session = Session.getDefaultInstance(properties)
 
-        try {
-            val message = new MimeMessage(session)
-            message.setFrom(new InternetAddress(from))
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to))
+        val message = new MimeMessage(session)
+        message.setFrom(new InternetAddress(from))
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(to))
 
-            message.setSubject("메일 제목입니다.")
-            val body = new MimeBodyPart()
+        message.setSubject("메일 제목입니다.")
+        val body = new MimeBodyPart()
 
-            body.setText("<h1>메일 본문 제목입니다.</h1>\n<hr>\n<div>메일 본문이구요.</div>", "UTF-8", "html")
+        body.setText("<h1>메일 본문 제목입니다.</h1>\n<hr>\n<div>메일 본문이구요.</div>", "UTF-8", "html")
 
-            val multipart = new MimeMultipart()
-            multipart.addBodyPart(body)
-            message.setContent(multipart)
+        val multipart = new MimeMultipart()
+        multipart.addBodyPart(body)
+        message.setContent(multipart)
 
-
-            // send message
-            Transport.send(message)
-            System.out.println("Sent message successfully...")
-        } catch {
-            case mex: MessagingException => System.err.print(mex)
-            case e: Exception => System.err.print(e)
-        }
+        // send message
+        Transport.send(message)
+        log.debug("Sent message successfully...")
     }
 }

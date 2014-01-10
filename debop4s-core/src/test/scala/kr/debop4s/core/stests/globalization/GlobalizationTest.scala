@@ -1,14 +1,12 @@
 package kr.debop4s.core.globalization
 
 import java.util.{ResourceBundle, Locale}
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.{MessageSource, ApplicationContext}
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.support.GenericXmlContextLoader
+import org.springframework.test.context.{TestContextManager, ContextConfiguration}
 
 /**
  * GlobalizationTest
@@ -16,25 +14,25 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 5:26
  */
-@RunWith(classOf[SpringJUnit4ClassRunner])
 //
 // NOTE: classpath에 있는 messages 를 xml configuration 에서 똑같이 정의하면 제대로 읽어드리는데,
 // NOTE: java config에서 작업하면 파일을 찾지 못한다!!!
 //
-@ContextConfiguration(locations = Array("classpath:globalization.xml"))
-// @ContextConfiguration(classes = Array(classOf[GlobalizationConfiguration]))
-class GlobalizationTest extends AssertionsForJUnit {
+@ContextConfiguration(locations = Array("classpath:globalization.xml"), loader = classOf[GenericXmlContextLoader])
+// @ContextConfiguration(classes = Array(classOf[GlobalizationConfiguration]), loader = classOf[AnnotationConfigContextLoader])
+class GlobalizationTest extends FunSuite with Matchers {
 
     implicit lazy val log = LoggerFactory.getLogger(classOf[GlobalizationTest])
 
-    @Autowired
-    var applicationContext: ApplicationContext = _
+    @Autowired val applicationContext: ApplicationContext = null
+    @Autowired val messageSource: MessageSource = null
 
-    @Autowired
-    var messageSource: MessageSource = _
+    // Spring Autowired 를 수행합니다.
+    new TestContextManager(this.getClass).prepareTestInstance(this)
 
-    @Test
-    def loadLocalMessages() {
+    test("load localized messages") {
+        require(messageSource != null, "messageSource should not be null")
+
         val intro = messageSource.getMessage("intro", null, Locale.getDefault)
         assert(intro === "안녕하세요.")
         log.debug(s"intro=[$intro]")
@@ -48,8 +46,7 @@ class GlobalizationTest extends AssertionsForJUnit {
         log.debug(s"korean=[$korean]")
     }
 
-    @Test
-    def resourceBundleTest() {
+    test("load resource bundle") {
         val bundle = ResourceBundle.getBundle("messages")
         val deftext = bundle.getString("intro")
         assert(deftext === "안녕하세요.")

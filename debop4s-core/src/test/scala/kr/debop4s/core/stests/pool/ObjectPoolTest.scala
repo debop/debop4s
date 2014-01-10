@@ -2,8 +2,7 @@ package kr.debop4s.core.stests.pool
 
 import java.util.Properties
 import kr.debop4s.core.parallels.Parallels
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 
 /**
@@ -12,7 +11,7 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 11. 오후 4:53
  */
-class ObjectPoolTest extends AssertionsForJUnit {
+class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
 
     implicit lazy val log = LoggerFactory.getLogger(classOf[ObjectPoolTest])
 
@@ -25,8 +24,7 @@ class ObjectPoolTest extends AssertionsForJUnit {
         props
     }
 
-    @Test
-    def returnObject() {
+    test("return object") {
         val props = getProperties()
         var pool = new ObjectPool(new ObjectPoolConfig(), props)
         try {
@@ -52,8 +50,7 @@ class ObjectPoolTest extends AssertionsForJUnit {
         }
     }
 
-    @Test
-    def multi() {
+    test("multithread test") {
         val props = getProperties()
         val name = props.getProperty("pool.name")
 

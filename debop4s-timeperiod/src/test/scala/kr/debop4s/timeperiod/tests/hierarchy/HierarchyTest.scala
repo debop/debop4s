@@ -1,9 +1,9 @@
 package kr.debop4s.timeperiod.tests.hierarchy
 
+import kr.debop4s.time._
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * kr.debop4s.timeperiod.tests.hierarchy.HierarchyTest
@@ -11,16 +11,15 @@ import org.scalatest.junit.AssertionsForJUnit
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 2. 오전 11:12
  */
-class HierarchyTest extends AssertionsForJUnit {
+class HierarchyTest extends FunSuite with Matchers {
 
-    @Test
-    def protectedValueAccessing() {
-
+    test("protected value accessing") {
         val range = new Range(Times.now, Times.now.plusDays(1), false)
         range.start = Times.today
-        assert(range.start != Times.now)
-        assert(range.start == Times.today)
-        assert(range.end.compareTo(range.start) > 0)
+
+        range.start should not eq Times.now
+        range.start should be eq Times.today
+        range.end should be > range.start
     }
 }
 

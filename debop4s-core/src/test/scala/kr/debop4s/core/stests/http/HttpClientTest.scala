@@ -18,7 +18,7 @@ import org.apache.http.util.EntityUtils
 import org.apache.http.{NameValuePair, HttpStatus, HttpResponse}
 import org.fest.assertions.Assertions._
 import org.junit.{Ignore, Test}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.junit.JUnitSuite
 import org.slf4j.LoggerFactory
 import scala.Predef.String
 import scala.collection.mutable.ArrayBuffer
@@ -29,7 +29,7 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 2:42
  */
-class HttpClientTest extends AssertionsForJUnit {
+class HttpClientTest extends JUnitSuite {
 
     implicit lazy val log = LoggerFactory.getLogger(getClass)
 
@@ -125,7 +125,7 @@ class HttpClientTest extends AssertionsForJUnit {
         val connectionManager: PoolingNHttpClientConnectionManager = new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor)
         val client = HttpAsyncClients.custom.setConnectionManager(connectionManager).build
         try {
-            client.start
+            client.start()
             Parallels.runAction(10) {
                 try {
                     val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁")

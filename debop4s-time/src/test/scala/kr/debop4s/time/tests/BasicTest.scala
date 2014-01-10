@@ -2,8 +2,7 @@ package kr.debop4s.time.tests
 
 import kr.debop4s.time._
 import org.joda.time.{Interval, DateTime}
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 
 /**
  * kr.debop4s.time.tests.BasicTest 
@@ -11,18 +10,16 @@ import org.scalatest.junit.AssertionsForJUnit
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 7. 오후 2:50
  */
-class BasicTest extends AssertionsForJUnit {
+class BasicTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    @Test
-    def dateTimeManupulation() {
+    test("DateTime manipulation") {
         val now = StaticDateTime.now
         assert(now == now)
 
         assert((now plusHours 1) isAfter now)
     }
 
-    @Test
-    def dateTimeSetter() {
+    test("DateTime setter") {
         val actual =
             DateTime.parse("2014-01-01T01:01:01.123+0900")
                 .withYear(2013)
@@ -36,8 +33,7 @@ class BasicTest extends AssertionsForJUnit {
         assert(actual === expected)
     }
 
-    @Test
-    def basicTest() {
+    test("basic test") {
         assert(TDateTime.nextMonth < TDateTime.now + 2.months)
 
         val x: Interval = TDateTime.now to TDateTime.tomorrow

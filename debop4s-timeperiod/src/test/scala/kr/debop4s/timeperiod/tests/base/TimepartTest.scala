@@ -5,7 +5,6 @@ import kr.debop4s.timeperiod.Timepart
 import kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import kr.debop4s.timeperiod.utils.{Durations, Times}
 import org.joda.time.{Duration, DateTime}
-import org.junit.Test
 import org.slf4j.LoggerFactory
 
 /**
@@ -18,8 +17,7 @@ class TimepartTest extends AbstractTimePeriodTest {
 
     override implicit lazy val log = LoggerFactory.getLogger(getClass)
 
-    @Test
-    def timeConstructorTest() {
+    test("timepart constructor") {
         val now: DateTime = Times.now
         val time: Timepart = Timepart(now)
 
@@ -33,8 +31,7 @@ class TimepartTest extends AbstractTimePeriodTest {
         assert(time.totalMillis == now.getMillisOfDay)
     }
 
-    @Test
-    def emptyDateTimeConstructor() {
+    test("zero millis") {
         val today: DateTime = Times.today
         val time: Timepart = Times.timepart(today)
 
@@ -50,8 +47,8 @@ class TimepartTest extends AbstractTimePeriodTest {
         assert(time.totalMillis === 0)
         assert(time.totalMillis == 0)
     }
-    @Test
-    def constructorTest() {
+
+    test("non zero millis") {
         val time: Timepart = Timepart(18, 23, 56, 344)
         log.debug(s"time=[$time]")
         assert(time.hour === 18)
@@ -59,8 +56,8 @@ class TimepartTest extends AbstractTimePeriodTest {
         assert(time.second === 56)
         assert(time.millis === 344)
     }
-    @Test
-    def emptyConstructorTest() {
+
+    test("create with empty parameter") {
         val time: Timepart = Timepart()
         log.debug(s"time=[$time]")
         assert(time.millis === 0)
@@ -74,8 +71,8 @@ class TimepartTest extends AbstractTimePeriodTest {
         assert(time.totalSeconds === 0)
         assert(time.totalMillis === 0)
     }
-    @Test
-    def durationTest() {
+
+    test("create with duration") {
         val test: Duration = Durations.hours(18, 23, 56, 344)
         val time: Timepart = Timepart(Some(test))
         log.debug(s"time=[$time]")
@@ -86,8 +83,8 @@ class TimepartTest extends AbstractTimePeriodTest {
 
         assert(time.totalMillis === test.getMillis)
     }
-    @Test
-    def getDateTimeTest() {
+
+    test("getDateTime") {
         val now: DateTime = Times.now
         val duration: Duration = Durations.hours(18, 23, 56, 344)
         val time: Timepart = Timepart(Some(duration))
@@ -95,8 +92,8 @@ class TimepartTest extends AbstractTimePeriodTest {
         log.debug(s"time=[$time]")
         assert(time.getDateTime(now) == now.withTimeAtStartOfDay() + duration)
     }
-    @Test
-    def getEmptyDateTimeTest() {
+
+    test("getDateTime with Empty Timepart") {
         val today: DateTime = Times.today
         val time: Timepart = Timepart()
         log.debug(s"time=[$time]")

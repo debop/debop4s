@@ -12,8 +12,7 @@ import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClien
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.util.EntityUtils
 import org.apache.http.{HttpException, HttpHeaders, HttpResponse, HttpStatus}
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 
 /**
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 2:42
  */
-class AsyncHttpClientTest extends AssertionsForJUnit {
+class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
 
     implicit lazy val log = LoggerFactory.getLogger(classOf[AsyncHttpClientTest])
 
@@ -35,8 +34,7 @@ class AsyncHttpClientTest extends AssertionsForJUnit {
             .setParameter("q", searchStr)
             .build()
 
-    @Test
-    def httpGetAsParallel() {
+    test("http get method") {
         val httpgets = (0 until TEST_COUNT).map(_ => new HttpGet(googleSearchURI("배성혁")))
         val httpResponses = HttpAsyncs.getAsParallel(httpgets: _*)
         httpResponses.foreach(response => {
@@ -45,8 +43,7 @@ class AsyncHttpClientTest extends AssertionsForJUnit {
         })
     }
 
-    @Test
-    def httpPostAsParallel() {
+    test("http post method") {
         val httpposts = (0 until TEST_COUNT).map(_ => new HttpPost(googleSearchURI("배성혁")))
         val httpResponses = HttpAsyncs.postAsParallel(httpposts: _*)
         httpResponses.foreach(response => {
@@ -56,8 +53,7 @@ class AsyncHttpClientTest extends AssertionsForJUnit {
         })
     }
 
-    @Test
-    def sslTest() {
+    test("ssl test") {
         val uri = new URIBuilder().setScheme("https").setHost("issues.apache.org").setPort(443).build()
         val client = HttpAsyncClients.createDefault()
         val httpget = new HttpGet(uri)
@@ -73,8 +69,7 @@ class AsyncHttpClientTest extends AssertionsForJUnit {
         }
     }
 
-    @Test
-    def sslGet() {
+    test("ssl get simple") {
         val uri = new URIBuilder().setScheme("https").setHost("issues.apache.org").setPort(443).build()
         val response = HttpAsyncs.get(uri)
         assert(response != null)
@@ -82,8 +77,7 @@ class AsyncHttpClientTest extends AssertionsForJUnit {
         log.debug(EntityUtils.toString(response.getEntity))
     }
 
-    @Test
-    def testGetBySSL() {
+    test("ssl get sdg") {
         val uri: URI = new URIBuilder().setScheme("https").setHost("sdg.sktelecom.com").setPort(443).setPath("/api/1-0/devices")
             .build
         val httpGet: HttpGet = new HttpGet(uri)
@@ -97,8 +91,7 @@ class AsyncHttpClientTest extends AssertionsForJUnit {
         log.debug(EntityUtils.toString(response.getEntity))
     }
 
-    @Test
-    def execute() {
+    test("execute") {
         val uri: URI = new URIBuilder().setScheme("https").setHost("issues.apache.org").setPort(443).build
         val response: HttpResponse = HttpAsyncs.execute(new HttpGet(uri))
         assert(response != null)
@@ -106,8 +99,7 @@ class AsyncHttpClientTest extends AssertionsForJUnit {
         log.debug(EntityUtils.toString(response.getEntity))
     }
 
-    @Test
-    def executeSSL() {
+    test("execute ssl") {
         val uri: URI = new URIBuilder().setScheme("https").setHost("sdg.sktelecom.com").setPort(443).setPath("/api/1-0/devices")
             .build
         val httpGet: HttpGet = new HttpGet(uri)
@@ -120,8 +112,7 @@ class AsyncHttpClientTest extends AssertionsForJUnit {
         log.debug(EntityUtils.toString(response.getEntity))
     }
 
-    @Test
-    def customSSLByHttpAsyncClient() {
+    test("custom ssl") {
         val uri: URI = new URIBuilder().setScheme("https").setHost("sdg.sktelecom.com").setPort(443).setPath("/api/1-0/devices")
             .build
         val httpGet: HttpGet = new HttpGet(uri)
