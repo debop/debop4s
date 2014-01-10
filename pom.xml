@@ -239,6 +239,13 @@
                 <version>1.7.20</version>
             </dependency>
 
+            <!-- Mail -->
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4</version>
+            </dependency>
+
             <!-- JSR -->
             <dependency>
                 <groupId>javax.inject</groupId>
