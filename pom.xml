@@ -21,11 +21,10 @@
         <scala.version>2.10.3</scala.version>
 
         <springframework.version>4.0.0.RELEASE</springframework.version>
-
         <hibernate.version>4.3.0.Final</hibernate.version>
-        <hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
-        <querydsl.version>3.2.4</querydsl.version>
+        <querydsl.version>3.3.0</querydsl.version>
 
+        <hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

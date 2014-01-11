@@ -12,7 +12,7 @@ import scala.annotation.varargs
  */
 object Springs {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = Logger(getClass)
 
     @varargs
     def tryGetBean(ctx: ApplicationContext, name: String, args: Any*): AnyRef = {
@@ -20,7 +20,7 @@ object Springs {
             return ctx.getBean(name)
         } catch {
             case e: Throwable =>
-                log.warn(s"Bean을 찾는데 실패했습니다. null을 반환합니다. bean name=$name", e)
+                log.warn(s"Bean을 찾는데 실패했습니다. null을 반환합니다. bean name=[$name]", e)
         }
         null
     }
@@ -30,7 +30,7 @@ object Springs {
             return ctx.getBean[T](requiredType)
         } catch {
             case e: Throwable =>
-                log.warn(s"Bean을 찾는데 실패했습니다. null을 반환합니다. required type=$requiredType", e)
+                log.warn(s"Bean을 찾는데 실패했습니다. null을 반환합니다. required type=[$requiredType]", e)
         }
         null.asInstanceOf[T]
     }

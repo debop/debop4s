@@ -32,12 +32,6 @@ final class Logger(val log: Slf4jLogger) {
     def trace(msg: => Any, t: Throwable) {
         if (isTraceEnabled) log.trace(msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def trace(format: => String, arguments: Any*) {
-    //        if (isTraceEnabled)
-    //            log.trace(format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
     @inline
     def trace(marker: Marker, msg: => Any) {
         if (isTraceEnabled(marker))
@@ -48,13 +42,6 @@ final class Logger(val log: Slf4jLogger) {
         if (isTraceEnabled(marker))
             log.trace(marker, msg.toString, t)
     }
-
-    //    @inline
-    //    @varargs
-    //    def trace(marker: Marker, format: => String, arguments: Any*) {
-    //        if (isTraceEnabled(marker))
-    //            log.trace(marker, format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
 
     lazy val isDebugEnabled = log.isDebugEnabled
     @inline def isDebugEnabled(marker: Marker) = log.isDebugEnabled(marker)
@@ -67,12 +54,6 @@ final class Logger(val log: Slf4jLogger) {
     def debug(msg: => Any, t: Throwable) {
         if (isDebugEnabled) log.debug(msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def debug(format: => String, arguments: Any*) {
-    //        if (isDebugEnabled)
-    //            log.debug(format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
     @inline
     def debug(marker: Marker, msg: => Any) {
         if (isDebugEnabled(marker))
@@ -83,12 +64,6 @@ final class Logger(val log: Slf4jLogger) {
         if (isDebugEnabled(marker))
             log.debug(marker, msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def debug(marker: Marker, format: => String, arguments: Any*) {
-    //        if (isDebugEnabled(marker))
-    //            log.debug(marker, format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
 
     lazy val isInfoEnabled = log.isInfoEnabled
     @inline def isInfoEnabled(marker: Marker) = log.isInfoEnabled(marker)
@@ -101,12 +76,6 @@ final class Logger(val log: Slf4jLogger) {
     def info(msg: => Any, t: Throwable) {
         if (isInfoEnabled) log.info(msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def info(format: => String, arguments: Any*) {
-    //        if (isInfoEnabled)
-    //            log.info(format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
     @inline
     def info(marker: Marker, msg: => Any) {
         if (isInfoEnabled(marker))
@@ -117,12 +86,6 @@ final class Logger(val log: Slf4jLogger) {
         if (isInfoEnabled(marker))
             log.info(marker, msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def info(marker: Marker, format: => String, arguments: Any*) {
-    //        if (isInfoEnabled(marker))
-    //            log.info(marker, format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
 
     lazy val isWarnEnabled = log.isWarnEnabled
     @inline def isWarnEnabled(marker: Marker) = log.isWarnEnabled(marker)
@@ -137,12 +100,6 @@ final class Logger(val log: Slf4jLogger) {
         if (isWarnEnabled)
             log.warn(msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def warn(format: String, arguments: Any*) {
-    //        if (isWarnEnabled)
-    //            log.warn(format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
     @inline
     def warn(marker: Marker, msg: => Any) {
         if (isWarnEnabled(marker))
@@ -153,12 +110,6 @@ final class Logger(val log: Slf4jLogger) {
         if (isWarnEnabled(marker))
             log.warn(marker, msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def warn(marker: Marker, format: String, arguments: Any*) {
-    //        if (isWarnEnabled(marker))
-    //            log.warn(marker, format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
 
     lazy val isErrorEnabled = log.isErrorEnabled
     @inline def isErrorEnabled(marker: Marker) = log.isErrorEnabled(marker)
@@ -173,12 +124,6 @@ final class Logger(val log: Slf4jLogger) {
         if (isErrorEnabled)
             log.error(msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def error(format: => String, arguments: Any*) {
-    //        if (isErrorEnabled)
-    //            log.error(format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
     @inline
     def error(marker: Marker, msg: => Any) {
         if (isErrorEnabled(marker))
@@ -189,12 +134,6 @@ final class Logger(val log: Slf4jLogger) {
         if (isErrorEnabled(marker))
             log.error(marker, msg.toString, t)
     }
-    //    @inline
-    //    @varargs
-    //    def error(marker: Marker, format: => String, arguments: Any*) {
-    //        if (isErrorEnabled(marker))
-    //            log.error(marker, format, arguments.map(_.asInstanceOf[AnyRef]): _*)
-    //    }
 }
 
 /**

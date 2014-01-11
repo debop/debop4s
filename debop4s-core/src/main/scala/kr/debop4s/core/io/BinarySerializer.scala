@@ -44,7 +44,7 @@ class BinarySerializer extends Serializer {
      * @return 역직렬화된 객체 정보
      */
     def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T = {
-        log.trace("직렬화된 데이터를 역직렬화합니다.")
+        log.trace(s"직렬화된 데이터를 역직렬화합니다. clazz=[$clazz]")
 
         if (Arrays.isEmpty(bytes))
             return null.asInstanceOf[T]

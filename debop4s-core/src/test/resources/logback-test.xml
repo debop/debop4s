@@ -9,7 +9,7 @@
         </encoder>
     </appender>
 
-    <logger name="kr.debop4s" level="TRACE"/>
+    <logger name="kr.debop4s.core" level="TRACE"/>
 
     <root level="INFO">
         <appender-ref ref="console"/>

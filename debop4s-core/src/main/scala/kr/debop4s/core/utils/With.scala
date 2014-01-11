@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
+import kr.debop4s.core.logging.Logging
 
 /**
  * kr.debop4s.core.tools.With
@@ -8,9 +8,7 @@ import kr.debop4s.core.logging.Logger
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 13. 오전 9:33
  */
-object With {
-
-    implicit lazy val log = Logger(getClass)
+object With extends Logging {
 
     def stopwatch(action: => Unit) {
         val sw = new ClosableStopwatch()
