@@ -1,5 +1,6 @@
 package kr.debop4s.data.hibernate.repository
 
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.Arrays
 import kr.debop4s.data.hibernate.HibernateParameter
 import kr.debop4s.data.hibernate.tools.{HibernateTool, CriteriaTool}
@@ -19,6 +20,8 @@ import scala.collection.JavaConversions._
  */
 @Repository
 class HibernateDao {
+
+    lazy val log = Logger[HibernateDao]
 
     @Autowired
     var sessionFactory: SessionFactory = _

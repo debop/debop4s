@@ -1,10 +1,10 @@
 package kr.debop4s.timeperiod.calendars
 
 import kr.debop4s.core.Guard
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod.SeekDirection.SeekDirection
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.timerange._
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.calendars.CalendarVisitor
@@ -18,7 +18,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
  val seekDirection: SeekDirection = SeekDirection.Forward,
  val calendar: ITimeCalendar = DefaultTimeCalendar) {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     protected def startPeriodVisit(context: C) {
         startPeriodVisit(limits, context)

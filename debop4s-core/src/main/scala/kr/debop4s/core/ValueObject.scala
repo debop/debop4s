@@ -8,6 +8,14 @@ import kr.debop4s.core.utils.ToStringHelper
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 1:30
  */
+abstract class AbstractValueObject extends ValueObject
+
+/**
+ * DDD 의 Value Object를 표현합니다.
+ *
+ * @author 배성혁 sunghyouk.bae@gmail.com
+ * @since 2013. 12. 10. 오후 1:30
+ */
 trait ValueObject extends AnyRef with Serializable {
 
     override
@@ -25,4 +33,4 @@ trait ValueObject extends AnyRef with Serializable {
     protected def buildStringHelper: ToStringHelper = ToStringHelper(this)
 }
 
-abstract class AbstractValueObject extends ValueObject
+

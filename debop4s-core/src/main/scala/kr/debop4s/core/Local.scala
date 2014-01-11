@@ -1,7 +1,7 @@
 package kr.debop4s.core
 
 import java.util.concurrent.Callable
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 import scala.collection.mutable
 
 /**
@@ -12,7 +12,7 @@ import scala.collection.mutable
  */
 object Local {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = Logger(getClass)
 
     private lazy val threadLocal = new ThreadLocal[mutable.LinkedHashMap[Any, Any]]() {
         override def initialValue(): mutable.LinkedHashMap[Any, Any] = {
@@ -28,12 +28,12 @@ object Local {
 
     def put(key: Any, value: Any) {
         assert(key != null)
-        log.trace(s"Local 저장소에 key=[$key], value=[$value]를 저장합니다.")
+        log.trace(s"put: Local 저장소에 key=[$key], value=[$value]를 저장합니다.")
         getStorage.update(key, value)
     }
 
     def clear() {
-        log.trace("Local 저장소를 clear 합니다.")
+        log.trace("clear: Local 저장소를 clear 합니다.")
         getStorage.clear()
     }
 

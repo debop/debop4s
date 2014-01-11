@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 
 /**
  * kr.debop4s.core.tools.With
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
  */
 object With {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     def stopwatch(action: => Unit) {
         val sw = new ClosableStopwatch()

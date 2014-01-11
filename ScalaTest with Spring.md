@@ -11,7 +11,7 @@ Spring with ScalaTest 예제:
 	// @ContextConfiguration(classes = Array(classOf[GlobalizationConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 	class GlobalizationTest extends FunSuite with Matchers {
 	
-		implicit lazy val log = LoggerFactory.getLogger(classOf[GlobalizationTest])
+		implicit lazy val log = Logger[GlobalizationTest])
 		
 		@Autowired val applicationContext: ApplicationContext = null
 		@Autowired val messageSource: MessageSource = null

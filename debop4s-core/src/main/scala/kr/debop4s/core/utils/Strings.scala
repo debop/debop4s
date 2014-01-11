@@ -4,8 +4,8 @@ import java.nio.charset.Charset
 import java.util
 import kr.debop4s.core.BinaryStringFormat
 import kr.debop4s.core.BinaryStringFormat.BinaryStringFormat
+import kr.debop4s.core.logging.Logger
 import org.apache.commons.codec.binary.{Base64, Hex, StringUtils}
-import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -17,7 +17,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Strings {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     val MULTI_BYTES_PREFIX = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
     val TRIMMING_STR = "..."

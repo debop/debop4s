@@ -1,8 +1,8 @@
 package kr.debop4s.core.pool
 
+import kr.debop4s.core.logging.Logger
 import org.apache.commons.pool.PoolableObjectFactory
 import org.apache.commons.pool.impl.GenericObjectPool
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.pool.PoolBase
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
 abstract class AbstractObjectPool[T <: AnyRef](val config: AbstractObjectPoolConfig,
                                                val factory: PoolableObjectFactory[T]) extends AutoCloseable {
 
-    implicit lazy val log = LoggerFactory.getLogger(classOf[AbstractObjectPool[_]])
+    implicit lazy val log = Logger[AbstractObjectPool[_]]
 
     protected val pool = new GenericObjectPool[T](factory, config)
 

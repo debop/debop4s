@@ -2,11 +2,11 @@ package kr.debop4s.data.hibernate.config
 
 import java.util.Properties
 import javax.sql.DataSource
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.data.hibernate.interceptor.PersistentObjectInterceptor
 import kr.debop4s.data.jdbc.DataSources
 import org.hibernate.cfg.{AvailableSettings, NamingStrategy}
 import org.hibernate.{Interceptor, SessionFactory}
-import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableTransactionManagement
 abstract class AbstractHibernateConfiguration {
 
-    implicit lazy val log = LoggerFactory.getLogger(classOf[AbstractHibernateConfiguration])
+    implicit lazy val log = Logger[AbstractHibernateConfiguration]
 
     def getDatabaseName = "hibernate"
 
@@ -65,7 +65,7 @@ abstract class AbstractHibernateConfiguration {
         val factoryBean = new LocalSessionFactoryBean()
         val packagenames = getMappedPackageNames
         if (packagenames != null && packagenames.length > 0) {
-            log.debug("hibernate용 entity를 scan 합니다. packages=[{}]", packagenames)
+            log.debug(s"hibernate용 entity를 scan 합니다. packages=[$packagenames]")
             factoryBean.setPackagesToScan(packagenames: _*)
         }
 

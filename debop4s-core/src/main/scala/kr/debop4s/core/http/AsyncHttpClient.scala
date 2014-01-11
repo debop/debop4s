@@ -5,6 +5,7 @@ import java.net.URI
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Parallels
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods._
@@ -15,7 +16,6 @@ import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.nio.reactor.ConnectingIOReactor
 import org.apache.http.{HttpException, HttpResponse}
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.http.AsyncHttpClient
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory
  */
 class AsyncHttpClient {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
     implicit lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
 
 

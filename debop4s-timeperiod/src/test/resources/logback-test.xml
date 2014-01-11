@@ -9,7 +9,7 @@
         </encoder>
     </appender>
 
-    <logger name="kr.debop4s" level="TRACE"/>
+    <logger name="kr.debop4s.timeperiod" level="TRACE"/>
     <root level="DEBUG">
         <appender-ref ref="console"/>
     </root>

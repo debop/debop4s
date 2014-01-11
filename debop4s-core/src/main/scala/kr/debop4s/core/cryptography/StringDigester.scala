@@ -1,7 +1,7 @@
 package kr.debop4s.core.cryptography
 
+import kr.debop4s.core.logging.Logger
 import org.jasypt.digest.StandardStringDigester
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.cryptography.StringDigester
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
  */
 trait StringDigester {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     val standardStringDigester = new StandardStringDigester()
 

@@ -1,8 +1,8 @@
 package kr.debop4s.timeperiod.timeline
 
 import kr.debop4s.core.Guard
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod._
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.timeline.TimeLines
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 object TimeLines {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     def combinePeriods(moments: ITimeLineMomentCollection): ITimePeriodCollection = {
 
@@ -76,7 +76,7 @@ object TimeLines {
             }
         }
 
-        log.debug(s"ITimeLineMomentCollection으로부터 교집합에 해당하는 기간을 구했습니다. periods=[periods]", periods)
+        log.debug(s"ITimeLineMomentCollection으로부터 교집합에 해당하는 기간을 구했습니다. periods=[$periods]")
         periods
     }
 
@@ -125,7 +125,7 @@ object TimeLines {
             log.trace(s"ending gap을 추가합니다. endingGap=[$endingGap]")
             gaps.add(endingGap)
         }
-        log.debug(s"ITimeLineMomentCollection에서 gap을 계산했습니다. gaps=[$gaps]", gaps)
+        log.debug(s"ITimeLineMomentCollection에서 gap을 계산했습니다. gaps=[$gaps]")
         gaps
     }
 }

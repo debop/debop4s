@@ -1,6 +1,7 @@
 package kr.debop4s.timeperiod.utils
 
 import kr.debop4s.core.NotSupportedException
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.time._
 import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import kr.debop4s.timeperiod.Halfyear.Halfyear
@@ -11,7 +12,6 @@ import kr.debop4s.timeperiod.Quarter.Quarter
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.timerange._
 import org.joda.time.{Duration, DateTimeZone, DateTime}
-import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.parallel.ParSeq
@@ -23,7 +23,7 @@ import scala.collection.parallel.ParSeq
  */
 object Times {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     val NullString = "<null>"
     val UnixEpoch = new DateTime(1970, 1, 1, 0, 0)

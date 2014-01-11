@@ -2,7 +2,7 @@ package kr.debop4s.core.json
 
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.datatype.joda.JodaModule
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 
 /**
  * Jackson 라이브러리를 사용한 Json Serializer 입니다.
@@ -14,7 +14,7 @@ class JacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
 
     assert(mapper != null)
 
-    implicit lazy val log = LoggerFactory.getLogger(classOf[JacksonSerializer])
+    implicit lazy val log = Logger[JacksonSerializer]
 
     def this() {
         this(JacksonSerializer.createObjectMapper())

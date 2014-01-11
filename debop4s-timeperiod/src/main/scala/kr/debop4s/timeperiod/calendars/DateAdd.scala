@@ -1,5 +1,6 @@
 package kr.debop4s.timeperiod.calendars
 
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.{Guard, ValueObject}
 import kr.debop4s.time._
 import kr.debop4s.timeperiod.SeekBoundaryMode.SeekBoundaryMode
@@ -8,7 +9,6 @@ import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.timeline.TimeGapCalculator
 import kr.debop4s.timeperiod.utils.Durations
 import org.joda.time.{Duration, DateTime}
-import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 
 /**
@@ -19,7 +19,7 @@ import scala.collection.JavaConversions._
 @SerialVersionUID(2352433294158169198L)
 class DateAdd extends ValueObject {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     val includePeriods = TimePeriodCollection()
     val excludePeriods = TimePeriodCollection()

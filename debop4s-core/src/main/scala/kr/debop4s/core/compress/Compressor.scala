@@ -1,6 +1,6 @@
 package kr.debop4s.core.compress
 
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 
 /**
  * 데이터를 압축/복원을 수행합니다.
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
  */
 trait Compressor {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = Logger[Compressor]
     val BUFFER_SIZE = 4096
 
     protected def doCompress(plainBytes: Array[Byte]): Array[Byte]

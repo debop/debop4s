@@ -13,8 +13,7 @@ import kr.debop4s.core.utils.ToStringHelper
 @SerialVersionUID(-7066710546641101707L)
 trait PersistentObject extends ValueObject {
 
-    @Transient
-    private var persisted: Boolean = false
+    @Transient private var persisted: Boolean = false
 
     def isPersisted = persisted
 

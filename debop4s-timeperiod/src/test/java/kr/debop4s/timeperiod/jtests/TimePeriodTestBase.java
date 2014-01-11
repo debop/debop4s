@@ -3,6 +3,7 @@ package kr.debop4s.timeperiod.jtests;
 import kr.debop4s.timeperiod.utils.Times;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
+import org.scalatest.junit.JUnitSuite;
 
 /**
  * kr.debop4s.timeperiod.jtests.TimePeriodTestBase
@@ -11,7 +12,7 @@ import org.joda.time.DateTime;
  * @since 2014. 1. 9. 오전 11:34
  */
 @Slf4j
-public class TimePeriodTestBase {
+abstract public class TimePeriodTestBase extends JUnitSuite {
 
 
 //    @Rule

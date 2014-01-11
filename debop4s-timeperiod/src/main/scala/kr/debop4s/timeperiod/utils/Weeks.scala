@@ -1,11 +1,11 @@
 package kr.debop4s.timeperiod.utils
 
 import java.util.Locale
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.timerange.WeekRange
 import org.joda.time.DateTime
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.utils.Weeks
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
  */
 object Weeks {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     def firstDayOfWeek: DayOfWeek = FirstDayOfWeek
 

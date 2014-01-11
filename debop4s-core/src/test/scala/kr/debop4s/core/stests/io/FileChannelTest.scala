@@ -5,9 +5,9 @@ import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousFileChannel
 import java.nio.charset.Charset
 import java.nio.file.{Path, StandardOpenOption, Files, Paths}
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.{Strings, Charsets}
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
-import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
@@ -19,7 +19,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = LoggerFactory.getLogger(classOf[FileChannelTest])
+    implicit lazy val log = Logger[FileChannelTest]
 
     val TEST_TEXT = "동해물과 백두산이 마르고 닳도록, 하느님이 보우하사 우리나라 만세!!! Hello World. 안녕 세계여 \n"
 
@@ -33,7 +33,7 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
             writer.close()
         }
         val lines = Files.readAllLines(path, Charsets.UTF_8)
-        lines.foreach(line => log.debug("line:{}", line))
+        lines.foreach(line => log.debug(s"line:$line"))
         Files.deleteIfExists(path)
     }
 
@@ -70,7 +70,7 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
             buffer.flip
             val bytes: Array[Byte] = buffer.array
             val lines = readAllLines(bytes, Charsets.UTF_8)
-            lines.foreach(line => log.debug("line:{}", line))
+            lines.foreach(line => log.debug(s"line:$line"))
             buffer.clear
         } finally {
             assert(fc != null)

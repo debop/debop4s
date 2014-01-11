@@ -1,9 +1,9 @@
 package kr.debop4s.timeperiod.timeline
 
 import java.util
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod._
 import org.joda.time.DateTime
-import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 
 /**
@@ -16,7 +16,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
                                  private val aLimits: ITimePeriod = null,
                                  private val mapper: ITimePeriodMapper = null) extends ITimeLine {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     val limits = if (aLimits != null) TimeRange(aLimits) else TimeRange(periods)
 
@@ -87,7 +87,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
             }
         })
         moments.addAll(intersections)
-        log.trace("기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드했습니다. moments=[{}]", moments)
+        log.trace(s"기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드했습니다. moments=[$moments]")
         moments
     }
 

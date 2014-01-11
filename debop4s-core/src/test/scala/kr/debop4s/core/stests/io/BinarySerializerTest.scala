@@ -1,9 +1,9 @@
 package kr.debop4s.core.stests.io
 
 import kr.debop4s.core.io.BinarySerializer
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.stests.io.model.{User, Company}
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.io.BinarySerializerTest
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
  */
 class BinarySerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = LoggerFactory.getLogger(classOf[BinarySerializerTest])
+    implicit lazy val log = Logger[BinarySerializerTest]
 
     test("serialize/deserialize") {
         val ser = new BinarySerializer()

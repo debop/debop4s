@@ -1,5 +1,6 @@
 package kr.debop4s.data.utils
 
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.data.hibernate.repository.HibernateDao
 import kr.debop4s.data.model.HibernateTreeEntity
 import org.hibernate.criterion.{Restrictions, DetachedCriteria}
@@ -10,6 +11,8 @@ import org.hibernate.criterion.{Restrictions, DetachedCriteria}
  * @since  2013. 12. 24. 오후 8:38
  */
 object Entities {
+
+    lazy val log = Logger(getClass)
 
     def updateTreeNodePosition[T <: HibernateTreeEntity[T]](entity: T) {
         assert(entity != null)

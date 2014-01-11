@@ -3,7 +3,7 @@ package kr.debop4s.time.tests
 import kr.debop4s.time._
 import org.joda.time.{Duration, LocalDate, DateTime}
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.junit.JUnitSuite
 
 /**
  * kr.debop4s.time.tests.OrderingTest 
@@ -11,7 +11,7 @@ import org.scalatest.junit.AssertionsForJUnit
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 7. 오후 3:00
  */
-class OrderingTest extends AssertionsForJUnit {
+class OrderingTest extends JUnitSuite {
 
     @Test
     def sortDateTime() {

@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 import scala.reflect._
 
 /**
@@ -11,7 +11,7 @@ import scala.reflect._
  */
 class Reflects {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     /**
      * Java의 Primitive 수형에 대한 Box된 Scala 클래스를 Unbox한 Java Primitive 수형 타입을 구합니다.
@@ -61,7 +61,7 @@ class Reflects {
      * @return 생성된 인스턴스
      */
     def newInstance[T](initArgs: Any*)(implicit tag: ClassTag[T]): T = {
-        log.trace("인스턴스를 생성합니다. type=[{}]", tag.runtimeClass.getName)
+        log.trace(s"인스턴스를 생성합니다. type=[${tag.runtimeClass.getName}]")
 
         if (initArgs == null || initArgs.length == 0)
             return newInstance[T]
@@ -84,7 +84,7 @@ class Reflects {
         if (initArgs == null || initArgs.length == 0)
             return newInstance[T]
 
-        log.trace("인스턴스를 생성합니다. type=[{}]", classTag[T].runtimeClass.getName)
+        log.trace(s"인스턴스를 생성합니다. type=[${classTag[T].runtimeClass.getName}]")
 
         val parameterTypes =
             if (initArgsTypes != null) initArgsTypes.toArray

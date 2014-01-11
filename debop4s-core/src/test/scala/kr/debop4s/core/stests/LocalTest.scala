@@ -2,8 +2,8 @@ package kr.debop4s.core.stests
 
 import java.util.UUID
 import kr.debop4s.core.Local
+import kr.debop4s.core.logging.Logger
 import org.scalatest._
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.LocalTest
@@ -12,13 +12,9 @@ import org.slf4j.LoggerFactory
  */
 class LocalTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    lazy val log = LoggerFactory.getLogger(classOf[LocalTest])
+    lazy val log = Logger[LocalTest]
 
     before {
-        Local.clear()
-    }
-
-    after {
         Local.clear()
     }
 
@@ -36,7 +32,7 @@ class LocalTest extends FunSuite with Matchers with BeforeAndAfter {
         Thread.sleep(5)
 
         val storedUser = Local.get(key).asInstanceOf[User]
-        assert(storedUser !== null)
+        assert(storedUser != null)
         assert(storedUser === user)
         assert(user.name === storedUser.name)
         assert(user.password === storedUser.password)
@@ -50,11 +46,11 @@ class LocalTest extends FunSuite with Matchers with BeforeAndAfter {
 
         val storedUser = Local.get(key).asInstanceOf[User]
         storedUser should not be null
-        storedUser should be eq user.name
-        storedUser.password should be eq user.password
-        storedUser.age should equal(user.age)
+        storedUser shouldEqual user
+        storedUser.name shouldEqual user.name
+        storedUser.password shouldEqual user.password
+        storedUser.age shouldEqual user.age
     }
-
 }
 
 case class User(name: String, password: String, age: Int)

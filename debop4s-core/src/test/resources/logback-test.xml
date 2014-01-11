@@ -3,14 +3,15 @@
     <!-- help : http://logback.qos.ch/manual/appenders.html -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%method : %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%-5thread] %logger{48} : %msg%n</pattern>
             <immediateFlush>true</immediateFlush>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
 
     <logger name="kr.debop4s" level="TRACE"/>
-    <root level="DEBUG">
+
+    <root level="INFO">
         <appender-ref ref="console"/>
     </root>
 

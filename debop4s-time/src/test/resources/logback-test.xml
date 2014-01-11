@@ -10,7 +10,7 @@
     </appender>
 
     <logger name="kr.debop4s.time" level="TRACE"/>
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="console"/>
     </root>
 

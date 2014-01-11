@@ -100,14 +100,14 @@ trait ITimePeriodChain extends ITimePeriodContainer {
 
         if (size <= 0) return false
         val item: ITimePeriod = o.asInstanceOf[ITimePeriod]
-        log.trace("요소 [{}]를 컬렉션에서 제거합니다...", item)
+        log.trace(s"요소 [$item]를 컬렉션에서 제거합니다...")
         val itemDuration: Duration = item.getDuration
         val index: Int = indexOf(item)
         var next: ITimePeriod = null
         if (itemDuration.getMillis > 0 && index >= 0 && index < size - 1) next = get(index)
         val removed: Boolean = getPeriods.remove(item)
         if (removed && next != null) {
-            log.trace("요소[{}]를 제거하고, chain의 후속 periods 들의 기간을 조정합니다...", item)
+            log.trace(s"요소[$item]를 제거하고, chain의 후속 periods 들의 기간을 조정합니다...")
 
             for (x <- index until size) {
                 val start = periods(x).getStart.minus(itemDuration)
@@ -115,7 +115,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
                 periods(x).setup(start, start.plus(duration))
             }
         }
-        log.trace(s"요소[$item]를 제거했습니다. removed=[$removed]", item, removed)
+        log.trace(s"요소[$item]를 제거했습니다. removed=[$removed]")
         removed
     }
 

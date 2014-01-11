@@ -1,6 +1,6 @@
 package kr.debop4s.core.spring
 
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 import org.springframework.context.ApplicationContext
 import scala.annotation.varargs
 
@@ -12,7 +12,7 @@ import scala.annotation.varargs
  */
 object Springs {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     @varargs
     def tryGetBean(ctx: ApplicationContext, name: String, args: Any*): AnyRef = {

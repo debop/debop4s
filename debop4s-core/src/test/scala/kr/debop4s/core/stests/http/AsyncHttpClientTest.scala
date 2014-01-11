@@ -5,6 +5,7 @@ import java.security.KeyStore
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import kr.debop4s.core.http.{AsyncHttpClient, HttpAsyncs}
+import kr.debop4s.core.logging.Logger
 import org.apache.http.client.methods.{HttpGet, HttpPost}
 import org.apache.http.client.utils.URIBuilder
 import org.apache.http.conn.ssl.{TrustSelfSignedStrategy, SSLContexts}
@@ -12,8 +13,7 @@ import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClien
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.util.EntityUtils
 import org.apache.http.{HttpException, HttpHeaders, HttpResponse, HttpStatus}
-import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
-import org.slf4j.LoggerFactory
+import org.scalatest.FunSuite
 
 /**
  * kr.debop4s.core.tests.http.AsyncHttpClientTest
@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 2:42
  */
-class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
+class AsyncHttpClientTest extends FunSuite {
 
-    implicit lazy val log = LoggerFactory.getLogger(classOf[AsyncHttpClientTest])
+    implicit lazy val log = Logger[AsyncHttpClientTest]
 
     val URI_STRING = "https://www.google.co.kr"
     val TEST_COUNT = 30
@@ -37,7 +37,8 @@ class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
     test("http get method") {
         val httpgets = (0 until TEST_COUNT).map(_ => new HttpGet(googleSearchURI("배성혁")))
         val httpResponses = HttpAsyncs.getAsParallel(httpgets: _*)
-        httpResponses.foreach(response => {
+        httpResponses.par.foreach(response => {
+            assert(response != null)
             assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
             log.debug(EntityUtils.toString(response.getEntity))
         })
@@ -46,7 +47,7 @@ class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
     test("http post method") {
         val httpposts = (0 until TEST_COUNT).map(_ => new HttpPost(googleSearchURI("배성혁")))
         val httpResponses = HttpAsyncs.postAsParallel(httpposts: _*)
-        httpResponses.foreach(response => {
+        httpResponses.par.foreach(response => {
             assert(response != null)
             assert(response.getStatusLine.getStatusCode == HttpStatus.SC_METHOD_NOT_ALLOWED)
             log.debug(EntityUtils.toString(response.getEntity))
@@ -71,6 +72,7 @@ class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
 
     test("ssl get simple") {
         val uri = new URIBuilder().setScheme("https").setHost("issues.apache.org").setPort(443).build()
+
         val response = HttpAsyncs.get(uri)
         assert(response != null)
         assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
@@ -78,11 +80,17 @@ class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
     }
 
     test("ssl get sdg") {
-        val uri: URI = new URIBuilder().setScheme("https").setHost("sdg.sktelecom.com").setPort(443).setPath("/api/1-0/devices")
+        val uri: URI = new URIBuilder()
+            .setScheme("https")
+            .setHost("sdg.sktelecom.com")
+            .setPort(443)
+            .setPath("/api/1-0/devices")
             .build
+
         val httpGet: HttpGet = new HttpGet(uri)
-        httpGet
-            .setHeader("BP_Access_Token", "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
+        httpGet.setHeader("BP_Access_Token",
+            "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
+
         httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
         val client: AsyncHttpClient = new AsyncHttpClient
         val response: HttpResponse = client.getSSL(httpGet)
@@ -100,11 +108,16 @@ class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
     }
 
     test("execute ssl") {
-        val uri: URI = new URIBuilder().setScheme("https").setHost("sdg.sktelecom.com").setPort(443).setPath("/api/1-0/devices")
+        val uri: URI = new URIBuilder()
+            .setScheme("https")
+            .setHost("sdg.sktelecom.com")
+            .setPort(443)
+            .setPath("/api/1-0/devices")
             .build
+
         val httpGet: HttpGet = new HttpGet(uri)
-        httpGet
-            .setHeader("BP_Access_Token", "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
+        httpGet.setHeader("BP_Access_Token",
+            "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
         httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
         val response: HttpResponse = HttpAsyncs.executeSSL(httpGet)
         assert(response != null)
@@ -113,11 +126,16 @@ class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
     }
 
     test("custom ssl") {
-        val uri: URI = new URIBuilder().setScheme("https").setHost("sdg.sktelecom.com").setPort(443).setPath("/api/1-0/devices")
+        val uri = new URIBuilder()
+            .setScheme("https")
+            .setHost("sdg.sktelecom.com")
+            .setPort(443)
+            .setPath("/api/1-0/devices")
             .build
+
         val httpGet: HttpGet = new HttpGet(uri)
-        httpGet
-            .setHeader("BP_Access_Token", "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
+        httpGet.setHeader("BP_Access_Token",
+            "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
         httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
         val client: CloseableHttpAsyncClient = createHttpAsyncClient(uri)
         try {
@@ -160,8 +178,7 @@ class AsyncHttpClientTest extends FunSuite with Matchers with BeforeAndAfter {
             new SSLIOSessionStrategy(sslcontext, Array[String]("TLSv1"), null, SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER)
         }
         catch {
-            case e: Exception =>
-                throw new HttpException("", e)
+            case e: Exception => throw new HttpException("SSLIOSessionStrategy 를 생성하는데 실패했습니다.", e)
         }
     }
 }

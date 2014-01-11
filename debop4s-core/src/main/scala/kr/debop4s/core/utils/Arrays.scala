@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
@@ -13,7 +13,7 @@ import scala.util.Random
  */
 object Arrays {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
     lazy val RANDOM: Random = new Random(System.currentTimeMillis())
 
     val EMPTY_BYTE_ARRAY = Array[Byte](0)

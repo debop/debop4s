@@ -1,6 +1,6 @@
 package kr.debop4s.core.parallels
 
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 
 /**
  * ExecutableAdapter
@@ -12,7 +12,7 @@ class ExecutableAdapter(val executable: Executable) extends Runnable {
 
     assert(executable != null)
 
-    implicit lazy val log = LoggerFactory.getLogger(classOf[ExecutableAdapter])
+    implicit lazy val log = Logger[ExecutableAdapter]
 
     private var error: Throwable = _
     private var done: Boolean = false

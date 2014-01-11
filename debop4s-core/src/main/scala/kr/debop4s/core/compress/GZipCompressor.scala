@@ -2,7 +2,7 @@ package kr.debop4s.core.compress
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.util.zip.{GZIPInputStream, GZIPOutputStream}
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 
 /**
  * kr.debop4s.core.compress.GZipCompressor
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 class GZipCompressor extends Compressor {
 
-    override lazy val log = LoggerFactory.getLogger(getClass)
+    override lazy val log = Logger[GZipCompressor]
 
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
         val bos = new ByteArrayOutputStream()

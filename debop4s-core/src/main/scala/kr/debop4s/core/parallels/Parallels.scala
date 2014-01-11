@@ -1,7 +1,7 @@
 package kr.debop4s.core.parallels
 
 import java.util.concurrent.{Callable, ThreadLocalRandom}
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 
 
 /**
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
  */
 object Parallels {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     lazy val random = ThreadLocalRandom.current()
     lazy val processCount = Runtime.getRuntime.availableProcessors()

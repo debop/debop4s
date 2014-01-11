@@ -1,9 +1,9 @@
 package kr.debop4s.core.stests.pool
 
 import java.util.Properties
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Parallels
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
-import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.pool.ObjectPoolTest
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
  */
 class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = LoggerFactory.getLogger(classOf[ObjectPoolTest])
+    implicit lazy val log = Logger[ObjectPoolTest]
 
     def getProperties(): Properties = {
         val props = new Properties()

@@ -2,6 +2,7 @@ package kr.debop4s.core.stests.http
 
 import java.net.URI
 import kr.debop4s.core.http.HttpClient
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Parallels
 import kr.debop4s.core.utils.{Strings, Charsets}
 import lombok.Cleanup
@@ -19,7 +20,6 @@ import org.apache.http.{NameValuePair, HttpStatus, HttpResponse}
 import org.fest.assertions.Assertions._
 import org.junit.{Ignore, Test}
 import org.scalatest.junit.JUnitSuite
-import org.slf4j.LoggerFactory
 import scala.Predef.String
 import scala.collection.mutable.ArrayBuffer
 
@@ -31,7 +31,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class HttpClientTest extends JUnitSuite {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     private final val URI_STRING: String = "https://www.google.co.kr"
 
@@ -40,7 +40,7 @@ class HttpClientTest extends JUnitSuite {
         val httpClient = new HttpClient()
         try {
             val responseStr = httpClient.get(URI_STRING)
-            log.debug("RESPONSE HTML={}", responseStr)
+            log.debug(s"RESPONSE HTML=$responseStr")
         } finally {
             httpClient.close()
         }

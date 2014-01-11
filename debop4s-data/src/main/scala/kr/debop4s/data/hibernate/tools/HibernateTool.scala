@@ -1,6 +1,7 @@
 package kr.debop4s.data.hibernate.tools
 
 import kr.debop4s.core.io.Serializers
+import kr.debop4s.core.logging.Logger
 import kr.debop4s.data.hibernate.HibernateParameter
 import org.hibernate.criterion.{Order, DetachedCriteria}
 import org.hibernate.{Query, Session, Criteria}
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable
  * @since  2013. 12. 24. 오후 9:24
  */
 object HibernateTool {
+
+    lazy val log = Logger(getClass)
 
     def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
 

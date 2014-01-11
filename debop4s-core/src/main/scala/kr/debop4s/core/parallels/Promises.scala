@@ -1,6 +1,6 @@
 package kr.debop4s.core.parallels
 
-import org.slf4j.LoggerFactory
+import kr.debop4s.core.logging.Logger
 import scala.concurrent._
 import scala.concurrent.duration._
 
@@ -12,7 +12,7 @@ import scala.concurrent.duration._
  */
 object Promises {
 
-    implicit lazy val log = LoggerFactory.getLogger(getClass)
+    implicit lazy val log = Logger(getClass)
 
     import scala.concurrent.ExecutionContext.Implicits.global
 
