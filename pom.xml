@@ -477,7 +477,14 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- Spring MVC -->
+            <!-- Spring Scala -->
+            <dependency>
+                <groupId>org.springframework.scala</groupId>
+                <artifactId>spring-scala</artifactId>
+                <version>1.0.0.M2</version>
+            </dependency>
+
+           <!-- Spring MVC -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
