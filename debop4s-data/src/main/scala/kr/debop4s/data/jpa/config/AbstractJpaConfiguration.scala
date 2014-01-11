@@ -11,6 +11,7 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
 import org.springframework.orm.jpa.{JpaTransactionManager, LocalContainerEntityManagerFactoryBean}
+import org.springframework.scala.jdbc.core.JdbcTemplate
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
@@ -51,9 +52,11 @@ abstract class AbstractJpaConfiguration {
 
     def buildEmbeddedDataSource() = DataSources.getEmbeddedHSqlDataSource
 
-
     @Bean
     def dataSource(): DataSource = buildEmbeddedDataSource()
+
+    @Bean
+    def jdbcTemplate() = new JdbcTemplate(dataSource())
 
     protected def setupEntityManagerFactory(factoryBean: LocalContainerEntityManagerFactoryBean) {
         // 추가 작업 시 override 해서 사용하세요.

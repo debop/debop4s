@@ -18,6 +18,12 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <!-- Spring Scala -->
+        <dependency>
+            <groupId>org.springframework.scala</groupId>
+            <artifactId>spring-scala</artifactId>
+        </dependency>
+
         <!-- Spring JPA -->
         <dependency>
             <groupId>org.springframework.data</groupId>

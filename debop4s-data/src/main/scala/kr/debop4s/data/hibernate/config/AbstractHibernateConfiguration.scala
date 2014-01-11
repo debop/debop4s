@@ -11,6 +11,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator
 import org.springframework.orm.hibernate4.{HibernateTransactionManager, LocalSessionFactoryBean}
+import org.springframework.scala.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 /**
@@ -53,6 +54,9 @@ abstract class AbstractHibernateConfiguration {
 
     @Bean
     def dataSource(): DataSource = buildEmbeddedDataSource()
+
+    @Bean
+    def jdbcTemplate() = new JdbcTemplate(dataSource())
 
     protected def setupSessionFactory(factoryBean: LocalSessionFactoryBean) {
         // 추가 작업 시 override 해서 사용하세요.
