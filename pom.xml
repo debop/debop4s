@@ -858,6 +858,7 @@
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <optimize>true</optimize>
                 </configuration>
             </plugin>
 
@@ -915,73 +916,11 @@
                     <!--<encoding>${project.build.sourceEncoding}</encoding>-->
                 </configuration>
                 <executions>
-                    <!--<execution>-->
-                    <!--<id>scala-compile-first</id>-->
-                    <!--<phase>process-resources</phase>-->
-                    <!--<goals>-->
-                    <!--<goal>add-source</goal>-->
-                    <!--<goal>compile</goal>-->
-                    <!--</goals>-->
-                    <!--</execution>-->
                     <execution>
-                        <id>compile</id>
                         <goals>
                             <goal>compile</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <jvmArgs>
-                                <jvmArg>-Xms128m</jvmArg>
-                                <jvmArg>-Xmx8192m</jvmArg>
-                                <jvmArg>-XX:+UseCompressedOops</jvmArg>
-                                <jvmArg>-XX:+UseParallelOldGC</jvmArg>
-                                <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
-                            </jvmArgs>
-                            <args>
-                                <arg>-unchecked</arg>
-                                <arg>-deprecation</arg>
-                                <arg>-explaintypes</arg>
-                            </args>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>test-compile</id>
-                        <goals>
                             <goal>testCompile</goal>
                         </goals>
-                        <phase>test-compile</phase>
-                        <configuration>
-                            <jvmArgs>
-                                <jvmArg>-Xms128m</jvmArg>
-                                <jvmArg>-Xmx8192m</jvmArg>
-                                <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
-                            </jvmArgs>
-
-                            <args>
-                                <arg>-unchecked</arg>
-                                <arg>-deprecation</arg>
-                                <arg>-explaintypes</arg>
-                            </args>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <jvmArgs>
-                                <jvmArg>-Xms128m</jvmArg>
-                                <jvmArg>-Xmx4096m</jvmArg>
-                                <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
-                            </jvmArgs>
-                            <args>
-                                <arg>-unchecked</arg>
-                                <arg>-deprecation</arg>
-                                <arg>-explaintypes</arg>
-                            </args>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -992,14 +931,13 @@
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest-maven-plugin</artifactId>
                 <version>1.0-RC2</version>
-                <configuration>
-                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                    <junitxml>.</junitxml>
-                    <filereports>WDF TestSuite.txt</filereports>
-                </configuration>
+                <!--<configuration>-->
+                <!--<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>-->
+                <!--<junitxml>.</junitxml>-->
+                <!--<filereports>WDF TestSuite.txt</filereports>-->
+                <!--</configuration>-->
                 <executions>
                     <execution>
-                        <id>test</id>
                         <goals>
                             <goal>test</goal>
                         </goals>
