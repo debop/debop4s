@@ -2,8 +2,9 @@
 <configuration>
     <!-- help : http://logback.qos.ch/manual/appenders.html -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%method : %msg%n</pattern>
+            <pattern>%d{ISO8601} %highlight(%-5level) [%.-12t] %cyan(%logger{32}): %m%n%ex</pattern>
             <immediateFlush>true</immediateFlush>
             <charset>UTF-8</charset>
         </encoder>

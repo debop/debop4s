@@ -9,6 +9,11 @@ import scala.collection.mutable
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 31. 오후 8:39
  */
+object TimeLineMomentCollection {
+
+    def apply(): TimeLineMomentCollection = new TimeLineMomentCollection()
+}
+
 @SerialVersionUID(-5739605965754152358L)
 class TimeLineMomentCollection extends ITimeLineMomentCollection {
 

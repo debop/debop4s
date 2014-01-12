@@ -23,5 +23,12 @@ class TimeGapCalculator[T <: ITimePeriod](val mapper: ITimeCalendar) {
         val timeLine = new TimeLine[T](excludePeriods, limits, mapper)
         timeLine.calculateGaps
     }
-
 }
+
+object TimeGapCalculator {
+
+    def apply[T <: ITimePeriod](): TimeGapCalculator[T] = new TimeGapCalculator[T]()
+
+    def apply[T <: ITimePeriod](mapper: ITimeCalendar): TimeGapCalculator[T] = new TimeGapCalculator[T](mapper)
+}
+

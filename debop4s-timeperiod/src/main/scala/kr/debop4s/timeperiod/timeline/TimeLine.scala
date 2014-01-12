@@ -16,6 +16,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
                                  private val aLimits: ITimePeriod = null,
                                  private val mapper: ITimePeriodMapper = null) extends ITimeLine {
 
+    require(periods != null)
     implicit lazy val log = Logger(getClass)
 
     val limits = if (aLimits != null) TimeRange(aLimits) else TimeRange(periods)
@@ -28,28 +29,29 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
 
     def combinePeriods: ITimePeriodCollection = {
         if (periods.size == 0)
-            new TimePeriodCollection()
+            return new TimePeriodCollection()
 
         val moments = getTimeLineMoments
         if (moments == null || moments.size == 0)
-            new TimePeriodCollection(TimeRange(periods))
+            return new TimePeriodCollection(TimeRange(periods))
 
         TimeLines.combinePeriods(moments)
     }
 
     def intersectPeriods: ITimePeriodCollection = {
         if (periods.size == 0)
-            new TimePeriodCollection()
+            return new TimePeriodCollection()
 
         val moments = getTimeLineMoments
         if (moments == null || moments.size == 0)
-            new TimePeriodCollection()
+            return new TimePeriodCollection()
 
         TimeLines.intersectPeriods(moments)
     }
 
     def calculateGaps: ITimePeriodCollection = {
-        val gapPeriods = new TimePeriodCollection()
+        log.trace("calculate gaps...")
+        val gapPeriods = TimePeriodCollection()
 
         periods
             .filter(x => limits.intersectsWith(x))
@@ -57,7 +59,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
 
         val moments = getTimeLineMoments(gapPeriods)
         if (moments == null || moments.size == 0)
-            new TimePeriodCollection(limits)
+            return new TimePeriodCollection(limits)
 
         val range = TimeRange(mapPeriodStart(limits.getStart), mapPeriodEnd(limits.getEnd))
         TimeLines.calculateGap(moments, range)
@@ -66,24 +68,25 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
     private def getTimeLineMoments: ITimeLineMomentCollection = getTimeLineMoments(periods)
 
     private def getTimeLineMoments(periods: util.Collection[_ <: ITimePeriod]): ITimeLineMomentCollection = {
-        log.trace("기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드합니다...")
+        log.trace(s"기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드합니다... periods=[$periods]")
 
-        val moments = new TimeLineMomentCollection()
-        if (periods == null || periods.size == 0) return moments
+        val moments = TimeLineMomentCollection()
+        if (periods == null || periods.size == 0)
+            return moments
 
         // setup gap set with all start/end points
         //
         val intersections = new TimePeriodCollection()
-        periods.foreach(mp => {
-            if (!mp.isMoment) {
-                val intersection = limits.getIntersection(mp)
-                if (intersection != null && !intersection.isMoment) {
-                    if (mapper != null) {
-                        intersection.setup(mapPeriodStart(intersection.getStart),
-                            mapPeriodEnd(intersection.getEnd))
-                    }
-                    intersections.add(intersection)
+        periods
+            .filter(mp => !mp.isMoment)
+            .foreach(mp => {
+            val intersection = limits.getIntersection(mp)
+            if (intersection != null && !intersection.isMoment) {
+                if (mapper != null) {
+                    intersection.setup(mapPeriodStart(intersection.getStart),
+                        mapPeriodEnd(intersection.getEnd))
                 }
+                intersections.add(intersection)
             }
         })
         moments.addAll(intersections)

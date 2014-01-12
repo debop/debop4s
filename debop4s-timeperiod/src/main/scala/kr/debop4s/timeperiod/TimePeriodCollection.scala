@@ -90,4 +90,6 @@ object TimePeriodCollection {
 
     def apply(): TimePeriodCollection = new TimePeriodCollection
 
+    def apply(seq: ITimePeriod*): TimePeriodCollection = new TimePeriodCollection(seq)
+
 }
