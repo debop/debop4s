@@ -14,7 +14,7 @@ final class Logger(val log: Slf4jLogger) {
     lazy val name = log.getName
 
     @inline
-    private implicit def _any2String(msg: Any): String = {
+    private implicit def any2String(msg: Any): String = {
         msg match {
             case null => "<null>"
             case _ => msg.toString
@@ -26,21 +26,21 @@ final class Logger(val log: Slf4jLogger) {
 
     @inline
     def trace(msg: => Any) {
-        if (isTraceEnabled) log.trace(msg.toString)
+        if (isTraceEnabled) log.trace(any2String(msg))
     }
     @inline
     def trace(msg: => Any, t: Throwable) {
-        if (isTraceEnabled) log.trace(msg.toString, t)
+        if (isTraceEnabled) log.trace(any2String(msg), t)
     }
     @inline
     def trace(marker: Marker, msg: => Any) {
         if (isTraceEnabled(marker))
-            log.trace(marker, msg.toString)
+            log.trace(marker, any2String(msg))
     }
     @inline
     def trace(marker: Marker, msg: => Any, t: Throwable) {
         if (isTraceEnabled(marker))
-            log.trace(marker, msg.toString, t)
+            log.trace(marker, msg, t)
     }
 
     lazy val isDebugEnabled = log.isDebugEnabled
@@ -48,21 +48,21 @@ final class Logger(val log: Slf4jLogger) {
 
     @inline
     def debug(msg: => Any) {
-        if (isDebugEnabled) log.debug(msg.toString)
+        if (isDebugEnabled) log.debug(any2String(msg))
     }
     @inline
     def debug(msg: => Any, t: Throwable) {
-        if (isDebugEnabled) log.debug(msg.toString, t)
+        if (isDebugEnabled) log.debug(any2String(msg), t)
     }
     @inline
     def debug(marker: Marker, msg: => Any) {
         if (isDebugEnabled(marker))
-            log.debug(marker, msg.toString)
+            log.debug(marker, any2String(msg))
     }
     @inline
     def debug(marker: Marker, msg: => Any, t: Throwable) {
         if (isDebugEnabled(marker))
-            log.debug(marker, msg.toString, t)
+            log.debug(marker, any2String(msg), t)
     }
 
     lazy val isInfoEnabled = log.isInfoEnabled
@@ -70,21 +70,21 @@ final class Logger(val log: Slf4jLogger) {
 
     @inline
     def info(msg: => Any) {
-        if (isInfoEnabled) log.info(msg.toString)
+        if (isInfoEnabled) log.info(any2String(msg))
     }
     @inline
     def info(msg: => Any, t: Throwable) {
-        if (isInfoEnabled) log.info(msg.toString, t)
+        if (isInfoEnabled) log.info(any2String(msg), t)
     }
     @inline
     def info(marker: Marker, msg: => Any) {
         if (isInfoEnabled(marker))
-            log.info(marker, msg.toString)
+            log.info(marker, any2String(msg))
     }
     @inline
     def info(marker: Marker, msg: => Any, t: Throwable) {
         if (isInfoEnabled(marker))
-            log.info(marker, msg.toString, t)
+            log.info(marker, any2String(msg), t)
     }
 
     lazy val isWarnEnabled = log.isWarnEnabled
@@ -93,22 +93,22 @@ final class Logger(val log: Slf4jLogger) {
     @inline
     def warn(msg: => Any) {
         if (isWarnEnabled)
-            log.warn(msg.toString)
+            log.warn(any2String(msg))
     }
     @inline
     def warn(msg: => Any, t: Throwable) {
         if (isWarnEnabled)
-            log.warn(msg.toString, t)
+            log.warn(any2String(msg), t)
     }
     @inline
     def warn(marker: Marker, msg: => Any) {
         if (isWarnEnabled(marker))
-            log.warn(marker, msg.toString)
+            log.warn(marker, any2String(msg))
     }
     @inline
     def warn(marker: Marker, msg: => Any, t: Throwable) {
         if (isWarnEnabled(marker))
-            log.warn(marker, msg.toString, t)
+            log.warn(marker, any2String(msg), t)
     }
 
     lazy val isErrorEnabled = log.isErrorEnabled
@@ -117,22 +117,22 @@ final class Logger(val log: Slf4jLogger) {
     @inline
     def error(msg: => Any) {
         if (isErrorEnabled)
-            log.error(msg.toString)
+            log.error(any2String(msg))
     }
     @inline
     def error(msg: => Any, t: Throwable) {
         if (isErrorEnabled)
-            log.error(msg.toString, t)
+            log.error(any2String(msg), t)
     }
     @inline
     def error(marker: Marker, msg: => Any) {
         if (isErrorEnabled(marker))
-            log.error(marker, msg.toString)
+            log.error(marker, any2String(msg))
     }
     @inline
     def error(marker: Marker, msg: => Any, t: Throwable) {
         if (isErrorEnabled(marker))
-            log.error(marker, msg.toString, t)
+            log.error(marker, any2String(msg), t)
     }
 }
 
