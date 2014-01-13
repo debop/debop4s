@@ -17,8 +17,8 @@ class HierarchyTest extends FunSuite with Matchers {
         val range = new Range(Times.now, Times.now.plusDays(1), false)
         range.start = Times.today
 
-        range.start should not eq Times.now
-        range.start should be eq Times.today
+        range.start should not be eq(Times.now)
+        range.start shouldBe Times.today
         range.end should be > range.start
     }
 }

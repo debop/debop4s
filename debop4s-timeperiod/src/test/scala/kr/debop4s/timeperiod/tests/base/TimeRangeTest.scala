@@ -165,7 +165,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
 
         val changedEnd = end + 1.hour
         range.end = changedEnd
-        range.end should be eq changedEnd
+        range.end shouldBe changedEnd
     }
 
     test("readonly instance set end") {
