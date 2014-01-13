@@ -914,6 +914,10 @@
                     <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
                     </testAnalysisCacheFile>
                     <!--<encoding>${project.build.sourceEncoding}</encoding>-->
+                    <javacArgs>
+                        <javacArg>-Xlint:unchecked</javacArg>
+                        <javacArg>-Xlint:deprecation</javacArg>
+                    </javacArgs>
                 </configuration>
                 <executions>
                     <execution>
