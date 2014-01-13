@@ -77,4 +77,6 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
                 moments -= item
         }
     }
+
+    override def toString(): String = "TimeLineMomentCollection# moments=" + moments.sortBy(_.getMoment).toString()
 }

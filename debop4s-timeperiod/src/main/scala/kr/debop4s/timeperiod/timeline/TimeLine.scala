@@ -13,13 +13,13 @@ import scala.collection.JavaConversions._
  */
 @SerialVersionUID(8784228432548497611L)
 class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
-                                 private val aLimits: ITimePeriod = null,
+                                 private val _limits: ITimePeriod = null,
                                  private val mapper: ITimePeriodMapper = null) extends ITimeLine {
 
     require(periods != null)
     implicit lazy val log = Logger(getClass)
 
-    val limits = if (aLimits != null) TimeRange(aLimits) else TimeRange(periods)
+    val limits = if (_limits != null) TimeRange(_limits) else TimeRange(periods)
 
     def getPeriod = periods
 
@@ -84,8 +84,9 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
             if (intersection != null && !intersection.isMoment) {
                 if (mapper != null) {
                     intersection.setup(mapPeriodStart(intersection.getStart),
-                        mapPeriodEnd(intersection.getEnd))
+                                          mapPeriodEnd(intersection.getEnd))
                 }
+                log.trace(s"add intersection. intersection=[$intersection]")
                 intersections.add(intersection)
             }
         })

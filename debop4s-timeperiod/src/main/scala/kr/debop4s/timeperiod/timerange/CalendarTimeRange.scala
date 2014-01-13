@@ -13,10 +13,15 @@ import org.joda.time.{DateTime, Duration}
  */
 @SerialVersionUID(-422889827258277497L)
 class CalendarTimeRange(private val _period: ITimePeriod, val calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends TimeRange(_period.getStart, _period.getEnd, true) {
+    extends TimeRange(calendar.mapStart(_period.getStart), calendar.mapEnd(_period.getEnd), true) {
+
+    private val _mappedStart = calendar.mapStart(_period.start)
+    private val _mappedEnd = calendar.mapEnd(_period.end)
+    Times.assertValidPeriod(_mappedStart, _mappedEnd)
+
 
     def this(start: DateTime, end: DateTime, calendar: ITimeCalendar) {
-        this(new TimeRange(start, end, true), calendar)
+        this(TimeRange(start, end), calendar)
     }
 
     def this(start: DateTime, end: DateTime) {

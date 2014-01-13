@@ -2,6 +2,7 @@ package kr.debop4s.timeperiod.timeline
 
 import kr.debop4s.core.Guard
 import kr.debop4s.core.logging.Logger
+import kr.debop4s.time._
 import kr.debop4s.timeperiod._
 
 /**
@@ -81,25 +82,29 @@ object TimeLines {
     }
 
     def calculateGap(moments: ITimeLineMomentCollection, range: ITimePeriod): ITimePeriodCollection = {
-        log.trace(s"ITimeLineMomentCollection의 모든 ITimePeriod에 속하지 않는 Gap을 구합니다(여집합). range=[$range]")
+        log.trace(s"ITimeLineMomentCollection의 모든 ITimePeriod에 속하지 않는 Gap을 구합니다(여집합)." +
+            s"moments=[$moments], range=[$range]")
 
-        val gaps: ITimePeriodCollection = new TimePeriodCollection
+        val gaps = new TimePeriodCollection
         if (moments.isEmpty) return gaps
 
         // find leading gap
         val periodStart: ITimeLineMoment = moments.getMin
-        if (periodStart != null && range.getStart.compareTo(periodStart.getMoment) < 0) {
-            val startingGap = TimeRange(range.getStart, periodStart.getMoment)
+        if (periodStart != null && range.start < periodStart.getMoment) {
+            val startingGap = TimeRange(range.start, periodStart.getMoment)
             log.trace(s"starting gap을 추가합니다... startingGap=[$startingGap]")
             gaps.add(startingGap)
         }
+
         // find intermediated gap
-        var itemIndex: Int = 0
+        var itemIndex = 0
 
         while (itemIndex < moments.size) {
-            val moment: ITimeLineMoment = moments(itemIndex)
+            val moment = moments(itemIndex)
+            assert(moment != null)
+            assert(moment.getStartCount > 0, s"moment.getStartCount() 값이 0보다 커야합니다. balance=[${moment.getStartCount}]")
+
             var balance: Int = moment.getStartCount
-            Guard.shouldBe(balance > 0, s"moment.getStartCount() 값이 0보다 커야합니다. balance=[$balance]")
             var gapStart: ITimeLineMoment = null
 
             while (itemIndex < moments.size - 1 && balance > 0) {
@@ -110,17 +115,20 @@ object TimeLines {
             }
             Guard.shouldNotBeNull(gapStart, "gapStart")
 
-            if (gapStart.getStartCount <= 0 && itemIndex < moments.size - 1) {
-                val gap = TimeRange(gapStart.getMoment, moments(itemIndex + 1).getMoment)
-                log.trace(s"intermediated gap을 추가합니다. gap=[$gap]")
-                gaps.add(gap)
+            if (gapStart.getStartCount <= 0) {
+                if (itemIndex < moments.size - 1) {
+                    val gap = TimeRange(gapStart.getMoment, moments(itemIndex + 1).getMoment)
+                    log.trace(s"intermediated gap을 추가합니다. gap=[$gap]")
+                    gaps.add(gap)
+                }
             }
             itemIndex += 1
         }
         // find ending gap
-        val periodEnd: ITimeLineMoment = moments.getMax
+        val periodEnd = moments.getMax
+        log.trace(s"periodEnd=[$periodEnd]")
 
-        if (periodEnd != null && range.getEnd.compareTo(periodEnd.getMoment) > 0) {
+        if (periodEnd != null && range.end > periodEnd.getMoment) {
             val endingGap = TimeRange(periodEnd.getMoment, range.getEnd)
             log.trace(s"ending gap을 추가합니다. endingGap=[$endingGap]")
             gaps.add(endingGap)

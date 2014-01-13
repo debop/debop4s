@@ -15,7 +15,7 @@ class MonthTimeRange(private[this] val _year: Int,
                      private[this] val _monthOfYear: Int,
                      val monthCount: Int,
                      private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), _monthOfYear), _calendar) {
+    extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
     def this(moment: DateTime, monthCount: Int, calendar: ITimeCalendar) {
         this(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
