@@ -847,9 +847,9 @@ object Times {
 
 
     def assertValidPeriod(start: DateTime, end: DateTime) {
+        log.trace(s"assert valid period... start=[$start], end=[$end]")
         if (start != null && end != null) {
-            assert(start <= end,
-                s"시작시각이 완료시각보다 이전이어야 합니다. start=[$start], end=[$end]")
+            assert(start <= end, s"시작시각이 완료시각보다 이전이어야 합니다. start=[$start], end=[$end]")
         }
     }
 
