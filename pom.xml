@@ -129,6 +129,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <!-- Scala -->
             <dependency>
                 <groupId>org.scala-lang</groupId>
@@ -913,7 +914,7 @@
                     <analysisCacheFile>${project.build.outputDirectory}/analysis-cache-file</analysisCacheFile>
                     <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
                     </testAnalysisCacheFile>
-                    <!--<encoding>${project.build.sourceEncoding}</encoding>-->
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <javacArgs>
                         <javacArg>-Xlint:unchecked</javacArg>
                         <javacArg>-Xlint:deprecation</javacArg>
