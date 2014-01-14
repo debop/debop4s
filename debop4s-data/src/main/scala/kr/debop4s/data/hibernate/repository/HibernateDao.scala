@@ -1,12 +1,12 @@
 package kr.debop4s.data.hibernate.repository
 
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.Arrays
 import kr.debop4s.data.hibernate.HibernateParameter
 import kr.debop4s.data.hibernate.tools.{HibernateTool, CriteriaTool}
 import org.hibernate._
 import org.hibernate.criterion._
 import org.hibernate.transform.Transformers
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.stereotype.Repository
@@ -21,7 +21,7 @@ import scala.collection.JavaConversions._
 @Repository
 class HibernateDao {
 
-    lazy val log = Logger[HibernateDao]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     @Autowired
     var sessionFactory: SessionFactory = _

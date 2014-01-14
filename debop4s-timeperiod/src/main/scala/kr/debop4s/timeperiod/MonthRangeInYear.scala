@@ -13,8 +13,8 @@ import kr.debop4s.core.utils.ToStringHelper
 class MonthRangeInYear(val startMonthOfYear: Int, val endMonthOfYear: Int)
     extends AbstractValueObject with Ordered[MonthRangeInYear] {
 
-    assert(startMonthOfYear <= endMonthOfYear,
-        s"startMonthOfYear[$startMonthOfYear] <= endMonthOfYear[$endMonthOfYear] 여야 합니다.")
+    require(startMonthOfYear <= endMonthOfYear,
+               s"startMonthOfYear[$startMonthOfYear] <= endMonthOfYear[$endMonthOfYear] 여야 합니다.")
 
     def isSingleMonth = startMonthOfYear == endMonthOfYear
 

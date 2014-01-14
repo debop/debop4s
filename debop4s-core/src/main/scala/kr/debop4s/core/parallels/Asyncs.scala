@@ -1,7 +1,7 @@
 package kr.debop4s.core.parallels
 
 import java.util.concurrent.Callable
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.concurrent
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,7 +15,7 @@ import scala.concurrent.duration._
  */
 object Asyncs {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val EMPTY_RUNNABLE = new Runnable {
         def run() {

@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.message.BasicHeader
 import org.apache.http.{HttpStatus, Header}
+import org.slf4j.LoggerFactory
 import scala.Predef.String
 import scala.collection.mutable.ArrayBuffer
 
@@ -19,6 +20,8 @@ import scala.collection.mutable.ArrayBuffer
  * @since 2013. 12. 15. 오후 2:28
  */
 class GcmSender(val serverApiKey: String) {
+
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val GCM_SERVER_URL: String = "https://android.googleapis.com/gcm/send"
     val GCM_SERVER_URI = new URI(GCM_SERVER_URL)

@@ -8,7 +8,8 @@ import kr.debop4s.timeperiod.timerange.DayRange
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오후 8:17
  */
-class DaySeekerContext(val startDay: DayRange, private[this] val _dayCount: Int) extends ICalendarVisitorContext {
+class DaySeekerContext(val startDay: DayRange,
+                       private val _dayCount: Int) extends ICalendarVisitorContext {
 
     val dayCount = Math.abs(_dayCount)
 

@@ -1,12 +1,12 @@
 package kr.debop4s.timeperiod.tests.base
 
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.time._
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import kr.debop4s.timeperiod.tests.samples.TimeBlockPeriodRelationTestData
 import kr.debop4s.timeperiod.utils.{Times, Durations}
 import org.joda.time.{Duration, DateTime}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.tests.base.TimeBlockTest
@@ -15,7 +15,7 @@ import org.joda.time.{Duration, DateTime}
  */
 class TimeBlockTest extends AbstractTimePeriodTest {
 
-    override implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val duration = 1.hours.toDuration
     val offset = Durations.Second

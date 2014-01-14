@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 import scala.collection.mutable
 
 /**
@@ -11,7 +11,7 @@ import scala.collection.mutable
  */
 object Graphs {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def breadthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
         require(source != null)

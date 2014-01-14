@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tools.Stopwatch
@@ -10,7 +10,7 @@ import kr.debop4s.core.logging.Logger
  */
 class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def this() {
         this("", false)

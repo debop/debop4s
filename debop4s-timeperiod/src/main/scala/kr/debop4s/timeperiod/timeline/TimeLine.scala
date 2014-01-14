@@ -1,9 +1,9 @@
 package kr.debop4s.timeperiod.timeline
 
 import java.util
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod._
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 
 /**
@@ -17,7 +17,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
                                  private val mapper: ITimePeriodMapper = null) extends ITimeLine {
 
     require(periods != null)
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val limits = if (_limits != null) TimeRange(_limits) else TimeRange(periods)
 

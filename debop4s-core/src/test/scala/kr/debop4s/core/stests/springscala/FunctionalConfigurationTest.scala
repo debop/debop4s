@@ -1,8 +1,8 @@
 package kr.debop4s.core.stests.springscala
 
 import kr.debop4s.core.compress.{DeflateCompressor, GZipCompressor}
-import kr.debop4s.core.logging.Logger
 import org.scalatest.FunSuite
+import org.slf4j.LoggerFactory
 import org.springframework.scala.context.function.{FunctionalConfigApplicationContext, FunctionalConfiguration}
 
 /**
@@ -12,7 +12,8 @@ import org.springframework.scala.context.function.{FunctionalConfigApplicationCo
  * @since  2014. 1. 12. 오전 3:19
  */
 class FunctionalConfigurationTest extends FunSuite {
-    lazy val log = Logger[FunctionalConfigurationTest]
+
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val context = FunctionalConfigApplicationContext(classOf[CompressorConfiguration])
     val gzip = context.getBean(classOf[GZipCompressor])

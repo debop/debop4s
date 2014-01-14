@@ -13,7 +13,8 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 11. 오후 10:54
  */
-@ContextConfiguration(classes = Array(classOf[JpaHSqlConfiguration]), loader = classOf[AnnotationConfigContextLoader])
+@ContextConfiguration(classes = Array(classOf[JpaHSqlConfiguration]),
+                         loader = classOf[AnnotationConfigContextLoader])
 class MappingTest extends AbstractDataTest {
 
     @PersistenceContext val em: EntityManager = null

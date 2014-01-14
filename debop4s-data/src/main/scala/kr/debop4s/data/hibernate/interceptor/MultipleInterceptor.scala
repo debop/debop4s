@@ -4,6 +4,7 @@ import java.io.Serializable
 import java.util
 import org.hibernate.`type`.Type
 import org.hibernate.{Interceptor, EmptyInterceptor}
+import org.slf4j.LoggerFactory
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -13,6 +14,8 @@ import scala.collection.mutable.ArrayBuffer
  * @since 2013. 12. 24. 오후 4:43
  */
 class MultipleInterceptor extends EmptyInterceptor {
+
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val interceptors = ArrayBuffer[Interceptor]()
 

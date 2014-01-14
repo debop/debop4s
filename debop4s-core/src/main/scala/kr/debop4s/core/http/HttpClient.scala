@@ -3,7 +3,6 @@ package kr.debop4s.core.http
 import java.net.URI
 import java.nio.charset.Charset
 import kr.debop4s.core.json.JacksonSerializer
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.{With, Charsets}
 import org.apache.http._
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -12,6 +11,7 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.{HttpClients, CloseableHttpClient}
 import org.apache.http.impl.conn.{DefaultProxyRoutePlanner, PoolingHttpClientConnectionManager}
 import org.apache.http.util.EntityUtils
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 
 /**
@@ -22,7 +22,7 @@ import scala.collection.JavaConversions._
  */
 class HttpClient extends AutoCloseable {
 
-    implicit lazy val log = Logger[HttpClient]
+    lazy val log = LoggerFactory.getLogger(classOf[HttpClient])
 
     lazy val connectionManager = new PoolingHttpClientConnectionManager()
 

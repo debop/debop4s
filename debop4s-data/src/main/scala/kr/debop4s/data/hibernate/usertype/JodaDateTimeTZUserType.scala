@@ -3,11 +3,11 @@ package kr.debop4s.data.hibernate.usertype
 import java.io.Serializable
 import java.sql.{Timestamp, Types, ResultSet, PreparedStatement}
 import java.util.Objects
-import kr.debop4s.core.logging.Logger
 import org.hibernate.`type`.StandardBasicTypes
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
 import org.joda.time.{DateTimeZone, DateTime}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.data.hibernate.usertype.JodaDateTimeTZUserType
@@ -16,7 +16,7 @@ import org.joda.time.{DateTimeZone, DateTime}
  */
 class JodaDateTimeTZUserType extends UserType {
 
-    implicit lazy val log = Logger[JodaDateTimeTZUserType]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def sqlTypes() = Array(Types.TIMESTAMP, Types.VARCHAR)
     def returnedClass() = classOf[DateTime]

@@ -3,9 +3,9 @@ package kr.debop4s.core.stests.io
 import kr.debop4s.core.compress.{Compressor, DeflateCompressor, GZipCompressor}
 import kr.debop4s.core.cryptography.{TripleDESEncryptor, DESEncryptor, RC2Encryptor, SymmetricEncryptor}
 import kr.debop4s.core.io.{EncryptableSerializer, CompressableSerializer, BinarySerializer, Serializer}
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.stests.io.model.{User, Company}
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.io.SerializerTest
@@ -15,7 +15,7 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
  */
 class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = Logger[SerializerTest]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     var company: Company = _
 

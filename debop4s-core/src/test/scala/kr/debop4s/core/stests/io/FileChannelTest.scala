@@ -5,9 +5,9 @@ import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousFileChannel
 import java.nio.charset.Charset
 import java.nio.file.{Path, StandardOpenOption, Files, Paths}
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.{Strings, Charsets}
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
@@ -19,7 +19,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = Logger[FileChannelTest]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val TEST_TEXT = "동해물과 백두산이 마르고 닳도록, 하느님이 보우하사 우리나라 만세!!! Hello World. 안녕 세계여 \n"
 

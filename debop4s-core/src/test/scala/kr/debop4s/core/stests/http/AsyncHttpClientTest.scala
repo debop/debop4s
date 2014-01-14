@@ -5,7 +5,6 @@ import java.security.KeyStore
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import kr.debop4s.core.http.{AsyncHttpClient, HttpAsyncs}
-import kr.debop4s.core.logging.Logger
 import org.apache.http.client.methods.{HttpGet, HttpPost}
 import org.apache.http.client.utils.URIBuilder
 import org.apache.http.conn.ssl.{TrustSelfSignedStrategy, SSLContexts}
@@ -14,6 +13,7 @@ import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.util.EntityUtils
 import org.apache.http.{HttpException, HttpHeaders, HttpResponse, HttpStatus}
 import org.scalatest.FunSuite
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.http.AsyncHttpClientTest
@@ -23,7 +23,7 @@ import org.scalatest.FunSuite
  */
 class AsyncHttpClientTest extends FunSuite {
 
-    implicit lazy val log = Logger[AsyncHttpClientTest]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val URI_STRING = "https://www.google.co.kr"
     val TEST_COUNT = 30
@@ -89,7 +89,7 @@ class AsyncHttpClientTest extends FunSuite {
 
         val httpGet: HttpGet = new HttpGet(uri)
         httpGet.setHeader("BP_Access_Token",
-            "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
+                             "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
 
         httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
         val client: AsyncHttpClient = new AsyncHttpClient
@@ -117,7 +117,7 @@ class AsyncHttpClientTest extends FunSuite {
 
         val httpGet: HttpGet = new HttpGet(uri)
         httpGet.setHeader("BP_Access_Token",
-            "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
+                             "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
         httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
         val response: HttpResponse = HttpAsyncs.executeSSL(httpGet)
         assert(response != null)
@@ -135,7 +135,7 @@ class AsyncHttpClientTest extends FunSuite {
 
         val httpGet: HttpGet = new HttpGet(uri)
         httpGet.setHeader("BP_Access_Token",
-            "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
+                             "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
         httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
         val client: CloseableHttpAsyncClient = createHttpAsyncClient(uri)
         try {

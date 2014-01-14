@@ -2,11 +2,11 @@ package kr.debop4s.core.stests.io
 
 import java.nio.file.{StandardOpenOption, Paths, Path}
 import kr.debop4s.core.io.FileUtils
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Promises
 import kr.debop4s.core.utils.Strings
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
+import org.slf4j.LoggerFactory
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration._
 
@@ -18,7 +18,7 @@ import scala.concurrent.duration._
  */
 class FileUtilsTest extends AssertionsForJUnit {
 
-    implicit lazy val log = Logger[FileUtilsTest]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val TEST_TEXT: String = "동해물과 백두산이 마르고 닳도록, 하느님이 보우하사 우리나라 만세!!! Hello World. 안녕 세계여\n"
 
@@ -85,9 +85,9 @@ class FileUtilsTest extends AssertionsForJUnit {
 
         try {
             val writeResult = FileUtils.writeAsync(path,
-                Strings.replicate(TEST_TEXT, lineCount).getBytes(FileUtils.UTF8),
-                StandardOpenOption.CREATE,
-                StandardOpenOption.WRITE)
+                                                      Strings.replicate(TEST_TEXT, lineCount).getBytes(FileUtils.UTF8),
+                                                      StandardOpenOption.CREATE,
+                                                      StandardOpenOption.WRITE)
             Promises.await(writeResult)
             val readResult = FileUtils.readAllLinesAsync(path, FileUtils.UTF8, StandardOpenOption.READ)
             val lines = Promises.await(readResult, 60 seconds)

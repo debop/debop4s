@@ -2,6 +2,7 @@ package kr.debop4s.timeperiod.timeline
 
 import kr.debop4s.timeperiod.{DateTimeOrdering, ITimePeriod}
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import scala.collection.mutable
 
 /**
@@ -16,6 +17,8 @@ object TimeLineMomentCollection {
 
 @SerialVersionUID(-5739605965754152358L)
 class TimeLineMomentCollection extends ITimeLineMomentCollection {
+
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     implicit val dateTimeOrdering = new DateTimeOrdering()
 

@@ -1,12 +1,12 @@
 package kr.debop4s.timeperiod
 
 import kr.debop4s.core.ValueObject
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.{Options, Hashs}
 import kr.debop4s.time._
 import kr.debop4s.timeperiod.PeriodRelation.PeriodRelation
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.TimePeriod
@@ -15,7 +15,7 @@ import org.joda.time.{Duration, DateTime}
  */
 trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializable {
 
-    lazy val log = Logger("ITimePeriod")
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def compare(that: ITimePeriod): Int = if (that != null) start.compareTo(that.start) else 1
 
@@ -97,10 +97,10 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
                           private var _end: DateTime = MaxPeriodTime,
                           var readonly: Boolean = false) extends ITimePeriod {
 
-    override lazy val log = Logger(getClass)
+    override lazy val log = LoggerFactory.getLogger(getClass)
 
     private var (startTime, endTime) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
-        Options.get(_end).getOrElse(MaxPeriodTime))
+                                                             Options.get(_end).getOrElse(MaxPeriodTime))
 
     def this(start: DateTime, duration: Duration, readonly: Boolean) {
         this(start, start.plus(duration), readonly)

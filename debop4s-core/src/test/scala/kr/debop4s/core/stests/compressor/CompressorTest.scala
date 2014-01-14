@@ -1,9 +1,9 @@
 package kr.debop4s.core.stests.compressor
 
 import kr.debop4s.core.compress.{DeflateCompressor, Compressor, GZipCompressor}
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.Charsets
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -13,7 +13,7 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
  */
 class CompressorTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     test("gzip test") {
 

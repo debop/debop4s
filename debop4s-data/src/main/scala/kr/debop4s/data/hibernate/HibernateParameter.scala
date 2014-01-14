@@ -9,7 +9,9 @@ import org.hibernate.`type`.StandardBasicTypes
  * @since  2013. 12. 19. 오후 9:39
  */
 @SerialVersionUID(3975859046850492000L)
-class HibernateParameter(name: String, value: Any, paramType: org.hibernate.`type`.Type = StandardBasicTypes.SERIALIZABLE)
+class HibernateParameter(name: String,
+                         value: Any,
+                         paramType: org.hibernate.`type`.Type)
     extends AbstractNamedParameter(name, value) {
 
     def this(name: String, value: Any) {
@@ -17,5 +19,6 @@ class HibernateParameter(name: String, value: Any, paramType: org.hibernate.`typ
     }
 
     override protected def buildStringHelper =
-        super.buildStringHelper.add("paramType", paramType)
+        super.buildStringHelper
+            .add("paramType", paramType)
 }

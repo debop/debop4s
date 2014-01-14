@@ -1,8 +1,8 @@
 package kr.debop4s.core.globalization
 
 import java.util.{ResourceBundle, Locale}
-import kr.debop4s.core.logging.Logger
 import org.scalatest.{Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.{MessageSource, ApplicationContext}
 import org.springframework.test.context.support.GenericXmlContextLoader
@@ -22,7 +22,7 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
 // @ContextConfiguration(classes = Array(classOf[GlobalizationConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class GlobalizationTest extends FunSuite with Matchers {
 
-    implicit lazy val log = Logger[GlobalizationTest]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     @Autowired val applicationContext: ApplicationContext = null
     @Autowired val messageSource: MessageSource = null

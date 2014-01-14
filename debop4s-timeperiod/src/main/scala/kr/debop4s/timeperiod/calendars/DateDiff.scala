@@ -16,7 +16,7 @@ import org.joda.time.{Duration, DateTime}
 @SerialVersionUID(3415272759108830763L)
 class DateDiff(val start: DateTime,
                val end: DateTime,
-               val calendar: ITimeCalendar = DefaultTimeCalendar) extends ValueObject {
+               val calendar: ITimeCalendar) extends ValueObject {
 
     def this(moment: DateTime, calendar: ITimeCalendar) {
         this(moment, Times.now, calendar)
@@ -24,6 +24,10 @@ class DateDiff(val start: DateTime,
 
     def this(moment: DateTime) {
         this(moment, DefaultTimeCalendar)
+    }
+
+    def this(start: DateTime, end: DateTime) {
+        this(start, end, DefaultTimeCalendar)
     }
 
     val difference = new Duration(start, end)

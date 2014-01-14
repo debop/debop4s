@@ -3,9 +3,9 @@ package kr.debop4s.core.io
 import java.io.{InputStream, ByteArrayOutputStream, OutputStream}
 import java.util.Objects
 import kr.debop4s.core.BinaryStringFormat
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Asyncs
 import kr.debop4s.core.utils.{Arrays, Streams, Strings}
+import org.slf4j.LoggerFactory
 import scala.concurrent.Future
 
 /**
@@ -17,7 +17,7 @@ import scala.concurrent.Future
  */
 object Serializers {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
     lazy val serializer = new BinarySerializer()
 
     def serializeAsString[T <: AnyRef](serializer: Serializer, graph: T): String = {

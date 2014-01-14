@@ -26,6 +26,7 @@ class HierarchyTest extends FunSuite with Matchers {
 abstract class Period(private var _start: DateTime,
                       private var _end: DateTime,
                       private var _readonly: Boolean) {
+
     def start = _start
 
     protected def start_=(v: DateTime) = { _start = v }

@@ -1,8 +1,8 @@
 package kr.debop4s.data.hibernate.tools
 
-import kr.debop4s.core.logging.Logger
 import org.hibernate.Criteria
 import org.hibernate.criterion.{Order, DetachedCriteria, Restrictions}
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import scala.collection.JavaConversions._
 
@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
  */
 object CriteriaTool {
 
-    lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def addIn(criteria: Criteria, propertyName: String, ids: java.io.Serializable*): Criteria =
         criteria.add(Restrictions.in(propertyName, ids))

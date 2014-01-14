@@ -6,7 +6,7 @@ import java.nio.channels.AsynchronousFileChannel
 import java.nio.charset.Charset
 import java.nio.file._
 import java.nio.file.attribute.{BasicFileAttributes, FileAttribute}
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -22,7 +22,7 @@ import scala.concurrent.duration._
  */
 object FileUtils {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val DEFUALT_BUFFER_SIZE = 4096
     val UTF8 = Charset.forName("UTF-8")

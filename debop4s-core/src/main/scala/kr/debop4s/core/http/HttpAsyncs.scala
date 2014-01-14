@@ -3,13 +3,13 @@ package kr.debop4s.core.http
 import java.net.URI
 import java.nio.charset.Charset
 import kr.debop4s.core.json.JacksonSerializer
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.Charsets
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.{HttpDelete, HttpPost, HttpGet, HttpUriRequest}
 import org.apache.http.entity.StringEntity
 import org.apache.http.util.EntityUtils
 import org.apache.http.{NameValuePair, Header, HttpResponse}
+import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 
 
@@ -21,7 +21,7 @@ import scala.collection.JavaConversions._
  */
 object HttpAsyncs {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     lazy val client = new AsyncHttpClient()
     lazy val serializer = JacksonSerializer()

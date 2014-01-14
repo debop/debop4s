@@ -1,7 +1,7 @@
 package kr.debop4s.core
 
 import java.util.concurrent.Callable
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 import scala.collection.mutable
 
 /**
@@ -12,7 +12,7 @@ import scala.collection.mutable
  */
 object Local {
 
-    lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     private lazy val threadLocal = new ThreadLocal[mutable.LinkedHashMap[Any, Any]]() {
         override def initialValue(): mutable.LinkedHashMap[Any, Any] = {

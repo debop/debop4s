@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -11,7 +11,7 @@ import kr.debop4s.core.logging.Logger
  */
 object Collections {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def sortByKey[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
         m.toList.sortWith(_._1 < _._1).toMap

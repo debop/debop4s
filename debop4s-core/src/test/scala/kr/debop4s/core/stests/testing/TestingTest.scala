@@ -1,8 +1,8 @@
 package kr.debop4s.core.stests.testing
 
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.testing.Testing
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tests.testing.TestingTest
@@ -11,7 +11,7 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
  */
 class TestingTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = Logger[TestingTest]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val range = Range(0, 9)
 

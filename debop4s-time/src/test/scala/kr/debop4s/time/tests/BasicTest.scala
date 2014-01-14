@@ -3,6 +3,7 @@ package kr.debop4s.time.tests
 import kr.debop4s.time._
 import org.joda.time.{Interval, DateTime}
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.time.tests.BasicTest 
@@ -11,6 +12,8 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
  * @since 2014. 1. 7. 오후 2:50
  */
 class BasicTest extends FunSuite with Matchers with BeforeAndAfter {
+
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     test("DateTime manipulation") {
         val now = StaticDateTime.now

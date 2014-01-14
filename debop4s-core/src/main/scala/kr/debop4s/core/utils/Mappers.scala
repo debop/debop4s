@@ -1,9 +1,9 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
 import org.modelmapper.ModelMapper
 import org.modelmapper.config.Configuration.AccessLevel
 import org.modelmapper.convention.MatchingStrategies
+import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.reflect._
@@ -16,7 +16,7 @@ import scala.reflect._
  */
 object Mappers {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val mapper = new ModelMapper()
 

@@ -1,6 +1,6 @@
 package kr.debop4s.core.utils
 
-import kr.debop4s.core.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.core.tools.Tasks
@@ -10,7 +10,7 @@ import kr.debop4s.core.logging.Logger
  */
 object Tasks {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     /**
      * 지정된 block을 성공할 때까지 수행햅니다.

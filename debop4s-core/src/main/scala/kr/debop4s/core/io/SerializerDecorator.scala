@@ -8,7 +8,7 @@ package kr.debop4s.core.io
  */
 abstract class SerializerDecorator(val serializer: Serializer) extends Serializer {
 
-    assert(serializer != null)
+    require(serializer != null, "serializer가 null 이면 안됩니다.")
 
     /**
      * 객체를 직렬화 합니다.

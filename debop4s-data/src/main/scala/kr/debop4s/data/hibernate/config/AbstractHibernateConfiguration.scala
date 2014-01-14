@@ -2,11 +2,11 @@ package kr.debop4s.data.hibernate.config
 
 import java.util.Properties
 import javax.sql.DataSource
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.data.hibernate.interceptor.PersistentObjectInterceptor
 import kr.debop4s.data.jdbc.DataSources
 import org.hibernate.cfg.{AvailableSettings, NamingStrategy}
 import org.hibernate.{Interceptor, SessionFactory}
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator
@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableTransactionManagement
 abstract class AbstractHibernateConfiguration {
 
-    implicit lazy val log = Logger[AbstractHibernateConfiguration]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def getDatabaseName = "hibernate"
 

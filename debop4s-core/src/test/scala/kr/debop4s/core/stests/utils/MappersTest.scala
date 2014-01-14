@@ -26,7 +26,7 @@ class MappersTest extends FunSuite with Matchers with BeforeAndAfter {
 
         val bsf = Mappers.mapListAsync[B](as)
         Await.result(bsf, 100 milli)
-        assert(bsf.value.get.get.size == as.size)
+        bsf.value.get.get.size shouldEqual as.size
     }
 
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,7 +37,7 @@ class MappersTest extends FunSuite with Matchers with BeforeAndAfter {
 
         val bsf = Mappers.mapArrayAsync[B](new A(0), new A(1), new A(2))
         bsf onComplete {
-            case Success(result) => assert(result.size == 3)
+            case Success(result) => result.size shouldEqual 3
             case Failure(t) => throw new RuntimeException(t)
         }
     }

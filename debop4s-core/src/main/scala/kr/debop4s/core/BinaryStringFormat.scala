@@ -9,8 +9,8 @@ object BinaryStringFormat extends Enumeration {
 
     type BinaryStringFormat = Value
 
-    val Base64 = Value("Base64")
+    val Base64 = Value(0, "Base64")
 
-    val HexDecimal = Value("HexDecimal")
+    val HexDecimal = Value(1, "HexDecimal")
 
 }

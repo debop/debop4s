@@ -2,8 +2,8 @@ package kr.debop4s.core.stests.mail
 
 import javax.mail.internet.{MimeBodyPart, MimeMultipart, InternetAddress, MimeMessage}
 import javax.mail.{MessagingException, Transport, Message, Session}
-import kr.debop4s.core.logging.Logger
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 
 /**
  * 메일 발송 테스트를 위해서는 OSX에서는 sendemail 을 설치하세요.
@@ -14,7 +14,7 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
  */
 class SendMailTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = Logger[SendMailTest]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val to = "debop@hconnect.co.kr"
     val from = "noreply@hconnect.co.kr"

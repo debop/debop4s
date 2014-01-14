@@ -17,7 +17,24 @@ class ToStringHelper(val className: String) {
         this
     }
 
-    override def toString: String = map.mkString("{", ", ", "}")
+    @inline
+    override def toString: String = {
+        val builder = new StringBuilder()
+
+        builder.append("{")
+        var sep = ""
+        var first = true
+        for (x <- map) {
+            builder.append(sep)
+            builder.append(x._1).append("=").append(x._2)
+            if (first) {
+                first = false
+                sep = ","
+            }
+        }
+        builder.append("}")
+        builder.toString()
+    }
 
     private def addMap(name: String, value: Any) {
         map.put(name, value)

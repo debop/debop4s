@@ -1,10 +1,10 @@
 package kr.debop4s.data.hibernate.tools
 
 import kr.debop4s.core.io.Serializers
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.data.hibernate.HibernateParameter
 import org.hibernate.criterion.{Order, DetachedCriteria}
 import org.hibernate.{Query, Session, Criteria}
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 
 /**
@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable
  */
 object HibernateTool {
 
-    lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
 

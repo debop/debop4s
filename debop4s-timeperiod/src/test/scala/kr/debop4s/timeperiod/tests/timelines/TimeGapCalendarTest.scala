@@ -5,6 +5,7 @@ import kr.debop4s.timeperiod.timeline.TimeGapCalculator
 import kr.debop4s.timeperiod.timerange.MonthRange
 import kr.debop4s.timeperiod.utils.Times
 import kr.debop4s.timeperiod.{TimePeriodCollection, TimeRange}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.tests.timelines.TimeGapCalendarTest
@@ -12,6 +13,8 @@ import kr.debop4s.timeperiod.{TimePeriodCollection, TimeRange}
  * @since  2014. 1. 12. 오후 7:53
  */
 class TimeGapCalendarTest extends AbstractTimePeriodTest {
+
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val limits = TimeRange(Times.asDate(2011, 3, 1), Times.asDate(2011, 3, 5))
     val calculator = TimeGapCalculator()

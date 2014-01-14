@@ -3,9 +3,9 @@ package kr.debop4s.core.compress
 import java.io.{OutputStream, InputStream}
 import kr.debop4s.core.BinaryStringFormat
 import kr.debop4s.core.BinaryStringFormat.BinaryStringFormat
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.parallels.Asyncs
 import kr.debop4s.core.utils.{Streams, Strings}
+import org.slf4j.LoggerFactory
 import scala.concurrent.Future
 
 /**
@@ -15,7 +15,7 @@ import scala.concurrent.Future
  */
 object Compressors {
 
-    lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def compressString(compressor: Compressor,
                        plainText: String,

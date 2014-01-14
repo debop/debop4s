@@ -4,9 +4,12 @@ import kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import kr.debop4s.timeperiod.timerange.CalendarTimeRange
 import kr.debop4s.timeperiod.utils.Times
 import kr.debop4s.timeperiod.{TimeRange, TimeCalendar}
+import org.slf4j.LoggerFactory
 
 
 class CalendarTimeRangeTest extends AbstractTimePeriodTest {
+
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     test("calendar test") {
         val calendar = TimeCalendar()

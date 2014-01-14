@@ -1,11 +1,11 @@
 package kr.debop4s.timeperiod.utils
 
 import java.util.Locale
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod.Halfyear.Halfyear
 import kr.debop4s.timeperiod.Quarter.Quarter
 import kr.debop4s.timeperiod._
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.tools.Durations
@@ -14,7 +14,7 @@ import org.joda.time.{DateTime, Duration}
  */
 object Durations {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     val Zero = Duration.ZERO
 

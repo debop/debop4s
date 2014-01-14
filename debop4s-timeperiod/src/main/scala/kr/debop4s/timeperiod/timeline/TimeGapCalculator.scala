@@ -1,7 +1,7 @@
 package kr.debop4s.timeperiod.timeline
 
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.timeperiod.{ITimePeriodCollection, ITimePeriodContainer, ITimeCalendar, ITimePeriod}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.timeline.TimeGapCalculator
@@ -10,7 +10,7 @@ import kr.debop4s.timeperiod.{ITimePeriodCollection, ITimePeriodContainer, ITime
  */
 class TimeGapCalculator[T <: ITimePeriod](val mapper: ITimeCalendar) {
 
-    implicit lazy val log = Logger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     def this() {
         this(null)

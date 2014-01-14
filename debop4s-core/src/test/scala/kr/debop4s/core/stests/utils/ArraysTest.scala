@@ -1,8 +1,8 @@
 package kr.debop4s.core.stests.utils
 
-import kr.debop4s.core.logging.Logger
 import kr.debop4s.core.utils.Arrays
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class ArraysTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    implicit lazy val log = Logger[ArraysTest]
+    lazy val log = LoggerFactory.getLogger(getClass)
 
     test("iterable to array") {
         val buffer = new ArrayBuffer[Int](100)

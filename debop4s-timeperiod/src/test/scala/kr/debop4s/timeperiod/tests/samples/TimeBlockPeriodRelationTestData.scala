@@ -12,6 +12,7 @@ import scala.collection.mutable.ArrayBuffer
  * @since  2014. 1. 8. 오후 11:47
  */
 class TimeBlockPeriodRelationTestData {
+
     val allPeriods = ArrayBuffer[ITimePeriod]()
     var reference: ITimeBlock = null
     var before: ITimeBlock = null

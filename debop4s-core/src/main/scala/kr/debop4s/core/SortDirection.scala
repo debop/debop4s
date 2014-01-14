@@ -10,7 +10,7 @@ object SortDirection extends Enumeration {
 
     type SortDirection = Value
 
-    val ASC = Value("ASC")
+    val ASC = Value(1, "ASC")
 
-    val DESC = Value("DESC")
+    val DESC = Value(-1, "DESC")
 }

@@ -4,6 +4,7 @@ import java.io.Serializable
 import kr.debop4s.data.model.PersistentObject
 import org.hibernate.EmptyInterceptor
 import org.hibernate.`type`.Type
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.data.hibernate.interceptor.PersistentObjectInterceptor
@@ -13,13 +14,21 @@ import org.hibernate.`type`.Type
  */
 class PersistentObjectInterceptor extends EmptyInterceptor {
 
+    lazy val log = LoggerFactory.getLogger(getClass)
+
     def isPersisted(entity: AnyRef): Boolean = entity match {
         case p: PersistentObject => true
         case _ => false
     }
 
     override
-    def onLoad(entity: Any, id: Serializable, state: Array[AnyRef], propertyNames: Array[String], types: Array[Type]): Boolean = {
+    def onLoad(entity: Any,
+               id: Serializable,
+               state: Array[AnyRef],
+               propertyNames: Array[String],
+               types: Array[Type]): Boolean = {
+        log.debug(s"엔티티 로드 후 PersistentObject의 상태를 갱신합니다.")
+
         entity match {
             case p: PersistentObject => p.onLoad()
             case _ =>
@@ -28,7 +37,13 @@ class PersistentObjectInterceptor extends EmptyInterceptor {
     }
 
     override
-    def onSave(entity: scala.Any, id: Serializable, state: Array[AnyRef], propertyNames: Array[String], types: Array[Type]): Boolean = {
+    def onSave(entity: scala.Any,
+               id: Serializable,
+               state: Array[AnyRef],
+               propertyNames: Array[String],
+               types: Array[Type]): Boolean = {
+        log.debug(s"엔티티 로드 후 PersistentObject의 상태를 갱신합니다.")
+
         entity match {
             case p: PersistentObject => p.onPersist()
             case _ =>
