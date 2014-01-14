@@ -1,7 +1,7 @@
 package kr.debop4s.timeperiod.tests.base
 
-import kr.debop4s.time._
 import kr.debop4s.timeperiod.Timepart
+import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import kr.debop4s.timeperiod.utils.{Durations, Times}
 import org.joda.time.{Duration, DateTime}

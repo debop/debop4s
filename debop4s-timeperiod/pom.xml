@@ -17,11 +17,6 @@
             <artifactId>debop4s-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>kr.debop4s</groupId>
-            <artifactId>debop4s-time</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
     </dependencies>
 
 </project>

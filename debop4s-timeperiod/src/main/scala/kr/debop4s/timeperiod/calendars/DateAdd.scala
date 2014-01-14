@@ -1,7 +1,6 @@
 package kr.debop4s.timeperiod.calendars
 
 import kr.debop4s.core.{Guard, ValueObject}
-import kr.debop4s.time._
 import kr.debop4s.timeperiod.SeekBoundaryMode.SeekBoundaryMode
 import kr.debop4s.timeperiod.SeekDirection.SeekDirection
 import kr.debop4s.timeperiod._

@@ -1,7 +1,6 @@
 package kr.debop4s.timeperiod.timeline
 
 import kr.debop4s.core.Guard
-import kr.debop4s.time._
 import kr.debop4s.timeperiod._
 import org.slf4j.LoggerFactory
 

@@ -3,7 +3,6 @@ package kr.debop4s.timeperiod
 import java.util.Locale
 import kr.debop4s.core.ValueObject
 import kr.debop4s.core.utils.{Options, ToStringHelper, Hashs}
-import kr.debop4s.time._
 import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}

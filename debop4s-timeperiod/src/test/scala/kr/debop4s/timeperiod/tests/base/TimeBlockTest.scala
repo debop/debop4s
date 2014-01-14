@@ -1,6 +1,5 @@
 package kr.debop4s.timeperiod.tests.base
 
-import kr.debop4s.time._
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import kr.debop4s.timeperiod.tests.samples.TimeBlockPeriodRelationTestData

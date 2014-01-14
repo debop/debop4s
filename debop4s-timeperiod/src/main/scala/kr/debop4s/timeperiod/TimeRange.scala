@@ -1,6 +1,5 @@
 package kr.debop4s.timeperiod
 
-import kr.debop4s.time._
 import org.joda.time.{Duration, DateTime}
 
 /**
@@ -80,8 +79,8 @@ class TimeRange(private var _start: DateTime = MinPeriodTime,
             TimeRange(this)
         else
             TimeRange(if (hasStart) start.plus(offset) else start,
-                if (hasEnd) end.plus(offset) else end,
-                readonly)
+                         if (hasEnd) end.plus(offset) else end,
+                         readonly)
     }
 
     def expandStartTo(moment: DateTime) {

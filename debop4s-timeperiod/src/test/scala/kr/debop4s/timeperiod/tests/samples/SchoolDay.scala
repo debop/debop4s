@@ -1,6 +1,6 @@
 package kr.debop4s.timeperiod.tests.samples
 
-import kr.debop4s.time._
+import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.utils.Times
 import kr.debop4s.timeperiod.{TimeBlock, TimePeriodChain}
 import org.joda.time.DateTime

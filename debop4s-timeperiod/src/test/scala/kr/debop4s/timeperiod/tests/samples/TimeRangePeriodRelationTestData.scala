@@ -1,7 +1,7 @@
 package kr.debop4s.timeperiod.tests.samples
 
 import kr.debop4s.core.Guard
-import kr.debop4s.time._
+import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.{TimeRange, ITimeRange, ITimePeriod}
 import org.joda.time.{Duration, DateTime}
 import scala.collection.mutable.ArrayBuffer

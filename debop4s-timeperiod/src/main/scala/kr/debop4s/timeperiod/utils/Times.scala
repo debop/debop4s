@@ -1,7 +1,6 @@
 package kr.debop4s.timeperiod.utils
 
 import kr.debop4s.core.NotSupportedException
-import kr.debop4s.time._
 import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import kr.debop4s.timeperiod.Halfyear.Halfyear
 import kr.debop4s.timeperiod.Month.Month

@@ -1,6 +1,5 @@
 package kr.debop4s.timeperiod
 
-import kr.debop4s.time._
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
 import org.slf4j.LoggerFactory

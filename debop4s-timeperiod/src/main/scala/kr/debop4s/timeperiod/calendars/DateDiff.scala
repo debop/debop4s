@@ -3,7 +3,6 @@ package kr.debop4s.timeperiod.calendars
 import java.util.Objects
 import kr.debop4s.core.ValueObject
 import kr.debop4s.core.utils.Hashs
-import kr.debop4s.time._
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}

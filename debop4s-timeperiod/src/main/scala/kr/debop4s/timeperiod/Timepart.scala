@@ -1,7 +1,6 @@
 package kr.debop4s.timeperiod
 
 import kr.debop4s.core.ValueObject
-import kr.debop4s.time._
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
 

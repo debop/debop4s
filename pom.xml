@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>debop4s-time</module>
+        <!--<module>debop4s-time</module>-->
         <module>debop4s-core</module>
         <module>debop4s-timeperiod</module>
         <module>debop4s-data</module>
@@ -484,7 +484,7 @@
                 <version>1.0.0.M2</version>
             </dependency>
 
-           <!-- Spring MVC -->
+            <!-- Spring MVC -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
