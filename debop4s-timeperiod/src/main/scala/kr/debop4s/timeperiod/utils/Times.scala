@@ -253,11 +253,11 @@ object Times {
 
     def isSameHalfyear(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) &&
-        getHalfyearOfMonth(left.getMonthOfYear) == getHalfyearOfMonth(right.getMonthOfYear)
+            getHalfyearOfMonth(left.getMonthOfYear) == getHalfyearOfMonth(right.getMonthOfYear)
 
     def isSameQuarter(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) &&
-        getQuarterOfMonth(left.getMonthOfYear) == getQuarterOfMonth(right.getMonthOfYear)
+            getQuarterOfMonth(left.getMonthOfYear) == getQuarterOfMonth(right.getMonthOfYear)
 
     def isSameMonth(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) && left.getMonthOfYear == right.getMonthOfYear
@@ -674,27 +674,19 @@ object Times {
 
 
     def hasInside(period: ITimePeriod, target: DateTime): Boolean = {
-        val isInside = target >= period.start && target <= period.end
-        log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=[$isInside]")
-        isInside
+        target >= period.start && target <= period.end
     }
 
     def hasInside(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        val isInside = hasInside(period, target.start) && hasInside(period, target.end)
-        log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=$isInside")
-        isInside
+        hasInside(period, target.start) && hasInside(period, target.end)
     }
 
     def hasPureInside(period: ITimePeriod, target: DateTime): Boolean = {
-        val isInside = target > period.start && target < period.end
-        log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=$isInside")
-        isInside
+        target > period.start && target < period.end
     }
 
     def hasPureInside(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        val isInside = hasPureInside(period, target.start) && hasPureInside(period, target.end)
-        log.trace(s"기간[$period]에 target[$target]이 포함되는가? isInside=$isInside")
-        isInside
+        hasPureInside(period, target.start) && hasPureInside(period, target.end)
     }
 
     def isAnytime(period: ITimePeriod) = period != null && period.isAnytime
@@ -702,8 +694,8 @@ object Times {
     def isNotAnyTime(period: ITimePeriod) = period != null && !period.isAnytime
 
     def getRelation(period: ITimePeriod, target: ITimePeriod): PeriodRelation = {
-        assert(period != null)
-        assert(target != null)
+        require(period != null)
+        require(target != null)
 
         var relation = PeriodRelation.NoRelation
 
@@ -751,29 +743,32 @@ object Times {
         assert(period != null)
         assert(target != null)
 
-        val isIntersect = hasInside(period, target.start) ||
-                          hasInside(period, target.end) ||
-                          hasPureInside(target, period)
+        val isIntersect =
+            hasInside(period, target.start) ||
+                hasInside(period, target.end) ||
+                hasPureInside(target, period)
+
         log.debug(s"period=[$period], target=[$target]이 교차 구간인가? intersect=[$isIntersect]")
+
         isIntersect
     }
 
-    val NotOverlapedRelations = Array(PeriodRelation.After,
-                                         PeriodRelation.StartTouching,
-                                         PeriodRelation.EndTouching,
-                                         PeriodRelation.Before)
+    lazy val NotOverlapedRelations = Array(PeriodRelation.After,
+                                              PeriodRelation.StartTouching,
+                                              PeriodRelation.EndTouching,
+                                              PeriodRelation.Before)
 
     def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        assert(period != null)
-        assert(target != null)
+        require(period != null)
+        require(target != null)
 
         val relation = getRelation(period, target)
         !NotOverlapedRelations.contains(relation)
     }
 
     def getIntersectionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
-        assert(period != null)
-        assert(target != null)
+        require(period != null)
+        require(target != null)
 
         var intersection: TimeBlock = null
         if (intersectWith(period, target)) {
@@ -788,8 +783,8 @@ object Times {
     }
 
     def getUnionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
-        assert(period != null)
-        assert(target != null)
+        require(period != null)
+        require(target != null)
 
         val start = min(period.start, target.start)
         val end = max(period.end, target.end)
@@ -798,8 +793,8 @@ object Times {
     }
 
     def getIntersectionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
-        assert(period != null)
-        assert(target != null)
+        require(period != null)
+        require(target != null)
 
         var intersection: TimeRange = null
         if (intersectWith(period, target)) {
@@ -813,8 +808,8 @@ object Times {
     }
 
     def getUnionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
-        assert(period != null)
-        assert(target != null)
+        require(period != null)
+        require(target != null)
 
         val start = min(period.start, target.start)
         val end = max(period.end, target.end)
@@ -858,8 +853,8 @@ object Times {
     }
 
     def allItemsAreEqual(left: Iterable[_ <: ITimePeriod], right: Iterable[_ <: ITimePeriod]): Boolean = {
-        assert(left != null)
-        assert(right != null)
+        require(left != null)
+        require(right != null)
 
         if (left.size != right.size)
             return false
@@ -891,7 +886,7 @@ object Times {
     }
 
     def foreachYears(period: ITimePeriod): Seq[ITimePeriod] = {
-        assert(period != null)
+        require(period != null)
         log.debug(s"기간[$period]에 대해 Year 단위로 열거합니다...")
 
         val years = ArrayBuffer[ITimePeriod]()
@@ -923,7 +918,7 @@ object Times {
     }
 
     def foreachHalfyears(period: ITimePeriod): Seq[ITimePeriod] = {
-        assert(period != null)
+        require(period != null)
         log.debug(s"기간[$period]에 대해 HalfYear 단위로 열거합니다...")
 
         val halfyears = ArrayBuffer[ITimePeriod]()
@@ -958,7 +953,7 @@ object Times {
     }
 
     def foreachQuarters(period: ITimePeriod): Seq[ITimePeriod] = {
-        assert(period != null)
+        require(period != null)
         log.debug(s"기간[$period]에 대해 Quarter 단위로 열거합니다...")
 
         val quarters = ArrayBuffer[ITimePeriod]()
@@ -993,7 +988,7 @@ object Times {
     }
 
     def foreachMonths(period: ITimePeriod): Seq[ITimePeriod] = {
-        assert(period != null)
+        require(period != null)
         log.trace(s"기간[$period]에 대해 월(Month) 단위로 열거합니다...")
 
         val months = ArrayBuffer[ITimePeriod]()
@@ -1027,7 +1022,7 @@ object Times {
     }
 
     def foreachWeeks(period: ITimePeriod): Seq[ITimePeriod] = {
-        assert(period != null)
+        require(period != null)
         log.trace(s"기간[$period]에 대해 주(Week) 단위로 열거합니다...")
 
         val weeks = ArrayBuffer[ITimePeriod]()
@@ -1065,7 +1060,7 @@ object Times {
     }
 
     def foreachDays(period: ITimePeriod): Seq[ITimePeriod] = {
-        assert(period != null)
+        require(period != null)
         log.trace(s"기간[$period]에 대해 일(Day) 단위로 열거합니다...")
 
         val days = ArrayBuffer[ITimePeriod]()
@@ -1095,7 +1090,7 @@ object Times {
     }
 
     def foreachHours(period: ITimePeriod): Seq[ITimePeriod] = {
-        assert(period != null)
+        require(period != null)
         log.trace(s"기간[$period]에 대해 시간(Hour) 단위로 열거합니다...")
 
         val hours = ArrayBuffer[ITimePeriod]()
@@ -1127,7 +1122,7 @@ object Times {
     }
 
     def foreachMinutes(period: ITimePeriod): Seq[ITimePeriod] = {
-        assert(period != null)
+        require(period != null)
         log.trace(s"기간[$period]에 대해 분(Minute) 단위로 열거합니다...")
 
         val minutes = ArrayBuffer[ITimePeriod]()
@@ -1165,15 +1160,15 @@ object Times {
     }
 
     def runPeriods[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): Seq[T] = {
-        assert(period != null)
-        assert(func != null)
+        require(period != null)
+        require(func != null)
 
         foreachPeriods(period, unit).map(p => func(p))
     }
 
     def runPeriodsAsParallel[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): ParSeq[(ITimePeriod, T)] = {
-        assert(period != null)
-        assert(func != null)
+        require(period != null)
+        require(func != null)
 
         foreachPeriods(period, unit).par.map(p => (p, func(p)))
     }
