@@ -646,7 +646,11 @@
                 <artifactId>querydsl-jpa-codegen</artifactId>
                 <version>${querydsl.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.mysema.querydsl</groupId>
+                <artifactId>querydsl-scala</artifactId>
+                <version>${querydsl.version}</version>
+            </dependency>
             <!-- MongoDB -->
             <dependency>
                 <groupId>org.mongodb</groupId>

@@ -119,11 +119,16 @@
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-jpa-codegen</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-scala</artifactId>
+        </dependency>
 
         <!-- Tomcat Connection Pool -->
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Database Drivers -->
