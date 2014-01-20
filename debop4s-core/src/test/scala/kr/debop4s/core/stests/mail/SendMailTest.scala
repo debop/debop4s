@@ -49,7 +49,7 @@ class SendMailTest extends FunSuite with Matchers with BeforeAndAfter {
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to))
 
         message.setSubject("메일 제목입니다.")
-        val body = new MimeBodyPart() ㄷㅌ
+        val body = new MimeBodyPart()
 
         body.setText("<h1>메일 본문 제목입니다.</h1>\n<hr>\n<div>메일 본문이구요.</div>", "UTF-8", "html")
 
