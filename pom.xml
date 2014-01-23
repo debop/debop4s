@@ -302,13 +302,24 @@
             </dependency>
 
             <!-- ASM -->
-            <!-- NOTE: org.ow2.asm 4.1 을 사용하면 안되고, 꼭 asm 3.x 버전을 사용하세요 -->
+            <!-- NOTE: Spring 3.x 에서는 org.ow2.asm 4.1 을 사용하면 안되고, 꼭 asm 3.x 버전을 사용하세요 -->
+            <!-- NOTE: Spring 4.0 이상에서는 org.ow2.asm 4.2 이상을 사용해야 합니다. -->
             <dependency>
-                <groupId>asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>3.3.1</version>
-                <scope>provided</scope>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>3.1</version>
             </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-all</artifactId>
+                <version>4.2</version>
+            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>asm</groupId>-->
+                <!--<artifactId>asm</artifactId>-->
+                <!--<version>3.3.1</version>-->
+                <!--<scope>provided</scope>-->
+            <!--</dependency>-->
 
             <!-- Model Mapper -->
             <dependency>

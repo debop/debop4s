@@ -150,10 +150,19 @@
         <!-- ASM -->
         <!-- NOTE: org.ow2.asm 4.1 을 사용하면 안되고, 꼭 asm 3.x 버전을 사용하세요 -->
         <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <scope>provided</scope>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <version>4.2</version>
         </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>asm</groupId>-->
+            <!--<artifactId>asm</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
     </dependencies>
 
