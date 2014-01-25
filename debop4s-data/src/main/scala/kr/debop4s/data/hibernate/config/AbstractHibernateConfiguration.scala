@@ -13,6 +13,7 @@ import org.springframework.orm.hibernate4.HibernateExceptionTranslator
 import org.springframework.orm.hibernate4.{HibernateTransactionManager, LocalSessionFactoryBean}
 import org.springframework.scala.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.EnableTransactionManagement
+import kr.debop4s.data.hibernate.repository.HibernateDao
 
 /**
  * Spring 용 Hibernate 환경 설정 Class 입니다.
@@ -102,4 +103,7 @@ abstract class AbstractHibernateConfiguration {
     @Bean
     def exceptionTranslation(): PersistenceExceptionTranslationPostProcessor =
         new PersistenceExceptionTranslationPostProcessor()
+
+    @Bean
+    def hibernateDao():HibernateDao = new HibernateDao(sessionFactory())
 }

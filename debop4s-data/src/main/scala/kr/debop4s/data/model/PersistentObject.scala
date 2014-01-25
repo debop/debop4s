@@ -1,8 +1,8 @@
 package kr.debop4s.data.model
 
-import java.beans.Transient
 import kr.debop4s.core.ValueObject
 import kr.debop4s.core.utils.ToStringHelper
+import javax.persistence.Transient
 
 /**
  * kr.debop4s.data.model.PersistentObject
@@ -13,7 +13,8 @@ import kr.debop4s.core.utils.ToStringHelper
 @SerialVersionUID(-7066710546641101707L)
 trait PersistentObject extends ValueObject {
 
-    @Transient private var persisted: Boolean = false
+    @Transient
+    private var persisted: Boolean = false
 
     def isPersisted = persisted
 
