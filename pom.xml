@@ -866,8 +866,61 @@
                     <useFullNames>false</useFullNames>
                 </configuration>
             </plugin>
+
+            <!--
+                scala-maven-plugin 을 maven-compiler-plugin 보다 앞에 정의해야 한다.
+                참고: http://davidb.github.io/scala-maven-plugin/example_java.html
+            -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.1.6</version>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <!--<recompileMode>incremental</recompileMode>-->
+                    <!--<useZincServer>true</useZincServer>-->
+                    <analysisCacheFile>${project.build.outputDirectory}/analysis-cache-file</analysisCacheFile>
+                    <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
+                    </testAnalysisCacheFile>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <args>
+                        <arg>-target:jvm-${jdk.version}</arg>
+                        <arg>-unchecked</arg>
+                        <arg>-deprecation</arg>
+                        <arg>-explaintypes</arg>
+                    </args>
+                    <javacArgs>
+                        <javacArg>-source</javacArg>
+                        <javacArg>${jdk.version}</javacArg>
+                        <javacArg>-target</javacArg>
+                        <javacArg>${jdk.version}</javacArg>
+                    </javacArgs>
+                    <jvmArgs>
+                        <jvmArg>-Xms128m</jvmArg>
+                        <jvmArg>-Xmx4096m</jvmArg>
+                    </jvmArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
@@ -917,34 +970,6 @@
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>3.1.6</version>
-                <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                    <!--<recompileMode>incremental</recompileMode>-->
-                    <!--<useZincServer>true</useZincServer>-->
-                    <analysisCacheFile>${project.build.outputDirectory}/analysis-cache-file</analysisCacheFile>
-                    <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
-                    </testAnalysisCacheFile>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <javacArgs>
-                        <javacArg>-Xlint:unchecked</javacArg>
-                        <javacArg>-Xlint:deprecation</javacArg>
-                    </javacArgs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
 
             <!-- enable scalatest -->
             <plugin>
