@@ -14,9 +14,7 @@ object Promises {
 
     lazy val log = LoggerFactory.getLogger(getClass)
 
-    import scala.concurrent.ExecutionContext.Implicits.global
-
-    implicit val executor = ExecutionContext.fromExecutor(global)
+    implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
     def startNew[V](block: => V)(implicit executor: ExecutionContextExecutor): Future[V] = {
         val promise = Promise[V]()

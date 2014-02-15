@@ -10,6 +10,22 @@ import org.joda.time.DateTime
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 28. 오후 10:40
  */
+object DayRange {
+
+    def apply(): DayRange = new DayRange(Times.today, DefaultTimeCalendar)
+
+    def apply(calendar: TimeCalendar): DayRange = new DayRange(Times.today, DefaultTimeCalendar)
+
+    def apply(moment: DateTime): DayRange = new DayRange(moment, DefaultTimeCalendar)
+
+    def apply(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): DayRange =
+        new DayRange(moment, calendar)
+
+    def apply(year: Int, monthOfYear: Int, dayOfMonth: Int): DayRange =
+        new DayRange(Times.asDate(year, monthOfYear, dayOfMonth), DefaultTimeCalendar)
+
+}
+
 @SerialVersionUID(7993201574147735665L)
 class DayRange(private[this] val _moment: DateTime,
                private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
@@ -39,13 +55,10 @@ class DayRange(private[this] val _moment: DateTime,
 
     def dayOfWeek: DayOfWeek = startDayOfWeek
 
-    def addDays(days: Int): DayRange = {
-        new DayRange(Times.asDate(getStart).plusDays(days), calendar)
-    }
+    def addDays(days: Int): DayRange =
+        DayRange(Times.asDate(start).plusDays(days), calendar)
 
     def previousDay: DayRange = addDays(-1)
 
     def nextDay: DayRange = addDays(1)
-
-
 }

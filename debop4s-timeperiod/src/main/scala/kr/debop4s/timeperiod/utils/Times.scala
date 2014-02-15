@@ -253,11 +253,11 @@ object Times {
 
     def isSameHalfyear(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) &&
-            getHalfyearOfMonth(left.getMonthOfYear) == getHalfyearOfMonth(right.getMonthOfYear)
+        getHalfyearOfMonth(left.getMonthOfYear) == getHalfyearOfMonth(right.getMonthOfYear)
 
     def isSameQuarter(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) &&
-            getQuarterOfMonth(left.getMonthOfYear) == getQuarterOfMonth(right.getMonthOfYear)
+        getQuarterOfMonth(left.getMonthOfYear) == getQuarterOfMonth(right.getMonthOfYear)
 
     def isSameMonth(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) && left.getMonthOfYear == right.getMonthOfYear
@@ -341,8 +341,8 @@ object Times {
 
     def endTimeOfHalfyear(year: Int, halfyear: Halfyear): DateTime =
         startTimeOfHalfyear(year, halfyear)
-            .plusMonths(MonthsPerHalfyear)
-            .minus(1)
+        .plusMonths(MonthsPerHalfyear)
+        .minus(1)
 
     def startTimeOfQuarter(moment: DateTime): DateTime =
         startTimeOfQuarter(moment.getYear, moment.getMonthOfYear)
@@ -361,8 +361,8 @@ object Times {
 
     def endTimeOfQuarter(year: Int, quarter: Quarter): DateTime =
         startTimeOfQuarter(year, quarter)
-            .plusMonths(MonthsPerQuarter)
-            .minus(1)
+        .plusMonths(MonthsPerQuarter)
+        .minus(1)
 
     def startTimeOfLastQuarter(moment: DateTime): DateTime =
         startTimeOfQuarter(moment.minusMonths(MonthsPerQuarter))
@@ -631,13 +631,13 @@ object Times {
         new YearRangeCollection(moment.getYear, yearCount, calendar)
 
     def getHalfyearRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): HalfyearRange =
-        new HalfyearRange(moment, calendar)
+        HalfyearRange(moment, calendar)
 
     def getHalfyearRanges(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): HalfyearRangeCollection =
-        new HalfyearRangeCollection(moment, halfyearCount, calendar)
+        HalfyearRangeCollection(moment, halfyearCount, calendar)
 
     def getQuarterRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): QuarterRange =
-        new QuarterRange(moment, calendar)
+        QuarterRange(moment, calendar)
 
     def getQuarterRanges(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): QuarterRangeCollection =
         new QuarterRangeCollection(moment, quarterCount, calendar)
@@ -745,8 +745,8 @@ object Times {
 
         val isIntersect =
             hasInside(period, target.start) ||
-                hasInside(period, target.end) ||
-                hasPureInside(target, period)
+            hasInside(period, target.end) ||
+            hasPureInside(target, period)
 
         log.debug(s"period=[$period], target=[$target]이 교차 구간인가? intersect=[$isIntersect]")
 
@@ -841,7 +841,6 @@ object Times {
 
 
     def assertValidPeriod(start: DateTime, end: DateTime) {
-        log.trace(s"assert valid period... start=[$start], end=[$end]")
         if (start != null && end != null) {
             assert(start <= end, s"시작시각이 완료시각보다 이전이어야 합니다. start=[$start], end=[$end]")
         }

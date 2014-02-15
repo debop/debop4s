@@ -11,20 +11,27 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오후 6:20
  */
+object HalfyearRangeCollection {
+
+    def apply(year: Int, halfyear: Halfyear, halfyearCount: Int): HalfyearRangeCollection =
+        apply(year, halfyear, halfyearCount, DefaultTimeCalendar)
+
+    def apply(year: Int, halfyear: Halfyear, halfyearCount: Int, calendar: ITimeCalendar): HalfyearRangeCollection =
+        new HalfyearRangeCollection(year, halfyear, halfyearCount, calendar)
+
+    def apply(moment: DateTime, halfyearCount: Int): HalfyearRangeCollection =
+        apply(moment, halfyearCount, DefaultTimeCalendar)
+
+    def apply(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar): HalfyearRangeCollection =
+        new HalfyearRangeCollection(moment.getYear, Times.halfyearOf(moment), halfyearCount, calendar)
+}
+
+
 class HalfyearRangeCollection(private val _year: Int,
                               private val _halfyear: Halfyear,
                               private val _halfyearCount: Int,
                               private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends HalfyearTimeRange(_year, _halfyear, _halfyearCount, _calendar) {
-
-    def this(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar) {
-        this(moment.getYear, Times.halfyearOf(moment), halfyearCount, calendar)
-    }
-
-    def this(moment: DateTime, halfyearCount: Int) {
-        this(moment.getYear, Times.halfyearOf(moment), halfyearCount, DefaultTimeCalendar)
-    }
-
 
     def getHalfyears: Seq[HalfyearRange] = {
         val halfyears = ArrayBuffer[HalfyearRange]()

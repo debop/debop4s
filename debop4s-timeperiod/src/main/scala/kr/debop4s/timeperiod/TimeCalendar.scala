@@ -55,11 +55,11 @@ trait ITimeCalendar extends ITimePeriodMapper {
     def getStartOfYearWeek(year: Int, weekOfYear: Int): DateTime = Times.getStartOfYearWeek(year, weekOfYear)
 
     def mapStart(moment: DateTime): DateTime =
-        if (moment.compareTo(MinPeriodTime) > 0) moment.plus(getStartOffset)
+        if (moment > MinPeriodTime) moment.plus(getStartOffset)
         else moment
 
     def mapEnd(moment: DateTime): DateTime =
-        if (moment.compareTo(MaxPeriodTime) < 0) moment.plus(getEndOffset)
+        if (moment < MaxPeriodTime) moment.plus(getEndOffset)
         else moment
 
     def unmapStart(moment: DateTime): DateTime =
@@ -100,10 +100,10 @@ class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCa
 
     override protected def buildStringHelper: ToStringHelper =
         super.buildStringHelper
-            .add("locale", locale)
-            .add("startOffset", startOffset)
-            .add("endOffset", endOffset)
-            .add("firstDayOfWeek", firstDayOfWeek)
+        .add("locale", locale)
+        .add("startOffset", startOffset)
+        .add("endOffset", endOffset)
+        .add("firstDayOfWeek", firstDayOfWeek)
 }
 
 object TimeCalendar {

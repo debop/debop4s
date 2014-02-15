@@ -16,13 +16,9 @@ class QuarterRange(private val _year: Int,
                    private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends QuarterTimeRange(_year, _quarter, 1, _calendar) {
 
-    def this(moment: DateTime, calendar: ITimeCalendar) {
-        this(moment.getYear, Times.getQuarterOfMonth(moment.getMonthOfYear), calendar)
-    }
+    def year: Int = startYear
 
-    def this(moment: DateTime) {
-        this(moment.getYear, Times.getQuarterOfMonth(moment.getMonthOfYear), DefaultTimeCalendar)
-    }
+    def quarter: Quarter = startQuarter
 
     def addQuarters(quarters: Int): QuarterRange = {
         val yq = Times.addQuarter(startYear, startQuarter, quarters)
@@ -32,4 +28,12 @@ class QuarterRange(private val _year: Int,
     def nextQuarter: QuarterRange = addQuarters(1)
 
     def previousQuarter: QuarterRange = addQuarters(-1)
+}
+
+object QuarterRange {
+
+    def apply(moment: DateTime): QuarterRange = apply(moment, DefaultTimeCalendar)
+
+    def apply(moment: DateTime, calendar: ITimeCalendar): QuarterRange =
+        new QuarterRange(moment.getYear, Times.getQuarterOfMonth(moment.getMonthOfYear), calendar)
 }

@@ -29,7 +29,7 @@ class QuarterRangeCollection(private val _year: Int,
     def getQuarters: Seq[QuarterRange] = {
         val quarters = ArrayBuffer[QuarterRange]()
         for (q <- 0 until quarterCount) {
-            quarters += new QuarterRange(start.plusMonths(q * MonthsPerQuarter), calendar)
+            quarters += QuarterRange(start.plusMonths(q * MonthsPerQuarter), calendar)
         }
         quarters
     }

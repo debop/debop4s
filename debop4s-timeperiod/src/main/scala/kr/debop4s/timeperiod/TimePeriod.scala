@@ -231,11 +231,15 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
         assert(!isReadonly, "일기전용 인스턴스입니다.")
     }
 
+
+    override def equals(obj: Any): Boolean =
+        obj != null && getClass().equals(obj.getClass) && hashCode() == obj.hashCode()
+
     override def hashCode() = Hashs.compute(start, end, readonly)
 
     override protected def buildStringHelper =
         super.buildStringHelper
-            .add("start", start)
-            .add("end", end)
-            .add("readonly", readonly)
+        .add("start", start)
+        .add("end", end)
+        .add("readonly", readonly)
 }

@@ -12,24 +12,37 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오후 5:49
  */
+object HalfyearTimeRange {
+    def apply(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar): HalfyearTimeRange = {
+        new HalfyearTimeRange(moment.getYear,
+                                 Times.getHalfyearOfMonth(moment.getMonthOfYear),
+                                 halfyearCount,
+                                 calendar)
+    }
+
+    def apply(moment: DateTime, halfyearCount: Int): HalfyearTimeRange = {
+        new HalfyearTimeRange(moment.getYear,
+                                 Times.getHalfyearOfMonth(moment.getMonthOfYear),
+                                 halfyearCount,
+                                 DefaultTimeCalendar)
+    }
+
+    def getPeriodOf(year: Int, halfyear: Halfyear, halfyearCount: Int): TimeRange = {
+        val yearStart = Times.startTimeOfYear(year)
+        val start = yearStart.plusMonths((halfyear.id - 1) * MonthsPerHalfyear)
+        val end = start.plusMonths(halfyearCount * MonthsPerHalfyear)
+        TimeRange(start, end)
+    }
+}
+
 class HalfyearTimeRange(val year: Int,
                         val halfyear: Halfyear,
                         val halfyearCount: Int,
                         private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(new TimeRange(Times.startTimeOfHalfyear(year, halfyear),
-        Times.addHalfyear(year, halfyear, halfyearCount).end),
-        _calendar) {
-    def this(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar) {
-        this(moment.getYear, Times.getHalfyearOfMonth(moment.getMonthOfYear), halfyearCount, calendar)
-    }
-
-    def this(moment: DateTime, halfyearCount: Int) {
-        this(moment.getYear, Times.getHalfyearOfMonth(moment.getMonthOfYear), halfyearCount, DefaultTimeCalendar)
-    }
-
+    extends CalendarTimeRange(HalfyearTimeRange.getPeriodOf(year, halfyear, halfyearCount),
+                                 _calendar) {
 
     val startHalfyear: Halfyear = halfyear
-
     val endHalfyear: Halfyear = Times.getHalfyearOfMonth(endMonthOfYear)
 
     def isMultipleCalendarYears: Boolean = startYear != endYear
@@ -61,9 +74,9 @@ class HalfyearTimeRange(val year: Int,
 
     override protected def buildStringHelper =
         super.buildStringHelper
-            .add("startYear", startYear)
-            .add("startHalfyear", startHalfyear)
-            .add("endYear", endYear)
-            .add("endHalfyear", endHalfyear)
-            .add("halfyearCount", halfyearCount)
+        .add("startYear", startYear)
+        .add("startHalfyear", startHalfyear)
+        .add("endYear", endYear)
+        .add("endHalfyear", endHalfyear)
+        .add("halfyearCount", halfyearCount)
 }

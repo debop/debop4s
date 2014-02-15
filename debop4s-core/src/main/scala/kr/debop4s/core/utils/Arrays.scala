@@ -2,7 +2,6 @@ package kr.debop4s.core.utils
 
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
-import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 import scala.util.Random
 
@@ -77,16 +76,10 @@ object Arrays {
             throw new ArrayIndexOutOfBoundsException(toIndex)
     }
 
-    def toSeq[T](iterable: Iterable[_ <: T]): collection.IndexedSeq[T] = {
-        val list = new ArrayBuffer[T]()
-        iterable.foreach(x => list.add(x.asInstanceOf[T]))
-        list
-    }
+    def toSeq[T](iterable: java.lang.Iterable[_ <: T]): collection.IndexedSeq[T] =
+        iterable.toIndexedSeq
 
-    def toSet[T](iterable: Iterable[_ <: T]): collection.Set[T] = {
-        val set = collection.mutable.HashSet[T]()
-        iterable.foreach(x => set += x)
-        set
-    }
+    def toSet[T](iterable: java.lang.Iterable[_ <: T]): collection.Set[T] =
+        iterable.toSet
 
 }
