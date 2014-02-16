@@ -13,10 +13,6 @@ import org.joda.time.DateTime
  */
 class YearWeek(var year: Int = 0, var weekOfYear: Int = 1) extends ValueObject {
 
-  def this(yw: YearWeek) {
-    this(yw.year, yw.weekOfYear)
-  }
-
   def start: DateTime = Times.startTimeOfWeek(year, weekOfYear)
 
   def end: DateTime = Times.endTimeOfMonth(year, weekOfYear)

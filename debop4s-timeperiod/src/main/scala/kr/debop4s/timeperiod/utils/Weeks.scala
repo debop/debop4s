@@ -41,7 +41,7 @@ object Weeks {
   def addWeekOfYears(yw: YearWeek, weeks: Int): YearWeek = {
     log.trace(s"주차 연산을 수행합니다. yearWeek=[$yw], weeks=[$weeks]")
 
-    var result = new YearWeek(yw)
+    var result = YearWeek(yw)
 
     if (weeks == 0)
       result
@@ -53,7 +53,7 @@ object Weeks {
   }
 
   private def plusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
-    val result = new YearWeek(yw)
+    val result = YearWeek(yw)
     var newWeeks = result.weekOfYear
 
     if (newWeeks < getEndYearAndWeek(result.year).weekOfYear) {
