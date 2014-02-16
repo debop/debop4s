@@ -929,6 +929,14 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <optimize>true</optimize>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
