@@ -11,9 +11,9 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 28. 오후 9:32
  */
-abstract class HourTimeRange(private val _moment: DateTime,
-                             val hourCount: Int = 1,
-                             private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class HourTimeRange(private val _moment: DateTime,
+                    val hourCount: Int = 1,
+                    private val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(Times.relativeHourPeriod(_moment, hourCount), _calendar) {
 
   val endHour: Int = getStart.plusHours(hourCount).getHourOfDay
@@ -35,4 +35,13 @@ abstract class HourTimeRange(private val _moment: DateTime,
   override protected def buildStringHelper =
     super.buildStringHelper
     .add("hourCount", hourCount)
+}
+
+object HourTimeRange {
+
+  def apply(moment: DateTime, hourCount: Int): HourTimeRange =
+    apply(moment, hourCount, DefaultTimeCalendar)
+
+  def apply(moment: DateTime, hourCount: Int, calendar: ITimeCalendar): HourTimeRange =
+    new HourTimeRange(moment, hourCount, calendar)
 }

@@ -54,7 +54,7 @@ object Weeks {
 
   private def plusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
     val result = YearWeek(yw)
-    var newWeeks = result.weekOfYear
+    var newWeeks = weeks + result.weekOfYear
 
     if (newWeeks < getEndYearAndWeek(result.year).weekOfYear) {
       result.weekOfYear = newWeeks
@@ -76,8 +76,8 @@ object Weeks {
 
   private def minusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
     val result = YearWeek(yw)
-
     var week = weeks + result.weekOfYear
+
     if (week == 0) {
       result.year -= 1
       result.weekOfYear = getEndYearAndWeek(result.year).weekOfYear

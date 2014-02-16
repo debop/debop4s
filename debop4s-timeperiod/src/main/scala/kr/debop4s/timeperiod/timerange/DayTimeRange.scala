@@ -12,18 +12,10 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 28. 오후 10:27
  */
-abstract class DayTimeRange(private[this] val _start: DateTime,
-                            val dayCount: Int,
-                            private[this] var _calendar: ITimeCalendar = DefaultTimeCalendar)
+class DayTimeRange(private[this] val _start: DateTime,
+                   val dayCount: Int,
+                   private[this] var _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(Times.relativeDayPeriod(_start, dayCount), _calendar) {
-
-  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int, calendar: ITimeCalendar) {
-    this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
-  }
-
-  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int) {
-    this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, DefaultTimeCalendar)
-  }
 
   def startDayOfWeek: DayOfWeek = calendar.getDayOfWeek(start)
 
@@ -49,4 +41,20 @@ abstract class DayTimeRange(private[this] val _start: DateTime,
     .add("end", end)
     .add("dayCount", dayCount)
     .add("calendar", calendar)
+}
+
+object DayTimeRange {
+
+  def apply(moment: DateTime, dayCount: Int): DayTimeRange =
+    apply(moment, dayCount, DefaultTimeCalendar)
+
+  def apply(moment: DateTime, dayCount: Int, calendar: ITimeCalendar): DayTimeRange =
+    new DayTimeRange(moment, dayCount, calendar)
+
+  def apply(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int): DayTimeRange =
+    apply(year, monthOfYear, dayOfMonth, dayCount, DefaultTimeCalendar)
+
+  def apply(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int, calendar: ITimeCalendar): DayTimeRange =
+    new DayTimeRange(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
+
 }

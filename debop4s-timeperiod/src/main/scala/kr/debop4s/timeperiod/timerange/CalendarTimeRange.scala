@@ -19,23 +19,6 @@ class CalendarTimeRange(private val _period: ITimePeriod, val calendar: ITimeCal
   private val _mappedEnd = calendar.mapEnd(_period.end)
   Times.assertValidPeriod(_mappedStart, _mappedEnd)
 
-
-  def this(start: DateTime, end: DateTime, calendar: ITimeCalendar) {
-    this(TimeRange(start, end), calendar)
-  }
-
-  def this(start: DateTime, end: DateTime) {
-    this(start, end, DefaultTimeCalendar)
-  }
-
-  def this(calendar: ITimeCalendar) {
-    this(MinPeriodTime, MaxPeriodTime, calendar)
-  }
-
-  def this() {
-    this(DefaultTimeCalendar)
-  }
-
   def startYear: Int = start.getYear
 
   def startMonthOfYear: Int = start.getMonthOfYear
@@ -93,4 +76,17 @@ class CalendarTimeRange(private val _period: ITimePeriod, val calendar: ITimeCal
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
     .add("calendar", calendar)
+}
+
+object CalendarTimeRange {
+
+  def apply(): CalendarTimeRange = apply(DefaultTimeCalendar)
+
+  def apply(calendar: ITimeCalendar): CalendarTimeRange = apply(MinPeriodTime, MaxPeriodTime, calendar)
+
+  def apply(start: DateTime, end: DateTime): CalendarTimeRange =
+    apply(start, end, DefaultTimeCalendar)
+
+  def apply(start: DateTime, end: DateTime, calendar: ITimeCalendar): CalendarTimeRange =
+    new CalendarTimeRange(TimeRange(start, end), calendar)
 }

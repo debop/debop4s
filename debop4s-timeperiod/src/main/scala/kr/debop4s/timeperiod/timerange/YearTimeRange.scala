@@ -18,14 +18,6 @@ class YearTimeRange(private val _year: Int,
                     private val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends YearCalendarTimeRange(Times.relativeYearPeriod(Times.startTimeOfYear(_year), yearCount), _calendar) {
 
-  def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) {
-    this(moment.getYear, yearCount, calendar)
-  }
-
-  def this(moment: DateTime, yearCount: Int) {
-    this(moment.getYear, yearCount, DefaultTimeCalendar)
-  }
-
   def getHalfyears: Seq[HalfyearRange] = {
     val halfyears = new ArrayBuffer[HalfyearRange](yearCount)
     for (y <- 0 until yearCount) {
@@ -59,4 +51,20 @@ class YearTimeRange(private val _year: Int,
     .add("year", startYear)
     .add("yearCount", yearCount)
     .add("calendar", calendar)
+}
+
+object YearTimeRange {
+
+  def apply(year: Int, yearCount: Int): YearTimeRange =
+    apply(year, yearCount, DefaultTimeCalendar)
+
+  def apply(year: Int, yearCount: Int, calendar: ITimeCalendar): YearTimeRange =
+    new YearTimeRange(year, yearCount, calendar)
+
+  def apply(moment: DateTime, yearCount: Int): YearTimeRange =
+    apply(moment, yearCount, DefaultTimeCalendar)
+
+
+  def apply(moment: DateTime, yearCount: Int, calendar: ITimeCalendar): YearTimeRange =
+    new YearTimeRange(moment.getYear, yearCount, calendar)
 }

@@ -17,14 +17,6 @@ class MonthTimeRange(private[this] val _year: Int,
                      private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
-  def this(moment: DateTime, monthCount: Int, calendar: ITimeCalendar) {
-    this(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
-  }
-
-  def this(moment: DateTime, monthCount: Int) {
-    this(moment.getYear, moment.getMonthOfYear, monthCount, DefaultTimeCalendar)
-  }
-
   def getDays: Seq[DayRange] = {
     val startMonth = Times.startTimeOfMonth(getStart)
     val days = ArrayBuffer[DayRange]()
@@ -47,4 +39,19 @@ class MonthTimeRange(private[this] val _year: Int,
     .add("monthOfYear", startMonthOfYear)
     .add("monthCount", monthCount)
     .add("calendar", calendar)
+}
+
+object MonthTimeRange {
+
+  def apply(year: Int, monthOfYear: Int, monthCount: Int): MonthTimeRange =
+    apply(year, monthOfYear, monthCount, DefaultTimeCalendar)
+
+  def apply(year: Int, monthOfYear: Int, monthCount: Int, calendar: ITimeCalendar): MonthTimeRange =
+    new MonthTimeRange(year, monthOfYear, monthCount, calendar)
+
+  def apply(moment: DateTime, monthCount: Int): MonthTimeRange =
+    apply(moment, monthCount, DefaultTimeCalendar)
+
+  def apply(moment: DateTime, monthCount: Int, calendar: ITimeCalendar): MonthTimeRange =
+    new MonthTimeRange(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
 }

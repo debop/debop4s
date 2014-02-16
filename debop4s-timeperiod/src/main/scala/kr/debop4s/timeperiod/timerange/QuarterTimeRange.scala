@@ -4,7 +4,6 @@ import kr.debop4s.core.utils.Hashs
 import kr.debop4s.timeperiod.Quarter.Quarter
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.utils.Times
-import org.joda.time.DateTime
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -13,10 +12,10 @@ import scala.collection.mutable.ArrayBuffer
  * @since  2013. 12. 29. 오후 4:54
  */
 @SerialVersionUID(-1642725884160403253L)
-class QuarterTimeRange(private val _year: Int,
-                       private val _quarter: Quarter,
-                       val quarterCount: Int,
-                       private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+abstract class QuarterTimeRange(private val _year: Int,
+                                private val _quarter: Quarter,
+                                val quarterCount: Int,
+                                private val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(QuarterTimeRange.getPeriodOf(_year, _quarter, quarterCount, _calendar),
                              _calendar) {
 
@@ -50,15 +49,6 @@ class QuarterTimeRange(private val _year: Int,
 }
 
 object QuarterTimeRange {
-
-  def apply(moment: DateTime, quarterCount: Int): QuarterTimeRange =
-    apply(moment, quarterCount, DefaultTimeCalendar)
-
-  def apply(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar): QuarterTimeRange =
-    new QuarterTimeRange(moment.getYear,
-                          Times.getQuarterOfMonth(moment.getMonthOfYear),
-                          quarterCount,
-                          calendar)
 
   private[timerange] def getPeriodOf(year: Int,
                                      quarter: Quarter,

@@ -31,6 +31,10 @@ class MonthRange(private[this] val _year: Int,
 
 object MonthRange {
 
+  def apply(): MonthRange = apply(Times.now, DefaultTimeCalendar)
+
+  def apply(calendar: ITimeCalendar): MonthRange = apply(Times.now, calendar)
+
   def apply(year: Int, monthOfYear: Int): MonthRange = apply(year, monthOfYear, DefaultTimeCalendar)
 
   def apply(year: Int, monthOfYear: Int, calendar: ITimeCalendar): MonthRange =

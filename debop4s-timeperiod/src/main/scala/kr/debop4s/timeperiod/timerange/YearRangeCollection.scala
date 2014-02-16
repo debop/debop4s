@@ -16,14 +16,6 @@ class YearRangeCollection(private val _year: Int,
                           private val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends YearTimeRange(_year, _yearCount, _calendar) {
 
-  def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) {
-    this(moment.getYear, yearCount, calendar)
-  }
-
-  def this(moment: DateTime, yearCount: Int) {
-    this(moment, yearCount, DefaultTimeCalendar)
-  }
-
   def getYears: Seq[YearRange] = {
     val years = ArrayBuffer[YearRange]()
     for (y <- 0 until yearCount) {
@@ -31,5 +23,20 @@ class YearRangeCollection(private val _year: Int,
     }
     years
   }
+}
+
+object YearRangeCollection {
+
+  def apply(year: Int, yearCount: Int): YearRangeCollection =
+    apply(year, yearCount, DefaultTimeCalendar)
+
+  def apply(year: Int, yearCount: Int, calendar: ITimeCalendar): YearRangeCollection =
+    new YearRangeCollection(year, yearCount, calendar)
+
+  def apply(moment: DateTime, yearCount: Int): YearRangeCollection =
+    apply(moment, yearCount, DefaultTimeCalendar)
+
+  def apply(moment: DateTime, yearCount: Int, calendar: ITimeCalendar): YearRangeCollection =
+    new YearRangeCollection(moment.getYear, yearCount, calendar)
 
 }

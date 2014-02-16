@@ -1,6 +1,7 @@
 package kr.debop4s.timeperiod.timerange
 
 import kr.debop4s.timeperiod._
+import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
 /**
@@ -14,14 +15,6 @@ class YearRange(private[this] val _year: Int,
                 private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends YearTimeRange(_year, 1, _calendar) {
 
-  def this(moment: DateTime, calendar: ITimeCalendar) {
-    this(moment.getYear, calendar)
-  }
-
-  def this(moment: DateTime) {
-    this(moment.getYear, DefaultTimeCalendar)
-  }
-
   def year = startYear
 
   def addYears(years: Int): YearRange = {
@@ -31,4 +24,20 @@ class YearRange(private[this] val _year: Int,
   def nextYear: YearRange = addYears(1)
 
   def previousYear: YearRange = addYears(-1)
+}
+
+object YearRange {
+
+  def apply(): YearRange = apply(Times.currentYear, DefaultTimeCalendar)
+
+  def apply(year: Int): YearRange = apply(year, DefaultTimeCalendar)
+
+  def apply(year: Int, calendar: ITimeCalendar): YearRange =
+    new YearRange(year, calendar)
+
+  def apply(moment: DateTime): YearRange =
+    apply(moment, DefaultTimeCalendar)
+
+  def apply(moment: DateTime, calendar: ITimeCalendar): YearRange =
+    new YearRange(moment.getYear, calendar)
 }

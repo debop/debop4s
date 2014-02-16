@@ -86,7 +86,7 @@ class CalendarDateAdd extends DateAdd {
     var moment = start
     var remaining = offset
 
-    var week = new WeekRange(start, calendar)
+    var week = WeekRange(start, calendar)
     while (week != null) {
       super.getIncludePeriods.clear()
       super.getIncludePeriods.addAll(getAvailableWeekPeriods(week))
@@ -130,7 +130,7 @@ class CalendarDateAdd extends DateAdd {
       val remainingPeriods = gapCalculator.getGaps(getExcludePeriods, limits)
 
       next =
-        if (remainingPeriods.size > 0) new WeekRange(remainingPeriods.get(0).start, calendar)
+        if (remainingPeriods.size > 0) WeekRange(remainingPeriods.get(0).start, calendar)
         else null
     }
 
@@ -152,7 +152,7 @@ class CalendarDateAdd extends DateAdd {
 
       previous =
         if (remainingPeriods.size > 0)
-          new WeekRange(remainingPeriods.get(remainingPeriods.size - 1).end, calendar)
+          WeekRange(remainingPeriods.get(remainingPeriods.size - 1).end, calendar)
         else null
     }
 

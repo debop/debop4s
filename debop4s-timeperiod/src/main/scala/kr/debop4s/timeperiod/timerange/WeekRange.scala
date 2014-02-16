@@ -14,14 +14,6 @@ class WeekRange(private val _year: Int,
                 private val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends WeekTimeRange(Times.startTimeOfWeek(_year, weekOfYear, _calendar), 1, _calendar) {
 
-  def this(moment: DateTime, calendar: ITimeCalendar) {
-    this(moment.getYear, moment.getWeekOfWeekyear, calendar)
-  }
-
-  def this(moment: DateTime) {
-    this(moment.getYear, moment.getWeekOfWeekyear, DefaultTimeCalendar)
-  }
-
   def firstDayOfWeek: DateTime = getStart
 
   def lastDayOfWeek: DateTime = firstDayOfWeek.plusDays(6)
@@ -34,7 +26,21 @@ class WeekRange(private val _year: Int,
   def nextWeek: WeekRange = addWeeks(1)
 
   def addWeeks(weeks: Int): WeekRange = {
-    new WeekRange(Times.getStartOfYearWeek(year, weekOfYear, calendar).plusWeeks(weeks), calendar)
+    WeekRange(Times.getStartOfYearWeek(year, weekOfYear, calendar).plusWeeks(weeks), calendar)
   }
+}
+
+object WeekRange {
+
+  def apply(year: Int, weekOfYear: Int): WeekRange =
+    apply(year, weekOfYear, DefaultTimeCalendar)
+
+  def apply(year: Int, weekOfYear: Int, calendar: ITimeCalendar): WeekRange =
+    new WeekRange(year, weekOfYear, calendar)
+
+  def apply(moment: DateTime): WeekRange = apply(moment, DefaultTimeCalendar)
+
+  def apply(moment: DateTime, calendar: ITimeCalendar): WeekRange =
+    new WeekRange(moment.getWeekyear, moment.getWeekOfWeekyear, calendar)
 
 }

@@ -394,13 +394,9 @@ object Times {
   def startTimeOfWeek(moment: DateTime): DateTime = getStartOfWeek(moment)
 
   def startTimeOfWeek(year: Int, weekOfYear: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DateTime = {
-    var current = startTimeOfYear(year).minusWeeks(1)
-    while (current.getYear < year + 2) {
-      if (current.getWeekyear == year && current.getWeekOfWeekyear == weekOfYear)
-        return current
-      current = current.plusDays(1)
-    }
-    current
+    val start = startTimeOfYear(year).plusMonths(1).withWeekOfWeekyear(weekOfYear)
+    log.trace(s"year=$year, weekOfYear=$weekOfYear, start=$start")
+    start
   }
 
   def endTimeOfWeek(moment: DateTime): DateTime = startTimeOfWeek(moment).plusWeeks(1).minus(1)
@@ -615,9 +611,9 @@ object Times {
       case PeriodUnit.Hour => getHourRanges(moment, periodCount, calendar)
       case PeriodUnit.Minute => getMinuteRanges(moment, periodCount, calendar)
       case PeriodUnit.Second =>
-        new CalendarTimeRange(trimToMillis(moment),
-                               trimToMillis(moment).plusSeconds(periodCount),
-                               calendar)
+        CalendarTimeRange(trimToMillis(moment),
+                           trimToMillis(moment).plusSeconds(periodCount),
+                           calendar)
 
       case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
     }
@@ -640,7 +636,7 @@ object Times {
     QuarterRange(moment, calendar)
 
   def getQuarterRanges(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): QuarterRangeCollection =
-    new QuarterRangeCollection(moment, quarterCount, calendar)
+    QuarterRangeCollection(moment, quarterCount, calendar)
 
   def getMonthRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): MonthRange =
     MonthRange(moment, calendar)
@@ -649,28 +645,28 @@ object Times {
     MonthRangeCollection(moment, monthCount, calendar)
 
   def getWeekRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): WeekRange =
-    new WeekRange(moment, calendar)
+    WeekRange(moment, calendar)
 
   def getWeekRanges(moment: DateTime, weekCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): WeekRangeCollection =
-    new WeekRangeCollection(moment, weekCount, calendar)
+    WeekRangeCollection(moment, weekCount, calendar)
 
   def getDayRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): DayRange =
-    new DayRange(asDate(moment), calendar)
+    DayRange(asDate(moment), calendar)
 
   def getDayRanges(moment: DateTime, dayCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DayRangeCollection =
-    new DayRangeCollection(asDate(moment), dayCount, calendar)
+    DayRangeCollection(asDate(moment), dayCount, calendar)
 
   def getHourRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): HourRange =
-    new HourRange(moment, calendar)
+    HourRange(moment, calendar)
 
   def getHourRanges(moment: DateTime, hourCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): HourRangeCollection =
-    new HourRangeCollection(moment, hourCount, calendar)
+    HourRangeCollection(moment, hourCount, calendar)
 
   def getMinuteRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): MinuteRange =
-    new MinuteRange(moment, calendar)
+    MinuteRange(moment, calendar)
 
   def getMinuteRanges(moment: DateTime, minuteCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): MinuteRangeCollection =
-    new MinuteRangeCollection(moment, minuteCount, calendar)
+    MinuteRangeCollection(moment, minuteCount, calendar)
 
 
   def hasInside(period: ITimePeriod, target: DateTime): Boolean = {

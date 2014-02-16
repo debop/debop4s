@@ -18,14 +18,6 @@ class QuarterRangeCollection(private val _year: Int,
                              private val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends QuarterTimeRange(_year, _quarter, _quarterCount, _calendar) {
 
-  def this(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar) {
-    this(moment.getYear, Times.getQuarterOfMonth(moment.getMonthOfYear), quarterCount, calendar)
-  }
-
-  def this(moment: DateTime, quarterCount: Int) {
-    this(moment.getYear, Times.getQuarterOfMonth(moment.getMonthOfYear), quarterCount, DefaultTimeCalendar)
-  }
-
   def getQuarters: Seq[QuarterRange] = {
     val quarters = ArrayBuffer[QuarterRange]()
     for (q <- 0 until quarterCount) {
@@ -33,4 +25,21 @@ class QuarterRangeCollection(private val _year: Int,
     }
     quarters
   }
+}
+
+object QuarterRangeCollection {
+
+  def apply(year: Int, quarter: Quarter, quarterCount: Int): QuarterRangeCollection =
+    apply(year, quarter, quarterCount, DefaultTimeCalendar)
+
+  def apply(year: Int, quarter: Quarter, quarterCount: Int, calendar: ITimeCalendar): QuarterRangeCollection =
+    new QuarterRangeCollection(year, quarter, quarterCount, calendar)
+
+  def apply(moment: DateTime, quarterCount: Int): QuarterRangeCollection =
+    apply(moment, quarterCount, DefaultTimeCalendar)
+
+  def apply(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar): QuarterRangeCollection =
+    new QuarterRangeCollection(moment.getYear, Times.getQuarterOfMonth(moment.getMonthOfYear), quarterCount, calendar)
+
+
 }

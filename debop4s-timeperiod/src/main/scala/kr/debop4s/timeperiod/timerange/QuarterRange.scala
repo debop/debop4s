@@ -32,6 +32,11 @@ class QuarterRange(private val _year: Int,
 
 object QuarterRange {
 
+  def apply(year: Int, quarter: Quarter): QuarterRange = apply(year, quarter, DefaultTimeCalendar)
+
+  def apply(year: Int, quarter: Quarter, calendar: ITimeCalendar): QuarterRange =
+    new QuarterRange(year, quarter, calendar)
+
   def apply(moment: DateTime): QuarterRange = apply(moment, DefaultTimeCalendar)
 
   def apply(moment: DateTime, calendar: ITimeCalendar): QuarterRange =

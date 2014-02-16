@@ -18,7 +18,7 @@ class CalendarTimeRangeTest extends AbstractTimePeriodTest {
 
   test("moment test") {
     intercept[AssertionError] {
-      new CalendarTimeRange(Times.today, Times.today)
+      CalendarTimeRange(Times.today, Times.today)
     }
   }
 }

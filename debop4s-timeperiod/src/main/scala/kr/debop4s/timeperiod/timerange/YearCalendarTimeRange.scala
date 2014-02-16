@@ -9,8 +9,8 @@ import kr.debop4s.timeperiod._
  * @since 2013. 12. 27. 오후 5:05
  */
 @SerialVersionUID(-7922671338410846872L)
-abstract class YearCalendarTimeRange(private val _period: ITimePeriod,
-                                     private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class YearCalendarTimeRange(private val _period: ITimePeriod,
+                            private val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(_period, _calendar) {
 
   def yearBaseMonth: Int = 1
