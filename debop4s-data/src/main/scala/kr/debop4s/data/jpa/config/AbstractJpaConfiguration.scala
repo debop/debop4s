@@ -25,77 +25,77 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableTransactionManagement
 abstract class AbstractJpaConfiguration {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    def getDatabaseName = "hibernate"
+  def getDatabaseName = "hibernate"
 
-    def getMappedPackageNames: Array[String]
+  def getMappedPackageNames: Array[String]
 
-    def getNamingStrategy: NamingStrategy = null
+  def getNamingStrategy: NamingStrategy = null
 
-    def jpaProperties(): Properties = {
-        val props = new Properties()
+  def jpaProperties(): Properties = {
+    val props = new Properties()
 
-        props.setProperty(AvailableSettings.FORMAT_SQL, "true")
-        // create | create-drop | spawn | spawn-drop | update | validate | none
-        props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create")
-        props.setProperty(AvailableSettings.POOL_SIZE, "30")
-        props.setProperty(AvailableSettings.SHOW_SQL, "true")
-        props.setProperty(AvailableSettings.FORMAT_SQL, "true")
-        props.setProperty(AvailableSettings.AUTOCOMMIT, "true")
+    props.setProperty(AvailableSettings.FORMAT_SQL, "true")
+    // create | create-drop | spawn | spawn-drop | update | validate | none
+    props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create")
+    props.setProperty(AvailableSettings.POOL_SIZE, "30")
+    props.setProperty(AvailableSettings.SHOW_SQL, "true")
+    props.setProperty(AvailableSettings.FORMAT_SQL, "true")
+    props.setProperty(AvailableSettings.AUTOCOMMIT, "true")
 
-        props
+    props
+  }
+
+  def buildDataSource(driverClass: String, url: String, username: String, password: String): DataSource =
+    DataSources.getDataSource(driverClass, url, username, password)
+
+  def buildEmbeddedDataSource() = DataSources.getEmbeddedHSqlDataSource
+
+  @Bean
+  def dataSource(): DataSource = buildEmbeddedDataSource()
+
+  @Bean
+  def jdbcTemplate() = new JdbcTemplate(dataSource())
+
+  protected def setupEntityManagerFactory(factoryBean: LocalContainerEntityManagerFactoryBean) {
+    // 추가 작업 시 override 해서 사용하세요.
+  }
+
+  @Bean
+  def entityManagerFactory(): EntityManagerFactory = {
+    log.info("SessionFactory를 생성합니다.")
+
+    val factoryBean = new LocalContainerEntityManagerFactoryBean()
+
+    val packagenames = getMappedPackageNames
+    if (packagenames != null && packagenames.length > 0) {
+      log.debug(s"hibernate용 entity를 scan 합니다. packages=[$packagenames]")
+      factoryBean.setPackagesToScan(packagenames: _*)
     }
+    factoryBean.setJpaProperties(jpaProperties())
+    factoryBean.setDataSource(dataSource())
 
-    def buildDataSource(driverClass: String, url: String, username: String, password: String): DataSource =
-        DataSources.getDataSource(driverClass, url, username, password)
+    val adapter = new HibernateJpaVendorAdapter()
+    adapter.setGenerateDdl(true)
+    factoryBean.setJpaVendorAdapter(adapter)
 
-    def buildEmbeddedDataSource() = DataSources.getEmbeddedHSqlDataSource
+    setupEntityManagerFactory(factoryBean)
 
-    @Bean
-    def dataSource(): DataSource = buildEmbeddedDataSource()
+    factoryBean.afterPropertiesSet()
+    log.info("EntityManagerFactory Bean에 대해 설정합니다.")
 
-    @Bean
-    def jdbcTemplate() = new JdbcTemplate(dataSource())
+    factoryBean.getObject
+  }
 
-    protected def setupEntityManagerFactory(factoryBean: LocalContainerEntityManagerFactoryBean) {
-        // 추가 작업 시 override 해서 사용하세요.
-    }
+  @Bean
+  def transactionManager(): PlatformTransactionManager =
+    new JpaTransactionManager(entityManagerFactory())
 
-    @Bean
-    def entityManagerFactory(): EntityManagerFactory = {
-        log.info("SessionFactory를 생성합니다.")
+  @Bean
+  def hibernateExceptionTranslator() = new HibernateExceptionTranslator()
 
-        val factoryBean = new LocalContainerEntityManagerFactoryBean()
-
-        val packagenames = getMappedPackageNames
-        if (packagenames != null && packagenames.length > 0) {
-            log.debug(s"hibernate용 entity를 scan 합니다. packages=[$packagenames]")
-            factoryBean.setPackagesToScan(packagenames: _*)
-        }
-        factoryBean.setJpaProperties(jpaProperties())
-        factoryBean.setDataSource(dataSource())
-
-        val adapter = new HibernateJpaVendorAdapter()
-        adapter.setGenerateDdl(true)
-        factoryBean.setJpaVendorAdapter(adapter)
-
-        setupEntityManagerFactory(factoryBean)
-
-        factoryBean.afterPropertiesSet()
-        log.info("EntityManagerFactory Bean에 대해 설정합니다.")
-
-        factoryBean.getObject
-    }
-
-    @Bean
-    def transactionManager(): PlatformTransactionManager =
-        new JpaTransactionManager(entityManagerFactory())
-
-    @Bean
-    def hibernateExceptionTranslator() = new HibernateExceptionTranslator()
-
-    @Bean
-    def exceptionTranslation(): PersistenceExceptionTranslationPostProcessor =
-        new PersistenceExceptionTranslationPostProcessor()
+  @Bean
+  def exceptionTranslation(): PersistenceExceptionTranslationPostProcessor =
+    new PersistenceExceptionTranslationPostProcessor()
 }

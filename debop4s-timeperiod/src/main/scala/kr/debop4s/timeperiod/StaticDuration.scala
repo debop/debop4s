@@ -9,14 +9,19 @@ import org.joda.time.Duration
  */
 
 object StaticDuration extends StaticDuration {
-    def apply(v: Long) = new Duration(v)
-    def empty = Duration.ZERO
-    def zero = empty
+  def apply(v: Long) = new Duration(v)
+
+  def empty = Duration.ZERO
+
+  def zero = empty
 }
 
 trait StaticDuration {
-    def standardDays(days: Long) = Duration.standardDays(days)
-    def standardHours(hours: Long) = Duration.standardHours(hours)
-    def standardMinutes(minutes: Long) = Duration.standardMinutes(minutes)
-    def standardSeconds(seconds: Long) = Duration.standardSeconds(seconds)
+  def standardDays(days: Long) = Duration.standardDays(days)
+
+  def standardHours(hours: Long) = Duration.standardHours(hours)
+
+  def standardMinutes(minutes: Long) = Duration.standardMinutes(minutes)
+
+  def standardSeconds(seconds: Long) = Duration.standardSeconds(seconds)
 }

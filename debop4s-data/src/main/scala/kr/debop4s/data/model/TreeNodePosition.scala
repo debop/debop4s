@@ -14,21 +14,21 @@ import kr.debop4s.core.utils.{Hashs, ToStringHelper}
 @Embeddable
 case class TreeNodePosition(var level: Int = 0, var order: Int = 0) extends ValueObject {
 
-    @Column(name = "treeLevel")
-    def getLevel: Int = level
+  @Column(name = "treeLevel")
+  def getLevel: Int = level
 
-    @Column(name = "treeOrder")
-    def getOrder: Int = order
+  @Column(name = "treeOrder")
+  def getOrder: Int = order
 
-    def setPosition(level: Int, order: Int) {
-        this.level = level
-        this.order = order
-    }
+  def setPosition(level: Int, order: Int) {
+    this.level = level
+    this.order = order
+  }
 
-    override def hashCode(): Int = Hashs.compute(level, order)
+  override def hashCode(): Int = Hashs.compute(level, order)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-            .add("level", level)
-            .add("order", order)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("level", level)
+    .add("order", order)
 }

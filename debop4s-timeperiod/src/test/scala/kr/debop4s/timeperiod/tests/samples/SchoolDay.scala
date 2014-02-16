@@ -12,19 +12,19 @@ import org.joda.time.DateTime
  */
 class SchoolDay(private val moment: DateTime) extends TimePeriodChain {
 
-    def this() {
-        this(Times.today + 8.hour)
-    }
+  def this() {
+    this(Times.today + 8.hour)
+  }
 
-    val lesson1 = new Lesson(moment)
-    val break1 = new ShortBreak(moment)
-    val lesson2 = new Lesson(moment)
-    val break2 = new LargeBreak(moment)
-    val lesson3 = new Lesson(moment)
-    val break3 = new ShortBreak(moment)
-    val lesson4 = new Lesson(moment)
+  val lesson1 = new Lesson(moment)
+  val break1 = new ShortBreak(moment)
+  val lesson2 = new Lesson(moment)
+  val break2 = new LargeBreak(moment)
+  val lesson3 = new Lesson(moment)
+  val break3 = new ShortBreak(moment)
+  val lesson4 = new Lesson(moment)
 
-    super.addAll(lesson1, break1, lesson2, break2, lesson3, break3, lesson4)
+  super.addAll(lesson1, break1, lesson2, break2, lesson3, break3, lesson4)
 }
 
 

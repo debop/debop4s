@@ -12,15 +12,15 @@ import kr.debop4s.timeperiod.utils.Times
  */
 class DayRangeCollectionTest extends AbstractTimePeriodTest {
 
-    test("single days") {
-        val start = Times.asDate(2004, 2, 22)
-        val days = new DayRangeCollection(start, 1)
+  test("single days") {
+    val start = Times.asDate(2004, 2, 22)
+    val days = new DayRangeCollection(start, 1)
 
-        days.dayCount should equal(1)
+    days.dayCount should equal(1)
 
-        days.startYear should equal(start.getYear)
-        days.startMonthOfYear should equal(start.getMonthOfYear)
-        days.startDayOfMonth should equal(start.getDayOfMonth)
-    }
+    days.startYear should equal(start.getYear)
+    days.startMonthOfYear should equal(start.getMonthOfYear)
+    days.startDayOfMonth should equal(start.getDayOfMonth)
+  }
 
 }

@@ -10,25 +10,25 @@ import org.joda.time.DateTime
  */
 trait ITimeLineMomentCollection extends Iterable[ITimeLineMoment] with Serializable {
 
-    def size: Int
+  def size: Int
 
-    def isEmpty: Boolean
+  def isEmpty: Boolean
 
-    def getMin: ITimeLineMoment
+  def getMin: ITimeLineMoment
 
-    def getMax: ITimeLineMoment
+  def getMax: ITimeLineMoment
 
-    def get(index: Int): ITimeLineMoment
+  def get(index: Int): ITimeLineMoment
 
-    def apply(index: Int): ITimeLineMoment
+  def apply(index: Int): ITimeLineMoment
 
-    def add(period: ITimePeriod)
+  def add(period: ITimePeriod)
 
-    def addAll(periods: Iterable[_ <: ITimePeriod])
+  def addAll(periods: Iterable[_ <: ITimePeriod])
 
-    def remove(period: ITimePeriod)
+  def remove(period: ITimePeriod)
 
-    def find(moment: DateTime): ITimeLineMoment
+  def find(moment: DateTime): ITimeLineMoment
 
-    def contains(moment: DateTime): Boolean
+  def contains(moment: DateTime): Boolean
 }

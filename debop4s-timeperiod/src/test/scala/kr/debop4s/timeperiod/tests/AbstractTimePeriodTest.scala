@@ -3,6 +3,7 @@ package kr.debop4s.timeperiod.tests
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.slf4j.LoggerFactory
 
 /**
  * kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
@@ -12,8 +13,10 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
  */
 abstract class AbstractTimePeriodTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    val testDate = new DateTime(2000, 10, 2, 13, 45, 53, 673)
-    val testDiffDate = new DateTime(2002, 9, 3, 7, 14, 22, 234)
-    val testNow = Times.now
+  lazy val log = LoggerFactory.getLogger(getClass)
+
+  val testDate = new DateTime(2000, 10, 2, 13, 45, 53, 673)
+  val testDiffDate = new DateTime(2002, 9, 3, 7, 14, 22, 234)
+  val testNow = Times.now
 
 }

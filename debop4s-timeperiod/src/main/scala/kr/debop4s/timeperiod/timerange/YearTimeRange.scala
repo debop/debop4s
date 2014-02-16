@@ -16,47 +16,47 @@ import scala.collection.mutable.ArrayBuffer
 class YearTimeRange(private val _year: Int,
                     val yearCount: Int,
                     private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends YearCalendarTimeRange(Times.relativeYearPeriod(Times.startTimeOfYear(_year), yearCount), _calendar) {
+  extends YearCalendarTimeRange(Times.relativeYearPeriod(Times.startTimeOfYear(_year), yearCount), _calendar) {
 
-    def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) {
-        this(moment.getYear, yearCount, calendar)
+  def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) {
+    this(moment.getYear, yearCount, calendar)
+  }
+
+  def this(moment: DateTime, yearCount: Int) {
+    this(moment.getYear, yearCount, DefaultTimeCalendar)
+  }
+
+  def getHalfyears: Seq[HalfyearRange] = {
+    val halfyears = new ArrayBuffer[HalfyearRange](yearCount)
+    for (y <- 0 until yearCount) {
+      Halfyear.values.foreach(hy => halfyears += new HalfyearRange(startYear + y, hy, calendar))
     }
+    halfyears
+  }
 
-    def this(moment: DateTime, yearCount: Int) {
-        this(moment.getYear, yearCount, DefaultTimeCalendar)
+  def getQuarters: Seq[QuarterRange] = {
+    val quarters = new ArrayBuffer[QuarterRange](yearCount)
+    for (y <- 0 until yearCount) {
+      Quarter.values.foreach(q => quarters += new QuarterRange(startYear + y, q, calendar))
     }
+    quarters
+  }
 
-    def getHalfyears: Seq[HalfyearRange] = {
-        val halfyears = new ArrayBuffer[HalfyearRange](yearCount)
-        for (y <- 0 until yearCount) {
-            Halfyear.values.foreach(hy => halfyears += new HalfyearRange(startYear + y, hy, calendar))
-        }
-        halfyears
+  def getMonths: Seq[MonthRange] = {
+    val months = new ArrayBuffer[MonthRange](yearCount * MonthsPerYear)
+    for (y <- 0 until yearCount) {
+      val baseTime = start.plusYears(y)
+      for (m <- 0 until MonthsPerYear)
+        months += MonthRange(baseTime.plusMonths(m), calendar)
     }
+    months
+  }
 
-    def getQuarters: Seq[QuarterRange] = {
-        val quarters = new ArrayBuffer[QuarterRange](yearCount)
-        for (y <- 0 until yearCount) {
-            Quarter.values.foreach(q => quarters += new QuarterRange(startYear + y, q, calendar))
-        }
-        quarters
-    }
+  override def hashCode(): Int = Hashs.compute(startYear, yearCount)
 
-    def getMonths: Seq[MonthRange] = {
-        val months = new ArrayBuffer[MonthRange](yearCount * MonthsPerYear)
-        for (y <- 0 until yearCount) {
-            val baseTime = start.plusYears(y)
-            for (m <- 0 until MonthsPerYear)
-                months += new MonthRange(baseTime.plusMonths(m), calendar)
-        }
-        months
-    }
-
-    override def hashCode(): Int = Hashs.compute(startYear, yearCount)
-
-    override protected def buildStringHelper: ToStringHelper =
-        ToStringHelper(this)
-            .add("year", startYear)
-            .add("yearCount", yearCount)
-            .add("calendar", calendar)
+  override protected def buildStringHelper: ToStringHelper =
+    ToStringHelper(this)
+    .add("year", startYear)
+    .add("yearCount", yearCount)
+    .add("calendar", calendar)
 }

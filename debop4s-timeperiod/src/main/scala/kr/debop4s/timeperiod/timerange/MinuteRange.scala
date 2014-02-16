@@ -13,49 +13,52 @@ import org.joda.time.DateTime
 @SerialVersionUID(4111802915947727424L)
 class MinuteRange(private val _moment: DateTime,
                   private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends MinuteTimeRange(Times.trimToSecond(_moment), 1, _calendar) {
+  extends MinuteTimeRange(Times.trimToSecond(_moment), 1, _calendar) {
 
-    def this(calendar: ITimeCalendar) {
-        this(Times.trimToSecond(Times.now), calendar)
-    }
 
-    def this() {
-        this(DefaultTimeCalendar)
-    }
+  def year = startYear
 
-    def this(year: Int,
-             monthOfYear: Int,
-             dayOfMonth: Int,
-             hourOfDay: Int,
-             minuteOfHour: Int,
-             calendar: ITimeCalendar) {
-        this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), calendar)
-    }
+  def monthOfYear = startMonthOfYear
 
-    def this(year: Int,
-             monthOfYear: Int,
-             dayOfMonth: Int,
-             hourOfDay: Int,
-             minuteOfHour: Int) {
-        this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), DefaultTimeCalendar)
-    }
+  def dayOfMonth = startDayOfMonth
 
-    def year = startYear
+  def hourOfDay = startHourOfDay
 
-    def monthOfYear = startMonthOfYear
+  def minuteOfHour = startMinuteOfHour
 
-    def dayOfMonth = startDayOfMonth
+  def previousMinute: MinuteRange = addMinutes(-1)
 
-    def hourOfDay = startHourOfDay
+  def nextMinute: MinuteRange = addMinutes(1)
 
-    def minuteOfHour = startMinuteOfHour
+  def addMinutes(minutes: Int): MinuteRange = {
+    val start = getStart.withTimeAtStartOfDay().withTime(hourOfDay, minuteOfHour, 0, 0)
+    new MinuteRange(start.plusMinutes(minutes), calendar)
+  }
+}
 
-    def previousMinute: MinuteRange = addMinutes(-1)
+object MinuteRange {
 
-    def nextMinute: MinuteRange = addMinutes(1)
+  def apply(): MinuteRange = apply(DefaultTimeCalendar)
 
-    def addMinutes(minutes: Int): MinuteRange = {
-        val start = getStart.withTimeAtStartOfDay().withTime(hourOfDay, minuteOfHour, 0, 0)
-        new MinuteRange(start.plusMinutes(minutes), calendar)
-    }
+  def apply(calendar: ITimeCalendar): MinuteRange = apply(Times.now, calendar)
+
+  def apply(moment: DateTime): MinuteRange = apply(moment, DefaultTimeCalendar)
+
+  def apply(moment: DateTime, calendar: ITimeCalendar): MinuteRange = new MinuteRange(moment, calendar)
+
+  def apply(year: Int,
+            monthOfYear: Int,
+            dayOfMonth: Int,
+            hourOfDay: Int,
+            minuteOfHour: Int): MinuteRange =
+    apply(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, DefaultTimeCalendar)
+
+  def apply(year: Int,
+            monthOfYear: Int,
+            dayOfMonth: Int,
+            hourOfDay: Int,
+            minuteOfHour: Int,
+            calendar: ITimeCalendar): MinuteRange =
+    new MinuteRange(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), calendar)
+
 }

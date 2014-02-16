@@ -12,29 +12,29 @@ import org.joda.time.DateTime
 class WeekRange(private val _year: Int,
                 val weekOfYear: Int,
                 private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends WeekTimeRange(Times.startTimeOfWeek(_year, weekOfYear, _calendar), 1, _calendar) {
+  extends WeekTimeRange(Times.startTimeOfWeek(_year, weekOfYear, _calendar), 1, _calendar) {
 
-    def this(moment: DateTime, calendar: ITimeCalendar) {
-        this(moment.getYear, moment.getWeekOfWeekyear, calendar)
-    }
+  def this(moment: DateTime, calendar: ITimeCalendar) {
+    this(moment.getYear, moment.getWeekOfWeekyear, calendar)
+  }
 
-    def this(moment: DateTime) {
-        this(moment.getYear, moment.getWeekOfWeekyear, DefaultTimeCalendar)
-    }
+  def this(moment: DateTime) {
+    this(moment.getYear, moment.getWeekOfWeekyear, DefaultTimeCalendar)
+  }
 
-    def firstDayOfWeek: DateTime = getStart
+  def firstDayOfWeek: DateTime = getStart
 
-    def lastDayOfWeek: DateTime = firstDayOfWeek.plusDays(6)
+  def lastDayOfWeek: DateTime = firstDayOfWeek.plusDays(6)
 
-    def isMultipleCalendarYears: Boolean =
-        calendar.getYear(firstDayOfWeek) != calendar.getYear(lastDayOfWeek)
+  def isMultipleCalendarYears: Boolean =
+    calendar.getYear(firstDayOfWeek) != calendar.getYear(lastDayOfWeek)
 
-    def previousWeek: WeekRange = addWeeks(-1)
+  def previousWeek: WeekRange = addWeeks(-1)
 
-    def nextWeek: WeekRange = addWeeks(1)
+  def nextWeek: WeekRange = addWeeks(1)
 
-    def addWeeks(weeks: Int): WeekRange = {
-        new WeekRange(Times.getStartOfYearWeek(year, weekOfYear, calendar).plusWeeks(weeks), calendar)
-    }
+  def addWeeks(weeks: Int): WeekRange = {
+    new WeekRange(Times.getStartOfYearWeek(year, weekOfYear, calendar).plusWeeks(weeks), calendar)
+  }
 
 }

@@ -10,13 +10,15 @@ import org.joda.time._
  */
 class RichReadableInstant(val self: ReadableInstant) extends AnyVal with Ordered[ReadableInstant] {
 
-    def chronology: Chronology = self.getChronology
-    def millis: Long = self.getMillis
-    def zone: DateTimeZone = self.getZone
+  def chronology: Chronology = self.getChronology
 
-    def to(other: ReadableInstant): Interval = new Interval(self, other)
+  def millis: Long = self.getMillis
 
-    def instant: Instant = self.toInstant
+  def zone: DateTimeZone = self.getZone
 
-    def compare(that: ReadableInstant) = self.compareTo(that)
+  def to(other: ReadableInstant): Interval = new Interval(self, other)
+
+  def instant: Instant = self.toInstant
+
+  def compare(that: ReadableInstant) = self.compareTo(that)
 }

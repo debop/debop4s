@@ -14,24 +14,25 @@ import scala.collection.mutable.ArrayBuffer
 abstract class HourTimeRange(private val _moment: DateTime,
                              val hourCount: Int = 1,
                              private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(Times.relativeHourPeriod(_moment, hourCount), _calendar) {
+  extends CalendarTimeRange(Times.relativeHourPeriod(_moment, hourCount), _calendar) {
 
-    val endHour: Int = getStart.plusHours(hourCount).getHourOfDay
+  val endHour: Int = getStart.plusHours(hourCount).getHourOfDay
 
-    def getMinutes: Seq[MinuteRange] = {
-        val minutes = ArrayBuffer[MinuteRange]()
-        for (h <- 0 until hourCount) {
-            for (m <- 0 until MinutesPerHour) {
-                minutes += new MinuteRange(start.plusHours(h).plusMinutes(m), calendar)
-            }
-        }
-        minutes
+  def getMinutes: Seq[MinuteRange] = {
+    val minutes = ArrayBuffer[MinuteRange]()
+
+    for (h <- 0 until hourCount) {
+      for (m <- 0 until MinutesPerHour) {
+        minutes += MinuteRange(start.plusHours(h).plusMinutes(m), calendar)
+      }
     }
 
-    override def hashCode() = Hashs.compute(super.hashCode(), hourCount)
+    minutes
+  }
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("hourCount", hourCount)
+  override def hashCode() = Hashs.compute(super.hashCode(), hourCount)
+
+  override protected def buildStringHelper =
+    super.buildStringHelper
+    .add("hourCount", hourCount)
 }
-

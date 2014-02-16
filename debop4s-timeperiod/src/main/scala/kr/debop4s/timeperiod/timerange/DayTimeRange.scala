@@ -15,38 +15,38 @@ import scala.collection.mutable.ArrayBuffer
 abstract class DayTimeRange(private[this] val _start: DateTime,
                             val dayCount: Int,
                             private[this] var _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(Times.relativeDayPeriod(_start, dayCount), _calendar) {
+  extends CalendarTimeRange(Times.relativeDayPeriod(_start, dayCount), _calendar) {
 
-    def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int, calendar: ITimeCalendar) {
-        this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
+  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int, calendar: ITimeCalendar) {
+    this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
+  }
+
+  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int) {
+    this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, DefaultTimeCalendar)
+  }
+
+  def startDayOfWeek: DayOfWeek = calendar.getDayOfWeek(start)
+
+  def endDayOfWeek: DayOfWeek = calendar.getDayOfWeek(end)
+
+  def getHours: Seq[HourRange] = {
+    val day = startDayStart
+    val hours = ArrayBuffer[HourRange]()
+
+    for (d <- 0 until dayCount) {
+      for (h <- 0 until HoursPerDay) {
+        hours += new HourRange(day.plusHours(d * HoursPerDay + h), calendar)
+      }
     }
+    hours
+  }
 
-    def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int) {
-        this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, DefaultTimeCalendar)
-    }
+  override def hashCode() = Hashs.compute(super.hashCode(), dayCount)
 
-    def startDayOfWeek: DayOfWeek = calendar.getDayOfWeek(start)
-
-    def endDayOfWeek: DayOfWeek = calendar.getDayOfWeek(end)
-
-    def getHours: Seq[HourRange] = {
-        val day = startDayStart
-        val hours = ArrayBuffer[HourRange]()
-
-        for (d <- 0 until dayCount) {
-            for (h <- 0 until HoursPerDay) {
-                hours += new HourRange(day.plusHours(d * HoursPerDay + h), calendar)
-            }
-        }
-        hours
-    }
-
-    override def hashCode() = Hashs.compute(super.hashCode(), dayCount)
-
-    override protected def buildStringHelper =
-        ToStringHelper(this)
-            .add("start", start)
-            .add("end", end)
-            .add("dayCount", dayCount)
-            .add("calendar", calendar)
+  override protected def buildStringHelper =
+    ToStringHelper(this)
+    .add("start", start)
+    .add("end", end)
+    .add("dayCount", dayCount)
+    .add("calendar", calendar)
 }

@@ -14,22 +14,22 @@ import scala.collection.mutable.ArrayBuffer
 class YearRangeCollection(private val _year: Int,
                           private val _yearCount: Int,
                           private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends YearTimeRange(_year, _yearCount, _calendar) {
+  extends YearTimeRange(_year, _yearCount, _calendar) {
 
-    def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) {
-        this(moment.getYear, yearCount, calendar)
-    }
+  def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) {
+    this(moment.getYear, yearCount, calendar)
+  }
 
-    def this(moment: DateTime, yearCount: Int) {
-        this(moment, yearCount, DefaultTimeCalendar)
-    }
+  def this(moment: DateTime, yearCount: Int) {
+    this(moment, yearCount, DefaultTimeCalendar)
+  }
 
-    def getYears: Seq[YearRange] = {
-        val years = ArrayBuffer[YearRange]()
-        for (y <- 0 until yearCount) {
-            years += new YearRange(startYear + y, calendar)
-        }
-        years
+  def getYears: Seq[YearRange] = {
+    val years = ArrayBuffer[YearRange]()
+    for (y <- 0 until yearCount) {
+      years += new YearRange(startYear + y, calendar)
     }
+    years
+  }
 
 }

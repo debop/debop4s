@@ -10,10 +10,13 @@ import org.joda.time.{DateTimeFieldType, DateTimeField}
  */
 class RichAbstractPartial(val self: AbstractPartial) extends AnyVal with Ordered[AbstractPartial] {
 
-    def field(idx: Int): DateTimeField = self.getField(idx)
-    def fields: Array[DateTimeField] = self.getFields
-    def fieldTypes: Array[DateTimeFieldType] = self.getFieldTypes
-    def values: Array[Int] = self.getValues
+  def field(idx: Int): DateTimeField = self.getField(idx)
 
-    override def compare(that: AbstractPartial): Int = self.compareTo(that)
+  def fields: Array[DateTimeField] = self.getFields
+
+  def fieldTypes: Array[DateTimeFieldType] = self.getFieldTypes
+
+  def values: Array[Int] = self.getValues
+
+  override def compare(that: AbstractPartial): Int = self.compareTo(that)
 }

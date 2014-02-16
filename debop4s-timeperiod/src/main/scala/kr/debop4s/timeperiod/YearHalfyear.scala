@@ -14,21 +14,21 @@ import org.joda.time.DateTime
  */
 class YearHalfyear(var year: Int, var halfyear: Halfyear) extends ValueObject {
 
-    val start: DateTime = Times.startTimeOfHalfyear(year, halfyear)
+  val start: DateTime = Times.startTimeOfHalfyear(year, halfyear)
 
-    val end: DateTime = Times.endTimeOfHalfyear(year, halfyear)
+  val end: DateTime = Times.endTimeOfHalfyear(year, halfyear)
 
-    override def hashCode() = Hashs.compute(year, halfyear)
+  override def hashCode() = Hashs.compute(year, halfyear)
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("year", year)
-            .add("halfyear", halfyear)
+  override protected def buildStringHelper =
+    super.buildStringHelper
+    .add("year", year)
+    .add("halfyear", halfyear)
 }
 
 object YearHalfyear {
 
-    def apply(year: Int, halfyear: Halfyear): YearHalfyear = new YearHalfyear(year, halfyear)
+  def apply(year: Int, halfyear: Halfyear): YearHalfyear = new YearHalfyear(year, halfyear)
 
-    def apply(src: YearHalfyear): YearHalfyear = apply(src.year, src.halfyear)
+  def apply(src: YearHalfyear): YearHalfyear = apply(src.year, src.halfyear)
 }

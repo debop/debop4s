@@ -16,14 +16,14 @@ class TimeCalendarConfig(var locale: Locale = Locale.getDefault,
                          var startOffset: Duration = DefaultStartOffset,
                          var endOffset: Duration = DefaultEndOffset) extends ValueObject {
 
-    var firstDayOfWeek: DayOfWeek = DayOfWeek.Monday
+  var firstDayOfWeek: DayOfWeek = DayOfWeek.Monday
 
-    override def hashCode(): Int =
-        Hashs.compute(locale, startOffset, endOffset)
+  override def hashCode(): Int =
+    Hashs.compute(locale, startOffset, endOffset)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-            .add("locale", locale)
-            .add("startOffset", startOffset)
-            .add("endOffset", endOffset)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("locale", locale)
+    .add("startOffset", startOffset)
+    .add("endOffset", endOffset)
 }

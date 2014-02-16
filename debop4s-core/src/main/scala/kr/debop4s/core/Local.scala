@@ -12,45 +12,45 @@ import scala.collection.mutable
  */
 object Local {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    private lazy val threadLocal = new ThreadLocal[mutable.LinkedHashMap[Any, Any]]() {
-        override def initialValue(): mutable.LinkedHashMap[Any, Any] = {
-            new mutable.LinkedHashMap[Any, Any]()
-        }
+  private lazy val threadLocal = new ThreadLocal[mutable.LinkedHashMap[Any, Any]]() {
+    override def initialValue(): mutable.LinkedHashMap[Any, Any] = {
+      new mutable.LinkedHashMap[Any, Any]()
     }
+  }
 
-    private def getStorage: mutable.LinkedHashMap[Any, Any] = threadLocal.get()
+  private def getStorage: mutable.LinkedHashMap[Any, Any] = threadLocal.get()
 
-    def get(key: Any): Any = getStorage.getOrElse(key, null)
+  def get(key: Any): Any = getStorage.getOrElse(key, null)
 
-    def get[T](key: Any, clazz: Class[T]): T = get(key).asInstanceOf[T]
+  def get[T](key: Any, clazz: Class[T]): T = get(key).asInstanceOf[T]
 
-    def put(key: Any, value: Any) {
-        assert(key != null)
-        log.trace(s"put: Local 저장소에 key=[$key], value=[$value]를 저장합니다.")
-        getStorage.update(key, value)
+  def put(key: Any, value: Any) {
+    assert(key != null)
+    log.trace(s"put: Local 저장소에 key=[$key], value=[$value]를 저장합니다.")
+    getStorage.update(key, value)
+  }
+
+  def clear() {
+    log.trace("clear: Local 저장소를 clear 합니다.")
+    getStorage.clear()
+  }
+
+  def getOrCreate[T](key: Any, factory: () => T): T = {
+    if (!getStorage.contains(key)) {
+      assert(factory != null)
+      val result: T = factory()
+      put(key, result)
     }
+    get(key).asInstanceOf[T]
+  }
 
-    def clear() {
-        log.trace("clear: Local 저장소를 clear 합니다.")
-        getStorage.clear()
+  def getOrCreate[T](key: Any, factory: Callable[T]): T = synchronized {
+    if (!getStorage.contains(key)) {
+      assert(factory != null)
+      put(key, factory.call())
     }
-
-    def getOrCreate[T](key: Any, factory: () => T): T = {
-        if (!getStorage.contains(key)) {
-            assert(factory != null)
-            val result: T = factory()
-            put(key, result)
-        }
-        get(key).asInstanceOf[T]
-    }
-
-    def getOrCreate[T](key: Any, factory: Callable[T]): T = synchronized {
-        if (!getStorage.contains(key)) {
-            assert(factory != null)
-            put(key, factory.call())
-        }
-        get(key).asInstanceOf[T]
-    }
+    get(key).asInstanceOf[T]
+  }
 }

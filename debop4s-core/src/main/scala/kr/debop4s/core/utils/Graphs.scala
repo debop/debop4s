@@ -11,40 +11,40 @@ import scala.collection.mutable
  */
 object Graphs {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    def breadthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
-        require(source != null)
-        require(getAdjacent != null)
+  def breadthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
+    require(source != null)
+    require(getAdjacent != null)
 
-        val toScan = mutable.Queue[T](source)
-        val scanned = mutable.HashSet[T]()
+    val toScan = mutable.Queue[T](source)
+    val scanned = mutable.HashSet[T]()
 
-        while (toScan.size > 0) {
-            val current = toScan.dequeue()
-            scanned += current
-            for (node <- getAdjacent(current) if !scanned.contains(node)) {
-                toScan.enqueue(node)
-            }
-        }
-        scanned
+    while (toScan.size > 0) {
+      val current = toScan.dequeue()
+      scanned += current
+      for (node <- getAdjacent(current) if !scanned.contains(node)) {
+        toScan.enqueue(node)
+      }
     }
+    scanned
+  }
 
-    def depthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
-        require(source != null)
-        require(getAdjacent != null)
+  def depthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
+    require(source != null)
+    require(getAdjacent != null)
 
-        val toScan = mutable.Stack[T](source)
-        val scanned = mutable.HashSet[T]()
+    val toScan = mutable.Stack[T](source)
+    val scanned = mutable.HashSet[T]()
 
-        while (toScan.size > 0) {
-            val current = toScan.pop()
-            scanned += current
-            for (node <- getAdjacent(current) if !scanned.contains(node)) {
-                toScan.push(node)
-            }
-        }
-        scanned
+    while (toScan.size > 0) {
+      val current = toScan.pop()
+      scanned += current
+      for (node <- getAdjacent(current) if !scanned.contains(node)) {
+        toScan.push(node)
+      }
     }
+    scanned
+  }
 
 }

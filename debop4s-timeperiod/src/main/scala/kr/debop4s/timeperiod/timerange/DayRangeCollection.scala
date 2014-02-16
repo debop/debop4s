@@ -13,20 +13,20 @@ import scala.collection.mutable.ArrayBuffer
 class DayRangeCollection(private[this] val _moment: DateTime,
                          private[this] val _dayCount: Int,
                          private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends DayTimeRange(Times.asDate(_moment), _dayCount, _calendar) {
+  extends DayTimeRange(Times.asDate(_moment), _dayCount, _calendar) {
 
-    def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int, calendar: ITimeCalendar) {
-        this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
-    }
+  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int, calendar: ITimeCalendar) {
+    this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
+  }
 
-    def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int) {
-        this(year, monthOfYear, dayOfMonth, dayCount, DefaultTimeCalendar)
-    }
+  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int) {
+    this(year, monthOfYear, dayOfMonth, dayCount, DefaultTimeCalendar)
+  }
 
-    def getDays: Seq[DayRange] = {
-        val days = ArrayBuffer[DayRange]()
-        val startDay = Times.asDate(getStart)
-        (0 until dayCount).foreach(d => days += new DayRange(startDay.plusDays(d), calendar))
-        days
-    }
+  def getDays: Seq[DayRange] = {
+    val days = ArrayBuffer[DayRange]()
+    val startDay = Times.asDate(getStart)
+    (0 until dayCount).foreach(d => days += new DayRange(startDay.plusDays(d), calendar))
+    days
+  }
 }

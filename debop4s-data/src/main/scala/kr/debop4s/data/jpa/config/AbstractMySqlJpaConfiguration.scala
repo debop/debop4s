@@ -17,17 +17,17 @@ import scala.Predef.String
 @EnableTransactionManagement
 abstract class AbstractMySqlJpaConfiguration extends AbstractJpaConfiguration {
 
-    val DRIVER_CLASS_MYSQL: String = "com.mysql.jdbc.Driver"
-    val DIALECT_MYSQL: String = "org.hibernate.dialect.MySQL5InnoDBDialect"
+  val DRIVER_CLASS_MYSQL: String = "com.mysql.jdbc.Driver"
+  val DIALECT_MYSQL: String = "org.hibernate.dialect.MySQL5InnoDBDialect"
 
-    @Bean
-    override def dataSource(): DataSource = {
-        buildDataSource(DRIVER_CLASS_MYSQL, "jdbc:mysql://localhost/" + getDatabaseName, "root", "root")
-    }
+  @Bean
+  override def dataSource(): DataSource = {
+    buildDataSource(DRIVER_CLASS_MYSQL, "jdbc:mysql://localhost/" + getDatabaseName, "root", "root")
+  }
 
-    override def jpaProperties(): Properties = {
-        val props: Properties = super.jpaProperties()
-        props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
-        props
-    }
+  override def jpaProperties(): Properties = {
+    val props: Properties = super.jpaProperties()
+    props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
+    props
+  }
 }

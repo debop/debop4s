@@ -13,20 +13,21 @@ import org.joda.time.DateTime
  */
 class YearMonth(var year: Int = 0, var monthOfYear: Int = 1) extends ValueObject {
 
-    val start: DateTime = Times.startTimeOfMonth(year, monthOfYear)
+  val start: DateTime = Times.startTimeOfMonth(year, monthOfYear)
 
-    val end: DateTime = Times.endTimeOfMonth(year, monthOfYear)
+  val end: DateTime = Times.endTimeOfMonth(year, monthOfYear)
 
-    override def hashCode() = Hashs.compute(year, monthOfYear)
+  override def hashCode() = Hashs.compute(year, monthOfYear)
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("year", year)
-            .add("monthOfYear", monthOfYear)
+  override protected def buildStringHelper =
+    super.buildStringHelper
+    .add("year", year)
+    .add("monthOfYear", monthOfYear)
 }
 
 object YearMonth {
 
-    def apply(year: Int, monthOfYear: Int): YearMonth = new YearMonth(year, monthOfYear)
-    def apply(src: YearMonth): YearMonth = new YearMonth(src.year, src.monthOfYear)
+  def apply(year: Int, monthOfYear: Int): YearMonth = new YearMonth(year, monthOfYear)
+
+  def apply(src: YearMonth): YearMonth = new YearMonth(src.year, src.monthOfYear)
 }

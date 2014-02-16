@@ -14,36 +14,52 @@ import scala.collection.mutable.ArrayBuffer
 class MinuteRangeCollection(private val _moment: DateTime,
                             private val _minuteCount: Int,
                             private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends MinuteTimeRange(_moment, _minuteCount, _calendar) {
+  extends MinuteTimeRange(_moment, _minuteCount, _calendar) {
 
-    def this(year: Int,
-             monthOfYear: Int,
-             dayOfMonth: Int,
-             hourOfDay: Int,
-             minuteOfHour: Int,
-             minuteCount: Int,
-             calendar: ITimeCalendar) {
-        this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), minuteCount, calendar)
+
+  lazy val minutes: Seq[MinuteRange] = getMinutes
+
+  def getMinutes: Seq[MinuteRange] = {
+    val minutes = ArrayBuffer[MinuteRange]()
+    val startMin = Times.trimToSecond(start)
+
+    for (m <- 0 until minuteCount) {
+      minutes += new MinuteRange(startMin.plusMinutes(m), calendar)
     }
+    minutes
+  }
+}
 
-    def this(year: Int,
-             monthOfYear: Int,
-             dayOfMonth: Int,
-             hourOfDay: Int,
-             minuteOfHour: Int,
-             minuteCount: Int) {
-        this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), minuteCount, DefaultTimeCalendar)
-    }
+object MinuteRangeCollection {
 
-    lazy val minutes: Seq[MinuteRange] = getMinutes
+  def apply(moment: DateTime, minuteCount: Int): MinuteRangeCollection = {
+    apply(moment, minuteCount, DefaultTimeCalendar)
+  }
 
-    def getMinutes: Seq[MinuteRange] = {
-        val minutes = ArrayBuffer[MinuteRange]()
-        val startMin = Times.trimToSecond(start)
+  def apply(moment: DateTime, minuteCount: Int, calendar: ITimeCalendar): MinuteRangeCollection = {
+    new MinuteRangeCollection(moment, minuteCount, calendar)
+  }
 
-        for (m <- 0 until minuteCount) {
-            minutes += new MinuteRange(startMin.plusMinutes(m), calendar)
-        }
-        minutes
-    }
+  def apply(year: Int,
+            monthOfYear: Int,
+            dayOfMonth: Int,
+            hourOfDay: Int,
+            minuteOfHour: Int,
+            minuteCount: Int): MinuteRangeCollection = {
+    apply(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, minuteCount, DefaultTimeCalendar)
+  }
+
+  def apply(year: Int,
+            monthOfYear: Int,
+            dayOfMonth: Int,
+            hourOfDay: Int,
+            minuteOfHour: Int,
+            minuteCount: Int,
+            calendar: ITimeCalendar): MinuteRangeCollection = {
+    new MinuteRangeCollection(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour),
+                               minuteCount,
+                               calendar)
+  }
+
+
 }

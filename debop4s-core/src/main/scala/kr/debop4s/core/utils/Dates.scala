@@ -11,32 +11,32 @@ import org.slf4j.LoggerFactory
  */
 object Dates {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    def startOfDay(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
+  def startOfDay(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 
-    def endOfDay(moment: DateTime): DateTime = startOfDay(moment).plusDays(1).minusMillis(1)
+  def endOfDay(moment: DateTime): DateTime = startOfDay(moment).plusDays(1).minusMillis(1)
 
-    def startOfWeek(moment: DateTime): DateTime =
-        startOfDay(moment).minusDays(moment.getDayOfWeek - DateTimeConstants.MONDAY)
+  def startOfWeek(moment: DateTime): DateTime =
+    startOfDay(moment).minusDays(moment.getDayOfWeek - DateTimeConstants.MONDAY)
 
-    def endOfWeek(moment: DateTime): DateTime =
-        startOfWeek(moment).plusDays(7).minusMillis(1)
+  def endOfWeek(moment: DateTime): DateTime =
+    startOfWeek(moment).plusDays(7).minusMillis(1)
 
-    def startOfMonth(moment: DateTime): DateTime =
-        new DateTime(moment.getYear, moment.getMonthOfYear, 1, 0, 0)
+  def startOfMonth(moment: DateTime): DateTime =
+    new DateTime(moment.getYear, moment.getMonthOfYear, 1, 0, 0)
 
-    def endOfMonth(moment: DateTime): DateTime =
-        startOfMonth(moment).plusMonths(1).minusMillis(1)
+  def endOfMonth(moment: DateTime): DateTime =
+    startOfMonth(moment).plusMonths(1).minusMillis(1)
 
-    def startOfYear(year: Int): DateTime = new DateTime(year, 1, 1, 0, 0)
+  def startOfYear(year: Int): DateTime = new DateTime(year, 1, 1, 0, 0)
 
-    def endOfYear(year: Int): DateTime = startOfYear(year + 1).minusMillis(1)
+  def endOfYear(year: Int): DateTime = startOfYear(year + 1).minusMillis(1)
 
-    /**
-     * 월 주차.
-     */
-    def getWeekOfMonth(moment: DateTime): Int =
-        moment.getWeekOfWeekyear - startOfMonth(moment).getWeekOfWeekyear + 1
+  /**
+   * 월 주차.
+   */
+  def getWeekOfMonth(moment: DateTime): Int =
+    moment.getWeekOfWeekyear - startOfMonth(moment).getWeekOfWeekyear + 1
 
 }

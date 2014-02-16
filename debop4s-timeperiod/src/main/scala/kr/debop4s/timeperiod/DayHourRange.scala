@@ -12,11 +12,11 @@ import kr.debop4s.timeperiod.DayOfWeek.DayOfWeek
 class DayHourRange(val dayOfWeek: DayOfWeek,
                    private[this] val _startHourOfDay: Int,
                    private[this] val _endHourOfDay: Int)
-    extends HourRangeInDay(_startHourOfDay, _endHourOfDay) {
+  extends HourRangeInDay(_startHourOfDay, _endHourOfDay) {
 
-    override def hashCode() = Hashs.compute(dayOfWeek, start, end)
+  override def hashCode() = Hashs.compute(dayOfWeek, start, end)
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("dayOfWeek", dayOfWeek)
+  override protected def buildStringHelper =
+    super.buildStringHelper
+    .add("dayOfWeek", dayOfWeek)
 }

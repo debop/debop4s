@@ -7,10 +7,10 @@ package kr.debop4s.timeperiod
  */
 package object timeline {
 
-    class TimeLineMomentOrdering extends Ordering[ITimeLineMoment] {
-        def compare(x: ITimeLineMoment, y: ITimeLineMoment): Int =
-            x.getMoment.compareTo(y.getMoment)
-    }
+  class TimeLineMomentOrdering extends Ordering[ITimeLineMoment] {
+    def compare(x: ITimeLineMoment, y: ITimeLineMoment): Int =
+      x.getMoment.compareTo(y.getMoment)
+  }
 
-    implicit val timelineMomentOrdering = new TimeLineMomentOrdering()
+  implicit val timelineMomentOrdering = new TimeLineMomentOrdering()
 }

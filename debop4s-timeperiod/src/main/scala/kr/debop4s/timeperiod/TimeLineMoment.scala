@@ -10,12 +10,12 @@ import org.joda.time.DateTime
  */
 trait TimeLineMoment extends Serializable {
 
-    def getMoment: DateTime
+  def getMoment: DateTime
 
-    def getPeriods: TimePeriodCollection
+  def getPeriods: TimePeriodCollection
 
-    def getStartCount: Int
+  def getStartCount: Int
 
-    def getEndCount: Int
+  def getEndCount: Int
 
 }

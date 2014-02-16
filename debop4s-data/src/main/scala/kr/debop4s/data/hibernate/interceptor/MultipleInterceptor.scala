@@ -15,61 +15,61 @@ import scala.collection.mutable.ArrayBuffer
  */
 class MultipleInterceptor extends EmptyInterceptor {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    val interceptors = ArrayBuffer[Interceptor]()
+  val interceptors = ArrayBuffer[Interceptor]()
 
-    def this(interceptors: Interceptor*) {
-        this()
-        this.interceptors ++= interceptors
+  def this(interceptors: Interceptor*) {
+    this()
+    this.interceptors ++= interceptors
+  }
+
+  def addInterceptor(interceptor: Interceptor) {
+    this.interceptors += interceptor
+  }
+
+  def removeInterceptor(interceptor: Interceptor) {
+    this.interceptors -= interceptor
+  }
+
+  def exists: Boolean = interceptors != null && interceptors.size > 0
+
+  override def onDelete(entity: Any, id: Serializable, state: Array[AnyRef], propertyNames: Array[String], types: Array[Type]) {
+    if (exists) {
+      interceptors.foreach(x => x.onDelete(entity, id, state, propertyNames, types))
     }
+  }
 
-    def addInterceptor(interceptor: Interceptor) {
-        this.interceptors += interceptor
+  override def onFlushDirty(entity: Any, id: Serializable, currentState: Array[AnyRef], previousState: Array[AnyRef], propertyNames: Array[String], types: Array[Type]): Boolean = {
+    if (exists) {
+      interceptors.foreach(x => x.onFlushDirty(entity, id, currentState, previousState, propertyNames, types))
     }
+    false
+  }
 
-    def removeInterceptor(interceptor: Interceptor) {
-        this.interceptors -= interceptor
+  override def onSave(entity: scala.Any, id: Serializable, state: Array[AnyRef], propertyNames: Array[String], types: Array[Type]): Boolean = {
+    if (exists) {
+      interceptors.foreach(x => x.onSave(entity, id, state, propertyNames, types))
     }
+    false
+  }
 
-    def exists: Boolean = interceptors != null && interceptors.size > 0
-
-    override def onDelete(entity: Any, id: Serializable, state: Array[AnyRef], propertyNames: Array[String], types: Array[Type]) {
-        if (exists) {
-            interceptors.foreach(x => x.onDelete(entity, id, state, propertyNames, types))
-        }
+  override def onLoad(entity: scala.Any, id: Serializable, state: Array[AnyRef], propertyNames: Array[String], types: Array[Type]): Boolean = {
+    if (exists) {
+      interceptors.foreach(x => x.onLoad(entity, id, state, propertyNames, types))
     }
+    false
+  }
 
-    override def onFlushDirty(entity: Any, id: Serializable, currentState: Array[AnyRef], previousState: Array[AnyRef], propertyNames: Array[String], types: Array[Type]): Boolean = {
-        if (exists) {
-            interceptors.foreach(x => x.onFlushDirty(entity, id, currentState, previousState, propertyNames, types))
-        }
-        false
+  override def postFlush(entities: util.Iterator[_]) {
+    if (exists) {
+      interceptors.foreach(x => x.postFlush(entities))
     }
+  }
 
-    override def onSave(entity: scala.Any, id: Serializable, state: Array[AnyRef], propertyNames: Array[String], types: Array[Type]): Boolean = {
-        if (exists) {
-            interceptors.foreach(x => x.onSave(entity, id, state, propertyNames, types))
-        }
-        false
+  override def preFlush(entities: util.Iterator[_]) {
+    if (exists) {
+      interceptors.foreach(x => x.preFlush(entities))
     }
-
-    override def onLoad(entity: scala.Any, id: Serializable, state: Array[AnyRef], propertyNames: Array[String], types: Array[Type]): Boolean = {
-        if (exists) {
-            interceptors.foreach(x => x.onLoad(entity, id, state, propertyNames, types))
-        }
-        false
-    }
-
-    override def postFlush(entities: util.Iterator[_]) {
-        if (exists) {
-            interceptors.foreach(x => x.postFlush(entities))
-        }
-    }
-
-    override def preFlush(entities: util.Iterator[_]) {
-        if (exists) {
-            interceptors.foreach(x => x.preFlush(entities))
-        }
-    }
+  }
 }

@@ -9,19 +9,25 @@ import org.joda.time.{ReadableDuration, Duration}
  */
 class RichDuration(val self: Duration) extends AnyVal with Ordered[Duration] {
 
-    def days: Long = self.getStandardDays
-    def horus: Long = self.getStandardHours
-    def minutes: Long = self.getStandardMinutes
-    def seconds: Long = self.getStandardSeconds
-    def millis = self.getMillis
+  def days: Long = self.getStandardDays
 
-    def -(amount: Long): Duration = self.minus(amount)
-    def -(amount: ReadableDuration): Duration = self.minus(amount)
+  def horus: Long = self.getStandardHours
 
-    def +(amount: Long): Duration = self.plus(amount)
-    def +(amount: ReadableDuration): Duration = self.plus(amount)
+  def minutes: Long = self.getStandardMinutes
 
-    def isZero: Boolean = self.getMillis == 0
+  def seconds: Long = self.getStandardSeconds
 
-    def compare(that: Duration): Int = self.compareTo(that)
+  def millis = self.getMillis
+
+  def -(amount: Long): Duration = self.minus(amount)
+
+  def -(amount: ReadableDuration): Duration = self.minus(amount)
+
+  def +(amount: Long): Duration = self.plus(amount)
+
+  def +(amount: ReadableDuration): Duration = self.plus(amount)
+
+  def isZero: Boolean = self.getMillis == 0
+
+  def compare(that: Duration): Int = self.compareTo(that)
 }

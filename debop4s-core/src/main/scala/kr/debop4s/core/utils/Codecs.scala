@@ -11,23 +11,23 @@ import org.slf4j.LoggerFactory
  */
 object Codecs {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    def encodeBase64(input: Array[Byte], isChucked: Boolean = false, urlSafe: Boolean = true): Array[Byte] =
-        Base64.encodeBase64(input, isChucked, urlSafe)
+  def encodeBase64(input: Array[Byte], isChucked: Boolean = false, urlSafe: Boolean = true): Array[Byte] =
+    Base64.encodeBase64(input, isChucked, urlSafe)
 
-    def encodeBase64String(str: String, isChunked: Boolean = false, urlSafe: Boolean = true): String = {
-        val input = Strings.getBytesUtf8(str)
-        val bytes = encodeBase64(input, isChunked, urlSafe)
-        Strings.getStringUtf8(bytes)
-    }
+  def encodeBase64String(str: String, isChunked: Boolean = false, urlSafe: Boolean = true): String = {
+    val input = Strings.getBytesUtf8(str)
+    val bytes = encodeBase64(input, isChunked, urlSafe)
+    Strings.getStringUtf8(bytes)
+  }
 
-    def decodeBase64(input: Array[Byte]): Array[Byte] =
-        Base64.decodeBase64(input)
+  def decodeBase64(input: Array[Byte]): Array[Byte] =
+    Base64.decodeBase64(input)
 
-    def decodeBase64String(str: String): String = {
-        val input = Strings.getBytesUtf8(str)
-        val bytes = decodeBase64(input)
-        Strings.getStringUtf8(bytes)
-    }
+  def decodeBase64String(str: String): String = {
+    val input = Strings.getBytesUtf8(str)
+    val bytes = decodeBase64(input)
+    Strings.getStringUtf8(bytes)
+  }
 }

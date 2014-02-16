@@ -15,35 +15,35 @@ import org.joda.time.DateTime
 abstract class MinuteTimeRange(private val _start: DateTime,
                                val minuteCount: Int = 1,
                                private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(Times.relativeMinutePeriod(_start, minuteCount), _calendar) {
+  extends CalendarTimeRange(Times.relativeMinutePeriod(_start, minuteCount), _calendar) {
 
-    def this(year: Int,
-             monthOfYear: Int,
-             dayOfMonth: Int,
-             hourOfDay: Int,
-             minuteOfHour: Int,
-             minuteCount: Int,
-             calendar: ITimeCalendar) {
-        this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), minuteCount, calendar)
-    }
+  def this(year: Int,
+           monthOfYear: Int,
+           dayOfMonth: Int,
+           hourOfDay: Int,
+           minuteOfHour: Int,
+           minuteCount: Int,
+           calendar: ITimeCalendar) {
+    this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), minuteCount, calendar)
+  }
 
-    def this(year: Int,
-             monthOfYear: Int,
-             dayOfMonth: Int,
-             hourOfDay: Int,
-             minuteOfHour: Int,
-             minuteCount: Int) {
-        this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), minuteCount, DefaultTimeCalendar)
-    }
+  def this(year: Int,
+           monthOfYear: Int,
+           dayOfMonth: Int,
+           hourOfDay: Int,
+           minuteOfHour: Int,
+           minuteCount: Int) {
+    this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), minuteCount, DefaultTimeCalendar)
+  }
 
-    assert(minuteCount > 0)
-    val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
+  assert(minuteCount > 0)
+  val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
 
-    override def hashCode(): Int = Hashs.compute(super.hashCode(), endMinute)
+  override def hashCode(): Int = Hashs.compute(super.hashCode(), endMinute)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-            .add("minuteCount", minuteCount)
-            .add("endMinute", endMinute)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("minuteCount", minuteCount)
+    .add("endMinute", endMinute)
 }
 

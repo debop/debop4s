@@ -11,39 +11,39 @@ import org.slf4j.LoggerFactory
  */
 class GZipCompressor extends Compressor {
 
-    override lazy val log = LoggerFactory.getLogger(classOf[GZipCompressor])
+  override lazy val log = LoggerFactory.getLogger(classOf[GZipCompressor])
 
-    override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
-        val bos = new ByteArrayOutputStream()
-        val gzip = new GZIPOutputStream(bos)
+  override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
+    val bos = new ByteArrayOutputStream()
+    val gzip = new GZIPOutputStream(bos)
 
-        try {
-            gzip.write(plainBytes)
-            gzip.close()
+    try {
+      gzip.write(plainBytes)
+      gzip.close()
 
-            bos.toByteArray
-        } finally {
-            bos.close()
-        }
+      bos.toByteArray
+    } finally {
+      bos.close()
     }
+  }
 
-    override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
-        val bos = new ByteArrayOutputStream()
-        val bis = new ByteArrayInputStream(compressedBytes)
-        val gzip = new GZIPInputStream(bis)
+  override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
+    val bos = new ByteArrayOutputStream()
+    val bis = new ByteArrayInputStream(compressedBytes)
+    val gzip = new GZIPInputStream(bis)
 
-        try {
-            val buffer = new Array[Byte](BUFFER_SIZE)
-            var n = 0
-            do {
-                n = gzip.read(buffer, 0, BUFFER_SIZE)
-                if (n > 0) bos.write(buffer, 0, n)
-            } while (n > 0)
+    try {
+      val buffer = new Array[Byte](BUFFER_SIZE)
+      var n = 0
+      do {
+        n = gzip.read(buffer, 0, BUFFER_SIZE)
+        if (n > 0) bos.write(buffer, 0, n)
+      } while (n > 0)
 
-            bos.toByteArray
-        } finally {
-            gzip.close()
-            bos.close()
-        }
+      bos.toByteArray
+    } finally {
+      gzip.close()
+      bos.close()
     }
+  }
 }

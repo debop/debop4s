@@ -14,21 +14,21 @@ class WeekRangeCollection(private val _year: Int,
                           private val _weekOfYear: Int,
                           private val _weekCount: Int,
                           private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends WeekTimeRange(Times.startTimeOfWeek(_year, _weekOfYear, _calendar), _weekCount, _calendar) {
+  extends WeekTimeRange(Times.startTimeOfWeek(_year, _weekOfYear, _calendar), _weekCount, _calendar) {
 
-    def this(moment: DateTime, weekCount: Int, calendar: ITimeCalendar) {
-        this(moment.getYear, moment.getWeekOfWeekyear, weekCount, calendar)
-    }
+  def this(moment: DateTime, weekCount: Int, calendar: ITimeCalendar) {
+    this(moment.getYear, moment.getWeekOfWeekyear, weekCount, calendar)
+  }
 
-    def this(moment: DateTime, weekCount: Int) {
-        this(moment.getYear, moment.getWeekOfWeekyear, weekCount, DefaultTimeCalendar)
-    }
+  def this(moment: DateTime, weekCount: Int) {
+    this(moment.getYear, moment.getWeekOfWeekyear, weekCount, DefaultTimeCalendar)
+  }
 
-    def getWeeks: Seq[WeekRange] = {
-        val weeks = ArrayBuffer[WeekRange]()
-        for (w <- 0 until weekCount) {
-            weeks += new WeekRange(start.plusWeeks(w), calendar)
-        }
-        weeks
+  def getWeeks: Seq[WeekRange] = {
+    val weeks = ArrayBuffer[WeekRange]()
+    for (w <- 0 until weekCount) {
+      weeks += new WeekRange(start.plusWeeks(w), calendar)
     }
+    weeks
+  }
 }

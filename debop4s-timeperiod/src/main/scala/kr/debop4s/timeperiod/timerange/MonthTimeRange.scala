@@ -15,36 +15,36 @@ class MonthTimeRange(private[this] val _year: Int,
                      private[this] val _monthOfYear: Int,
                      val monthCount: Int,
                      private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
+  extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
-    def this(moment: DateTime, monthCount: Int, calendar: ITimeCalendar) {
-        this(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
+  def this(moment: DateTime, monthCount: Int, calendar: ITimeCalendar) {
+    this(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
+  }
+
+  def this(moment: DateTime, monthCount: Int) {
+    this(moment.getYear, moment.getMonthOfYear, monthCount, DefaultTimeCalendar)
+  }
+
+  def getDays: Seq[DayRange] = {
+    val startMonth = Times.startTimeOfMonth(getStart)
+    val days = ArrayBuffer[DayRange]()
+
+    for (m <- 0 until monthCount) {
+      val currentMonth = startMonth.plusMonths(m)
+      val daysOfMonth = Times.getDaysInMonth(currentMonth.getYear, currentMonth.getMonthOfYear)
+      for (d <- 0 until daysOfMonth) {
+        days += new DayRange(currentMonth.plusDays(d), calendar)
+      }
     }
+    days
+  }
 
-    def this(moment: DateTime, monthCount: Int) {
-        this(moment.getYear, moment.getMonthOfYear, monthCount, DefaultTimeCalendar)
-    }
+  override def hashCode() = Hashs.compute(super.hashCode(), monthCount)
 
-    def getDays: Seq[DayRange] = {
-        val startMonth = Times.startTimeOfMonth(getStart)
-        val days = ArrayBuffer[DayRange]()
-
-        for (m <- 0 until monthCount) {
-            val currentMonth = startMonth.plusMonths(m)
-            val daysOfMonth = Times.getDaysInMonth(currentMonth.getYear, currentMonth.getMonthOfYear)
-            for (d <- 0 until daysOfMonth) {
-                days += new DayRange(currentMonth.plusDays(d), calendar)
-            }
-        }
-        days
-    }
-
-    override def hashCode() = Hashs.compute(super.hashCode(), monthCount)
-
-    override protected def buildStringHelper: ToStringHelper =
-        ToStringHelper(this)
-            .add("year", startYear)
-            .add("monthOfYear", startMonthOfYear)
-            .add("monthCount", monthCount)
-            .add("calendar", calendar)
+  override protected def buildStringHelper: ToStringHelper =
+    ToStringHelper(this)
+    .add("year", startYear)
+    .add("monthOfYear", startMonthOfYear)
+    .add("monthCount", monthCount)
+    .add("calendar", calendar)
 }

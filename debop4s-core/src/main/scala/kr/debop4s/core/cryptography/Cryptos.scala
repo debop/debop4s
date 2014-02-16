@@ -10,16 +10,16 @@ import org.slf4j.LoggerFactory
  */
 object Cryptos {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    val RANDOM_NUMBER_GENERATION = "SHA1PRNG"
-    lazy val random: SecureRandom = SecureRandom.getInstance(RANDOM_NUMBER_GENERATION)
+  val RANDOM_NUMBER_GENERATION = "SHA1PRNG"
+  lazy val random: SecureRandom = SecureRandom.getInstance(RANDOM_NUMBER_GENERATION)
 
-    def randomBytes(num: Int): Array[Byte] = {
-        assert(num >= 0)
-        val bytes = new Array[Byte](num)
-        if (num > 0)
-            random.nextBytes(bytes)
-        bytes
-    }
+  def randomBytes(num: Int): Array[Byte] = {
+    assert(num >= 0)
+    val bytes = new Array[Byte](num)
+    if (num > 0)
+      random.nextBytes(bytes)
+    bytes
+  }
 }

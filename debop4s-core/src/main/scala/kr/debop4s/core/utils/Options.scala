@@ -7,6 +7,6 @@ package kr.debop4s.core.utils
  */
 object Options {
 
-    def get[T <: AnyRef](v: T): Option[T] = if (v == null) None else Some(v)
+  def get[T <: AnyRef](v: T): Option[T] = if (v == null) None else Some(v)
 
 }

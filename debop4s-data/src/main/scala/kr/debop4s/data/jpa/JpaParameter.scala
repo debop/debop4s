@@ -12,12 +12,12 @@ import org.hibernate.`type`.StandardBasicTypes
 class JpaParameter(override val name: String,
                    override val value: Any,
                    val paramType: org.hibernate.`type`.Type = StandardBasicTypes.SERIALIZABLE)
-    extends AbstractNamedParameter(name, value) {
+  extends AbstractNamedParameter(name, value) {
 
-    def this(name: String, value: Any) {
-        this(name, value, StandardBasicTypes.SERIALIZABLE)
-    }
+  def this(name: String, value: Any) {
+    this(name, value, StandardBasicTypes.SERIALIZABLE)
+  }
 
-    override protected def buildStringHelper =
-        super.buildStringHelper.add("paramType", paramType)
+  override protected def buildStringHelper =
+    super.buildStringHelper.add("paramType", paramType)
 }

@@ -9,15 +9,15 @@ import kr.debop4s.timeperiod.{ITimePeriodCollection, ITimePeriodMapper, ITimePer
  */
 trait ITimeLine extends Serializable {
 
-    def getPeriod: ITimePeriodContainer
+  def getPeriod: ITimePeriodContainer
 
-    def getLimits: ITimePeriod
+  def getLimits: ITimePeriod
 
-    def getPeriodMapper: ITimePeriodMapper
+  def getPeriodMapper: ITimePeriodMapper
 
-    def combinePeriods: ITimePeriodCollection
+  def combinePeriods: ITimePeriodCollection
 
-    def intersectPeriods: ITimePeriodCollection
+  def intersectPeriods: ITimePeriodCollection
 
-    def calculateGaps: ITimePeriodCollection
+  def calculateGaps: ITimePeriodCollection
 }

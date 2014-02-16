@@ -11,19 +11,19 @@ import org.slf4j.LoggerFactory
  */
 object Collections {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    def sortByKey[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
-        m.toList.sortWith(_._1 < _._1).toMap
+  def sortByKey[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
+    m.toList.sortWith(_._1 < _._1).toMap
 
-    def sortByKeyDescending[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
-        m.toList.sortWith(_._1 > _._1).toMap
+  def sortByKeyDescending[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
+    m.toList.sortWith(_._1 > _._1).toMap
 
 
-    def sortByValue[K, V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
-        m.toList.sortWith(_._2 < _._2).toMap
+  def sortByValue[K, V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
+    m.toList.sortWith(_._2 < _._2).toMap
 
-    def sortByValueDescending[K, V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
-        m.toList.sortWith(_._2 > _._2).toMap
+  def sortByValueDescending[K, V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
+    m.toList.sortWith(_._2 > _._2).toMap
 
 }

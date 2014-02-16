@@ -12,11 +12,11 @@ import kr.debop4s.core.utils.Hashs
 abstract class AbstractNamedParameter(val name: String,
                                       val value: Any) extends ValueObject {
 
-    override def hashCode(): Int =
-        Hashs.compute(name)
+  override def hashCode(): Int =
+    Hashs.compute(name)
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("name", name)
-            .add("value", value)
+  override protected def buildStringHelper =
+    super.buildStringHelper
+    .add("name", name)
+    .add("value", value)
 }

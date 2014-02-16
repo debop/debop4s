@@ -9,7 +9,7 @@ import kr.debop4s.timeperiod.utils.Durations
  */
 package object samples {
 
-    val LessonDuration = Durations.minutes(50)
-    val LargeBreakDuration = Durations.minutes(15)
-    val ShortBreakDuration = Durations.minutes(5)
+  val LessonDuration = Durations.minutes(50)
+  val LargeBreakDuration = Durations.minutes(15)
+  val ShortBreakDuration = Durations.minutes(5)
 }

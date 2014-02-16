@@ -10,8 +10,8 @@ import kr.debop4s.core.pool.AbstractObjectPoolConfig
  */
 class ObjectPoolConfig extends AbstractObjectPoolConfig {
 
-    testWhileIdle = true
-    minEvictableIdleTimeMillis = 60000
-    timeBetweenEvictionRunsMillis = 30000
-    numTestsPerEvictionRun = -1
+  testWhileIdle = true
+  minEvictableIdleTimeMillis = 60000
+  timeBetweenEvictionRunsMillis = 30000
+  numTestsPerEvictionRun = -1
 }

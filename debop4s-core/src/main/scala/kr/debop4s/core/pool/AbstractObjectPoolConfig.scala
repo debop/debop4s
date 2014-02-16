@@ -10,44 +10,44 @@ import org.apache.commons.pool.impl.GenericObjectPool
  */
 trait AbstractObjectPoolConfig extends GenericObjectPool.Config {
 
-    def getMaxIdle: Int = maxIdle
+  def getMaxIdle: Int = maxIdle
 
-    def setMaxIdle(value: Int) { maxIdle = value }
+  def setMaxIdle(value: Int) { maxIdle = value }
 
-    def getMaxActive: Int = maxActive
+  def getMaxActive: Int = maxActive
 
-    def setMaxActive(value: Int) { maxActive = value }
+  def setMaxActive(value: Int) { maxActive = value }
 
-    def getWhenExhaustedAction: Byte = whenExhaustedAction
+  def getWhenExhaustedAction: Byte = whenExhaustedAction
 
-    def setWhenExhaustedAction(value: Byte) { whenExhaustedAction = value }
+  def setWhenExhaustedAction(value: Byte) { whenExhaustedAction = value }
 
-    def isTestOnBorrow: Boolean = testOnBorrow
+  def isTestOnBorrow: Boolean = testOnBorrow
 
-    def setTestOnBorrow(value: Boolean) { testOnBorrow = value }
+  def setTestOnBorrow(value: Boolean) { testOnBorrow = value }
 
-    def isTestOnReturn: Boolean = testOnReturn
+  def isTestOnReturn: Boolean = testOnReturn
 
-    def setTestOnReturn(value: Boolean) { testOnReturn = value }
+  def setTestOnReturn(value: Boolean) { testOnReturn = value }
 
-    def isTestWhileIdle: Boolean = testWhileIdle
+  def isTestWhileIdle: Boolean = testWhileIdle
 
-    def setTestWhileIdle(value: Boolean) { testWhileIdle = value }
+  def setTestWhileIdle(value: Boolean) { testWhileIdle = value }
 
-    def getTimeBetweenEvictionRunsMillis: Long = timeBetweenEvictionRunsMillis
+  def getTimeBetweenEvictionRunsMillis: Long = timeBetweenEvictionRunsMillis
 
-    def setTimeBetweenEvictionRunsMillis(value: Long) { timeBetweenEvictionRunsMillis = value }
+  def setTimeBetweenEvictionRunsMillis(value: Long) { timeBetweenEvictionRunsMillis = value }
 
-    def getNumTestsPerEvictionRun: Int = numTestsPerEvictionRun
+  def getNumTestsPerEvictionRun: Int = numTestsPerEvictionRun
 
-    def setNumTestsPerEvictionRun(value: Int) { numTestsPerEvictionRun = value }
+  def setNumTestsPerEvictionRun(value: Int) { numTestsPerEvictionRun = value }
 
-    def getMinEvictableIdleTimeMillis: Long = minEvictableIdleTimeMillis
+  def getMinEvictableIdleTimeMillis: Long = minEvictableIdleTimeMillis
 
-    def setMinEvictableIdleTimeMillis(value: Long) { minEvictableIdleTimeMillis = value }
+  def setMinEvictableIdleTimeMillis(value: Long) { minEvictableIdleTimeMillis = value }
 
-    def getSoftMinEvictableIdleTimeMillis: Long = softMinEvictableIdleTimeMillis
+  def getSoftMinEvictableIdleTimeMillis: Long = softMinEvictableIdleTimeMillis
 
-    def setSoftMinEvictableIdleTimeMillis(value: Long) { softMinEvictableIdleTimeMillis = value }
+  def setSoftMinEvictableIdleTimeMillis(value: Long) { softMinEvictableIdleTimeMillis = value }
 
 }
