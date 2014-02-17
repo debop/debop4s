@@ -19,6 +19,8 @@ class WeekTimeRange(private val _moment: DateTime,
 
   def year: Int = getStart.getYear
 
+  def weekyear: Int = getStart.getWeekyear
+
   def startWeekOfYear: Int = Times.getWeekOfYear(getStart).weekOfYear
 
   def endWeekOfYear: Int = Times.getWeekOfYear(getEnd).weekOfYear
@@ -37,7 +39,7 @@ class WeekTimeRange(private val _moment: DateTime,
 
   override protected def buildStringHelper =
     super.buildStringHelper
-    .add("weekCount", weekCount)
+      .add("weekCount", weekCount)
 }
 
 object WeekTimeRange {
@@ -52,7 +54,7 @@ object WeekTimeRange {
     apply(year, weekOfYear, weekCount, DefaultTimeCalendar)
 
   def apply(year: Int, weekOfYear: Int, weekCount: Int, calendar: ITimeCalendar): WeekTimeRange =
-    new WeekTimeRange(Times.startTimeOfWeek(year, weekOfYear, calendar), weekCount, calendar)
+    new WeekTimeRange(Times.startTimeOfWeek(year, weekOfYear), weekCount, calendar)
 
   def getPeriodOf(moment: DateTime, weekCount: Int): TimeRange = {
     require(weekCount > 0)

@@ -10,9 +10,11 @@ import org.joda.time.DateTime
  * @since  2013. 12. 28. 오후 11:18
  */
 class WeekRange(private val _year: Int,
-                val weekOfYear: Int,
+                private val _weekOfWeekyear: Int,
                 private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends WeekTimeRange(Times.startTimeOfWeek(_year, weekOfYear, _calendar), 1, _calendar) {
+  extends WeekTimeRange(Times.startTimeOfWeek(_year, _weekOfWeekyear), 1, _calendar) {
+
+  def weekOfWeekyear = start.getWeekOfWeekyear
 
   def firstDayOfWeek: DateTime = getStart
 
@@ -26,11 +28,15 @@ class WeekRange(private val _year: Int,
   def nextWeek: WeekRange = addWeeks(1)
 
   def addWeeks(weeks: Int): WeekRange = {
-    WeekRange(Times.getStartOfYearWeek(year, weekOfYear, calendar).plusWeeks(weeks), calendar)
+    WeekRange(Times.getStartOfYearWeek(weekyear, weekOfWeekyear, calendar).plusWeeks(weeks), calendar)
   }
 }
 
 object WeekRange {
+
+  def apply(): WeekRange = apply(Times.today)
+
+  def apply(calendar: ITimeCalendar): WeekRange = apply(Times.today, calendar)
 
   def apply(year: Int, weekOfYear: Int): WeekRange =
     apply(year, weekOfYear, DefaultTimeCalendar)

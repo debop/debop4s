@@ -191,8 +191,9 @@ object Times {
     asDate(year, month).plusMonths(1).minusDays(1).getDayOfMonth
 
   def getStartOfWeek(moment: DateTime): DateTime = {
-    val dow = moment.withTimeAtStartOfDay().getDayOfWeek
-    moment.minusDays(dow - 1)
+    val day = asDate(moment)
+    val dow = day.getDayOfWeek
+    day - (dow - 1).day
   }
 
   def getWeekOfMonth(moment: DateTime): Int =
@@ -213,8 +214,8 @@ object Times {
     lastDay.getWeekOfWeekyear
   }
 
-  def getStartOfYearWeek(year: Int, weekOfYear: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DateTime =
-    new DateTime().withYear(year).withWeekOfWeekyear(weekOfYear)
+  def getStartOfYearWeek(weekyear: Int, weekOfWeekYear: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DateTime =
+    new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(weekOfWeekYear)
 
   def dayStart(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 
@@ -341,8 +342,8 @@ object Times {
 
   def endTimeOfHalfyear(year: Int, halfyear: Halfyear): DateTime =
     startTimeOfHalfyear(year, halfyear)
-    .plusMonths(MonthsPerHalfyear)
-    .minus(1)
+      .plusMonths(MonthsPerHalfyear)
+      .minus(1)
 
   def startTimeOfQuarter(moment: DateTime): DateTime =
     startTimeOfQuarter(moment.getYear, moment.getMonthOfYear)
@@ -361,8 +362,8 @@ object Times {
 
   def endTimeOfQuarter(year: Int, quarter: Quarter): DateTime =
     startTimeOfQuarter(year, quarter)
-    .plusMonths(MonthsPerQuarter)
-    .minus(1)
+      .plusMonths(MonthsPerQuarter)
+      .minus(1)
 
   def startTimeOfLastQuarter(moment: DateTime): DateTime =
     startTimeOfQuarter(moment.minusMonths(MonthsPerQuarter))
@@ -393,9 +394,9 @@ object Times {
 
   def startTimeOfWeek(moment: DateTime): DateTime = getStartOfWeek(moment)
 
-  def startTimeOfWeek(year: Int, weekOfYear: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DateTime = {
-    val start = startTimeOfYear(year).plusMonths(1).withWeekOfWeekyear(weekOfYear)
-    log.trace(s"year=$year, weekOfYear=$weekOfYear, start=$start")
+  def startTimeOfWeek(weekyear: Int, weekOfWeekYear: Int): DateTime = {
+    val start = startTimeOfYear(weekyear).plusMonths(1).withWeekOfWeekyear(weekOfWeekYear)
+    log.trace(s"weekyear=$weekyear, weekOfWeekYear=$weekOfWeekYear, start=$start")
     start
   }
 
@@ -612,8 +613,8 @@ object Times {
       case PeriodUnit.Minute => getMinuteRanges(moment, periodCount, calendar)
       case PeriodUnit.Second =>
         CalendarTimeRange(trimToMillis(moment),
-                           trimToMillis(moment).plusSeconds(periodCount),
-                           calendar)
+          trimToMillis(moment).plusSeconds(periodCount),
+          calendar)
 
       case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
     }
@@ -750,9 +751,9 @@ object Times {
   }
 
   lazy val NotOverlapedRelations = Array(PeriodRelation.After,
-                                          PeriodRelation.StartTouching,
-                                          PeriodRelation.EndTouching,
-                                          PeriodRelation.Before)
+    PeriodRelation.StartTouching,
+    PeriodRelation.EndTouching,
+    PeriodRelation.Before)
 
   def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
     require(period != null)
