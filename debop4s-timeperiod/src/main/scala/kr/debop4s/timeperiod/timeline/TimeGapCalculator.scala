@@ -17,7 +17,7 @@ class TimeGapCalculator[T <: ITimePeriod](val mapper: ITimeCalendar) {
   }
 
   def getGaps(excludePeriods: ITimePeriodContainer, limits: ITimePeriod = null): ITimePeriodCollection = {
-    assert(excludePeriods != null)
+    require(excludePeriods != null)
     log.debug(s"Period들의 Gap을 계산합니다. excpudePeriods=[$excludePeriods], limits=[$limits]")
 
     val timeLine = new TimeLine[T](excludePeriods, limits, mapper)

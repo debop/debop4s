@@ -88,7 +88,8 @@ object TimeLines {
     if (moments.isEmpty) return gaps
 
     // find leading gap
-    val periodStart: ITimeLineMoment = moments.getMin
+    val periodStart = moments.getMin
+
     if (periodStart != null && range.start < periodStart.getMoment) {
       val startingGap = TimeRange(range.start, periodStart.getMoment)
       log.trace(s"starting gap을 추가합니다... startingGap=[$startingGap]")
@@ -103,7 +104,7 @@ object TimeLines {
       assert(moment != null)
       assert(moment.getStartCount > 0, s"moment.getStartCount() 값이 0보다 커야합니다. balance=[${moment.getStartCount}]")
 
-      var balance: Int = moment.getStartCount
+      var balance = moment.getStartCount
       var gapStart: ITimeLineMoment = null
 
       while (itemIndex < moments.size - 1 && balance > 0) {
@@ -112,9 +113,11 @@ object TimeLines {
         balance += gapStart.getStartCount
         balance -= gapStart.getEndCount
       }
-      Guard.shouldNotBeNull(gapStart, "gapStart")
+      assert(gapStart != null)
 
       if (gapStart.getStartCount <= 0) {
+
+        // found a gap
         if (itemIndex < moments.size - 1) {
           val gap = TimeRange(gapStart.getMoment, moments(itemIndex + 1).getMoment)
           log.trace(s"intermediated gap을 추가합니다. gap=[$gap]")

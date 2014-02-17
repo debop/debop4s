@@ -30,6 +30,9 @@ class DateAdd extends ValueObject {
   def add(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
     log.trace(s"Add... start=[$start] + offset[$offset]의 시간을 계산합니다. seekBoundary=[$seekBoundary]")
 
+    if (offset == Durations.Zero)
+      return start
+
     if (includePeriods.size == 0 && excludePeriods.size == 0)
       return start + offset
 
@@ -46,14 +49,15 @@ class DateAdd extends ValueObject {
   def subtract(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
     log.trace(s"Subtract... start=[$start] + offset[$offset]의 시간을 계산합니다. seekBoundary=[$seekBoundary]")
 
+    if (offset == Durations.Zero)
+      return start
+
     if (includePeriods.size == 0 && excludePeriods.size == 0)
-      return start + offset
+      return start - offset
 
     val (end, remaining) =
-      if (offset < Duration.ZERO)
-        calculateEnd(start, Durations.negate(offset), SeekDirection.Forward, seekBoundary)
-      else
-        calculateEnd(start, offset, SeekDirection.Backward, seekBoundary)
+      if (offset < Duration.ZERO) calculateEnd(start, Durations.negate(offset), SeekDirection.Forward, seekBoundary)
+      else calculateEnd(start, offset, SeekDirection.Backward, seekBoundary)
 
     log.debug(s"Subtract. start=[$start] + offset[$offset]의 결과 end=[$end], remaining=[$remaining]")
     end
@@ -131,11 +135,11 @@ class DateAdd extends ValueObject {
         if (isTargetPeriod) {
           end = seekMoment + remaining
           remaining = null
-          (end, remaining)
+          return (end, remaining)
         }
         remaining = remaining - gapRemaining
         if (i == availablePeriods.size - 1) {
-          (null, remaining)
+          return (null, remaining)
         }
         seekMoment = availablePeriods(i + 1).start
       })
@@ -153,11 +157,11 @@ class DateAdd extends ValueObject {
         if (isTargetPeriod) {
           end = seekMoment - remaining
           remaining = null
-          (end, remaining)
+          return (end, remaining)
         }
         remaining = remaining - gapRemaining
         if (i == 0) {
-          (null, remaining)
+          return (null, remaining)
         }
         seekMoment = availablePeriods(i - 1).end
       })
@@ -175,14 +179,14 @@ class DateAdd extends ValueObject {
     var difference = MaxDuration
 
     periods
-    .filter(period => period.end.compareTo(start) <= 0)
+    .filter(period => period.end >= start)
     .foreach(period => {
 
       if (period.hasInside(start)) {
         nearest = period
         moment = start
         log.trace(s"시작시각 이후 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")
-        (nearest, moment)
+        return (nearest, moment)
       }
       val periodToMoment = new Duration(start, period.start)
       if (periodToMoment < difference) {
@@ -203,15 +207,18 @@ class DateAdd extends ValueObject {
     var difference = MaxDuration
 
     periods
-    .filter(period => period.end <= start)
+    .filter(period => period.start <= start)
     .foreach(period => {
 
+      // start가 기간에 속한다면...
       if (period.hasInside(start)) {
         nearest = period
         moment = start
         log.trace(s"시작시각 이전 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")
-        (nearest, moment)
+        return (nearest, moment)
       }
+
+      // 근처 값이 아니라면 포기
       val periodToMoment = new Duration(start, period.end)
       if (periodToMoment < difference) {
         difference = periodToMoment

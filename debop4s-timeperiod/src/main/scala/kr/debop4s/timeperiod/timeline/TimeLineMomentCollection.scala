@@ -22,7 +22,7 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
 
   implicit val dateTimeOrdering = new DateTimeOrdering()
 
-  val moments = mutable.ArrayBuffer[ITimeLineMoment]()
+  var moments = mutable.ArrayBuffer[ITimeLineMoment]()
 
   override def size: Int = moments.size
 
@@ -44,7 +44,7 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
   }
 
   def addAll(periods: Iterable[_ <: ITimePeriod]) {
-    periods.filter(x => x != null).foreach(x => add(x))
+    periods.filter(x => x != null).toSeq.sortBy(x => x.start).foreach(x => add(x))
   }
 
   def remove(period: ITimePeriod) {
@@ -67,6 +67,8 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
     if (item == null) {
       item = new TimeLineMoment(moment)
       moments += item
+      moments = moments.sortBy(_.getMoment)
+      log.trace(s"TimeLineMoment를 추가했습니다. item=[$item]")
     }
     item.getPeriods.add(period)
   }
@@ -78,8 +80,9 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
       item.getPeriods.remove(period)
       if (item.getPeriods.size == 0)
         moments -= item
+      log.trace(s"TimeLineMoment를 제거했습니다. item=[$item]")
     }
   }
 
-  override def toString(): String = "TimeLineMomentCollection# moments=" + moments.sortBy(_.getMoment).toString()
+  override def toString(): String = "TimeLineMomentCollection# moments=" + moments.toString()
 }

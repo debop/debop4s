@@ -20,16 +20,15 @@ class TimeLineMoment(val moment: DateTime) extends ValueObject with ITimeLineMom
 
   def getPeriods: TimePeriodCollection = periods
 
-  def getStartCount: Int = periods.count(x => x.getStart.equals(moment))
+  def getStartCount: Int = periods.count(x => x.start.equals(moment))
 
-  def getEndCount: Int = periods.count(x => x.getEnd.equals(moment))
+  def getEndCount: Int = periods.count(x => x.end.equals(moment))
 
   override def hashCode() = Hashs.compute(moment)
 
   override protected def buildStringHelper =
     super.buildStringHelper
     .add("moment", moment)
-    .add("period", periods)
     .add("startCount", getStartCount)
     .add("endCount", getEndCount)
 }

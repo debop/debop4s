@@ -342,8 +342,8 @@ object Times {
 
   def endTimeOfHalfyear(year: Int, halfyear: Halfyear): DateTime =
     startTimeOfHalfyear(year, halfyear)
-      .plusMonths(MonthsPerHalfyear)
-      .minus(1)
+    .plusMonths(MonthsPerHalfyear)
+    .minus(1)
 
   def startTimeOfQuarter(moment: DateTime): DateTime =
     startTimeOfQuarter(moment.getYear, moment.getMonthOfYear)
@@ -362,8 +362,8 @@ object Times {
 
   def endTimeOfQuarter(year: Int, quarter: Quarter): DateTime =
     startTimeOfQuarter(year, quarter)
-      .plusMonths(MonthsPerQuarter)
-      .minus(1)
+    .plusMonths(MonthsPerQuarter)
+    .minus(1)
 
   def startTimeOfLastQuarter(moment: DateTime): DateTime =
     startTimeOfQuarter(moment.minusMonths(MonthsPerQuarter))
@@ -622,8 +622,8 @@ object Times {
       case PeriodUnit.Minute => getMinuteRanges(moment, periodCount, calendar)
       case PeriodUnit.Second =>
         CalendarTimeRange(trimToMillis(moment),
-          trimToMillis(moment).plusSeconds(periodCount),
-          calendar)
+                           trimToMillis(moment).plusSeconds(periodCount),
+                           calendar)
 
       case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
     }
@@ -680,7 +680,9 @@ object Times {
 
 
   def hasInside(period: ITimePeriod, target: DateTime): Boolean = {
-    target >= period.start && target <= period.end
+    val result = target >= period.start && target <= period.end
+    log.trace(s"기간[$period] 안에 target=[$target]이 포함되는가? [$result]")
+    result
   }
 
   def hasInside(period: ITimePeriod, target: ITimePeriod): Boolean = {
@@ -760,9 +762,9 @@ object Times {
   }
 
   lazy val NotOverlapedRelations = Array(PeriodRelation.After,
-    PeriodRelation.StartTouching,
-    PeriodRelation.EndTouching,
-    PeriodRelation.Before)
+                                          PeriodRelation.StartTouching,
+                                          PeriodRelation.EndTouching,
+                                          PeriodRelation.Before)
 
   def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
     require(period != null)

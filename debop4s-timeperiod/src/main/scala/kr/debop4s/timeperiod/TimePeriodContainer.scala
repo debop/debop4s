@@ -199,16 +199,16 @@ class TimePeriodContainer extends ITimePeriodContainer {
   def getPeriods = periods
 
   def start: DateTime = {
-    if (size == 0)
-      MinPeriodTime
-
-    periods.minBy(x => x.start).start
+    if (size == 0) MinPeriodTime
+    else if (periods.isEmpty) MinPeriodTime
+    else periods.minBy(x => x.start).start
   }
 
   def getStart = start
 
   def end: DateTime = {
     if (size == 0) MaxPeriodTime
+    else if (periods.isEmpty) MaxPeriodTime
     else periods.maxBy(x => x.end).end
   }
 

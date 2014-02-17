@@ -61,7 +61,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
     if (moments == null || moments.size == 0)
       return new TimePeriodCollection(limits)
 
-    val range = TimeRange(mapPeriodStart(limits.getStart), mapPeriodEnd(limits.getEnd))
+    val range = TimeRange(mapPeriodStart(limits.start), mapPeriodEnd(limits.end))
     TimeLines.calculateGap(moments, range)
   }
 

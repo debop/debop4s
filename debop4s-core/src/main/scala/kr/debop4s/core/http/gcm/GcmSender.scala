@@ -62,6 +62,4 @@ class GcmSender(val serverApiKey: String) {
     post.setEntity(new StringEntity(text, Charsets.UTF_8))
     post
   }
-
-
 }
