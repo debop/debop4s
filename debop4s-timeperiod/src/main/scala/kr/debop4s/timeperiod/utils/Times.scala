@@ -113,7 +113,7 @@ object Times {
   def nextHalfyear(startYear: Int, startHalfyear: Halfyear): YearHalfyear =
     addHalfyear(startYear, startHalfyear, 1)
 
-  def previousHalfyear(startYear: Int, startHalfyear: Halfyear): YearHalfyear =
+  def prevHalfyear(startYear: Int, startHalfyear: Halfyear): YearHalfyear =
     addHalfyear(startYear, startHalfyear, -1)
 
   def addHalfyear(startYear: Int, startHalfyear: Halfyear, delta: Int): YearHalfyear = {
@@ -144,7 +144,7 @@ object Times {
 
   def nextQuarter(year: Int, quarter: Quarter): YearQuarter = addQuarter(year, quarter, 1)
 
-  def previousQuarter(year: Int, quarter: Quarter): YearQuarter = addQuarter(year, quarter, -1)
+  def prevQuarter(year: Int, quarter: Quarter): YearQuarter = addQuarter(year, quarter, -1)
 
   def addQuarter(year: Int, quarter: Quarter, delta: Int): YearQuarter = {
     if (delta == 0)
@@ -172,7 +172,7 @@ object Times {
 
   def nextMonth(year: Int, monthOfYear: Int): YearMonth = addMonth(year, monthOfYear, 1)
 
-  def previousMonth(year: Int, monthOfYear: Int): YearMonth = addMonth(year, monthOfYear, -1)
+  def prevMonth(year: Int, monthOfYear: Int): YearMonth = addMonth(year, monthOfYear, -1)
 
   def addMonth(year: Int, monthOfYear: Int, count: Int): YearMonth = {
     if (count == 0)
@@ -221,7 +221,7 @@ object Times {
 
   def nextDayOfWeek(day: DayOfWeek): DayOfWeek = addDayOfWeek(day, 1)
 
-  def previousDayOfWeek(day: DayOfWeek): DayOfWeek = addDayOfWeek(day, -1)
+  def prevDayOfWeek(day: DayOfWeek): DayOfWeek = addDayOfWeek(day, -1)
 
   def addDayOfWeek(day: DayOfWeek, days: Int): DayOfWeek = {
     if (days == 0) return day
@@ -444,7 +444,7 @@ object Times {
   def quarterOf(moment: DateTime): Quarter = quarterOf(moment.getMonthOfYear)
 
   def previousQuarterOf(moment: DateTime): Quarter =
-    previousQuarter(moment.getYear, quarterOf(moment)).quarter
+    prevQuarter(moment.getYear, quarterOf(moment)).quarter
 
   /** 지정한 일의 다음 주의 같은 요일 */
   def nextDayOfWeek(moment: DateTime): DateTime =
@@ -459,10 +459,10 @@ object Times {
     next
   }
 
-  def previousDayOfWeek(moment: DateTime): DateTime =
-    previousDayOfWeek(moment, DayOfWeek(moment.getDayOfWeek))
+  def prevDayOfWeek(moment: DateTime): DateTime =
+    prevDayOfWeek(moment, DayOfWeek(moment.getDayOfWeek))
 
-  def previousDayOfWeek(moment: DateTime, dayOfWeek: DayOfWeek): DateTime = {
+  def prevDayOfWeek(moment: DateTime, dayOfWeek: DayOfWeek): DateTime = {
     val dow = dayOfWeek
     var previous = moment.minusDays(1)
     while (previous.getDayOfWeek != dow.id) {
@@ -527,42 +527,50 @@ object Times {
   def since(moment: DateTime, duration: Duration): DateTime = moment.plus(duration)
 
   def min(a: DateTime, b: DateTime): DateTime = {
-    if (a != null && b != null) {
-      if (a < b) a else b
-    } else {
-      null
-    }
+    if (a != null && b != null) {if (a < b) a else b}
+    else if (a == null) b
+    else if (b == null) a
+    else null
   }
 
   def max(a: DateTime, b: DateTime): DateTime = {
-    if (a != null && b != null) {
-      if (a > b) a else b
-    } else {
-      null
-    }
+    if (a != null && b != null) {if (a > b) a else b}
+    else if (a == null) b
+    else if (b == null) a
+    else null
   }
 
   def min(a: Duration, b: Duration): Duration = {
-    if (a != null && b != null) {
-      if (a < b) a else b
-    } else {
-      null
-    }
+    if (a != null && b != null) {if (a < b) a else b}
+    else if (a == null) b
+    else if (b == null) a
+    else null
   }
 
   def max(a: Duration, b: Duration): Duration = {
-    if (a != null && b != null) {
-      if (a > b) a else b
-    } else {
-      null
-    }
+    if (a != null && b != null) {if (a > b) a else b}
+    else if (a == null) b
+    else if (b == null) a
+    else null
   }
 
   def adjustPeriod(start: DateTime, end: DateTime): (DateTime, DateTime) =
     (min(start, end), max(start, end))
 
-  def adjustPeriod(start: DateTime, duration: Duration): (DateTime, DateTime) =
-    adjustPeriod(start, start.plus(duration))
+  def adjustPeriod(start: DateTime, duration: Duration): (DateTime, Duration) = {
+    if (duration.getMillis < 0)
+      (start + duration, new Duration(-duration.getMillis))
+    else
+      (start, duration)
+  }
+
+  def getTimeBlock(start: DateTime, duration: Duration): TimeBlock = TimeBlock(start, duration, false)
+
+  def getTimeBlock(start: DateTime, end: DateTime): TimeBlock = TimeBlock(start, end, false)
+
+  def getTimeRange(start: DateTime, duration: Duration): TimeRange = TimeRange(start, duration, false)
+
+  def getTimeRange(start: DateTime, end: DateTime): TimeRange = TimeRange(start, end, false)
 
   def relativeYearPeriod(start: DateTime, years: Int): TimeRange = TimeRange(trimToMonth(start), trimToMonth(start).plusYears(years))
 
@@ -591,6 +599,7 @@ object Times {
       case PeriodUnit.Day => getDayRange(moment, calendar)
       case PeriodUnit.Hour => getHourRange(moment, calendar)
       case PeriodUnit.Minute => getMinuteRange(moment, calendar)
+      case PeriodUnit.Second => TimeRange(trimToMillis(moment), Durations.Second)
 
       case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
     }
@@ -732,7 +741,7 @@ object Times {
         relation = PeriodRelation.EndInside
       }
     }
-    log.debug(s"relation=[$relation], period=[$period], target=[$target]")
+    log.trace(s"relation=[$relation], period=[$period], target=[$target]")
     relation
   }
 
@@ -745,7 +754,7 @@ object Times {
       hasInside(period, target.end) ||
       hasPureInside(target, period)
 
-    log.debug(s"period=[$period], target=[$target]이 교차 구간인가? intersect=[$isIntersect]")
+    log.trace(s"period=[$period], target=[$target]이 교차 구간인가? intersect=[$isIntersect]")
 
     isIntersect
   }
@@ -775,7 +784,7 @@ object Times {
       intersection = TimeBlock(start, end, period.isReadonly)
 
     }
-    log.debug(s"기간의 교집합. period=[$period], target=[$target], result=[$intersection]")
+    log.trace(s"기간의 교집합. period=[$period], target=[$target], result=[$intersection]")
     intersection
   }
 
@@ -800,7 +809,7 @@ object Times {
 
       intersection = TimeRange(start, end, period.isReadonly)
     }
-    log.debug(s"기간의 교집합. period=[$period], target=[$target], result=[$intersection]")
+    log.trace(s"기간의 교집합. period=[$period], target=[$target], result=[$intersection]")
     intersection
   }
 
@@ -883,7 +892,7 @@ object Times {
 
   def foreachYears(period: ITimePeriod): Seq[ITimePeriod] = {
     require(period != null)
-    log.debug(s"기간[$period]에 대해 Year 단위로 열거합니다...")
+    log.trace(s"기간[$period]에 대해 Year 단위로 열거합니다...")
 
     val years = ArrayBuffer[ITimePeriod]()
 
@@ -915,7 +924,7 @@ object Times {
 
   def foreachHalfyears(period: ITimePeriod): Seq[ITimePeriod] = {
     require(period != null)
-    log.debug(s"기간[$period]에 대해 HalfYear 단위로 열거합니다...")
+    log.trace(s"기간[$period]에 대해 HalfYear 단위로 열거합니다...")
 
     val halfyears = ArrayBuffer[ITimePeriod]()
 
@@ -950,7 +959,7 @@ object Times {
 
   def foreachQuarters(period: ITimePeriod): Seq[ITimePeriod] = {
     require(period != null)
-    log.debug(s"기간[$period]에 대해 Quarter 단위로 열거합니다...")
+    log.trace(s"기간[$period]에 대해 Quarter 단위로 열거합니다...")
 
     val quarters = ArrayBuffer[ITimePeriod]()
 

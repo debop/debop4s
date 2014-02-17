@@ -48,10 +48,12 @@ object Durations {
     new Duration(start, end)
   }
 
+  lazy val Week = weeks(1)
+
   def weeks(weeks: Int): Duration =
     if (weeks == 0) Zero else days(weeks * DaysPerWeek)
 
-  val Day: Duration = Duration.standardDays(1)
+  lazy val Day: Duration = Duration.standardDays(1)
 
   def days(days: Int): Duration =
     if (days == 0) Zero else Duration.standardDays(days)
@@ -63,7 +65,7 @@ object Durations {
                     seconds * MillisPerSecond +
                     millis)
 
-  val Hour: Duration = Duration.standardHours(1)
+  lazy val Hour: Duration = Duration.standardHours(1)
 
   def hours(hours: Int, minutes: Int = 0, seconds: Int = 0, millis: Int = 0): Duration =
     Duration.millis(hours * MillisPerHour +
@@ -71,7 +73,7 @@ object Durations {
                     seconds * MillisPerSecond +
                     millis)
 
-  val Minute: Duration = Duration.standardMinutes(1)
+  lazy val Minute: Duration = Duration.standardMinutes(1)
 
   def minutes(minutes: Int, seconds: Int = 0, millis: Int = 0): Duration =
     Duration.millis(minutes * MillisPerMinute +
@@ -79,12 +81,12 @@ object Durations {
                     millis)
 
 
-  val Second: Duration = Duration.standardSeconds(1)
+  lazy val Second: Duration = Duration.standardSeconds(1)
 
   def seconds(seconds: Int, millis: Int = 0): Duration =
     Duration.millis(seconds * MillisPerSecond + millis)
 
-  val Millisecond: Duration = millis(1)
+  lazy val Millisecond: Duration = millis(1)
 
   def millis(millisecond: Int): Duration = Duration.millis(millisecond)
 

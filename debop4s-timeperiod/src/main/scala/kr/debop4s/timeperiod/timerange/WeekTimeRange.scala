@@ -21,9 +21,9 @@ class WeekTimeRange(private val _moment: DateTime,
 
   def weekyear: Int = getStart.getWeekyear
 
-  def startWeekOfYear: Int = Times.getWeekOfYear(getStart).weekOfYear
+  def startWeekOfYear: Int = Times.getWeekOfYear(getStart).weekOfWeekyear
 
-  def endWeekOfYear: Int = Times.getWeekOfYear(getEnd).weekOfYear
+  def endWeekOfYear: Int = Times.getWeekOfYear(getEnd).weekOfWeekyear
 
   def getDays: Seq[DayRange] = {
     val startDay = startDayStart

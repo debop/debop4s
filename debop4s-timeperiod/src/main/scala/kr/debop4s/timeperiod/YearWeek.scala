@@ -11,23 +11,23 @@ import org.joda.time.DateTime
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 2. 오전 11:27
  */
-class YearWeek(var year: Int = 0, var weekOfYear: Int = 1) extends ValueObject {
+class YearWeek(var weekyear: Int = 0, var weekOfWeekyear: Int = 1) extends ValueObject {
 
-  def start: DateTime = Times.startTimeOfWeek(year, weekOfYear)
+  def start: DateTime = Times.startTimeOfWeek(weekyear, weekOfWeekyear)
 
-  def end: DateTime = Times.endTimeOfMonth(year, weekOfYear)
+  def end: DateTime = Times.endTimeOfMonth(weekyear, weekOfWeekyear)
 
-  override def hashCode() = Hashs.compute(year, weekOfYear)
+  override def hashCode() = Hashs.compute(weekyear, weekOfWeekyear)
 
   override protected def buildStringHelper =
     super.buildStringHelper
-    .add("year", year)
-    .add("weekOfYear", weekOfYear)
+      .add("weekyear", weekyear)
+      .add("weekOfWeekyear", weekOfWeekyear)
 }
 
 object YearWeek {
 
-  def apply(year: Int, weekOfYear: Int): YearWeek = new YearWeek(year, weekOfYear)
+  def apply(weekyear: Int, weekOfWeekyear: Int): YearWeek = new YearWeek(weekyear, weekOfWeekyear)
 
-  def apply(src: YearWeek): YearWeek = new YearWeek(src.year, src.weekOfYear)
+  def apply(src: YearWeek): YearWeek = new YearWeek(src.weekyear, src.weekOfWeekyear)
 }

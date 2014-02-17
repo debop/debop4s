@@ -54,7 +54,7 @@ trait ITimeCalendar extends ITimePeriodMapper {
   def getDaysInMonth(year: Int, month: Int): Int = Times.getDaysInMonth(year, month)
 
   /** 지정된 일자의 주차(Week of Year)를 반환합니다. */
-  def getWeekOfYear(time: DateTime): Int = Times.getWeekOfYear(time).weekOfYear
+  def getWeekOfYear(time: DateTime): Int = Times.getWeekOfYear(time).weekOfWeekyear
 
   /** 지정된 년, 주차에 해당하는 주의 첫번째 일자를 반환한다. (예: 2011년 3주차의 첫번째 일자는?) */
   def getStartOfYearWeek(year: Int, weekOfYear: Int): DateTime = Times.getStartOfYearWeek(year, weekOfYear)
@@ -109,10 +109,10 @@ class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCa
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-    .add("locale", locale)
-    .add("startOffset", startOffset)
-    .add("endOffset", endOffset)
-    .add("firstDayOfWeek", firstDayOfWeek)
+      .add("locale", locale)
+      .add("startOffset", startOffset)
+      .add("endOffset", endOffset)
+      .add("firstDayOfWeek", firstDayOfWeek)
 }
 
 object TimeCalendar {
