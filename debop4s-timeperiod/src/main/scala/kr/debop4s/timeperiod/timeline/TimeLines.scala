@@ -25,20 +25,20 @@ object TimeLines {
         var itemIndex = 0
         while (itemIndex < momentsSize) {
             val periodStart = moments(itemIndex)
-            var balance = periodStart.getStartCount
+            var balance = periodStart.startCount
             Guard.shouldBe(balance > 0, s"balance > 0 이여아합니다. balance=[$balance]")
 
             var periodEnd: ITimeLineMoment = null
             while (itemIndex < momentsSize - 1 && balance > 0) {
                 itemIndex += 1
                 periodEnd = moments(itemIndex)
-                balance += periodEnd.getStartCount
-                balance -= periodEnd.getEndCount
+                balance += periodEnd.startCount
+                balance -= periodEnd.endCount
             }
             Guard.shouldNotBeNull(periodEnd, "periodEnd")
 
-            if (periodEnd.getStartCount <= 0 && itemIndex < momentsSize) {
-                val period = TimeRange(periodStart.getMoment, periodEnd.getMoment)
+            if (periodEnd.startCount <= 0 && itemIndex < momentsSize) {
+                val period = TimeRange(periodStart.moment, periodEnd.moment)
                 log.trace(s"period를 추가합니다. period=[$period]")
                 periods.add(period)
             }
@@ -61,15 +61,15 @@ object TimeLines {
 
         for (i <- 0 until moments.size) {
             val moment = moments(i)
-            val startCount = moment.getStartCount
-            val endCount = moment.getEndCount
+            val startCount = moment.startCount
+            val endCount = moment.endCount
             balance += startCount
             balance -= endCount
 
             if (startCount > 0 && balance > 1 && intersectionStart < 0) {
                 intersectionStart = i
             } else if (endCount > 0 && balance <= 1 && intersectionStart >= 0) {
-                val period = TimeRange(moments(intersectionStart).getMoment, moment.getMoment)
+                val period = TimeRange(moments(intersectionStart).moment, moment.moment)
                 log.trace(s"intersect period에 추가합니다. period=[$period]")
                 periods.add(period)
                 intersectionStart = -1
@@ -88,10 +88,10 @@ object TimeLines {
         if (moments.isEmpty) return gaps
 
         // find leading gap
-        val periodStart = moments.getMin
+        val periodStart = moments.min
 
-        if (periodStart != null && range.start < periodStart.getMoment) {
-            val startingGap = TimeRange(range.start, periodStart.getMoment)
+        if (periodStart != null && range.start < periodStart.moment) {
+            val startingGap = TimeRange(range.start, periodStart.moment)
             log.trace(s"starting gap을 추가합니다... startingGap=[$startingGap]")
             gaps.add(startingGap)
         }
@@ -102,24 +102,24 @@ object TimeLines {
         while (itemIndex < moments.size) {
             val moment = moments(itemIndex)
             assert(moment != null)
-            assert(moment.getStartCount > 0, s"moment.getStartCount() 값이 0보다 커야합니다. balance=[${moment.getStartCount}]")
+            assert(moment.startCount > 0, s"moment.getStartCount() 값이 0보다 커야합니다. balance=[${moment.startCount}]")
 
-            var balance = moment.getStartCount
+            var balance = moment.startCount
             var gapStart: ITimeLineMoment = null
 
             while (itemIndex < moments.size - 1 && balance > 0) {
                 itemIndex += 1
                 gapStart = moments(itemIndex)
-                balance += gapStart.getStartCount
-                balance -= gapStart.getEndCount
+                balance += gapStart.startCount
+                balance -= gapStart.endCount
             }
             assert(gapStart != null)
 
-            if (gapStart.getStartCount <= 0) {
+            if (gapStart.startCount <= 0) {
 
                 // found a gap
                 if (itemIndex < moments.size - 1) {
-                    val gap = TimeRange(gapStart.getMoment, moments(itemIndex + 1).getMoment)
+                    val gap = TimeRange(gapStart.moment, moments(itemIndex + 1).moment)
                     log.trace(s"intermediated gap을 추가합니다. gap=[$gap]")
                     gaps.add(gap)
                 }
@@ -127,11 +127,11 @@ object TimeLines {
             itemIndex += 1
         }
         // find ending gap
-        val periodEnd = moments.getMax
+        val periodEnd = moments.max
         log.trace(s"periodEnd=[$periodEnd]")
 
-        if (periodEnd != null && range.end > periodEnd.getMoment) {
-            val endingGap = TimeRange(periodEnd.getMoment, range.getEnd)
+        if (periodEnd != null && range.end > periodEnd.moment) {
+            val endingGap = TimeRange(periodEnd.moment, range.getEnd)
             log.trace(s"ending gap을 추가합니다. endingGap=[$endingGap]")
             gaps.add(endingGap)
         }

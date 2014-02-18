@@ -11,20 +11,21 @@ import scala.collection.JavaConversions._
  * @since  2013. 12. 31. 오후 8:10
  */
 @SerialVersionUID(8784228432548497611L)
-class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
-                                 private val _limits: ITimePeriod = null,
+class TimeLine[T <: ITimePeriod](private val _periods: ITimePeriodContainer,
+                                 private val _aLimits: ITimePeriod = null,
                                  private val mapper: ITimePeriodMapper = null) extends ITimeLine {
 
-    require(periods != null)
+    require(_periods != null)
+
     lazy val log = LoggerFactory.getLogger(getClass)
 
-    val limits = if (_limits != null) TimeRange(_limits) else TimeRange(periods)
+    private val _limits = if (_aLimits != null) TimeRange(_aLimits) else TimeRange(_periods)
 
-    def getPeriod = periods
+    def periods = _periods
 
-    def getLimits = limits
+    def limits = _limits
 
-    def getPeriodMapper = mapper
+    def periodMapper = mapper
 
     def combinePeriods: ITimePeriodCollection = {
         if (periods.size == 0)
@@ -32,7 +33,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
 
         val moments = getTimeLineMoments
         if (moments == null || moments.size == 0)
-            return TimePeriodCollection(TimeRange(periods))
+            return TimePeriodCollection(TimeRange(_periods))
 
         TimeLines.combinePeriods(moments)
     }
@@ -52,7 +53,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
         log.trace("calculate gaps...")
         val gapPeriods = TimePeriodCollection()
 
-        periods
+        _periods
             .filter(x => limits.intersectsWith(x))
             .foreach(x => gapPeriods.add(TimeRange(x)))
 
@@ -64,7 +65,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
         TimeLines.calculateGap(moments, range)
     }
 
-    private def getTimeLineMoments: ITimeLineMomentCollection = getTimeLineMoments(this.periods.periods)
+    private def getTimeLineMoments: ITimeLineMomentCollection = getTimeLineMoments(_periods)
 
     private def getTimeLineMoments(periods: Iterable[ITimePeriod]): ITimeLineMomentCollection = {
         log.trace(s"기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드합니다... periods=$periods")

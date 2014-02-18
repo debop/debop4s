@@ -8,13 +8,13 @@ import org.joda.time.DateTime
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 31. 오후 8:15
  */
-trait ITimeLineMoment extends Serializable {
+trait ITimeLineMoment extends Ordered[DateTime] with Serializable {
 
-    def getMoment: DateTime
+    def moment: DateTime
 
-    def getPeriods: ITimePeriodCollection
+    def periods: ITimePeriodCollection
 
-    def getStartCount: Int
+    def startCount: Int
 
-    def getEndCount: Int
+    def endCount: Int
 }

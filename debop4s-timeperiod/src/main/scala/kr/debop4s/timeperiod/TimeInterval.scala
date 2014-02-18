@@ -133,6 +133,10 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
         setStart(v)
     }
 
+    override def start: DateTime =
+        if (isIntervalEnabled && isStartOpen) super.start.plus(1)
+        else super.start
+
     override def getStart: DateTime =
         if (isIntervalEnabled && isStartOpen) super.getStart.plus(1)
         else super.getStart
@@ -153,6 +157,10 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
         assert(v.compareTo(super.getStart) >= 0)
         setEnd(v)
     }
+
+    override def end: DateTime =
+        if (isIntervalEnabled && isEndOpen) super.end.minus(1)
+        else super.end
 
     override def getEnd: DateTime =
         if (isIntervalEnabled && isEndOpen) super.getEnd.minus(1)

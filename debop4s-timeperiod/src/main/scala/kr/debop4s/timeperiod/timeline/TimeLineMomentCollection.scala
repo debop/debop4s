@@ -1,9 +1,10 @@
 package kr.debop4s.timeperiod.timeline
 
+import kr.debop4s.core.utils.ToStringHelper
 import kr.debop4s.timeperiod.{DateTimeOrdering, ITimePeriod}
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
-import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * kr.debop4s.timeperiod.timeline.TimeLineMomentCollection
@@ -18,71 +19,86 @@ object TimeLineMomentCollection {
 @SerialVersionUID(-5739605965754152358L)
 class TimeLineMomentCollection extends ITimeLineMomentCollection {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
+    // minBy, maxBy에서 DateTime으로 정렬하기 위해 사용합니다.
     implicit val dateTimeOrdering = new DateTimeOrdering()
 
-    var moments = mutable.ArrayBuffer[ITimeLineMoment]()
+    private var _moments = ArrayBuffer[ITimeLineMoment]()
 
-    override def size: Int = moments.size
+    override def size: Int = _moments.size
 
-    override def isEmpty: Boolean = moments.isEmpty
+    override def isEmpty: Boolean = _moments.isEmpty
 
-    def getMin: ITimeLineMoment = if (isEmpty) null else moments.minBy(_.getMoment)
+    override def length: Int = _moments.size
 
-    def getMax: ITimeLineMoment = if (isEmpty) null else moments.maxBy(_.getMoment)
+    def min: ITimeLineMoment = if (isEmpty) null else _moments.minBy(_.moment)
 
-    def get(index: Int): ITimeLineMoment = moments(index)
+    def max: ITimeLineMoment = if (isEmpty) null else _moments.maxBy(_.moment)
 
-    def apply(index: Int): ITimeLineMoment = moments(index)
+    def get(index: Int): ITimeLineMoment = _moments(index)
+
+    def apply(index: Int): ITimeLineMoment = _moments(index)
 
     def add(period: ITimePeriod) {
         if (period != null) {
-            addPeriod(period.getStart, period)
-            addPeriod(period.getEnd, period)
+            addPeriod(period.start, period)
+            addPeriod(period.end, period)
         }
     }
 
     def addAll(periods: Iterable[_ <: ITimePeriod]) {
-        periods.filter(x => x != null).toSeq.sortBy(x => x.start).foreach(x => add(x))
+        periods
+            .filter(x => x != null)
+            .foreach(add)
     }
 
     def remove(period: ITimePeriod) {
         if (period != null) {
-            removePeriod(period.getStart, period)
-            removePeriod(period.getEnd, period)
+            removePeriod(period.start, period)
+            removePeriod(period.end, period)
         }
     }
 
     def find(moment: DateTime): ITimeLineMoment =
-        moments.find(x => x.getMoment.equals(moment)).getOrElse(null)
+        _moments.find(x => x.moment.equals(moment)).getOrElse(null)
 
 
-    def contains(moment: DateTime): Boolean = find(moment) != null
+    def contains(moment: DateTime): Boolean =
+        _moments.exists(x => x.moment == moment)
 
-    def iterator: Iterator[ITimeLineMoment] = moments.iterator
+    def iterator: Iterator[ITimeLineMoment] = _moments.iterator
 
     protected def addPeriod(moment: DateTime, period: ITimePeriod) {
         var item = find(moment)
+
         if (item == null) {
             item = new TimeLineMoment(moment)
-            moments += item
-            moments = moments.sortBy(_.getMoment)
+            _moments += item
+            // 정렬을 수행한다!!!
+            _moments = _moments.sortBy(_.moment)
+
             log.trace(s"TimeLineMoment를 추가했습니다. item=[$item]")
         }
-        item.getPeriods.add(period)
+        item.periods.add(period)
     }
 
     protected def removePeriod(moment: DateTime, period: ITimePeriod) {
         val item = find(moment)
 
-        if (item != null && item.getPeriods.contains(period)) {
-            item.getPeriods.remove(period)
-            if (item.getPeriods.size == 0)
-                moments -= item
+        if (item != null && item.periods.contains(period)) {
+            item.periods.remove(period)
+
+            if (item.periods.size == 0)
+                _moments -= item
+
             log.trace(s"TimeLineMoment를 제거했습니다. item=[$item]")
         }
     }
 
-    override def toString(): String = "TimeLineMomentCollection# moments=" + moments.toString()
+    override def toString(): String =
+        ToStringHelper(this)
+            .add("moments", _moments)
+            .toString
+
 }
