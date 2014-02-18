@@ -10,7 +10,7 @@ import kr.debop4s.core.pool.{AbstractObjectPoolConfig, AbstractObjectPool}
  * @since 2013. 12. 11. 오후 4:40
  */
 class ObjectPool(cfg: AbstractObjectPoolConfig, val props: Properties)
-  extends AbstractObjectPool[PoolObject](cfg, new ObjectFactory(props)) {
+    extends AbstractObjectPool[PoolObject](cfg, new ObjectFactory(props)) {
 
 }
 

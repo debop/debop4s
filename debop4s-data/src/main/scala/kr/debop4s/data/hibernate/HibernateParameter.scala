@@ -12,13 +12,13 @@ import org.hibernate.`type`.StandardBasicTypes
 class HibernateParameter(name: String,
                          value: Any,
                          paramType: org.hibernate.`type`.Type)
-  extends AbstractNamedParameter(name, value) {
+    extends AbstractNamedParameter(name, value) {
 
-  def this(name: String, value: Any) {
-    this(name, value, StandardBasicTypes.SERIALIZABLE)
-  }
+    def this(name: String, value: Any) {
+        this(name, value, StandardBasicTypes.SERIALIZABLE)
+    }
 
-  override protected def buildStringHelper =
-    super.buildStringHelper
-    .add("paramType", paramType)
+    override protected def buildStringHelper =
+        super.buildStringHelper
+            .add("paramType", paramType)
 }

@@ -11,62 +11,62 @@ import org.slf4j.LoggerFactory
  */
 trait SymmetricEncryptor {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  private val DEFAULT_PASSWORD = "sunghyouk.bae@gmail.com-21011"
+    private val DEFAULT_PASSWORD = "sunghyouk.bae@gmail.com-21011"
 
-  protected var byteEncryptor = new StandardPBEByteEncryptor()
-  byteEncryptor.setAlgorithm(algorithm)
-  byteEncryptor.setPassword(DEFAULT_PASSWORD)
+    protected var byteEncryptor = new StandardPBEByteEncryptor()
+    byteEncryptor.setAlgorithm(algorithm)
+    byteEncryptor.setPassword(DEFAULT_PASSWORD)
 
-  /**
-   * 대칭형 암호화 알고리즘
-   *
-   * @return 대칭형 암호화 알고리즘
-   */
-  def algorithm: String
+    /**
+     * 대칭형 암호화 알고리즘
+     *
+     * @return 대칭형 암호화 알고리즘
+     */
+    def algorithm: String
 
-  /** 초기화 여부 */
-  def isInitialized: Boolean = byteEncryptor.isInitialized
+    /** 초기화 여부 */
+    def isInitialized: Boolean = byteEncryptor.isInitialized
 
-  /**
-   * 비밀번호 지정
-   *
-   * @param password 비밀번호
-   */
-  def setPassword(password: String) {
-    byteEncryptor.setPassword(password)
-  }
-
-  /**
-   * 데이터를 암호화합니다.
-   *
-   * @param input 암호화할 데이터
-   * @return 암호화된 데이터
-   */
-  def encrypt(input: Array[Byte]): Array[Byte] = {
-    if (input == null || input.length == 0)
-      Array.emptyByteArray
-    else {
-      log.trace(s"데이터를 암호화합니다. algorithm=[$algorithm]")
-      byteEncryptor.encrypt(input)
+    /**
+     * 비밀번호 지정
+     *
+     * @param password 비밀번호
+     */
+    def setPassword(password: String) {
+        byteEncryptor.setPassword(password)
     }
-  }
 
-  /**
-   * 암호화된 데이터를 복원합니다.
-   *
-   * @param input 암호화된 정보
-   * @return 복원된 데이터
-   */
-  def decrypt(input: Array[Byte]): Array[Byte] = {
-    if (input == null || input.length == 0)
-      Array.emptyByteArray
-    else {
-      log.trace(s"데이터를 복호화합니다. algorithm=[$algorithm]")
-      byteEncryptor.decrypt(input)
+    /**
+     * 데이터를 암호화합니다.
+     *
+     * @param input 암호화할 데이터
+     * @return 암호화된 데이터
+     */
+    def encrypt(input: Array[Byte]): Array[Byte] = {
+        if (input == null || input.length == 0)
+            Array.emptyByteArray
+        else {
+            log.trace(s"데이터를 암호화합니다. algorithm=[$algorithm]")
+            byteEncryptor.encrypt(input)
+        }
     }
-  }
+
+    /**
+     * 암호화된 데이터를 복원합니다.
+     *
+     * @param input 암호화된 정보
+     * @return 복원된 데이터
+     */
+    def decrypt(input: Array[Byte]): Array[Byte] = {
+        if (input == null || input.length == 0)
+            Array.emptyByteArray
+        else {
+            log.trace(s"데이터를 복호화합니다. algorithm=[$algorithm]")
+            byteEncryptor.decrypt(input)
+        }
+    }
 }
 
 
@@ -75,7 +75,7 @@ trait SymmetricEncryptor {
  */
 class RC2Encryptor extends SymmetricEncryptor {
 
-  def algorithm: String = "PBEwithSHA1andRC2_40"
+    def algorithm: String = "PBEwithSHA1andRC2_40"
 }
 
 /**
@@ -83,7 +83,7 @@ class RC2Encryptor extends SymmetricEncryptor {
  */
 class DESEncryptor extends SymmetricEncryptor {
 
-  def algorithm: String = "PBEwithMD5andDES"
+    def algorithm: String = "PBEwithMD5andDES"
 }
 
 /**
@@ -91,5 +91,5 @@ class DESEncryptor extends SymmetricEncryptor {
  */
 class TripleDESEncryptor extends SymmetricEncryptor {
 
-  def algorithm: String = "PBEwithSHA1andDESEDE"
+    def algorithm: String = "PBEwithSHA1andDESEDE"
 }

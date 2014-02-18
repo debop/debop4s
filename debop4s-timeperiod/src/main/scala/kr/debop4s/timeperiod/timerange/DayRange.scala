@@ -12,53 +12,53 @@ import org.joda.time.DateTime
  */
 object DayRange {
 
-  def apply(): DayRange = new DayRange(Times.today, DefaultTimeCalendar)
+    def apply(): DayRange = new DayRange(Times.today, DefaultTimeCalendar)
 
-  def apply(calendar: TimeCalendar): DayRange = new DayRange(Times.today, DefaultTimeCalendar)
+    def apply(calendar: TimeCalendar): DayRange = new DayRange(Times.today, DefaultTimeCalendar)
 
-  def apply(moment: DateTime): DayRange = new DayRange(moment, DefaultTimeCalendar)
+    def apply(moment: DateTime): DayRange = new DayRange(moment, DefaultTimeCalendar)
 
-  def apply(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): DayRange =
-    new DayRange(moment, calendar)
+    def apply(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): DayRange =
+        new DayRange(moment, calendar)
 
-  def apply(year: Int, monthOfYear: Int, dayOfMonth: Int): DayRange =
-    new DayRange(Times.asDate(year, monthOfYear, dayOfMonth), DefaultTimeCalendar)
+    def apply(year: Int, monthOfYear: Int, dayOfMonth: Int): DayRange =
+        new DayRange(Times.asDate(year, monthOfYear, dayOfMonth), DefaultTimeCalendar)
 
 }
 
 @SerialVersionUID(7993201574147735665L)
 class DayRange(private[this] val _moment: DateTime,
                private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends DayTimeRange(Times.asDate(_moment), 1, _calendar) {
+    extends DayTimeRange(Times.asDate(_moment), 1, _calendar) {
 
-  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, calendar: ITimeCalendar) {
-    this(Times.asDate(year, monthOfYear, dayOfMonth), calendar)
-  }
+    def this(year: Int, monthOfYear: Int, dayOfMonth: Int, calendar: ITimeCalendar) {
+        this(Times.asDate(year, monthOfYear, dayOfMonth), calendar)
+    }
 
-  def this(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-    this(year, monthOfYear, dayOfMonth, DefaultTimeCalendar)
-  }
+    def this(year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        this(year, monthOfYear, dayOfMonth, DefaultTimeCalendar)
+    }
 
-  def this(calendar: ITimeCalendar) {
-    this(Times.today, calendar)
-  }
+    def this(calendar: ITimeCalendar) {
+        this(Times.today, calendar)
+    }
 
-  def this() {
-    this(DefaultTimeCalendar)
-  }
+    def this() {
+        this(DefaultTimeCalendar)
+    }
 
-  def year: Int = startYear
+    def year: Int = startYear
 
-  def monthOfYear: Int = startMonthOfYear
+    def monthOfYear: Int = startMonthOfYear
 
-  def dayOfMonth: Int = startDayOfMonth
+    def dayOfMonth: Int = startDayOfMonth
 
-  def dayOfWeek: DayOfWeek = startDayOfWeek
+    def dayOfWeek: DayOfWeek = startDayOfWeek
 
-  def addDays(days: Int): DayRange =
-    DayRange(Times.asDate(start).plusDays(days), calendar)
+    def addDays(days: Int): DayRange =
+        DayRange(Times.asDate(start).plusDays(days), calendar)
 
-  def previousDay: DayRange = addDays(-1)
+    def previousDay: DayRange = addDays(-1)
 
-  def nextDay: DayRange = addDays(1)
+    def nextDay: DayRange = addDays(1)
 }

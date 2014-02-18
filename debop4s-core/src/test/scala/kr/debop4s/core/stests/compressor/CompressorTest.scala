@@ -13,34 +13,34 @@ import org.slf4j.LoggerFactory
  */
 class CompressorTest extends FunSuite with Matchers with BeforeAndAfter {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  test("gzip test") {
+    test("gzip test") {
 
-    val gzip = new GZipCompressor()
-    compressorTest(gzip)
-  }
+        val gzip = new GZipCompressor()
+        compressorTest(gzip)
+    }
 
-  test("deflate test") {
-    val deflater = new DeflateCompressor()
-    compressorTest(deflater)
-  }
+    test("deflate test") {
+        val deflater = new DeflateCompressor()
+        compressorTest(deflater)
+    }
 
-  private def compressorTest(compressor: Compressor) {
-    assert(compressor.compress(null) == Array.emptyByteArray)
-    assert(compressor.compress(Array.emptyByteArray) == Array.emptyByteArray)
+    private def compressorTest(compressor: Compressor) {
+        assert(compressor.compress(null) == Array.emptyByteArray)
+        assert(compressor.compress(Array.emptyByteArray) == Array.emptyByteArray)
 
-    val text = "동해물과 백두산이 마르고 닳도록 Hello World!" * 100
-    val compressedBytes = compressor.compress(text.getBytes(Charsets.UTF_8))
-    assert(compressedBytes != null)
-    assert(compressedBytes != Array.emptyByteArray)
+        val text = "동해물과 백두산이 마르고 닳도록 Hello World!" * 100
+        val compressedBytes = compressor.compress(text.getBytes(Charsets.UTF_8))
+        assert(compressedBytes != null)
+        assert(compressedBytes != Array.emptyByteArray)
 
-    val textBytes = compressor.decompress(compressedBytes)
-    assert(textBytes != null)
-    assert(textBytes != Array.emptyByteArray)
+        val textBytes = compressor.decompress(compressedBytes)
+        assert(textBytes != null)
+        assert(textBytes != Array.emptyByteArray)
 
-    val text2 = new String(textBytes, Charsets.UTF_8)
-    assert(text2 != null)
-    assert(text2 === text)
-  }
+        val text2 = new String(textBytes, Charsets.UTF_8)
+        assert(text2 != null)
+        assert(text2 === text)
+    }
 }

@@ -7,10 +7,10 @@ package kr.debop4s.core
  */
 object BinaryStringFormat extends Enumeration {
 
-  type BinaryStringFormat = Value
+    type BinaryStringFormat = Value
 
-  val Base64 = Value(0, "Base64")
+    val Base64 = Value(0, "Base64")
 
-  val HexDecimal = Value(1, "HexDecimal")
+    val HexDecimal = Value(1, "HexDecimal")
 
 }

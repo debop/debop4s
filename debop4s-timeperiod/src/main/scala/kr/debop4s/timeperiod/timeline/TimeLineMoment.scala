@@ -14,21 +14,21 @@ import scala.collection.JavaConversions._
 @SerialVersionUID(8524596139661439627L)
 class TimeLineMoment(val moment: DateTime) extends ValueObject with ITimeLineMoment {
 
-  val periods = new TimePeriodCollection()
+    val periods = new TimePeriodCollection()
 
-  def getMoment: DateTime = moment
+    def getMoment: DateTime = moment
 
-  def getPeriods: TimePeriodCollection = periods
+    def getPeriods: TimePeriodCollection = periods
 
-  def getStartCount: Int = periods.count(x => x.start.equals(moment))
+    def getStartCount: Int = periods.count(x => x.start.equals(moment))
 
-  def getEndCount: Int = periods.count(x => x.end.equals(moment))
+    def getEndCount: Int = periods.count(x => x.end.equals(moment))
 
-  override def hashCode() = Hashs.compute(moment)
+    override def hashCode() = Hashs.compute(moment)
 
-  override protected def buildStringHelper =
-    super.buildStringHelper
-    .add("moment", moment)
-    .add("startCount", getStartCount)
-    .add("endCount", getEndCount)
+    override protected def buildStringHelper =
+        super.buildStringHelper
+            .add("moment", moment)
+            .add("startCount", getStartCount)
+            .add("endCount", getEndCount)
 }

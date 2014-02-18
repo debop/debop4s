@@ -11,40 +11,40 @@ import org.slf4j.LoggerFactory
  */
 object Converts {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  def toInt(x: Any): Int = {
-    try {
-      x match {
-        case i: Byte => i.toInt
-        case i: Int => i
-        case i: Long => i.toInt
-        case i: Float => i.toInt
-        case i: Double => i.toInt
-        case _ => x.toString.toInt
-      }
-    } catch {
-      case e: Throwable => 0
+    def toInt(x: Any): Int = {
+        try {
+            x match {
+                case i: Byte => i.toInt
+                case i: Int => i
+                case i: Long => i.toInt
+                case i: Float => i.toInt
+                case i: Double => i.toInt
+                case _ => x.toString.toInt
+            }
+        } catch {
+            case e: Throwable => 0
+        }
     }
-  }
 
-  def toLong(x: Any): Long = {
-    try {
-      x match {
-        case i: Byte => i.toLong
-        case i: Int => i.toLong
-        case i: Long => i
-        case i: Float => i.toLong
-        case i: Double => i.toLong
-        case _ => x.toString.toLong
-      }
-    } catch {
-      case e: Throwable => 0
+    def toLong(x: Any): Long = {
+        try {
+            x match {
+                case i: Byte => i.toLong
+                case i: Int => i.toLong
+                case i: Long => i
+                case i: Float => i.toLong
+                case i: Double => i.toLong
+                case _ => x.toString.toLong
+            }
+        } catch {
+            case e: Throwable => 0
+        }
     }
-  }
 
-  def toString(x: Any): String = if (x == null) "" else x.toString
+    def toString(x: Any): String = if (x == null) "" else x.toString
 
-  def toDateTime(millis: Long): DateTime = new DateTime(millis)
+    def toDateTime(millis: Long): DateTime = new DateTime(millis)
 
 }

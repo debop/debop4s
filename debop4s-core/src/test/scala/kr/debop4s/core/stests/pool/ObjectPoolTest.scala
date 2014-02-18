@@ -13,68 +13,68 @@ import org.slf4j.LoggerFactory
  */
 class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  def getProperties(): Properties = {
-    val props = new Properties()
-    props.setProperty("pool.name", "scalaObjectPool")
-    props.setProperty("pool.intValue", "100")
-    props.setProperty("pool.uriValue", "http://localhost")
+    def getProperties(): Properties = {
+        val props = new Properties()
+        props.setProperty("pool.name", "scalaObjectPool")
+        props.setProperty("pool.intValue", "100")
+        props.setProperty("pool.uriValue", "http://localhost")
 
-    props
-  }
-
-  test("return object") {
-    val props = getProperties()
-    var pool = new ObjectPool(new ObjectPoolConfig(), props)
-    try {
-      val po = pool.getResource
-      assert(po != null)
-      po.name = "newName"
-      assert(po.name === "newName")
-
-      pool.returnResource(po)
-      pool.destroy()
-
-      Thread.sleep(10)
-
-      pool = new ObjectPool(new ObjectPoolConfig(), props)
-      val po2 = pool.getResource
-      assert(po2 != null)
-      assert(po2.isActive)
-      assert(po2.name === props.getProperty("pool.name"))
-      pool.returnResource(po2)
-
-    } finally {
-      pool.destroy()
+        props
     }
-  }
 
-  test("multithread test") {
-    val props = getProperties()
-    val name = props.getProperty("pool.name")
+    test("return object") {
+        val props = getProperties()
+        var pool = new ObjectPool(new ObjectPoolConfig(), props)
+        try {
+            val po = pool.getResource
+            assert(po != null)
+            po.name = "newName"
+            assert(po.name === "newName")
 
-    val pool = new ObjectPool(new ObjectPoolConfig(), props)
-    try {
-      Parallels.callFunction1(100)(x => {
-        val po = pool.getResource
-        assert(po != null)
-        assert(po.isActive)
-        assert(po.name === name)
+            pool.returnResource(po)
+            pool.destroy()
 
-        if (x % 5 == 0) {
-          po.name = "NewValue-" + x.toString
-          pool.returnBrokenResource(po)
-          log.trace("return Broken Resource")
-        } else {
-          pool.returnResource(po)
-          log.trace("return Resource")
+            Thread.sleep(10)
+
+            pool = new ObjectPool(new ObjectPoolConfig(), props)
+            val po2 = pool.getResource
+            assert(po2 != null)
+            assert(po2.isActive)
+            assert(po2.name === props.getProperty("pool.name"))
+            pool.returnResource(po2)
+
+        } finally {
+            pool.destroy()
         }
-      })
     }
-    finally {
-      pool.destroy()
+
+    test("multithread test") {
+        val props = getProperties()
+        val name = props.getProperty("pool.name")
+
+        val pool = new ObjectPool(new ObjectPoolConfig(), props)
+        try {
+            Parallels.callFunction1(100)(x => {
+                val po = pool.getResource
+                assert(po != null)
+                assert(po.isActive)
+                assert(po.name === name)
+
+                if (x % 5 == 0) {
+                    po.name = "NewValue-" + x.toString
+                    pool.returnBrokenResource(po)
+                    log.trace("return Broken Resource")
+                } else {
+                    pool.returnResource(po)
+                    log.trace("return Resource")
+                }
+            })
+        }
+        finally {
+            pool.destroy()
+        }
     }
-  }
 
 }

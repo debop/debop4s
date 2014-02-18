@@ -11,5 +11,5 @@ import org.springframework.beans.factory.annotation.Autowired
  */
 abstract class AbstractDataTest extends FunSuite {
 
-  @Autowired val emf: EntityManagerFactory = null
+    @Autowired val emf: EntityManagerFactory = null
 }

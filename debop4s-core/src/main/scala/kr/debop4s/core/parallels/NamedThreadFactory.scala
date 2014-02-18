@@ -12,27 +12,27 @@ import kr.debop4s.core.utils.Threads
  */
 class NamedThreadFactory(val prefix: Option[String] = None) extends ThreadFactory {
 
-  val threadNumber = new AtomicInteger(1)
+    val threadNumber = new AtomicInteger(1)
 
-  def newThread(r: Runnable): Thread = {
-    assert(r != null)
-    val threadName = prefix.getOrElse("thread") + "_" + threadNumber.getAndIncrement.toString
-    new Thread(r, threadName)
-  }
+    def newThread(r: Runnable): Thread = {
+        assert(r != null)
+        val threadName = prefix.getOrElse("thread") + "_" + threadNumber.getAndIncrement.toString
+        new Thread(r, threadName)
+    }
 }
 
 object NamedThreadFactory {
 
-  private val threadNumber = new AtomicInteger(1)
+    private val threadNumber = new AtomicInteger(1)
 
-  def createThread(r: Runnable, prefix: Option[String] = None): Thread = {
-    require(r != null)
-    val threadName = prefix.getOrElse("thread") + "_" + threadNumber.getAndIncrement.toString
-    new Thread(r, threadName)
-  }
+    def createThread(r: Runnable, prefix: Option[String] = None): Thread = {
+        require(r != null)
+        val threadName = prefix.getOrElse("thread") + "_" + threadNumber.getAndIncrement.toString
+        new Thread(r, threadName)
+    }
 
-  def create(prefix: Option[String] = None)(block: => Unit): Thread = {
-    createThread(Threads.makeRunnable(block), prefix)
-  }
+    def create(prefix: Option[String] = None)(block: => Unit): Thread = {
+        createThread(Threads.makeRunnable(block), prefix)
+    }
 
 }

@@ -14,21 +14,21 @@ import org.joda.time.DateTime
  */
 class YearQuarter(var year: Int, var quarter: Quarter) extends ValueObject {
 
-  def start: DateTime = Times.startTimeOfQuarter(year, quarter)
+    def start: DateTime = Times.startTimeOfQuarter(year, quarter)
 
-  def end: DateTime = Times.endTimeOfQuarter(year, quarter)
+    def end: DateTime = Times.endTimeOfQuarter(year, quarter)
 
-  override def hashCode() = Hashs.compute(year, quarter)
+    override def hashCode() = Hashs.compute(year, quarter)
 
-  override protected def buildStringHelper =
-    super.buildStringHelper
-    .add("year", year)
-    .add("quarter", quarter)
+    override protected def buildStringHelper =
+        super.buildStringHelper
+            .add("year", year)
+            .add("quarter", quarter)
 }
 
 object YearQuarter {
 
-  def apply(year: Int, quarter: Quarter): YearQuarter = new YearQuarter(year, quarter)
+    def apply(year: Int, quarter: Quarter): YearQuarter = new YearQuarter(year, quarter)
 
-  def apply(src: YearQuarter): YearQuarter = new YearQuarter(src.year, src.quarter)
+    def apply(src: YearQuarter): YearQuarter = new YearQuarter(src.year, src.quarter)
 }

@@ -13,44 +13,44 @@ import kr.debop4s.timeperiod.{TimePeriodCollection, TimeRange}
  */
 class TimeGapCalendarTest extends AbstractTimePeriodTest {
 
-  val limits = TimeRange(Times.asDate(2011, 3, 1), Times.asDate(2011, 3, 5))
-  val calculator = TimeGapCalculator()
+    val limits = TimeRange(Times.asDate(2011, 3, 1), Times.asDate(2011, 3, 5))
+    val calculator = TimeGapCalculator()
 
-  test("no periods") {
-    val gaps = calculator.getGaps(TimePeriodCollection(), limits)
-    gaps.size shouldBe 1
-    gaps(0).isSamePeriod(limits) shouldBe true
-  }
+    test("no periods") {
+        val gaps = calculator.getGaps(TimePeriodCollection(), limits)
+        gaps.size shouldBe 1
+        gaps(0).isSamePeriod(limits) shouldBe true
+    }
 
-  test("period equals limits when excludePeriods has limits") {
-    val excludePeriods = TimePeriodCollection(limits)
-    val gaps = calculator.getGaps(excludePeriods, limits)
-    gaps.size shouldBe 0
-  }
+    test("period equals limits when excludePeriods has limits") {
+        val excludePeriods = TimePeriodCollection(limits)
+        val gaps = calculator.getGaps(excludePeriods, limits)
+        gaps.size shouldBe 0
+    }
 
-  test("period is larger than limits") {
-    val excludePeriods = TimePeriodCollection(TimeRange(Times.asDate(2011, 2, 1), Times.asDate(2011, 4, 1)))
+    test("period is larger than limits") {
+        val excludePeriods = TimePeriodCollection(TimeRange(Times.asDate(2011, 2, 1), Times.asDate(2011, 4, 1)))
 
-    val gaps = calculator.getGaps(excludePeriods, limits)
-    gaps.size shouldBe 0
-  }
+        val gaps = calculator.getGaps(excludePeriods, limits)
+        gaps.size shouldBe 0
+    }
 
-  test("period is outside with limits") {
-    val excludePeriods = TimePeriodCollection(TimeRange(Times.asDate(2011, 2, 1), Times.asDate(2011, 2, 5)),
-                                               TimeRange(Times.asDate(2011, 4, 1), Times.asDate(2011, 4, 5)))
-    val gaps = calculator.getGaps(excludePeriods, limits)
+    test("period is outside with limits") {
+        val excludePeriods = TimePeriodCollection(TimeRange(Times.asDate(2011, 2, 1), Times.asDate(2011, 2, 5)),
+            TimeRange(Times.asDate(2011, 4, 1), Times.asDate(2011, 4, 5)))
+        val gaps = calculator.getGaps(excludePeriods, limits)
 
-    gaps.size shouldBe 1
-    gaps(0).isSamePeriod(limits) shouldBe true
-  }
+        gaps.size shouldBe 1
+        gaps(0).isSamePeriod(limits) shouldBe true
+    }
 
-  test("period is outside touching limits") {
-    val limits = new MonthRange(2011, 3)
-    val excludePeriods = TimePeriodCollection(TimeRange(Times.asDate(2011, 2, 1), Times.asDate(2011, 3, 5)),
-                                               TimeRange(Times.asDate(2011, 3, 20), Times.asDate(2011, 4, 15)))
-    val gaps = calculator.getGaps(excludePeriods, limits)
+    test("period is outside touching limits") {
+        val limits = new MonthRange(2011, 3)
+        val excludePeriods = TimePeriodCollection(TimeRange(Times.asDate(2011, 2, 1), Times.asDate(2011, 3, 5)),
+            TimeRange(Times.asDate(2011, 3, 20), Times.asDate(2011, 4, 15)))
+        val gaps = calculator.getGaps(excludePeriods, limits)
 
-    gaps.size shouldBe 1
-    gaps(0).isSamePeriod(TimeRange(Times.asDate(2011, 3, 5), Times.asDate(2011, 3, 20))) shouldBe true
-  }
+        gaps.size shouldBe 1
+        gaps(0).isSamePeriod(TimeRange(Times.asDate(2011, 3, 5), Times.asDate(2011, 3, 20))) shouldBe true
+    }
 }

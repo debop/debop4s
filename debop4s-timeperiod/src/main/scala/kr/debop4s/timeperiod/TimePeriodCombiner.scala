@@ -9,13 +9,13 @@ import kr.debop4s.timeperiod.timeline.TimeLine
  */
 class TimePeriodCombiner[T <: ITimePeriod](val mapper: ITimePeriodMapper) {
 
-  def this() {
-    this(null)
-  }
+    def this() {
+        this(null)
+    }
 
-  def combinePeriods(periods: ITimePeriod*): ITimePeriodCollection =
-    new TimeLine(new TimePeriodCollection(periods: _*), mapper = mapper).combinePeriods
+    def combinePeriods(periods: ITimePeriod*): ITimePeriodCollection =
+        new TimeLine(new TimePeriodCollection(periods: _*), mapper = mapper).combinePeriods
 
-  def combinePeriods(periods: ITimePeriodContainer): ITimePeriodCollection =
-    new TimeLine(periods, mapper = mapper).combinePeriods
+    def combinePeriods(periods: ITimePeriodContainer): ITimePeriodCollection =
+        new TimeLine(periods, mapper = mapper).combinePeriods
 }

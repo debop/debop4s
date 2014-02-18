@@ -16,17 +16,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableTransactionManagement
 abstract class AbstractMySqlHiberanteConfiguration extends AbstractHibernateConfiguration {
 
-  @Bean
-  override def dataSource(): DataSource =
-    buildDataSource(DRIVER_CLASS_MYSQL,
-                     "jdbc:mysql://localhost/" + getDatabaseName,
-                     "root",
-                     "root")
+    @Bean
+    override def dataSource(): DataSource =
+        buildDataSource(DRIVER_CLASS_MYSQL,
+            "jdbc:mysql://localhost/" + getDatabaseName,
+            "root",
+            "root")
 
-  override def hibernateProperties(): Properties = {
-    val props = super.hibernateProperties()
-    props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
-    props
-  }
+    override def hibernateProperties(): Properties = {
+        val props = super.hibernateProperties()
+        props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
+        props
+    }
 
 }

@@ -8,9 +8,9 @@ package kr.debop4s.core.utils
  */
 class ClosableStopwatch(msg: String = "", runGC: Boolean = false) extends Stopwatch(msg, runGC) with AutoCloseable {
 
-  start()
+    start()
 
-  def close() {
-    stop()
-  }
+    def close() {
+        stop()
+    }
 }

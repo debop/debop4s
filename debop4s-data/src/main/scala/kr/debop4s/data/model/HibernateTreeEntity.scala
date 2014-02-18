@@ -8,15 +8,15 @@ package kr.debop4s.data.model
  */
 trait HibernateTreeEntity[T <: HibernateTreeEntity[T]] extends PersistentObject {
 
-  def getParent: T
+    def getParent: T
 
-  def setParent(parent: T)
+    def setParent(parent: T)
 
-  def getChildren: Set[T]
+    def getChildren: Set[T]
 
-  def getNodePosition: TreeNodePosition
+    def getNodePosition: TreeNodePosition
 
-  def addChild(child: T)
+    def addChild(child: T)
 
-  def removeChild(child: T)
+    def removeChild(child: T)
 }

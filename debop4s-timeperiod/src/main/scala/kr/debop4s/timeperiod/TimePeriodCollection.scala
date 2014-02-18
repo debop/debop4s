@@ -12,84 +12,84 @@ import scala.collection.mutable.ArrayBuffer
  */
 trait ITimePeriodCollection extends ITimePeriodContainer {
 
-  /**
-   * 대상 ITimePeriod 기간에 속하는 기간이 있다면 true를 반환합니다.
-   */
-  def hasInsidePeriods(target: ITimePeriod): Boolean =
-    getPeriods.exists(x => Times.hasInside(x, target))
+    /**
+     * 대상 ITimePeriod 기간에 속하는 기간이 있다면 true를 반환합니다.
+     */
+    def hasInsidePeriods(target: ITimePeriod): Boolean =
+        getPeriods.exists(x => Times.hasInside(x, target))
 
-  /**
-   * 대상 ITimePeriod 기간과 교집합이 존재하면 true를 반환합니다.
-   */
-  def hasOverlapPeriods(target: ITimePeriod): Boolean =
-    getPeriods.exists(x => Times.overlapsWith(x, target))
+    /**
+     * 대상 ITimePeriod 기간과 교집합이 존재하면 true를 반환합니다.
+     */
+    def hasOverlapPeriods(target: ITimePeriod): Boolean =
+        getPeriods.exists(x => Times.overlapsWith(x, target))
 
-  /**
-   * 대상 시각과 교집합이 존재하면 true를 반환합니다.
-   */
-  def hasIntersectionPeriods(moment: DateTime): Boolean =
-    getPeriods.exists(x => Times.hasInside(x, moment))
+    /**
+     * 대상 시각과 교집합이 존재하면 true를 반환합니다.
+     */
+    def hasIntersectionPeriods(moment: DateTime): Boolean =
+        getPeriods.exists(x => Times.hasInside(x, moment))
 
-  /**
-   * 대상 ITimePeriod 기간과 교집합이 존재하면 true를 반환합니다.
-   */
-  def hasIntersectionPeriods(target: ITimePeriod): Boolean =
-    getPeriods.exists(x => Times.intersectWith(x, target))
+    /**
+     * 대상 ITimePeriod 기간과 교집합이 존재하면 true를 반환합니다.
+     */
+    def hasIntersectionPeriods(target: ITimePeriod): Boolean =
+        getPeriods.exists(x => Times.intersectWith(x, target))
 
-  /**
-   * 대상 ITimePeriod 기간을 포함하는 ITimePeriod 들을 열거합니다.
-   */
-  def insidePeriods(target: ITimePeriod): Seq[ITimePeriod] =
-    getPeriods.filter(x => Times.hasInside(x, target))
+    /**
+     * 대상 ITimePeriod 기간을 포함하는 ITimePeriod 들을 열거합니다.
+     */
+    def insidePeriods(target: ITimePeriod): Seq[ITimePeriod] =
+        getPeriods.filter(x => Times.hasInside(x, target))
 
-  def overlapPeriods(target: ITimePeriod): Seq[ITimePeriod] =
-    getPeriods.filter(x => Times.overlapsWith(x, target))
+    def overlapPeriods(target: ITimePeriod): Seq[ITimePeriod] =
+        getPeriods.filter(x => Times.overlapsWith(x, target))
 
-  /**
-   * 지정한 moment 시각과 교집합이 존재하는 TimePeriod를 열거합니다.
-   */
-  def intersectionPeriods(moment: DateTime): Seq[ITimePeriod] =
-    getPeriods.filter(x => Times.hasInside(x, moment))
+    /**
+     * 지정한 moment 시각과 교집합이 존재하는 TimePeriod를 열거합니다.
+     */
+    def intersectionPeriods(moment: DateTime): Seq[ITimePeriod] =
+        getPeriods.filter(x => Times.hasInside(x, moment))
 
-  /**
-   * 지정한 target 기간과 교집합이 존재하는 TimePeriod를 열거합니다.
-   */
-  def intersectionPeriods(target: ITimePeriod): Seq[ITimePeriod] =
-    getPeriods.filter(x => Times.intersectWith(x, target))
+    /**
+     * 지정한 target 기간과 교집합이 존재하는 TimePeriod를 열거합니다.
+     */
+    def intersectionPeriods(target: ITimePeriod): Seq[ITimePeriod] =
+        getPeriods.filter(x => Times.intersectWith(x, target))
 
-  /**
-   * 대상 ITimePeriod 와 특정 관계를 가지는 ITimePeriod 요소들을 열거합니다.
-   */
-  def relationPeriods(target: ITimePeriod,
-                      relation: PeriodRelation,
-                      relations: PeriodRelation*): Seq[ITimePeriod] = {
+    /**
+     * 대상 ITimePeriod 와 특정 관계를 가지는 ITimePeriod 요소들을 열거합니다.
+     */
+    def relationPeriods(target: ITimePeriod,
+                        relation: PeriodRelation,
+                        relations: PeriodRelation*): Seq[ITimePeriod] = {
 
-    val filteringRelation = ArrayBuffer[PeriodRelation]()
-    filteringRelation += relation
-    filteringRelation ++= relations
+        val filteringRelation = ArrayBuffer[PeriodRelation]()
+        filteringRelation += relation
+        filteringRelation ++= relations
 
-    getPeriods.filter(x => filteringRelation.contains(Times.getRelation(x, target)))
-  }
+        getPeriods.filter(x => filteringRelation.contains(Times.getRelation(x, target)))
+    }
 }
 
 @SerialVersionUID(106296570654143822L)
 class TimePeriodCollection extends TimePeriodContainer with ITimePeriodCollection {
 
-  def this(seq: ITimePeriod*) {
-    this()
-    periods ++= seq
-  }
+    def this(seq: ITimePeriod*) {
+        this()
+        periods ++= seq
+    }
 
-  def this(collection: Iterable[_ <: ITimePeriod]) {
-    this()
-    periods ++= collection
-  }
+    def this(collection: Iterable[_ <: ITimePeriod]) {
+        this()
+        periods ++= collection
+    }
 }
 
 object TimePeriodCollection {
 
-  def apply(): TimePeriodCollection = new TimePeriodCollection
+    def apply(): TimePeriodCollection = new TimePeriodCollection
 
-  def apply(seq: ITimePeriod*): TimePeriodCollection = new TimePeriodCollection(seq)
+    def apply(seq: ITimePeriod*): TimePeriodCollection = new TimePeriodCollection(seq)
 
 }

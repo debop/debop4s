@@ -9,15 +9,15 @@ import kr.debop4s.timeperiod.calendars.CollectKind.CollectKind
  */
 class CalendarPeriodCollectorContext extends ICalendarVisitorContext {
 
-  var scope: CollectKind = _
+    var scope: CollectKind = _
 }
 
 object CollectKind extends Enumeration {
-  type CollectKind = Value
+    type CollectKind = Value
 
-  val Year = Value(0, "Year")
-  val Month = Value(1, "Month")
-  val Day = Value(2, "Day")
-  val Hour = Value(3, "Hour")
-  val Minute = Value(4, "Minute")
+    val Year = Value(0, "Year")
+    val Month = Value(1, "Month")
+    val Day = Value(2, "Day")
+    val Hour = Value(3, "Hour")
+    val Minute = Value(4, "Minute")
 }

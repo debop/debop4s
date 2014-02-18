@@ -14,45 +14,45 @@ import scala.collection.mutable.ArrayBuffer
 class HourRangeCollection(private val _moment: DateTime,
                           private val _hourCount: Int,
                           private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends HourTimeRange(Times.trimToSecond(_moment), _hourCount, _calendar) {
+    extends HourTimeRange(Times.trimToSecond(_moment), _hourCount, _calendar) {
 
-  def getHours: Seq[HourRange] = {
-    val startHour = Times.trimToMinute(getStart)
+    def getHours: Seq[HourRange] = {
+        val startHour = Times.trimToMinute(getStart)
 
-    val hours = ArrayBuffer[HourRange]()
-    for (h <- 0 until hourCount) {
-      hours += new HourRange(startHour.plusHours(h), calendar)
+        val hours = ArrayBuffer[HourRange]()
+        for (h <- 0 until hourCount) {
+            hours += new HourRange(startHour.plusHours(h), calendar)
+        }
+        hours
     }
-    hours
-  }
 }
 
 object HourRangeCollection {
 
-  def apply(moment: DateTime, hourCount: Int): HourRangeCollection = {
-    new HourRangeCollection(moment, hourCount, DefaultTimeCalendar)
-  }
+    def apply(moment: DateTime, hourCount: Int): HourRangeCollection = {
+        new HourRangeCollection(moment, hourCount, DefaultTimeCalendar)
+    }
 
-  def apply(moment: DateTime, hourCount: Int, calendar: ITimeCalendar): HourRangeCollection = {
-    new HourRangeCollection(moment, hourCount, calendar)
-  }
+    def apply(moment: DateTime, hourCount: Int, calendar: ITimeCalendar): HourRangeCollection = {
+        new HourRangeCollection(moment, hourCount, calendar)
+    }
 
-  def apply(year: Int,
-            monthOfYear: Int,
-            dayOfMonth: Int,
-            hourOfDay: Int,
-            hourCount: Int): HourRangeCollection = {
-    apply(year, monthOfYear, dayOfMonth, hourOfDay, hourCount, DefaultTimeCalendar)
-  }
+    def apply(year: Int,
+              monthOfYear: Int,
+              dayOfMonth: Int,
+              hourOfDay: Int,
+              hourCount: Int): HourRangeCollection = {
+        apply(year, monthOfYear, dayOfMonth, hourOfDay, hourCount, DefaultTimeCalendar)
+    }
 
-  def apply(year: Int,
-            monthOfYear: Int,
-            dayOfMonth: Int,
-            hourOfDay: Int,
-            hourCount: Int,
-            calendar: ITimeCalendar): HourRangeCollection = {
-    new HourRangeCollection(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay), hourCount, calendar)
-  }
+    def apply(year: Int,
+              monthOfYear: Int,
+              dayOfMonth: Int,
+              hourOfDay: Int,
+              hourCount: Int,
+              calendar: ITimeCalendar): HourRangeCollection = {
+        new HourRangeCollection(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay), hourCount, calendar)
+    }
 
 
 }

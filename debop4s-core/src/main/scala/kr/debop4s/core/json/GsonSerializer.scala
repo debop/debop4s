@@ -11,17 +11,17 @@ import org.slf4j.LoggerFactory
  */
 class GsonSerializer(val gson: Gson) extends JsonSerializer {
 
-  require(gson != null)
+    require(gson != null)
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  def this() {
-    this(new Gson())
-  }
+    def this() {
+        this(new Gson())
+    }
 
-  override def serializeToText(graph: AnyRef): String = gson.toJson(graph)
+    override def serializeToText(graph: AnyRef): String = gson.toJson(graph)
 
-  override def deserializeFromText[T <: AnyRef](text: String, clazz: Class[T]): T =
-    gson.fromJson[T](text, clazz)
+    override def deserializeFromText[T <: AnyRef](text: String, clazz: Class[T]): T =
+        gson.fromJson[T](text, clazz)
 }
 

@@ -13,63 +13,63 @@ import kr.debop4s.timeperiod.timerange.{YearRangeCollection, YearRange, MonthRan
 class DaySeeker(private val _filter: CalendarVisitorFilter,
                 private val _seekDir: SeekDirection = SeekDirection.Forward,
                 private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends CalendarVisitor[CalendarVisitorFilter, DaySeekerContext](_filter,
-                                                                    TimeRange.Anytime,
-                                                                    _seekDir,
-                                                                    _calendar) {
+    extends CalendarVisitor[CalendarVisitorFilter, DaySeekerContext](_filter,
+        TimeRange.Anytime,
+        _seekDir,
+        _calendar) {
 
-  def this(seekDir: SeekDirection, calendar: ITimeCalendar) {
-    this(new CalendarVisitorFilter(), seekDir, calendar)
-  }
+    def this(seekDir: SeekDirection, calendar: ITimeCalendar) {
+        this(new CalendarVisitorFilter(), seekDir, calendar)
+    }
 
-  def this(seekDir: SeekDirection) {
-    this(new CalendarVisitorFilter(), seekDir)
-  }
+    def this(seekDir: SeekDirection) {
+        this(new CalendarVisitorFilter(), seekDir)
+    }
 
-  def this() {
-    this(new CalendarVisitorFilter())
-  }
+    def this() {
+        this(new CalendarVisitorFilter())
+    }
 
-  def findDay(startDay: DayRange, dayCount: Int): DayRange = {
-    log.trace(s"Day 찾기... startDay=[$startDay], dayCount=[$dayCount]")
+    def findDay(startDay: DayRange, dayCount: Int): DayRange = {
+        log.trace(s"Day 찾기... startDay=[$startDay], dayCount=[$dayCount]")
 
-    if (dayCount == 0) startDay
+        if (dayCount == 0) startDay
 
-    val context = new DaySeekerContext(startDay, dayCount)
-    var visitDir = seekDirection
+        val context = new DaySeekerContext(startDay, dayCount)
+        var visitDir = seekDirection
 
-    if (dayCount < 0)
-      visitDir = if (visitDir == SeekDirection.Forward) SeekDirection.Backward else SeekDirection.Forward
+        if (dayCount < 0)
+            visitDir = if (visitDir == SeekDirection.Forward) SeekDirection.Backward else SeekDirection.Forward
 
-    startDayVisit(startDay, context, visitDir)
-    val foundDay = context.foundDay
-    log.trace(s"Day 찾기 완료. startDay=[$startDay], dayCount=[$dayCount], foundDay=[$foundDay]")
+        startDayVisit(startDay, context, visitDir)
+        val foundDay = context.foundDay
+        log.trace(s"Day 찾기 완료. startDay=[$startDay], dayCount=[$dayCount], foundDay=[$foundDay]")
 
-    foundDay
-  }
+        foundDay
+    }
 
-  override protected def enterYears(years: YearRangeCollection, context: DaySeekerContext) =
-    !context.isFinished
+    override protected def enterYears(years: YearRangeCollection, context: DaySeekerContext) =
+        !context.isFinished
 
-  override protected def enterMonths(year: YearRange, context: DaySeekerContext) =
-    !context.isFinished
+    override protected def enterMonths(year: YearRange, context: DaySeekerContext) =
+        !context.isFinished
 
-  override protected def enterDays(month: MonthRange, context: DaySeekerContext) =
-    !context.isFinished
+    override protected def enterDays(month: MonthRange, context: DaySeekerContext) =
+        !context.isFinished
 
-  override protected def enterHours(day: DayRange, context: DaySeekerContext) = false
+    override protected def enterHours(day: DayRange, context: DaySeekerContext) = false
 
-  override protected def onVisitDay(day: DayRange, context: DaySeekerContext) = {
-    assert(day != null)
+    override protected def onVisitDay(day: DayRange, context: DaySeekerContext) = {
+        assert(day != null)
 
-    if (context.isFinished) false
-    else if (day.isSamePeriod(context.startDay)) true
-    else if (!isMatchingDay(day, context)) true
-    else if (!checkLimits(day)) true
+        if (context.isFinished) false
+        else if (day.isSamePeriod(context.startDay)) true
+        else if (!isMatchingDay(day, context)) true
+        else if (!checkLimits(day)) true
 
-    context.processDay(day)
+        context.processDay(day)
 
-    // context가 찾기를 완료하면, 탐색(Visit)를 중단하도록 합니다.
-    !context.isFinished
-  }
+        // context가 찾기를 완료하면, 탐색(Visit)를 중단하도록 합니다.
+        !context.isFinished
+    }
 }

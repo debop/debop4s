@@ -10,11 +10,11 @@ import org.joda.time.DateTime
  */
 trait ITimeLineMoment extends Serializable {
 
-  def getMoment: DateTime
+    def getMoment: DateTime
 
-  def getPeriods: ITimePeriodCollection
+    def getPeriods: ITimePeriodCollection
 
-  def getStartCount: Int
+    def getStartCount: Int
 
-  def getEndCount: Int
+    def getEndCount: Int
 }

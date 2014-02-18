@@ -14,31 +14,31 @@ class WeekRangeCollection(private val _year: Int,
                           private val _weekOfYear: Int,
                           private val _weekCount: Int,
                           private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends WeekTimeRange(Times.startTimeOfWeek(_year, _weekOfYear), _weekCount, _calendar) {
+    extends WeekTimeRange(Times.startTimeOfWeek(_year, _weekOfYear), _weekCount, _calendar) {
 
 
-  def getWeeks: Seq[WeekRange] = {
-    val weeks = ArrayBuffer[WeekRange]()
-    for (w <- 0 until weekCount) {
-      weeks += WeekRange(start.plusWeeks(w), calendar)
+    def getWeeks: Seq[WeekRange] = {
+        val weeks = ArrayBuffer[WeekRange]()
+        for (w <- 0 until weekCount) {
+            weeks += WeekRange(start.plusWeeks(w), calendar)
+        }
+        weeks
     }
-    weeks
-  }
 }
 
 object WeekRangeCollection {
 
-  def apply(year: Int, weekOfYear: Int, weekCount: Int): WeekRangeCollection =
-    apply(year, weekOfYear, weekCount, DefaultTimeCalendar)
+    def apply(year: Int, weekOfYear: Int, weekCount: Int): WeekRangeCollection =
+        apply(year, weekOfYear, weekCount, DefaultTimeCalendar)
 
-  def apply(year: Int, weekOfYear: Int, weekCount: Int, calendar: ITimeCalendar): WeekRangeCollection =
-    new WeekRangeCollection(year, weekOfYear, weekCount, calendar)
+    def apply(year: Int, weekOfYear: Int, weekCount: Int, calendar: ITimeCalendar): WeekRangeCollection =
+        new WeekRangeCollection(year, weekOfYear, weekCount, calendar)
 
-  def apply(moment: DateTime, weekCount: Int): WeekRangeCollection =
-    apply(moment, weekCount, DefaultTimeCalendar)
+    def apply(moment: DateTime, weekCount: Int): WeekRangeCollection =
+        apply(moment, weekCount, DefaultTimeCalendar)
 
-  def apply(moment: DateTime, weekCount: Int, calendar: ITimeCalendar): WeekRangeCollection =
-    new WeekRangeCollection(moment.getYear, moment.getWeekOfWeekyear, weekCount, calendar)
+    def apply(moment: DateTime, weekCount: Int, calendar: ITimeCalendar): WeekRangeCollection =
+        new WeekRangeCollection(moment.getYear, moment.getWeekOfWeekyear, weekCount, calendar)
 
 
 }

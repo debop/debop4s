@@ -11,48 +11,48 @@ import org.slf4j.LoggerFactory
  */
 object With {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  def stopwatch(action: => Unit) {
-    val sw = new ClosableStopwatch()
-    try {
-      action
-    } finally {
-      sw.close()
+    def stopwatch(action: => Unit) {
+        val sw = new ClosableStopwatch()
+        try {
+            action
+        } finally {
+            sw.close()
+        }
     }
-  }
 
-  def stopwatch(msg: String)(action: => Unit) {
-    val sw = new ClosableStopwatch("msg")
-    try {
-      action
-    } finally {
-      sw.close()
+    def stopwatch(msg: String)(action: => Unit) {
+        val sw = new ClosableStopwatch("msg")
+        try {
+            action
+        } finally {
+            sw.close()
+        }
     }
-  }
 
-  def tryAction(action: => Unit)(catchAction: => Unit = ())(finallyAction: => Unit = ()) {
-    try {
-      action
-    } catch {
-      case e: Throwable =>
-        log.warn("action 수행에 예외가 발생했습니다.", e)
-        catchAction
-    } finally {
-      finallyAction
+    def tryAction(action: => Unit)(catchAction: => Unit = ())(finallyAction: => Unit = ()) {
+        try {
+            action
+        } catch {
+            case e: Throwable =>
+                log.warn("action 수행에 예외가 발생했습니다.", e)
+                catchAction
+        } finally {
+            finallyAction
+        }
     }
-  }
 
-  def tryFunction[T](func: () => T)(catchAction: => Unit = ())(finallyAction: => Unit = ()): T = {
-    try {
-      func()
-    } catch {
-      case e: Throwable =>
-        log.warn("funct 수행에 예외가 발생했습니다.", e)
-        catchAction
-        null.asInstanceOf[T]
-    } finally {
-      finallyAction
+    def tryFunction[T](func: () => T)(catchAction: => Unit = ())(finallyAction: => Unit = ()): T = {
+        try {
+            func()
+        } catch {
+            case e: Throwable =>
+                log.warn("funct 수행에 예외가 발생했습니다.", e)
+                catchAction
+                null.asInstanceOf[T]
+        } finally {
+            finallyAction
+        }
     }
-  }
 }

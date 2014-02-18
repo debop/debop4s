@@ -17,16 +17,16 @@ import scala.Predef.String
 @EnableTransactionManagement
 abstract class AbstractHSqlJpaConfiguration extends AbstractJpaConfiguration {
 
-  val DRIVER_CLASS_HSQL: String = "org.hsqldb.jdbcDriver"
-  val DIALECT_HSQL: String = "org.hibernate.dialect.HSQLDialect"
+    val DRIVER_CLASS_HSQL: String = "org.hsqldb.jdbcDriver"
+    val DIALECT_HSQL: String = "org.hibernate.dialect.HSQLDialect"
 
-  override def dataSource(): DataSource = {
-    buildDataSource(DRIVER_CLASS_HSQL, "jdbc:hsqldb:mem:" + getDatabaseName + ";MVCC=TRUE;", "sa", "")
-  }
+    override def dataSource(): DataSource = {
+        buildDataSource(DRIVER_CLASS_HSQL, "jdbc:hsqldb:mem:" + getDatabaseName + ";MVCC=TRUE;", "sa", "")
+    }
 
-  override def jpaProperties(): Properties = {
-    val props: Properties = super.jpaProperties()
-    props.put(AvailableSettings.DIALECT, DIALECT_HSQL)
-    props
-  }
+    override def jpaProperties(): Properties = {
+        val props: Properties = super.jpaProperties()
+        props.put(AvailableSettings.DIALECT, DIALECT_HSQL)
+        props
+    }
 }

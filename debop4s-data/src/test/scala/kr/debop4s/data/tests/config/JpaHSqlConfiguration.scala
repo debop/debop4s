@@ -15,6 +15,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableTransactionManagement
 class JpaHSqlConfiguration extends AbstractHSqlJpaConfiguration {
 
-  def getMappedPackageNames: Array[String] =
-    Array("kr.debop4s.data")
+    def getMappedPackageNames: Array[String] =
+        Array("kr.debop4s.data")
 }

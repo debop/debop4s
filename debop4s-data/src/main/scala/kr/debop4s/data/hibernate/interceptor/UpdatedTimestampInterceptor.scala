@@ -13,17 +13,17 @@ import org.slf4j.LoggerFactory
  */
 class UpdatedTimestampInterceptor extends EmptyInterceptor {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  override def preFlush(entities: util.Iterator[_]) {
-    log.trace("UpdatedTimestampEntity에 대해 갱신 시각을 설정합니다...")
+    override def preFlush(entities: util.Iterator[_]) {
+        log.trace("UpdatedTimestampEntity에 대해 갱신 시각을 설정합니다...")
 
-    while (entities.hasNext) {
-      val entity = entities.next()
-      entity match {
-        case ute: UpdatedTimestampEntity => ute.updateUpdatedTimestamp()
-        case _ =>
-      }
+        while (entities.hasNext) {
+            val entity = entities.next()
+            entity match {
+                case ute: UpdatedTimestampEntity => ute.updateUpdatedTimestamp()
+                case _ =>
+            }
+        }
     }
-  }
 }

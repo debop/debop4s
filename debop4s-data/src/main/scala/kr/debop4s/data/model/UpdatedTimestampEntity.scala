@@ -10,12 +10,12 @@ import org.joda.time.DateTime
  */
 trait UpdatedTimestampEntity {
 
-  var updatedTimestamp: DateTime = _
+    var updatedTimestamp: DateTime = _
 
-  def getUpdatedTimestamp: DateTime = updatedTimestamp
+    def getUpdatedTimestamp: DateTime = updatedTimestamp
 
-  def updateUpdatedTimestamp() {
-    updatedTimestamp = DateTime.now()
-  }
+    def updateUpdatedTimestamp() {
+        updatedTimestamp = DateTime.now()
+    }
 
 }

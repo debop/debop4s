@@ -12,25 +12,25 @@ import scala.collection.mutable
  */
 trait ICalendarVisitorFilter extends Serializable {
 
-  def excludePeriods: ITimePeriodCollection
+    def excludePeriods: ITimePeriodCollection
 
-  def years: Seq[Int]
+    def years: Seq[Int]
 
-  def monthOfYears: Seq[Int]
+    def monthOfYears: Seq[Int]
 
-  def dayOfMonths: Seq[Int]
+    def dayOfMonths: Seq[Int]
 
-  def weekDays: mutable.Set[DayOfWeek]
+    def weekDays: mutable.Set[DayOfWeek]
 
-  def hourOfDays: Seq[Int]
+    def hourOfDays: Seq[Int]
 
-  def minuteOfHours: Seq[Int]
+    def minuteOfHours: Seq[Int]
 
-  def addWorkingWeekdays()
+    def addWorkingWeekdays()
 
-  def addWorkingWeekends()
+    def addWorkingWeekends()
 
-  def addWeekdays(days: DayOfWeek*)
+    def addWeekdays(days: DayOfWeek*)
 
-  def clear()
+    def clear()
 }

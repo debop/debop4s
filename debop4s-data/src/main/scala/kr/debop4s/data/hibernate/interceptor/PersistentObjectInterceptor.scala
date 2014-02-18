@@ -14,40 +14,40 @@ import org.slf4j.LoggerFactory
  */
 class PersistentObjectInterceptor extends EmptyInterceptor {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  def isPersisted(entity: AnyRef): Boolean = entity match {
-    case p: PersistentObject => true
-    case _ => false
-  }
-
-  override
-  def onLoad(entity: Any,
-             id: Serializable,
-             state: Array[AnyRef],
-             propertyNames: Array[String],
-             types: Array[Type]): Boolean = {
-    log.debug(s"엔티티 로드 후 PersistentObject의 상태를 갱신합니다.")
-
-    entity match {
-      case p: PersistentObject => p.onLoad()
-      case _ =>
+    def isPersisted(entity: AnyRef): Boolean = entity match {
+        case p: PersistentObject => true
+        case _ => false
     }
-    false
-  }
 
-  override
-  def onSave(entity: scala.Any,
-             id: Serializable,
-             state: Array[AnyRef],
-             propertyNames: Array[String],
-             types: Array[Type]): Boolean = {
-    log.debug(s"엔티티 로드 후 PersistentObject의 상태를 갱신합니다.")
+    override
+    def onLoad(entity: Any,
+               id: Serializable,
+               state: Array[AnyRef],
+               propertyNames: Array[String],
+               types: Array[Type]): Boolean = {
+        log.debug(s"엔티티 로드 후 PersistentObject의 상태를 갱신합니다.")
 
-    entity match {
-      case p: PersistentObject => p.onPersist()
-      case _ =>
+        entity match {
+            case p: PersistentObject => p.onLoad()
+            case _ =>
+        }
+        false
     }
-    false
-  }
+
+    override
+    def onSave(entity: scala.Any,
+               id: Serializable,
+               state: Array[AnyRef],
+               propertyNames: Array[String],
+               types: Array[Type]): Boolean = {
+        log.debug(s"엔티티 로드 후 PersistentObject의 상태를 갱신합니다.")
+
+        entity match {
+            case p: PersistentObject => p.onPersist()
+            case _ =>
+        }
+        false
+    }
 }

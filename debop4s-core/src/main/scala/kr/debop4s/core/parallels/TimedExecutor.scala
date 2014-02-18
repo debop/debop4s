@@ -12,41 +12,41 @@ import org.slf4j.LoggerFactory
  */
 class TimedExecutor(val timeout: Long, val checkMillis: Option[Long] = None) {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  def this(timeout: Long) {
-    this(timeout, None)
-  }
+    def this(timeout: Long) {
+        this(timeout, None)
+    }
 
-  def execute(executable: Executable) {
-    if (executable == null)
-      return
+    def execute(executable: Executable) {
+        if (executable == null)
+            return
 
-    val adapter = new ExecutableAdapter(executable)
-    val separatedThread = new Thread(adapter)
+        val adapter = new ExecutableAdapter(executable)
+        val separatedThread = new Thread(adapter)
 
-    separatedThread.start()
+        separatedThread.start()
 
-    val runningTime = new AtomicLong(0)
-    do {
-      if (runningTime.get() > timeout) {
-        try {
-          executable.timeout()
-        } catch {
-          case _: Throwable =>
-        }
-        throw new TimeoutException()
-      }
-      try {
-        Thread.sleep(checkMillis.getOrElse(100L))
-        runningTime.addAndGet(checkMillis.getOrElse(100L))
-      } catch {
-        case _: Throwable =>
-      }
-    } while (!adapter.isDone)
+        val runningTime = new AtomicLong(0)
+        do {
+            if (runningTime.get() > timeout) {
+                try {
+                    executable.timeout()
+                } catch {
+                    case _: Throwable =>
+                }
+                throw new TimeoutException()
+            }
+            try {
+                Thread.sleep(checkMillis.getOrElse(100L))
+                runningTime.addAndGet(checkMillis.getOrElse(100L))
+            } catch {
+                case _: Throwable =>
+            }
+        } while (!adapter.isDone)
 
-    adapter.throwAnyErrors()
-    log.debug(s"제한된 시각[$timeout](msecs) 동안 지정된 executable 인스턴스를 실행했습니다.")
-  }
+        adapter.throwAnyErrors()
+        log.debug(s"제한된 시각[$timeout](msecs) 동안 지정된 executable 인스턴스를 실행했습니다.")
+    }
 
 }

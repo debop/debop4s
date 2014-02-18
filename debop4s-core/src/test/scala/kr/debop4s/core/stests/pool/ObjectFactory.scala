@@ -12,24 +12,24 @@ import org.apache.commons.pool.BasePoolableObjectFactory
  */
 class ObjectFactory(val props: Properties) extends BasePoolableObjectFactory[PoolObject] {
 
-  val name = props.getProperty("pool.name", "name")
-  val intValue = Integer.decode(props.getProperty("pool.intValue", "1"))
-  val uriValue = URI.create(props.getProperty("pool.uriValue", "http://localhost"))
+    val name = props.getProperty("pool.name", "name")
+    val intValue = Integer.decode(props.getProperty("pool.intValue", "1"))
+    val uriValue = URI.create(props.getProperty("pool.uriValue", "http://localhost"))
 
 
-  override def makeObject(): PoolObject = {
-    val po = new PoolObject(name, intValue, uriValue)
-    po.isActive = true
-    po
-  }
+    override def makeObject(): PoolObject = {
+        val po = new PoolObject(name, intValue, uriValue)
+        po.isActive = true
+        po
+    }
 
-  override def destroyObject(obj: PoolObject) {
-    val po = obj.asInstanceOf[PoolObject]
-    if (po.isActive)
-      po.isActive = false
-  }
+    override def destroyObject(obj: PoolObject) {
+        val po = obj.asInstanceOf[PoolObject]
+        if (po.isActive)
+            po.isActive = false
+    }
 
-  override def validateObject(obj: PoolObject): Boolean =
-    obj.asInstanceOf[PoolObject].isActive
+    override def validateObject(obj: PoolObject): Boolean =
+        obj.asInstanceOf[PoolObject].isActive
 
 }

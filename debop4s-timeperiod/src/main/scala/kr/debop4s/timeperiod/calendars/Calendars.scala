@@ -9,23 +9,23 @@ package kr.debop4s.timeperiod.calendars
  */
 object Calendars {
 
-  def asString(filter: ICalendarVisitorFilter): String = {
-    if (filter == null)
-      "Filter is null."
+    def asString(filter: ICalendarVisitorFilter): String = {
+        if (filter == null)
+            "Filter is null."
 
-    val builder = new StringBuilder()
-    builder.append("CalendarVisitorFilter#\n")
-    builder.append("----------------------")
-    builder.append("\n\t years=").append(filter.years.mkString)
-    builder.append("\n\t monthOfYears=").append(filter.monthOfYears.mkString)
-    builder.append("\n\t monthOfYears=").append(filter.monthOfYears.mkString)
-    builder.append("\n\t dayOfMonths=").append(filter.dayOfMonths.mkString)
-    builder.append("\n\t hourOfDays=").append(filter.hourOfDays.mkString)
-    builder.append("\n\t minuteOfHours=").append(filter.minuteOfHours.mkString)
-    builder.append("\n\t dayOfWeeks=").append(filter.weekDays.mkString)
-    builder.append("\n\t exclude periods=").append(filter.excludePeriods)
-    builder.append("----------------------")
-    builder.toString()
-  }
+        val builder = new StringBuilder()
+        builder.append("CalendarVisitorFilter#\n")
+        builder.append("----------------------")
+        builder.append("\n\t years=").append(filter.years.mkString)
+        builder.append("\n\t monthOfYears=").append(filter.monthOfYears.mkString)
+        builder.append("\n\t monthOfYears=").append(filter.monthOfYears.mkString)
+        builder.append("\n\t dayOfMonths=").append(filter.dayOfMonths.mkString)
+        builder.append("\n\t hourOfDays=").append(filter.hourOfDays.mkString)
+        builder.append("\n\t minuteOfHours=").append(filter.minuteOfHours.mkString)
+        builder.append("\n\t dayOfWeeks=").append(filter.weekDays.mkString)
+        builder.append("\n\t exclude periods=").append(filter.excludePeriods)
+        builder.append("----------------------")
+        builder.toString()
+    }
 
 }

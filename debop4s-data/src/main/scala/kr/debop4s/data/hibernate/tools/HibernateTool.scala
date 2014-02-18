@@ -14,58 +14,58 @@ import org.springframework.data.domain.Pageable
  */
 object HibernateTool {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
+    def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
 
-  def copyCriteria(src: Criteria) = Serializers.copyObject(src)
+    def copyCriteria(src: Criteria) = Serializers.copyObject(src)
 
-  def getExecutableCriteria(session: Session, dc: DetachedCriteria, orders: Order*): Criteria =
-    addOrders(dc, orders: _*).getExecutableCriteria(session)
+    def getExecutableCriteria(session: Session, dc: DetachedCriteria, orders: Order*): Criteria =
+        addOrders(dc, orders: _*).getExecutableCriteria(session)
 
-  def addOrders(dc: DetachedCriteria, orders: Order*): DetachedCriteria = {
-    assert(dc != null)
-    if (orders != null)
-      orders.foreach(o => dc.addOrder(o))
-    dc
-  }
+    def addOrders(dc: DetachedCriteria, orders: Order*): DetachedCriteria = {
+        assert(dc != null)
+        if (orders != null)
+            orders.foreach(o => dc.addOrder(o))
+        dc
+    }
 
-  def addOrders(criteria: Criteria, orders: Order*): Criteria = {
-    assert(criteria != null)
-    if (orders != null)
-      orders.foreach(o => criteria.addOrder(o))
-    criteria
-  }
+    def addOrders(criteria: Criteria, orders: Order*): Criteria = {
+        assert(criteria != null)
+        if (orders != null)
+            orders.foreach(o => criteria.addOrder(o))
+        criteria
+    }
 
-  def setParameters(query: Query, parameters: HibernateParameter*): Query = {
-    assert(query != null)
-    if (parameters != null)
-      parameters.foreach(p => query.setParameter(p.name, p.value))
-    query
-  }
+    def setParameters(query: Query, parameters: HibernateParameter*): Query = {
+        assert(query != null)
+        if (parameters != null)
+            parameters.foreach(p => query.setParameter(p.name, p.value))
+        query
+    }
 
-  def setPaging(criteria: Criteria, pageable: Pageable): Criteria =
-    setPaging(criteria, pageable.getPageNumber * pageable.getPageSize, pageable.getPageSize)
+    def setPaging(criteria: Criteria, pageable: Pageable): Criteria =
+        setPaging(criteria, pageable.getPageNumber * pageable.getPageSize, pageable.getPageSize)
 
-  def setPaging(criteria: Criteria, firstResult: Int, maxResults: Int): Criteria = {
-    if (firstResult >= 0)
-      criteria.setFirstResult(firstResult)
-    if (maxResults > 0)
-      criteria.setMaxResults(maxResults)
+    def setPaging(criteria: Criteria, firstResult: Int, maxResults: Int): Criteria = {
+        if (firstResult >= 0)
+            criteria.setFirstResult(firstResult)
+        if (maxResults > 0)
+            criteria.setMaxResults(maxResults)
 
-    criteria
-  }
+        criteria
+    }
 
-  def setPaging(query: Query, pageable: Pageable): Query =
-    setPaging(query, pageable.getPageNumber * pageable.getPageSize, pageable.getPageSize)
+    def setPaging(query: Query, pageable: Pageable): Query =
+        setPaging(query, pageable.getPageNumber * pageable.getPageSize, pageable.getPageSize)
 
-  def setPaging(query: Query, firstResult: Int, maxResults: Int): Query = {
-    if (firstResult >= 0)
-      query.setFirstResult(firstResult)
-    if (maxResults > 0)
-      query.setMaxResults(maxResults)
+    def setPaging(query: Query, firstResult: Int, maxResults: Int): Query = {
+        if (firstResult >= 0)
+            query.setFirstResult(firstResult)
+        if (maxResults > 0)
+            query.setMaxResults(maxResults)
 
-    query
-  }
+        query
+    }
 
 }

@@ -13,21 +13,21 @@ import org.joda.time.DateTime
  */
 class YearWeek(var weekyear: Int = 0, var weekOfWeekyear: Int = 1) extends ValueObject {
 
-  def start: DateTime = Times.startTimeOfWeek(weekyear, weekOfWeekyear)
+    def start: DateTime = Times.startTimeOfWeek(weekyear, weekOfWeekyear)
 
-  def end: DateTime = Times.endTimeOfMonth(weekyear, weekOfWeekyear)
+    def end: DateTime = Times.endTimeOfMonth(weekyear, weekOfWeekyear)
 
-  override def hashCode() = Hashs.compute(weekyear, weekOfWeekyear)
+    override def hashCode() = Hashs.compute(weekyear, weekOfWeekyear)
 
-  override protected def buildStringHelper =
-    super.buildStringHelper
-      .add("weekyear", weekyear)
-      .add("weekOfWeekyear", weekOfWeekyear)
+    override protected def buildStringHelper =
+        super.buildStringHelper
+            .add("weekyear", weekyear)
+            .add("weekOfWeekyear", weekOfWeekyear)
 }
 
 object YearWeek {
 
-  def apply(weekyear: Int, weekOfWeekyear: Int): YearWeek = new YearWeek(weekyear, weekOfWeekyear)
+    def apply(weekyear: Int, weekOfWeekyear: Int): YearWeek = new YearWeek(weekyear, weekOfWeekyear)
 
-  def apply(src: YearWeek): YearWeek = new YearWeek(src.weekyear, src.weekOfWeekyear)
+    def apply(src: YearWeek): YearWeek = new YearWeek(src.weekyear, src.weekOfWeekyear)
 }

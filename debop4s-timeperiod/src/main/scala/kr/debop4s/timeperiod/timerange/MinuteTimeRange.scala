@@ -15,42 +15,42 @@ import org.joda.time.DateTime
 class MinuteTimeRange(private val _start: DateTime,
                       val minuteCount: Int = 1,
                       private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends CalendarTimeRange(Times.relativeMinutePeriod(_start, minuteCount), _calendar) {
+    extends CalendarTimeRange(Times.relativeMinutePeriod(_start, minuteCount), _calendar) {
 
-  assert(minuteCount > 0)
-  val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
+    assert(minuteCount > 0)
+    val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
 
-  override def hashCode(): Int = Hashs.compute(super.hashCode(), endMinute)
+    override def hashCode(): Int = Hashs.compute(super.hashCode(), endMinute)
 
-  override protected def buildStringHelper: ToStringHelper =
-    super.buildStringHelper
-    .add("minuteCount", minuteCount)
-    .add("endMinute", endMinute)
+    override protected def buildStringHelper: ToStringHelper =
+        super.buildStringHelper
+            .add("minuteCount", minuteCount)
+            .add("endMinute", endMinute)
 }
 
 object MinuteTimeRange {
 
-  def apply(moment: DateTime, minuteCount: Int): MinuteTimeRange =
-    apply(moment, minuteCount, DefaultTimeCalendar)
+    def apply(moment: DateTime, minuteCount: Int): MinuteTimeRange =
+        apply(moment, minuteCount, DefaultTimeCalendar)
 
-  def apply(moment: DateTime, minuteCount: Int, calendar: ITimeCalendar): MinuteTimeRange =
-    new MinuteTimeRange(moment, minuteCount, calendar)
+    def apply(moment: DateTime, minuteCount: Int, calendar: ITimeCalendar): MinuteTimeRange =
+        new MinuteTimeRange(moment, minuteCount, calendar)
 
-  def apply(year: Int,
-            monthOfYear: Int,
-            dayOfMonth: Int,
-            hourOfDay: Int,
-            minuteOfHour: Int,
-            minuteCount: Int): MinuteTimeRange =
-    apply(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, minuteCount, DefaultTimeCalendar)
+    def apply(year: Int,
+              monthOfYear: Int,
+              dayOfMonth: Int,
+              hourOfDay: Int,
+              minuteOfHour: Int,
+              minuteCount: Int): MinuteTimeRange =
+        apply(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, minuteCount, DefaultTimeCalendar)
 
-  def apply(year: Int,
-            monthOfYear: Int,
-            dayOfMonth: Int,
-            hourOfDay: Int,
-            minuteOfHour: Int,
-            minuteCount: Int,
-            calendar: ITimeCalendar): MinuteTimeRange =
-    new MinuteTimeRange(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), minuteCount, calendar)
+    def apply(year: Int,
+              monthOfYear: Int,
+              dayOfMonth: Int,
+              hourOfDay: Int,
+              minuteOfHour: Int,
+              minuteCount: Int,
+              calendar: ITimeCalendar): MinuteTimeRange =
+        new MinuteTimeRange(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), minuteCount, calendar)
 }
 
