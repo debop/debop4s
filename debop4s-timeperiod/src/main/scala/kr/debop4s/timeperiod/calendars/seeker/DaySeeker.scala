@@ -5,6 +5,22 @@ import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.calendars.{CalendarVisitor, CalendarVisitorFilter}
 import kr.debop4s.timeperiod.timerange.{YearRangeCollection, YearRange, MonthRange, DayRange}
 
+
+object DaySeeker {
+
+    def apply(): DaySeeker =
+        apply(SeekDirection.Forward)
+
+    def apply(seekDir: SeekDirection): DaySeeker =
+        apply(seekDir, DefaultTimeCalendar)
+
+    def apply(seekDir: SeekDirection, calendar: ITimeCalendar): DaySeeker =
+        apply(new CalendarVisitorFilter(), seekDir, calendar)
+
+    def apply(filter: CalendarVisitorFilter, seekDir: SeekDirection, calendar: ITimeCalendar): DaySeeker =
+        new DaySeeker(filter, seekDir, calendar)
+}
+
 /**
  * kr.debop4s.timeperiod.calendars.seeker.DaySeeker
  * @author 배성혁 sunghyouk.bae@gmail.com
@@ -14,21 +30,10 @@ class DaySeeker(private val _filter: CalendarVisitorFilter,
                 private val _seekDir: SeekDirection = SeekDirection.Forward,
                 private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarVisitor[CalendarVisitorFilter, DaySeekerContext](_filter,
-        TimeRange.Anytime,
-        _seekDir,
-        _calendar) {
+                                                                        TimeRange.Anytime,
+                                                                        _seekDir,
+                                                                        _calendar) {
 
-    def this(seekDir: SeekDirection, calendar: ITimeCalendar) {
-        this(new CalendarVisitorFilter(), seekDir, calendar)
-    }
-
-    def this(seekDir: SeekDirection) {
-        this(new CalendarVisitorFilter(), seekDir)
-    }
-
-    def this() {
-        this(new CalendarVisitorFilter())
-    }
 
     def findDay(startDay: DayRange, dayCount: Int): DayRange = {
         log.trace(s"Day 찾기... startDay=[$startDay], dayCount=[$dayCount]")

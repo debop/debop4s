@@ -85,6 +85,9 @@ object Times {
 
     def asDate(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 
+    def asDateTime(year: Int, monthOfYear: Int = 1, dayOfMonth: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, millis: Int = 0): DateTime =
+        new DateTime(year, monthOfYear, dayOfMonth, hour, minute, second, millis)
+
     def asString(period: ITimePeriod): String =
         if (period == null) NullString else period.toString
 
@@ -342,8 +345,8 @@ object Times {
 
     def endTimeOfHalfyear(year: Int, halfyear: Halfyear): DateTime =
         startTimeOfHalfyear(year, halfyear)
-            .plusMonths(MonthsPerHalfyear)
-            .minus(1)
+        .plusMonths(MonthsPerHalfyear)
+        .minus(1)
 
     def startTimeOfQuarter(moment: DateTime): DateTime =
         startTimeOfQuarter(moment.getYear, moment.getMonthOfYear)
@@ -362,8 +365,8 @@ object Times {
 
     def endTimeOfQuarter(year: Int, quarter: Quarter): DateTime =
         startTimeOfQuarter(year, quarter)
-            .plusMonths(MonthsPerQuarter)
-            .minus(1)
+        .plusMonths(MonthsPerQuarter)
+        .minus(1)
 
     def startTimeOfLastQuarter(moment: DateTime): DateTime =
         startTimeOfQuarter(moment.minusMonths(MonthsPerQuarter))
@@ -396,7 +399,7 @@ object Times {
 
     def startTimeOfWeek(weekyear: Int, weekOfWeekYear: Int): DateTime = {
         val start = startTimeOfYear(weekyear).plusMonths(1).withWeekOfWeekyear(weekOfWeekYear)
-        log.trace(s"weekyear=$weekyear, weekOfWeekYear=$weekOfWeekYear, start=$start")
+        //log.trace(s"weekyear=$weekyear, weekOfWeekYear=$weekOfWeekYear, start=$start")
         start
     }
 
@@ -622,8 +625,8 @@ object Times {
             case PeriodUnit.Minute => getMinuteRanges(moment, periodCount, calendar)
             case PeriodUnit.Second =>
                 CalendarTimeRange(trimToMillis(moment),
-                    trimToMillis(moment).plusSeconds(periodCount),
-                    calendar)
+                                     trimToMillis(moment).plusSeconds(periodCount),
+                                     calendar)
 
             case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
         }
@@ -762,9 +765,9 @@ object Times {
     }
 
     lazy val NotOverlapedRelations = Array(PeriodRelation.After,
-        PeriodRelation.StartTouching,
-        PeriodRelation.EndTouching,
-        PeriodRelation.Before)
+                                              PeriodRelation.StartTouching,
+                                              PeriodRelation.EndTouching,
+                                              PeriodRelation.Before)
 
     def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
         require(period != null)

@@ -38,13 +38,13 @@ object Weeks {
         addWeekOfYears(YearWeek(year, weekOfYear), weeks)
     }
 
+
     def addWeekOfYears(yw: YearWeek, weeks: Int): YearWeek = {
         if (weeks == 0)
             YearWeek(yw)
         else {
             val result = if (weeks > 0) plusWeeks(yw, weeks) else minusWeeks(yw, weeks)
-
-            log.debug(s"주차연산을 수행했습니다. yearWeek=[$yw], weeks=[$weeks], result=[$result]")
+            // log.trace(s"주차연산을 수행했습니다. yearWeek=[$yw], weeks=[$weeks], result=[$result]")
             result
         }
     }

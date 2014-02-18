@@ -34,7 +34,7 @@ class DateAddTest extends AbstractTimePeriodTest {
         val dateAdd = DateAdd()
 
         // 예외기간을 설정합니다. 4월 20일 ~ 4월25일, 4월 30일 이후
-        dateAdd.getExcludePeriods.addAll(period1, period2)
+        dateAdd.excludePeriods.addAll(period1, period2)
 
         dateAdd.add(start, Durations.Day) should equal(start + 1.day)
 
@@ -56,7 +56,7 @@ class DateAddTest extends AbstractTimePeriodTest {
         val dateAdd = DateAdd()
 
         // 예외기간을 설정합니다. 4월 6일 이전, 4월 20일 ~ 4월 25일
-        dateAdd.getExcludePeriods.addAll(period1, period2)
+        dateAdd.excludePeriods.addAll(period1, period2)
 
         dateAdd.subtract(start, Durations.Day) should equal(start - 1.day)
 

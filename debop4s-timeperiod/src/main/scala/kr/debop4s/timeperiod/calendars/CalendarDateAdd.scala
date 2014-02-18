@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.mutable.ArrayBuffer
 
-/**
- * kr.debop4s.timeperiod.calendars.CalendarDayAdd
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2014. 1. 5. 오전 4:21
- */
+object CalendarDateAdd {
+
+    def apply(): CalendarDateAdd = new CalendarDateAdd()
+}
+
 class CalendarDateAdd extends DateAdd {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
@@ -27,8 +27,6 @@ class CalendarDateAdd extends DateAdd {
     val weekDays = ArrayBuffer[DayOfWeek]()
     val workingHours = ArrayBuffer[HourRangeInDay]()
     val workingDayHours = ArrayBuffer[DayHourRange]()
-
-    override val includePeriods: TimePeriodCollection = null
 
     override def getIncludePeriods = throw new NotSupportedException("IncludePeriods는 지원하지 않습니다.")
 
@@ -90,14 +88,15 @@ class CalendarDateAdd extends DateAdd {
         var remaining = offset
 
         var week = WeekRange(start, calendar)
+
         while (week != null) {
             super.getIncludePeriods.clear()
             super.getIncludePeriods.addAll(getAvailableWeekPeriods(week))
 
             log.trace(s"가능한 기간=[${super.getIncludePeriods}]")
-            val result = super.calculateEnd(moment, remaining, seekDir, seekBoundary)
-            end = result._1
-            remaining = result._2
+            val results = super.calculateEnd(moment, remaining, seekDir, seekBoundary)
+            end = results._1
+            remaining = results._2
             log.trace(s"완료기간을 구했습니다. end=[$end], remaining=[$remaining]")
 
             if (end != null || remaining == null)
@@ -171,13 +170,14 @@ class CalendarDateAdd extends DateAdd {
         }
 
         val filter = new CalendarPeriodCollectorFilter()
-        filter.weekDays ++ weekDays
+        filter.weekDays ++= weekDays
         filter.collectingHours ++= workingHours
         filter.collectingDayHours ++= workingDayHours
 
         val weekCollector = new CalendarPeriodCollector(filter, limits, SeekDirection.Forward, calendar)
         weekCollector.collectHours()
 
+        log.trace(s"가능한 주간 기간=${weekCollector.periods}")
         weekCollector.periods
     }
 

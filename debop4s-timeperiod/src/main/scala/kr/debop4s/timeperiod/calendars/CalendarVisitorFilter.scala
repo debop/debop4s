@@ -25,17 +25,17 @@ class CalendarVisitorFilter extends ICalendarVisitorFilter {
 
     def excludePeriods: ITimePeriodCollection = _excludePeriods
 
-    def years: Seq[Int] = _years
+    def years: ArrayBuffer[Int] = _years
 
-    def monthOfYears: Seq[Int] = _monthOfYears
+    def monthOfYears: ArrayBuffer[Int] = _monthOfYears
 
-    def dayOfMonths: Seq[Int] = _dayOfMonths
+    def dayOfMonths: ArrayBuffer[Int] = _dayOfMonths
 
-    def weekDays: mutable.Set[DayOfWeek] = _weekDays
+    def weekDays: mutable.HashSet[DayOfWeek] = _weekDays
 
-    def hourOfDays: Seq[Int] = _hourOfDays
+    def hourOfDays: ArrayBuffer[Int] = _hourOfDays
 
-    def minuteOfHours: Seq[Int] = _minuteOfHours
+    def minuteOfHours: ArrayBuffer[Int] = _minuteOfHours
 
     def addWorkingWeekdays() {
         addWeekdays(Weekdays: _*)
