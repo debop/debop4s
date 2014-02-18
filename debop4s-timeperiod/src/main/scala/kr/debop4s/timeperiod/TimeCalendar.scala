@@ -129,6 +129,16 @@ object TimeCalendar {
         new TimeCalendar(cfg)
     }
 
+    def getDefault(): TimeCalendar = getDefault(Locale.getDefault)
+
+    def getDefault(locale: Locale): TimeCalendar = {
+        val config = new TimeCalendarConfig(locale)
+        config.startOffset = DefaultStartOffset
+        config.endOffset = DefaultEndOffset
+
+        TimeCalendar(config)
+    }
+
     def getEmptyOffset: TimeCalendar = getEmptyOffset(Locale.getDefault)
 
     def getEmptyOffset(locale: Locale): TimeCalendar = {

@@ -167,7 +167,7 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     def setup(start: DateTime, end: DateTime) {
         log.trace(s"기간을 새로 설정합니다. newStart=[$start], newEnd=[$end]")
-        assertMutable()
+
         val ns: DateTime = Options.get(start).getOrElse(MinPeriodTime)
         val ne: DateTime = Options.get(end).getOrElse(MaxPeriodTime)
 

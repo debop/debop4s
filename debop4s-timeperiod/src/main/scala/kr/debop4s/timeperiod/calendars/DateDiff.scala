@@ -1,8 +1,7 @@
 package kr.debop4s.timeperiod.calendars
 
 import java.util.Objects
-import kr.debop4s.core.ValueObject
-import kr.debop4s.core.utils.Hashs
+import kr.debop4s.core.utils.{ToStringHelper, Hashs}
 import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
@@ -12,22 +11,9 @@ import org.joda.time.{Duration, DateTime}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 3:40
  */
-@SerialVersionUID(3415272759108830763L)
 class DateDiff(val start: DateTime,
                val end: DateTime,
-               val calendar: ITimeCalendar) extends ValueObject {
-
-    def this(moment: DateTime, calendar: ITimeCalendar) {
-        this(moment, Times.now, calendar)
-    }
-
-    def this(moment: DateTime) {
-        this(moment, DefaultTimeCalendar)
-    }
-
-    def this(start: DateTime, end: DateTime) {
-        this(start, end, DefaultTimeCalendar)
-    }
+               val calendar: ITimeCalendar) {
 
     val difference = new Duration(start, end)
 
@@ -35,29 +21,41 @@ class DateDiff(val start: DateTime,
     lazy val quarters = calcQuarters()
     lazy val months = calcMonths()
     lazy val weeks = calcWeeks()
-    lazy val days = Math.round(roundEx(difference.getStandardDays)).toInt
-    lazy val hours = Math.round(roundEx(difference.getStandardHours)).toInt
-    lazy val minutes = Math.round(roundEx(difference.getStandardMinutes)).toInt
-    lazy val seconds = Math.round(roundEx(difference.getStandardSeconds)).toInt
+    lazy val days = Math.round(roundEx(difference.getStandardDays)).toLong
+    lazy val hours = Math.round(roundEx(difference.getStandardHours)).toLong
+    lazy val minutes = Math.round(roundEx(difference.getStandardMinutes)).toLong
+    lazy val seconds = Math.round(roundEx(difference.getStandardSeconds)).toLong
 
     lazy val elapsedYears = years
     lazy val elapsedQuarters = quarters
     lazy val elapsedMonths = months - elapsedYears * MonthsPerYear
 
-    lazy val elapsedStartDays = start.plusYears(elapsedYears).plusMonths(elapsedMonths)
-    lazy val elapsedDays = new Duration(elapsedStartDays, end).getStandardDays.toInt
+    lazy val elapsedStartDays = start.plusYears(elapsedYears.toInt).plusMonths(elapsedMonths.toInt)
+    lazy val elapsedDays = new Duration(elapsedStartDays, end).getStandardDays.toLong
 
-    lazy val elapsedStartHours = start.plusYears(elapsedYears).plusMonths(elapsedMonths).plusDays(elapsedDays)
-    lazy val elapsedHours = new Duration(elapsedStartHours, end).getStandardHours.toInt
+    lazy val elapsedStartHours =
+        start.plusYears(elapsedYears.toInt)
+            .plusMonths(elapsedMonths.toInt)
+            .plusDays(elapsedDays.toInt)
+
+    lazy val elapsedHours = new Duration(elapsedStartHours, end).getStandardHours.toLong
 
     lazy val elapsedStartMinutes =
-        start.plusYears(elapsedYears).plusMonths(elapsedMonths).plusDays(elapsedDays).plusHours(elapsedHours)
-    lazy val elapsedMinutes = new Duration(elapsedStartMinutes, end).getStandardMinutes.toInt
+        start.plusYears(elapsedYears.toInt)
+            .plusMonths(elapsedMonths.toInt)
+            .plusDays(elapsedDays.toInt)
+            .plusHours(elapsedHours.toInt)
+
+    lazy val elapsedMinutes = new Duration(elapsedStartMinutes, end).getStandardMinutes.toLong
 
     lazy val elapsedStartSeconds =
-        start.plusYears(elapsedYears).plusMonths(elapsedMonths).plusDays(elapsedDays)
-            .plusHours(elapsedHours).plusMinutes(elapsedMinutes)
-    lazy val elapsedSeconds = new Duration(elapsedStartSeconds, end).getStandardSeconds.toInt
+        start.plusYears(elapsedYears.toInt)
+            .plusMonths(elapsedMonths.toInt)
+            .plusDays(elapsedDays.toInt)
+            .plusHours(elapsedHours.toInt)
+            .plusMinutes(elapsedMinutes.toInt)
+
+    lazy val elapsedSeconds = new Duration(elapsedStartSeconds, end).getStandardSeconds.toLong
 
     def isEmpty = difference.isEqual(Duration.ZERO)
 
@@ -69,7 +67,7 @@ class DateDiff(val start: DateTime,
 
     def endMonthOfYear = calendar.getMonthOfYear(end)
 
-    private def calcYears(): Int = {
+    private def calcYears(): Long = {
         if (Objects.equals(start, end)) 0
 
         val compareDay = Math.min(end.getDayOfMonth, calendar.getDaysInMonth(startYear, endMonthOfYear))
@@ -83,7 +81,7 @@ class DateDiff(val start: DateTime,
         endYear - calendar.getYear(compareDate)
     }
 
-    private def calcQuarters(): Int = {
+    private def calcQuarters(): Long = {
         if (Objects.equals(start, end)) 0
 
         val y1 = Times.getYearOf(startYear, startMonthOfYear)
@@ -95,7 +93,7 @@ class DateDiff(val start: DateTime,
         (y2 * QuartersPerYear + q2.id) - (y1 * QuartersPerYear + q1.id)
     }
 
-    private def calcMonths(): Int = {
+    private def calcMonths(): Long = {
         if (Objects.equals(start, end)) 0
 
         val compareDay = Math.min(end.getDayOfMonth, calendar.getDaysInMonth(startYear, startMonthOfYear))
@@ -112,14 +110,14 @@ class DateDiff(val start: DateTime,
         (calendar.getYear(compareDate) * MonthsPerYear + calendar.getMonthOfYear(compareDate))
     }
 
-    private def calcWeeks(): Int = {
+    private def calcWeeks(): Long = {
         if (Objects.equals(start, end)) 0
 
         val w1 = Times.getStartOfWeek(start)
         val w2 = Times.getStartOfWeek(end)
 
         if (Objects.equals(w1, w2)) 0
-        else (new Duration(w1, w2).getStandardDays / DaysPerWeek).toInt
+        else (new Duration(w1, w2).getStandardDays / DaysPerWeek).toLong
     }
 
     private def roundEx(n: Double): Double =
@@ -128,10 +126,28 @@ class DateDiff(val start: DateTime,
     override def hashCode(): Int =
         Hashs.compute(start, end, difference, calendar)
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
+
+    override def toString: String =
+        ToStringHelper(this)
             .add("start", start)
             .add("end", end)
             .add("diffrence", difference)
             .add("calendar", calendar)
+            .toString
+}
+
+
+object DateDiff {
+
+    def apply(start: DateTime, end: DateTime): DateDiff =
+        apply(start, end, DefaultTimeCalendar)
+
+    def apply(start: DateTime, end: DateTime, calendar: ITimeCalendar): DateDiff =
+        new DateDiff(start, end, calendar)
+
+    def apply(moment: DateTime): DateDiff =
+        apply(moment, DefaultTimeCalendar)
+
+    def apply(moment: DateTime, calendar: ITimeCalendar): DateDiff =
+        apply(moment, Times.now, calendar)
 }

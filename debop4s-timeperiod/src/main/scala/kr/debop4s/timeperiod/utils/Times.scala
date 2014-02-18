@@ -97,7 +97,7 @@ object Times {
     }
 
     def toTimePeriodCollection[T <: ITimePeriod](sequence: Iterable[T]): TimePeriodCollection =
-        new TimePeriodCollection(sequence)
+        TimePeriodCollection(sequence)
 
     def getYearOf(moment: DateTime): Int = getYearOf(moment.getYear, moment.getMonthOfYear)
 
@@ -805,6 +805,7 @@ object Times {
         require(target != null)
 
         var intersection: TimeRange = null
+
         if (intersectWith(period, target)) {
             val start = max(period.start, target.start)
             val end = min(period.end, target.end)

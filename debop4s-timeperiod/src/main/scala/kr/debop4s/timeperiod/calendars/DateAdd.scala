@@ -1,6 +1,6 @@
 package kr.debop4s.timeperiod.calendars
 
-import kr.debop4s.core.{Guard, ValueObject}
+import kr.debop4s.core.Guard
 import kr.debop4s.timeperiod.SeekBoundaryMode.SeekBoundaryMode
 import kr.debop4s.timeperiod.SeekDirection.SeekDirection
 import kr.debop4s.timeperiod._
@@ -15,10 +15,9 @@ import scala.collection.JavaConversions._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 1:51
  */
-@SerialVersionUID(2352433294158169198L)
-class DateAdd extends ValueObject {
+class DateAdd {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val includePeriods = TimePeriodCollection()
     val excludePeriods = TimePeriodCollection()
@@ -29,9 +28,6 @@ class DateAdd extends ValueObject {
 
     def add(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
         log.trace(s"Add... start=[$start] + offset[$offset]의 시간을 계산합니다. seekBoundary=[$seekBoundary]")
-
-        if (offset == Durations.Zero)
-            return start
 
         if (includePeriods.size == 0 && excludePeriods.size == 0)
             return start + offset
@@ -48,9 +44,6 @@ class DateAdd extends ValueObject {
 
     def subtract(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
         log.trace(s"Subtract... start=[$start] + offset[$offset]의 시간을 계산합니다. seekBoundary=[$seekBoundary]")
-
-        if (offset == Durations.Zero)
-            return start
 
         if (includePeriods.size == 0 && excludePeriods.size == 0)
             return start - offset
@@ -74,7 +67,7 @@ class DateAdd extends ValueObject {
         var remaining = offset
         var end: DateTime = null
 
-        val searchPeriods = new TimePeriodCollection(includePeriods)
+        val searchPeriods = TimePeriodCollection(includePeriods)
         if (searchPeriods.size == 0)
             searchPeriods.add(TimeRange.Anytime)
 
@@ -95,30 +88,32 @@ class DateAdd extends ValueObject {
             })
         }
 
-        if (availablePeriods.size == 0) {
+        if (availablePeriods == null || availablePeriods.size == 0) {
             log.trace("유효한 period가 없어서 중단합니다.")
             return (null, remaining)
         }
 
-        log.trace("유효기간 중 중복된 부분은 결합합니다...")
+        log.trace(s"유효기간 중 중복된 부분은 제거하기 위해 기간을 결합합니다... availablePeriods=$availablePeriods")
         val periodCombiner = new TimePeriodCombiner[TimeRange]()
         availablePeriods = periodCombiner.combinePeriods(availablePeriods)
 
         log.trace("첫 시작합니다...")
 
         var (startPeriod, seekMoment) =
-            if (seekDir == SeekDirection.Forward) findNextPeriod(start, availablePeriods)
-            else findPreviousPeriod(start, availablePeriods)
+            if (seekDir == SeekDirection.Forward)
+                DateAdd.findNextPeriod(start, availablePeriods)
+            else
+                DateAdd.findPreviousPeriod(start, availablePeriods)
 
         // 첫 시작 기간이 없다면 중단합니다.
         if (startPeriod == null) {
             log.trace("첫 시작이 없어서 중단합니다.")
-            (null, remaining)
+            return (null, remaining)
         }
 
         if (offset.isEqual(Duration.ZERO)) {
             log.trace("offset 값이 0이므로, 바로 다음 값인 seekMoment를 반환합니다.")
-            (seekMoment, remaining)
+            return (seekMoment, remaining)
         }
 
         if (seekDir == SeekDirection.Forward) {
@@ -171,7 +166,16 @@ class DateAdd extends ValueObject {
         (null, remaining)
     }
 
-    private def findNextPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {
+
+}
+
+object DateAdd {
+
+    def apply(): DateAdd = new DateAdd()
+
+    private lazy val log = LoggerFactory.getLogger(getClass)
+
+    private[timeperiod] def findNextPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {
         log.trace(s"시작시각 이후 기간을 찾습니다... start=[$start], periods=[$periods]")
 
         var nearest: ITimePeriod = null
@@ -181,7 +185,6 @@ class DateAdd extends ValueObject {
         periods
             .filter(period => period.end >= start)
             .foreach(period => {
-
             if (period.hasInside(start)) {
                 nearest = period
                 moment = start
@@ -199,7 +202,7 @@ class DateAdd extends ValueObject {
         (nearest, moment)
     }
 
-    private def findPreviousPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {
+    private[timeperiod] def findPreviousPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {
         log.trace(s"시작시각 이전 기간을 찾습니다... start=[$start], periods=[$periods]")
 
         var nearest: ITimePeriod = null
@@ -229,5 +232,4 @@ class DateAdd extends ValueObject {
         log.trace(s"시작시각 이후 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")
         (nearest, moment)
     }
-
 }

@@ -10,6 +10,7 @@ import kr.debop4s.timeperiod.timeline.TimeGapCalculator
 import kr.debop4s.timeperiod.timerange.WeekRange
 import kr.debop4s.timeperiod.utils.Durations
 import org.joda.time.{Duration, DateTime}
+import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.mutable.ArrayBuffer
 
@@ -19,6 +20,8 @@ import scala.collection.mutable.ArrayBuffer
  * @since  2014. 1. 5. 오전 4:21
  */
 class CalendarDateAdd extends DateAdd {
+
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val calendar = TimeCalendar.getEmptyOffset
     val weekDays = ArrayBuffer[DayOfWeek]()
@@ -55,7 +58,7 @@ class CalendarDateAdd extends DateAdd {
                 calculateEnd(start, offset, SeekDirection.Forward, seekBoundary)
 
         log.trace(s"Add finished. start=[$start] + offset=[$offset] => end=[$end] seekBoundary=[$seekBoundary]")
-        return end
+        end
     }
 
     override def subtract(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
@@ -71,7 +74,7 @@ class CalendarDateAdd extends DateAdd {
                 calculateEnd(start, offset, SeekDirection.Backward, seekBoundary)
 
         log.trace(s"Subtract finished. start=[$start] - offset=[$offset] => end=[$end] seekBoundary=[$seekBoundary]")
-        return end
+        end
     }
 
     override def calculateEnd(start: DateTime,
@@ -129,9 +132,8 @@ class CalendarDateAdd extends DateAdd {
             val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
             val remainingPeriods = gapCalculator.getGaps(getExcludePeriods, limits)
 
-            next =
-                if (remainingPeriods.size > 0) WeekRange(remainingPeriods.get(0).start, calendar)
-                else null
+            if (remainingPeriods.size > 0)
+                next = WeekRange(remainingPeriods.get(0).start, calendar)
         }
 
         log.trace(s"current week=[$current] 이후 week 기간=[$next]")
@@ -150,10 +152,8 @@ class CalendarDateAdd extends DateAdd {
             val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
             val remainingPeriods = gapCalculator.getGaps(getExcludePeriods, limits)
 
-            previous =
-                if (remainingPeriods.size > 0)
-                    WeekRange(remainingPeriods.get(remainingPeriods.size - 1).end, calendar)
-                else null
+            if (remainingPeriods.size > 0)
+                previous = WeekRange(remainingPeriods.get(remainingPeriods.size - 1).end, calendar)
         }
 
         log.trace(s"current week=[$current] 이전 week 기간=[$previous]")
@@ -167,7 +167,7 @@ class CalendarDateAdd extends DateAdd {
         if (weekDays.size == 0 && workingHours.size == 0 && workingDayHours.size == 0) {
             val result = TimePeriodCollection()
             result.add(limits)
-            result
+            return result
         }
 
         val filter = new CalendarPeriodCollectorFilter()

@@ -5,6 +5,7 @@ import kr.debop4s.core.NotSupportedException
 import kr.debop4s.timeperiod.OrderDirection.OrderDirection
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
+import scala.annotation.varargs
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
@@ -44,6 +45,7 @@ trait ITimePeriodContainer extends util.List[ITimePeriod] with ITimePeriod {
         true
     }
 
+    @varargs
     def addAll(elems: ITimePeriod*): Boolean = {
         periods ++= elems
         true

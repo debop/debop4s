@@ -14,7 +14,7 @@ class TimePeriodCombiner[T <: ITimePeriod](val mapper: ITimePeriodMapper) {
     }
 
     def combinePeriods(periods: ITimePeriod*): ITimePeriodCollection =
-        new TimeLine(new TimePeriodCollection(periods: _*), mapper = mapper).combinePeriods
+        new TimeLine(TimePeriodCollection(periods: _*), mapper = mapper).combinePeriods
 
     def combinePeriods(periods: ITimePeriodContainer): ITimePeriodCollection =
         new TimeLine(periods, mapper = mapper).combinePeriods

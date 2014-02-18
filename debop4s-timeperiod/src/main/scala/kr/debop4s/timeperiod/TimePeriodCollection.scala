@@ -3,6 +3,7 @@ package kr.debop4s.timeperiod
 import kr.debop4s.timeperiod.PeriodRelation.PeriodRelation
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
+import scala.annotation.varargs
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -75,21 +76,25 @@ trait ITimePeriodCollection extends ITimePeriodContainer {
 @SerialVersionUID(106296570654143822L)
 class TimePeriodCollection extends TimePeriodContainer with ITimePeriodCollection {
 
-    def this(seq: ITimePeriod*) {
-        this()
-        periods ++= seq
-    }
-
-    def this(collection: Iterable[_ <: ITimePeriod]) {
-        this()
-        periods ++= collection
-    }
+    override def toString: String = periods.mkString
 }
 
 object TimePeriodCollection {
 
     def apply(): TimePeriodCollection = new TimePeriodCollection
 
-    def apply(seq: ITimePeriod*): TimePeriodCollection = new TimePeriodCollection(seq)
+    @varargs
+    def apply(seq: ITimePeriod*): TimePeriodCollection = {
+        val tpc = new TimePeriodCollection()
+        tpc.addAll(seq: _*)
+        tpc
+    }
+
+    def apply(collection: Iterable[_ <: ITimePeriod]): TimePeriodCollection = {
+        val tpc = new TimePeriodCollection()
+        tpc.addAll(collection)
+        tpc
+    }
+
 
 }

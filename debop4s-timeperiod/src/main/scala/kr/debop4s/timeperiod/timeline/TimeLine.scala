@@ -1,6 +1,5 @@
 package kr.debop4s.timeperiod.timeline
 
-import java.util
 import kr.debop4s.timeperiod._
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -33,7 +32,7 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
 
         val moments = getTimeLineMoments
         if (moments == null || moments.size == 0)
-            return new TimePeriodCollection(TimeRange(periods))
+            return TimePeriodCollection(TimeRange(periods))
 
         TimeLines.combinePeriods(moments)
     }
@@ -59,16 +58,16 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
 
         val moments = getTimeLineMoments(gapPeriods)
         if (moments == null || moments.size == 0)
-            return new TimePeriodCollection(limits)
+            return TimePeriodCollection(limits)
 
         val range = TimeRange(mapPeriodStart(limits.start), mapPeriodEnd(limits.end))
         TimeLines.calculateGap(moments, range)
     }
 
-    private def getTimeLineMoments: ITimeLineMomentCollection = getTimeLineMoments(periods)
+    private def getTimeLineMoments: ITimeLineMomentCollection = getTimeLineMoments(this.periods.periods)
 
-    private def getTimeLineMoments(periods: util.Collection[_ <: ITimePeriod]): ITimeLineMomentCollection = {
-        log.trace(s"기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드합니다... periods=[$periods]")
+    private def getTimeLineMoments(periods: Iterable[ITimePeriod]): ITimeLineMomentCollection = {
+        log.trace(s"기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드합니다... periods=$periods")
 
         val moments = TimeLineMomentCollection()
         if (periods == null || periods.size == 0)
@@ -77,14 +76,15 @@ class TimeLine[T <: ITimePeriod](val periods: ITimePeriodContainer,
         // setup gap set with all start/end points
         //
         val intersections = new TimePeriodCollection()
+
         periods
             .filter(mp => !mp.isMoment)
             .foreach(mp => {
+            log.trace(s"moment periods = $mp")
             val intersection = limits.getIntersection(mp)
             if (intersection != null && !intersection.isMoment) {
                 if (mapper != null) {
-                    intersection.setup(mapPeriodStart(intersection.getStart),
-                        mapPeriodEnd(intersection.getEnd))
+                    intersection.setup(mapPeriodStart(intersection.start), mapPeriodEnd(intersection.end))
                 }
                 log.trace(s"add intersection. intersection=[$intersection]")
                 intersections.add(intersection)
