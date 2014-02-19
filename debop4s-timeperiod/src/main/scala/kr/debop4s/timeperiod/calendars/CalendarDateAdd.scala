@@ -30,10 +30,17 @@ class CalendarDateAdd extends DateAdd {
 
     override def getIncludePeriods = throw new NotSupportedException("IncludePeriods는 지원하지 않습니다.")
 
+    /**
+     * 주중 (월-금)을 working day로 추가합니다.
+     */
+
     def addWorkingWeekDays() {
         addWeekDays(Weekdays: _*)
     }
 
+    /**
+     * 주말 (토-일)을 working day로 추가합니다.
+     */
     def addWeekendWeekDays() {
         addWeekDays(Weekends: _*)
     }
@@ -43,14 +50,17 @@ class CalendarDateAdd extends DateAdd {
         weekDays ++= dayOfWeeks
     }
 
-    override def add(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
+    /**
+     * start 시각으로부터 offset 기간이 지난 시각을 계산합니다.
+     */
+    override def add(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode): DateTime = {
         log.trace(s"Add... start=$start, offset=$offset 시각을 계산합니다. seekBoundary=$seekBoundary")
 
         if (weekDays.size == 0 && excludePeriods.size == 0 && workingHours.size == 0)
             return start.plus(offset)
 
         val (end, remaining) =
-            if (offset.compareTo(Duration.ZERO) < 0)
+            if (offset < Duration.ZERO)
                 calculateEnd(start, Durations.negate(offset), SeekDirection.Backward, seekBoundary)
             else
                 calculateEnd(start, offset, SeekDirection.Forward, seekBoundary)
@@ -59,14 +69,17 @@ class CalendarDateAdd extends DateAdd {
         end
     }
 
-    override def subtract(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
+    /**
+     * start 시각으로부터 offset 기간 전 시각을 계산합니다.
+     */
+    override def subtract(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode): DateTime = {
         log.trace(s"subtract... start=[$start] - offset=[$offset] 시각을 계산합니다. seekBoundary=$seekBoundary")
 
         if (weekDays.size == 0 && excludePeriods.size == 0 && workingHours.size == 0)
             return start.minus(offset)
 
         val (end, remaining) =
-            if (offset.compareTo(Duration.ZERO) < 0)
+            if (offset < Duration.ZERO)
                 calculateEnd(start, Durations.negate(offset), SeekDirection.Forward, seekBoundary)
             else
                 calculateEnd(start, offset, SeekDirection.Backward, seekBoundary)
@@ -152,7 +165,7 @@ class CalendarDateAdd extends DateAdd {
         if (getExcludePeriods.size == 0) {
             previous = current.previousWeek
         } else {
-            val limits = new TimeRange(MinPeriodTime, current.start - 1.millis )
+            val limits = new TimeRange(MinPeriodTime, current.start - 1.millis)
             val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
             val remainingPeriods = gapCalculator.getGaps(excludePeriods, limits)
 
@@ -168,7 +181,7 @@ class CalendarDateAdd extends DateAdd {
 
     private def getAvailableWeekPeriods(limits: ITimePeriod): Seq[ITimePeriod] = {
         assert(limits != null)
-        log.trace(s"가능한 주간 기간을 추출합니다. limits=[$limits]")
+        log.trace(s"가능한 주간 기간을 추출합니다... limits=[$limits]")
 
         if (weekDays.size == 0 && workingHours.size == 0 && workingDayHours.size == 0) {
             val result = TimePeriodCollection()
@@ -181,7 +194,7 @@ class CalendarDateAdd extends DateAdd {
         filter.collectingHours ++= workingHours
         filter.collectingDayHours ++= workingDayHours
 
-        val weekCollector = new CalendarPeriodCollector(filter, limits, SeekDirection.Forward, calendar)
+        val weekCollector = CalendarPeriodCollector(filter, limits, SeekDirection.Forward, calendar)
         weekCollector.collectHours()
 
         log.trace(s"가능한 주간 기간=${weekCollector.periods}")

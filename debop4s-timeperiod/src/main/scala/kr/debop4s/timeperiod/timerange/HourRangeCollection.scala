@@ -51,7 +51,7 @@ object HourRangeCollection {
               hourOfDay: Int,
               hourCount: Int,
               calendar: ITimeCalendar): HourRangeCollection = {
-        new HourRangeCollection(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay), hourCount, calendar)
+        new HourRangeCollection(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, 0), hourCount, calendar)
     }
 
 

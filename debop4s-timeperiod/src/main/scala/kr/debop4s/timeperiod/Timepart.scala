@@ -29,7 +29,7 @@ class Timepart(val value: DateTime) extends ValueObject with Ordered[Timepart] {
 
     def totalMillis: Long = value.getMillisOfDay
 
-    def getDateTime(moment: DateTime): DateTime = moment.withTimeAtStartOfDay() + totalMillis
+    def getDateTime(moment: DateTime): DateTime = moment.withTimeAtStartOfDay().plus(totalMillis)
 
     def compare(that: Timepart) = value.compareTo(that.value)
 
@@ -37,7 +37,7 @@ class Timepart(val value: DateTime) extends ValueObject with Ordered[Timepart] {
 
     override protected def buildStringHelper = {
         super.buildStringHelper
-            .add("value", value)
+        .add("value", value)
     }
 }
 

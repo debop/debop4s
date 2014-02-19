@@ -90,7 +90,7 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
     override lazy val log = LoggerFactory.getLogger(getClass)
 
     private var (startTime, endTime) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
-        Options.get(_end).getOrElse(MaxPeriodTime))
+                                                             Options.get(_end).getOrElse(MaxPeriodTime))
 
     def start = startTime
 
@@ -196,13 +196,12 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
 
     override def equals(obj: Any): Boolean =
-        obj != null && getClass().equals(obj.getClass) && hashCode() == obj.hashCode()
+        obj != null && getClass.equals(obj.getClass) && hashCode() == obj.hashCode()
 
     override def hashCode() = Hashs.compute(start, end, readonly)
 
     override protected def buildStringHelper =
         super.buildStringHelper
-            .add("start", start)
-            .add("end", end)
-            .add("readonly", readonly)
+        .add("start", start)
+        .add("end", end)
 }

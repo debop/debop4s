@@ -43,14 +43,6 @@ class YearTimeRange(private val _year: Int,
         }
         months
     }
-
-    override def hashCode(): Int = Hashs.compute(startYear, yearCount)
-
-    override protected def buildStringHelper: ToStringHelper =
-        ToStringHelper(this)
-            .add("year", startYear)
-            .add("yearCount", yearCount)
-            .add("calendar", calendar)
 }
 
 object YearTimeRange {

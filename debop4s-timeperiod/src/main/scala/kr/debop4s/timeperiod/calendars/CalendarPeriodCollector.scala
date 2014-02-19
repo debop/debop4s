@@ -8,14 +8,20 @@ import kr.debop4s.timeperiod.timerange._
 
 object CalendarPeriodCollector {
 
-    def apply(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod): CalendarPeriodCollector =
+    def apply(filter: CalendarPeriodCollectorFilter,
+              limits: ITimePeriod): CalendarPeriodCollector =
         apply(filter, limits, SeekDirection.Forward)
 
-    def apply(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod, seekDir: SeekDirection): CalendarPeriodCollector =
+    def apply(filter: CalendarPeriodCollectorFilter,
+              limits: ITimePeriod,
+              seekDir: SeekDirection): CalendarPeriodCollector =
         apply(filter, limits, SeekDirection.Forward, DefaultTimeCalendar)
 
-    def apply(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod, seekDir: SeekDirection, calendar: ITimeCalendar): CalendarPeriodCollector =
-        apply(filter, limits, seekDir, calendar)
+    def apply(filter: CalendarPeriodCollectorFilter,
+              limits: ITimePeriod,
+              seekDir: SeekDirection,
+              calendar: ITimeCalendar): CalendarPeriodCollector =
+        new CalendarPeriodCollector(filter, limits, seekDir, calendar)
 }
 
 /**
@@ -63,19 +69,19 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     }
 
     override protected def enterYears(years: YearRangeCollection, context: CalendarPeriodCollectorContext) =
-        context.scope > CollectKind.Year
+        context.scope.id > CollectKind.Year.id
 
     override protected def enterMonths(year: YearRange, context: CalendarPeriodCollectorContext) =
-        context.scope > CollectKind.Month
+        context.scope.id > CollectKind.Month.id
 
     override protected def enterDays(month: MonthRange, context: CalendarPeriodCollectorContext) =
-        context.scope > CollectKind.Day
+        context.scope.id > CollectKind.Day.id
 
     override protected def enterHours(day: DayRange, context: CalendarPeriodCollectorContext) =
-        context.scope > CollectKind.Hour
+        context.scope.id > CollectKind.Hour.id
 
     override protected def enterMinutes(hour: HourRange, context: CalendarPeriodCollectorContext) =
-        context.scope > CollectKind.Minute
+        context.scope.id > CollectKind.Minute.id
 
     override protected def onVisitYears(years: YearRangeCollection, context: CalendarPeriodCollectorContext): Boolean = {
         log.trace(s"visit years... years=[$years]")
@@ -92,7 +98,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     }
 
     override protected def onVisitYear(year: YearRange, context: CalendarPeriodCollectorContext): Boolean = {
-        log.trace(s"visit year... year=[$year]")
+        log.trace(s"visit year... year=[$year], context=$context")
 
         if (context.scope != CollectKind.Month)
             return true
@@ -123,7 +129,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     }
 
     override protected def onVisitMonth(month: MonthRange, context: CalendarPeriodCollectorContext): Boolean = {
-        log.trace(s"visit month... month=[$month]")
+        log.trace(s"visit month... month=[$month], context=$context")
 
         if (context.scope != CollectKind.Day)
             return true
@@ -152,15 +158,20 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     }
 
     override protected def onVisitDay(day: DayRange, context: CalendarPeriodCollectorContext): Boolean = {
-        log.trace(s"visit day... day=[$day]")
+        log.trace(s"visit day... day=[$day], context=$context")
 
-        if (context.scope != CollectKind.Hour)
+        if (context.scope != CollectKind.Hour) {
+            log.trace(s"Scope=[${context.scope}}]")
             return true
+        }
 
         if (filter.collectingHours.size == 0) {
             day.getHours
             .filter(h => isMatchingHour(h, context) && checkLimits(h))
-            .foreach(h => periods.add(h))
+            .foreach(h => {
+                log.trace(s"add hour. $h")
+                periods.add(h)
+            })
         } else if (isMatchingDay(day, context)) {
             filter.collectingHours.foreach(h => {
                 val start = h.start.getDateTime(day.start)
@@ -168,6 +179,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                 val hours = CalendarTimeRange(start, end, day.calendar)
 
                 if (checkExcludePeriods(hours) && checkLimits(hours)) {
+                    log.trace(s"add hours. $hours")
                     periods.add(hours)
                 }
             })

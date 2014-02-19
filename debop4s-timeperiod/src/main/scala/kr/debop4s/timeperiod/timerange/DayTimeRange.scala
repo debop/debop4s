@@ -32,15 +32,6 @@ class DayTimeRange(private[this] val _start: DateTime,
         }
         hours
     }
-
-    override def hashCode() = Hashs.compute(super.hashCode(), dayCount)
-
-    override protected def buildStringHelper =
-        ToStringHelper(this)
-            .add("start", start)
-            .add("end", end)
-            .add("dayCount", dayCount)
-            .add("calendar", calendar)
 }
 
 object DayTimeRange {

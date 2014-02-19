@@ -1,11 +1,11 @@
 package kr.debop4s.timeperiod.tests.calendars.seekers
 
+import kr.debop4s.timeperiod._
+import kr.debop4s.timeperiod.calendars.CalendarVisitorFilter
+import kr.debop4s.timeperiod.calendars.seeker.DaySeeker
 import kr.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import kr.debop4s.timeperiod.timerange.{DayRangeCollection, DayRange}
-import kr.debop4s.timeperiod.calendars.seeker.DaySeeker
-import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.utils.Times
-import kr.debop4s.timeperiod.calendars.CalendarVisitorFilter
 
 /**
  * DaySeekerTest
@@ -18,9 +18,11 @@ class DaySeekerTest extends AbstractTimePeriodTest {
         val daySeeker = DaySeeker()
 
         val day1 = daySeeker.findDay(start, 0)
+        assert(day1 != null)
         day1.isSamePeriod(start) should equal(true)
 
         val day2 = daySeeker.findDay(start, 1)
+        assert(day2 != null)
         day2.isSamePeriod(start.nextDay) should equal(true)
 
         (-10 until 20).par.foreach(i => {
@@ -56,9 +58,9 @@ class DaySeekerTest extends AbstractTimePeriodTest {
 
         val backwardSeeker = DaySeeker(SeekDirection.Backward)
 
-        (-10 until 20).par.foreach(i => {
+        (-10 until 20).foreach(i => {
             val offset = i * 5
-            val day = daySeeker.findDay(start, offset)
+            val day = backwardSeeker.findDay(start, offset)
             day.isSamePeriod(start.addDays(-offset)) should equal(true)
         })
     }

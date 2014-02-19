@@ -73,9 +73,6 @@ class CalendarTimeRange(private val _period: ITimePeriod, val calendar: ITimeCal
 
     override def hashCode(): Int = Hashs.compute(super.hashCode(), calendar)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-            .add("calendar", calendar)
 }
 
 object CalendarTimeRange {

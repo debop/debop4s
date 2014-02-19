@@ -15,7 +15,7 @@ trait ITimeBlock extends ITimePeriod {
 
     def end_=(v: DateTime)
 
-    def duration:Duration
+    def duration: Duration
 
     def duration_=(d: Duration)
 
@@ -66,8 +66,8 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
             TimeBlock(this)
         else
             TimeBlock(if (hasStart) start.plus(offset) else start,
-                if (hasEnd) end.plus(offset) else end,
-                readonly)
+                         if (hasEnd) end.plus(offset) else end,
+                         readonly)
     }
 
     def setup(ns: DateTime, nd: Duration) {
@@ -122,10 +122,6 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
     protected def assertValidDuration(v: Duration) {
         assert(v != null && v.getMillis >= 0, "duration은 0 이상의 값을 가져야 합니다.")
     }
-
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("duration", duration)
 }
 
 

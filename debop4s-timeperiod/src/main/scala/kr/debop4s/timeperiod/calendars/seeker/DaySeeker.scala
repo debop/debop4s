@@ -37,7 +37,8 @@ class DaySeeker(private val _filter: CalendarVisitorFilter,
     def findDay(startDay: DayRange, dayCount: Int): DayRange = {
         log.trace(s"Day 찾기... startDay=[$startDay], dayCount=[$dayCount]")
 
-        if (dayCount == 0) startDay
+        if (dayCount == 0)
+            return startDay
 
         val context = new DaySeekerContext(startDay, dayCount)
         var visitDir = seekDirection
@@ -63,16 +64,15 @@ class DaySeeker(private val _filter: CalendarVisitorFilter,
 
     override protected def enterHours(day: DayRange, context: DaySeekerContext) = false
 
-    override protected def onVisitDay(day: DayRange, context: DaySeekerContext) = {
+    override protected def onVisitDay(day: DayRange, context: DaySeekerContext): Boolean = {
         assert(day != null)
 
-        if (context.isFinished) false
-        else if (day.isSamePeriod(context.startDay)) true
-        else if (!isMatchingDay(day, context)) true
-        else if (!checkLimits(day)) true
+        if (context.isFinished) return false
+        else if (day.isSamePeriod(context.startDay)) return true
+        else if (!isMatchingDay(day, context)) return true
+        else if (!checkLimits(day)) return true
 
         context.processDay(day)
-
         // context가 찾기를 완료하면, 탐색(Visit)를 중단하도록 합니다.
         !context.isFinished
     }

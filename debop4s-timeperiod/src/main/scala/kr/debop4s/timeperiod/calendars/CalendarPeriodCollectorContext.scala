@@ -10,6 +10,8 @@ import kr.debop4s.timeperiod.calendars.CollectKind.CollectKind
 class CalendarPeriodCollectorContext extends ICalendarVisitorContext {
 
     var scope: CollectKind = _
+
+    override def toString: String = s"scope=$scope"
 }
 
 object CollectKind extends Enumeration {

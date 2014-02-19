@@ -19,13 +19,6 @@ class MinuteTimeRange(private val _start: DateTime,
 
     assert(minuteCount > 0)
     val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
-
-    override def hashCode(): Int = Hashs.compute(super.hashCode(), endMinute)
-
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-            .add("minuteCount", minuteCount)
-            .add("endMinute", endMinute)
 }
 
 object MinuteTimeRange {

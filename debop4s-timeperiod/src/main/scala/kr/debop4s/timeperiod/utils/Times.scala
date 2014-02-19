@@ -681,17 +681,14 @@ object Times {
     def getMinuteRanges(moment: DateTime, minuteCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): MinuteRangeCollection =
         MinuteRangeCollection(moment, minuteCount, calendar)
 
-
+    @inline
     def hasInside(period: ITimePeriod, target: DateTime): Boolean = {
-        val result = (target >= period.start) && (target <= period.end)
-        log.trace(s"HasInside=$result, period=$period, target=$target")
-        result
+        (target >= period.start) && (target <= period.end)
     }
 
+    @inline
     def hasInside(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        val result= hasInside(period, target.start) && hasInside(period, target.end)
-        log.trace(s"HasInside=$result, period=$period, target=$target")
-        result
+        hasInside(period, target.start) && hasInside(period, target.end)
     }
 
     def hasPureInside(period: ITimePeriod, target: DateTime): Boolean = {
@@ -706,6 +703,7 @@ object Times {
 
     def isNotAnyTime(period: ITimePeriod) = period != null && !period.isAnytime
 
+    @inline
     def getRelation(period: ITimePeriod, target: ITimePeriod): PeriodRelation = {
         require(period != null)
         require(target != null)
@@ -753,9 +751,6 @@ object Times {
     }
 
     def intersectWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        assert(period != null)
-        assert(target != null)
-
         val isIntersect =
             hasInside(period, target.start) ||
             hasInside(period, target.end) ||
@@ -772,9 +767,6 @@ object Times {
                                               PeriodRelation.Before)
 
     def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        require(period != null)
-        require(target != null)
-
         val relation = getRelation(period, target)
         val isOverlaps = !NotOverlapedRelations.contains(relation)
 
@@ -783,9 +775,6 @@ object Times {
     }
 
     def getIntersectionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
-        require(period != null)
-        require(target != null)
-
         var intersection: TimeBlock = null
         if (intersectWith(period, target)) {
             val start = max(period.start, target.start)
@@ -799,9 +788,6 @@ object Times {
     }
 
     def getUnionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
-        require(period != null)
-        require(target != null)
-
         val start = min(period.start, target.start)
         val end = max(period.end, target.end)
 
@@ -825,9 +811,6 @@ object Times {
     }
 
     def getUnionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
-        require(period != null)
-        require(target != null)
-
         val start = min(period.start, target.start)
         val end = max(period.end, target.end)
 

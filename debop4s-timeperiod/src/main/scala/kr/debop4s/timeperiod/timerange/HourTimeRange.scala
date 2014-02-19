@@ -29,12 +29,6 @@ class HourTimeRange(private val _moment: DateTime,
 
         minutes
     }
-
-    override def hashCode() = Hashs.compute(super.hashCode(), hourCount)
-
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("hourCount", hourCount)
 }
 
 object HourTimeRange {

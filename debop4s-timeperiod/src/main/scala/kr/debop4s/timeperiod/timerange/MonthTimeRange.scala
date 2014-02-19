@@ -31,15 +31,6 @@ class MonthTimeRange(private[this] val _year: Int,
         }
         days
     }
-
-    override def hashCode() = Hashs.compute(super.hashCode(), monthCount)
-
-    override protected def buildStringHelper: ToStringHelper =
-        ToStringHelper(this)
-            .add("year", startYear)
-            .add("monthOfYear", startMonthOfYear)
-            .add("monthCount", monthCount)
-            .add("calendar", calendar)
 }
 
 object MonthTimeRange {

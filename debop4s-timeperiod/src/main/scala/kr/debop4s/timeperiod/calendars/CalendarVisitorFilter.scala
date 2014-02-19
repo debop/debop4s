@@ -5,6 +5,7 @@ import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.{TimePeriodCollection, ITimePeriodCollection}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.annotation.varargs
 
 /**
  * kr.debop4s.timeperiod.calendars.CalendarVisitorFilter
@@ -45,6 +46,7 @@ class CalendarVisitorFilter extends ICalendarVisitorFilter {
         addWeekdays(Weekends: _*)
     }
 
+    @varargs
     def addWeekdays(days: DayOfWeek*) {
         _weekDays ++= days
     }

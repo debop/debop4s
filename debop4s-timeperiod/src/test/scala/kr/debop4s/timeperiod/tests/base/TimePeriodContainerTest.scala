@@ -21,9 +21,9 @@ class TimePeriodContainerTest extends AbstractTimePeriodTest {
         log.trace(s"container=$container")
         container.size should equal(2)
 
+        // 값 중복을 허용하지 않습니다^^
         val container2 = TimePeriodContainer(period1, period2, container)
-
-        assert( container2.length == 4 )
+        assert(container2.length == 2)
     }
 
 }

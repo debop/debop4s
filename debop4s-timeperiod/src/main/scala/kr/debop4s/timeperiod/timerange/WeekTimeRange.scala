@@ -34,12 +34,6 @@ class WeekTimeRange(private val _moment: DateTime,
         }
         days
     }
-
-    override def hashCode() = Hashs.compute(super.hashCode(), weekCount)
-
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("weekCount", weekCount)
 }
 
 object WeekTimeRange {

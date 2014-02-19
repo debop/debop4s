@@ -51,6 +51,7 @@ class CalendarPeriodCollectorTest extends AbstractTimePeriodTest {
     test("collect days") {
         val filter = new CalendarPeriodCollectorFilter()
 
+        // 1월의 금요일만 추출
         filter.monthOfYears += Month.January.id
         filter.weekDays += DayOfWeek.Friday
 

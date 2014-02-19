@@ -17,7 +17,7 @@ abstract class QuarterTimeRange(private val _year: Int,
                                 val quarterCount: Int,
                                 private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(QuarterTimeRange.getPeriodOf(_year, _quarter, quarterCount, _calendar),
-        _calendar) {
+                                 _calendar) {
 
     val startQuarter: Quarter = _quarter
     val endQuarter: Quarter = Times.getQuarterOfMonth(end.getMonthOfYear)
@@ -37,15 +37,6 @@ abstract class QuarterTimeRange(private val _year: Int,
         }
         months
     }
-
-    override def hashCode() = Hashs.compute(startYear, startQuarter, endYear, endQuarter)
-
-    override protected def buildStringHelper =
-        super.buildStringHelper
-            .add("startYear", startYear)
-            .add("startQuarter", startQuarter)
-            .add("endYear", endYear)
-            .add("endQuarter", endQuarter)
 }
 
 object QuarterTimeRange {

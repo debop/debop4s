@@ -60,28 +60,19 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     }
 
     def add(x: ITimePeriod) {
-        periods += x
+        x match {
+            case container: ITimePeriodContainer => container.foreach(add)
+            case _ => if (!periods.contains(x)) periods += x
+        }
     }
 
     def addAll(elems: Iterable[ITimePeriod]) {
-        elems
-        .filter(_.isInstanceOf[ITimePeriodContainer])
-        .foreach(elem => addAll(elem.asInstanceOf[ITimePeriodContainer].periods))
-
-        elems
-        .filter(!_.isInstanceOf[ITimePeriodContainer])
-        .foreach(add)
+        elems.foreach(add)
     }
 
     @varargs
     def addAll(elems: ITimePeriod*) {
-        elems
-        .filter(_.isInstanceOf[ITimePeriodContainer])
-        .foreach(elem => addAll(elem.asInstanceOf[ITimePeriodContainer].periods))
-
-        elems
-        .filter(!_.isInstanceOf[ITimePeriodContainer])
-        .foreach(add)
+        elems.foreach(add)
     }
 
     @varargs
@@ -275,13 +266,13 @@ class TimePeriodContainer extends ITimePeriodContainer {
 
 object TimePeriodContainer {
 
-    def apply(collection: Iterable[ITimePeriod]):TimePeriodContainer = {
+    def apply(collection: Iterable[ITimePeriod]): TimePeriodContainer = {
         val container = new TimePeriodContainer()
         container.addAll(collection)
         container
     }
 
-    def apply(periods: ITimePeriod*):TimePeriodContainer = {
+    def apply(periods: ITimePeriod*): TimePeriodContainer = {
         val container = new TimePeriodContainer()
         container.addAll(periods)
         container
