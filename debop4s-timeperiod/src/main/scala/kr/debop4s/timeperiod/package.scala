@@ -36,8 +36,6 @@ package object timeperiod {
 
     implicit def richChronology(v: Chronology): RichChronology = new RichChronology(v)
 
-    implicit def richDateMidnight(v: DateMidnight): RichDateMidnight = new RichDateMidnight(v)
-
     implicit def richDateTime(v: DateTime): RichDateTime = new RichDateTime(v)
 
     implicit def richDateTimeFormatter(v: DateTimeFormatter): RichDateTimeFormatter = new RichDateTimeFormatter(v)
@@ -81,7 +79,6 @@ package object timeperiod {
     implicit def richReadablePeriod(v: ReadablePeriod): RichReadablePeriod = new RichReadablePeriod(v)
 
     implicit val DateTimeOrdering: Ordering[DateTime] = ReadableInstantOrdering[DateTime]
-    implicit val DateMidnightOrdering: Ordering[DateMidnight] = ReadableInstantOrdering[DateMidnight]
     implicit val LocalDateOrdering: Ordering[LocalDate] = ReadablePartialOrdering[LocalDate]
     implicit val LocalTimeOrdering: Ordering[LocalTime] = ReadablePartialOrdering[LocalTime]
     implicit val LocalDateTimeOrdering: Ordering[LocalDateTime] = ReadablePartialOrdering[LocalDateTime]
@@ -197,19 +194,24 @@ package object timeperiod {
     val WeekDaysPerWeek: Int = 5
     /** 한 주의 주말 일 수 (2) */
     val WeekEndsPerWeek: Int = 2
+
     /** 주중 요일 */
-    var Weekdays: Array[DayOfWeek] = Array[DayOfWeek](DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek
-        .Thursday, DayOfWeek.Friday)
+    var Weekdays = Array(DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday)
+
     /** 주말 요일 */
-    var Weekends: Array[DayOfWeek] = Array[DayOfWeek](DayOfWeek.Saturday, DayOfWeek.Sunday)
+    var Weekends = Array(DayOfWeek.Saturday, DayOfWeek.Sunday)
+
     /** 한 주의 첫번째 주중 요일 (월요일) */
     val FirstWorkingDayOfWeek: DayOfWeek = DayOfWeek.Monday
+
     /** 한 주의 첫번째 요일 (월요일) - ISO8601을 따른다. */
     val FirstDayOfWeek: DayOfWeek = DayOfWeek.Monday
+
     /** 전반기에 속하는 월 (1월~6월) */
-    val FirstHalfyearMonths: Array[Int] = Array[Int](1, 2, 3, 4, 5, 6)
+    val FirstHalfyearMonths = Array[Int](1, 2, 3, 4, 5, 6)
+
     /** 후반기에 속하는 월 (7월~12월) */
-    val SecondHalfyearMonths: Array[Int] = Array[Int](7, 8, 9, 10, 11, 12)
+    val SecondHalfyearMonths = Array[Int](7, 8, 9, 10, 11, 12)
     /** 1분기 시작 월 (1월) */
     val FirstQuarterMonth: Int = 1
     /** 2분기 시작 월 (4월) */

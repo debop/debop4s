@@ -289,9 +289,9 @@ class DateAddTest extends AbstractTimePeriodTest {
         val dateAdd = DateAdd()
 
         dateAdd.includePeriods.add(TimeRange(asDate(2011, 3, 1), asDate(2011, 3, 5)))
-        dateAdd.includePeriods.add(TimeRange(asDate(2011, 3, 5), asDate(2011, 3, 10)))
+        dateAdd.excludePeriods.add(TimeRange(asDate(2011, 3, 5), asDate(2011, 3, 10)))
         dateAdd.includePeriods.add(TimeRange(asDate(2011, 3, 10), asDate(2011, 3, 15)))
-        dateAdd.includePeriods.add(TimeRange(asDate(2011, 3, 15), asDate(2011, 3, 20)))
+        dateAdd.excludePeriods.add(TimeRange(asDate(2011, 3, 15), asDate(2011, 3, 20)))
         dateAdd.includePeriods.add(TimeRange(asDate(2011, 3, 20), asDate(2011, 3, 25)))
 
         val periodStart = asDate(2011, 3, 1)
@@ -300,7 +300,6 @@ class DateAddTest extends AbstractTimePeriodTest {
         // add from start
         dateAdd.add(periodStart, Durations.Zero) should equal(periodStart)
         dateAdd.add(periodStart, Durations.days(1)) should equal(asDate(2011, 3, 2))
-        dateAdd.add(periodStart, Durations.days(2)) should equal(asDate(2011, 3, 3))
         dateAdd.add(periodStart, Durations.days(3)) should equal(asDate(2011, 3, 4))
         dateAdd.add(periodStart, Durations.days(4)) should equal(asDate(2011, 3, 10))
         dateAdd.add(periodStart, Durations.days(5)) should equal(asDate(2011, 3, 11))
@@ -358,7 +357,7 @@ class DateAddTest extends AbstractTimePeriodTest {
 
         // setup some periods to exclude
         dateAdd.excludePeriods.add(TimeRange(asDate(2011, 3, 5), asDate(2011, 3, 10)))
-        dateAdd.excludePeriods.add(TimeRange(asDate(2011, 3, 10), asDate(2011, 3, 15)))
+        dateAdd.includePeriods.add(TimeRange(asDate(2011, 3, 10), asDate(2011, 3, 15)))
         dateAdd.excludePeriods.add(TimeRange(asDate(2011, 3, 15), asDate(2011, 3, 20)))
 
         val start = asDate(2011, 3, 10)

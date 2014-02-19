@@ -15,7 +15,7 @@ import scala.collection.mutable.ArrayBuffer
 @SerialVersionUID(3032428178497692848L)
 class CalendarVisitorFilter extends ICalendarVisitorFilter {
 
-    val _excludePeriods = new TimePeriodCollection()
+    val _excludePeriods = TimePeriodCollection()
     val _years = ArrayBuffer[Int]()
     val _monthOfYears = ArrayBuffer[Int]()
     val _dayOfMonths = ArrayBuffer[Int]()

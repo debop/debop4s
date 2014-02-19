@@ -7,7 +7,7 @@ import kr.debop4s.timeperiod.timerange._
 import org.slf4j.LoggerFactory
 
 /**
- * kr.debop4s.timeperiod.calendars.CalendarVisitor
+ * 특정 기간에 대한 필터링 정보를 기반으로 기간들을 필터링 할 수 있도록 특정 기간을 탐색하는 Visitor입니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 3. 오후 2:14
@@ -32,49 +32,52 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
         onVisitStart()
 
-        val years = new YearRangeCollection(period.start.getYear,
-            period.end.getYear - period.start.getYear + 1,
-            calendar)
+        val years = YearRangeCollection(period.start.getYear,
+                                           period.end.getYear - period.start.getYear + 1,
+                                           if (calendar != null) calendar else DefaultTimeCalendar)
+
+        val isForward = seekDirection == SeekDirection.Forward
 
         if (onVisitYears(years, context) && enterYears(years, context)) {
             val yearsToVisit =
-                if (seekDirection == SeekDirection.Forward)
-                    years.getYears
-                else
-                    years.getYears.sortWith((x, y) => x.end.compareTo(y.end) > 0)
+                if (isForward) years.getYears
+                else years.getYears.sortWith(_.end > _.end)
 
             for (year <- yearsToVisit) {
-                log.trace(s"year=[${year.year}]를 탐색합니다.")
+                log.trace(s"Year 탐색: year=${year.year}")
 
-                if (year.overlapsWith(period) && onVisitYear(year, context) && enterMonths(year, context)) {
+                val canVisitMonth = year.overlapsWith(period) && onVisitYear(year, context) && enterMonths(year, context)
+
+                if (canVisitMonth) {
                     val monthsToVisit =
-                        if (seekDirection == SeekDirection.Forward)
-                            year.getMonths
-                        else
-                            years.getMonths.sortWith((x, y) => x.end.compareTo(y.end) > 0)
+                        if (isForward) years.getMonths
+                        else years.getMonths.sortWith(_.end > _.end)
 
                     for (month <- monthsToVisit) {
-                        log.trace(s"year=[${month.year}], month=[${month.monthOfYear}}]를 탐색합니다.")
+                        log.trace(s"Month 탐색: year=${month.year}, month=${month.monthOfYear}")
 
-                        if (month.overlapsWith(period) && onVisitMonth(month, context) && enterDays(month, context)) {
+                        val canVisitDay = month.overlapsWith(period) && onVisitMonth(month, context) && enterDays(month, context)
+                        if (canVisitDay) {
 
                             val daysToVisit =
-                                if (seekDirection == SeekDirection.Forward) month.getDays
-                                else month.getDays.sortWith((x, y) => x.end.compareTo(y.end) > 0)
+                                if (isForward) month.getDays
+                                else month.getDays.sortWith(_.end > _.end)
 
                             for (day <- daysToVisit) {
-                                log.trace(s"day를 탐색합니다. day=[${day.start}]")
+                                log.trace(s"Day 탐색: day를 탐색합니다. day=${day.start}")
+                                val canVisitHour = day.overlapsWith(period) && onVisitDay(day, context) && enterHours(day, context)
 
-                                if (day.overlapsWith(period) && onVisitDay(day, context) && enterHours(day, context)) {
+                                if (canVisitHour) {
 
                                     val hoursToVisit =
-                                        if (seekDirection == SeekDirection.Forward) day.getHours
-                                        else day.getHours.sortWith((x, y) => x.end.compareTo(y.end) > 0)
+                                        if (isForward) day.getHours
+                                        else day.getHours.sortWith(_.end > _.end)
 
                                     for (hour <- hoursToVisit) {
-                                        log.trace(s"Hour를 탐색합니다. hour=[${hour.hourOfDay}]")
+                                        log.trace(s"Hour 탐색: hour=[${hour.hourOfDay}]")
 
-                                        if (hour.overlapsWith(period) && onVisitHour(hour, context)) {
+                                        val canVisitMinute = hour.overlapsWith(period) && onVisitHour(hour, context)
+                                        if (canVisitMinute) {
                                             enterMinutes(hour, context)
                                         }
                                     }
@@ -100,12 +103,12 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
         onVisitStart()
 
         val minStart = MinPeriodTime
-        val maxEnd = MaxPeriodTime.minusYears(1)
+        val maxEnd = MaxPeriodTime - 1.year
         val offset = direction.id
 
         var current = year
-        while (lastVisited == null && current.start.compareTo(minStart) > 0 && current.end.compareTo(maxEnd) < 0) {
-            if (!onVisitYear(current, context)) {
+        while(lastVisited == null && current.start > minStart && current.end < maxEnd) {
+            if(!onVisitYear(current, context)) {
                 lastVisited = year
             } else {
                 current = current.addYears(offset)
@@ -114,6 +117,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
         onVisitEnd()
         log.trace(s"마지막 탐색 Year. lastVisited=[$lastVisited]")
+
         lastVisited
     }
 
@@ -124,11 +128,11 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
         onVisitStart()
 
         val minStart = MinPeriodTime
-        val maxEnd = MaxPeriodTime.minusYears(1)
+        val maxEnd = MaxPeriodTime - 1.year
         val offset = direction.id
 
         var current = month
-        while (lastVisited == null && current.start.compareTo(minStart) > 0 && current.end.compareTo(maxEnd) < 0) {
+        while (lastVisited == null && current.start > minStart && current.end < maxEnd) {
             if (!onVisitMonth(current, context)) {
                 lastVisited = current
             } else {
@@ -149,11 +153,11 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
         onVisitStart()
 
         val minStart = MinPeriodTime
-        val maxEnd = MaxPeriodTime.minusYears(1)
+        val maxEnd = MaxPeriodTime - 1.year
         val offset = direction.id
 
         var current = day
-        while (lastVisited == null && current.start.compareTo(minStart) > 0 && current.end.compareTo(maxEnd) < 0) {
+        while (lastVisited == null && current.start > minStart && current.end < maxEnd) {
             if (!onVisitDay(current, context)) {
                 lastVisited = current
             } else {
@@ -174,11 +178,11 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
         onVisitStart()
 
         val minStart = MinPeriodTime
-        val maxEnd = MaxPeriodTime.minusYears(1)
+        val maxEnd = MaxPeriodTime - 1.year
         val offset = direction.id
 
         var current = hour
-        while (lastVisited == null && current.start.compareTo(minStart) > 0 && current.end.compareTo(maxEnd) < 0) {
+        while (lastVisited == null && current.start > minStart && current.end < maxEnd) {
             if (!onVisitHour(current, context)) {
                 lastVisited = current
             } else {
@@ -203,7 +207,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     protected def checkLimits(target: ITimePeriod): Boolean = limits.hasInside(target)
 
     protected def checkExcludePeriods(target: ITimePeriod): Boolean = {
-        if (filter.excludePeriods.size() == 0) true
+        if (filter.excludePeriods.size == 0) true
         else filter.excludePeriods.overlapPeriods(target).size == 0
     }
 
@@ -229,62 +233,62 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
     protected def onVisitMinute(minute: MinuteRange, context: C) = true
 
-    protected def isMatchingYear(year: YearRange, context: C): Boolean = {
-        if (filter.years.size > 0 && !filter.years.contains(year.year))
+    protected def isMatchingYear(yr: YearRange, context: C): Boolean = {
+        if (filter.years.size > 0 && !filter.years.contains(yr.year))
             false
-        else checkExcludePeriods(year)
+        else checkExcludePeriods(yr)
     }
 
-    protected def isMatchingMonth(month: MonthRange, context: C): Boolean = {
-        if (filter.years.size > 0 && !filter.years.contains(month.year))
+    protected def isMatchingMonth(mr: MonthRange, context: C): Boolean = {
+        if (filter.years.size > 0 && !filter.years.contains(mr.year))
             false
-        if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(month.monthOfYear))
+        else if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(mr.monthOfYear))
             false
-        checkExcludePeriods(month)
+        else checkExcludePeriods(mr)
     }
 
-    protected def isMatchingDay(day: DayRange, context: C): Boolean = {
-        if (filter.years.size > 0 && !filter.years.contains(day.year))
+    protected def isMatchingDay(dr: DayRange, context: C): Boolean = {
+        if (filter.years.size > 0 && !filter.years.contains(dr.year))
             false
-        if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(day.monthOfYear))
+        else if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(dr.monthOfYear))
             false
-        if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(day.dayOfMonth))
+        else if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(dr.dayOfMonth))
             false
-        if (filter.weekDays.size > 0 && !filter.weekDays.contains(day.dayOfWeek))
+        else if (filter.weekDays.size > 0 && !filter.weekDays.contains(dr.dayOfWeek))
             false
 
-        checkExcludePeriods(day)
+        checkExcludePeriods(dr)
     }
 
-    protected def isMatchingHour(hour: HourRange, context: C): Boolean = {
-        if (filter.years.size > 0 && !filter.years.contains(hour.year))
+    protected def isMatchingHour(hr: HourRange, context: C): Boolean = {
+        if (filter.years.size > 0 && !filter.years.contains(hr.year))
             false
-        if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(hour.monthOfYear))
+        else if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(hr.monthOfYear))
             false
-        if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(hour.dayOfMonth))
+        else if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(hr.dayOfMonth))
             false
-        if (filter.weekDays.size > 0 && !filter.weekDays.contains(DayOfWeek(hour.start.getDayOfWeek)))
+        else if (filter.weekDays.size > 0 && !filter.weekDays.contains(DayOfWeek(hr.start.getDayOfWeek)))
             false
-        if (filter.hourOfDays.size > 0 && !filter.hourOfDays.contains(hour.hourOfDay))
+        else if (filter.hourOfDays.size > 0 && !filter.hourOfDays.contains(hr.hourOfDay))
             false
 
-        checkExcludePeriods(hour)
+        checkExcludePeriods(hr)
     }
 
-    protected def isMatchingMinute(min: MinuteRange, context: C): Boolean = {
-        if (filter.years.size > 0 && !filter.years.contains(min.year))
+    protected def isMatchingMinute(mr: MinuteRange, context: C): Boolean = {
+        if (filter.years.size > 0 && !filter.years.contains(mr.year))
             false
-        if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(min.monthOfYear))
+        else if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(mr.monthOfYear))
             false
-        if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(min.dayOfMonth))
+        else if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(mr.dayOfMonth))
             false
-        if (filter.weekDays.size > 0 && !filter.weekDays.contains(DayOfWeek(min.start.getDayOfWeek)))
+        else if (filter.weekDays.size > 0 && !filter.weekDays.contains(DayOfWeek(mr.start.getDayOfWeek)))
             false
-        if (filter.hourOfDays.size > 0 && !filter.hourOfDays.contains(min.hourOfDay))
+        else if (filter.hourOfDays.size > 0 && !filter.hourOfDays.contains(mr.hourOfDay))
             false
-        if (filter.minuteOfHours.size > 0 && !filter.minuteOfHours.contains(min.minuteOfHour))
+        else if (filter.minuteOfHours.size > 0 && !filter.minuteOfHours.contains(mr.minuteOfHour))
             false
 
-        checkExcludePeriods(min)
+        checkExcludePeriods(mr)
     }
 }

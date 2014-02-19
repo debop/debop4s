@@ -22,7 +22,7 @@ class MonthRange(private[this] val _year: Int,
     def monthOfYear: Int = startMonthOfYear
 
     def addMonths(months: Int): MonthRange =
-        MonthRange(Times.startTimeOfMonth(getStart).plusMonths(months), calendar)
+        MonthRange(Times.startTimeOfMonth(start).plusMonths(months), calendar)
 
     def nextMonth: MonthRange = addMonths(1)
 

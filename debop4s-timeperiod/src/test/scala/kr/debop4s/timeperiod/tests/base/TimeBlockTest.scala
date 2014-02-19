@@ -62,7 +62,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
     test("period is not moment") {
         val block = TimeBlock(Times.now, MinPositiveDuration)
         assert(!block.isMoment)
-        assert(block.getDuration == MinPositiveDuration)
+        assert(block.duration == MinPositiveDuration)
     }
 
     test("hasStart") {

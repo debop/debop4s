@@ -18,38 +18,38 @@ class SchoolDay(private var _moment: DateTime) extends TimePeriodChain {
 
     private var moment = _moment
     val lesson1 = new Lesson(moment)
-    moment = moment.plus(lesson1.getDuration)
+     moment += lesson1.duration
 
     val break1 = new ShortBreak(moment)
-    moment = moment.plus(break1.getDuration)
+    moment += break1.duration
 
     val lesson2 = new Lesson(moment)
-    moment = moment.plus(lesson2.getDuration)
+    moment += lesson2.duration
 
     val break2 = new LargeBreak(moment)
-    moment = moment.plus(break2.getDuration)
+    moment  += break2.duration
 
     val lesson3 = new Lesson(moment)
-    moment = moment.plus(lesson3.getDuration)
+    moment += lesson3.duration
 
     val break3 = new ShortBreak(moment)
-    moment = moment.plus(break3.getDuration)
+    moment += break3.duration
 
     val lesson4 = new Lesson(moment)
-    moment = moment.plus(lesson4.getDuration)
+    moment += lesson4.duration
 
     super.addAll(lesson1, break1, lesson2, break2, lesson3, break3, lesson4)
 }
 
 
-class Lesson(private val moment: DateTime) extends TimeBlock(moment, moment + LessonDuration) {
+class Lesson(private val moment: DateTime) extends TimeBlock(moment, moment + LessonDuration, false) {
     log.trace(s"Create Lesson. moment=$moment")
 }
 
-class LargeBreak(private val moment: DateTime) extends TimeBlock(moment, moment + LargeBreakDuration) {
+class LargeBreak(private val moment: DateTime) extends TimeBlock(moment, moment + LargeBreakDuration, false) {
     log.trace(s"Create LargeBreak. moment=$moment")
 }
 
-class ShortBreak(private val moment: DateTime) extends TimeBlock(moment, moment + ShortBreakDuration) {
+class ShortBreak(private val moment: DateTime) extends TimeBlock(moment, moment + ShortBreakDuration, false) {
     log.trace(s"Create ShortBreak. moment=$moment")
 }

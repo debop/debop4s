@@ -48,7 +48,7 @@ class Range(_start: DateTime, _end: DateTime, _readonly: Boolean = false) extend
 
     override def start_=(v: DateTime) = { super.start_=(v) }
 
-    override def setStart(v: DateTime) = { super.setStart(v) }
+    override def setStart(v: DateTime) = { super.start_$eq(v) }
 
     override def end_=(v: DateTime) = { super.end_=(v) }
 

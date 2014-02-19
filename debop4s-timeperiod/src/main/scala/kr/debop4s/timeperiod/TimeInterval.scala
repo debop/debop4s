@@ -97,10 +97,6 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
 
     def intervalEnabled_=(v: Boolean) { _intervalEnabled = v }
 
-    override def setStart(v: DateTime) { super.setStart(v) }
-
-    override def setEnd(v: DateTime) { super.setEnd(v) }
-
     def isStartOpen: Boolean = _startEdge eq IntervalEdge.Opened
 
     def isEndOpen: Boolean = _endEdge eq IntervalEdge.Opened
@@ -125,21 +121,17 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
         this.intervalEnabled = intervalEnabled
     }
 
-    def getStartInterval: DateTime = super.getStart
+    def getStartInterval: DateTime = super.start
 
     def setStartInterval(v: DateTime) {
         assertMutable()
-        assert(v.compareTo(getEnd) <= 0)
-        setStart(v)
+        assert(v <= end)
+        start = v
     }
 
     override def start: DateTime =
-        if (isIntervalEnabled && isStartOpen) super.start.plus(1)
+        if (isIntervalEnabled && isStartOpen) super.start + 1
         else super.start
-
-    override def getStart: DateTime =
-        if (isIntervalEnabled && isStartOpen) super.getStart.plus(1)
-        else super.getStart
 
     def getStartEdge: IntervalEdge = startEdge
 
@@ -148,23 +140,19 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
         startEdge = edge
     }
 
-    override def hasEnd: Boolean = !(super.getEnd == MaxPeriodTime) || !isEndClosed
+    override def hasEnd: Boolean = !(super.end == MaxPeriodTime) || !isEndClosed
 
-    def getEndInterval: DateTime = super.getEnd
+    def getEndInterval: DateTime = super.end
 
     def setEndInterval(v: DateTime) {
         assertMutable()
-        assert(v.compareTo(super.getStart) >= 0)
-        setEnd(v)
+        assert(v >= super.start)
+        end = v
     }
 
     override def end: DateTime =
-        if (isIntervalEnabled && isEndOpen) super.end.minus(1)
+        if (isIntervalEnabled && isEndOpen) super.end - 1
         else super.end
-
-    override def getEnd: DateTime =
-        if (isIntervalEnabled && isEndOpen) super.getEnd.minus(1)
-        else super.getEnd
 
 
     def getEndEdge: IntervalEdge = this.endEdge
@@ -174,18 +162,16 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
         this.endEdge = edge
     }
 
-    override def getDuration: Duration = new Duration(super.getStart, super.getEnd)
-
     def expandStartTo(moment: DateTime) {
         assertMutable()
         if (start.compareTo(moment) > 0)
-            setStart(moment)
+            start = moment
     }
 
     def expandEndTo(moment: DateTime) {
         assertMutable()
         if (end.compareTo(moment) < 0)
-            setEnd(moment)
+            end = moment
     }
 
     def expandTo(moment: DateTime) {
@@ -195,20 +181,20 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
 
     def expandTo(period: ITimePeriod) {
         assert(period != null)
-        if (period.hasStart) expandStartTo(period.getStart)
-        if (period.hasEnd) expandEndTo(period.getEnd)
+        if (period.hasStart) expandStartTo(period.start)
+        if (period.hasEnd) expandEndTo(period.end)
     }
 
     def shrinkStartTo(moment: DateTime) {
         assertMutable()
         if (start.compareTo(moment) < 0)
-            setStart(moment)
+            start = moment
     }
 
     def shrinkEndTo(moment: DateTime) {
         assertMutable()
         if (end.compareTo(moment) > 0)
-            setEnd(moment)
+            end = moment
     }
 
     def shrinkTo(moment: DateTime) {
@@ -220,8 +206,8 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
     def shrinkTo(period: ITimePeriod) {
         assert(period != null)
         assertMutable()
-        if (period.hasStart) shrinkStartTo(period.getStart)
-        if (period.hasEnd) shrinkEndTo(period.getEnd)
+        if (period.hasStart) shrinkStartTo(period.start)
+        if (period.hasEnd) shrinkEndTo(period.end)
     }
 
     /** 현재 IInterval에서 오프셋만큼 이동한 {@link ITimeInterval}을 반환합니다. */
@@ -244,13 +230,13 @@ class TimeInterval(_start: DateTime = MinPeriodTime,
     override def getIntersection(other: ITimePeriod): ITimeInterval = {
         assert(other != null)
         val range: ITimePeriod = super.getIntersection(other)
-        new TimeInterval(range.getStart, range.getEnd)
+        new TimeInterval(range.start, range.end)
     }
 
     override def getUnion(other: ITimePeriod): ITimeInterval = {
         assert(other != null)
         val union: ITimePeriod = Times.getUnionRange(this, other)
-        new TimeInterval(union.getStart, union.getEnd)
+        new TimeInterval(union.start, union.end)
     }
 }
 
@@ -283,7 +269,7 @@ object TimeInterval {
         if (period.isAnytime)
             Anytime
         else
-            new TimeInterval(period.getStart, period.getEnd, startEdge, endEdge, intervalEnabled, readonly)
+            new TimeInterval(period.start, period.end, startEdge, endEdge, intervalEnabled, readonly)
     }
 }
 

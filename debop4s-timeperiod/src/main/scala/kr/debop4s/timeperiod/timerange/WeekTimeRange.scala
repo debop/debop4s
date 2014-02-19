@@ -17,13 +17,13 @@ class WeekTimeRange(private val _moment: DateTime,
                     private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(WeekTimeRange.getPeriodOf(_moment, weekCount), _calendar) {
 
-    def year: Int = getStart.getYear
+    def year: Int = start.getYear
 
-    def weekyear: Int = getStart.getWeekyear
+    def weekyear: Int = start.getWeekyear
 
-    def startWeekOfYear: Int = Times.getWeekOfYear(getStart).weekOfWeekyear
+    def startWeekOfYear: Int = Times.getWeekOfYear(start).weekOfWeekyear
 
-    def endWeekOfYear: Int = Times.getWeekOfYear(getEnd).weekOfWeekyear
+    def endWeekOfYear: Int = Times.getWeekOfYear(end).weekOfWeekyear
 
     def getDays: Seq[DayRange] = {
         val startDay = startDayStart

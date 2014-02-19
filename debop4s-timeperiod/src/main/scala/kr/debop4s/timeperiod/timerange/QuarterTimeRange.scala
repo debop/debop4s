@@ -33,7 +33,7 @@ abstract class QuarterTimeRange(private val _year: Int,
         val months = ArrayBuffer[MonthRange]()
         val monthCount = quarterCount * MonthsPerQuarter
         for (m <- 0 until monthCount) {
-            months += MonthRange(getStart.plusMonths(m), calendar)
+            months += MonthRange(start.plusMonths(m), calendar)
         }
         months
     }

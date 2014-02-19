@@ -31,25 +31,25 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
     }
 
     test("period limits add") {
-        //        val start = asDate(2011, 4, 12)
-        //        val period1 = TimeRange(asDate(2011, 4, 20), asDate(2011, 4, 25))
-        //        val period2 = TimeRange(asDate(2011, 4, 30), null.asInstanceOf[DateTime])
-        //
-        //        val dateAdd = CalendarDateAdd()
-        //
-        //        // 예외기간을 설정합니다. 4월 20일 ~ 4월25일, 4월 30일 이후
-        //        dateAdd.excludePeriods.addAll(period1, period2)
-        //
-        //        dateAdd.add(start, Durations.Day) should equal(start + 1.day)
-        //
-        //        // 4월 12일에 8일을 더하면 4월 20일이지만, 20~25일까지 제외되므로, 4월 25일이 된다.
-        //        dateAdd.add(start, Durations.days(8)) should equal(period1.end)
-        //
-        //        // 4월 12에 20일을 더하면 4월 20~25일을 제외한 후 계산하면 4월 30 이후가 된다. (5월 3일).
-        //        // 하지만 4월 30 이후는 모두 제외되므로 결과값은 null이다.
-        //        dateAdd.add(start, Durations.days(20)) should equal(null)
-        //
-        //        dateAdd.subtract(start, Durations.days(3)) should equal(start - 3.day)
+        val start = asDate(2011, 4, 12)
+        val period1 = TimeRange(asDate(2011, 4, 20), asDate(2011, 4, 25))
+        val period2 = TimeRange(asDate(2011, 4, 30), null.asInstanceOf[DateTime])
+
+        val dateAdd = CalendarDateAdd()
+
+        // 예외기간을 설정합니다. 4월 20일 ~ 4월25일, 4월 30일 이후
+        dateAdd.excludePeriods.addAll(period1, period2)
+
+        dateAdd.add(start, Durations.Day) should equal(start + 1.day)
+
+        // 4월 12일에 8일을 더하면 4월 20일이지만, 20~25일까지 제외되므로, 4월 25일이 된다.
+        dateAdd.add(start, Durations.days(8)) should equal(period1.end)
+
+        // 4월 12에 20일을 더하면 4월 20~25일을 제외한 후 계산하면 4월 30 이후가 된다. (5월 3일).
+        // 하지만 4월 30 이후는 모두 제외되므로 결과값은 null이다.
+        dateAdd.add(start, Durations.days(20)) should equal(null)
+
+        dateAdd.subtract(start, Durations.days(3)) should equal(start - 3.day)
     }
 
     test("period limits subtract") {
@@ -69,135 +69,6 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
 
         // 4월 30일로부터 20일 전이라면, 5일 전이 4월 20일이므로, 4월 5일이 된다. 근데 4월 6일 이전은 모두 제외 기간이므로 null 을 반환한다.
         dateAdd.subtract(start, Durations.days(20)) should equal(null)
-    }
-
-    test("include outside max") {
-        val start = asDate(2011, 4, 12)
-        val period = TimeRange(asDate(2011, 4, 20), null.asInstanceOf[DateTime])
-
-        val dateAdd = CalendarDateAdd()
-        dateAdd.includePeriods.add(period)
-
-        dateAdd.add(start, Durations.Zero) should equal(period.start)
-        dateAdd.add(start, Durations.days(1)) should equal(period.start + 1.day)
-
-        dateAdd.subtract(start, Durations.Zero) should equal(null)
-        dateAdd.subtract(start, Durations.days(1)) should equal(null)
-    }
-
-    test("include outside min") {
-        val start = asDate(2011, 4, 12)
-        val period = TimeRange(null, asDate(2011, 4, 10))
-
-        val dateAdd = CalendarDateAdd()
-        dateAdd.includePeriods.add(period)
-
-        dateAdd.add(start, Durations.Zero) should equal(null)
-        dateAdd.add(start, Durations.days(1)) should equal(null)
-
-        dateAdd.subtract(start, Durations.Zero) should equal(period.end)
-        dateAdd.subtract(start, Durations.days(1)) should equal(period.end - 1.day)
-    }
-
-    test("all excluded") {
-        val start = asDate(2011, 4, 12)
-        val period = TimeRange(asDate(2011, 4, 10), asDate(2011, 4, 20))
-
-        val dateAdd = CalendarDateAdd()
-        dateAdd.includePeriods.add(period)
-        dateAdd.excludePeriods.add(period)
-
-        dateAdd.add(start, Durations.Zero) should equal(null)
-        dateAdd.add(start, Durations.year(2011)) should equal(null)
-
-        dateAdd.subtract(start, Durations.Zero) should equal(null)
-        dateAdd.subtract(start, Durations.year(2011)) should equal(null)
-    }
-
-    test("all excluded 2") {
-        val start = asDate(2011, 4, 12)
-        val period1 = TimeRange(asDate(2011, 4, 10), asDate(2011, 4, 20))
-        val period2 = TimeRange(asDate(2011, 4, 10), asDate(2011, 4, 15))
-        val period3 = TimeRange(asDate(2011, 4, 15), asDate(2011, 4, 20))
-
-        val dateAdd = CalendarDateAdd()
-        dateAdd.includePeriods.add(period1)
-        dateAdd.excludePeriods.addAll(period2, period3)
-
-        dateAdd.add(start, Durations.Zero) should equal(null)
-        dateAdd.add(start, Durations.year(2011)) should equal(null)
-
-        dateAdd.subtract(start, Durations.Zero) should equal(null)
-        dateAdd.subtract(start, Durations.year(2011)) should equal(null)
-    }
-
-    test("all excluded 3") {
-        val start = asDate(2011, 4, 12)
-        val period1 = TimeRange(asDate(2011, 4, 10), asDate(2011, 4, 20))
-        val period2 = TimeRange(asDate(2011, 4, 15), asDate(2011, 4, 20))
-
-        val dateAdd = CalendarDateAdd()
-        dateAdd.includePeriods.add(period1)
-        dateAdd.excludePeriods.add(period2)
-
-        dateAdd.add(start, Durations.Zero) should equal(start)
-        dateAdd.add(start, Durations.days(1)) should equal(start + 1.day)
-        dateAdd.add(start, Durations.days(2)) should equal(start + 2.day)
-        dateAdd.add(start, Durations.days(3)) should equal(null)
-    }
-
-    test("period moment") {
-        val start = asDate(2011, 4, 12)
-        val period = TimeRange(start)
-
-        val dateAdd = CalendarDateAdd()
-
-        dateAdd.add(start, Durations.Zero) should equal(start)
-
-        dateAdd.includePeriods.add(period)
-        dateAdd.add(start, Durations.Zero) should equal(start)
-
-        dateAdd.excludePeriods.add(period)
-        dateAdd.add(start, Durations.Zero) should equal(start)
-
-        dateAdd.includePeriods.clear()
-        dateAdd.add(start, Durations.Zero) should equal(start)
-
-        dateAdd.excludePeriods.clear()
-        dateAdd.add(start, Durations.Zero) should equal(start)
-    }
-
-    test("include") {
-        val start = asDate(2011, 4, 12)
-        val period = TimeRange(asDate(2011, 4, 1), MaxPeriodTime)
-
-        val dateAdd = CalendarDateAdd()
-
-        dateAdd.includePeriods.add(period)
-
-        dateAdd.add(start, Durations.Zero) should equal(start)
-        dateAdd.add(start, Durations.days(1)) should equal(start + 1.day)
-        dateAdd.add(start, Durations.days(365)) should equal(start + 365.day)
-    }
-
-    test("include split") {
-        val start = asDate(2011, 4, 12)
-        val period1 = TimeRange(asDate(2011, 4, 1), asDate(2011, 4, 15))
-        val period2 = TimeRange(asDate(2011, 4, 20), asDate(2011, 4, 24))
-
-        val dateAdd = CalendarDateAdd()
-        dateAdd.includePeriods.addAll(period1, period2)
-
-        dateAdd.add(start, Durations.Zero) should equal(start)
-        dateAdd.add(start, Durations.days(1)) should equal(start + 1.day)
-        dateAdd.add(start, Durations.days(3)) should equal(period2.start)
-        dateAdd.add(start, Durations.days(5)) should equal(period2.start + 2.day)
-        dateAdd.add(start, Durations.days(6)) should equal(period2.start + 3.day)
-        dateAdd.add(start, Durations.days(7)) should equal(null)
-
-        // NOTE: SeekboundaryMode에 따라 결과가 달라집니다.
-        dateAdd.add(start, Durations.days(7), SeekBoundaryMode.Fill) should equal(period2.end)
-        dateAdd.add(start, Durations.days(7), SeekBoundaryMode.Next) should equal(null)
     }
 
     test("exclude") {
@@ -238,7 +109,7 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
         val dateAdd = CalendarDateAdd()
 
         dateAdd.addWorkingWeekDays()
-        dateAdd.excludePeriods.add(new DayRange(2011, 4, 4, dateAdd.calendar))
+        dateAdd.excludePeriods.add(DayRange(asDate(2011, 4, 4), dateAdd.calendar))
         dateAdd.workingHours += HourRangeInDay(8, 18)
 
         val start = new DateTime(2011, 4, 1, 9, 0)

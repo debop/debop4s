@@ -8,14 +8,6 @@ import org.joda.time.DateTime
 @SerialVersionUID(-2730296141281632596L)
 class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
-    def this() {
-        this(new DateTime(0))
-    }
-
-    def this(year: Int, monthOfYear: Int = 1, dayOfMonth: Int = 1) {
-        this(new DateTime(year, monthOfYear, dayOfMonth, 0, 0))
-    }
-
     def year = value.getYear
 
     def monthOfYear = value.getMonthOfYear
@@ -44,9 +36,14 @@ class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
 object Datepart {
 
-    def apply() = new Datepart(Times.today)
+    def apply():Datepart = new Datepart(Times.today)
 
-    def apply(moment: DateTime) = new Datepart(moment.withTimeAtStartOfDay())
+    def apply(year: Int, monthOfYear: Int = 1, dayOfMonth: Int = 1):Datepart =
+        new Datepart(Times.asDate(year, monthOfYear, dayOfMonth))
+
+
+    def apply(moment: DateTime):Datepart =
+        new Datepart(moment.withTimeAtStartOfDay())
 
     def today() = apply()
 }

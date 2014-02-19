@@ -17,7 +17,7 @@ import scala.collection.JavaConversions._
  * @since 2014. 2. 17. 오후 1:42
  */
 
-class TimesCalendarTest extends AbstractTimePeriodTest {
+class TimesTest extends AbstractTimePeriodTest {
 
     test("getYearOf") {
         getYearOf(asDate(2000, 1, 1)) should equal(2000)
@@ -203,9 +203,6 @@ class TimesCalendarTest extends AbstractTimePeriodTest {
         addDayOfWeek(Saturday, -14) should equal(Saturday)
 
     }
-}
-
-class TimesCompareTest extends AbstractTimePeriodTest {
 
     test("is same year") {
         isSameYear(testDate, testNow) should equal(false)
@@ -290,9 +287,6 @@ class TimesCompareTest extends AbstractTimePeriodTest {
         isSameSecond(new DateTime(2000, 10, 19, 18, 10, 10), new DateTime(2000, 10, 19, 18, 10, 10)) should equal(true)
         isSameSecond(new DateTime(2000, 10, 19, 18, 10, 0), new DateTime(2000, 10, 19, 23, 10, 0)) should equal(false)
     }
-}
-
-class TimesDateTimeTest extends AbstractTimePeriodTest {
 
     test("get date") {
         getDate(testDate) should equal(testDate.withTimeAtStartOfDay())
@@ -320,9 +314,6 @@ class TimesDateTimeTest extends AbstractTimePeriodTest {
         setTime(testDate, testNow).getMillisOfDay should equal(testNow.getMillisOfDay)
         setTime(testNow, testDate).getMillisOfDay should equal(testDate.getMillisOfDay)
     }
-}
-
-class TimesForEachTest extends AbstractTimePeriodTest {
 
     val startTime = new DateTime(2008, 4, 10, 5, 33, 24, 345)
     val endTime = new DateTime(2010, 10, 20, 13, 43, 12, 599)
@@ -350,7 +341,7 @@ class TimesForEachTest extends AbstractTimePeriodTest {
             log.trace(s"month($count)=${p.start.getMonthOfYear}")
             count += 1
         })
-        val months = period.getDuration.getMillis / (MillisPerDay * MaxDaysPerMonth) + 2
+        val months = period.duration.getMillis / (MillisPerDay * MaxDaysPerMonth) + 2
         count should equal(months)
     }
 
@@ -415,9 +406,7 @@ class TimesForEachTest extends AbstractTimePeriodTest {
             }
         })
     }
-}
 
-class TimesMathTest extends AbstractTimePeriodTest {
 
     val min = new DateTime(2008, 4, 10, 5, 33, 24, 345)
     val max = new DateTime(2010, 10, 20, 13, 43, 12, 599)
@@ -464,9 +453,6 @@ class TimesMathTest extends AbstractTimePeriodTest {
         t2 should equal(min - Durations.Day)
         d2 should equal(Durations.Day)
     }
-}
-
-class TimesPackageTest extends AbstractTimePeriodTest {
 
     test("date unit") {
         MonthsPerYear should equal(12)
@@ -627,7 +613,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
         val start = startTimeOfHalfyear(startTime)
 
         hy.start should equal(start)
-        hy.end should equal(hy.nextHalfyear.getStart)
+        hy.end should equal(hy.nextHalfyear.start)
     }
 
     test("getHalfyearRanges") {
@@ -755,21 +741,18 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
         })
     }
 
-}
-
-class TimesTest extends AbstractTimePeriodTest {
 
     test("asString") {
         val period = TimeRange(testDate, testNow)
         val str = Times.asString(period)
 
-        log.debug(s"period=$str")
+        log.trace(s"period=$str")
         assert(!str.isEmpty)
     }
 
     test("toDateTime") {
         val dateString = testDate.toString()
-        log.debug(s"dateString=$dateString")
+        log.trace(s"dateString=$dateString")
 
         val parseTime = Times.toDateTime(dateString)
         parseTime.isEqual(testDate) should equal(true)
@@ -783,16 +766,13 @@ class TimesTest extends AbstractTimePeriodTest {
         val dateTime = formatter.parseDateTime("20131013")
         dateTime should equal(Times.asDate(2013, 10, 13))
     }
-}
-
-class TimesTimeZoneTest extends AbstractTimePeriodTest {
 
     test("with TimeZone") {
         val localTime = Times.now
 
         val utcTime = Times.asUtc(localTime)
 
-        log.debug(s"local=$localTime, utc=$utcTime")
+        log.trace(s"local=$localTime, utc=$utcTime")
     }
 
     test("timezone id") {
@@ -801,7 +781,7 @@ class TimesTimeZoneTest extends AbstractTimePeriodTest {
         val utc = Times.asUtc(now)
 
         val local = new DateTime(utc, DateTimeZone.forID(zoneId))
-        log.debug(s"timezone id=$zoneId")
+        log.trace(s"timezone id=$zoneId")
 
         local should equal(now)
     }
@@ -814,11 +794,11 @@ class TimesTimeZoneTest extends AbstractTimePeriodTest {
             val tzNow = utcNow.toDateTime(tz)
 
             val offset = tz.getOffset(tzNow)
-            log.debug(s"ID=$id, TimeZone=$tz, local=$tzNow, utc=$utcNow, offset=$offset")
+            log.trace(s"ID=$id, TimeZone=$tz, local=$tzNow, utc=$utcNow, offset=$offset")
         })
 
         val seoul = utcNow.withZone(DateTimeZone.forID("Asia/Seoul"))
-        log.debug(s"utcNow=$utcNow, Seoul=$seoul")
+        log.trace(s"utcNow=$utcNow, Seoul=$seoul")
     }
 
     test("local DateTime") {
@@ -837,7 +817,7 @@ class TimesTimeZoneTest extends AbstractTimePeriodTest {
 
             // TimeZone 별 offset 값
             val offset = tz.getOffset(0)
-            log.debug(s"offset=$offset, TimeZone=$tz")
+            log.trace(s"offset=$offset, TimeZone=$tz")
 
             val localZone = DateTimeZone.forOffsetMillis(offset)
             val localTimeZoneTime = utcNow.toDateTime(localZone)
@@ -853,20 +833,17 @@ class TimesTimeZoneTest extends AbstractTimePeriodTest {
 
             val offset = Times.timeZoneOffset(id)
             // offset=[32400000], TimeZone=[Asia/Seoul]
-            log.debug(s"offset=[$offset], TimeZone=[$tz]")
+            log.trace(s"offset=[$offset], TimeZone=[$tz]")
 
             val localZone = Times.timeZoneForOffsetMillis(offset)
 
             // id=[ROK], offset=[32400000], localZone=[+09:00]
-            log.debug(s"id=[$id], offset=[$offset], localZone=[${localZone.getID}}]")
+            log.trace(s"id=[$id], offset=[$offset], localZone=[${localZone.getID}}]")
             val localTimeZoneTime = utcNow.toDateTime(localZone)
 
             localTimeZoneTime.getMillis should equal(localNow.getMillis)
         })
     }
-}
-
-class TimesTrimTest extends AbstractTimePeriodTest {
 
     test("trim to month") {
         Times.trimToMonth(testDate) should equal(asDate(testDate.getYear, 1, 1))

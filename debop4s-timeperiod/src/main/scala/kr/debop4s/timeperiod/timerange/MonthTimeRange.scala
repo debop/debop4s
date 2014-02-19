@@ -18,14 +18,15 @@ class MonthTimeRange(private[this] val _year: Int,
     extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
     def getDays: Seq[DayRange] = {
-        val startMonth = Times.startTimeOfMonth(getStart)
+        val startMonth = Times.startTimeOfMonth(start)
         val days = ArrayBuffer[DayRange]()
 
         for (m <- 0 until monthCount) {
-            val currentMonth = startMonth.plusMonths(m)
-            val daysOfMonth = Times.getDaysInMonth(currentMonth.getYear, currentMonth.getMonthOfYear)
+            val month = startMonth + m.month
+            val daysOfMonth = Times.getDaysInMonth(month.getYear, month.getMonthOfYear)
+
             for (d <- 0 until daysOfMonth) {
-                days += new DayRange(currentMonth.plusDays(d), calendar)
+                days += DayRange(month + d.day, calendar)
             }
         }
         days

@@ -16,7 +16,7 @@ class HourTimeRange(private val _moment: DateTime,
                     private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(Times.relativeHourPeriod(_moment, hourCount), _calendar) {
 
-    val endHour: Int = getStart.plusHours(hourCount).getHourOfDay
+    val endHour: Int = start.plusHours(hourCount).getHourOfDay
 
     def getMinutes: Seq[MinuteRange] = {
         val minutes = ArrayBuffer[MinuteRange]()

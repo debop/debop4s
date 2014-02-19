@@ -1,10 +1,42 @@
 package kr.debop4s.timeperiod.timeline
 
 import kr.debop4s.core.utils.ToStringHelper
-import kr.debop4s.timeperiod.{DateTimeOrdering, ITimePeriod}
+import kr.debop4s.timeperiod.{ITimePeriodCollection, DateTimeOrdering, ITimePeriod}
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable
+
+/**
+* [[ITimeLineMoment] 의 컬렉션입니다.
+* @author 배성혁 sunghyouk.bae@gmail.com
+* @since  2013. 12. 31. 오후 8:17
+*/
+trait ITimeLineMomentCollection extends mutable.Iterable[ITimeLineMoment] with Serializable {
+
+    def size: Int
+
+    def isEmpty: Boolean
+
+    def min: ITimeLineMoment
+
+    def max: ITimeLineMoment
+
+    def get(index: Int): ITimeLineMoment
+
+    def apply(index: Int): ITimeLineMoment
+
+    def add(period: ITimePeriod)
+
+    def addAll(periods: Iterable[_ <: ITimePeriod])
+
+    def remove(period: ITimePeriod)
+
+    def find(moment: DateTime): ITimeLineMoment
+
+    def contains(moment: DateTime): Boolean
+}
+
 
 /**
  * kr.debop4s.timeperiod.timeline.TimeLineMomentCollection
@@ -29,8 +61,6 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
     override def size: Int = _moments.size
 
     override def isEmpty: Boolean = _moments.isEmpty
-
-    override def length: Int = _moments.size
 
     def min: ITimeLineMoment = if (isEmpty) null else _moments.minBy(_.moment)
 

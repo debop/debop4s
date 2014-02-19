@@ -61,7 +61,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
     test("create with some duration is not moment") {
         val range = TimeRange(Times.now, MinPositiveDuration)
         assert(!range.isMoment)
-        assert(range.getDuration == MinPositiveDuration)
+        assert(range.duration == MinPositiveDuration)
     }
 
     test("create with empty end") {
@@ -79,7 +79,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         val range = TimeRange(start, end)
         assert(range.start == start)
         assert(range.end == end)
-        assert(range.getDuration == duration)
+        assert(range.duration == duration)
         assert(range.hasPeriod)
         assert(!range.isAnytime)
         assert(!range.isMoment)
@@ -90,7 +90,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         val range = TimeRange(end, start)
         assert(range.start == start)
         assert(range.end == end)
-        assert(range.getDuration == duration)
+        assert(range.duration == duration)
         assert(range.hasPeriod)
         assert(!range.isAnytime)
         assert(!range.isMoment)
@@ -101,7 +101,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         val range = TimeRange(start, duration)
         assert(range.start == start)
         assert(range.end == end)
-        assert(range.getDuration == duration)
+        assert(range.duration == duration)
         assert(range.hasPeriod)
         assert(!range.isAnytime)
         assert(!range.isMoment)
@@ -112,7 +112,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         val range = TimeRange(start, Durations.negate(duration))
         assert(range.start == start.minus(duration))
         assert(range.end == end.minus(duration))
-        assert(range.getDuration == duration)
+        assert(range.duration == duration)
         assert(range.hasPeriod)
         assert(!range.isAnytime)
         assert(!range.isMoment)
@@ -126,7 +126,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
 
         assert(copy.start == source.start)
         assert(copy.end == source.end)
-        assert(copy.getDuration == source.getDuration)
+        assert(copy.duration == source.duration)
         assert(copy.isReadonly == source.isReadonly)
         assert(copy.hasPeriod)
         assert(!copy.isAnytime)
@@ -227,20 +227,20 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         val noMove = range.copy(Durations.Zero)
         assert(noMove.start == range.start)
         assert(noMove.end == range.end)
-        assert(noMove.getDuration == range.getDuration)
+        assert(noMove.duration == range.duration)
         assert(noMove == noMove)
 
         val forwardOffset = Durations.hours(2, 30, 15)
         val forward = range.copy(forwardOffset)
         assert(forward.start == start.plus(forwardOffset))
         assert(forward.end == end.plus(forwardOffset))
-        assert(forward.getDuration == duration)
+        assert(forward.duration == duration)
 
         val backwardOffset = Durations.hours(-1, 10, 30)
         val backward = range.copy(backwardOffset)
         assert(backward.start == start.plus(backwardOffset))
         assert(backward.end == end.plus(backwardOffset))
-        assert(backward.getDuration == duration)
+        assert(backward.duration == duration)
     }
 
     test("move TimeRange") {
@@ -248,7 +248,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
         moveZero.move(Durations.Zero)
         assert(moveZero.start == start)
         assert(moveZero.end == end)
-        assert(moveZero.getDuration == duration)
+        assert(moveZero.duration == duration)
 
         val forward = TimeRange(start, end)
         val forwardOffset = Durations.hours(2, 30, 15)
@@ -256,14 +256,14 @@ class TimeRangeTest extends AbstractTimePeriodTest {
 
         assert(forward.start == start.plus(forwardOffset))
         assert(forward.end == end.plus(forwardOffset))
-        assert(forward.getDuration == duration)
+        assert(forward.duration == duration)
 
         val backward = TimeRange(start, end)
         val backwardOffset = Durations.hours(-1, 10, 30)
         backward.move(backwardOffset)
         assert(backward.start == start.plus(backwardOffset))
         assert(backward.end == end.plus(backwardOffset))
-        assert(backward.getDuration == duration)
+        assert(backward.duration == duration)
     }
 
     test("expandStartTo") {

@@ -683,13 +683,15 @@ object Times {
 
 
     def hasInside(period: ITimePeriod, target: DateTime): Boolean = {
-        val result = target >= period.start && target <= period.end
-        log.trace(s"기간[$period] 안에 target=[$target]이 포함되는가? [$result]")
+        val result = (target >= period.start) && (target <= period.end)
+        log.trace(s"HasInside=$result, period=$period, target=$target")
         result
     }
 
     def hasInside(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        hasInside(period, target.start) && hasInside(period, target.end)
+        val result= hasInside(period, target.start) && hasInside(period, target.end)
+        log.trace(s"HasInside=$result, period=$period, target=$target")
+        result
     }
 
     def hasPureInside(period: ITimePeriod, target: DateTime): Boolean = {
@@ -774,7 +776,10 @@ object Times {
         require(target != null)
 
         val relation = getRelation(period, target)
-        !NotOverlapedRelations.contains(relation)
+        val isOverlaps = !NotOverlapedRelations.contains(relation)
+
+        log.trace(s"isOverlaps=$isOverlaps, period=$period, target=$target")
+        isOverlaps
     }
 
     def getIntersectionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
@@ -860,7 +865,7 @@ object Times {
 
     def assertMutable(period: ITimePeriod) {
         assert(period != null)
-        assert(period.isReadonly, s"TimePeriod가 읽기 전용입니다. period=[$period]")
+        assert(! period.isReadonly, s"TimePeriod가 읽기 전용입니다. period=[$period]")
     }
 
     def allItemsAreEqual(left: Iterable[_ <: ITimePeriod], right: Iterable[_ <: ITimePeriod]): Boolean = {

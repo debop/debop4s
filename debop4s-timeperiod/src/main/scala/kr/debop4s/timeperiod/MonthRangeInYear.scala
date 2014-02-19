@@ -31,3 +31,12 @@ class MonthRangeInYear(val startMonthOfYear: Int, val endMonthOfYear: Int)
             .add("endMonthOfYear", endMonthOfYear)
 }
 
+object MonthRangeInYear {
+
+    def apply(startMonthOfYear:Int, endMonthOfYear:Int):MonthRangeInYear =
+        new MonthRangeInYear(startMonthOfYear, endMonthOfYear)
+
+    def apply(period:ITimePeriod):MonthRangeInYear =
+        apply(period.start.getMonthOfYear, period.end.getMonthOfYear)
+}
+

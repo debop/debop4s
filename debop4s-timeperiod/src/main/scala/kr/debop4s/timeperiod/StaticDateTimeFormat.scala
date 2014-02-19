@@ -12,8 +12,8 @@ object StaticDateTimeFormat extends StaticDateTimeFormat
 
 trait StaticDateTimeFormat {
 
-    @deprecated(message = "use StaticISODateTimeFormat")
-    val jsonFormat: DateTimeFormatter = forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+//    @deprecated(message = "use StaticISODateTimeFormat")
+//    val jsonFormat: DateTimeFormatter = forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
     def forPattern(pattern: String) = DateTimeFormat.forPattern(pattern)
 

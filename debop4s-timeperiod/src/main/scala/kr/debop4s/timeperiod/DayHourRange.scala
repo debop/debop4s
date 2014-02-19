@@ -20,3 +20,12 @@ class DayHourRange(val dayOfWeek: DayOfWeek,
         super.buildStringHelper
         .add("dayOfWeek", dayOfWeek)
 }
+
+object DayHourRange {
+
+    def apply(dayOfWeek:DayOfWeek, startHourOfDay:Int, endHourOfDay:Int):DayHourRange = {
+        val startHour = math.max(0, math.min(startHourOfDay, endHourOfDay))
+        val endHour = math.min(23, math.max(startHourOfDay, endHourOfDay))
+        new DayHourRange(dayOfWeek, startHour, endHour)
+    }
+}

@@ -91,7 +91,7 @@ class WeeksTest extends AbstractTimePeriodTest {
             if (endDayYearWeek == startDayYearWeek)
                 startDayWeekRange should equal(endDayWeekRange)
             else
-                startDayWeekRange should not eq endDayWeekRange
+                startDayWeekRange should not equal endDayWeekRange
         })
     }
 

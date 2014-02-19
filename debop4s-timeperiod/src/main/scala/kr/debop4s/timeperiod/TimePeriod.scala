@@ -1,6 +1,6 @@
 package kr.debop4s.timeperiod
 
-import kr.debop4s.core.ValueObject
+import kr.debop4s.core.{AbstractValueObject, ValueObject}
 import kr.debop4s.core.utils.{Options, Hashs}
 import kr.debop4s.timeperiod.PeriodRelation.PeriodRelation
 import kr.debop4s.timeperiod.utils.Times
@@ -21,20 +21,11 @@ trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializabl
     /** 시작 시각 */
     def start: DateTime
 
-    /** 시작 시각 */
-    def getStart: DateTime
-
     /** 종료 시각 */
     def end: DateTime
 
-    /** 종료 시각 */
-    def getEnd: DateTime
-
     /** 기간 */
     def duration: Duration
-
-    /** 기간 */
-    def getDuration: Duration
 
     /** 시작 시각이 있는지 여부 */
     def hasStart: Boolean
@@ -101,38 +92,18 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
     private var (startTime, endTime) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
         Options.get(_end).getOrElse(MaxPeriodTime))
 
-    def this(start: DateTime, duration: Duration, readonly: Boolean) {
-        this(start, start.plus(duration), readonly)
-    }
-
-    def this(start: DateTime, duration: Duration) {
-        this(start, duration, false)
-    }
-
     def start = startTime
-
-    def getStart = startTime
 
     protected def start_=(v: DateTime) {
         assertMutable()
         startTime = v
     }
 
-    protected def setStart(v: DateTime) {
-        start = v
-    }
-
     def end = endTime
-
-    def getEnd = endTime
 
     protected def end_=(v: DateTime) {
         assertMutable()
         endTime = v
-    }
-
-    protected def setEnd(v: DateTime) {
-        end = v
     }
 
     def isReadonly = readonly
@@ -141,15 +112,7 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     def duration = new Duration(start, end)
 
-    def getDuration = new Duration(startTime, endTime)
-
     def duration_=(v: Duration) {
-        assert(duration >= 0.millis, "Duration 은 0 이상이어야 합니다.")
-        if (hasStart)
-            end = start + duration
-    }
-
-    def setDuration(duration: Duration) {
         assert(duration >= 0.millis, "Duration 은 0 이상이어야 합니다.")
         if (hasStart)
             end = start + duration

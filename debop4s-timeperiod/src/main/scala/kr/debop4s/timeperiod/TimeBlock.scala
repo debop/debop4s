@@ -11,11 +11,13 @@ import org.slf4j.LoggerFactory
  */
 trait ITimeBlock extends ITimePeriod {
 
-    def setStart(v: DateTime)
+    def start_=(v: DateTime)
 
-    def setEnd(v: DateTime)
+    def end_=(v: DateTime)
 
-    def setDuration(d: Duration)
+    def duration:Duration
+
+    def duration_=(d: Duration)
 
     def setup(ns: DateTime, ne: DateTime)
 
@@ -30,14 +32,10 @@ trait ITimeBlock extends ITimePeriod {
 
 class TimeBlock(_start: DateTime = MinPeriodTime,
                 _end: DateTime = MaxPeriodTime,
-                _readonly: Boolean)
+                _readonly: Boolean = false)
     extends TimePeriod(_start, _end, _readonly) with ITimeBlock {
 
     override lazy val log = LoggerFactory.getLogger(getClass)
-
-    def this(_start: DateTime, _end: DateTime) {
-        this(_start, _end, false)
-    }
 
     override def start_=(v: DateTime) {
         assertMutable()
@@ -45,9 +43,6 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
         super.start_=(v)
     }
 
-    override def setStart(v: DateTime) {
-        start = v
-    }
 
     override def end_=(v: DateTime) {
         assertMutable()
@@ -56,21 +51,11 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
 
     }
 
-    override def setEnd(v: DateTime) {
-        end = v
-    }
-
     var _duration: Duration = new Duration(start, end)
 
     override def duration = _duration
 
     override def duration_=(v: Duration) {
-        setDuration(v)
-    }
-
-    override def getDuration = _duration
-
-    override def setDuration(v: Duration) {
         assertMutable()
         assertValidDuration(v)
         durationFromStart(v)
@@ -85,13 +70,13 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
                 readonly)
     }
 
-    def setup(start: DateTime, duration: Duration) {
+    def setup(ns: DateTime, nd: Duration) {
         assertMutable()
-        assertValidDuration(duration)
-        log.trace(s"TimeBlock 값을 새로 설정합니다. start=$start, duration=$duration")
+        assertValidDuration(nd)
+        log.trace(s"TimeBlock 값을 새로 설정합니다. start=$ns, duration=$nd")
 
-        setStart(start)
-        setDuration(duration)
+        start = ns
+        duration = nd
     }
 
     def durationFromStart(nd: Duration) {
@@ -125,12 +110,12 @@ class TimeBlock(_start: DateTime = MinPeriodTime,
     }
 
     override def getIntersection(other: ITimePeriod): TimeBlock = {
-        assert(other != null)
+        require(other != null)
         Times.getIntersectionBlock(this, other)
     }
 
     override def getUnion(other: ITimePeriod): TimeBlock = {
-        assert(other != null)
+        require(other != null)
         Times.getUnionBlock(this, other)
     }
 
@@ -191,7 +176,7 @@ object TimeBlock {
         if (source.isAnytime)
             Anytime
         else
-            new TimeBlock(source.getStart, source.getEnd, readonly)
+            new TimeBlock(source.start, source.end, readonly)
     }
 
     def toRange(block: TimeBlock): TimeRange = TimeRange(block.start, block.end, block.isReadonly)

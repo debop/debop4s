@@ -17,7 +17,7 @@ class HourRangeCollection(private val _moment: DateTime,
     extends HourTimeRange(Times.trimToSecond(_moment), _hourCount, _calendar) {
 
     def getHours: Seq[HourRange] = {
-        val startHour = Times.trimToMinute(getStart)
+        val startHour = Times.trimToMinute(start)
 
         val hours = ArrayBuffer[HourRange]()
         for (h <- 0 until hourCount) {

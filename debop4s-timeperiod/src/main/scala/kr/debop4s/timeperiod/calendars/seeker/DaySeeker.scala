@@ -34,7 +34,6 @@ class DaySeeker(private val _filter: CalendarVisitorFilter,
                                                                         _seekDir,
                                                                         _calendar) {
 
-
     def findDay(startDay: DayRange, dayCount: Int): DayRange = {
         log.trace(s"Day 찾기... startDay=[$startDay], dayCount=[$dayCount]")
 

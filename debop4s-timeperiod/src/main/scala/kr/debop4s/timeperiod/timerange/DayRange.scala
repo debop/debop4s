@@ -18,7 +18,7 @@ object DayRange {
 
     def apply(moment: DateTime): DayRange = new DayRange(moment, DefaultTimeCalendar)
 
-    def apply(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): DayRange =
+    def apply(moment: DateTime, calendar: ITimeCalendar): DayRange =
         new DayRange(moment, calendar)
 
     def apply(year: Int, monthOfYear: Int, dayOfMonth: Int): DayRange =

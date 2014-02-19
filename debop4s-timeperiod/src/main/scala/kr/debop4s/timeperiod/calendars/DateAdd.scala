@@ -62,12 +62,12 @@ class DateAdd {
                                seekBoundary: SeekBoundaryMode): (DateTime, Duration) = {
         log.trace("기준시각으로부터 오프셋만큼 떨어진 시각을 구합니다. " +
                   s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
-        Guard.shouldBe(offset.compareTo(Duration.ZERO) >= 0, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
+        Guard.shouldBe(offset >= Duration.ZERO, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
 
         var remaining = offset
         var end: DateTime = null
 
-        val searchPeriods = TimePeriodCollection(includePeriods)
+        val searchPeriods = TimePeriodCollection(includePeriods.periods)
         if (searchPeriods.size == 0)
             searchPeriods.add(TimeRange.Anytime)
 
@@ -88,7 +88,7 @@ class DateAdd {
             })
         }
 
-        if (availablePeriods == null || availablePeriods.size == 0) {
+        if (availablePeriods.size == 0) {
             log.trace("유효한 period가 없어서 중단합니다.")
             return (null, remaining)
         }

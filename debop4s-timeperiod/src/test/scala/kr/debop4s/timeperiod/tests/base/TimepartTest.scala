@@ -19,10 +19,10 @@ class TimepartTest extends AbstractTimePeriodTest {
 
         log.debug(s"now=[$now], time=[$time], zero=[${Times.zero}]")
 
-        assert(time.hour == now.hour.get())
-        assert(time.minute == now.minute.get())
-        assert(time.second == now.second.get())
-        assert(time.millis == now.millis.get())
+        assert(time.hour == now.getHourOfDay)
+        assert(time.minute == now.getMinuteOfHour)
+        assert(time.second == now.getSecondOfMinute)
+        assert(time.millis == now.getMillisOfSecond)
 
         assert(time.totalMillis == now.getMillisOfDay)
     }
@@ -31,53 +31,53 @@ class TimepartTest extends AbstractTimePeriodTest {
         val today: DateTime = Times.today
         val time: Timepart = Times.timepart(today)
 
-        assert(time.millis === 0)
-        assert(time.hour === 0)
-        assert(time.minute === 0)
-        assert(time.second === 0)
-        assert(time.millis === 0)
-        assert(time.millis === 0)
-        assert(time.totalHours === 0)
-        assert(time.totalMinutes === 0)
-        assert(time.totalSeconds === 0)
-        assert(time.totalMillis === 0)
+        assert(time.millis == 0)
+        assert(time.hour == 0)
+        assert(time.minute == 0)
+        assert(time.second == 0)
+        assert(time.millis == 0)
+        assert(time.millis == 0)
+        assert(time.totalHours == 0)
+        assert(time.totalMinutes == 0)
+        assert(time.totalSeconds == 0)
+        assert(time.totalMillis == 0)
         assert(time.totalMillis == 0)
     }
 
     test("non zero millis") {
         val time: Timepart = Timepart(18, 23, 56, 344)
         log.debug(s"time=[$time]")
-        assert(time.hour === 18)
-        assert(time.minute === 23)
-        assert(time.second === 56)
-        assert(time.millis === 344)
+        assert(time.hour == 18)
+        assert(time.minute == 23)
+        assert(time.second == 56)
+        assert(time.millis == 344)
     }
 
     test("create with empty parameter") {
         val time: Timepart = Timepart()
         log.debug(s"time=[$time]")
-        assert(time.millis === 0)
-        assert(time.hour === 0)
-        assert(time.minute === 0)
-        assert(time.second === 0)
-        assert(time.millis === 0)
-        assert(time.millis === 0)
-        assert(time.totalHours === 0)
-        assert(time.totalMinutes === 0)
-        assert(time.totalSeconds === 0)
-        assert(time.totalMillis === 0)
+        assert(time.millis == 0)
+        assert(time.hour == 0)
+        assert(time.minute == 0)
+        assert(time.second == 0)
+        assert(time.millis == 0)
+        assert(time.millis == 0)
+        assert(time.totalHours == 0)
+        assert(time.totalMinutes == 0)
+        assert(time.totalSeconds == 0)
+        assert(time.totalMillis == 0)
     }
 
     test("create with duration") {
         val test: Duration = Durations.hours(18, 23, 56, 344)
         val time: Timepart = Timepart(Some(test))
         log.debug(s"time=[$time]")
-        assert(time.hour === 18)
-        assert(time.minute === 23)
-        assert(time.second === 56)
-        assert(time.millis === 344)
+        assert(time.hour == 18)
+        assert(time.minute == 23)
+        assert(time.second == 56)
+        assert(time.millis == 344)
 
-        assert(time.totalMillis === test.getMillis)
+        assert(time.totalMillis == test.getMillis)
     }
 
     test("getDateTime") {

@@ -9,18 +9,14 @@ import org.joda.time.{Duration, DateTime}
  */
 trait ITimeRange extends ITimePeriod {
 
+    /** 시작시각을 설정합니다 */
     def start_=(v: DateTime)
 
-    /** 시작시각을 설정합니다. */
-    def setStart(v: DateTime)
-
+    /** 완료시각을 설정합니다. */
     def end_=(v: DateTime)
 
-    /** 완료시각을 설정합니다. */
-    def setEnd(v: DateTime)
-
     /** 시작시각을 기준으로 기간을 설정합니다. */
-    def setDuration(duration: Duration)
+    def duration_=(v:Duration)
 
     /** 시작시각을 지정된 시각으로 설정합니다. 시작시각 이전이여야 합니다. */
     def expandStartTo(moment: DateTime)
@@ -61,10 +57,6 @@ class TimeRange(private var _start: DateTime = MinPeriodTime,
         super.start_=(v)
     }
 
-    override def setStart(v: DateTime) {
-        start = v
-    }
-
     override def end_=(v: DateTime) {
         assertMutable()
         assert(v >= start, "완료시각이 시작시각보다 작을 수 없습니다.")
@@ -72,8 +64,9 @@ class TimeRange(private var _start: DateTime = MinPeriodTime,
 
     }
 
-    override def setEnd(v: DateTime) {
-        end = v
+    override def duration_=(v:Duration) {
+        assertMutable()
+        super.duration_=(v)
     }
 
     override def copy(offset: Duration = Duration.ZERO) = {
@@ -88,13 +81,13 @@ class TimeRange(private var _start: DateTime = MinPeriodTime,
     def expandStartTo(moment: DateTime) {
         assertMutable()
         if (start.compareTo(moment) > 0)
-            setStart(moment)
+            start = moment
     }
 
     def expandEndTo(moment: DateTime) {
         assertMutable()
         if (end.compareTo(moment) < 0)
-            setEnd(moment)
+            end = moment
     }
 
     def expandTo(moment: DateTime) {
@@ -173,6 +166,6 @@ object TimeRange {
         if (period.isAnytime)
             Anytime
         else
-            apply(period.getStart, period.getEnd, readonly)
+            apply(period.start, period.end, readonly)
     }
 }

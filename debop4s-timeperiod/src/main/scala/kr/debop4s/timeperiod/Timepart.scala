@@ -13,10 +13,6 @@ import org.joda.time.{Duration, DateTime}
 class Timepart(val value: DateTime) extends ValueObject with Ordered[Timepart] {
     assert(value != null)
 
-    def this() {
-        this(Times.zero)
-    }
-
     def hour: Int = value.getHourOfDay
 
     def minute: Int = value.getMinuteOfHour
@@ -49,7 +45,7 @@ object Timepart {
 
     def now(): Timepart = new Timepart(Times.now)
 
-    def apply(): Timepart = new Timepart()
+    def apply(): Timepart = new Timepart(Times.zero)
 
     def apply(moment: DateTime): Timepart = new Timepart(Times.zero.withMillisOfDay(moment.getMillisOfDay))
 

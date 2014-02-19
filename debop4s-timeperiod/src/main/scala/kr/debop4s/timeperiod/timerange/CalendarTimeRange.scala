@@ -13,7 +13,7 @@ import org.joda.time.{DateTime, Duration}
  */
 @SerialVersionUID(-422889827258277497L)
 class CalendarTimeRange(private val _period: ITimePeriod, val calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends TimeRange(calendar.mapStart(_period.getStart), calendar.mapEnd(_period.getEnd), true) {
+    extends TimeRange(calendar.mapStart(_period.start), calendar.mapEnd(_period.end), true) {
 
     private val _mappedStart = calendar.mapStart(_period.start)
     private val _mappedEnd = calendar.mapEnd(_period.end)

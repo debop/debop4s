@@ -17,10 +17,10 @@ class DayRangeTest extends AbstractTimePeriodTest {
         val now = Times.now
         val firstDay = startTimeOfDay(now)
 
-        val dr = DayRange(now)
+        val dr = DayRange(now, EmptyOffsetTimeCalendar)
 
-        dr.start should be eq firstDay
-        dr.end should be eq (firstDay + 1 day)
+        dr.start should equal(firstDay)
+        dr.end should equal(firstDay + 1.day)
     }
 
     test("defaultCalendar") {

@@ -131,7 +131,7 @@ object TimeLines {
         log.trace(s"periodEnd=[$periodEnd]")
 
         if (periodEnd != null && range.end > periodEnd.moment) {
-            val endingGap = TimeRange(periodEnd.moment, range.getEnd)
+            val endingGap = TimeRange(periodEnd.moment, range.end)
             log.trace(s"ending gap을 추가합니다. endingGap=[$endingGap]")
             gaps.add(endingGap)
         }

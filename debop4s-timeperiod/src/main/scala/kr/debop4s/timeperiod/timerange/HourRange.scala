@@ -27,7 +27,7 @@ class HourRange(moment: DateTime, private val _calendar: ITimeCalendar = Default
     def nextHour: HourRange = addHours(1)
 
     def addHours(hours: Int): HourRange = {
-        val startHour = Times.trimToHour(getStart, hourOfDay)
+        val startHour = Times.trimToHour(start, hourOfDay)
         new HourRange(startHour.plusHours(hours), calendar)
     }
 }

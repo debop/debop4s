@@ -5,6 +5,19 @@ import kr.debop4s.timeperiod._
 import kr.debop4s.timeperiod.calendars.CollectKind.CollectKind
 import kr.debop4s.timeperiod.timerange._
 
+
+object CalendarPeriodCollector {
+
+    def apply(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod): CalendarPeriodCollector =
+        apply(filter, limits, SeekDirection.Forward)
+
+    def apply(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod, seekDir: SeekDirection): CalendarPeriodCollector =
+        apply(filter, limits, SeekDirection.Forward, DefaultTimeCalendar)
+
+    def apply(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod, seekDir: SeekDirection, calendar: ITimeCalendar): CalendarPeriodCollector =
+        apply(filter, limits, seekDir, calendar)
+}
+
 /**
  * kr.debop4s.timeperiod.calendars.CalendarPeriodCollector
  * @author 배성혁 sunghyouk.bae@gmail.com
@@ -14,10 +27,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                               private[this] val _limits: ITimePeriod,
                               private[this] val _seekDir: SeekDirection = SeekDirection.Forward,
                               private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarVisitor[CalendarPeriodCollectorFilter, CalendarPeriodCollectorContext](_filter,
-        _limits,
-        _seekDir,
-        _calendar) {
+    extends CalendarVisitor[CalendarPeriodCollectorFilter, CalendarPeriodCollectorContext](_filter, _limits, _seekDir, _calendar) {
 
     val periods: ITimePeriodCollection = TimePeriodCollection()
 
@@ -71,30 +81,33 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         log.trace(s"visit years... years=[$years]")
 
         if (context.scope != CollectKind.Year) {
-            true
-        } else {
-            years.getYears
-                .filter(y => isMatchingYear(y, context) && checkLimits(y))
-                .foreach(y => periods.add(y))
-            false
+            return true
         }
+
+        years.getYears
+        .filter(y => isMatchingYear(y, context) && checkLimits(y))
+        .foreach(y => periods.add(y))
+
+        false
     }
 
     override protected def onVisitYear(year: YearRange, context: CalendarPeriodCollectorContext): Boolean = {
         log.trace(s"visit year... year=[$year]")
 
         if (context.scope != CollectKind.Month)
-            true
+            return true
+
+        val monthFilter = (m: MonthRange) => isMatchingMonth(m, context) && checkLimits(m)
 
         if (filter.collectingMonths.size == 0) {
             year.getMonths
-                .filter(m => isMatchingMonth(m, context) && checkLimits(m))
-                .foreach(m => periods.add(m))
+            .filter(monthFilter)
+            .foreach(m => periods.add(m))
         } else {
-            filter.getCollectingMonths.foreach(m => {
+            filter.collectingMonths.foreach(m => {
                 if (m.isSingleMonth) {
                     val month = new MonthRange(year.year, m.startMonthOfYear, year.calendar)
-                    if (isMatchingMonth(month, context) && checkLimits(month)) {
+                    if (monthFilter(month)) {
                         periods.add(month)
                     }
                 } else {
@@ -113,12 +126,12 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         log.trace(s"visit month... month=[$month]")
 
         if (context.scope != CollectKind.Day)
-            true
+            return true
 
         if (filter.collectingDays.size == 0) {
             month.getDays
-                .filter(d => isMatchingDay(d, context) && checkLimits(d))
-                .foreach(d => periods.add(d))
+            .filter(d => isMatchingDay(d, context) && checkLimits(d))
+            .foreach(d => periods.add(d))
         } else {
             filter.collectingDays.foreach(day => {
                 if (day.isSingleDay) {
@@ -142,12 +155,12 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         log.trace(s"visit day... day=[$day]")
 
         if (context.scope != CollectKind.Hour)
-            true
+            return true
 
         if (filter.collectingHours.size == 0) {
             day.getHours
-                .filter(h => isMatchingHour(h, context) && checkLimits(h))
-                .foreach(h => periods.add(h))
+            .filter(h => isMatchingHour(h, context) && checkLimits(h))
+            .foreach(h => periods.add(h))
         } else if (isMatchingDay(day, context)) {
             filter.collectingHours.foreach(h => {
                 val start = h.start.getDateTime(day.start)

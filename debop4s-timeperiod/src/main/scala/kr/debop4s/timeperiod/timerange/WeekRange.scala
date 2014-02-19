@@ -16,7 +16,7 @@ class WeekRange(private val _year: Int,
 
     def weekOfWeekyear = start.getWeekOfWeekyear
 
-    def firstDayOfWeek: DateTime = getStart
+    def firstDayOfWeek: DateTime = start
 
     def lastDayOfWeek: DateTime = firstDayOfWeek.plusDays(6)
 

@@ -19,7 +19,7 @@ class MonthRangeCollection(private[this] val _year: Int,
     def getMonths: Seq[MonthRange] = {
         val months = ArrayBuffer[MonthRange]()
         for (m <- 0 until monthCount) {
-            months += MonthRange(getStart.plusMonths(m), calendar)
+            months += MonthRange(start.plusMonths(m), calendar)
         }
         months
     }

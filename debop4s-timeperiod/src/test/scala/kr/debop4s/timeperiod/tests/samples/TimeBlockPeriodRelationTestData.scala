@@ -35,11 +35,11 @@ class TimeBlockPeriodRelationTestData {
         reference = new TimeBlock(start, end, true)
 
         val beforeEnd: DateTime = start - duration
-        val beforeStart: DateTime = beforeEnd - reference.getDuration
+        val beforeStart: DateTime = beforeEnd - reference.duration
         val insideStart: DateTime = start + duration
         val insideEnd: DateTime = end - duration
         val afterStart: DateTime = end + duration
-        val afterEnd: DateTime = afterStart + reference.getDuration
+        val afterEnd: DateTime = afterStart + reference.duration
 
         after = new TimeBlock(beforeStart, beforeEnd, true)
         startTouching = new TimeBlock(beforeStart, start, true)

@@ -1,12 +1,12 @@
 package kr.debop4s.timeperiod
 
-import java.util
 import kr.debop4s.core.NotSupportedException
+import kr.debop4s.core.utils.ToStringHelper
 import kr.debop4s.timeperiod.OrderDirection.OrderDirection
 import kr.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
 import scala.annotation.varargs
-import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 
@@ -15,41 +15,136 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 11:45
  */
-trait ITimePeriodContainer extends util.List[ITimePeriod] with ITimePeriod {
+trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod {
 
     def periods: ArrayBuffer[ITimePeriod]
 
-    def getPeriods: ArrayBuffer[ITimePeriod]
+    override def +=:(elem: ITimePeriod): this.type = {
+        elem +=: periods
+        this
+    }
 
+    override def +=(elem: ITimePeriod): this.type = {
+        periods += elem
+        this
+    }
+
+    override def length: Int = periods.length
+
+    override def size = periods.size
+
+    override def isEmpty = periods.isEmpty
+
+    override def contains(elem: Any): Boolean = periods.contains(elem)
 
     /** 시작시각을 설정합니다. */
-    def setStart(start: DateTime)
+    def start_=(x: DateTime)
 
     /** 완료시각을 설정합니다. */
-    def setEnd(end: DateTime)
+    def end_=(x: DateTime)
 
     /** 읽기전용 여부 */
-    def isReadonly: Boolean
+    override def isReadonly: Boolean
 
     def apply(index: Int) = periods(index)
 
     def get(index: Int) = periods(index)
+
+    def clear() {
+        periods.clear()
+    }
 
     def containsPeriod(target: ITimePeriod): Boolean = {
         if (target == null) false
         else periods.contains(target)
     }
 
-    def addAll(elems: Iterable[_ <: ITimePeriod]): Boolean = {
-        periods ++= elems
-        true
+    def add(x: ITimePeriod) {
+        periods += x
+    }
+
+    def addAll(elems: Iterable[ITimePeriod]) {
+        elems
+        .filter(_.isInstanceOf[ITimePeriodContainer])
+        .foreach(elem => addAll(elem.asInstanceOf[ITimePeriodContainer].periods))
+
+        elems
+        .filter(!_.isInstanceOf[ITimePeriodContainer])
+        .foreach(add)
     }
 
     @varargs
-    def addAll(elems: ITimePeriod*): Boolean = {
-        periods ++= elems
+    def addAll(elems: ITimePeriod*) {
+        elems
+        .filter(_.isInstanceOf[ITimePeriodContainer])
+        .foreach(elem => addAll(elem.asInstanceOf[ITimePeriodContainer].periods))
+
+        elems
+        .filter(!_.isInstanceOf[ITimePeriodContainer])
+        .foreach(add)
+    }
+
+    @varargs
+    override def insert(n: Int, elems: ITimePeriod*) {
+        periods.insert(n, elems: _*)
+    }
+
+    override def insertAll(n: Int, elems: Traversable[ITimePeriod]) {
+        periods.insertAll(n, elems)
+    }
+
+
+    override def iterator = periods.iterator
+
+
+    def insertAll(n: Int, elems: Iterable[ITimePeriod]) = {
+        periods.insert(n, elems.toSeq: _*)
+    }
+
+    def containsAll(elems: Iterable[_]): Boolean = {
+        elems.forall(x => periods.contains(x))
+    }
+
+    def remove(x: Any): Boolean = {
+        if (periods.contains(x)) {
+            periods -= x.asInstanceOf[ITimePeriod]
+            true
+        } else {
+            false
+        }
+    }
+
+    def removeAll(elems: Iterable[_]): Boolean = {
+        elems.foreach(c => periods -= c.asInstanceOf[ITimePeriod])
         true
     }
+
+
+    def retainAll(elems: Iterable[_]): Boolean = {
+        periods.clear()
+        elems.foreach {
+            case elem: ITimePeriod =>
+                periods += elem
+            case _ =>
+        }
+        true
+    }
+
+    override def update(n: Int, newelem: ITimePeriod) {
+        periods.update(n, newelem)
+    }
+
+
+    def set(index: Int, elem: ITimePeriod) = {
+        periods.update(index, elem)
+        periods(index)
+    }
+
+    override def remove(index: Int) = periods.remove(index)
+
+    override def indexOf[T >: ITimePeriod](o: T): Int = periods.indexOf(o)
+
+    override def lastIndexOf[T >: ITimePeriod](o: T): Int = periods.lastIndexOf(o)
 
     def sortByStart(sortDir: OrderDirection) {
         var sorted: ArrayBuffer[ITimePeriod] = null
@@ -84,99 +179,15 @@ trait ITimePeriodContainer extends util.List[ITimePeriod] with ITimePeriod {
         periods ++= sorted
     }
 
-    def size = periods.size
-
-    def isEmpty = periods.isEmpty
-
-    def contains(elem: Any): Boolean = periods.contains(elem)
-
-    def iterator = periods.asJava.iterator
-
-
-    def add(x: ITimePeriod): Boolean = {
-        periods += x
-        true
-    }
-
-    def remove(x: Any): Boolean = {
-        if (periods.contains(x)) {
-            periods -= x.asInstanceOf[ITimePeriod]
-            true
-        } else {
-            false
-        }
-    }
-
-    def containsAll(elems: util.Collection[_]): Boolean = {
-        elems.asScala.foreach(x => {
-            if (!periods.contains(x))
-                false
-        })
-        true
-    }
-
-    def addAll(elems: util.Collection[_ <: ITimePeriod]): Boolean = {
-        elems.asScala.foreach(x => periods += x.asInstanceOf[ITimePeriod])
-        true
-    }
-
-    def addAll(index: Int, elems: util.Collection[_ <: ITimePeriod]): Boolean = {
-        periods.insert(index, elems.asScala.toSeq: _*)
-        true
-    }
-
-    def removeAll(elems: util.Collection[_]): Boolean = {
-        elems.asScala.foreach(c => periods -= c.asInstanceOf[ITimePeriod])
-        true
-    }
-
-    def retainAll(elems: util.Collection[_]): Boolean = {
-        periods.clear()
-        elems.asScala.foreach {
-            case elem: ITimePeriod =>
-                periods += elem
-            case _ =>
-        }
-        true
-    }
-
-
-    def set(index: Int, elem: ITimePeriod) = {
-        periods.update(index, elem)
-        periods(index)
-    }
-
-    def add(index: Int, elem: ITimePeriod) {
-        periods.insert(index, elem)
-    }
-
-    def clear() = periods.clear()
-
-    def remove(index: Int) = periods.remove(index)
-
-    def indexOf(o: Any): Int = periods.indexOf(o)
-
-    def lastIndexOf(o: Any): Int = periods.lastIndexOf(o)
-
-    def listIterator(): util.ListIterator[ITimePeriod] = {
-        periods.asJava.listIterator()
-    }
-
-    def listIterator(index: Int): util.ListIterator[ITimePeriod] = {
-        periods.asJava.listIterator(index)
-    }
-
-    def subList(fromIndex: Int, toIndex: Int): util.List[ITimePeriod] = {
-        periods.slice(fromIndex, toIndex).asJava
+    def subList(fromIndex: Int, toIndex: Int): Seq[ITimePeriod] = {
+        periods.slice(fromIndex, toIndex)
     }
 
     def compare(x: ITimePeriod, y: ITimePeriod): Int = x.start.compareTo(y.start)
 
-    def toArray: Array[AnyRef] = periods.asJava.toArray
-
-    def toArray[T](a: Array[T with Object]): Array[T with Object] =
-        periods.asJava.toArray[T](a)
-
+    override protected def buildStringHelper: ToStringHelper =
+        super.buildStringHelper
+        .add("periods", periods)
 }
 
 @SerialVersionUID(-7112720659283751048L)
@@ -186,53 +197,29 @@ class TimePeriodContainer extends ITimePeriodContainer {
 
     val _periods = ArrayBuffer[ITimePeriod]()
 
-    def this(periods: ITimePeriod*) {
-        this()
-        _periods ++= periods
-    }
-
-    def this(collection: Iterable[_ <: ITimePeriod]) {
-        this()
-        _periods ++= collection
-    }
-
     def periods = _periods
 
-    def getPeriods = periods
-
-    def start: DateTime = {
+    override def start: DateTime = {
         if (size == 0) MinPeriodTime
         else if (periods.isEmpty) MinPeriodTime
         else periods.minBy(x => x.start).start
     }
 
-    def getStart = start
-
-    def end: DateTime = {
+    override def end: DateTime = {
         if (size == 0) MaxPeriodTime
         else if (periods.isEmpty) MaxPeriodTime
         else periods.maxBy(x => x.end).end
     }
 
-    def getEnd = end
-
-    def start_=(x: DateTime) {
+    override def start_=(x: DateTime) {
         if (size > 0)
             move(new Duration(start, x))
     }
 
-    def setStart(x: DateTime) {
-        start_=(x)
-    }
-
-    def end_=(x: DateTime) {
+    override def end_=(x: DateTime) {
         if (size > 0) {
-            move(new Duration(getEnd, x))
+            move(new Duration(end, x))
         }
-    }
-
-    def setEnd(x: DateTime) {
-        end_=(x)
     }
 
     def duration: Duration = if (hasPeriod) new Duration(start, end) else MaxDuration
@@ -283,4 +270,22 @@ class TimePeriodContainer extends ITimePeriodContainer {
     def getIntersection(other: ITimePeriod) = Times.getIntersectionRange(this, other)
 
     def getUnion(other: ITimePeriod) = Times.getUnionRange(this, other)
+
+}
+
+object TimePeriodContainer {
+
+    def apply(collection: Iterable[ITimePeriod]):TimePeriodContainer = {
+        val container = new TimePeriodContainer()
+        container.addAll(collection)
+        container
+    }
+
+    def apply(periods: ITimePeriod*):TimePeriodContainer = {
+        val container = new TimePeriodContainer()
+        container.addAll(periods)
+        container
+    }
+
+
 }

@@ -16,10 +16,6 @@ class CalendarPeriodCollectorFilter extends CalendarVisitorFilter with ICalendar
     val collectingHours = ArrayBuffer[HourRangeInDay]()
     val collectingDayHours = ArrayBuffer[DayHourRange]()
 
-    def getCollectingMonths = collectingMonths
-
-    def getCollectingDays = collectingDays
-
     override def clear() {
         super.clear()
         collectingMonths.clear()

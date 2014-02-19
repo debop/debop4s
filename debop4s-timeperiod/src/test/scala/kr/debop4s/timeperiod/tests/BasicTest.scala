@@ -33,13 +33,14 @@ class BasicTest extends FunSuite with Matchers with BeforeAndAfter {
                 .withSecondOfMinute(9)
 
         val expected = DateTime.parse("2013-03-02T07:08:09.123+0900")
-        assert(actual === expected)
+        assert(actual == expected)
     }
 
     test("basic test") {
         assert(TDateTime.nextMonth < TDateTime.now + 2.months)
 
         val x: Interval = TDateTime.now to TDateTime.tomorrow
+
         print(s"x=[$x]")
 
         assert((TDateTime.now to TDateTime.nextSecond).millis == 1000)

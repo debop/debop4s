@@ -31,8 +31,8 @@ class MinuteRange(private val _moment: DateTime,
     def nextMinute: MinuteRange = addMinutes(1)
 
     def addMinutes(minutes: Int): MinuteRange = {
-        val start = getStart.withTimeAtStartOfDay().withTime(hourOfDay, minuteOfHour, 0, 0)
-        new MinuteRange(start.plusMinutes(minutes), calendar)
+        val s = Times.asDate(this.start).withTime(hourOfDay, minuteOfHour, 0, 0)
+        new MinuteRange(s + minutes.minute, calendar)
     }
 }
 

@@ -44,7 +44,7 @@ class CalendarDateAdd extends DateAdd {
     }
 
     override def add(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): DateTime = {
-        log.trace(s"Add... start=[$start] + offset=[$offset] 시각을 계산합니다. seekBoundary=$seekBoundary")
+        log.trace(s"Add... start=$start, offset=$offset 시각을 계산합니다. seekBoundary=$seekBoundary")
 
         if (weekDays.size == 0 && excludePeriods.size == 0 && workingHours.size == 0)
             return start.plus(offset)
@@ -81,22 +81,25 @@ class CalendarDateAdd extends DateAdd {
                               seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): (DateTime, Duration) = {
         log.trace("기준시각으로부터 오프셋만큼 떨어진 시각을 구합니다. " +
                   s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
-        Guard.shouldBe(offset.compareTo(Duration.ZERO) >= 0, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
 
-        var end: DateTime = null
+        Guard.shouldBe(offset >= Duration.ZERO, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
+
         var moment = start
+        var end: DateTime = null
         var remaining = offset
 
         var week = WeekRange(start, calendar)
 
         while (week != null) {
-            super.getIncludePeriods.clear()
-            super.getIncludePeriods.addAll(getAvailableWeekPeriods(week))
+            includePeriods.clear()
+            includePeriods.addAll(getAvailableWeekPeriods(week))
 
-            log.trace(s"가능한 기간=[${super.getIncludePeriods}]")
+            log.trace(s"가능한 기간=[$includePeriods]")
+
             val results = super.calculateEnd(moment, remaining, seekDir, seekBoundary)
             end = results._1
             remaining = results._2
+
             log.trace(s"완료기간을 구했습니다. end=[$end], remaining=[$remaining]")
 
             if (end != null || remaining == null)
@@ -127,12 +130,14 @@ class CalendarDateAdd extends DateAdd {
         if (getExcludePeriods.size == 0) {
             next = current.nextWeek
         } else {
-            val limits = TimeRange(current.end.plusMillis(1))
+            val limits = TimeRange(current.end + 1.millis, null.asInstanceOf[DateTime])
             val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
-            val remainingPeriods = gapCalculator.getGaps(getExcludePeriods, limits)
+            val remainingPeriods = gapCalculator.getGaps(excludePeriods, limits)
 
             if (remainingPeriods.size > 0)
-                next = WeekRange(remainingPeriods.get(0).start, calendar)
+                next = WeekRange(remainingPeriods(0).start, calendar)
+            else
+                next = null
         }
 
         log.trace(s"current week=[$current] 이후 week 기간=[$next]")
@@ -147,25 +152,27 @@ class CalendarDateAdd extends DateAdd {
         if (getExcludePeriods.size == 0) {
             previous = current.previousWeek
         } else {
-            val limits = new TimeRange(MinPeriodTime, current.start.minusMillis(1))
+            val limits = new TimeRange(MinPeriodTime, current.start - 1.millis )
             val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
-            val remainingPeriods = gapCalculator.getGaps(getExcludePeriods, limits)
+            val remainingPeriods = gapCalculator.getGaps(excludePeriods, limits)
 
             if (remainingPeriods.size > 0)
                 previous = WeekRange(remainingPeriods.get(remainingPeriods.size - 1).end, calendar)
+            else
+                previous = null
         }
 
         log.trace(s"current week=[$current] 이전 week 기간=[$previous]")
         previous
     }
 
-    private def getAvailableWeekPeriods(limits: ITimePeriod): util.List[ITimePeriod] = {
+    private def getAvailableWeekPeriods(limits: ITimePeriod): Seq[ITimePeriod] = {
         assert(limits != null)
-        log.trace(s"가능한 기간을 추출합니다. limits=[$limits]")
+        log.trace(s"가능한 주간 기간을 추출합니다. limits=[$limits]")
 
         if (weekDays.size == 0 && workingHours.size == 0 && workingDayHours.size == 0) {
             val result = TimePeriodCollection()
-            result.add(limits)
+            result.addAll(limits)
             return result
         }
 

@@ -10,8 +10,8 @@ import kr.debop4s.timeperiod.{MonthRangeInYear, DayRangeInMonth}
  */
 trait ICalendarPeriodCollectorFilter extends ICalendarVisitorFilter {
 
-    def getCollectingMonths: Seq[MonthRangeInYear]
+    def collectingMonths: Seq[MonthRangeInYear]
 
-    def getCollectingDays: Seq[DayRangeInMonth]
+    def collectingDays: Seq[DayRangeInMonth]
 
 }
