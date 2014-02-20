@@ -35,7 +35,7 @@ public class LocalTest extends JUnitSuite {
                     saveAndLoadReferenceType();
                     getOrCreate();
                 } catch (Exception e) {
-                    LocalTest.log.error("예외 발생", e);
+                    log.error("예외 발생", e);
                 }
             }
         });
