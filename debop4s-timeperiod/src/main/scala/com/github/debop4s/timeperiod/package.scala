@@ -8,7 +8,7 @@ import org.joda.time.field.AbstractReadableInstantFieldProperty
 import org.joda.time.format.DateTimeFormatter
 
 /**
- * com.github.debop4s.timeperiod.package
+ * Time Period 관련 상수 및 Implicit 정의
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 26. 오후 1:47
