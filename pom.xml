@@ -4,16 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>kr.debop4s</groupId>
+    <groupId>com.github.debop4s</groupId>
     <artifactId>debop4s-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <!--<module>debop4s-time</module>-->
+        <!--<module>github-time</module>-->
         <module>debop4s-core</module>
         <module>debop4s-timeperiod</module>
         <module>debop4s-data</module>
+        <module>debop4s-redis</module>
     </modules>
 
     <properties>
@@ -678,9 +679,9 @@
 
             <!-- Redis -->
             <dependency>
-                <groupId>redis.clients</groupId>
-                <artifactId>jedis</artifactId>
-                <version>2.2.1</version>
+                <groupId>net.debasishg</groupId>
+                <artifactId>redisclient_2.10</artifactId>
+                <version>2.11</version>
             </dependency>
 
             <!-- Memcached -->

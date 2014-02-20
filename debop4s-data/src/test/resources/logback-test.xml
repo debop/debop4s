@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <logger name="kr.debop4s.data" level="TRACE"/>
+    <logger name="com.github.debop4s.data" level="TRACE"/>
 
     <root level="INFO">
         <appender-ref ref="console"/>
