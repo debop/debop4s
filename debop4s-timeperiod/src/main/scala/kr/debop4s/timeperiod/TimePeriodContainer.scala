@@ -17,7 +17,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod {
 
-    def periods: ArrayBuffer[ITimePeriod]
+    def periods: mutable.ArrayBuffer[ITimePeriod]
 
     override def +=:(elem: ITimePeriod): this.type = {
         elem +=: periods
@@ -25,7 +25,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     }
 
     override def +=(elem: ITimePeriod): this.type = {
-        periods += elem
+        add(elem)
         this
     }
 
@@ -35,7 +35,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
 
     override def isEmpty = periods.isEmpty
 
-    override def contains(elem: Any): Boolean = periods.contains(elem)
+    //    override def contains(elem: Any): Boolean = periods.contains(elem)
 
     /** 시작시각을 설정합니다. */
     def start_=(x: DateTime)
@@ -93,23 +93,23 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     }
 
     def containsAll(elems: Iterable[_]): Boolean = {
-        elems.forall(x => periods.contains(x))
+        elems.filter(_.isInstanceOf[ITimePeriod]).forall(x => periods.contains(x))
     }
 
     def remove(x: Any): Boolean = {
-        if (periods.contains(x)) {
-            periods -= x.asInstanceOf[ITimePeriod]
-            true
-        } else {
-            false
+        x match {
+            case period: ITimePeriod if periods.contains(x) =>
+                periods -= period
+                true
+            case _ =>
+                false
         }
     }
 
     def removeAll(elems: Iterable[_]): Boolean = {
-        elems.foreach(c => periods -= c.asInstanceOf[ITimePeriod])
+        elems.filter(_.isInstanceOf[ITimePeriod]).foreach(remove)
         true
     }
-
 
     def retainAll(elems: Iterable[_]): Boolean = {
         periods.clear()

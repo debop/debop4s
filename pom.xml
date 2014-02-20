@@ -20,8 +20,8 @@
         <jdk.version>1.7</jdk.version>
         <scala.version>2.10.3</scala.version>
 
-        <springframework.version>4.0.0.RELEASE</springframework.version>
-        <hibernate.version>4.3.0.Final</hibernate.version>
+        <springframework.version>4.0.2.RELEASE</springframework.version>
+        <hibernate.version>4.3.1.Final</hibernate.version>
         <querydsl.version>3.3.0</querydsl.version>
 
         <hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
