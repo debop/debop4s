@@ -1,7 +1,7 @@
 package org.hibernate.cache.redis.client
 
 import akka.util.ByteString
-import com.github.debop4s.core.io.BinarySerializer
+import org.hibernate.cache.redis.serializer.BinaryRedisSerializer
 import org.slf4j.LoggerFactory
 import redis.RedisClient
 import redis.api.Limit
@@ -29,7 +29,7 @@ class CacheClient(val redis: RedisClient) {
 
     val DEFAULT_REGION_NAME = "hibernate"
 
-    private val valueSerializer = new BinarySerializer()
+    private val valueSerializer = new BinaryRedisSerializer[Any]()
 
     def ping: Future[String] = redis.ping()
 
@@ -50,7 +50,7 @@ class CacheClient(val redis: RedisClient) {
      * @param timeoutInSeconds expiration timeout value
      * @return return cached entity, if not exists return null.
      */
-    def get(region: String, key: String, expireInSeconds: Long = 0): Future[AnyRef] = {
+    def get(region: String, key: String, expireInSeconds: Long = 0): Future[Any] = {
         log.trace(s"retrieve CacheItem... region=$region, key=$key")
 
         redis.hget(region, key).map((item: Option[ByteString]) => {
@@ -58,8 +58,8 @@ class CacheClient(val redis: RedisClient) {
                 val score = System.currentTimeMillis + expireInSeconds * 1000L
                 redis.zadd(regionExpireKey(region), (score, key))
             }
-            item.map((x: ByteString) => {valueSerializer.deserialize(x.toArray, classOf[AnyRef])})
-            .getOrElse(null.asInstanceOf[AnyRef])
+            item.map((x: ByteString) => valueSerializer.deserialize(x.toArray))
+            .getOrElse(null)
         })
     }
 
@@ -72,30 +72,35 @@ class CacheClient(val redis: RedisClient) {
         redis.hkeys(region)
     }
 
-    def keySizeInRegion(region: String) = redis.hlen(region)
+    def keySizeInRegion(region: String): Future[Long] = redis.hlen(region)
 
-    def getAll(region: String) = redis.hgetall(region)
+    def getAll(region: String): Future[Map[String, Any]] = {
+
+        redis.hgetall(region).map(kvs => {
+            kvs.map(x => (x._1, valueSerializer.deserialize(x._2.toArray)))
+        })
+    }
 
     @varargs
-    def multiGet(region: String, keys: String*): Future[Seq[AnyRef]] = {
+    def multiGet(region: String, keys: String*): Future[Seq[Any]] = {
         redis.hmget(region, keys: _*).map(results => {
             results.map(x => {
-                x.map(v => valueSerializer.deserialize(v.toArray, classOf[AnyRef]))
-                .getOrElse(null.asInstanceOf[AnyRef])
+                x.map(v => valueSerializer.deserialize(v.toArray))
+                .getOrElse(null)
             })
         })
     }
 
-    def multiGet(region: String, keys: Iterable[String]): Future[Seq[AnyRef]] = {
+    def multiGet(region: String, keys: Iterable[String]): Future[Seq[Any]] = {
         redis.hmget(region, keys.toSeq: _*).map(results => {
             results.map(x => {
-                x.map(v => valueSerializer.deserialize(v.toArray, classOf[AnyRef]))
-                .getOrElse(null.asInstanceOf[AnyRef])
+                x.map(v => valueSerializer.deserialize(v.toArray))
+                .getOrElse(null)
             })
         })
     }
 
-    def set[V](region: String, key: String, value: V, expiry: Long = 0, unit: TimeUnit = TimeUnit.SECONDS): Future[Any] = {
+    def set(region: String, key: String, value: Any, expiry: Long = 0, unit: TimeUnit = TimeUnit.SECONDS): Future[Any] = {
 
         log.trace(s"cache 값을 설정합니다... region=$region, key=$key, value=$value, expiry=$expiry, unit=$unit")
 
@@ -186,7 +191,7 @@ object CacheClient {
     implicit val akkaSystem = akka.actor.ActorSystem()
 
     def apply(): CacheClient =
-        apply(RedisClient("localhost", 6379))
+        apply(RedisClient())
 
     def apply(redis: RedisClient): CacheClient =
         new CacheClient(redis)

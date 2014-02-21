@@ -37,6 +37,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+
         <!-- JPA -->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>

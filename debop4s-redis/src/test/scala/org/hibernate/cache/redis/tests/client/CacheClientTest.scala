@@ -45,8 +45,7 @@ class CacheClientTest extends AbstractRedisTest {
         Thread.sleep(150)
 
         client.get(REGION, "expireKey") map {
-            x =>
-                x should equal(null)
+            x => assert(x == null)
         }
     }
 
@@ -74,7 +73,7 @@ class CacheClientTest extends AbstractRedisTest {
         } yield {
             v should equal("value")
             exists should equal(true)
-            v2 should equal(null)
+            assert(v2 == null)
             exists2 should equal(false)
         }
     }
@@ -111,7 +110,7 @@ class CacheClientTest extends AbstractRedisTest {
 
         (0 until count).foreach(x => {
             val key = "key-" + x
-            client.get(REGION, key) map {v => v should equal(null)}
+            client.get(REGION, key) map {v => assert(v == null)}
         })
     }
 
