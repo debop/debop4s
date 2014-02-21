@@ -19,5 +19,5 @@ class RedisTimestampsRegion(private[this] val _accessStrategyFactory: RedisAcces
                                       _cache,
                                       _regionName,
                                       _props)
-            with TimestampsRegion {
+    with TimestampsRegion {
 }

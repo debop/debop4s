@@ -1,9 +1,8 @@
 package org.hibernate.cache.redis.strategy
 
 import org.hibernate.cache.redis.regions.{RedisNaturalIdRegion, RedisEntityRegion, RedisCollectionRegion}
+import org.hibernate.cache.spi.access._
 import org.hibernate.cfg.Settings
-import org.hibernate.cache.spi.access.{NaturalIdRegionAccessStrategy, EntityRegionAccessStrategy, SoftLock, CollectionRegionAccessStrategy}
-import org.hibernate.cache.spi.CollectionRegion
 
 /**
  * org.hibernate.cache.redis.strategy.TransactionalEntityRegionCollectionAccessStrategy
@@ -14,7 +13,7 @@ import org.hibernate.cache.spi.CollectionRegion
 class TransactionalRedisCollectionAccessStrategy(private[this] val _region: RedisCollectionRegion,
                                                  private[this] val _settings: Settings)
     extends AbstractRedisAccessStrategy(_region, _settings)
-            with CollectionRegionAccessStrategy {
+    with CollectionRegionAccessStrategy {
 
     override def getRegion = region
 
@@ -46,7 +45,7 @@ class TransactionalRedisCollectionAccessStrategy(private[this] val _region: Redi
 class TransactionalRedisEntityRegionAccessStrategy(private[this] val _region: RedisEntityRegion,
                                                    private[this] val _settings: Settings)
     extends AbstractRedisAccessStrategy(_region, _settings)
-            with EntityRegionAccessStrategy {
+    with EntityRegionAccessStrategy {
 
     override def getRegion = region
 
@@ -100,7 +99,7 @@ class TransactionalRedisEntityRegionAccessStrategy(private[this] val _region: Re
 class TransactionalRedisNatualIdRegionAccessStrategy(private[this] val _region: RedisNaturalIdRegion,
                                                      private[this] val _settings: Settings)
     extends AbstractRedisAccessStrategy(_region, _settings)
-            with NaturalIdRegionAccessStrategy {
+    with NaturalIdRegionAccessStrategy {
 
     override def getRegion = region
 

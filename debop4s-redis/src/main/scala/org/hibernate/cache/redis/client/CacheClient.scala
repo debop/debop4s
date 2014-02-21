@@ -134,7 +134,7 @@ class CacheClient(val redis: RedisClient) {
             log.trace(s"cache item들을 expire 시킵니다. region=$region, keys=$keysToExpire")
             withTransaction(tx => {
                 keysToExpire.par.foreach(key => {
-                    tx.hdel(region, key.toString())
+                    tx.hdel(region, key.utf8String)
                 })
                 tx.zremrangebyscore(regionExpire, Limit(0), Limit(score))
             })

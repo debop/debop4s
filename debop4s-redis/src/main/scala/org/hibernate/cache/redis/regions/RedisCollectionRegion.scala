@@ -25,7 +25,7 @@ class RedisCollectionRegion(private[this] val _accessStrategyFactory: RedisAcces
                                             _settings,
                                             _metadata,
                                             _props)
-            with CollectionRegion {
+    with CollectionRegion {
 
     def buildAccessStrategy(accessType: AccessType): CollectionRegionAccessStrategy =
         accessStrategyFactory.createCollectionRegionAccessStrategy(this, accessType)

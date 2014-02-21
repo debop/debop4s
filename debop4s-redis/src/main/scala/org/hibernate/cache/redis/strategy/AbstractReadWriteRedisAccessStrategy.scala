@@ -22,7 +22,6 @@ class AbstractReadWriteRedisAccessStrategy[T <: RedisTransactionalDataRegion](pr
                              txTimestamp: Long,
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
-
         region.put(key, value)
         true
     }

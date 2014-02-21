@@ -20,7 +20,7 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
                                    val metadata: CacheDataDescription,
                                    private[this] val _props: Properties)
     extends RedisDataRegion(_accessStrategyFactory, _cache, _regionName, _props)
-            with TransactionalDataRegion {
+    with TransactionalDataRegion {
 
 
     override def getCacheDataDescription: CacheDataDescription = metadata

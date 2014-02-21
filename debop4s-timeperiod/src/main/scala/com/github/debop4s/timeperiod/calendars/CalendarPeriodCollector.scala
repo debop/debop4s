@@ -38,33 +38,29 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     val periods: ITimePeriodCollection = TimePeriodCollection()
 
     def collectYears() {
-        log.trace("collect years...")
         collectInternal(CollectKind.Year)
     }
 
     def collectMonths() {
-        log.trace("collect months...")
         collectInternal(CollectKind.Month)
     }
 
     def collectDays() {
-        log.trace("collect days...")
         collectInternal(CollectKind.Day)
     }
 
     def collectHours() {
-        log.trace("collect hours...")
         collectInternal(CollectKind.Hour)
     }
 
     def collectMinutes() {
-        log.trace("collect minutes...")
         collectInternal(CollectKind.Minute)
     }
 
-    private def collectInternal(collectKind: CollectKind) {
-        val context = new CalendarPeriodCollectorContext()
-        context.scope = collectKind
+    private def collectInternal(scope: CollectKind) {
+        val context = new CalendarPeriodCollectorContext(scope)
+        // context.scope = scope
+        log.trace(s"collect periods... scope=$scope")
         startPeriodVisit(context)
     }
 

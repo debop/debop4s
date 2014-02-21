@@ -20,7 +20,7 @@ class RedisGeneralDataRegion(private[this] val _accessStrategyFactory: RedisAcce
                                _cache,
                                _regionName,
                                _props)
-            with GeneralDataRegion {
+    with GeneralDataRegion {
 
 
     override def get(key: Any): AnyRef = {

@@ -20,5 +20,5 @@ class RedisQueryResultsRegion(private[this] val _accessStrategyFactory: RedisAcc
                                       _cache,
                                       _regionName,
                                       _props)
-            with QueryResultsRegion {
+    with QueryResultsRegion {
 }

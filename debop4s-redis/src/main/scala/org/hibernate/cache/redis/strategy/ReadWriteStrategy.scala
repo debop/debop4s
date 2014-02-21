@@ -13,7 +13,7 @@ import org.hibernate.cfg.Settings
 class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: RedisCollectionRegion,
                                                    private[this] val _settings: Settings)
     extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-            with CollectionRegionAccessStrategy {
+    with CollectionRegionAccessStrategy {
 
     def getRegion = region
 
@@ -30,7 +30,7 @@ class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: Re
 class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisEntityRegion,
                                                private[this] val _settings: Settings)
     extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-            with EntityRegionAccessStrategy {
+    with EntityRegionAccessStrategy {
 
     def getRegion = region
 
@@ -67,7 +67,7 @@ class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisE
 class ReadWriteRedisNaturalIdRegionAccessStrategy(private[this] val _region: RedisNaturalIdRegion,
                                                   private[this] val _settings: Settings)
     extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-            with NaturalIdRegionAccessStrategy {
+    with NaturalIdRegionAccessStrategy {
 
     def getRegion = region
 
