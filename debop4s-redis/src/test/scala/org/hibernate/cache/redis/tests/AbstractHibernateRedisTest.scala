@@ -8,6 +8,6 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 20. 오후 5:18
  */
-class AbstractRedisTest extends FunSuite with Matchers with BeforeAndAfter {
+class AbstractHibernateRedisTest extends FunSuite with Matchers with BeforeAndAfter {
 
 }

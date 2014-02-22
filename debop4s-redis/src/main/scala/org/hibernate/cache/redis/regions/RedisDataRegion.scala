@@ -4,7 +4,7 @@ import com.github.debop4s.core.parallels.Promises
 import java.util
 import java.util.Properties
 import org.hibernate.cache.redis.RedisUtil
-import org.hibernate.cache.redis.client.CacheClient
+import org.hibernate.cache.redis.client.RedisHibernateCache
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.spi.Region
 import org.slf4j.LoggerFactory
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
  * @since 2014. 2. 21. 오전 9:25
  */
 abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessStrategyFactory,
-                               val cache: CacheClient,
+                               val cache: RedisHibernateCache,
                                val regionName: String,
                                val props: Properties) extends Region {
 

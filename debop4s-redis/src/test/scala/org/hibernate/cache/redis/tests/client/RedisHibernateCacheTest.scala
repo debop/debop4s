@@ -2,8 +2,8 @@ package org.hibernate.cache.redis.tests.client
 
 import com.github.debop4s.core.parallels.Promises
 import org.fest.assertions.Assertions._
-import org.hibernate.cache.redis.client.CacheClient
-import org.hibernate.cache.redis.tests.AbstractRedisTest
+import org.hibernate.cache.redis.client.RedisHibernateCache
+import org.hibernate.cache.redis.tests.AbstractHibernateRedisTest
 import scala.actors.threadpool.TimeUnit
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,9 +15,9 @@ import scala.concurrent.duration._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 20. 오후 3:04
  */
-class CacheClientTest extends AbstractRedisTest {
+class RedisHibernateCacheTest extends AbstractHibernateRedisTest {
 
-    val client = CacheClient()
+    val client = RedisHibernateCache()
 
     val REGION = client.DEFAULT_REGION_NAME
 
@@ -106,7 +106,7 @@ class CacheClientTest extends AbstractRedisTest {
         future.map(values => values.size should equal(keys.size))
 
         val future2 = client.multiDelete(REGION, keys)
-        Promises.await(future2, 1 seconds)
+        Promises.await(future2, 5 seconds)
 
         (0 until count).foreach(x => {
             val key = "key-" + x

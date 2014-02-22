@@ -16,8 +16,10 @@ class FunctionalConfigurationTest extends FunSuite {
     lazy val log = LoggerFactory.getLogger(getClass)
 
     val context = FunctionalConfigApplicationContext(classOf[CompressorConfiguration])
+
     val gzip = context.getBean(classOf[GZipCompressor])
     val deflate = context.getBean(classOf[DeflateCompressor])
+
     test("compressor injection") {
         log.debug("names=" + context.getBeanDefinitionNames.mkString(","))
 

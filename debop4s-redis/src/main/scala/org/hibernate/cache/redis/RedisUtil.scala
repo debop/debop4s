@@ -2,7 +2,7 @@ package org.hibernate.cache.redis
 
 import java.util.Properties
 import org.hibernate.SessionFactory
-import org.hibernate.cache.redis.client.CacheClient
+import org.hibernate.cache.redis.client.RedisHibernateCache
 import org.hibernate.cfg.AvailableSettings
 import org.hibernate.internal.SessionFactoryImpl
 import org.slf4j.LoggerFactory
@@ -33,7 +33,7 @@ object RedisUtil {
     /**
     * [[CacheClient]] 를 생성합니다.
     */
-    def createCacheClient(props: Properties): CacheClient = {
+    def createCacheClient(props: Properties): RedisHibernateCache = {
         log.info("RedisClient 인스턴스를 생성합니다...")
 
         val cachePath = props.getProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
@@ -47,9 +47,9 @@ object RedisUtil {
             val passwd = cacheProperties.getProperty("redis.password", null)
             val database = cacheProperties.getProperty("redis.database", String.valueOf(DEFAULT_DATABASE)).toInt
 
-            CacheClient(RedisClient(host, port, Some(passwd), Some(database)))
+            RedisHibernateCache(RedisClient(host, port, Some(passwd), Some(database)))
         } else {
-            CacheClient()
+            RedisHibernateCache()
         }
     }
 

@@ -21,7 +21,7 @@ import scala.concurrent.duration._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 20. 오후 1:14
  */
-class CacheClient(val redis: RedisClient) {
+class RedisHibernateCache(val redis: RedisClient) {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
@@ -186,14 +186,14 @@ class CacheClient(val redis: RedisClient) {
     private def regionExpireKey(region: String) = region + ":expire"
 }
 
-object CacheClient {
+object RedisHibernateCache {
 
     implicit val akkaSystem = akka.actor.ActorSystem()
 
-    def apply(): CacheClient =
+    def apply(): RedisHibernateCache =
         apply(RedisClient())
 
-    def apply(redis: RedisClient): CacheClient =
-        new CacheClient(redis)
+    def apply(redis: RedisClient): RedisHibernateCache =
+        new RedisHibernateCache(redis)
 
 }

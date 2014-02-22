@@ -15,7 +15,7 @@ object RedisCachePrefix {
 
     def apply(): RedisCachePrefix = new DefaultRedisCachePrefix()
 
-    def apply(delimeter: String) = new DefaultRedisCachePrefix(delimeter)
+    def apply(delimeter: Option[String]) = new DefaultRedisCachePrefix(delimeter)
 }
 
 class DefaultRedisCachePrefix(val delimeter: Option[String] = Some(RedisCachePrefix.DEFAULT_DELIMETER))

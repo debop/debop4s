@@ -2,7 +2,7 @@ package org.hibernate.cache.redis.regions
 
 import com.github.debop4s.core.parallels.Promises
 import java.util.Properties
-import org.hibernate.cache.redis.client.CacheClient
+import org.hibernate.cache.redis.client.RedisHibernateCache
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.spi.{CacheDataDescription, TransactionalDataRegion}
 import org.hibernate.cfg.Settings
@@ -14,7 +14,7 @@ import org.hibernate.cfg.Settings
  * @since 2014. 2. 21. 오후 12:00
  */
 class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: RedisAccessStrategyFactory,
-                                   private[this] val _cache: CacheClient,
+                                   private[this] val _cache: RedisHibernateCache,
                                    private[this] val _regionName: String,
                                    val settings: Settings,
                                    val metadata: CacheDataDescription,

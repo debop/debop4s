@@ -162,11 +162,16 @@ class RedisCache(val name: String,
 
 object RedisCache {
 
-    def apply(name: String, prefix: String, expiration: Long = 0): RedisCache =
-        new RedisCache(name, prefix, RedisClient(), expiration)
+    implicit val akkaSystem = akka.actor.ActorSystem()
 
-    def apply(name: String, prefix: String, expiration: Long = 0,
-              host: String = "locahost", port: Int = 6379): RedisCache = {
+    def apply(name: String, prefix: String, redis: RedisClient, expiration: Long): RedisCache =
+        new RedisCache(name, prefix, redis, expiration)
+
+    def apply(name: String,
+              prefix: String,
+              expiration: Long = 0,
+              host: String = "locahost",
+              port: Int = 6379): RedisCache = {
         val redis = RedisClient(host, port)
         new RedisCache(name, prefix, redis, expiration)
     }

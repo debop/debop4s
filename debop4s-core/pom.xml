@@ -94,6 +94,7 @@
             <artifactId>joda-convert</artifactId>
         </dependency>
 
+
         <!-- GSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -112,6 +113,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
+        </dependency>
+
+        <!-- Jackson for Scala -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-scala_${scala.main.version}</artifactId>
         </dependency>
 
         <!-- Model Mapper -->
