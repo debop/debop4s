@@ -12,8 +12,7 @@ import redis.api.pubsub.{Message, PMessage}
  */
 class ConsoleLogRedisSubscriberActor(override val address: InetSocketAddress,
                                      val channels: Seq[String] = Seq("channel:logback:logs"),
-                                val patterns: Seq[String] = Nil)
-
+                                     val patterns: Seq[String] = Nil)
     extends RedisSubscriberActor(address, channels, patterns) {
 
     private val serializer = ScalaJacksonSerializer()

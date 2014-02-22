@@ -44,7 +44,6 @@ object JacksonSerializer {
         new JacksonSerializer(mapper)
     }
 
-
     def createObjectMapper(): ObjectMapper = {
         val mapper = new ObjectMapper()
 

@@ -32,7 +32,6 @@ object ScalaJacksonSerializer {
         new ScalaJacksonSerializer(mapper)
     }
 
-
     def createObjectMapper(): ObjectMapper = {
         val mapper = new ObjectMapper()
 
