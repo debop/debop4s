@@ -4,10 +4,13 @@ import ch.qos.logback.classic.spi.{ThrowableProxyUtil, LoggingEvent}
 import ch.qos.logback.core.{CoreConstants, UnsynchronizedAppenderBase}
 import com.github.debop4s.core.json.ScalaJacksonSerializer
 import com.github.debop4s.core.logback.LogDocument
+import com.github.debop4s.core.parallels.Promises
 import com.github.debop4s.core.utils.Options
 import com.github.debop4s.redis.RedisConsts
 import org.joda.time.DateTime
 import redis.RedisClient
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 /**
  * log를 client 에 쓰는 logback 용 appender 입니다.
@@ -65,9 +68,11 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
         if (eventObject == null)
             return
 
-        val doc = createLogDocument(eventObject)
-        val jsonDoc = toJsonText(doc)
-        redis.lpush(key, jsonDoc)
+        Promises.startNew[Future[Long]] {
+            val doc = createLogDocument(eventObject)
+            val jsonDoc = toJsonText(doc)
+            redis.lpush(key, jsonDoc)
+        }
     }
 
     protected def createLogDocument(event: LoggingEvent): LogDocument = {

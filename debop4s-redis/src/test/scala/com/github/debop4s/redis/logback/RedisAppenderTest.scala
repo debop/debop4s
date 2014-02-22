@@ -1,5 +1,6 @@
 package com.github.debop4s.redis.logback
 
+import com.github.debop4s.core.parallels.Parallels
 import com.github.debop4s.redis.AbstractRedisTest
 import org.slf4j.LoggerFactory
 import redis.RedisClient
@@ -17,7 +18,12 @@ class RedisAppenderTest extends AbstractRedisTest {
     private val redis: RedisClient = RedisClient()
 
     test("logging message") {
-        log.debug("appender test")
+        Parallels.runAction(10) {
+            (0 until 100).foreach {
+                x =>
+                    log.debug(s"appender test [$x]")
+            }
+        }
     }
 
     test("clear logs") {

@@ -2,9 +2,12 @@ package com.github.debop4s.redis.logback.pubsub
 
 import com.github.debop4s.core.json.ScalaJacksonSerializer
 import com.github.debop4s.core.logback.LogDocument
+import com.github.debop4s.core.parallels.Promises
 import java.net.InetSocketAddress
 import redis.actors.RedisSubscriberActor
 import redis.api.pubsub.{Message, PMessage}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 /**
  * logback log message 를 Redis PubSub channel에서 받아와서 console에 씁니다.
@@ -18,24 +21,22 @@ class ConsoleLogRedisSubscriberActor(override val address: InetSocketAddress,
     private val serializer = ScalaJacksonSerializer()
 
     override def onMessage(m: Message) {
-        try {
+        Promises.startNew[Boolean] {
             val doc = serializer.deserializeFromText(m.data, classOf[LogDocument])
             println(s"Subscriber: ${doc.timestamp} [${doc.levelStr}] ${doc.message}")
             if (doc.stacktrace != null && doc.stacktrace.size > 0)
                 println(doc.stacktrace)
-        } catch {
-            case e: Throwable => System.err.print(e)
+            true
         }
     }
 
-    override def onPMessage(pm: PMessage) {
-        try {
+    override def onPMessage(pm: PMessage): Unit = future {
+        Promises.startNew[Boolean] {
             val doc = serializer.deserializeFromText(pm.data, classOf[LogDocument])
             println(s"Pattern Subscriber: ${doc.timestamp} [${doc.levelStr}] ${doc.message}")
             if (doc.stacktrace != null && doc.stacktrace.size > 0)
                 println(doc.stacktrace)
-        } catch {
-            case e: Throwable => System.err.print(e)
+            true
         }
     }
 }
