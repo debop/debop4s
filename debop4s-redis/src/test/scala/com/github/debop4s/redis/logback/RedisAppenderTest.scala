@@ -1,6 +1,5 @@
 package com.github.debop4s.redis.logback
 
-import org.springframework.test.context.TestContextManager
 import com.github.debop4s.redis.AbstractRedisTest
 import org.slf4j.LoggerFactory
 import redis.RedisClient
@@ -23,5 +22,6 @@ class RedisAppenderTest extends AbstractRedisTest {
 
     test("clear logs") {
         redis.del(RedisAppender.DEFAULT_KEY)
+        println("delete all logs")
     }
 }

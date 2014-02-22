@@ -12,4 +12,6 @@ object RedisConsts {
     val DEFAULT_DATABASE: Int = 0
     val CHARSET: String = "UTF-8"
 
+
+    val DEFAULT_LOGBACK_CHANNEL = "channel:logback:logs"
 }

@@ -1,6 +1,7 @@
 package com.github.debop4s.redis.logback.pubsub
 
 import ch.qos.logback.classic.spi.LoggingEvent
+import com.github.debop4s.redis.RedisConsts
 import com.github.debop4s.redis.logback.RedisAppender
 
 /**
@@ -9,9 +10,7 @@ import com.github.debop4s.redis.logback.RedisAppender
  */
 class RedisLogPublisher extends RedisAppender {
 
-    val DEFAULT_CHANNEL_NAME = "channel:logback:logs"
-
-    var channel = DEFAULT_CHANNEL_NAME
+    var channel = RedisConsts.DEFAULT_LOGBACK_CHANNEL
 
     override def append(eventObject: LoggingEvent) {
 

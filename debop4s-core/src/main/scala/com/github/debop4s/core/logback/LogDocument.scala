@@ -3,7 +3,6 @@ package com.github.debop4s.core.logback
 import com.github.debop4s.core.AbstractValueObject
 import org.joda.time.DateTime
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * logback 로그 정보를 표현하는 클래스입니다.
@@ -32,5 +31,5 @@ class LogDocument extends AbstractValueObject {
 
     var exception: String = null
 
-    var stacktrace: mutable.Buffer[String] = ArrayBuffer[String]()
+    var stacktrace: mutable.Buffer[String] = null
 }
