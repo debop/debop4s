@@ -1,7 +1,10 @@
 package com.github.debop4s.core.utils
 
+import com.github.debop4s.core.parallels.Promises
 import org.slf4j.LoggerFactory
 import scala.collection.mutable
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 /**
  * Graph 알고리즘에 해당하는 메소드를 제공합니다.
@@ -11,40 +14,76 @@ import scala.collection.mutable
  */
 object Graphs {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-    def breadthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
+    /**
+    * 폭 우선 탐색을 수행합니다.
+    * @param source 시작 노드
+    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
+    */
+    def breadthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): Seq[T] = {
         require(source != null)
         require(getAdjacent != null)
 
-        val toScan = mutable.Queue[T](source)
+        val toScan = new mutable.SynchronizedQueue[T]()
+        toScan += source
         val scanned = mutable.HashSet[T]()
 
         while (toScan.size > 0) {
             val current = toScan.dequeue()
             scanned += current
-            for (node <- getAdjacent(current) if !scanned.contains(node)) {
-                toScan.enqueue(node)
-            }
+
+            getAdjacent(current).par
+            .filter(!scanned.contains(_))
+            .foreach(node => toScan.enqueue(node))
         }
-        scanned
+        scanned.toSeq
     }
 
-    def depthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): collection.Set[T] = {
+    /**
+    * 폭 우선 탐색을 비동기 방식으로 수행합니다.
+    * @param source 시작 노드
+    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
+    */
+    def breathFirstScanAsync[T](source: T, getAdjacent: T => Iterable[T]): Future[Seq[T]] = {
+        Promises.startNew[Seq[T]] {
+            breadthFirstScan(source, getAdjacent)
+        }
+    }
+
+    /**
+    * 깊이 우선 탐색을 수행합니다.
+    * @param source 시작 노드
+    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
+    */
+    def depthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): Seq[T] = {
         require(source != null)
         require(getAdjacent != null)
 
-        val toScan = mutable.Stack[T](source)
+        val toScan = new mutable.SynchronizedStack[T]()
+        toScan.push(source)
+
         val scanned = mutable.HashSet[T]()
 
         while (toScan.size > 0) {
             val current = toScan.pop()
             scanned += current
-            for (node <- getAdjacent(current) if !scanned.contains(node)) {
-                toScan.push(node)
-            }
+
+            getAdjacent(current).par
+            .filter(!scanned.contains(_))
+            .foreach(node => toScan.push(node))
         }
-        scanned
+        scanned.toSeq
     }
 
+    /**
+    * 깊이 우선 탐색을 비동기 방식으로 수행합니다.
+    * @param source 시작 노드
+    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
+    */
+    def depthFirstScanAsync[T](source: T, getAdjacent: T => Iterable[T]): Future[Seq[T]] = {
+        Promises.startNew[Seq[T]] {
+            depthFirstScan(source, getAdjacent)
+        }
+    }
 }
