@@ -9,14 +9,14 @@ import scala.concurrent._
 import scala.reflect._
 
 /**
- * [[ModelMapper]]
+ * [[ModelMapper]]를 이용하여, 서로 상이한 수형 간의 정보를 복사할 수 있도록 합니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 12. 오후 2:14
  */
 object Mappers {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val mapper = new ModelMapper()
 

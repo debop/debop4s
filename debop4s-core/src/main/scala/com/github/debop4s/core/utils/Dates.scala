@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 object Dates {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def startOfDay(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 

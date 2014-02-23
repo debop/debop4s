@@ -11,18 +11,29 @@ import org.slf4j.LoggerFactory
  */
 object Collections {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
+    /**
+    * Map의 Key 값으로 정렬합니다.
+    */
     def sortByKey[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
         m.toList.sortWith(_._1 < _._1).toMap
 
+    /**
+    * Map이 Key로 역순 정렬을 합니다.
+    */
     def sortByKeyDescending[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
         m.toList.sortWith(_._1 > _._1).toMap
 
-
+    /**
+    * Map의 Value로 정렬합니다.
+    */
     def sortByValue[K, V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
         m.toList.sortWith(_._2 < _._2).toMap
 
+    /**
+    * Map의 Value로 역순 정렬합니다.
+    */
     def sortByValueDescending[K, V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
         m.toList.sortWith(_._2 > _._2).toMap
 

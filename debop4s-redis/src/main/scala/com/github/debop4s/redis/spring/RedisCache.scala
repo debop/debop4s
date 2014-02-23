@@ -22,6 +22,8 @@ class RedisCache(val name: String,
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
+    log.trace(s"create RedisCache name=$name, prefix=$prefix, expiration=$expiration, redis=$redis")
+
     val PAGE_SIZE = 100
 
     val serializer = new BinarySerializer()
@@ -47,6 +49,7 @@ class RedisCache(val name: String,
     }
 
     /**
+    * 캐시 항목을 조회합니다.
     * Spring 4.0 이상에서 지원합니다.
     */
     override def get[T](key: Any, clazz: Class[T]): T = {
@@ -58,14 +61,13 @@ class RedisCache(val name: String,
     }
 
     /**
-    * 캐시를 저장합니다.
-    */
+     * 캐시를 저장합니다.
+     */
     override def put(key: Any, value: Any) {
         log.trace(s"Spring Cache를 저장합니다. key=$key, value=$value")
         val keyStr = computeKey(key)
         withTransaction {
             tx =>
-
                 tx.set(keyStr, serializer.serialize(value))
                 tx.zadd(setName, (0.0, keyStr))
                 if (expiration > 0) {
@@ -76,6 +78,9 @@ class RedisCache(val name: String,
         }
     }
 
+    /**
+    * 캐시 항목을 삭제합니다.
+    */
     override def evict(key: Any) {
         log.trace(s"캐시를 삭제합니다. key=$key")
         val keyStr = computeKey(key)
@@ -86,6 +91,9 @@ class RedisCache(val name: String,
         }
     }
 
+    /**
+    * 모든 캐시 항목을 모두 삭제한다.
+    */
     override def clear() {
         try {
             doClear()
@@ -131,8 +139,7 @@ class RedisCache(val name: String,
     }
 
 
-    def computeKey(key: Any): String =
-        prefix + key.toString
+    def computeKey(key: Any): String = { prefix + key.toString }
 
     private def wairForLock(redis: RedisClient): Boolean = {
         var retry = false

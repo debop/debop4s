@@ -32,7 +32,9 @@ class RedisCacheManager(val redis: RedisClient) extends CacheManager with Dispos
         caches.get(name)
         .getOrElse {
             val expiration = computeExpiration(name)
-            val cache = RedisCache(name, if (usePrefix) cachePrefix.prefix(name) else "", redis, expiration)
+            val prefix = if (usePrefix) cachePrefix.prefix(name) else ""
+
+            val cache = RedisCache(name, prefix, redis, expiration)
             caches.put(name, cache)
             cache
         }

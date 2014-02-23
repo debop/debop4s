@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 object Converts {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def toInt(x: Any): Int = {
         try {

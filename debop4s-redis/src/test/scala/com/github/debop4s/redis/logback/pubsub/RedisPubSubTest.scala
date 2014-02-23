@@ -29,7 +29,7 @@ class RedisPubSubTest extends AbstractRedisTest {
         val channels = Seq("time")
         val patterns = Seq("pattern.*")
 
-        akkaSystem.actorOf(Props(classOf[SubscribeActor], channels, patterns).withDispatcher("rediscala"))
+        akkaSystem.actorOf(Props(classOf[SubscribeActor], channels, patterns).withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
 
         Thread.sleep(1000)
     }

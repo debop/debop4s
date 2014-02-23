@@ -12,8 +12,8 @@ import scala.util.Random
  */
 object Arrays {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
-    lazy val RANDOM: Random = new Random(System.currentTimeMillis())
+    private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val RANDOM: Random = new Random(System.currentTimeMillis())
 
     val EMPTY_BYTE_ARRAY = Array[Byte](0)
 
