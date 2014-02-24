@@ -9,7 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>hazelcast</name>
     <artifactId>debop4s-hazelcast</artifactId>
+
+    <properties>
+        <hazelcast.version>3.2-RC1</hazelcast.version>
+    </properties>
 
     <dependencies>
         <!-- debop4s -->
@@ -24,10 +29,21 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <!-- Hazelcast -->
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>3.2-RC1</version>
+            <version>${hazelcast.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-client</artifactId>
+            <version>${hazelcast.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-hibernate4</artifactId>
+            <version>${hazelcast.version}</version>
         </dependency>
 
     </dependencies>

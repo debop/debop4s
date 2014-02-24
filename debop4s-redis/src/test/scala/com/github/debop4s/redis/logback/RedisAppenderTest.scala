@@ -14,7 +14,6 @@ class RedisAppenderTest extends AbstractRedisTest {
     lazy val log = LoggerFactory.getLogger(getClass)
 
     implicit val akkaSystem = akka.actor.ActorSystem()
-
     private val redis: RedisClient = RedisClient()
 
     test("logging message") {
