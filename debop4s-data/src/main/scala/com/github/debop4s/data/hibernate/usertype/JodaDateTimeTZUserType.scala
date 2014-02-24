@@ -22,11 +22,11 @@ class JodaDateTimeTZUserType extends UserType {
 
     def returnedClass() = classOf[DateTime]
 
-    def equals(x: scala.Any, y: scala.Any) = Objects.equals(x, y)
+    def equals(x: Any, y: Any) = Objects.equals(x, y)
 
-    def hashCode(x: scala.Any) = Objects.hashCode(x)
+    def hashCode(x: Any) = Objects.hashCode(x)
 
-    def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: scala.Any) = {
+    def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
         val timestamp = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Timestamp]
         val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
 
@@ -41,7 +41,7 @@ class JodaDateTimeTZUserType extends UserType {
         value
     }
 
-    def nullSafeSet(st: PreparedStatement, value: scala.Any, index: Int, session: SessionImplementor) = {
+    def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
         val time = value.asInstanceOf[DateTime]
         log.trace(s"Save DateTime with TimeZone... time=[$time]")
 
@@ -59,9 +59,9 @@ class JodaDateTimeTZUserType extends UserType {
 
     def isMutable = true
 
-    def disassemble(value: scala.Any) = deepCopy(value).asInstanceOf[Serializable]
+    def disassemble(value: Any) = deepCopy(value).asInstanceOf[Serializable]
 
-    def assemble(cached: Serializable, owner: scala.Any) = deepCopy(cached)
+    def assemble(cached: Serializable, owner: Any) = deepCopy(cached)
 
-    def replace(original: scala.Any, target: scala.Any, owner: scala.Any) = deepCopy(original)
+    def replace(original: Any, target: Any, owner: Any) = deepCopy(original)
 }

@@ -15,6 +15,10 @@ class RedisLogPublisher extends RedisAppender {
 
     var channel = RedisConsts.DEFAULT_LOGBACK_CHANNEL
 
+    def setChannel(channel: String) {
+        this.channel = channel
+    }
+
     override def append(eventObject: LoggingEvent) {
 
         Promises.startNew[Future[Long]] {

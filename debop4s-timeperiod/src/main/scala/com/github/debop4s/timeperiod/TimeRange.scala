@@ -168,4 +168,16 @@ object TimeRange {
         else
             apply(period.start, period.end, readonly)
     }
+
+    def apply(start: Option[DateTime], end: Option[DateTime]): TimeRange = {
+        apply(start.getOrElse(MinPeriodTime),
+                 end.getOrElse(MaxPeriodTime),
+                 false)
+    }
+
+    def apply(start: Option[DateTime], end: Option[DateTime], readonly: Option[Boolean]): TimeRange = {
+        apply(start.getOrElse(MinPeriodTime),
+                 end.getOrElse(MaxPeriodTime),
+                 readonly.getOrElse(false))
+    }
 }

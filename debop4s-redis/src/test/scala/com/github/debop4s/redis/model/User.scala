@@ -1,14 +1,18 @@
-package com.github.debop4s.core.stests.model
+package com.github.debop4s.redis.model
 
 import com.github.debop4s.core.AbstractValueObject
 import com.github.debop4s.core.utils.{Arrays, ToStringHelper, Hashs}
 import org.joda.time.DateTime
+import scala.beans.BeanProperty
 import scala.collection.mutable.ArrayBuffer
 
 
 case class Address(street: String, phone: String, properties: ArrayBuffer[String] = ArrayBuffer[String]())
 
 class User extends AbstractValueObject with Ordered[User] {
+
+    // NOTE: id 값은 Java의 getter 가 있어야만 합니다.
+    @BeanProperty var id: String = _
 
     var firstName: String = _
     var lastName: String = _

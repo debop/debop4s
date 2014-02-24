@@ -11,7 +11,16 @@ package object config {
     val DRIVER_CLASS_HSQL = "org.hsqldb.jdbcDriver"
     val DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect"
 
+    val DRIVER_CLASS_H2: String = "org.h2.Driver"
+    val DIALECT_H2: String = "org.hibernate.dialect.H2Dialect"
+
     val DRIVER_CLASS_MYSQL = "com.mysql.jdbc.Driver"
     val DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect"
+
+    val DRIVER_CLASS_MARIADB: String = "org.mariadb.jdbc.Driver"
+    val DIALECT_MARIADB = "org.hibernate.dialect.MySQL5InnoDBDialect"
+
+    val DRIVER_CLASS_POSTGRESQL: String = "org.postgresql.Driver"
+    val DIALECT_POSTGRESQL: String = "org.hibernate.dialect.PostgreSQL82Dialect"
 
 }

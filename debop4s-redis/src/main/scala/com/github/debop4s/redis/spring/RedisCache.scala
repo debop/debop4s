@@ -53,7 +53,7 @@ class RedisCache(val name: String,
     * Spring 4.0 이상에서 지원합니다.
     */
     override def get[T](key: Any, clazz: Class[T]): T = {
-        log.trace(s"캐시 조회. key=$key")
+        log.trace(s"캐시 조회. key=$key, clazz=$clazz")
 
         Promises.await(redis.get(computeKey(key)))
         .map(bs => serializer.deserialize(bs.toArray, clazz))

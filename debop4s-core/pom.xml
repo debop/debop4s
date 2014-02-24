@@ -94,13 +94,6 @@
             <artifactId>joda-convert</artifactId>
         </dependency>
 
-
-        <!-- GSON -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-
         <!-- Jackson JSON Serializer -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

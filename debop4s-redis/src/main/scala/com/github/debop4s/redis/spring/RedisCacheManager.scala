@@ -9,6 +9,17 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 
+object RedisCacheManager {
+
+    implicit val akkaSystem = akka.actor.ActorSystem()
+
+    def apply(): RedisCacheManager =
+        apply(RedisClient())
+
+    def apply(redis: RedisClient): RedisCacheManager =
+        new RedisCacheManager(redis)
+}
+
 /**
  * RedisCacheManager
  * Created by debop on 2014. 2. 22.

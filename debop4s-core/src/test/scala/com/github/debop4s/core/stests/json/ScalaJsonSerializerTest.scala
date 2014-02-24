@@ -10,13 +10,12 @@ import com.github.debop4s.core.stests.model.User
  */
 class ScalaJsonSerializerTest extends AbstractCoreTest {
 
+    // NOTE: Gson 은 scala 를 지원하지 않는다.
     val serializers = Array[JsonSerializer](ScalaJacksonSerializer(), JacksonSerializer())
 
-    val user = new User()
-    user.firstName = "Sunghyouk"
-    user.lastName = "Bae"
+    val user = User(10)
 
-    test("serialize / deserialize") {
+    test("scala jsonserialize / deserialize") {
         serializers.foreach {
             serializer =>
 

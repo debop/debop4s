@@ -13,6 +13,8 @@
     <name>data</name>
 
     <dependencies>
+
+        <!-- debop4s -->
         <dependency>
             <groupId>com.github.debop4s</groupId>
             <artifactId>debop4s-core</artifactId>
