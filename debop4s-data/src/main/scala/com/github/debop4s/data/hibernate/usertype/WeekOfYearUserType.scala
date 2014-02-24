@@ -25,12 +25,12 @@ class WeekOfYearUserType extends CompositeUserType {
 
     override def getPropertyTypes: Array[Type] = Array[Type](IntegerType.INSTANCE, IntegerType.INSTANCE)
 
-    override def getPropertyValue(component: Any, property: Int): Int = {
+    override def getPropertyValue(component: Any, property: Int): AnyRef = {
         val yw = asYearWeek(component)
 
         property match {
-            case 0 => yw.weekyear
-            case 1 => yw.weekOfWeekyear
+            case 0 => yw.weekyear.asInstanceOf[AnyRef]
+            case 1 => yw.weekOfWeekyear.asInstanceOf[AnyRef]
             case _ => throw new HibernateException(s"property index가 범위를 벗어났습니다. [0, 1]이어야 합니다. property=$property")
         }
     }

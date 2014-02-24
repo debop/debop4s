@@ -28,10 +28,10 @@ class JacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
     override def serializeToText(graph: AnyRef): String =
         mapper.writeValueAsString(graph)
 
-    override def deserialize[T <: AnyRef](data: Array[Byte], clazz: Class[T]): T =
+    override def deserialize[T](data: Array[Byte], clazz: Class[T]): T =
         mapper.readValue[T](data, clazz)
 
-    override def deserializeFromText[T <: AnyRef](text: String, clazz: Class[T]): T =
+    override def deserializeFromText[T](text: String, clazz: Class[T]): T =
         mapper.readValue[T](text, clazz)
 }
 

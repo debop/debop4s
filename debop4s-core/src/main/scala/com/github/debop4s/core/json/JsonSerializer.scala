@@ -32,7 +32,7 @@ trait JsonSerializer {
      * @param data    JSON으로 직렬화한 바이트 배열
      * @return 역직렬화 한 객체
      */
-    def deserialize[T <: AnyRef](data: Array[Byte], clazz: Class[T]): T =
+    def deserialize[T](data: Array[Byte], clazz: Class[T]): T =
         deserializeFromText(Strings.getStringUtf8(data), clazz)
 
     /**
@@ -41,6 +41,6 @@ trait JsonSerializer {
      * @param text    JSON으로 직렬화한 문자열
      * @return 역직렬화 한 객체
      */
-    def deserializeFromText[T <: AnyRef](text: String, clazz: Class[T]): T
+    def deserializeFromText[T](text: String, clazz: Class[T]): T
 
 }

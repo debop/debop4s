@@ -87,7 +87,7 @@ class DESEncryptor extends SymmetricEncryptor {
 }
 
 /**
- * 3DES 알고리즘을 사용하는 암호기
+ * TripleDES 알고리즘을 사용하는 암호기
  */
 class TripleDESEncryptor extends SymmetricEncryptor {
 
