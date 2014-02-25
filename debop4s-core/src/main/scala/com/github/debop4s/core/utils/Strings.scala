@@ -145,12 +145,12 @@ object Strings {
 
     def decodeBase64String(base64Data: Array[Byte]): String = StringUtils.newStringUtf8(decodeBase64(base64Data))
 
-    def getBytesUtf8(str: String): Array[Byte] = {
+    def getUtf8Bytes(str: String): Array[Byte] = {
         if (isEmpty(str)) Arrays.EMPTY_BYTE_ARRAY
         else str.getBytes(UTF8)
     }
 
-    def getStringUtf8(bytes: Array[Byte]) = {
+    def getUtf8String(bytes: Array[Byte]) = {
         if (Arrays.isEmpty(bytes)) EMPTY_STR
         else new String(bytes, UTF8)
     }

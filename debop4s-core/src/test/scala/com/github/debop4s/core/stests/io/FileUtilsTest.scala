@@ -43,7 +43,7 @@ class FileUtilsTest extends AssertionsForJUnit {
         val path: Path = Paths.get("test.dat")
         FileUtils.deleteIfExists(path)
 
-        val bytes: Array[Byte] = Strings.getBytesUtf8(TEST_TEXT)
+        val bytes: Array[Byte] = Strings.getUtf8Bytes(TEST_TEXT)
         try {
             FileUtils.createFile(path)
             FileUtils.write(path, bytes, StandardOpenOption.WRITE)

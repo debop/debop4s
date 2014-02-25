@@ -12,10 +12,10 @@ class CodecsTest extends AbstractCoreTest {
     val plainText = "동해물과 백두산이 마르고 닳도록 ^^ https://github.com/debop/debop4s"
 
     test("base64 bytes") {
-        val base64Bytes = Codecs.encodeBase64(Strings.getBytesUtf8(plainText))
+        val base64Bytes = Codecs.encodeBase64(Strings.getUtf8Bytes(plainText))
         val convertedBytes = Codecs.decodeBase64(base64Bytes)
 
-        val convertedText = Strings.getStringUtf8(convertedBytes)
+        val convertedText = Strings.getUtf8String(convertedBytes)
         convertedText should equal(plainText)
     }
 

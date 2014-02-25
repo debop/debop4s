@@ -29,9 +29,9 @@ object Codecs {
                            cs: Charset = Charsets.UTF_8,
                            isChunked: Boolean = false,
                            urlSafe: Boolean = true): String = {
-        val input = Strings.getBytesUtf8(str)
+        val input = Strings.getUtf8Bytes(str)
         val bytes = encodeBase64(input, isChunked, urlSafe)
-        Strings.getStringUtf8(bytes)
+        Strings.getUtf8String(bytes)
     }
 
     /**
@@ -44,7 +44,7 @@ object Codecs {
     * base64 방식으로 인코딩된 문자열을 디코딩하여 plain text로 반환합니다.
     */
     def decodeBase64String(str: String, cs: Charset = Charsets.UTF_8): String = {
-        val input = Strings.getBytesUtf8(str)
+        val input = Strings.getUtf8Bytes(str)
         val bytes = decodeBase64(input)
         new String(bytes, cs)
     }

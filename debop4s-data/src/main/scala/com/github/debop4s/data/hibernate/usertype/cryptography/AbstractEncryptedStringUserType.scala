@@ -21,7 +21,7 @@ abstract class AbstractEncryptedStringUserType extends UserType {
     private def encrypt(plainText: String): String = {
         if (Strings.isEmpty(plainText)) null
         else {
-            val bytes = encryptor.encrypt(Strings.getBytesUtf8(plainText))
+            val bytes = encryptor.encrypt(Strings.getUtf8Bytes(plainText))
             Strings.getStringFromBytes(bytes)
         }
     }
@@ -30,7 +30,7 @@ abstract class AbstractEncryptedStringUserType extends UserType {
         if (Strings.isEmpty(cipherText)) null
         else {
             val bytes = encryptor.decrypt(Strings.getBytesFromString(cipherText))
-            Strings.getStringUtf8(bytes)
+            Strings.getUtf8String(bytes)
         }
     }
 

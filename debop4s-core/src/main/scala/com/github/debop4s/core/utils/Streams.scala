@@ -58,10 +58,10 @@ object Streams {
             toOutputStream(str.getBytes(cs))
     }
 
-    def toString(is: InputStream): String = Strings.getStringUtf8(toByteArray(is))
+    def toString(is: InputStream): String = Strings.getUtf8String(toByteArray(is))
 
     def toString(is: InputStream, cs: Charset = Charsets.UTF_8): String =
-        Strings.getStringUtf8(toByteArray(is))
+        Strings.getUtf8String(toByteArray(is))
 
 
     // TODO: Scala 고유의 Stream 처리 기능을 제공하자.

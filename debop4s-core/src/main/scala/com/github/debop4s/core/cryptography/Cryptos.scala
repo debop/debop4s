@@ -4,22 +4,26 @@ import java.security.SecureRandom
 import org.slf4j.LoggerFactory
 
 /**
- * com.github.debop4s.core.cryptography.Cryptos
+ * 암호화 관련 Helper class 입니다.
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 9. 오후 11:08
  */
 object Cryptos {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val RANDOM_NUMBER_GENERATION = "SHA1PRNG"
     lazy val random: SecureRandom = SecureRandom.getInstance(RANDOM_NUMBER_GENERATION)
 
+    /**
+    * 난수 데이터를 발생시킵니다.
+    */
     def randomBytes(num: Int): Array[Byte] = {
-        assert(num >= 0)
+        if (num <= 0)
+            return Array[Byte]()
+
         val bytes = new Array[Byte](num)
-        if (num > 0)
-            random.nextBytes(bytes)
+        random.nextBytes(bytes)
         bytes
     }
 }

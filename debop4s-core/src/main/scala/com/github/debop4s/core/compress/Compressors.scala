@@ -23,7 +23,7 @@ object Compressors {
         if (Strings.isEmpty(plainText))
             Strings.EMPTY_STR
 
-        val bytes = compressor.compress(Strings.getBytesUtf8(plainText))
+        val bytes = compressor.compress(Strings.getUtf8Bytes(plainText))
         Strings.getStringFromBytes(bytes, stringFormat)
     }
 
@@ -42,7 +42,7 @@ object Compressors {
             Strings.EMPTY_STR
 
         val bytes = compressor.decompress(Strings.getBytesFromString(compressedText, stringFormat))
-        Strings.getStringUtf8(bytes)
+        Strings.getUtf8String(bytes)
     }
 
     def decomperssStringAsync(compressor: Compressor,

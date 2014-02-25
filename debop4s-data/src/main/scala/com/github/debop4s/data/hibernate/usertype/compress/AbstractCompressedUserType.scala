@@ -76,12 +76,12 @@ abstract class AbstractCompressedStringUserType extends AbstractCompressedUserTy
 
     protected def compress(str: String): Array[Byte] = {
         if (Strings.isEmpty(str)) null
-        else compressor.compress(Strings.getBytesUtf8(str))
+        else compressor.compress(Strings.getUtf8Bytes(str))
     }
 
     protected def decompress(compressedBytes: Array[Byte]): String = {
         if (Arrays.isEmpty(compressedBytes)) null
-        else Strings.getStringUtf8(compressor.decompress(compressedBytes))
+        else Strings.getUtf8String(compressor.decompress(compressedBytes))
     }
 
     override def returnedClass(): Class[_] = classOf[String]

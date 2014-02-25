@@ -2,6 +2,7 @@ package com.github.debop4s.core.cryptography
 
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 
 /**
  * 대칭형 암호화 클래스
@@ -73,6 +74,7 @@ trait SymmetricEncryptor {
 /**
  * RC2 대칭형 알고리즘을 사용한 암호화 클래스
  */
+@Component
 class RC2Encryptor extends SymmetricEncryptor {
 
     def algorithm: String = "PBEwithSHA1andRC2_40"
@@ -81,6 +83,7 @@ class RC2Encryptor extends SymmetricEncryptor {
 /**
  * DES 대칭형 알고리즘을 사용한 암호화 클래스
  */
+@Component
 class DESEncryptor extends SymmetricEncryptor {
 
     def algorithm: String = "PBEwithMD5andDES"
@@ -89,6 +92,7 @@ class DESEncryptor extends SymmetricEncryptor {
 /**
  * TripleDES 알고리즘을 사용하는 암호기
  */
+@Component
 class TripleDESEncryptor extends SymmetricEncryptor {
 
     def algorithm: String = "PBEwithSHA1andDESEDE"

@@ -2,6 +2,7 @@ package com.github.debop4s.core.cryptography
 
 import org.jasypt.digest.StandardStringDigester
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 
 /**
  * com.github.debop4s.core.cryptography.StringDigester
@@ -43,33 +44,48 @@ abstract class AbstractStringDigester(iterations: Option[Int] = None) extends St
     standardStringDigester.setIterations(iterations.getOrElse(5))
 }
 
+@Component
 class MD5StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+
+    def this() { this(Some(5)) }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "MD5"
 }
 
+@Component
 class SHA1StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+
+    def this() { this(Some(5)) }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "SHA-1"
 }
 
+@Component
 class SHA256StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+
+    def this() { this(Some(5)) }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "SHA-256"
 
 }
 
+@Component
 class SHA384StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+
+    def this() { this(Some(5)) }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "SHA-384"
 
 }
 
+@Component
 class SHA512StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+
+    def this() { this(Some(5)) }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "SHA-512"
