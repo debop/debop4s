@@ -1,4 +1,4 @@
-package com.github.debop4s.data.jpa.config
+package com.github.debop4s.data.jpa.spring
 
 import com.github.debop4s.data.jdbc.DataSources
 import java.util.Properties
@@ -16,7 +16,7 @@ import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 /**
- * org.hibernate.examples.jpa.config.AbstractJpaConfiguration 
+ * org.hibernate.examples.jpa.spring.AbstractJpaConfiguration
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 9. 오후 4:02
@@ -33,7 +33,7 @@ abstract class AbstractJpaConfiguration {
 
     def getNamingStrategy: NamingStrategy = null
 
-    def jpaProperties(): Properties = {
+    def jpaProperties: Properties = {
         val props = new Properties()
 
         props.setProperty(AvailableSettings.FORMAT_SQL, "true")
@@ -53,10 +53,10 @@ abstract class AbstractJpaConfiguration {
     def buildEmbeddedDataSource() = DataSources.getEmbeddedHSqlDataSource
 
     @Bean
-    def dataSource(): DataSource = buildEmbeddedDataSource()
+    def dataSource: DataSource = buildEmbeddedDataSource()
 
     @Bean
-    def jdbcTemplate() = new JdbcTemplate(dataSource())
+    def jdbcTemplate: JdbcTemplate = new JdbcTemplate(dataSource)
 
     protected def setupEntityManagerFactory(factoryBean: LocalContainerEntityManagerFactoryBean) {
         // 추가 작업 시 override 해서 사용하세요.
@@ -73,8 +73,8 @@ abstract class AbstractJpaConfiguration {
             log.debug(s"hibernate용 entity를 scan 합니다. packages=[$packagenames]")
             factoryBean.setPackagesToScan(packagenames: _*)
         }
-        factoryBean.setJpaProperties(jpaProperties())
-        factoryBean.setDataSource(dataSource())
+        factoryBean.setJpaProperties(jpaProperties)
+        factoryBean.setDataSource(dataSource)
 
         val adapter = new HibernateJpaVendorAdapter()
         adapter.setGenerateDdl(true)

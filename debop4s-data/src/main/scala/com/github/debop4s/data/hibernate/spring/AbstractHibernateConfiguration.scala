@@ -1,4 +1,4 @@
-package com.github.debop4s.data.hibernate.config
+package com.github.debop4s.data.hibernate.spring
 
 import com.github.debop4s.data.hibernate.interceptor.PersistentObjectInterceptor
 import com.github.debop4s.data.hibernate.repository.HibernateDao

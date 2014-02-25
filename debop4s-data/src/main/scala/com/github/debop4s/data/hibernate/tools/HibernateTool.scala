@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable
  */
 object HibernateTool {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
 

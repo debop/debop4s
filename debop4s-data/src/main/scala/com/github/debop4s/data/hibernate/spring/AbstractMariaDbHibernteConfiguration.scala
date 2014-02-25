@@ -1,5 +1,6 @@
-package com.github.debop4s.data.hibernate.config
+package com.github.debop4s.data.hibernate.spring
 
+import com.github.debop4s.data._
 import java.util.Properties
 import javax.sql.DataSource
 import org.hibernate.cfg.AvailableSettings
@@ -24,7 +25,7 @@ abstract class AbstractMariaDbHibernteConfiguration extends AbstractHibernateCon
 
     override def hibernateProperties(): Properties = {
         val props = super.hibernateProperties()
-        props.put(AvailableSettings.DIALECT, DIALECT_MARIADB)
+        props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
         props
     }
 }
