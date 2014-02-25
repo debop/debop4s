@@ -15,7 +15,7 @@ import scala.concurrent.duration._
  */
 object Asyncs {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val EMPTY_RUNNABLE = new Runnable {
         def run() {
@@ -89,22 +89,22 @@ object Asyncs {
     }
 
     def invokeAll[T](tasks: Seq[_ <: Callable[T]]) = {
-        getAll(tasks.map(x => future {x.call()}))
+        resultAll(tasks.map(x => future {x.call()}))
     }
 
     def invokeAll[T](tasks: Seq[_ <: Callable[T]], timeout: Long, unit: TimeUnit) {
-        getAll(tasks.map(x => future {x.call()}), timeout, unit)
+        resultAll(tasks.map(x => future {x.call()}), timeout, unit)
     }
 
     def runAll[T](tasks: java.lang.Iterable[_ <: Future[T]]) {
-        getAll(tasks)
+        resultAll(tasks)
     }
 
-    def getAll[T](tasks: Iterable[_ <: Future[T]]): Iterable[T] = {
+    def resultAll[T](tasks: Iterable[_ <: Future[T]]): Iterable[T] = {
         tasks.map(task => Await.result(task, 60 seconds))
     }
 
-    def getAll[T](tasks: Iterable[_ <: Future[T]], timeout: Long, unit: TimeUnit): Iterable[T] = {
+    def resultAll[T](tasks: Iterable[_ <: Future[T]], timeout: Long, unit: TimeUnit): Iterable[T] = {
         tasks.map(task => Await.result(task, Duration(timeout, unit)))
     }
 

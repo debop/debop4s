@@ -15,7 +15,7 @@ class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
 
     lazy val log = LoggerFactory.getLogger(getClass)
 
-    def getProperties(): Properties = {
+    def getProperties: Properties = {
         val props = new Properties()
         props.setProperty("pool.name", "scalaObjectPool")
         props.setProperty("pool.intValue", "100")
@@ -25,13 +25,13 @@ class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
     }
 
     test("return object") {
-        val props = getProperties()
+        val props = getProperties
         var pool = new ObjectPool(new ObjectPoolConfig(), props)
         try {
             val po = pool.getResource
-            assert(po != null)
+            po should not equal null
             po.name = "newName"
-            assert(po.name === "newName")
+            assert(po.name == "newName")
 
             pool.returnResource(po)
             pool.destroy()
@@ -40,9 +40,11 @@ class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
 
             pool = new ObjectPool(new ObjectPoolConfig(), props)
             val po2 = pool.getResource
-            assert(po2 != null)
-            assert(po2.isActive)
-            assert(po2.name === props.getProperty("pool.name"))
+
+            po2 should not equal null
+            po2.isActive should equal(true)
+            po2.name should equal(props.getProperty("pool.name"))
+
             pool.returnResource(po2)
 
         } finally {
@@ -51,16 +53,16 @@ class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
     }
 
     test("multithread test") {
-        val props = getProperties()
+        val props = getProperties
         val name = props.getProperty("pool.name")
 
         val pool = new ObjectPool(new ObjectPoolConfig(), props)
         try {
             Parallels.callFunction1(100)(x => {
                 val po = pool.getResource
-                assert(po != null)
-                assert(po.isActive)
-                assert(po.name === name)
+                po should not equal null
+                po.isActive should equal(true)
+                po.name should equal(name)
 
                 if (x % 5 == 0) {
                     po.name = "NewValue-" + x.toString

@@ -1,7 +1,7 @@
 package com.github.debop4s.core.pool
 
-import org.apache.commons.pool.PoolableObjectFactory
-import org.apache.commons.pool.impl.GenericObjectPool
+import org.apache.commons.pool2.PooledObjectFactory
+import org.apache.commons.pool2.impl.{GenericObjectPoolConfig, GenericObjectPool}
 import org.slf4j.LoggerFactory
 
 /**
@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 11. 오후 4:35
  */
-abstract class AbstractObjectPool[T <: AnyRef](val config: AbstractObjectPoolConfig,
-                                               val factory: PoolableObjectFactory[T]) extends AutoCloseable {
+abstract class AbstractObjectPool[T <: AnyRef](val config: GenericObjectPoolConfig,
+                                               val factory: PooledObjectFactory[T]) extends AutoCloseable {
 
     lazy val log = LoggerFactory.getLogger(getClass)
 

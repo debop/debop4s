@@ -1,6 +1,7 @@
 package com.github.debop4s.core.stests.pool
 
-import com.github.debop4s.core.pool.AbstractObjectPoolConfig
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig
+
 
 /**
  * com.github.debop4s.core.tests.pool.ObjectPoolConfig
@@ -8,10 +9,7 @@ import com.github.debop4s.core.pool.AbstractObjectPoolConfig
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 11. 오후 4:43
  */
-class ObjectPoolConfig extends AbstractObjectPoolConfig {
+class ObjectPoolConfig extends GenericObjectPoolConfig {
 
-    testWhileIdle = true
-    minEvictableIdleTimeMillis = 60000
-    timeBetweenEvictionRunsMillis = 30000
-    numTestsPerEvictionRun = -1
+    setMaxTotal(100)
 }
