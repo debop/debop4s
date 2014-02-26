@@ -27,9 +27,9 @@ abstract class AbstractJpaConfiguration {
 
     lazy val log = LoggerFactory.getLogger(getClass)
 
-    def getDatabaseName = "hibernate"
-
     def getMappedPackageNames: Array[String]
+
+    def getDatabaseName = "hibernate"
 
     def getNamingStrategy: NamingStrategy = null
 
