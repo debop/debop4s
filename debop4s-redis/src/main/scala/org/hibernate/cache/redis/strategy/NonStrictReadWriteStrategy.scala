@@ -5,7 +5,7 @@ import org.hibernate.cache.spi.access.{NaturalIdRegionAccessStrategy, SoftLock, 
 import org.hibernate.cfg.Settings
 
 /**
- * org.hibernate.cache.redis.strategy.NonStrictReadWriteRedisCollectionRegionAccessStrategy
+ * NonStrictReadWriteRedisCollectionRegionAccessStrategy
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 1:19
@@ -26,11 +26,12 @@ class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _r
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            false
-        } else {
-            region.put(key, value)
-            true
+            log.debug(s"cancel put from load...")
+            return false
         }
+
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null
@@ -41,7 +42,7 @@ class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _r
 }
 
 /**
- * org.hibernate.cache.redis.strategy.NonStrictReadWriteRedisEntityRegionAccessStrategy
+ * NonStrictReadWriteRedisEntityRegionAccessStrategy
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 1:16
@@ -62,11 +63,12 @@ class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _regio
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            false
-        } else {
-            region.put(key, value)
-            true
+            log.debug(s"cancel put from load...")
+            return false
         }
+
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null
@@ -80,18 +82,18 @@ class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _regio
     override def afterInsert(key: Any, value: Any, version: Any): Boolean = false
 
     override def update(key: Any, value: Any, currentVersion: Any, previousVersion: Any): Boolean = {
-        lockItem(key, currentVersion)
-        false
+        remove(key)
+        true
     }
 
     override def afterUpdate(key: Any, value: Any, currentVersion: Any, previousVersion: Any, lock: SoftLock): Boolean = {
         unlockItem(key, lock)
-        false
+        true
     }
 }
 
 /**
- * org.hibernate.cache.redis.strategy.NonStrictReadWriteRedisNatualIdRegionAccessStrategy
+ * NonStrictReadWriteRedisNatualIdRegionAccessStrategy
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 1:22
@@ -112,11 +114,12 @@ class NonStrictReadWriteRedisNatualIdRegionAccessStrategy(private[this] val _reg
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            false
-        } else {
-            region.put(key, value)
-            true
+            log.debug(s"cancel put from load...")
+            return false
         }
+
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null
@@ -131,11 +134,11 @@ class NonStrictReadWriteRedisNatualIdRegionAccessStrategy(private[this] val _reg
 
     def update(key: Any, value: Any): Boolean = {
         remove(key)
-        false
+        true
     }
 
     def afterUpdate(key: Any, value: Any, lock: SoftLock): Boolean = {
         unlockItem(key, lock)
-        false
+        true
     }
 }

@@ -18,7 +18,7 @@ class RedisRegionFactory(private[this] val _props: Properties) extends AbstractR
         this.settings = settings
         try {
             if (cache == null) {
-                this.cache = RedisUtil.createCacheClient(properties)
+                this.cache = HibernateRedisUtil.createCacheClient(properties)
                 manageExpiration(cache)
             }
             log.info("RedisRegionFactory를 시작합니다.")

@@ -29,7 +29,7 @@ class JpaCacheTest extends JUnitSuite {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    @PersistenceContext var em: EntityManager = _
+    @PersistenceContext val em: EntityManager = null
     @Autowired val repository: JpaAccountRepository = null
     @Autowired val itemRepository: ItemRepository = null
     @Autowired val eventRepository: EventRepository = null
@@ -41,16 +41,16 @@ class JpaCacheTest extends JUnitSuite {
     def before() {
         repository.deleteAll()
         repository.flush()
-        em.clear()
-        em.getEntityManagerFactory.getCache.evict(classOf[JpaAccount])
     }
 
+    @Test
     def configurationTest() {
         assert(em != null)
         assert(repository != null)
         assert(eventRepository != null)
     }
 
+    @Test
     def loadEventByTitle() {
         val events = eventRepository.findByTitle("abc")
         assert(events != null)
@@ -62,7 +62,6 @@ class JpaCacheTest extends JUnitSuite {
     }
 
     @Test
-    @Rollback(false)
     def queryCacheInvalidation() {
         val item = new Item()
         item.name = "Widget"
@@ -82,7 +81,6 @@ class JpaCacheTest extends JUnitSuite {
     }
 
     @Test
-    @Rollback(false)
     def simpleEntityCaching() {
         em.getEntityManagerFactory.getCache.evict(classOf[Item])
 
@@ -111,6 +109,55 @@ class JpaCacheTest extends JUnitSuite {
         assert(loaded2 != null)
         assert(loaded2.id == item.id)
         assert(loaded2.description != item.description)
+        em.clear()
+    }
+
+    @Test
+    @Rollback(false)
+    def hqlLoad() {
+        em.getEntityManagerFactory.getCache.evict(classOf[Item])
+
+        log.debug("Item 저장 - #1")
+
+        val item = new Item()
+        item.name = "레디스"
+        item.description = "레디스 캐시 항목"
+        em.persist(item)
+        em.flush()
+        em.clear()
+
+        log.debug("Item 조회 - #1")
+        val query = em.createQuery("select e from Item e where e.id=:id")
+                    .setParameter("id", item.id)
+                    .setHint("org.hibernate.cacheable", true)
+        val loaded = query.getSingleResult.asInstanceOf[Item]
+        assert(loaded != null)
+        assert(loaded.id == item.id)
+        em.clear()
+
+        log.debug("Item 조회 - #2")
+        val query2 = em.createQuery("select e from Item e where e.id=:id")
+                     .setParameter("id", item.id)
+                     .setHint("org.hibernate.cacheable", true)
+        val loaded2 = query2.getSingleResult.asInstanceOf[Item]
+        assert(loaded2 != null)
+        assert(loaded2.id == item.id)
+        em.clear()
+
+
+        log.debug("Item 조회 - #3")
+        val loaded3 = em.find(classOf[Item], item.id)
+        assert(loaded3 != null)
+        assert(loaded3.id == item.id)
+        em.clear()
+
+        log.debug("Item 조회 - #4")
+        val query4 = em.createQuery("select e from Item e where e.id=:id")
+                     .setParameter("id", item.id)
+                     .setHint("org.hibernate.cacheable", true)
+        val loaded4 = query4.getSingleResult.asInstanceOf[Item]
+        assert(loaded4 != null)
+        assert(loaded4.id == item.id)
         em.clear()
     }
 

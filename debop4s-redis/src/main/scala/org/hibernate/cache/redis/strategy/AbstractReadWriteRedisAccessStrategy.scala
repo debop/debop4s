@@ -17,6 +17,9 @@ class AbstractReadWriteRedisAccessStrategy[T <: RedisTransactionalDataRegion](pr
 
     private val nextLockId = new AtomicLong()
 
+    def get(key: Any, txTimestamp: Long): AnyRef =
+        region.get(key).asInstanceOf[AnyRef]
+
     override def putFromLoad(key: Any,
                              value: Any,
                              txTimestamp: Long,
@@ -25,10 +28,6 @@ class AbstractReadWriteRedisAccessStrategy[T <: RedisTransactionalDataRegion](pr
         region.put(key, value)
         true
     }
-
-    def get(key: Any, txTimestamp: Long): AnyRef =
-        region.get(key).asInstanceOf[AnyRef]
-
 
     def lockItem(key: Any, version: Any): SoftLock = {
         region.remove(key)

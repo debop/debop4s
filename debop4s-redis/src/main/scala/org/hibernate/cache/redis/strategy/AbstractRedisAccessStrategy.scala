@@ -23,7 +23,6 @@ abstract class AbstractRedisAccessStrategy[T <: RedisTransactionalDataRegion](va
     def lockRegion: SoftLock = null
 
     def unlockRegion(lock: SoftLock) {
-        log.trace(s"unlock region... region=${region.getName}")
         region.clear()
     }
 

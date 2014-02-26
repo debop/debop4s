@@ -20,13 +20,17 @@ class TransactionalRedisCollectionAccessStrategy(private[this] val _region: Redi
     override def get(key: Any, txTimestamp: Long): AnyRef =
         region.get(key).asInstanceOf[AnyRef]
 
-    override def putFromLoad(key: Any, value: Any, txTimestamp: Long, version: Any, minimalPutOverride: Boolean): Boolean = {
+    override def putFromLoad(key: Any,
+                             value: Any,
+                             txTimestamp: Long,
+                             version: Any,
+                             minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            false
-        } else {
-            region.put(key, value)
-            true
+            log.debug(s"cancel put from load...")
+            return false
         }
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null
@@ -57,11 +61,13 @@ class TransactionalRedisEntityRegionAccessStrategy(private[this] val _region: Re
                              txTimestamp: Long,
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
-        if (minimalPutOverride && region.contains(key)) false
-        else {
-            region.put(key, value)
-            true
+        if (minimalPutOverride && region.contains(key)) {
+            log.debug(s"cancel put from load...")
+            return false
         }
+
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null
@@ -106,12 +112,17 @@ class TransactionalRedisNatualIdRegionAccessStrategy(private[this] val _region: 
     override def get(key: Any, txTimestamp: Long): AnyRef =
         region.get(key).asInstanceOf[AnyRef]
 
-    override def putFromLoad(key: Any, value: Any, txTimestamp: Long, version: Any, minimalPutOverride: Boolean): Boolean = {
-        if (minimalPutOverride && region.contains(key)) false
-        else {
-            region.put(key, value)
-            true
+    override def putFromLoad(key: Any,
+                             value: Any,
+                             txTimestamp: Long,
+                             version: Any,
+                             minimalPutOverride: Boolean): Boolean = {
+        if (minimalPutOverride && region.contains(key)) {
+            log.debug(s"cancel put from load...")
+            false
         }
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null

@@ -34,8 +34,8 @@ class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisE
 
     def getRegion = region
 
-    override def get(key: Any, txTimestamp: Long): AnyRef =
-        super.get(key, txTimestamp)
+    //    override def get(key: Any, txTimestamp: Long): AnyRef =
+    //        super.get(key, txTimestamp)
 
     override def insert(key: Any, value: Any, version: Any): Boolean = {
         region.put(key, value)
@@ -71,8 +71,8 @@ class ReadWriteRedisNaturalIdRegionAccessStrategy(private[this] val _region: Red
 
     def getRegion = region
 
-    override def get(key: Any, txTimestamp: Long): AnyRef =
-        super.get(key, txTimestamp)
+    //    override def get(key: Any, txTimestamp: Long): AnyRef =
+    //        super.get(key, txTimestamp)
 
     override def insert(key: Any, value: Any): Boolean = {
         region.put(key, value)

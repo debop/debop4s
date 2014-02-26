@@ -7,15 +7,16 @@ import org.hibernate.annotations.{Cascade, CascadeType, CacheConcurrencyStrategy
 
 
 @Entity
-@org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Access(AccessType.FIELD)
+@SerialVersionUID(-8245742950718661800L)
 class Person extends Serializable {
 
     @Id
     @GeneratedValue
     var id: java.lang.Long = _
 
-    var age: Int = _
+    var age: Option[Int] = None
     var firstName: String = _
     var lastName: String = _
 

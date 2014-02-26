@@ -29,9 +29,13 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
 
     def get(key: Any): Any = {
         try {
-            Promises.await(cache.get(regionName, key.toString, expireInSeconds))
+            val value = Promises.await(cache.get(regionName, key.toString, expireInSeconds))
+            log.trace(s"cache item key=$key, value=$value")
+            value
         } catch {
-            case e: Throwable => return null
+            case e: Throwable =>
+                log.warn(s"Fail to get cache item... key=$key", e)
+                return null
         }
     }
 

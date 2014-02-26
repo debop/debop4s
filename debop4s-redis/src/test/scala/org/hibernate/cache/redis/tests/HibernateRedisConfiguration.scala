@@ -38,6 +38,8 @@ class HibernateRedisConfiguration {
         props.setProperty(AvailableSettings.USE_QUERY_CACHE, "true")
         props.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[SingletonRedisRegionFactory].getName)
         props.setProperty(AvailableSettings.CACHE_REGION_PREFIX, "hibernate")
+        props.setProperty(AvailableSettings.GENERATE_STATISTICS, "true")
+        props.setProperty(AvailableSettings.USE_STRUCTURED_CACHE, "true")
         props.setProperty(AvailableSettings.TRANSACTION_STRATEGY, classOf[JdbcTransactionFactory].getName)
 
         props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")

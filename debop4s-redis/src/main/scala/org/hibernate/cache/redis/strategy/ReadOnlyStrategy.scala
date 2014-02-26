@@ -21,11 +21,11 @@ class ReadOnlyRedisCollectionRegionAccessStrategy(private[this] val _region: Red
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            false
-        } else {
-            region.put(key, value)
-            true
+            log.debug(s"cancel put from load...")
+            return false
         }
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null
@@ -50,11 +50,12 @@ class ReadOnlyRedisEntityRegionAccessStrategy(private[this] val _region: RedisEn
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            false
-        } else {
-            region.put(key, value)
-            true
+            log.debug(s"cancel put from load...")
+            return false
         }
+
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null
@@ -97,11 +98,12 @@ class ReadOnlyRedisNaturalIdRegionAccessStrategy(private[this] val _region: Redi
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            false
-        } else {
-            region.put(key, value)
-            true
+            log.debug(s"cancel put from load...")
+            return false
         }
+
+        region.put(key, value)
+        true
     }
 
     override def lockItem(key: Any, version: Any): SoftLock = null

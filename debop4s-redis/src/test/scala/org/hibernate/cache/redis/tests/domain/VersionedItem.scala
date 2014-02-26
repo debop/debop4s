@@ -6,7 +6,7 @@ import scala.beans.BeanProperty
 
 
 @Entity
-@org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Access(AccessType.FIELD)
 class VersionedItem extends Serializable {
 

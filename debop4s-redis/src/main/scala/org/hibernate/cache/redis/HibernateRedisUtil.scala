@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory
 import redis.RedisClient
 
 /**
- * org.hibernate.cache.redis.util.RedisUtil 
+ * Hibernate-Redis Helper class
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오전 9:34
  */
-object RedisUtil {
+object HibernateRedisUtil {
 
     implicit val akkaSystem = akka.actor.ActorSystem()
 

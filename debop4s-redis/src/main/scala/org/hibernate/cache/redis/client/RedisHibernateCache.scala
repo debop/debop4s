@@ -51,7 +51,7 @@ class RedisHibernateCache(val redis: RedisClient) {
      * @return return cached entity, if not exists return null.
      */
     def get(region: String, key: String, expireInSeconds: Long = 0): Future[Any] = {
-        log.trace(s"retrieve CacheItem... region=$region, key=$key")
+        log.trace(s"캐시 값을 조회합니다... region=$region, key=$key")
 
         redis.hget(region, key).map((item: Option[ByteString]) => {
             if (expireInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
@@ -164,7 +164,7 @@ class RedisHibernateCache(val redis: RedisClient) {
         multiDelete(region, keys.toSeq: _*)
     }
 
-    def deleteRegion(region: String) = {
+    def deleteRegion(region: String): Future[MultiBulk] = {
         log.debug(s"delete region... region=$region")
         withTransaction(tx => {
             tx.del(region)

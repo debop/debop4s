@@ -13,14 +13,15 @@ import scala.beans.BeanProperty
 @Entity
 @org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Access(AccessType.FIELD)
+@SerialVersionUID(6662300674854084326L)
 class Account extends Serializable {
 
     @Id
     @GeneratedValue
     var id: java.lang.Long = _
 
-    @ManyToOne(targetEntity = classOf[Person])
+    @ManyToOne
     @JoinColumn(name = "personId")
     @BeanProperty
-    var person: Person = null
+    var person: Person = _
 }

@@ -3,7 +3,7 @@ package org.hibernate.cache.redis.regions
 import com.github.debop4s.core.parallels.Promises
 import java.util
 import java.util.Properties
-import org.hibernate.cache.redis.RedisUtil
+import org.hibernate.cache.redis.HibernateRedisUtil
 import org.hibernate.cache.redis.client.RedisHibernateCache
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.spi.Region
@@ -21,9 +21,9 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
                                val props: Properties) extends Region {
 
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-    val expireInSeconds = RedisUtil.expireInSeconds(regionName)
+    val expireInSeconds = HibernateRedisUtil.expireInSeconds(regionName)
 
     override def getName: String = regionName
 
@@ -36,7 +36,7 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
         log.debug(s"delete cache region. region=$regionName")
 
         try {
-            cache.deleteRegion(regionName)
+            Promises.await(cache.deleteRegion(regionName))
         } catch {
             case ignored: Throwable =>
         } finally {
@@ -45,13 +45,11 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
     }
 
     override def contains(key: Any): Boolean = {
-        val future = cache.exists(regionName, key.asInstanceOf[String])
-        Promises.await(future)
+        Promises.await(cache.exists(regionName, key.toString))
     }
 
     override def getSizeInMemory: Long = {
-        val future = cache.dbSize
-        Promises.await(future)
+        Promises.await(cache.dbSize)
     }
 
     override def getElementCountInMemory: Long = {
@@ -67,7 +65,7 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
         results
     }
 
-    override def nextTimestamp: Long = RedisUtil.nextTimestamp()
+    override def nextTimestamp: Long = HibernateRedisUtil.nextTimestamp()
 
     override def getTimeout: Int = 0
 
