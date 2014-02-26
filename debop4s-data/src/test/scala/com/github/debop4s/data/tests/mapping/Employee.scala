@@ -7,10 +7,10 @@ import org.hibernate.annotations.{Type, DynamicUpdate, DynamicInsert}
 import org.joda.time.DateTime
 
 /**
- * com.github.debop4s.data.tests.mapping.Employee 
+ * Employee
  *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 26. 오전 10:35
+ * @author sunghyouk.bae@gmail.com
+ * @since 2014. 2. 26.
  */
 @Entity
 // @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -39,6 +39,9 @@ class Employee extends HibernateEntity[java.lang.Long] with UpdatedTimestampEnti
 
     @Type(`type` = "com.github.debop4s.data.hibernate.usertype.JodaDateTimeUserType")
     var birthDay: DateTime = _
+
+    @Embedded
+    var address: Address = Address(null, null, null, null, null)
 
     override def hashCode(): Int = Hashs.compute(empNo, name)
 
