@@ -2,19 +2,69 @@ package com.github.debop4s.data.hibernate.tools
 
 import com.github.debop4s.core.io.Serializers
 import com.github.debop4s.data.hibernate.HibernateParameter
+import com.github.debop4s.data.hibernate.listener.UpdatedTimestampListener
+import org.hibernate._
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder
+import org.hibernate.cfg.Configuration
 import org.hibernate.criterion.{Order, DetachedCriteria}
-import org.hibernate.{Query, Session, Criteria}
+import org.hibernate.event.service.spi.EventListenerRegistry
+import org.hibernate.event.spi.EventType
+import org.hibernate.internal.SessionFactoryImpl
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
+import scala.annotation.varargs
 
 /**
- * com.github.debop4s.data.hibernate.tools.HibernateTool
+ * Hibernate 사용 시 Helper class
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 24. 오후 9:24
  */
 object HibernateTool {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
+
+    def buildSessionfactory(cfg: Configuration): SessionFactory = {
+        require(cfg != null)
+        log.info("SessionFactory를 빌드합니다...")
+
+        val registryBuilder = new StandardServiceRegistryBuilder().applySettings(cfg.getProperties)
+        val sessionFactory = cfg.buildSessionFactory(registryBuilder.build())
+
+        log.info("SessionFactory를 빌드했습니다.")
+        sessionFactory
+    }
+
+    @varargs
+    def registEventListener[T](sessionFactory: SessionFactory,
+                               listener: T,
+                               eventTypes: EventType[T]*) {
+        val registry = sessionFactory.asInstanceOf[SessionFactoryImpl]
+                       .getServiceRegistry
+                       .getService(classOf[EventListenerRegistry])
+
+        eventTypes.foreach(et =>
+            registry
+            .getEventListenerGroup(et)
+            .appendListener(listener))
+    }
+
+    def registEventListener[T](sessionFactory: SessionFactory,
+                               listener: T,
+                               eventTypes: Iterable[EventType[T]]) {
+        val registry = sessionFactory.asInstanceOf[SessionFactoryImpl]
+                       .getServiceRegistry
+                       .getService(classOf[EventListenerRegistry])
+
+        eventTypes.foreach(et =>
+            registry
+            .getEventListenerGroup(et)
+            .appendListener(listener))
+    }
+
+    def registUpdateTimestampEventListener(sessionFactory: SessionFactory) {
+        val listener = new UpdatedTimestampListener()
+    }
+
 
     def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
 

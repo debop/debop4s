@@ -1,5 +1,6 @@
 package com.github.debop4s.data.model
 
+
 /**
  * Tree Node 를 표현하는 Entity
  *
@@ -12,7 +13,7 @@ trait HibernateTreeEntity[T <: HibernateTreeEntity[T]] extends PersistentObject 
 
     def setParent(parent: T)
 
-    def getChildren: Set[T]
+    def getChildren: java.util.Set[T]
 
     def getNodePosition: TreeNodePosition
 

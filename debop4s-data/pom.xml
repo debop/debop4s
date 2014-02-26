@@ -25,6 +25,23 @@
             <artifactId>debop4s-timeperiod</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-redis</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <!-- joda-time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+            <version>1.5</version>
+        </dependency>
 
         <!-- Spring Scala -->
         <dependency>

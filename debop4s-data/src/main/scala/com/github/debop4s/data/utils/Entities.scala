@@ -4,6 +4,7 @@ import com.github.debop4s.data.hibernate.repository.HibernateDao
 import com.github.debop4s.data.model.HibernateTreeEntity
 import org.hibernate.criterion.{Restrictions, DetachedCriteria}
 import org.slf4j.LoggerFactory
+import scala.collection.JavaConversions._
 
 /**
  * com.github.debop4s.data.hibernate.tools.Entities

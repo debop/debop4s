@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper
 import org.modelmapper.config.Configuration.AccessLevel
 import org.modelmapper.convention.MatchingStrategies
 import org.slf4j.LoggerFactory
+import scala.collection.immutable.IndexedSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.reflect._
@@ -25,28 +26,31 @@ object Mappers {
     .setMatchingStrategy(MatchingStrategies.STANDARD)
     .setFieldAccessLevel(AccessLevel.PRIVATE)
 
-    def map(src: AnyRef, dest: AnyRef) = mapper.map(src, dest)
-
-    def map[D: ClassTag](src: AnyRef) = mapper.map[D](src, classTag[D].runtimeClass)
-
-    def mapArray[D: ClassTag](src: AnyRef*): Seq[D] =
-        mapList(src.toIterable).toIndexedSeq
-
-    def mapList[D: ClassTag](srcs: Iterable[_]): Iterable[D] = {
-        for (src <- srcs) yield {
-            mapper.map[D](src, classTag[D].runtimeClass)
-        }
+    def map[T <: AnyRef](src: AnyRef, dest: T) {
+        mapper.map(src, dest)
     }
 
-    def mapAsync[D: ClassTag](src: AnyRef): Future[D] = future {
-        map[D](src)
+    def map[T: ClassTag](src: AnyRef) = mapper.map[T](src, classTag[T].runtimeClass)
+
+    def mapAll[T: ClassTag](srcs: Iterable[_]): Seq[T] = {
+        val targetClass = classTag[T].runtimeClass
+        srcs.toSeq.map(src => mapper.map(src, targetClass).asInstanceOf[T])
     }
 
-    def mapArrayAsync[D: ClassTag](srcs: AnyRef*): Future[Array[D]] = future {
-        mapList(srcs.toIterable).toArray
+    def mapAsync[T <: AnyRef](src: AnyRef, dest: T): Future[Unit] = future {
+        map[T](src, dest)
     }
 
-    def mapListAsync[D: ClassTag](srcs: Iterable[_]): Future[List[D]] = future {
-        mapList[D](srcs).toList
+    def mapAsync[T: ClassTag](src: AnyRef): Future[T] = future {
+        map[T](src)
+    }
+
+    def mapAllAsync[T: ClassTag](srcs: Iterable[_]): Future[Seq[T]] = future {
+        mapAll(srcs)
+    }
+
+    def mapAllAsParallel[T: ClassTag](srcs: Iterable[_]): IndexedSeq[T] = {
+        val targetClass = classTag[T].runtimeClass
+        srcs.par.map(src => mapper.map[T](src, targetClass).asInstanceOf[T]).toIndexedSeq
     }
 }
