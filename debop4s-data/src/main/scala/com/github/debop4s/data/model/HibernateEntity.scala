@@ -55,7 +55,7 @@ trait HibernateEntity[TId <: java.io.Serializable] extends PersistentObject {
     }
 
     private def hasSameBusinessSignature(entity: HibernateEntity[TId]): Boolean = {
-        val notNull = (entity != null)
+        val notNull = entity != null
         val hash = if (getId != null) Hashs.compute(getId) else hashCode()
         if (notNull) {
             val entityHash = if (entity.getId != null) Hashs.compute(entity.getId) else entity.hashCode()

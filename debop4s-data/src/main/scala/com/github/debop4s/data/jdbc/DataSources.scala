@@ -1,5 +1,6 @@
 package com.github.debop4s.data.jdbc
 
+import com.jolbox.bonecp.BoneCPDataSource
 import javax.sql.DataSource
 import org.apache.tomcat.jdbc.pool.PoolProperties
 import org.slf4j.LoggerFactory
@@ -37,8 +38,11 @@ object DataSources {
      * @param passwd      사용자 패스워드
      * @return [[javax.sql.DataSource]] 인스턴스
      */
-    def getDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource =
-        getTomcatDataSource(driverClass, url, username, passwd)
+    def getDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource = {
+        getBoneCPDataSource(driverClass, url, username, passwd)
+        //getTomcatDataSource(driverClass, url, username, passwd)
+    }
+
 
     /**
      * Tomcat DataSource 를 빌드합니다.
@@ -50,7 +54,7 @@ object DataSources {
      * @return [[javax.sql.DataSource]] 인스턴스
      */
     def getTomcatDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource = {
-        log.debug(s"Tomcat DataSource를 빌드합니다... " +
+        log.debug("Tomcat DataSource를 빌드합니다... " +
                   s"driverClass=[$driverClass], url=[$url], username=[$username], passwd=[$passwd]")
 
         val p: PoolProperties = new PoolProperties
@@ -73,6 +77,31 @@ object DataSources {
         p.setMinIdle(10)
 
         new org.apache.tomcat.jdbc.pool.DataSource(p)
+    }
+
+    def getBoneCPDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource = {
+        log.debug("BoneCP DataSource를 빌드합니다... " +
+                  s"driverClass=[$driverClass], url=[$url], username=[$username], passwd=[$passwd]")
+
+        Class.forName(driverClass)
+
+        val ds = new BoneCPDataSource()
+        ds.setDriverClass(driverClass)
+        ds.setJdbcUrl(url)
+        ds.setUsername(username)
+        ds.setPassword(passwd)
+
+        val processCount = Runtime.getRuntime.availableProcessors()
+
+        ds.setMaxConnectionsPerPartition(100)
+        ds.setMinConnectionsPerPartition(4)
+        ds.setPartitionCount(processCount)
+
+        ds.setIdleMaxAgeInSeconds(240)
+        ds.setIdleConnectionTestPeriodInSeconds(60)
+        ds.setMaxConnectionAgeInSeconds(360)
+
+        ds
     }
 
     /** 테스트에 사용하기 위해 메모리를 사용하는 HSql DB 에 대한 DataSource 를 반환합니다. */
