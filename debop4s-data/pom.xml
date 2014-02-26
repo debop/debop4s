@@ -151,6 +151,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Bone CP -->
+        <dependency>
+            <groupId>com.jolbox</groupId>
+            <artifactId>bonecp</artifactId>
+        </dependency>
+
         <!-- Database Drivers -->
         <dependency>
             <groupId>org.hsqldb</groupId>

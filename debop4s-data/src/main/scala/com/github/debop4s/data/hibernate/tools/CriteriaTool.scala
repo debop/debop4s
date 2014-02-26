@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
  */
 object CriteriaTool {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def addIn(criteria: Criteria, propertyName: String, ids: java.io.Serializable*): Criteria =
         criteria.add(Restrictions.in(propertyName, ids))

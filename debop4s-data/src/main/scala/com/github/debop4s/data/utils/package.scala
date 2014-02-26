@@ -1,7 +1,7 @@
 package com.github.debop4s.data
 
 /**
- * com.github.debop4s.data.utils.package
+ * com.github.debop4s.data.utils.spring
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 24. 오후 9:23
  */

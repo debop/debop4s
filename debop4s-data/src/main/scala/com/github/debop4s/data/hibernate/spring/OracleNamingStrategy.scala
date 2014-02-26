@@ -1,9 +1,9 @@
-package com.github.debop4s.data.hibernate.config
+package com.github.debop4s.data.hibernate.spring
 
 import org.hibernate.cfg.ImprovedNamingStrategy
 
 /**
- * com.github.debop4s.data.hibernate.config.OracleNamingStrategy
+ * com.github.debop4s.data.hibernate.spring.OracleNamingStrategy
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 24. 오후 4:53

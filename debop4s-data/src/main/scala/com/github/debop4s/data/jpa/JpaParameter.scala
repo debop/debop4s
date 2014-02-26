@@ -2,6 +2,7 @@ package com.github.debop4s.data.jpa
 
 import com.github.debop4s.data.AbstractNamedParameter
 import org.hibernate.`type`.StandardBasicTypes
+import scala.beans.BeanProperty
 
 /**
  * com.github.debop4s.data.jpa.JpaParameter
@@ -9,9 +10,9 @@ import org.hibernate.`type`.StandardBasicTypes
  * @since  2013. 12. 19. 오후 9:56
  */
 @SerialVersionUID(2672746608417519438L)
-class JpaParameter(override val name: String,
-                   override val value: Any,
-                   val paramType: org.hibernate.`type`.Type = StandardBasicTypes.SERIALIZABLE)
+class JpaParameter(@BeanProperty override val name: String,
+                   @BeanProperty override val value: Any,
+                   @BeanProperty val paramType: org.hibernate.`type`.Type = StandardBasicTypes.SERIALIZABLE)
     extends AbstractNamedParameter(name, value) {
 
     def this(name: String, value: Any) {
@@ -20,4 +21,15 @@ class JpaParameter(override val name: String,
 
     override protected def buildStringHelper =
         super.buildStringHelper.add("paramType", paramType)
+}
+
+object JpaParameter {
+
+    def apply(name: String, value: Any): JpaParameter = {
+        new JpaParameter(name, value)
+    }
+
+    def apply(name: String, value: Any, paramType: org.hibernate.`type`.Type): JpaParameter = {
+        new JpaParameter(name, value, paramType)
+    }
 }
