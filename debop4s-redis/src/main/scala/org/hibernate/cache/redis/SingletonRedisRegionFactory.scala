@@ -21,7 +21,7 @@ class SingletonRedisRegionFactory(private[this] val _props: Properties) extends 
         this.settings = settings
         try {
             if (cache == null) {
-                this.cache = RedisUtil.createCacheClient(props)
+                this.cache = RedisUtil.createCacheClient(properties)
                 manageExpiration(cache)
             }
             referenceCount.incrementAndGet()

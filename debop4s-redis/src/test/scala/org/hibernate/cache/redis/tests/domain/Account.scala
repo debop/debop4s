@@ -2,6 +2,7 @@ package org.hibernate.cache.redis.tests.domain
 
 import javax.persistence._
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import scala.beans.BeanProperty
 
 /**
  * org.hibernate.cache.redis.tests.domain.Account 
@@ -16,9 +17,10 @@ class Account extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    var id: java.lang.Long = _
 
-    @ManyToOne
+    @ManyToOne(targetEntity = classOf[Person])
     @JoinColumn(name = "personId")
-    var person: Person = _
+    @BeanProperty
+    var person: Person = null
 }

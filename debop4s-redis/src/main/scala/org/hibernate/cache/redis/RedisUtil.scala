@@ -44,7 +44,7 @@ object RedisUtil {
             val host = cacheProperties.getProperty("redis.host", "localhost")
             val port = cacheProperties.getProperty("redis.port", String.valueOf(DEFAULT_PORT)).toInt
             val timeout = cacheProperties.getProperty("redis.timeout", String.valueOf(DEFAULT_TIMEOUT)).toInt
-            val passwd = cacheProperties.getProperty("redis.password", null)
+            val passwd = cacheProperties.getProperty("redis.password", "")
             val database = cacheProperties.getProperty("redis.database", String.valueOf(DEFAULT_DATABASE)).toInt
 
             RedisHibernateCache(RedisClient(host, port, Some(passwd), Some(database)))

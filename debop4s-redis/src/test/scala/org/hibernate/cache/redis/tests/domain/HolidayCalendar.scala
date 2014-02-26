@@ -13,7 +13,7 @@ class HolidayCalendar extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    var id: java.lang.Long = _
 
     @CollectionTable(name = "HolidayMap", joinColumns = Array(new JoinColumn(name = "calendarId")))
     @MapKeyClass(classOf[Date])

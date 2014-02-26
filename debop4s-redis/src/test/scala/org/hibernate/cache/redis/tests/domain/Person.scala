@@ -13,7 +13,7 @@ class Person extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    var id: java.lang.Long = _
 
     var age: Int = _
     var firstName: String = _

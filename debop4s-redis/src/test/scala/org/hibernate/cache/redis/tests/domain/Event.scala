@@ -4,6 +4,7 @@ import java.util
 import java.util.Date
 import javax.persistence._
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import scala.beans.BeanProperty
 
 @Entity
 @org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -12,7 +13,7 @@ class Event extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    var id: java.lang.Long = _
 
     var title: String = _
 
@@ -24,7 +25,8 @@ class Event extends Serializable {
 
     @ManyToOne
     @JoinColumn(name = "organizerId")
-    var organizer: Person = _
+    @BeanProperty
+    var organizer: Person = null
 
     def addParticipant(person: Person) {
         participants.add(person)
@@ -36,6 +38,6 @@ class Event extends Serializable {
         person.events.remove(this)
     }
 
-    override def toString(): String = title + ": " + date
+    override def toString: String = title + ": " + date
 
 }

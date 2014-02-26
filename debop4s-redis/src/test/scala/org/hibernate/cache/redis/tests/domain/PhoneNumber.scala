@@ -1,13 +1,19 @@
 package org.hibernate.cache.redis.tests.domain
 
 import java.util.Objects
-
+import javax.persistence.Entity
+import scala.beans.BeanProperty
 
 class PhoneNumber extends Serializable {
 
-    var personId: Long = 0
+    @BeanProperty
+    var personId: java.lang.Long = 0
+
+    @BeanProperty
     var numberType: String = "home"
-    var phone: Long = 0
+
+    @BeanProperty
+    var phone: java.lang.Long = 0
 
 
     override def equals(obj: Any): Boolean = {

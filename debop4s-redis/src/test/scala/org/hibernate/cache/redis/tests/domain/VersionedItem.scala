@@ -2,6 +2,7 @@ package org.hibernate.cache.redis.tests.domain
 
 import javax.persistence._
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import scala.beans.BeanProperty
 
 
 @Entity
@@ -11,10 +12,12 @@ class VersionedItem extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    @BeanProperty
+    var id: java.lang.Long = _
 
     @Version
-    var version: Long = _
+    @BeanProperty
+    var version: java.lang.Long = _
 
     var name: String = _
 

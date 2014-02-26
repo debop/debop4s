@@ -1,6 +1,7 @@
 package org.hibernate.cache.redis.tests.domain
 
 import javax.persistence._
+import scala.beans.BeanProperty
 
 /**
  * org.hibernate.cache.redis.tests.domain.UuidItem 
@@ -14,10 +15,13 @@ class UuidItem extends Serializable {
 
     @Id
     @GeneratedValue
+    @BeanProperty
     var id: String = _
 
+    @BeanProperty
     var name: String = _
 
+    @BeanProperty
     var description: String = _
 
 }
