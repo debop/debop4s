@@ -72,6 +72,7 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
 
     override def buildQueryResultsRegion(regionName: String,
                                          properties: Properties): QueryResultsRegion = {
+        regionNames += regionName
         new RedisQueryResultsRegion(accessStrategyFactory,
                                        cache,
                                        regionName,

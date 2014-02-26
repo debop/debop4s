@@ -28,7 +28,9 @@
 
     <logger name="com.github.debop4s.redis" level="TRACE"/>
     <logger name="org.hibernate.cache.redis" level="TRACE"/>
+
     <logger name="org.springframework" level="INFO"/>
+    <logger name="org.hibernate" level="INFO"/>
 
     <root level="DEBUG">
         <appender-ref ref="console"/>
