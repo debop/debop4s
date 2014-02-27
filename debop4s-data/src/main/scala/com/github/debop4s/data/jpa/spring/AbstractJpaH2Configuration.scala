@@ -9,8 +9,7 @@ import org.hibernate.cfg.AvailableSettings
  * AbstractH2JpaConfiguration
  * Created by debop on 2014. 1. 29..
  */
-abstract
-class AbstractH2JpaConfiguration extends AbstractJpaConfiguration {
+abstract class AbstractJpaH2Configuration extends AbstractJpaConfiguration {
 
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_H2,

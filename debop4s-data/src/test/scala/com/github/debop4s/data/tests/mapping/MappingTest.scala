@@ -1,7 +1,7 @@
 package com.github.debop4s.data.tests.mapping
 
 import com.github.debop4s.data.tests.AbstractDataTest
-import com.github.debop4s.data.tests.spring.HSqlJpaConfiguration
+import com.github.debop4s.data.tests.spring.JpaMySqlConfiguration
 import javax.persistence.{EntityManager, PersistenceContext}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scala.jdbc.core.JdbcTemplate
@@ -13,7 +13,7 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 11. 오후 10:54
  */
-@ContextConfiguration(classes = Array(classOf[HSqlJpaConfiguration]),
+@ContextConfiguration(classes = Array(classOf[JpaMySqlConfiguration]),
                          loader = classOf[AnnotationConfigContextLoader])
 class MappingTest extends AbstractDataTest {
 

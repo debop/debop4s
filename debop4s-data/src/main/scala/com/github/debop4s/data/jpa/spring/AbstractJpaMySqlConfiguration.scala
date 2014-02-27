@@ -4,8 +4,7 @@ import com.github.debop4s.data._
 import java.util.Properties
 import javax.sql.DataSource
 import org.hibernate.cfg.AvailableSettings
-import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.springframework.context.annotation.Bean
 
 /**
  * org.hibernate.examples.jpa.spring.AbstractMySqlJpaConfiguration
@@ -13,9 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 9. 오후 4:08
  */
-@Configuration
-@EnableTransactionManagement
-abstract class AbstractMySqlJpaConfiguration extends AbstractJpaConfiguration {
+abstract class AbstractJpaMySqlConfiguration extends AbstractJpaConfiguration {
 
     @Bean
     override def dataSource: DataSource = {

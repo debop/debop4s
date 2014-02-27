@@ -1,6 +1,6 @@
 package com.github.debop4s.data.tests.spring
 
-import com.github.debop4s.data.jpa.spring.AbstractHSqlJpaConfiguration
+import com.github.debop4s.data.jpa.spring.AbstractJpaHSqlConfiguration
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.transaction.annotation.EnableTransactionManagement
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories
-class HSqlJpaConfiguration extends AbstractHSqlJpaConfiguration {
+class JpaHSqlConfiguration extends AbstractJpaHSqlConfiguration {
 
     override def getMappedPackageNames: Array[String] =
         Array("com.github.debop4s.data")

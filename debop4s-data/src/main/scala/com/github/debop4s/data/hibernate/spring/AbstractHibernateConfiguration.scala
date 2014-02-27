@@ -33,7 +33,7 @@ abstract class AbstractHibernateConfiguration {
 
     def getNamingStrategy: NamingStrategy = null
 
-    def hibernateProperties(): Properties = {
+    def hibernateProperties: Properties = {
         val props = new Properties()
 
         props.setProperty(AvailableSettings.FORMAT_SQL, "true")
@@ -54,17 +54,17 @@ abstract class AbstractHibernateConfiguration {
 
 
     @Bean
-    def dataSource(): DataSource = buildEmbeddedDataSource()
+    def dataSource: DataSource = buildEmbeddedDataSource()
 
     @Bean
-    def jdbcTemplate() = new JdbcTemplate(dataSource())
+    def jdbcTemplate = new JdbcTemplate(dataSource)
 
     protected def setupSessionFactory(factoryBean: LocalSessionFactoryBean) {
         // 추가 작업 시 override 해서 사용하세요.
     }
 
     @Bean
-    def sessionFactory(): SessionFactory = {
+    def sessionFactory: SessionFactory = {
         log.info("SessionFactory를 생성합니다.")
 
         val factoryBean = new LocalSessionFactoryBean()
@@ -76,11 +76,11 @@ abstract class AbstractHibernateConfiguration {
 
         factoryBean.setNamingStrategy(getNamingStrategy)
 
-        factoryBean.setHibernateProperties(hibernateProperties())
-        factoryBean.setDataSource(dataSource())
-        val interceptor = hibernateInterceptor()
+        factoryBean.setHibernateProperties(hibernateProperties)
+        factoryBean.setDataSource(dataSource)
+        val interceptor = hibernateInterceptor
         if (interceptor != null)
-            factoryBean.setEntityInterceptor(hibernateInterceptor())
+            factoryBean.setEntityInterceptor(hibernateInterceptor)
 
         setupSessionFactory(factoryBean)
 
@@ -91,19 +91,20 @@ abstract class AbstractHibernateConfiguration {
     }
 
     @Bean
-    def transactionManager(): HibernateTransactionManager =
-        new HibernateTransactionManager(sessionFactory())
+    def transactionManager: HibernateTransactionManager =
+        new HibernateTransactionManager(sessionFactory)
 
     @Bean
-    def hibernateInterceptor(): Interceptor = new PersistentObjectInterceptor()
+    def hibernateInterceptor: Interceptor = new PersistentObjectInterceptor()
 
     @Bean
-    def hibernateExceptionTranslator() = new HibernateExceptionTranslator()
+    def hibernateExceptionTranslator: HibernateExceptionTranslator =
+        new HibernateExceptionTranslator()
 
     @Bean
-    def exceptionTranslation(): PersistenceExceptionTranslationPostProcessor =
+    def exceptionTranslation: PersistenceExceptionTranslationPostProcessor =
         new PersistenceExceptionTranslationPostProcessor()
 
     @Bean
-    def hibernateDao(): HibernateDao = new HibernateDao(sessionFactory())
+    def hibernateDao: HibernateDao = new HibernateDao(sessionFactory)
 }

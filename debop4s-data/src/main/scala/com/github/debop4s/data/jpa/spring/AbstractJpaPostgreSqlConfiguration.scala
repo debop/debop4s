@@ -4,17 +4,13 @@ import com.github.debop4s.data._
 import java.util.Properties
 import javax.sql.DataSource
 import org.hibernate.cfg.AvailableSettings
-import org.springframework.context.annotation.{Configuration, Bean}
-import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.springframework.context.annotation.Bean
 
 /**
  * AbstractPostgreSqlJpaConfiguration
  * Created by debop on 2014. 1. 29..
  */
-@Configuration
-@EnableTransactionManagement
-abstract
-class AbstractPostgreSqlJpaConfiguration extends AbstractJpaConfiguration {
+abstract class AbstractJpaPostgreSqlConfiguration extends AbstractJpaConfiguration {
     @Bean
     override def dataSource: DataSource =
         buildDataSource(DRIVER_CLASS_POSTGRESQL,

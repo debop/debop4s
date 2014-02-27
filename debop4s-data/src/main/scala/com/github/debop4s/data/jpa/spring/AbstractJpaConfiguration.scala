@@ -6,14 +6,13 @@ import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
 import org.hibernate.cfg.{AvailableSettings, NamingStrategy}
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.Bean
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
 import org.springframework.orm.jpa.{JpaTransactionManager, LocalContainerEntityManagerFactoryBean}
 import org.springframework.scala.jdbc.core.JdbcTemplate
 import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.annotation.EnableTransactionManagement
 
 /**
  * org.hibernate.examples.jpa.spring.AbstractJpaConfiguration
@@ -21,8 +20,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 9. 오후 4:02
  */
-@Configuration
-@EnableTransactionManagement
 abstract class AbstractJpaConfiguration {
 
     lazy val log = LoggerFactory.getLogger(getClass)
@@ -50,10 +47,10 @@ abstract class AbstractJpaConfiguration {
     def buildDataSource(driverClass: String, url: String, username: String, password: String): DataSource =
         DataSources.getDataSource(driverClass, url, username, password)
 
-    def buildEmbeddedDataSource() = DataSources.getEmbeddedHSqlDataSource
+    def buildEmbeddedDataSource = DataSources.getEmbeddedHSqlDataSource
 
     @Bean
-    def dataSource: DataSource = buildEmbeddedDataSource()
+    def dataSource: DataSource = buildEmbeddedDataSource
 
     @Bean
     def jdbcTemplate: JdbcTemplate = new JdbcTemplate(dataSource)
@@ -63,7 +60,7 @@ abstract class AbstractJpaConfiguration {
     }
 
     @Bean
-    def entityManagerFactory(): EntityManagerFactory = {
+    def entityManagerFactory: EntityManagerFactory = {
         log.info("SessionFactory를 생성합니다.")
 
         val factoryBean = new LocalContainerEntityManagerFactoryBean()
@@ -89,13 +86,14 @@ abstract class AbstractJpaConfiguration {
     }
 
     @Bean
-    def transactionManager(): PlatformTransactionManager =
-        new JpaTransactionManager(entityManagerFactory())
+    def transactionManager: PlatformTransactionManager =
+        new JpaTransactionManager(entityManagerFactory)
 
     @Bean
-    def hibernateExceptionTranslator() = new HibernateExceptionTranslator()
+    def hibernateExceptionTranslator: HibernateExceptionTranslator =
+        new HibernateExceptionTranslator()
 
     @Bean
-    def exceptionTranslation(): PersistenceExceptionTranslationPostProcessor =
+    def exceptionTranslation: PersistenceExceptionTranslationPostProcessor =
         new PersistenceExceptionTranslationPostProcessor()
 }

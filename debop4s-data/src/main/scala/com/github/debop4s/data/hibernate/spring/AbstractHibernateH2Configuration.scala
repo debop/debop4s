@@ -12,17 +12,17 @@ import org.springframework.context.annotation.Bean
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 2:13
  */
-abstract class AbstractH2HibernateConfiguration extends AbstractHibernateConfiguration {
+abstract class AbstractHibernateH2Configuration extends AbstractHibernateConfiguration {
 
     @Bean
-    override def dataSource(): DataSource =
+    override def dataSource: DataSource =
         buildDataSource(DRIVER_CLASS_H2,
                            "jdbc:h2:mem:" + getDatabaseName + ";DB_CLOSE_DELAY=1;MVCC=TRUE;",
                            "sa",
                            "")
 
-    override def hibernateProperties(): Properties = {
-        val props = super.hibernateProperties()
+    override def hibernateProperties: Properties = {
+        val props = super.hibernateProperties
         props.put(AvailableSettings.DIALECT, DIALECT_H2)
         props
     }

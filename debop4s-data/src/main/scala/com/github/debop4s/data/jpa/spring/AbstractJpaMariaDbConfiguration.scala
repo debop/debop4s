@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Bean
  * AbstractMariaDbJpaConfiguration
  * Created by debop on 2014. 1. 29..
  */
-abstract
-class AbstractMariaDbJpaConfiguration extends AbstractMySqlJpaConfiguration {
+abstract class AbstractJpaMariaDbConfiguration extends AbstractJpaMySqlConfiguration {
 
     @Bean
     override def dataSource: DataSource = {
