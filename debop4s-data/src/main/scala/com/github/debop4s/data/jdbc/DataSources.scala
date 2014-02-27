@@ -93,11 +93,11 @@ object DataSources {
 
         val processCount = Runtime.getRuntime.availableProcessors()
 
-        ds.setMaxConnectionsPerPartition(100)
-        ds.setMinConnectionsPerPartition(4)
+        ds.setMaxConnectionsPerPartition(50)
+        ds.setMinConnectionsPerPartition(2)
         ds.setPartitionCount(processCount)
 
-        ds.setIdleMaxAgeInSeconds(240)
+        ds.setIdleMaxAgeInSeconds(120)
         ds.setIdleConnectionTestPeriodInSeconds(60)
         ds.setMaxConnectionAgeInSeconds(360)
 
