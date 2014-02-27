@@ -3,6 +3,7 @@ package com.github.debop4s.core.stests.pool
 import com.github.debop4s.core.pool.AbstractObjectPool
 import java.util.Properties
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
+import org.slf4j.LoggerFactory
 
 /**
  * com.github.debop4s.core.tests.pool.ObjectPool
@@ -13,6 +14,7 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 class ObjectPool(cfg: GenericObjectPoolConfig, val props: Properties)
     extends AbstractObjectPool[PoolObject](cfg, new ObjectFactory(props)) {
 
+    private lazy val log = LoggerFactory.getLogger(getClass)
 }
 
 

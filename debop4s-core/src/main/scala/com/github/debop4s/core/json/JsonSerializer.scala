@@ -16,7 +16,7 @@ trait JsonSerializer {
      * @param graph 직렬화할 객체
      * @return JSON으로 직렬화한 바이트 배열, 객체가 Null이면 null 반환
      */
-    def serialize(graph: AnyRef): Array[Byte] = Strings.getUtf8Bytes(serializeToText(graph))
+    def serialize(graph: Any): Array[Byte] = Strings.getUtf8Bytes(serializeToText(graph))
 
     /**
      * JSON 포맷으로 직렬화하여 Json Text 형식의 문자열로 반환합니다.
@@ -24,7 +24,7 @@ trait JsonSerializer {
      * @param graph 직렬화할 객체
      * @return JSON으로 직렬화한 문자열, 객체가 Null이면 null 반환
      */
-    def serializeToText(graph: AnyRef): String
+    def serializeToText(graph: Any): String
 
     /**
      * Json 형식의 데이터을 역직렬화하여, 객체로 빌드합니다.

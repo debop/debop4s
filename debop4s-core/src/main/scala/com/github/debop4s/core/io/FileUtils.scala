@@ -22,7 +22,7 @@ import scala.concurrent.duration._
  */
 object FileUtils {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val DEFUALT_BUFFER_SIZE = 4096
     val UTF8 = Charset.forName("UTF-8")

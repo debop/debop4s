@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
  */
 trait Compressor {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val BUFFER_SIZE = 4096
 

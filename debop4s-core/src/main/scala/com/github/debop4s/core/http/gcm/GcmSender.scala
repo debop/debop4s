@@ -1,6 +1,5 @@
 package com.github.debop4s.core.http.gcm
 
-import com.github.debop4s.core.Guard
 import com.github.debop4s.core.http.AsyncHttpClient
 import com.github.debop4s.core.json.JacksonSerializer
 import com.github.debop4s.core.utils.{Tasks, Charsets}
@@ -10,7 +9,6 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.message.BasicHeader
 import org.apache.http.{HttpStatus, Header}
 import org.slf4j.LoggerFactory
-import scala.Predef.String
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -21,16 +19,14 @@ import scala.collection.mutable.ArrayBuffer
  */
 class GcmSender(val serverApiKey: String) {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-    val GCM_SERVER_URL: String = "https://android.googleapis.com/gcm/send"
-    val GCM_SERVER_URI = new URI(GCM_SERVER_URL)
 
     lazy val serializer = new JacksonSerializer()
 
     def send(msg: GcmMessage, retry: Int = 3) {
-        Guard.shouldNotBeNull(msg, "msg")
-        Guard.shouldBe(msg.registrationIds.size > 0, "수신자가 있어야 합니다.")
+        require(msg != null)
+        require(msg.registrationIds != null && msg.registrationIds.size > 0)
 
         val post = buildHttpPost(serverApiKey, msg)
         var isSent = false
@@ -56,10 +52,19 @@ class GcmSender(val serverApiKey: String) {
     }
 
     private def buildHttpPost(apiKey: String, msg: GcmMessage): HttpPost = {
-        val post = new HttpPost(GCM_SERVER_URI)
+        val post = new HttpPost(GcmSender.GCM_SERVER_URI)
         buildHttpHeader(apiKey).foreach(h => post.addHeader(h))
         val text = buildMessage(msg)
         post.setEntity(new StringEntity(text, Charsets.UTF_8))
         post
     }
+}
+
+object GcmSender {
+
+    val GCM_SERVER_URL: String = "https://android.googleapis.com/gcm/send"
+    lazy val GCM_SERVER_URI = new URI(GCM_SERVER_URL)
+
+    def apply(serverApiKey: String): GcmSender = new GcmSender(serverApiKey)
+
 }

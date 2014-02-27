@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
 abstract class AbstractObjectPool[T <: AnyRef](val config: GenericObjectPoolConfig,
                                                val factory: PooledObjectFactory[T]) extends AutoCloseable {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     protected val pool = new GenericObjectPool[T](factory, config)
 

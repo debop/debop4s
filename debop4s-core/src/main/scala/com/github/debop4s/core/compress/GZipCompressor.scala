@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 class GZipCompressor extends Compressor {
 
-    override lazy val log = LoggerFactory.getLogger(classOf[GZipCompressor])
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
         val bos = new ByteArrayOutputStream()

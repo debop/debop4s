@@ -5,14 +5,14 @@ import java.io._
 import org.slf4j.LoggerFactory
 
 /**
- * com.github.debop4s.core.io.BinarySerializer
+ * Binary Serializer
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 5:37
  */
 class BinarySerializer extends Serializer {
 
-    lazy val log = LoggerFactory.getLogger(classOf[BinarySerializer])
+    private lazy val log = LoggerFactory.getLogger(classOf[BinarySerializer])
 
     /**
      * 객체를 직렬화 합니다.

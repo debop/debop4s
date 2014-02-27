@@ -15,7 +15,7 @@ import scala.concurrent.Future
  */
 object Compressors {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def compressString(compressor: Compressor,
                        plainText: String,

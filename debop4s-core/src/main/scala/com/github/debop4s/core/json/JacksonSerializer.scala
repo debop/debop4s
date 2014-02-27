@@ -16,16 +16,16 @@ class JacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
 
     require(mapper != null)
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def this() {
         this(JacksonSerializer.createObjectMapper())
     }
 
-    override def serialize(graph: AnyRef): Array[Byte] =
+    override def serialize(graph: Any): Array[Byte] =
         mapper.writeValueAsBytes(graph)
 
-    override def serializeToText(graph: AnyRef): String =
+    override def serializeToText(graph: Any): String =
         mapper.writeValueAsString(graph)
 
     override def deserialize[T](data: Array[Byte], clazz: Class[T]): T =

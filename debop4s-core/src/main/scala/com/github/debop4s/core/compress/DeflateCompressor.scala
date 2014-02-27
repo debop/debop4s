@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 class DeflateCompressor extends Compressor {
 
-    override lazy val log = LoggerFactory.getLogger(classOf[DeflateCompressor])
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
 

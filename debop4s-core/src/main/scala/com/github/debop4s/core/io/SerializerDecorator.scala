@@ -15,7 +15,7 @@ abstract class SerializerDecorator(val serializer: Serializer) extends Serialize
      * @param graph 직렬화할 객체
      * @return 직렬화된 정보를 가진 바이트 배열
      */
-    def serialize[T <: AnyRef](graph: T): Array[Byte] = {
+    def serialize[T](graph: T): Array[Byte] = {
         serializer.serialize(graph)
     }
 
@@ -24,7 +24,7 @@ abstract class SerializerDecorator(val serializer: Serializer) extends Serialize
      * @param bytes 직렬화된 바이트 배열
      * @return 역직렬화된 객체 정보
      */
-    def deserialize[T <: AnyRef](bytes: Array[Byte], clazz: Class[T]): T = {
+    def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T = {
         serializer.deserialize(bytes, clazz)
     }
 }

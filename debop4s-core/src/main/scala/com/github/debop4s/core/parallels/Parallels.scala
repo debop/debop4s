@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
  */
 object Parallels {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     lazy val random = ThreadLocalRandom.current()
     lazy val processCount = Runtime.getRuntime.availableProcessors()

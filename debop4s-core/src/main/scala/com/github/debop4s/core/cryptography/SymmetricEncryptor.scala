@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
  */
 trait SymmetricEncryptor {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    protected lazy val log = LoggerFactory.getLogger(getClass)
 
     private val DEFAULT_PASSWORD = "sunghyouk.bae@gmail.com-21011"
 

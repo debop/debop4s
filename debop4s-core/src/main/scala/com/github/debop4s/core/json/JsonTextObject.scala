@@ -30,7 +30,7 @@ object JsonTextObject {
 
     def apply(): JsonTextObject = new JsonTextObject(null, null)
 
-    def apply(graph: AnyRef): JsonTextObject = {
+    def apply(graph: Any): JsonTextObject = {
         graph match {
             case null => Empty
             case src: JsonTextObject => apply(src)

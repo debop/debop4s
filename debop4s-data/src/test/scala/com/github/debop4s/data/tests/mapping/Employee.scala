@@ -19,12 +19,12 @@ import org.joda.time.DateTime
 @SequenceGenerator(name = "employee_seq", sequenceName = "employee_seq")
 @Access(AccessType.FIELD)
 @SerialVersionUID(6936596398947403315L)
-class Employee extends HibernateEntity[java.lang.Long] with UpdatedTimestampEntity {
+class Employee extends HibernateEntity[Long] with UpdatedTimestampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "employee_seq")
     @Column(name = "employeeId")
-    protected var id: java.lang.Long = _
+    protected var id: Long = _
 
     def getId = id
 

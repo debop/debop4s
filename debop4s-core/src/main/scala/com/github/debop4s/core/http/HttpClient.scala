@@ -1,7 +1,7 @@
 package com.github.debop4s.core.http
 
 import com.github.debop4s.core.json.JacksonSerializer
-import com.github.debop4s.core.utils.{With, Charsets}
+import com.github.debop4s.core.utils.Charsets
 import java.net.URI
 import java.nio.charset.Charset
 import org.apache.http._
@@ -12,6 +12,7 @@ import org.apache.http.impl.client.{HttpClients, CloseableHttpClient}
 import org.apache.http.impl.conn.{DefaultProxyRoutePlanner, PoolingHttpClientConnectionManager}
 import org.apache.http.util.EntityUtils
 import org.slf4j.LoggerFactory
+import scala.annotation.varargs
 import scala.collection.JavaConversions._
 
 /**
@@ -22,7 +23,7 @@ import scala.collection.JavaConversions._
  */
 class HttpClient extends AutoCloseable {
 
-    lazy val log = LoggerFactory.getLogger(classOf[HttpClient])
+    private lazy val log = LoggerFactory.getLogger(classOf[HttpClient])
 
     lazy val connectionManager = new PoolingHttpClientConnectionManager()
 
@@ -37,15 +38,19 @@ class HttpClient extends AutoCloseable {
         builder.build()
     }
 
+    @varargs
     def get(uriString: String, headers: Header*): String =
         get(new URI(uriString), Charsets.UTF_8, headers: _*)
 
+    @varargs
     def get(uriString: String, cs: Charset, headers: Header*): String =
         get(new URI(uriString), cs, headers: _*)
 
+    @varargs
     def get(uri: URI, headers: Header*): String =
         get(uri, Charsets.UTF_8, headers: _*)
 
+    @varargs
     def get(uri: URI, cs: Charset, headers: Header*): String = {
         log.trace(s"HTTP GET uri=[$uri], headers=[$headers]")
 
@@ -62,16 +67,19 @@ class HttpClient extends AutoCloseable {
         }
     }
 
+    @varargs
     def post(uriString: String, nvps: List[NameValuePair], headers: Header*): String =
         post(uriString, nvps, Charsets.UTF_8, headers: _*)
 
-
+    @varargs
     def post(uriString: String, nvps: List[NameValuePair], cs: Charset, headers: Header*): String =
         post(new URI(uriString), nvps, cs, headers: _*)
 
+    @varargs
     def post(uri: URI, nvps: List[NameValuePair], headers: Header*): String =
         post(uri, nvps, Charsets.UTF_8, headers: _*)
 
+    @varargs
     def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): String = {
         assert(uri != null)
         val client = createHttpClient()
@@ -89,10 +97,12 @@ class HttpClient extends AutoCloseable {
         }
     }
 
-    def postJson[T <: AnyRef](uri: URI, entity: T, headers: Header*): String =
+    @varargs
+    def postJson[T](uri: URI, entity: T, headers: Header*): String =
         postJson[T](uri, entity, Charsets.UTF_8, headers: _*)
 
-    def postJson[T <: AnyRef](uri: URI, entity: T, cs: Charset, headers: Header*): String = {
+    @varargs
+    def postJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): String = {
         assert(uri != null)
         val client = createHttpClient()
         val httppost = new HttpPost(uri)
@@ -112,8 +122,11 @@ class HttpClient extends AutoCloseable {
         }
     }
 
-
     def close() {
-        With.tryAction(connectionManager.shutdown())()()
+        try {
+            connectionManager.shutdown()
+        } catch {
+            case _: Throwable =>
+        }
     }
 }

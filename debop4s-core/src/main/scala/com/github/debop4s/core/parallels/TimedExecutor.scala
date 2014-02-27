@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
  */
 class TimedExecutor(val timeout: Long, val checkMillis: Option[Long] = None) {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def this(timeout: Long) {
         this(timeout, None)

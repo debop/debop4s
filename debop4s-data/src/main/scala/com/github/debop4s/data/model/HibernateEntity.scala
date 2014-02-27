@@ -12,7 +12,7 @@ import javax.persistence.{MappedSuperclass, PostLoad, PostPersist}
 // HINT: @MappedSuperclass 는 @PostPersist, @PostLoad 등이 제대로 동작하도록 하기 위함입니다.
 // HINT: HibernateEntity가 class로 컴파일되어야 제대로 동작하게 되므로, 만약 동작하지 안는다면 abstract class를 추가로 구현해야 합니다.
 @MappedSuperclass
-trait HibernateEntity[TId <: java.io.Serializable] extends PersistentObject {
+trait HibernateEntity[TId] extends PersistentObject {
 
     def getId: TId
 

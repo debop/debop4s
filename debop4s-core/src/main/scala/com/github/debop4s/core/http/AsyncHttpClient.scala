@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory
  */
 class AsyncHttpClient {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
     lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
 
 

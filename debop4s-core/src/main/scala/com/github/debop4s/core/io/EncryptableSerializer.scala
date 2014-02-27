@@ -18,7 +18,7 @@ class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncr
      * @param graph 직렬화할 객체
      * @return 직렬화된 정보를 가진 바이트 배열
      */
-    override def serialize[T <: AnyRef](graph: T) =
+    override def serialize[T](graph: T) =
         encryptor.encrypt(super.serialize(graph))
 
     /**
@@ -26,6 +26,6 @@ class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncr
      * @param bytes 직렬화된 바이트 배열
      * @return 역직렬화된 객체 정보
      */
-    override def deserialize[T <: AnyRef](bytes: Array[Byte], clazz: Class[T]) =
+    override def deserialize[T](bytes: Array[Byte], clazz: Class[T]) =
         super.deserialize(encryptor.decrypt(bytes), clazz)
 }

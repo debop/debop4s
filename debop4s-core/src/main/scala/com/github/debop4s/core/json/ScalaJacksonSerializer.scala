@@ -11,10 +11,10 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
  */
 class ScalaJacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
 
-    override def serialize(graph: AnyRef): Array[Byte] =
+    override def serialize(graph: Any): Array[Byte] =
         mapper.writeValueAsBytes(graph)
 
-    override def serializeToText(graph: AnyRef): String =
+    override def serializeToText(graph: Any): String =
         mapper.writeValueAsString(graph)
 
     override def deserialize[T](data: Array[Byte], clazz: Class[T]): T =

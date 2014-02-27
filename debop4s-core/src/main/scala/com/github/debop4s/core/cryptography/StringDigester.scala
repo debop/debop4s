@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
  */
 trait StringDigester {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    protected lazy val log = LoggerFactory.getLogger(getClass)
 
     val standardStringDigester = new StandardStringDigester()
 

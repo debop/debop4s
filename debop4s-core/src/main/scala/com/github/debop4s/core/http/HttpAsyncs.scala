@@ -21,7 +21,7 @@ import scala.collection.JavaConversions._
  */
 object HttpAsyncs {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     lazy val client = new AsyncHttpClient()
     lazy val serializer = JacksonSerializer()
@@ -92,7 +92,7 @@ object HttpAsyncs {
     def postAsParallel(posts: HttpPost*): List[HttpResponse] =
         client.postAsParallel(posts: _*)
 
-    def buildHttpPostByJson[T <: AnyRef](uri: URI, entity: T, cs: Charset, headers: Header*): HttpPost = {
+    def buildHttpPostByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpPost = {
         val httppost = new HttpPost(uri)
         if (entity != null) {
             val text = serializer.serializeToText(entity)
@@ -103,10 +103,10 @@ object HttpAsyncs {
         httppost
     }
 
-    def postByJson[T <: AnyRef](uri: URI, entity: T, headers: Header*): HttpResponse =
+    def postByJson[T](uri: URI, entity: T, headers: Header*): HttpResponse =
         postByJson(uri, entity, Charsets.UTF_8, headers: _*)
 
-    def postByJson[T <: AnyRef](uri: URI, entity: T, cs: Charset, headers: Header*): HttpResponse =
+    def postByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpResponse =
         client.post(buildHttpPostByJson(uri, entity, cs, headers: _*))
 
     def buildHttpDelete(uriString: String, headers: Header*): HttpDelete =

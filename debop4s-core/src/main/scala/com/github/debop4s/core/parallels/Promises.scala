@@ -5,14 +5,14 @@ import scala.concurrent._
 import scala.concurrent.duration._
 
 /**
- * com.github.debop4s.core.parallels.Promises
+ * Scala Promise 를 사용합니다. 그냥 future 를 이용해도 됩니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 11. 오후 1:10
  */
 object Promises {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
