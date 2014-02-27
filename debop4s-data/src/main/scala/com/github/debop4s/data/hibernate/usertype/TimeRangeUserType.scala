@@ -52,8 +52,8 @@ class TimeRangeUserType extends CompositeUserType {
         val start = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session)
         val end = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(1), session)
 
-        TimeRange(Options.get(start).map(new DateTime(_)),
-                     Options.get(end).map(new DateTime(_)))
+        TimeRange(Options.toOption(start).map(new DateTime(_)),
+                     Options.toOption(end).map(new DateTime(_)))
     }
 
     override def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) {

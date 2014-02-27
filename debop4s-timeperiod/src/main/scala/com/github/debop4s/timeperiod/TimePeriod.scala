@@ -89,8 +89,8 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     override lazy val log = LoggerFactory.getLogger(getClass)
 
-    private var (startTime, endTime) = Times.adjustPeriod(Options.get(_start).getOrElse(MinPeriodTime),
-                                                             Options.get(_end).getOrElse(MaxPeriodTime))
+    private var (startTime, endTime) = Times.adjustPeriod(Options.toOption(_start).getOrElse(MinPeriodTime),
+                                                             Options.toOption(_end).getOrElse(MaxPeriodTime))
 
     def start = startTime
 
@@ -131,8 +131,8 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
     def setup(start: DateTime, end: DateTime) {
         log.trace(s"기간을 새로 설정합니다. newStart=[$start], newEnd=[$end]")
 
-        val ns: DateTime = Options.get(start).getOrElse(MinPeriodTime)
-        val ne: DateTime = Options.get(end).getOrElse(MaxPeriodTime)
+        val ns: DateTime = Options.toOption(start).getOrElse(MinPeriodTime)
+        val ne: DateTime = Options.toOption(end).getOrElse(MaxPeriodTime)
 
         if (ns < ne) {
             this.startTime = ns

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
  */
 object Streams {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val BUFFER_SIZE = 4096
 

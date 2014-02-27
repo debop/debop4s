@@ -53,7 +53,7 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
         synchronized {
             if (redis == null) {
                 println(s"host=$host, port=$port, password=$password, database=$database ")
-                redis = RedisClient(host, port, Options.get(password), Some(database))
+                redis = RedisClient(host, port, Options.toOption(password), Some(database))
             }
             super.start()
         }

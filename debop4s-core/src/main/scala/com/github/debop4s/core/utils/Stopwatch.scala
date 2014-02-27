@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
  */
 class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def this() {
         this("", false)

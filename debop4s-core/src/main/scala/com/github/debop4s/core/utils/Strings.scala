@@ -17,7 +17,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Strings {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val MULTI_BYTES_PREFIX = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
     val TRIMMING_STR = "..."

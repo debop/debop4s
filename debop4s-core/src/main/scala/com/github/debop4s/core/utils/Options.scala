@@ -9,8 +9,12 @@ package com.github.debop4s.core.utils
 object Options {
 
     /**
-     * 지정한 인스턴스가 null이면 None을 반환하고, 값이 있으면 Some(v)를 반환합니다.
+     * 인스턴스가 null이면 None을 반환하고, 값이 있으면 Some(v)를 반환합니다.
      */
-    def get[T](v: T): Option[T] = if (v == null) None else Some(v)
-
+    def toOption[T](v: T): Option[T] = v match {
+        case null => None
+        case None => None
+        case x: Option[Any] => x.asInstanceOf[Option[T]]
+        case _ => Some(v)
+    }
 }

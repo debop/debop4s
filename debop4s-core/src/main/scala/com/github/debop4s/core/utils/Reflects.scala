@@ -1,5 +1,6 @@
 package com.github.debop4s.core.utils
 
+import java.lang.reflect.Constructor
 import org.slf4j.LoggerFactory
 import scala.reflect._
 
@@ -9,7 +10,7 @@ import scala.reflect._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 12. 오후 5:23
  */
-class Reflects {
+object Reflects {
 
     lazy val log = LoggerFactory.getLogger(getClass)
 
@@ -68,9 +69,9 @@ class Reflects {
         // classTag[T].runtimeClass.newInstance().asInstanceOf[T]
 
         val parameterTypes = initArgs.map(x => asJavaClass(x)).toArray
-        val constructor = getRuntimeClass[T].getConstructor(parameterTypes: _*)
+        val constructor: Constructor[T] = getRuntimeClass[T].getConstructor(parameterTypes: _*)
 
-        constructor.newInstance(initArgs.map(_.asInstanceOf[AnyRef]): _*).asInstanceOf[T]
+        constructor.newInstance(initArgs.map(_.asInstanceOf[AnyRef]): _*)
     }
 
     /**

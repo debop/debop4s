@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 object With {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def stopwatch(action: => Unit) {
         val sw = new ClosableStopwatch()

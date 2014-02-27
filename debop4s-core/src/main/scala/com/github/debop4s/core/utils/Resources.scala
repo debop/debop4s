@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
  */
 object Resources {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     /**
      * 지정한 경로의 리소스를 읽기위한 InputStream 을 반환합니다.

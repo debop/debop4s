@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
  */
 object Tasks {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     /**
      * 지정된 block을 성공할 때까지 수행햅니다.

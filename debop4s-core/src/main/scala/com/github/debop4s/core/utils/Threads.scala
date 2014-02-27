@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 object Threads {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     implicit def makeRunnable(action: => Unit): Runnable = {
         new Runnable {
