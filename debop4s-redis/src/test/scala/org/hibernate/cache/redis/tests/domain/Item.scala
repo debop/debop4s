@@ -11,7 +11,7 @@ class Item extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: java.lang.Long = _
+    var id: Long = _
 
     var name: String = _
 

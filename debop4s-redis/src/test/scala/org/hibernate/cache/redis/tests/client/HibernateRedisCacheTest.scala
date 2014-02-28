@@ -1,13 +1,12 @@
 package org.hibernate.cache.redis.tests.client
 
-import com.github.debop4s.core.parallels.Promises
+import com.github.debop4s.core.parallels.{Parallels, Promises}
 import org.fest.assertions.Assertions._
-import org.hibernate.cache.redis.client.RedisHibernateCache
+import org.hibernate.cache.redis.client.HibernateRedisCache
 import org.hibernate.cache.redis.tests.AbstractHibernateRedisTest
 import scala.actors.threadpool.TimeUnit
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
 
 /**
  * org.hibernate.cache.redis.tests.client.CacheClientTest 
@@ -15,14 +14,23 @@ import scala.concurrent.duration._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 20. 오후 3:04
  */
-class RedisHibernateCacheTest extends AbstractHibernateRedisTest {
+class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
 
-    val client = RedisHibernateCache()
+    val client = HibernateRedisCache()
 
     val REGION = client.DEFAULT_REGION_NAME
 
     test("connection") {
-        client.ping.map {r => assertThat(r).isEqualTo("pong")}
+        client.ping.map { r =>
+            assertThat(r).isEqualTo("pong")
+        }
+    }
+
+    test("multiple connection test") {
+        Parallels.runAction(1000) {
+            client.ping
+            Thread.sleep(1)
+        }
     }
 
     test("set and get") {
@@ -105,12 +113,11 @@ class RedisHibernateCacheTest extends AbstractHibernateRedisTest {
         val future = client.multiGet(REGION, keys)
         future.map(values => values.size should equal(keys.size))
 
-        val future2 = client.multiDelete(REGION, keys)
-        Promises.await(future2, 5 seconds)
+        client.multiDelete(REGION, keys)
 
         (0 until count).foreach(x => {
             val key = "key-" + x
-            client.get(REGION, key) map {v => assert(v == null)}
+            client.get(REGION, key) map { v => assert(v == null)}
         })
     }
 
@@ -132,7 +139,7 @@ class RedisHibernateCacheTest extends AbstractHibernateRedisTest {
             }
         }
 
-        Promises.await(client.deleteRegion(REGION))
+        client.deleteRegion(REGION)
 
         client.keysInRegion(REGION) map {
             keys => {

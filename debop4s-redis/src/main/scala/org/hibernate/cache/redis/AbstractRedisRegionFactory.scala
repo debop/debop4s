@@ -1,7 +1,7 @@
 package org.hibernate.cache.redis
 
 import java.util.Properties
-import org.hibernate.cache.redis.client.RedisHibernateCache
+import org.hibernate.cache.redis.client.HibernateRedisCache
 import org.hibernate.cache.redis.regions._
 import org.hibernate.cache.redis.strategy._
 import org.hibernate.cache.spi._
@@ -24,7 +24,7 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
     protected val accessStrategyFactory = RedisAccessStrategyFactory()
     protected val regionNames = mutable.HashSet[String]()
 
-    protected var cache: RedisHibernateCache = null
+    protected var cache: HibernateRedisCache = null
     protected var expirationThread: Thread = null
 
     override def isMinimalPutsEnabledByDefault: Boolean = true
@@ -86,7 +86,7 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
                                      properties)
     }
 
-    protected def manageExpiration(cache: RedisHibernateCache): Unit = synchronized {
+    protected def manageExpiration(cache: HibernateRedisCache): Unit = synchronized {
         if (expirationThread != null && expirationThread.isAlive)
             return
 

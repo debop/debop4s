@@ -2,7 +2,7 @@ package org.hibernate.cache.redis.regions
 
 import com.github.debop4s.core.parallels.Promises
 import java.util.Properties
-import org.hibernate.cache.redis.client.RedisHibernateCache
+import org.hibernate.cache.redis.client.HibernateRedisCache
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.spi.GeneralDataRegion
 
@@ -13,14 +13,14 @@ import org.hibernate.cache.spi.GeneralDataRegion
  * @since 2014. 2. 21. 오후 1:28
  */
 class RedisGeneralDataRegion(private[this] val _accessStrategyFactory: RedisAccessStrategyFactory,
-                             private[this] val _cache: RedisHibernateCache,
+                             private[this] val _cache: HibernateRedisCache,
                              private[this] val _regionName: String,
                              private[this] val _props: Properties)
     extends RedisDataRegion(_accessStrategyFactory,
                                _cache,
                                _regionName,
                                _props)
-    with GeneralDataRegion {
+            with GeneralDataRegion {
 
 
     override def get(key: Any): AnyRef = {

@@ -4,7 +4,7 @@ import com.github.debop4s.core.parallels.Promises
 import java.util
 import java.util.Properties
 import org.hibernate.cache.redis.HibernateRedisUtil
-import org.hibernate.cache.redis.client.RedisHibernateCache
+import org.hibernate.cache.redis.client.HibernateRedisCache
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.spi.Region
 import org.slf4j.LoggerFactory
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
  * @since 2014. 2. 21. 오전 9:25
  */
 abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessStrategyFactory,
-                               val cache: RedisHibernateCache,
+                               val cache: HibernateRedisCache,
                                val regionName: String,
                                val props: Properties) extends Region {
 
@@ -36,7 +36,7 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
         log.debug(s"delete cache region. region=$regionName")
 
         try {
-            Promises.await(cache.deleteRegion(regionName))
+            cache.deleteRegion(regionName)
         } catch {
             case ignored: Throwable =>
         } finally {

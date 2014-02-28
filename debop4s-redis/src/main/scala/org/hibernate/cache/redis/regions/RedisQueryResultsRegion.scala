@@ -1,7 +1,7 @@
 package org.hibernate.cache.redis.regions
 
 import java.util.Properties
-import org.hibernate.cache.redis.client.RedisHibernateCache
+import org.hibernate.cache.redis.client.HibernateRedisCache
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.spi.QueryResultsRegion
 
@@ -13,12 +13,12 @@ import org.hibernate.cache.spi.QueryResultsRegion
  * @since 2014. 2. 21. 오후 1:37
  */
 class RedisQueryResultsRegion(private[this] val _accessStrategyFactory: RedisAccessStrategyFactory,
-                              private[this] val _cache: RedisHibernateCache,
+                              private[this] val _cache: HibernateRedisCache,
                               private[this] val _regionName: String,
                               private[this] val _props: Properties)
     extends RedisGeneralDataRegion(_accessStrategyFactory,
                                       _cache,
                                       _regionName,
                                       _props)
-    with QueryResultsRegion {
+            with QueryResultsRegion {
 }

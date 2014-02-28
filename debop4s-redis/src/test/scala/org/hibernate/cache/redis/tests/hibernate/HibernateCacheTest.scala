@@ -7,6 +7,7 @@ import org.hibernate.cache.redis.tests.domain.{Person, Account, Item}
 import org.hibernate.stat.SecondLevelCacheStatistics
 import org.junit.runner.RunWith
 import org.junit.{Test, Before}
+import org.scalatest.junit.JUnitSuite
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -21,7 +22,7 @@ import scala.collection.JavaConversions._
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[HibernateRedisConfiguration]),
                          loader = classOf[AnnotationConfigContextLoader])
-class HibernateCacheTest {
+class HibernateCacheTest extends JUnitSuite {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 

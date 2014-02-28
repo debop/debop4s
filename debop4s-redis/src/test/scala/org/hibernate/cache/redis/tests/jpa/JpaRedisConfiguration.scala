@@ -62,7 +62,7 @@ class JpaRedisConfiguration {
 
     @Bean
     def dataSource: DataSource =
-        new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL).build()
+        new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build()
 
     @Bean
     def jdbcTemplate: JdbcTemplate = new JdbcTemplate(dataSource)

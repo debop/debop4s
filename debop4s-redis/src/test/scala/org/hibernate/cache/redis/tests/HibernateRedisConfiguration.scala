@@ -50,7 +50,7 @@ class HibernateRedisConfiguration {
     @Bean
     def dataSource() =
         new EmbeddedDatabaseBuilder()
-        .setType(EmbeddedDatabaseType.HSQL)
+        .setType(EmbeddedDatabaseType.H2)
         .build()
 
     @Bean

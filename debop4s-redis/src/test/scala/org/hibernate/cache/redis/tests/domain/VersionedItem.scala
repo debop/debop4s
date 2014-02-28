@@ -13,11 +13,11 @@ class VersionedItem extends Serializable {
     @Id
     @GeneratedValue
     @BeanProperty
-    var id: java.lang.Long = _
+    var id: Long = _
 
     @Version
     @BeanProperty
-    var version: java.lang.Long = _
+    var version: Long = _
 
     var name: String = _
 
