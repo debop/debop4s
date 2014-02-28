@@ -3,6 +3,7 @@ package com.github.debop4s.data.tests.mapping
 import com.github.debop4s.data.tests.AbstractDataTest
 import com.github.debop4s.data.tests.spring.JpaMySqlConfiguration
 import javax.persistence.{EntityManager, PersistenceContext}
+import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scala.jdbc.core.JdbcTemplate
 import org.springframework.test.context.support.AnnotationConfigContextLoader
@@ -23,7 +24,8 @@ class MappingTest extends AbstractDataTest {
     // Spring Autowired 를 수행합니다.
     new TestContextManager(this.getClass).prepareTestInstance(this)
 
-    test("configuration setup test") {
+    @Test
+    def configurationSetup() {
         assert(em != null)
         assert(jdbcTemplate != null)
     }

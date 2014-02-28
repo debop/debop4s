@@ -1,6 +1,9 @@
 package com.github.debop4s.data.tests.spring
 
 import com.github.debop4s.data.jpa.spring.AbstractJpaHSqlConfiguration
+import com.github.debop4s.data.tests.mapping.Employee
+import java.util.Properties
+import org.hibernate.cfg.AvailableSettings
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.transaction.annotation.EnableTransactionManagement
@@ -17,5 +20,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 class JpaHSqlConfiguration extends AbstractJpaHSqlConfiguration {
 
     override def getMappedPackageNames: Array[String] =
-        Array("com.github.debop4s.data")
+        Array(classOf[Employee].getPackage.getName)
+
+    override def jpaProperties: Properties = {
+        val props = super.jpaProperties
+        props.put(AvailableSettings.HBM2DDL_AUTO, "auto")
+        props
+    }
 }

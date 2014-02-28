@@ -21,3 +21,4 @@ abstract class AbstractNamedParameter(@BeanProperty val name: String,
         .add("name", name)
         .add("value", value)
 }
+

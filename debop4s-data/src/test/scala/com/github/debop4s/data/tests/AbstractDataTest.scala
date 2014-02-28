@@ -1,12 +1,16 @@
 package com.github.debop4s.data.tests
 
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfter, Matchers, FunSuite}
+import org.scalatest.Matchers
+import org.scalatest.junit.JUnitSuite
+import org.junit.runner.RunWith
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 /**
  * com.github.debop4s.data.tests.AbstractDataTest
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 11. 오후 10:50
  */
-abstract class AbstractDataTest extends FunSuite with Matchers with BeforeAndAfter with BeforeAndAfterAll {
+@RunWith(classOf[SpringJUnit4ClassRunner])
+abstract class AbstractDataTest extends JUnitSuite {
 
 }
