@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
  */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackages = Array("com.github.debop4s.data.tests"))
 class JpaHSqlConfiguration extends AbstractJpaHSqlConfiguration {
 
     override def getMappedPackageNames: Array[String] =

@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
  */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackages = Array("com.github.debop4s.data.tests"))
 class JpaH2Configuration extends AbstractJpaH2Configuration {
 
     override def getMappedPackageNames: Array[String] =
