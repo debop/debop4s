@@ -83,8 +83,6 @@ object DataSources {
         log.debug("BoneCP DataSource를 빌드합니다... " +
                   s"driverClass=[$driverClass], url=[$url], username=[$username], passwd=[$passwd]")
 
-        Class.forName(driverClass)
-
         val ds = new BoneCPDataSource()
         ds.setDriverClass(driverClass)
         ds.setJdbcUrl(url)
