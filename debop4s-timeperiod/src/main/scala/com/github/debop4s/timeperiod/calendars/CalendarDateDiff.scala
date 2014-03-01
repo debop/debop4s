@@ -16,7 +16,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset) {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     assert(calendar.getStartOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
     assert(calendar.getEndOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")

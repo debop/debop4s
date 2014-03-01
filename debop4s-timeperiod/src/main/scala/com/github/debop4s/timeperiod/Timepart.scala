@@ -11,6 +11,7 @@ import org.joda.time.{Duration, DateTime}
  */
 @SerialVersionUID(-4029003873537088627L)
 class Timepart(val value: DateTime) extends ValueObject with Ordered[Timepart] {
+
     assert(value != null)
 
     def hour: Int = value.getHourOfDay

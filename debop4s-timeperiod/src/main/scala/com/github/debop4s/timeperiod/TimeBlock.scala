@@ -30,9 +30,9 @@ trait ITimeBlock extends ITimePeriod {
     def previousBlock(offset: Duration): ITimeBlock
 }
 
-class TimeBlock(_start: DateTime = MinPeriodTime,
-                _end: DateTime = MaxPeriodTime,
-                _readonly: Boolean = false)
+class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
+                private[this] val _end: DateTime = MaxPeriodTime,
+                private[this] val _readonly: Boolean = false)
     extends TimePeriod(_start, _end, _readonly) with ITimeBlock {
 
     override lazy val log = LoggerFactory.getLogger(getClass)
@@ -169,10 +169,9 @@ object TimeBlock {
 
     def apply(source: ITimePeriod, readonly: Boolean): TimeBlock = {
         assert(source != null)
-        if (source.isAnytime)
-            Anytime
-        else
-            new TimeBlock(source.start, source.end, readonly)
+
+        if (source.isAnytime) Anytime
+        else new TimeBlock(source.start, source.end, readonly)
     }
 
     def toRange(block: TimeBlock): TimeRange = TimeRange(block.start, block.end, block.isReadonly)

@@ -11,7 +11,7 @@ import scala.beans.BeanProperty
  * @since 2014. 2. 21. 오후 3:59
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Access(AccessType.FIELD)
 @SerialVersionUID(6662300674854084326L)
 class Account extends Serializable {

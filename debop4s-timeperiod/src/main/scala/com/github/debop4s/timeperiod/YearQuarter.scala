@@ -12,7 +12,7 @@ import org.joda.time.DateTime
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 2. 오전 11:27
  */
-class YearQuarter(var year: Int, var quarter: Quarter) extends ValueObject {
+class YearQuarter(val year: Int, val quarter: Quarter) extends ValueObject {
 
     def start: DateTime = Times.startTimeOfQuarter(year, quarter)
 
@@ -30,5 +30,8 @@ object YearQuarter {
 
     def apply(year: Int, quarter: Quarter): YearQuarter = new YearQuarter(year, quarter)
 
-    def apply(src: YearQuarter): YearQuarter = new YearQuarter(src.year, src.quarter)
+    def apply(src: YearQuarter): YearQuarter = {
+        require(src != null)
+        new YearQuarter(src.year, src.quarter)
+    }
 }

@@ -36,6 +36,8 @@ class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
 object Datepart {
 
+    def today() = apply()
+
     def apply(): Datepart = new Datepart(Times.today)
 
     def apply(year: Int, monthOfYear: Int = 1, dayOfMonth: Int = 1): Datepart =
@@ -44,7 +46,5 @@ object Datepart {
 
     def apply(moment: DateTime): Datepart =
         new Datepart(moment.withTimeAtStartOfDay())
-
-    def today() = apply()
 }
 

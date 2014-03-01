@@ -207,13 +207,12 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
     }
 
     test("calendar get gap") {
-        val calendars = Array(TimeCalendar.getDefault(), TimeCalendar.getEmptyOffset)
+        val calendars = Array(TimeCalendar.getDefault, TimeCalendar.getEmptyOffset)
 
         calendars.foreach(calendar => {
 
             // simulation of same reservations
-            val excludePeriods = TimePeriodCollection(
-                                                         DayRangeCollection(2011, 3, 7, 2, calendar),
+            val excludePeriods = TimePeriodCollection(DayRangeCollection(2011, 3, 7, 2, calendar),
                                                          DayRangeCollection(2011, 3, 16, 2, calendar))
 
             // overall search ranges

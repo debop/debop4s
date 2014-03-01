@@ -8,9 +8,6 @@ import com.github.debop4s.timeperiod.calendars.CollectKind.CollectKind
  * @since  2014. 1. 5. 오전 12:51
  */
 class CalendarPeriodCollectorContext(val scope: CollectKind) extends ICalendarVisitorContext {
-
-    //var scope: CollectKind = _
-
     override def toString: String = s"scope=$scope"
 }
 

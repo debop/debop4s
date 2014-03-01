@@ -9,7 +9,9 @@ import com.github.debop4s.core.utils.Hashs
  * @since  2014. 1. 2. 오후 8:48
  */
 @SerialVersionUID(1287074885972003104L)
-class DayRangeInMonth(val startDayOfMonth: Int, val endDayOfMonth: Int) extends AbstractValueObject with Ordering[DayRangeInMonth] {
+class DayRangeInMonth(val startDayOfMonth: Int,
+                      val endDayOfMonth: Int)
+    extends AbstractValueObject with Ordering[DayRangeInMonth] {
 
     def isSingleDay: Boolean = startDayOfMonth == endDayOfMonth
 

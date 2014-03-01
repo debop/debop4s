@@ -43,9 +43,9 @@ object TimeLine {
  * @since  2013. 12. 31. 오후 8:10
  */
 @SerialVersionUID(8784228432548497611L)
-class TimeLine[T <: ITimePeriod](private val _periods: ITimePeriodContainer,
-                                 private val _aLimits: ITimePeriod = null,
-                                 private val mapper: ITimePeriodMapper = null) extends ITimeLine {
+class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContainer,
+                                 private[this] val _aLimits: ITimePeriod = null,
+                                 private[this] val mapper: ITimePeriodMapper = null) extends ITimeLine {
 
     require(_periods != null)
 

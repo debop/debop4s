@@ -33,7 +33,7 @@ class MonthRangeInYear(val startMonthOfYear: Int, val endMonthOfYear: Int)
 
 object MonthRangeInYear {
 
-    def apply(startMonthOfYear: Int, endMonthOfYear: Int): MonthRangeInYear =
+    def apply(startMonthOfYear: Int = 1, endMonthOfYear: Int = 12): MonthRangeInYear =
         new MonthRangeInYear(startMonthOfYear, endMonthOfYear)
 
     def apply(period: ITimePeriod): MonthRangeInYear =

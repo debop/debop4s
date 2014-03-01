@@ -4,6 +4,7 @@ import com.github.debop4s.timeperiod.SeekDirection.SeekDirection
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.calendars.{CalendarVisitor, CalendarVisitorFilter}
 import com.github.debop4s.timeperiod.timerange.{YearRangeCollection, YearRange, MonthRange, DayRange}
+import org.slf4j.LoggerFactory
 
 
 object DaySeeker {
@@ -26,13 +27,15 @@ object DaySeeker {
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오후 8:17
  */
-class DaySeeker(private val _filter: CalendarVisitorFilter,
-                private val _seekDir: SeekDirection = SeekDirection.Forward,
-                private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class DaySeeker(private[this] val _filter: CalendarVisitorFilter,
+                private[this] val _seekDir: SeekDirection = SeekDirection.Forward,
+                private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarVisitor[CalendarVisitorFilter, DaySeekerContext](_filter,
                                                                         TimeRange.Anytime,
                                                                         _seekDir,
                                                                         _calendar) {
+
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def findDay(startDay: DayRange, dayCount: Int): DayRange = {
         log.trace(s"Day 찾기... startDay=[$startDay], dayCount=[$dayCount]")

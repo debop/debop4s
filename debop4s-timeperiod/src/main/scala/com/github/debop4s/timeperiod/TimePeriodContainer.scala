@@ -272,11 +272,10 @@ object TimePeriodContainer {
         container
     }
 
+    @varargs
     def apply(periods: ITimePeriod*): TimePeriodContainer = {
         val container = new TimePeriodContainer()
         container.addAll(periods)
         container
     }
-
-
 }

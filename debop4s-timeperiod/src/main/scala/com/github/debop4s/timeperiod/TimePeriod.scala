@@ -6,6 +6,7 @@ import com.github.debop4s.timeperiod.PeriodRelation.PeriodRelation
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
 import org.slf4j.LoggerFactory
+import scala.beans.BeanProperty
 
 /**
  * com.github.debop4s.timeperiod.TimePeriod
@@ -83,8 +84,8 @@ trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializabl
 
 }
 
-abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
-                          private var _end: DateTime = MaxPeriodTime,
+abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
+                          private[this] val _end: DateTime = MaxPeriodTime,
                           var readonly: Boolean = false) extends ITimePeriod {
 
     override lazy val log = LoggerFactory.getLogger(getClass)
@@ -92,15 +93,19 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
     private var (startTime, endTime) = Times.adjustPeriod(Options.toOption(_start).getOrElse(MinPeriodTime),
                                                              Options.toOption(_end).getOrElse(MaxPeriodTime))
 
+    @BeanProperty
     def start = startTime
 
+    @BeanProperty
     protected def start_=(v: DateTime) {
         assertMutable()
         startTime = v
     }
 
+    @BeanProperty
     def end = endTime
 
+    @BeanProperty
     protected def end_=(v: DateTime) {
         assertMutable()
         endTime = v
@@ -110,6 +115,7 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
 
     protected def setReadonly(v: Boolean) { readonly = v }
 
+    @BeanProperty
     def duration = new Duration(start, end)
 
     def duration_=(v: Duration) {
@@ -195,8 +201,9 @@ abstract class TimePeriod(private var _start: DateTime = MinPeriodTime,
     }
 
 
-    override def equals(obj: Any): Boolean =
+    override def equals(obj: Any): Boolean = {
         obj != null && getClass.equals(obj.getClass) && hashCode() == obj.hashCode()
+    }
 
     override def hashCode() = Hashs.compute(start, end, readonly)
 

@@ -4,6 +4,7 @@ import com.github.debop4s.timeperiod.SeekDirection.SeekDirection
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.calendars.CollectKind.CollectKind
 import com.github.debop4s.timeperiod.timerange._
+import org.slf4j.LoggerFactory
 
 
 object CalendarPeriodCollector {
@@ -34,6 +35,8 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                               private[this] val _seekDir: SeekDirection = SeekDirection.Forward,
                               private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarVisitor[CalendarPeriodCollectorFilter, CalendarPeriodCollectorContext](_filter, _limits, _seekDir, _calendar) {
+
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val periods: ITimePeriodCollection = TimePeriodCollection()
 
@@ -137,7 +140,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         } else {
             filter.collectingDays.foreach(day => {
                 if (day.isSingleDay) {
-                    val dayRange = new DayRange(month.year, month.monthOfYear, day.startDayOfMonth, month.calendar)
+                    val dayRange = DayRange(month.year, month.monthOfYear, day.startDayOfMonth, month.calendar)
                     if (isMatchingDay(dayRange, context) && checkLimits(dayRange)) {
                         periods.add(dayRange)
                     }

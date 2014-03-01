@@ -8,13 +8,9 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 2:20
  */
-class TimeGapCalculator[T <: ITimePeriod](val mapper: ITimeCalendar) {
+class TimeGapCalculator[T <: ITimePeriod](val mapper: ITimeCalendar = null) {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
-
-    def this() {
-        this(null)
-    }
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def getGaps(excludePeriods: ITimePeriodContainer, limits: ITimePeriod = null): ITimePeriodCollection = {
         require(excludePeriods != null)
@@ -29,6 +25,8 @@ object TimeGapCalculator {
 
     def apply[T <: ITimePeriod](): TimeGapCalculator[T] = new TimeGapCalculator[T]()
 
-    def apply[T <: ITimePeriod](mapper: ITimeCalendar): TimeGapCalculator[T] = new TimeGapCalculator[T](mapper)
+    def apply[T <: ITimePeriod](mapper: ITimeCalendar): TimeGapCalculator[T] = {
+        new TimeGapCalculator[T](mapper)
+    }
 }
 

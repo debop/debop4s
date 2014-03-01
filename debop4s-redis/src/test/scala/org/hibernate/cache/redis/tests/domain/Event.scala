@@ -7,7 +7,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy
 import scala.beans.BeanProperty
 
 @Entity
-@org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Access(AccessType.FIELD)
 class Event extends Serializable {
 

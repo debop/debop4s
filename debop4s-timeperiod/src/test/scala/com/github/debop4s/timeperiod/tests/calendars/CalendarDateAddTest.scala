@@ -122,7 +122,7 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
         val dateAdd = CalendarDateAdd()
 
         dateAdd.addWorkingWeekDays()
-        dateAdd.excludePeriods.add(new DayRange(2011, 4, 4, dateAdd.calendar))
+        dateAdd.excludePeriods.add(DayRange(2011, 4, 4, dateAdd.calendar))
         dateAdd.workingHours += HourRangeInDay(8, 18)
 
         val start = new DateTime(2011, 4, 1, 9, 0)
@@ -138,7 +138,7 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
         val dateAdd = CalendarDateAdd()
 
         dateAdd.addWorkingWeekDays()
-        dateAdd.excludePeriods.add(new DayRange(2011, 4, 4, dateAdd.calendar))
+        dateAdd.excludePeriods.add(DayRange(2011, 4, 4, dateAdd.calendar))
         dateAdd.workingHours ++= List(HourRangeInDay(8, 12), HourRangeInDay(13, 18))
 
 
@@ -154,7 +154,7 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
         val dateAdd = CalendarDateAdd()
 
         dateAdd.addWorkingWeekDays()
-        dateAdd.excludePeriods.add(new DayRange(2011, 4, 4, dateAdd.calendar))
+        dateAdd.excludePeriods.add(DayRange(2011, 4, 4, dateAdd.calendar))
         dateAdd.workingHours ++= List(HourRangeInDay(Timepart(8, 30), Timepart(12)),
                                          HourRangeInDay(Timepart(13, 30), Timepart(18)))
 

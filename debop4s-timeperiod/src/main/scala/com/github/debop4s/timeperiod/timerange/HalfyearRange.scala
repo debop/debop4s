@@ -30,9 +30,9 @@ object HalfyearRange {
         new HalfyearRange(moment.getYear, Times.halfyearOf(moment), calendar)
 }
 
-class HalfyearRange(private val _year: Int,
-                    private val _halfyear: Halfyear,
-                    private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class HalfyearRange(private[this] val _year: Int,
+                    private[this] val _halfyear: Halfyear,
+                    private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends HalfyearTimeRange(_year, _halfyear, 1, _calendar) {
 
     def addHalfyears(count: Int): HalfyearRange = {

@@ -11,8 +11,8 @@ import org.joda.time.DateTime
  * @since 2013. 12. 27. 오후 7:11
  */
 @SerialVersionUID(4111802915947727424L)
-class MinuteRange(private val _moment: DateTime,
-                  private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class MinuteRange(private[this] val _moment: DateTime,
+                  private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends MinuteTimeRange(Times.trimToSecond(_moment), 1, _calendar) {
 
 

@@ -7,7 +7,7 @@ import org.hibernate.annotations.{Cascade, CascadeType, CacheConcurrencyStrategy
 
 
 @Entity
-@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Access(AccessType.FIELD)
 @SerialVersionUID(-8245742950718661800L)
 class Person extends Serializable {

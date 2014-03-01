@@ -72,7 +72,8 @@ class WeekRangeCollectionTest extends AbstractTimePeriodTest {
                 item.isSamePeriod(WeekRange(wrs.start + w.week)) should equal(true)
 
                 val yw = Weeks.addWeekOfYears(now.getWeekyear, now.getWeekOfWeekyear, w)
-                item.isSamePeriod(WeekRange(yw.weekyear, yw.weekOfWeekyear)) should equal(true)
+                println(s"item=$item, yw=${WeekRange(yw)}")
+                item.isSamePeriod(WeekRange(yw)) should equal(true)
             })
         })
     }

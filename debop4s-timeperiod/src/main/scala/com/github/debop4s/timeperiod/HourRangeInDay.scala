@@ -27,7 +27,7 @@ object HourRangeInDay {
     def apply(start: Timepart, end: Timepart): HourRangeInDay =
         new HourRangeInDay(start, end)
 
-    def apply(startHour: Int, endHour: Int): HourRangeInDay =
+    def apply(startHour: Int = 0, endHour: Int = 23): HourRangeInDay =
         new HourRangeInDay(Timepart(startHour), Timepart(endHour))
 
     def apply(hourOfDay: Int): HourRangeInDay =

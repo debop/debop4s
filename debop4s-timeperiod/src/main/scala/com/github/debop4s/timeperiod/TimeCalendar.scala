@@ -129,14 +129,15 @@ object TimeCalendar {
         new TimeCalendar(cfg)
     }
 
-    def getDefault(): TimeCalendar = getDefault(Locale.getDefault)
+    def getDefault: TimeCalendar = getDefault(Locale.getDefault)
 
     def getDefault(locale: Locale): TimeCalendar = {
-        val config = new TimeCalendarConfig(locale)
-        config.startOffset = DefaultStartOffset
-        config.endOffset = DefaultEndOffset
+        TimeCalendar(TimeCalendarConfig(locale))
+        //        val config = new TimeCalendarConfig(locale)
+        //        config.startOffset = DefaultStartOffset
+        //        config.endOffset = DefaultEndOffset
 
-        TimeCalendar(config)
+        //        TimeCalendar(config)
     }
 
     def getEmptyOffset: TimeCalendar = getEmptyOffset(Locale.getDefault)

@@ -14,15 +14,18 @@ object DayRange {
 
     def apply(): DayRange = new DayRange(Times.today, DefaultTimeCalendar)
 
-    def apply(calendar: TimeCalendar): DayRange = new DayRange(Times.today, DefaultTimeCalendar)
+    def apply(calendar: TimeCalendar): DayRange = new DayRange(Times.today, calendar)
 
     def apply(moment: DateTime): DayRange = new DayRange(moment, DefaultTimeCalendar)
 
-    def apply(moment: DateTime, calendar: ITimeCalendar): DayRange =
+    def apply(moment: DateTime = Times.today, calendar: ITimeCalendar): DayRange =
         new DayRange(moment, calendar)
 
     def apply(year: Int, monthOfYear: Int, dayOfMonth: Int): DayRange =
         new DayRange(Times.asDate(year, monthOfYear, dayOfMonth), DefaultTimeCalendar)
+
+    def apply(year: Int, monthOfYear: Int, dayOfMonth: Int, calendar: ITimeCalendar): DayRange =
+        new DayRange(Times.asDate(year, monthOfYear, dayOfMonth), calendar)
 
 }
 
@@ -30,22 +33,6 @@ object DayRange {
 class DayRange(private[this] val _moment: DateTime,
                private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends DayTimeRange(Times.asDate(_moment), 1, _calendar) {
-
-    def this(year: Int, monthOfYear: Int, dayOfMonth: Int, calendar: ITimeCalendar) {
-        this(Times.asDate(year, monthOfYear, dayOfMonth), calendar)
-    }
-
-    def this(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        this(year, monthOfYear, dayOfMonth, DefaultTimeCalendar)
-    }
-
-    def this(calendar: ITimeCalendar) {
-        this(Times.today, calendar)
-    }
-
-    def this() {
-        this(DefaultTimeCalendar)
-    }
 
     def year: Int = startYear
 

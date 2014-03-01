@@ -29,7 +29,7 @@ trait ITimeLineMoment extends Ordered[DateTime] with Serializable {
  * @since  2013. 12. 31. 오후 8:10
  */
 @SerialVersionUID(8524596139661439627L)
-class TimeLineMoment(private val _moment: DateTime) extends ValueObject with ITimeLineMoment {
+class TimeLineMoment(private[this] val _moment: DateTime) extends ValueObject with ITimeLineMoment {
 
     private val _periods = new TimePeriodCollection()
 

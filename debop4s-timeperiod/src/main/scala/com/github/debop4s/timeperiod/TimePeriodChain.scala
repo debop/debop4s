@@ -3,6 +3,7 @@ package com.github.debop4s.timeperiod
 import com.github.debop4s.core.Guard
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
+import scala.annotation.varargs
 
 
 /**
@@ -151,16 +152,6 @@ trait ITimePeriodChain extends ITimePeriodContainer {
 @SerialVersionUID(-5838724440389574448L)
 class TimePeriodChain extends TimePeriodContainer with ITimePeriodChain {
 
-    def this(elems: ITimePeriod*) {
-        this()
-        addAll(elems)
-    }
-
-    def this(elems: Iterable[ITimePeriod]) {
-        this()
-        addAll(elems)
-    }
-
     override def start: DateTime =
         if (head != null) head.start else MinPeriodTime
 
@@ -174,5 +165,21 @@ class TimePeriodChain extends TimePeriodContainer with ITimePeriodChain {
 
     override def end_=(x: DateTime) {
         move(new Duration(end, x))
+    }
+}
+
+object TimePeriodChain {
+
+    @varargs
+    def apply(elems: ITimePeriod*): TimePeriodChain = {
+        val chain = new TimePeriodChain()
+        chain.addAll(elems)
+        chain
+    }
+
+    def apply(elems: Iterable[_ <: ITimePeriod]): TimePeriodChain = {
+        val chain = new TimePeriodChain()
+        chain.addAll(elems)
+        chain
     }
 }

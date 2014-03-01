@@ -10,8 +10,9 @@ import org.joda.time.DateTime
  * @since  2013. 12. 28. 오후 9:48
  */
 @SerialVersionUID(2876823794105220883L)
-class HourRange(moment: DateTime, private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends HourTimeRange(moment, 1, _calendar) {
+class HourRange(private[this] val _moment: DateTime,
+                private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+    extends HourTimeRange(_moment, 1, _calendar) {
 
 
     def year: Int = startYear

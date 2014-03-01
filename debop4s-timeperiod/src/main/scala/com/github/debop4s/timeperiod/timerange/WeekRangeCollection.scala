@@ -10,10 +10,10 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 28. 오후 11:25
  */
-class WeekRangeCollection(private val _year: Int,
-                          private val _weekOfYear: Int,
-                          private val _weekCount: Int,
-                          private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class WeekRangeCollection(private[this] val _year: Int,
+                          private[this] val _weekOfYear: Int,
+                          private[this] val _weekCount: Int,
+                          private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends WeekTimeRange(Times.startTimeOfWeek(_year, _weekOfYear), _weekCount, _calendar) {
 
 

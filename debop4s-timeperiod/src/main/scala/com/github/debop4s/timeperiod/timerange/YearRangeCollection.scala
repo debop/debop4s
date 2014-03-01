@@ -11,9 +11,9 @@ import scala.collection.mutable.ArrayBuffer
  * @since 2013. 12. 30. 오전 10:36
  */
 @SerialVersionUID(6717411713272815855L)
-class YearRangeCollection(private val _year: Int,
-                          private val _yearCount: Int,
-                          private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class YearRangeCollection(private[this] val _year: Int,
+                          private[this] val _yearCount: Int,
+                          private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends YearTimeRange(_year, _yearCount, _calendar) {
 
     def getYears: Seq[YearRange] = {

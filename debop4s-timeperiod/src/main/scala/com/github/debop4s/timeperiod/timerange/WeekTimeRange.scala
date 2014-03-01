@@ -11,9 +11,9 @@ import scala.collection.mutable.ArrayBuffer
  * @since  2013. 12. 28. 오후 11:05
  */
 @SerialVersionUID(-1899389597363540458L)
-class WeekTimeRange(private val _moment: DateTime,
+class WeekTimeRange(private[this] val _moment: DateTime,
                     val weekCount: Int,
-                    private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+                    private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(WeekTimeRange.getPeriodOf(_moment, weekCount), _calendar) {
 
     def year: Int = start.getYear

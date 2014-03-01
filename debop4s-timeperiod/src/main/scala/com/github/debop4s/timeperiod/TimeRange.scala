@@ -43,13 +43,10 @@ trait ITimeRange extends ITimePeriod {
     def shrinkTo(period: ITimePeriod)
 }
 
-class TimeRange(private var _start: DateTime = MinPeriodTime,
-                private var _end: DateTime = MaxPeriodTime,
-                private var _readonly: Boolean) extends TimePeriod(_start, _end, _readonly) with ITimeRange {
-
-    def this(_start: DateTime, _end: DateTime) {
-        this(_start, _end, false)
-    }
+class TimeRange(private[this] val _start: DateTime = MinPeriodTime,
+                private[this] val _end: DateTime = MaxPeriodTime,
+                private[this] val _readonly: Boolean = false)
+    extends TimePeriod(_start, _end, _readonly) with ITimeRange {
 
     override def start_=(v: DateTime) {
         assertMutable()
@@ -172,7 +169,7 @@ object TimeRange {
     def apply(start: Option[DateTime], end: Option[DateTime]): TimeRange = {
         apply(start.getOrElse(MinPeriodTime),
                  end.getOrElse(MaxPeriodTime),
-                 false)
+                 readonly = false)
     }
 
     def apply(start: Option[DateTime], end: Option[DateTime], readonly: Option[Boolean]): TimeRange = {

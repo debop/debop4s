@@ -18,7 +18,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
  val seekDirection: SeekDirection = SeekDirection.Forward,
  val calendar: ITimeCalendar = DefaultTimeCalendar) {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     protected def startPeriodVisit(context: C) {
         startPeriodVisit(limits, context)

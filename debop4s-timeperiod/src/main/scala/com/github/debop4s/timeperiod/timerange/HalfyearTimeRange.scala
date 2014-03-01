@@ -37,7 +37,7 @@ object HalfyearTimeRange {
 class HalfyearTimeRange(val year: Int,
                         val halfyear: Halfyear,
                         val halfyearCount: Int,
-                        private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+                        private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(HalfyearTimeRange.getPeriodOf(year, halfyear, halfyearCount),
                                  _calendar) {
 

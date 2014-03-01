@@ -11,7 +11,7 @@ import org.joda.time.DateTime
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 2. 오전 11:27
  */
-class YearMonth(var year: Int = 0, var monthOfYear: Int = 1) extends ValueObject {
+class YearMonth(val year: Int, val monthOfYear: Int) extends ValueObject {
 
     val start: DateTime = Times.startTimeOfMonth(year, monthOfYear)
 
@@ -27,7 +27,10 @@ class YearMonth(var year: Int = 0, var monthOfYear: Int = 1) extends ValueObject
 
 object YearMonth {
 
-    def apply(year: Int, monthOfYear: Int): YearMonth = new YearMonth(year, monthOfYear)
+    def apply(year: Int = 0, monthOfYear: Int = 1): YearMonth = new YearMonth(year, monthOfYear)
 
-    def apply(src: YearMonth): YearMonth = new YearMonth(src.year, src.monthOfYear)
+    def apply(src: YearMonth): YearMonth = {
+        require(src != null)
+        new YearMonth(src.year, src.monthOfYear)
+    }
 }

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
  */
 object Weeks {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def firstDayOfWeek: DayOfWeek = FirstDayOfWeek
 
@@ -34,68 +34,57 @@ object Weeks {
 
     def getEndWeekRangeOfYear(year: Int) = getWeekRange(getEndYearAndWeek(year))
 
-    def addWeekOfYears(year: Int, weekOfYear: Int, weeks: Int): YearWeek = {
-        addWeekOfYears(YearWeek(year, weekOfYear), weeks)
+    def addWeekOfYears(weekyear: Int, weekOfYear: Int, weeks: Int): YearWeek = {
+        addWeekOfYears(YearWeek(weekyear, weekOfYear), weeks)
     }
-
 
     def addWeekOfYears(yw: YearWeek, weeks: Int): YearWeek = {
         if (weeks == 0)
-            YearWeek(yw)
-        else {
-            val result = if (weeks > 0) plusWeeks(yw, weeks) else minusWeeks(yw, weeks)
-            // log.trace(s"주차연산을 수행했습니다. yearWeek=[$yw], weeks=[$weeks], result=[$result]")
-            result
-        }
+            return YearWeek(yw)
+
+        if (weeks > 0) plusWeeks(yw, weeks)
+        else minusWeeks(yw, weeks)
     }
 
     private def plusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
-        val result = YearWeek(yw)
-        var newWeeks = weeks + result.weekOfWeekyear
+        var newWeeks = weeks + yw.weekOfWeekyear
 
-        if (newWeeks < getEndYearAndWeek(result.weekyear).weekOfWeekyear) {
-            result.weekOfWeekyear = newWeeks
-            result
-        } else {
-            while (newWeeks >= 0) {
-                val endWeek = getEndYearAndWeek(result.weekyear)
-                if (newWeeks <= endWeek.weekOfWeekyear) {
-                    result.weekOfWeekyear = Math.max(newWeeks, 1)
-                    return result
-                }
-                newWeeks -= endWeek.weekOfWeekyear
-                result.weekyear = result.weekyear + 1
-            }
-            result.weekOfWeekyear = Math.max(newWeeks, 1)
-            result
+        if (newWeeks < getEndYearAndWeek(yw.weekyear).weekOfWeekyear) {
+            return YearWeek(yw.weekyear, newWeeks)
         }
+
+        var weekyear = yw.weekyear
+        while (newWeeks >= 0) {
+            val endWeek = getEndYearAndWeek(weekyear)
+            if (newWeeks <= endWeek.weekOfWeekyear) {
+                return YearWeek(weekyear, math.max(newWeeks, 1))
+            }
+            newWeeks -= endWeek.weekOfWeekyear
+            weekyear += 1
+        }
+        YearWeek(weekyear, math.max(newWeeks, 1))
     }
 
     private def minusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
-        val result = YearWeek(yw)
-        var week = weeks + result.weekOfWeekyear
+        var week = weeks + yw.weekOfWeekyear
 
         if (week == 0) {
-            result.weekyear -= 1
-            result.weekOfWeekyear = getEndYearAndWeek(result.weekyear).weekOfWeekyear
-            result
+            return YearWeek(yw.weekyear - 1, getEndYearAndWeek(yw.weekyear - 1).weekOfWeekyear)
         } else if (week > 0) {
-            result.weekOfWeekyear = week
-            result
-        } else {
-            while (week <= 0) {
-                result.weekyear -= 1
-                val endWeek = getEndYearAndWeek(result.weekyear)
-                week += endWeek.weekOfWeekyear
-
-                if (week > 0) {
-                    result.weekOfWeekyear = Math.max(week, 1)
-                    return result
-                }
-            }
-            result.weekOfWeekyear = Math.max(week, 1)
-            result
+            return YearWeek(yw.weekyear, week)
         }
+
+        var weekyear = yw.weekyear
+        while (week <= 0) {
+            weekyear -= 1
+            val endWeek = getEndYearAndWeek(weekyear)
+            week += endWeek.weekOfWeekyear
+
+            if (week > 0) {
+                return YearWeek(weekyear, math.max(week, 1))
+            }
+        }
+        YearWeek(weekyear, math.max(week, 1))
     }
 
     /**
@@ -103,6 +92,7 @@ object Weeks {
      */
     def getMonthAndWeekOfMonth(moment: DateTime): (Int, Int) = {
         val result = moment.getWeekOfWeekyear - Times.startTimeOfMonth(moment).getWeekOfWeekyear + 1
+
         if (result > 0) (moment.getMonthOfYear, result)
         else (moment.plusMonths(1).getMonthOfYear, result)
     }

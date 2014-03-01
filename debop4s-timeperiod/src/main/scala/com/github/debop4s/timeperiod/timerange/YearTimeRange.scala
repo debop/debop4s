@@ -1,6 +1,5 @@
 package com.github.debop4s.timeperiod.timerange
 
-import com.github.debop4s.core.utils.Hashs
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
@@ -13,9 +12,9 @@ import scala.collection.mutable.ArrayBuffer
  * @since 2013. 12. 27. 오후 6:48
  */
 @SerialVersionUID(1604523513628691621L)
-class YearTimeRange(private val _year: Int,
+class YearTimeRange(private[this] val _year: Int,
                     val yearCount: Int,
-                    private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+                    private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends YearCalendarTimeRange(Times.relativeYearPeriod(Times.startTimeOfYear(_year), yearCount), _calendar) {
 
     def getHalfyears: Seq[HalfyearRange] = {

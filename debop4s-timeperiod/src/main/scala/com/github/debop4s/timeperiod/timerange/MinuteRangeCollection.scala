@@ -11,9 +11,9 @@ import scala.collection.mutable.ArrayBuffer
  * @since  2013. 12. 28. 오후 9:00
  */
 @SerialVersionUID(-5566298718095890768L)
-class MinuteRangeCollection(private val _moment: DateTime,
-                            private val _minuteCount: Int,
-                            private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class MinuteRangeCollection(private[this] val _moment: DateTime,
+                            private[this] val _minuteCount: Int,
+                            private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends MinuteTimeRange(_moment, _minuteCount, _calendar) {
 
 

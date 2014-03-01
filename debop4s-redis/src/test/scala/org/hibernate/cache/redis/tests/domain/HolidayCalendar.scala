@@ -7,7 +7,7 @@ import javax.persistence._
 import org.hibernate.annotations.CacheConcurrencyStrategy
 
 @Entity
-@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Access(AccessType.FIELD)
 class HolidayCalendar extends Serializable {
 

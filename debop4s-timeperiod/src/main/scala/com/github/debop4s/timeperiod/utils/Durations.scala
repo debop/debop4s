@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
  */
 object Durations {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val Zero = Duration.ZERO
 

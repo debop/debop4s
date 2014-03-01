@@ -1,6 +1,5 @@
 package com.github.debop4s.timeperiod.timeline
 
-import com.github.debop4s.core.Guard
 import com.github.debop4s.timeperiod._
 import org.slf4j.LoggerFactory
 
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory
  */
 object TimeLines {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def combinePeriods(moments: ITimeLineMomentCollection): ITimePeriodCollection = {
 
@@ -26,7 +25,7 @@ object TimeLines {
         while (itemIndex < momentsSize) {
             val periodStart = moments(itemIndex)
             var balance = periodStart.startCount
-            Guard.shouldBe(balance > 0, s"balance > 0 이여아합니다. balance=[$balance]")
+            assert(balance > 0, s"balance > 0 이여아합니다. balance=[$balance]")
 
             var periodEnd: ITimeLineMoment = null
             while (itemIndex < momentsSize - 1 && balance > 0) {
@@ -35,7 +34,7 @@ object TimeLines {
                 balance += periodEnd.startCount
                 balance -= periodEnd.endCount
             }
-            Guard.shouldNotBeNull(periodEnd, "periodEnd")
+            assert(periodEnd != null, s"periodEnd should not null.")
 
             if (periodEnd.startCount <= 0 && itemIndex < momentsSize) {
                 val period = TimeRange(periodStart.moment, periodEnd.moment)

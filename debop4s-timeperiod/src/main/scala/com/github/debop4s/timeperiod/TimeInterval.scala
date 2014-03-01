@@ -65,25 +65,25 @@ trait ITimeInterval extends ITimePeriod {
 
 }
 
-class TimeInterval(_start: DateTime = MinPeriodTime,
-                   _end: DateTime = MaxPeriodTime,
-                   var _startEdge: IntervalEdge = IntervalEdge.Closed,
-                   var _endEdge: IntervalEdge = IntervalEdge.Closed,
-                   var _intervalEnabled: Boolean = true,
-                   _readonly: Boolean = false)
+class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
+                   private[this] val _end: DateTime = MaxPeriodTime,
+                   private[this] var _startEdge: IntervalEdge = IntervalEdge.Closed,
+                   private[this] var _endEdge: IntervalEdge = IntervalEdge.Closed,
+                   private[this] var _intervalEnabled: Boolean = true,
+                   private[this] val _readonly: Boolean = false)
     extends TimePeriod(_start, _end, _readonly) with ITimeInterval {
 
-    def this(moment: DateTime,
-             startEdge: IntervalEdge,
-             endEdge: IntervalEdge,
-             intervalEnabled: Boolean,
-             readonly: Boolean) {
-        this(moment, moment, startEdge, endEdge, intervalEnabled, readonly)
-    }
-
-    def this() {
-        this(MinPeriodTime, MaxPeriodTime)
-    }
+    //    def this(moment: DateTime,
+    //             startEdge: IntervalEdge,
+    //             endEdge: IntervalEdge,
+    //             intervalEnabled: Boolean,
+    //             readonly: Boolean) {
+    //        this(moment, moment, startEdge, endEdge, intervalEnabled, readonly)
+    //    }
+    //
+    //    def this() {
+    //        this(MinPeriodTime, MaxPeriodTime)
+    //    }
 
     def startEdge = _startEdge
 

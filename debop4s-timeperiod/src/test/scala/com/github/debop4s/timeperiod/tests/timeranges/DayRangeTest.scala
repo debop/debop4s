@@ -42,7 +42,7 @@ class DayRangeTest extends AbstractTimePeriodTest {
         val dayRange = DayRange(now)
         dayRange.start should equal(today)
 
-        val dayRange2 = new DayRange(now.getYear, now.getMonthOfYear, now.getDayOfMonth)
+        val dayRange2 = DayRange(now.getYear, now.getMonthOfYear, now.getDayOfMonth)
         dayRange2.start should equal(today)
     }
 

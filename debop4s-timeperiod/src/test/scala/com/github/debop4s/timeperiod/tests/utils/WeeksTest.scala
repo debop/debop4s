@@ -96,16 +96,16 @@ class WeeksTest extends AbstractTimePeriodTest {
     }
 
     test("add WeekOfYears") {
-        (2000 to 2100).par.foreach(year => {
+        (2000 to 2100).par.foreach(weekyear => {
             val step = 2
             val maxAddWeeks = 40
 
             var prevResult: YearWeek = null
-            val maxWeek = Weeks.getEndYearAndWeek(year)
+            val maxWeek = Weeks.getEndYearAndWeek(weekyear)
 
             for (week <- 1 until maxWeek.weekOfWeekyear by step) {
                 for (addWeeks <- -maxAddWeeks until maxAddWeeks by step) {
-                    val current = YearWeek(year, week)
+                    val current = YearWeek(weekyear, week)
                     val result = Weeks.addWeekOfYears(current, addWeeks)
 
                     if (addWeeks != 0 && prevResult != null) {

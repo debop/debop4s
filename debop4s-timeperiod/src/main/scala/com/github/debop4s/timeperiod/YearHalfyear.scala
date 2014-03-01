@@ -12,7 +12,7 @@ import org.joda.time.DateTime
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 2. 오전 11:26
  */
-class YearHalfyear(var year: Int, var halfyear: Halfyear) extends ValueObject {
+class YearHalfyear(val year: Int, val halfyear: Halfyear) extends ValueObject {
 
     val start: DateTime = Times.startTimeOfHalfyear(year, halfyear)
 

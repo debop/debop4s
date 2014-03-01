@@ -1,6 +1,5 @@
 package com.github.debop4s.timeperiod.timerange
 
-import com.github.debop4s.core.utils.ToStringHelper
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
@@ -12,9 +11,9 @@ import org.joda.time.DateTime
  * @since 2013. 12. 27. 오후 7:03
  */
 @SerialVersionUID(-5669915582907325590L)
-class MinuteTimeRange(private val _start: DateTime,
+class MinuteTimeRange(private[this] val _start: DateTime,
                       val minuteCount: Int = 1,
-                      private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+                      private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(Times.relativeMinutePeriod(_start, minuteCount), _calendar) {
 
     assert(minuteCount > 0)

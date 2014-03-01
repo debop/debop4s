@@ -11,9 +11,9 @@ import scala.collection.mutable.ArrayBuffer
  * @since  2013. 12. 28. 오후 10:06
  */
 @SerialVersionUID(8973240176036662074L)
-class HourRangeCollection(private val _moment: DateTime,
-                          private val _hourCount: Int,
-                          private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class HourRangeCollection(private[this] val _moment: DateTime,
+                          private[this] val _hourCount: Int,
+                          private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends HourTimeRange(Times.trimToSecond(_moment), _hourCount, _calendar) {
 
     def getHours: Seq[HourRange] = {

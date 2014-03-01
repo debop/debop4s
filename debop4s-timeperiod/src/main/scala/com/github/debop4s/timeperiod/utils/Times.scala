@@ -22,7 +22,7 @@ import scala.collection.parallel.ParSeq
  */
 object Times {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     lazy val NullString = "<null>"
     lazy val UnixEpoch = new DateTime(0, DateTimeZone.UTC)
@@ -398,9 +398,7 @@ object Times {
     def startTimeOfWeek(moment: DateTime): DateTime = getStartOfWeek(moment)
 
     def startTimeOfWeek(weekyear: Int, weekOfWeekYear: Int): DateTime = {
-        val start = startTimeOfYear(weekyear).plusMonths(1).withWeekOfWeekyear(weekOfWeekYear)
-        //log.trace(s"weekyear=$weekyear, weekOfWeekYear=$weekOfWeekYear, start=$start")
-        start
+        startTimeOfWeek(new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(weekOfWeekYear))
     }
 
     def endTimeOfWeek(moment: DateTime): DateTime = startTimeOfWeek(moment).plusWeeks(1).minus(1)
