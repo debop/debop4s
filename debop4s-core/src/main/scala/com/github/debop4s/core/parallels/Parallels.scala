@@ -1,7 +1,6 @@
 package com.github.debop4s.core.parallels
 
 import java.util.concurrent.{Callable, ThreadLocalRandom}
-import org.slf4j.LoggerFactory
 
 
 /**
@@ -12,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 object Parallels {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+    // private lazy val log = LoggerFactory.getLogger(getClass)
 
     lazy val random = ThreadLocalRandom.current()
     lazy val processCount = Runtime.getRuntime.availableProcessors()
@@ -64,6 +63,14 @@ object Parallels {
         elements.par.foreach(block)
     }
 
+    /**
+    * 컬렉션을 지정된 갯수로 나누어서 작업합니다.
+    */
+    def runEach[V](elements: Iterable[V], size: Int = workerCount)(block: V => Unit) {
+        assert(elements != null)
+        elements.grouped(size).foreach(_.foreach(block))
+    }
+
     def call[V](count: Int)(callable: Callable[V]) {
         assert(callable != null)
         call[V](Range(0, count))(callable)
@@ -74,28 +81,32 @@ object Parallels {
         range.par.foreach(_ => callable.call())
     }
 
-    def callFunction[V](count: Int)(func: () => V): List[V] = {
+    def callFunction[V](count: Int)(func: () => V): Iterable[V] = {
         assert(func != null)
         callFunction(Range(0, count))(func)
     }
 
-    def callFunction[V](range: Range)(func: () => V): List[V] = {
+    def callFunction[V](range: Range)(func: () => V): Iterable[V] = {
         assert(func != null)
         range.par.map(_ => func()).toList
     }
 
-    def callFunction1[V](count: Int)(func: Int => V): List[V] = {
+    def callFunction1[V](count: Int)(func: Int => V): Iterable[V] = {
         assert(func != null)
         callFunction1(Range(0, count))(func)
     }
 
-    def callFunction1[V](range: Range)(func: Int => V): List[V] = {
+    def callFunction1[V](range: Range)(func: Int => V): Iterable[V] = {
         assert(func != null)
-        range.par.map(i => func(i)).toList
+        range.par.map(i => func(i)).seq
     }
 
-    def callEach[S, T](elements: Iterable[S])(func: S => T): List[T] = {
+    def callEach[S, T](elements: Iterable[S])(func: S => T): Iterable[T] = {
         assert(func != null)
-        elements.par.map(x => func(x)).toList
+        elements.par.map(x => func(x)).seq
+    }
+
+    def callEach[S, T](elements: Iterable[S], size: Int = processCount)(func: S => T): Iterable[(S, T)] = {
+        elements.grouped(size).map(_.map(s => (s, func(s)))).flatten.toIterable
     }
 }

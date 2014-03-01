@@ -19,12 +19,12 @@ object Strings {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    val MULTI_BYTES_PREFIX = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
+    lazy val MULTI_BYTES_PREFIX = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
     val TRIMMING_STR = "..."
     val NULL_STR = "<null>"
     val EMPTY_STR = ""
     val COMMA_STR = ","
-    val UTF8: Charset = Charsets.UTF_8
+    // val UTF8: Charset = Charsets.UTF_8
 
     // join 함수의 암묵적 인자로 사용됩니다.
     implicit val separator: String = COMMA_STR
@@ -147,12 +147,12 @@ object Strings {
 
     def getUtf8Bytes(str: String): Array[Byte] = {
         if (isEmpty(str)) Arrays.EMPTY_BYTE_ARRAY
-        else str.getBytes(UTF8)
+        else str.getBytes(Charsets.UTF_8)
     }
 
     def getUtf8String(bytes: Array[Byte]) = {
         if (Arrays.isEmpty(bytes)) EMPTY_STR
-        else new String(bytes, UTF8)
+        else new String(bytes, Charsets.UTF_8)
     }
 
     def getString(bytes: Array[Byte], charsetName: String = "UTF-8"): String = {

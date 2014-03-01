@@ -2,7 +2,7 @@ package com.github.debop4s.core.stests.io
 
 import com.github.debop4s.core.io.FileUtils
 import com.github.debop4s.core.parallels.Promises
-import com.github.debop4s.core.utils.Strings
+import com.github.debop4s.core.utils.{Charsets, Strings}
 import java.nio.file.{StandardOpenOption, Paths, Path}
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
@@ -66,7 +66,7 @@ class FileUtilsTest extends AssertionsForJUnit {
 
         try {
             FileUtils.createFile(path)
-            FileUtils.write(path, lines, Strings.UTF8, StandardOpenOption.WRITE)
+            FileUtils.write(path, lines, Charsets.UTF_8, StandardOpenOption.WRITE)
 
             val readLines = FileUtils.readAllLines(path)
             log.debug(s"readLines=${readLines.size}, lines=${lines.size}")

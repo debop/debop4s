@@ -1,7 +1,7 @@
 package com.github.debop4s.core.http
 
 import com.github.debop4s.core.json.JacksonSerializer
-import com.github.debop4s.core.utils.Charsets
+import com.github.debop4s.core.utils.{Strings, Charsets}
 import java.net.URI
 import java.nio.charset.Charset
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -10,6 +10,7 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.util.EntityUtils
 import org.apache.http.{NameValuePair, Header, HttpResponse}
 import org.slf4j.LoggerFactory
+import scala.annotation.varargs
 import scala.collection.JavaConversions._
 
 
@@ -64,17 +65,20 @@ object HttpAsyncs {
     //    def getAsParallel(uris: URI*): List[HttpResponse] =
     //        client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
 
-    def getAsParallel(cs: Charset, uris: URI*): List[String] =
+    @varargs
+    def getAsParallel(cs: Charset, uris: URI*): Iterable[String] =
         client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
         .map(r => getContent(r, cs))
 
-    def getAsParallel(httpgets: HttpGet*): List[HttpResponse] =
+    @varargs
+    def getAsParallel(httpgets: HttpGet*): Iterable[HttpResponse] =
         client.getAsParallel(httpgets: _*)
 
-    def buildHttpPost(uri: URI, nvps: List[NameValuePair], headers: Header*): HttpPost = {
+    @varargs
+    def buildHttpPost(uri: URI, nvps: List[NameValuePair], headers: Header*): HttpPost =
         buildHttpPost(uri, nvps, Charsets.UTF_8, headers: _*)
-    }
 
+    @varargs
     def buildHttpPost(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): HttpPost = {
         val httppost = new HttpPost(uri)
         if (nvps != null)
@@ -83,15 +87,19 @@ object HttpAsyncs {
         httppost
     }
 
+    @varargs
     def post(uri: URI, nvps: List[NameValuePair], headers: Header*): HttpResponse =
         post(uri, nvps, Charsets.UTF_8, headers: _*)
 
+    @varargs
     def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): HttpResponse =
         client.post(buildHttpPost(uri, nvps, cs, headers: _*))
 
-    def postAsParallel(posts: HttpPost*): List[HttpResponse] =
+    @varargs
+    def postAsParallel(posts: HttpPost*): Iterable[HttpResponse] =
         client.postAsParallel(posts: _*)
 
+    @varargs
     def buildHttpPostByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpPost = {
         val httppost = new HttpPost(uri)
         if (entity != null) {
@@ -103,48 +111,50 @@ object HttpAsyncs {
         httppost
     }
 
+    @varargs
     def postByJson[T](uri: URI, entity: T, headers: Header*): HttpResponse =
         postByJson(uri, entity, Charsets.UTF_8, headers: _*)
 
+    @varargs
     def postByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpResponse =
         client.post(buildHttpPostByJson(uri, entity, cs, headers: _*))
 
+    @varargs
     def buildHttpDelete(uriString: String, headers: Header*): HttpDelete =
         buildHttpDelete(new URI(uriString), headers: _*)
 
+    @varargs
     def buildHttpDelete(uri: URI, headers: Header*): HttpDelete = {
         val httpdelete = new HttpDelete(uri)
         headers.foreach(h => httpdelete.setHeader(h))
         httpdelete
     }
 
+    @varargs
     def delete(uriString: String, headers: Header*): HttpResponse =
         client.delete(buildHttpDelete(uriString))
 
+    @varargs
     def delete(uri: URI, headers: Header*): HttpResponse =
         client.delete(buildHttpDelete(uri))
 
     def delete(delete: HttpDelete): HttpResponse =
         client.delete(delete)
 
-
-    //    def deleteAsParallel(uriStrings: String*): List[HttpResponse] =
-    //        deleteAsParallel(uriStrings.map(x => buildHttpDelete(x)).toSeq: _*)
-
-    //    def deleteAsParallel(uris: URI*): List[HttpResponse] =
-    //        deleteAsParallel(uris.map(x => buildHttpDelete(x)).toSeq: _*)
-
-    def deleteAsParallel(deletes: HttpDelete*): List[HttpResponse] =
+    @varargs
+    def deleteAsParallel(deletes: HttpDelete*): Iterable[HttpResponse] =
         client.deleteAsParallel(deletes: _*)
 
     def getContent(response: HttpResponse, cs: Charset = Charsets.UTF_8): String = {
         if (response == null || response.getEntity == null)
-            null
+            return Strings.EMPTY_STR
+
         try {
             EntityUtils.toString(response.getEntity, cs)
         } catch {
-            case e: Throwable => log.error("HttpResponse에서 Content를 추출하는데 실패했습니다.", e)
+            case e: Throwable =>
+                log.error("HttpResponse에서 Content를 추출하는데 실패했습니다.", e)
+                Strings.EMPTY_STR
         }
-        null
     }
 }

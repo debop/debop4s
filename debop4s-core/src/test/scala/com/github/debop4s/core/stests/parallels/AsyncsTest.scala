@@ -19,7 +19,7 @@ class AsyncsTest extends AbstractCoreTest {
     }
 
     test("new task") {
-        val task = Asyncs.newTask(callable())
+        val task = Asyncs.run(callable())
         task.isCompleted should equal(false)
 
         Asyncs.result(task) should equal(1)
@@ -29,7 +29,7 @@ class AsyncsTest extends AbstractCoreTest {
     }
 
     test("start new task") {
-        val task = Asyncs.startNew(callable())
+        val task = Asyncs.run(callable())
 
         task.isCompleted should equal(false)
         Asyncs.result(task) should equal(1)
@@ -42,9 +42,9 @@ class AsyncsTest extends AbstractCoreTest {
         val count = 10
         val tasks = new ArrayBuffer[Future[Int]]()
 
-        (0 until 10).foreach(_ => tasks += Asyncs.startNew(callable()))
+        (0 until 10).foreach(_ => tasks += Asyncs.run(callable()))
 
-        Asyncs.waitAll(tasks)
+        Asyncs.readyAll(tasks)
 
         tasks.foreach(task => {
             task.value.get.get should equal(1)
