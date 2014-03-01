@@ -13,7 +13,7 @@ abstract class AbstractJpaH2Configuration extends AbstractJpaConfiguration {
 
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_H2,
-                           s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_DELAY=-1;MVCC=TRUE;",
+                           s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
                            "sa",
                            "")
     }

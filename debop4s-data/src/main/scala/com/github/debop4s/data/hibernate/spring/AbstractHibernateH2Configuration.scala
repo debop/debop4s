@@ -17,7 +17,7 @@ abstract class AbstractHibernateH2Configuration extends AbstractHibernateConfigu
     @Bean
     override def dataSource: DataSource =
         buildDataSource(DRIVER_CLASS_H2,
-                           "jdbc:h2:mem:" + getDatabaseName + ";DB_CLOSE_DELAY=1;MVCC=TRUE;",
+                           "jdbc:h2:mem:" + getDatabaseName + ";MVCC=TRUE;DB_CLOSE_ON_EXIT=FALSE",
                            "sa",
                            "")
 

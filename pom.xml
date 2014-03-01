@@ -825,6 +825,7 @@
                         <javacArg>${jdk.version}</javacArg>
                     </javacArgs>
                     <jvmArgs>
+                        <jvmArg>-server</jvmArg>
                         <jvmArg>-Xms128m</jvmArg>
                         <jvmArg>-Xmx4096m</jvmArg>
                     </jvmArgs>
