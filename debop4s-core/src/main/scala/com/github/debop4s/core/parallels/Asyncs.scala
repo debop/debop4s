@@ -17,11 +17,7 @@ object Asyncs {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    val EMPTY_RUNNABLE = new Runnable {
-        def run() {
-            /* nothing to do. */
-        }
-    }
+    lazy val EMPTY_RUNNABLE = new Runnable {def run() { /* nothing to do. */ }}
 
     def newTask[T](callable: Callable[T]): Future[T] = future {callable.call()}
 
@@ -67,8 +63,7 @@ object Asyncs {
 
 
     def continueTask[T, V](prevTask: Future[T], result: V)(block: T => Unit): Future[V] = future {
-        block(Await
-              .result(prevTask, 60 seconds))
+        block(Await.result(prevTask, 60 seconds))
         result
     }
 
@@ -77,7 +72,6 @@ object Asyncs {
     }
 
     def getTaskHasResult[T](result: T): Future[T] = newTask(EMPTY_RUNNABLE, result)
-
 
     def runAsync[T, R](elements: Iterable[T],
                        function: T => R): List[Future[R]] = {
@@ -109,15 +103,25 @@ object Asyncs {
     }
 
     def waitAll[T](futures: Iterable[_ <: Future[T]]) {
-        while (!futures.forall(task => task.isCompleted)) {
+        while (!futures.forall(task => {
+            Await.ready(task, 15 seconds)
+            task.isCompleted
+        })) {
             Thread.sleep(1)
         }
     }
 
     def waitAllTasks[T](futures: Iterable[_ <: Future[T]]) {
-        while (!futures.forall(task => task.isCompleted)) {
+        while (!futures.forall(task => {
+            Await.ready(task, 15 seconds)
+            task.isCompleted
+        })) {
             Thread.sleep(1)
         }
+    }
+
+    def ready[T](awaitable: Awaitable[T]) = {
+        Await.ready(awaitable, 60 seconds)
     }
 
     def result[T](awaitable: Awaitable[T]): T =

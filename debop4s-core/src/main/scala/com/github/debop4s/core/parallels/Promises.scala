@@ -1,5 +1,6 @@
 package com.github.debop4s.core.parallels
 
+import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -16,34 +17,14 @@ object Promises {
 
     implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
-    def startNew[V](block: => V)(implicit executor: ExecutionContextExecutor): Future[V] = {
-        val promise = Promise[V]()
-        executor.execute(new Runnable {
-            def run() {
-                try {
-                    val v = block
-                    promise.success(v)
-                } catch {
-                    case t: Throwable => promise.failure(t)
-                }
-            }
-        })
-        promise.future
+    def exec[V](block: => V): Future[V] = future {
+        require(block != null)
+        block
     }
 
-    def startNew[T, V](input: T)(func: T => V)(implicit executor: ExecutionContextExecutor): Future[V] = {
-        val promise = Promise[V]()
-        executor.execute(new Runnable {
-            def run() {
-                try {
-                    val v = func(input)
-                    promise.success(v)
-                } catch {
-                    case t: Throwable => promise.failure(t)
-                }
-            }
-        })
-        promise.future
+    def exec[T, V](input: T)(func: T => V): Future[V] = future {
+        require(func != null)
+        func(input)
     }
 
     /**
@@ -60,5 +41,9 @@ object Promises {
 
     def await[T](awaitable: Awaitable[T], atMost: Duration): T =
         Await.result(awaitable, atMost)
+
+    def awaitAll(awaitables: Iterable[Awaitable[_]], atMost: Duration = FiniteDuration(15, TimeUnit.MINUTES)): Iterable[Any] = {
+        awaitables.map(awaitable => Await.result(awaitable, atMost))
+    }
 
 }

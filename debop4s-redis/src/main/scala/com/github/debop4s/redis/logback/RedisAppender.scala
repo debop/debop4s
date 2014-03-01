@@ -9,7 +9,6 @@ import com.github.debop4s.core.utils.Options
 import com.github.debop4s.redis.RedisConsts
 import org.joda.time.DateTime
 import redis.RedisClient
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**
@@ -68,7 +67,7 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
         if (eventObject == null)
             return
 
-        Promises.startNew[Future[Long]] {
+        Promises.exec[Future[Long]] {
             val doc = createLogDocument(eventObject)
             val jsonDoc = toJsonText(doc)
             redis.lpush(key, jsonDoc)

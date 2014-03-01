@@ -40,7 +40,7 @@ object Weeks {
 
     def addWeekOfYears(yw: YearWeek, weeks: Int): YearWeek = {
         if (weeks == 0)
-            return YearWeek(yw)
+            return YearWeek(yw.weekyear, yw.weekOfWeekyear)
 
         if (weeks > 0) plusWeeks(yw, weeks)
         else minusWeeks(yw, weeks)

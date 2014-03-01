@@ -31,12 +31,15 @@ class TimeRangeUserType extends CompositeUserType {
     override def returnedClass(): Class[_] = classOf[TimeRange]
 
     override def getPropertyValue(component: Any, property: Int): AnyRef = {
-        property match {
-
-            case 0 => asTimeRange(component).start
-            case 1 => asTimeRange(component).end
-            case _ => null
+        val timeRange = asTimeRange(component)
+        if (timeRange != null) {
+            property match {
+                case 0 => return timeRange.start
+                case 1 => return timeRange.end
+                case _ => null
+            }
         }
+        null
     }
 
     override def setPropertyValue(component: Any, property: Int, value: Any) {

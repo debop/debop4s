@@ -3,7 +3,6 @@ package com.github.debop4s.core.utils
 import com.github.debop4s.core.parallels.Promises
 import org.slf4j.LoggerFactory
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**
@@ -46,7 +45,7 @@ object Graphs {
     * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
     */
     def breathFirstScanAsync[T](source: T, getAdjacent: T => Iterable[T]): Future[Seq[T]] = {
-        Promises.startNew[Seq[T]] {
+        Promises.exec[Seq[T]] {
             breadthFirstScan(source, getAdjacent)
         }
     }
@@ -82,7 +81,7 @@ object Graphs {
     * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
     */
     def depthFirstScanAsync[T](source: T, getAdjacent: T => Iterable[T]): Future[Seq[T]] = {
-        Promises.startNew[Seq[T]] {
+        Promises.exec[Seq[T]] {
             depthFirstScan(source, getAdjacent)
         }
     }

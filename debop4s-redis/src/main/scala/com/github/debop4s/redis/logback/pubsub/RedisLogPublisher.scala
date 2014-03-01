@@ -4,7 +4,6 @@ import ch.qos.logback.classic.spi.LoggingEvent
 import com.github.debop4s.core.parallels.Promises
 import com.github.debop4s.redis.RedisConsts
 import com.github.debop4s.redis.logback.RedisAppender
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -21,7 +20,7 @@ class RedisLogPublisher extends RedisAppender {
 
     override def append(eventObject: LoggingEvent) {
 
-        Promises.startNew[Future[Long]] {
+        Promises.exec[Future[Long]] {
             val doc = createLogDocument(eventObject)
             val jsonDoc = toJsonText(doc)
 
