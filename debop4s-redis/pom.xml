@@ -5,7 +5,7 @@
     <parent>
         <artifactId>debop4s-parent</artifactId>
         <groupId>com.github.debop4s</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -70,36 +70,6 @@
         <dependency>
             <groupId>com.etaty.rediscala</groupId>
             <artifactId>rediscala_${scala.main.version}</artifactId>
-        </dependency>
-
-        <!-- Query DSL -->
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-collections</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-apt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-sql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-jpa-codegen</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-scala</artifactId>
         </dependency>
 
         <!-- Tomcat Connection Pool -->

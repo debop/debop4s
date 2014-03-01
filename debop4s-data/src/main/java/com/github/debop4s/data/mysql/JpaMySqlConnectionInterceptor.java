@@ -1,6 +1,5 @@
 package com.github.debop4s.data.mysql;
 
-import lombok.Getter;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -53,7 +52,7 @@ public class JpaMySqlConnectionInterceptor {
             session.doWork(readOnlyWork);
             return pjp.proceed();
         } finally {
-            session.doWork(new RestoreConnectionWork(readOnlyWork));
+            session.doWork(new RestoreConnectionWork(readOnlyWork.readOnly));
         }
 
     }
@@ -61,7 +60,7 @@ public class JpaMySqlConnectionInterceptor {
     /** Connection을 readonly 속성을 true로  설정합니다. */
     static class ConnectionReadOnlyWork implements Work {
 
-        @Getter boolean readOnly;
+        public boolean readOnly;
 
         @Override
         public void execute(Connection connection) throws SQLException {
@@ -72,10 +71,10 @@ public class JpaMySqlConnectionInterceptor {
 
     /** Connection의 readonly 속성을 기존 속성으로 변환합니다. */
     static class RestoreConnectionWork implements Work {
-        @Getter boolean readOnly;
+        public boolean readOnly;
 
-        public RestoreConnectionWork(ConnectionReadOnlyWork readOnlyWork) {
-            this.readOnly = readOnlyWork.isReadOnly();
+        public RestoreConnectionWork(boolean readOnly) {
+            this.readOnly = readOnly;
         }
 
         @Override

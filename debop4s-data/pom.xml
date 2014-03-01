@@ -5,7 +5,7 @@
     <parent>
         <artifactId>debop4s-parent</artifactId>
         <groupId>com.github.debop4s</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -89,15 +89,16 @@
         </dependency>
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-codegen</artifactId>
+            <version>${querydsl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-sql</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
@@ -132,7 +133,6 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -143,23 +143,43 @@
 
     <build>
         <plugins>
+            <!-- java code 에 사용합니다. -->
+            <!--<plugin>-->
+            <!--<groupId>com.mysema.maven</groupId>-->
+            <!--<artifactId>apt-maven-plugin</artifactId>-->
+            <!--<version>1.1.1</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<goals>-->
+            <!--<goal>process</goal>-->
+            <!--<goal>test-process</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<outputDirectory>target/generated-sources/java</outputDirectory>-->
+            <!--<testOutputDirectory>target/generated-test-sources/java</testOutputDirectory>-->
+            <!--<processor>com.mysema.query.apt.jpa.JPAAnnotationProcessor</processor>-->
+            <!--<options>-->
+            <!--<querydsl.entityAccessors>true</querydsl.entityAccessors>-->
+            <!--</options>-->
+            <!--</configuration>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--</plugin>-->
             <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-                <version>1.1.1</version>
+                <groupId>com.mysema.querydsl</groupId>
+                <artifactId>querydsl-maven-plugin</artifactId>
+                <version>${querydsl.version}</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>process</goal>
-                            <goal>test-process</goal>
+                            <goal>jpa-export</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/generated-sources/java</outputDirectory>
-                            <testOutputDirectory>target/generated-test-sources/java</testOutputDirectory>
-                            <processor>com.mysema.query.apt.jpa.JPAAnnotationProcessor</processor>
-                            <options>
-                                <querydsl.entityAccessors>true</querydsl.entityAccessors>
-                            </options>
+                            <targetFolder>target/generated-sources/scala</targetFolder>
+                            <scala>true</scala>
+                            <packages>
+                                <package>com.github.debop4s.data</package>
+                            </packages>
                         </configuration>
                     </execution>
                 </executions>

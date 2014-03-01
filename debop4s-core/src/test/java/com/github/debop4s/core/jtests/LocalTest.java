@@ -5,20 +5,20 @@ import com.github.debop4s.core.Local;
 import com.github.debop4s.core.testing.Testing;
 import com.github.debop4s.core.utils.Hashs;
 import com.github.debop4s.core.utils.ToStringHelper;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.scalatest.junit.JUnitSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-@Slf4j
 public class LocalTest extends JUnitSuite {
+
+    private static final Logger log = LoggerFactory.getLogger(LocalTest.class);
 
     @Before
     public void before() {
@@ -82,8 +82,6 @@ public class LocalTest extends JUnitSuite {
         assertThat(storedUser.name).isEqualTo(user.name);
     }
 
-    @Getter
-    @Setter
     static class User extends AbstractValueObject {
         private String name;
         private String password;
@@ -103,9 +101,9 @@ public class LocalTest extends JUnitSuite {
         @Override
         public ToStringHelper buildStringHelper() {
             return super.buildStringHelper()
-                        .add("name", name)
-                        .add("password", password)
-                        .add("age", age);
+                    .add("name", name)
+                    .add("password", password)
+                    .add("age", age);
         }
 
         private static final long serialVersionUID = 2697543433170138506L;
