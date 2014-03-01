@@ -641,6 +641,16 @@
                 <version>5.1.29</version>
                 <scope>test</scope>
             </dependency>
+            <!--
+                mysql-async
+                https://github.com/mauricio/postgresql-async
+            -->
+            <dependency>
+                <groupId>com.github.mauricio</groupId>
+                <artifactId>mysql-async_${scala.main.version}</artifactId>
+                <version>0.2.12</version>
+                <scope>test</scope>
+            </dependency>
 
 
             <!-- Servlet -->

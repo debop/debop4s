@@ -138,6 +138,11 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.mauricio</groupId>
+            <artifactId>mysql-async_${scala.main.version}</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
