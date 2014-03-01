@@ -37,10 +37,10 @@ object Local {
         getStorage.clear()
     }
 
-    def getOrCreate[T](key: Any, factory: () => T): T = {
+    def getOrCreate[T](key: Any, factory: => T): T = {
         if (!getStorage.contains(key)) {
             assert(factory != null)
-            val result: T = factory()
+            val result: T = factory
             put(key, result)
         }
         get(key).asInstanceOf[T]
