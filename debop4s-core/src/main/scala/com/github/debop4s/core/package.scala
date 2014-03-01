@@ -1,11 +1,15 @@
 package com.github.debop4s
 
+import scala.concurrent.ExecutionContext
+
 /**
  * com.github.debop4s.core.package
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 9. 오후 10:03
  */
 package object core {
+
+    implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
     val ShouldNotBeNull = "[%s] should not be null."
     val ShouldBeNull = "[%s] should be null."

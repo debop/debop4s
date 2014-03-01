@@ -20,8 +20,6 @@ class BinarySerializer extends Serializer {
      * @return 직렬화된 정보를 가진 바이트 배열
      */
     def serialize[T](graph: T): Array[Byte] = {
-        log.trace(s"객체를 직렬화합니다. graph=[$graph]")
-
         if (graph == null)
             return Array.emptyByteArray
 
@@ -44,8 +42,6 @@ class BinarySerializer extends Serializer {
      * @return 역직렬화된 객체 정보
      */
     def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T = {
-        log.trace(s"직렬화된 데이터를 역직렬화합니다. clazz=[$clazz]")
-
         if (Arrays.isEmpty(bytes))
             return null.asInstanceOf[T]
 

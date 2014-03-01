@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncryptor = new RC2Encryptor())
     extends SerializerDecorator(serializer) {
 
-    lazy val log = LoggerFactory.getLogger(classOf[EncryptableSerializer])
+    private lazy val log = LoggerFactory.getLogger(classOf[EncryptableSerializer])
 
     /**
      * 객체를 직렬화 합니다.

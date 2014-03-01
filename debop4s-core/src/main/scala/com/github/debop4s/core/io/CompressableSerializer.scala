@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 class CompressableSerializer(serializer: Serializer, val compressor: Compressor)
     extends SerializerDecorator(serializer) {
 
-    lazy val log = LoggerFactory.getLogger(classOf[CompressableSerializer])
+    private lazy val log = LoggerFactory.getLogger(classOf[CompressableSerializer])
 
     def this(serializer: Serializer) {
         this(serializer, new GZipCompressor())

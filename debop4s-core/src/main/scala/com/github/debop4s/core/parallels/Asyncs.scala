@@ -1,10 +1,10 @@
 package com.github.debop4s.core.parallels
 
+import com.github.debop4s.core._
 import java.util.concurrent.Callable
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.concurrent
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
 
@@ -120,11 +120,12 @@ object Asyncs {
         }
     }
 
-    def ready[T](awaitable: Awaitable[T]) = {
+    def ready[T](awaitable: Awaitable[T]): Awaitable[T] = {
         Await.ready(awaitable, 60 seconds)
     }
 
-    def result[T](awaitable: Awaitable[T]): T =
+    def result[T](awaitable: Awaitable[T]): T = {
         Await.result(awaitable, 60 seconds)
+    }
 
 }

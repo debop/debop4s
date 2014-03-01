@@ -1,5 +1,6 @@
 package com.github.debop4s.core.parallels
 
+import com.github.debop4s.core._
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import scala.concurrent._
@@ -15,7 +16,7 @@ object Promises {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
+    // implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
     def exec[V](block: => V): Future[V] = future {
         require(block != null)
