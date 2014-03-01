@@ -13,8 +13,6 @@
         <module>debop4s-core</module>
         <module>debop4s-timeperiod</module>
         <module>debop4s-redis</module>
-        <module>debop4s-cassandra</module>
-        <module>debop4s-hazelcast</module>
         <module>debop4s-data</module>
     </modules>
 
