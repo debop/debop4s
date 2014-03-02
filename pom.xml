@@ -13,8 +13,10 @@
         <module>debop4s-core</module>
         <module>debop4s-timeperiod</module>
         <module>debop4s-redis</module>
-        <module>debop4s-data</module>
         <module>debop4s-mongo</module>
+        <module>debop4s-data</module>
+
+        <module>debop4s-experiments</module>
     </modules>
 
     <properties>
@@ -620,6 +622,13 @@
                 <version>0.8.0.RELEASE</version>
             </dependency>
 
+            <!-- HikariCP -->
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>1.3.0</version>
+            </dependency>
+
             <!-- Database Drivers -->
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -641,17 +650,6 @@
                 <version>5.1.29</version>
                 <scope>test</scope>
             </dependency>
-            <!--
-                mysql-async
-                https://github.com/mauricio/postgresql-async
-            -->
-            <dependency>
-                <groupId>com.github.mauricio</groupId>
-                <artifactId>mysql-async_${scala.main.version}</artifactId>
-                <version>0.2.12</version>
-                <scope>test</scope>
-            </dependency>
-
 
             <!-- Servlet -->
             <dependency>

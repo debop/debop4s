@@ -8,8 +8,9 @@ import org.hibernate.cfg.AvailableSettings
 import org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
-import org.springframework.jdbc.datasource.embedded.{EmbeddedDatabaseType, EmbeddedDatabaseBuilder}
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder
 import org.springframework.orm.hibernate4.{HibernateExceptionTranslator, HibernateTransactionManager, LocalSessionFactoryBean}
+import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
 
 /**
  * org.hibernate.cache.redis.tests.HibernateRedisConfiguration 
@@ -44,20 +45,33 @@ class HibernateRedisConfiguration {
 
         props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
 
+
+
         props
     }
 
     @Bean
-    def dataSource() =
-        new EmbeddedDatabaseBuilder()
-        .setType(EmbeddedDatabaseType.H2)
-        .build()
+    def dataSource = {
+        val config = new HikariConfig()
+        config.setMaximumPoolSize(200)
+
+        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
+        config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
+        config.addDataSourceProperty("user", "sa")
+        config.addDataSourceProperty("password", "")
+
+        new HikariDataSource(config)
+
+        //        new EmbeddedDatabaseBuilder()
+        //                .setType(EmbeddedDatabaseType.H2)
+        //                .build()
+    }
 
     @Bean
     def sessionFactory: SessionFactory = {
         val factoryBean = new LocalSessionFactoryBean()
         factoryBean.setPackagesToScan(getMappedPackageNames: _*)
-        factoryBean.setDataSource(dataSource())
+        factoryBean.setDataSource(dataSource)
         factoryBean.setHibernateProperties(hibernateProperties)
 
         factoryBean.afterPropertiesSet()

@@ -1,5 +1,6 @@
 package org.hibernate.cache.redis.tests.jpa
 
+import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
 import java.util.Properties
 import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.jdbc.datasource.embedded.{EmbeddedDatabaseType, EmbeddedDatabaseBuilder}
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
 import org.springframework.orm.jpa.{JpaTransactionManager, LocalContainerEntityManagerFactoryBean}
@@ -57,12 +57,25 @@ class JpaRedisConfiguration {
         props.setProperty(AvailableSettings.CACHE_REGION_PREFIX, "")
         props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
 
+        // props.setProperty(AvailableSettings.CONNECTION_PROVIDER, "com.zaxxer.hikari.hibernate.HikariConnectionProvider")
+
         props
     }
 
     @Bean
-    def dataSource: DataSource =
-        new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build()
+    def dataSource: DataSource = {
+        val config = new HikariConfig()
+        config.setMaximumPoolSize(200)
+
+        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
+        config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
+        config.addDataSourceProperty("user", "sa")
+        config.addDataSourceProperty("password", "")
+
+        new HikariDataSource(config)
+
+        //    new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build()
+    }
 
     @Bean
     def jdbcTemplate: JdbcTemplate = new JdbcTemplate(dataSource)
@@ -82,8 +95,9 @@ class JpaRedisConfiguration {
             log.debug(s"hibernate용 entity를 scan 합니다. packages=[$packagenames]")
             factoryBean.setPackagesToScan(packagenames: _*)
         }
-        factoryBean.setJpaProperties(jpaProperties)
         factoryBean.setDataSource(dataSource)
+        factoryBean.setJpaProperties(jpaProperties)
+
 
         val adapter = new HibernateJpaVendorAdapter()
         adapter.setGenerateDdl(true)

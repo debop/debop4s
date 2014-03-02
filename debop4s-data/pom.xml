@@ -109,17 +109,16 @@
             <artifactId>querydsl-scala</artifactId>
         </dependency>
 
-        <!-- Tomcat Connection Pool -->
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Bone CP -->
         <dependency>
             <groupId>com.jolbox</groupId>
             <artifactId>bonecp</artifactId>
+        </dependency>
+
+        <!-- Hikari CP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
         </dependency>
 
         <!-- Database Drivers -->
@@ -136,11 +135,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.mauricio</groupId>
-            <artifactId>mysql-async_${scala.main.version}</artifactId>
             <scope>test</scope>
         </dependency>
 

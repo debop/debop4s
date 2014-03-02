@@ -47,7 +47,7 @@ abstract class AbstractJpaConfiguration {
     def buildDataSource(driverClass: String, url: String, username: String, password: String): DataSource =
         DataSources.getDataSource(driverClass, url, username, password)
 
-    def buildEmbeddedDataSource = DataSources.getEmbeddedHSqlDataSource
+    def buildEmbeddedDataSource = DataSources.getEmbeddedH2DataSource
 
     @Bean
     def dataSource: DataSource = buildEmbeddedDataSource

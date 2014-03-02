@@ -85,6 +85,12 @@
             <artifactId>bonecp</artifactId>
         </dependency>
 
+        <!-- Hikari CP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
         <!-- Database Drivers -->
         <dependency>
             <groupId>org.hsqldb</groupId>
