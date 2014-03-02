@@ -5,9 +5,9 @@ import javax.persistence.{AccessType, Access, Embeddable}
 
 @Embeddable
 @Access(AccessType.FIELD)
-case class Address(street: String,
-                   city: String,
-                   state: String,
-                   country: String,
-                   zipcode: String) {
+case class Address(street: String = null,
+                   city: String = null,
+                   state: String = null,
+                   country: String = null,
+                   zipcode: String = null) {
 }

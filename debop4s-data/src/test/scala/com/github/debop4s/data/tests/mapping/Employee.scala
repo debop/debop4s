@@ -27,7 +27,7 @@ class Employee extends HibernateEntity[jLong] with UpdatedTimestampEntity {
     @Column(name = "employeeId")
     protected var id: jLong = _
 
-    def getId = id
+    def getId: jLong = id
 
     @Column(name = "empNo", nullable = false, length = 32)
     var empNo: String = _
@@ -42,7 +42,7 @@ class Employee extends HibernateEntity[jLong] with UpdatedTimestampEntity {
     var birthDay: DateTime = _
 
     @Embedded
-    var address: Address = Address(null, null, null, null, null)
+    var address: Address = Address()
 
     override def hashCode(): Int = Hashs.compute(empNo, name)
 
