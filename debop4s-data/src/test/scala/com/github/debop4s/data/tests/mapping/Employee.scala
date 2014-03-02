@@ -2,6 +2,7 @@ package com.github.debop4s.data.tests.mapping
 
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
 import com.github.debop4s.data.model.{UpdatedTimestampEntity, HibernateEntity}
+import java.lang.{Long => jLong}
 import javax.persistence._
 import org.hibernate.annotations.{Type, DynamicUpdate, DynamicInsert}
 import org.joda.time.DateTime
@@ -19,12 +20,12 @@ import org.joda.time.DateTime
 @SequenceGenerator(name = "employee_seq", sequenceName = "employee_seq")
 @Access(AccessType.FIELD)
 @SerialVersionUID(6936596398947403315L)
-class Employee extends HibernateEntity[Long] with UpdatedTimestampEntity {
+class Employee extends HibernateEntity[jLong] with UpdatedTimestampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "employee_seq")
     @Column(name = "employeeId")
-    protected var id: Long = _
+    protected var id: jLong = _
 
     def getId = id
 
