@@ -44,8 +44,6 @@ class HibernateRedisConfiguration {
 
         props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
 
-
-
         props
     }
 

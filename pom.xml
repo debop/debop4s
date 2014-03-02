@@ -783,7 +783,7 @@
         <repository>
             <id>typesafe</id>
             <name>Typesafe Repository</name>
-            <url>http://repo.typesafe.com/typesafe/releases/</url>
+            <url>http://repo.typesafe.com/typesafe/releases</url>
         </repository>
         <repository>
             <id>maven2-repository.dev.java.net</id>
@@ -794,7 +794,7 @@
         <repository>
             <id>rediscala</id>
             <name>RedisScala</name>
-            <url>https://github.com/etaty/rediscala-mvn/raw/master/releases/</url>
+            <url>https://github.com/etaty/rediscala-mvn/raw/master/releases</url>
         </repository>
     </repositories>
 
