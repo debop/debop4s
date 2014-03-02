@@ -1,12 +1,13 @@
 package com.github.debop4s.data.jpa.spring
 
 import com.github.debop4s.data._
+import com.github.debop4s.data.jdbc.DataSources
 import java.util.Properties
 import javax.sql.DataSource
 import org.hibernate.cfg.AvailableSettings
 
 /**
- * AbstractH2JpaConfiguration
+ * H2 Configuration
  * Created by debop on 2014. 1. 29..
  */
 abstract class AbstractJpaH2Configuration extends AbstractJpaConfiguration {
@@ -23,5 +24,17 @@ abstract class AbstractJpaH2Configuration extends AbstractJpaConfiguration {
         props.put(AvailableSettings.DIALECT, DIALECT_H2)
         props
     }
+}
 
+/**
+ * H2 Configuration by Hikari CP
+ */
+abstract class AbstractJpaH2HikariConfiguration extends AbstractJpaH2Configuration {
+
+    override def dataSource: DataSource = {
+        DataSources.getHikariDataSource(DATASOURCE_CLASS_H2,
+                                           s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
+                                           "sa",
+                                           "")
+    }
 }

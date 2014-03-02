@@ -1,6 +1,8 @@
 package com.github.debop4s.data.jdbc
 
 import com.jolbox.bonecp.BoneCPDataSource
+import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
+import java.util.Properties
 import javax.sql.DataSource
 import org.slf4j.LoggerFactory
 
@@ -16,6 +18,8 @@ object DataSources {
 
     final val HSQL_DRIVER_CLASS_NAME: String = "org.hsql.jdbcDriver"
     final val H2_DRIVER_CLASS_NAME: String = "org.h2.Driver"
+
+    lazy val processCount = Runtime.getRuntime.availableProcessors()
 
     /**
      * [[javax.sql.DataSource]] 를 빌드합니다. 기본적으로 Tomcat DataSource 를 사용합니다.
@@ -42,8 +46,8 @@ object DataSources {
     }
 
     def getBoneCPDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource = {
-        log.debug("BoneCP DataSource를 빌드합니다... " +
-                  s"driverClass=[$driverClass], url=[$url], username=[$username], passwd=[$passwd]")
+        log.info("BoneCP DataSource를 빌드합니다... " +
+                 s"driverClass=[$driverClass], url=[$url], username=[$username], passwd=[$passwd]")
 
         val ds = new BoneCPDataSource()
         ds.setDriverClass(driverClass)
@@ -51,13 +55,57 @@ object DataSources {
         ds.setUsername(username)
         ds.setPassword(passwd)
 
-        val processCount = Runtime.getRuntime.availableProcessors()
-
         ds.setMaxConnectionsPerPartition(50)
         ds.setMinConnectionsPerPartition(2)
         ds.setPartitionCount(processCount)
 
         ds
+    }
+
+    /**
+     * HikariCP DataSource를 생성합니다.
+     * @param dataSourceClassName dataSourceClassName ( 기존 driverClass 가 아닙니다 : mysql용은 com.mysql.jdbc.jdbc2.optional.MysqlDataSource 입니다 )
+     * @param url         Database 주소
+     * @param username    사용자 명
+     * @param passwd      사용자 패스워드
+     * @return [[javax.sql.DataSource]] 인스턴스
+     */
+    def getHikariDataSource(dataSourceClassName: String, url: String, username: String, passwd: String): DataSource = {
+        log.info("Hikari DataSource를 빌드합니다... " +
+                 s"dataSourceClassName=[$dataSourceClassName], url=[$url], username=[$username], passwd=[$passwd]")
+
+        val config = new HikariConfig()
+
+        config.setDataSourceClassName(dataSourceClassName)
+
+        config.addDataSourceProperty("url", url)
+        config.addDataSourceProperty("user", username)
+        config.addDataSourceProperty("password", passwd)
+
+        config.setAcquireIncrement(processCount * 2)
+        config.setMaximumPoolSize(processCount * 50)
+        config.setConnectionTestQuery("SELECT 1")
+
+        new HikariDataSource(config)
+    }
+
+    /**
+    * DataSource 속성을 가진 Properties 로 설정합니다.
+    *
+    * {{{
+    *   acquireIncrement=3
+    *   acquireRetryDelay=1000
+    *   connectionTestQuery=SELECT 1
+    *   dataSourceClassName=org.postgresql.ds.PGSimpleDataSource
+    *   dataSource.username=test
+    *   dataSource.password=test
+    *   dataSource.databaseName=mydb
+    *   dataSource.serverName=localhost
+    * }}}
+    */
+    def getHirakiDataSource(props: Properties): DataSource = {
+        val config = new HikariConfig(props)
+        new HikariDataSource(config)
     }
 
     /** 테스트에 사용하기 위해 메모리를 사용하는 HSql DB 에 대한 DataSource 를 반환합니다. */

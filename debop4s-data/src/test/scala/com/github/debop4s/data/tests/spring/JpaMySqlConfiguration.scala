@@ -1,6 +1,6 @@
 package com.github.debop4s.data.tests.spring
 
-import com.github.debop4s.data.jpa.spring.AbstractJpaMySqlConfiguration
+import com.github.debop4s.data.jpa.spring.AbstractJpaMySqlHikariConfiguration
 import com.github.debop4s.data.tests.mapping.Employee
 import java.util.Properties
 import org.hibernate.cfg.AvailableSettings
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = Array("com.github.debop4s.data.tests"))
-class JpaMySqlConfiguration extends AbstractJpaMySqlConfiguration {
+class JpaMySqlConfiguration extends AbstractJpaMySqlHikariConfiguration {
 
     override def getMappedPackageNames: Array[String] =
         Array(classOf[Employee].getPackage.getName)

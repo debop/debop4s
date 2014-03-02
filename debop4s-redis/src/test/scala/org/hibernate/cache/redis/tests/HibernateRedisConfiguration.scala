@@ -1,5 +1,6 @@
 package org.hibernate.cache.redis.tests
 
+import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
 import java.util.Properties
 import org.hibernate.SessionFactory
 import org.hibernate.cache.redis.SingletonRedisRegionFactory
@@ -8,9 +9,7 @@ import org.hibernate.cfg.AvailableSettings
 import org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder
 import org.springframework.orm.hibernate4.{HibernateExceptionTranslator, HibernateTransactionManager, LocalSessionFactoryBean}
-import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
 
 /**
  * org.hibernate.cache.redis.tests.HibernateRedisConfiguration 
@@ -61,10 +60,6 @@ class HibernateRedisConfiguration {
         config.addDataSourceProperty("password", "")
 
         new HikariDataSource(config)
-
-        //        new EmbeddedDatabaseBuilder()
-        //                .setType(EmbeddedDatabaseType.H2)
-        //                .build()
     }
 
     @Bean

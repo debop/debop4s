@@ -73,8 +73,6 @@ class JpaRedisConfiguration {
         config.addDataSourceProperty("password", "")
 
         new HikariDataSource(config)
-
-        //    new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build()
     }
 
     @Bean
