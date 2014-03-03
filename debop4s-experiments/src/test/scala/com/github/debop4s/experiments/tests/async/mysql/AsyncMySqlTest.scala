@@ -1,8 +1,8 @@
-package com.github.debop4s.experiments.tests.async.postgresql
+package com.github.debop4s.experiments.tests.async.mysql
 
 import com.github.debop4s.experiments.tests.AbstractExperimentTest
-import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
-import com.github.mauricio.async.db.postgresql.util.URLParser
+import com.github.mauricio.async.db.Configuration
+import com.github.mauricio.async.db.mysql.MySQLConnection
 import com.github.mauricio.async.db.util.ExecutorServiceUtils.CachedExecutionContext
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -11,11 +11,15 @@ import scala.concurrent.duration._
  * BasicExample
  * Created by debop on 2014. 3. 2.
  */
-class AsyncPostgreSqlTest extends AbstractExperimentTest {
+class AsyncMySqlTest extends AbstractExperimentTest {
 
     test("basic example") {
-        val configuration = URLParser.parse("jdbc:postgresql://localhost:5432/hibernate?user=root&password=root")
-        val conn = new PostgreSQLConnection(configuration)
+        val configuration = new Configuration(host = "localhost",
+                                                 username = "root",
+                                                 password = Some("root"),
+                                                 database = Some("hibernate"),
+                                                 port = 3306)
+        val conn = new MySQLConnection(configuration)
 
         Await.ready(conn.connect, 5 seconds)
 

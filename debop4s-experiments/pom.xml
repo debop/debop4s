@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>experiments</name>
     <artifactId>debop4s-experiments</artifactId>
 
     <properties>
@@ -37,31 +38,6 @@
             <version>0.8.0.RELEASE</version>
         </dependency>
 
-        <!--
-        mysql-async
-        https://github.com/mauricio/postgresql-async
-        -->
-        <dependency>
-            <groupId>org.adbcj</groupId>
-            <artifactId>adbcj-api</artifactId>
-            <version>${adbcj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.adbcj</groupId>
-            <artifactId>adbcj-connection-pool</artifactId>
-            <version>${adbcj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.adbcj</groupId>
-            <artifactId>mysql-async-driver</artifactId>
-            <version>${adbcj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.adbcj</groupId>
-            <artifactId>adbcj-jdbc</artifactId>
-            <version>${adbcj.version}</version>
-        </dependency>
-
         <!-- https://github.com/scalikejdbc/scalikejdbc-async -->
         <dependency>
             <groupId>org.scalikejdbc</groupId>
@@ -70,7 +46,7 @@
         </dependency>
         <!--
             mysql-async
-            https://github.com/mauricio/postgresql-async
+            https://github.com/mauricio/mysql-async
         -->
         <dependency>
             <groupId>com.github.mauricio</groupId>
@@ -78,7 +54,7 @@
             <version>0.2.12</version>
         </dependency>
         <!--
-            postgresql
+            mysql
             https://github.com/mauricio/postgresql-async
         -->
         <dependency>

@@ -20,7 +20,7 @@ package object data {
 
     val DRIVER_CLASS_MARIADB = "org.mariadb.jdbc.Driver"
 
-    val DATASOURCE_CLASS_POSTGRESQL = "org.postgresql.ds.PGPoolingDataSource"
+    val DATASOURCE_CLASS_POSTGRESQL = "org.postgresql.ds.PGSimpleDataSource"
     val DRIVER_CLASS_POSTGRESQL = "org.postgresql.Driver"
     val DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQL82Dialect"
 }
