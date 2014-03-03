@@ -16,12 +16,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableTransactionManagement
 class ScalaJpaConfiguration extends AbstractJpaH2Configuration {
 
-    override def getMappedPackageNames: Array[String] =
-        Array(classOf[ScalaJpaEntity].getPackage.getName)
+  override def getMappedPackageNames: Array[String] =
+    Array(classOf[ScalaJpaEntity].getPackage.getName)
 
-    override def jpaProperties: Properties = {
-        val props = super.jpaProperties
-        props.put(AvailableSettings.HBM2DDL_AUTO, "create")
-        props
-    }
+  override def jpaProperties: Properties = {
+    val props = super.jpaProperties
+    props.put(AvailableSettings.HBM2DDL_AUTO, "create")
+    props
+  }
 }

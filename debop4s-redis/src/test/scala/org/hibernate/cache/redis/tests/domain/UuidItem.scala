@@ -13,15 +13,15 @@ import scala.beans.BeanProperty
 @Access(AccessType.FIELD)
 class UuidItem extends Serializable {
 
-    @Id
-    @GeneratedValue
-    @BeanProperty
-    var id: String = _
+  @Id
+  @GeneratedValue
+  @BeanProperty
+  var id: String = _
 
-    @BeanProperty
-    var name: String = _
+  @BeanProperty
+  var name: String = _
 
-    @BeanProperty
-    var description: String = _
+  @BeanProperty
+  var description: String = _
 
 }

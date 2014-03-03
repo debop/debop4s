@@ -22,76 +22,76 @@ trait LocaleValue extends ValueObject {}
 @SerialVersionUID(-2891849618560053560L)
 trait HibernateLocaleEntity[TLocaleVal <: LocaleValue] extends PersistentObject {
 
-    private var defaultLocaleVal: TLocaleVal = _
+  private var defaultLocaleVal: TLocaleVal = _
 
-    protected val localeMap = mutable.HashMap[Locale, TLocaleVal]()
+  protected val localeMap = mutable.HashMap[Locale, TLocaleVal]()
 
-    protected def createDefaultLocaleVal: TLocaleVal
+  protected def createDefaultLocaleVal: TLocaleVal
 
-    def getDefaultLocale: TLocaleVal = {
-        if (defaultLocaleVal == null)
-            defaultLocaleVal = createDefaultLocaleVal
-        defaultLocaleVal
-    }
+  def getDefaultLocale: TLocaleVal = {
+    if (defaultLocaleVal == null)
+      defaultLocaleVal = createDefaultLocaleVal
+    defaultLocaleVal
+  }
 
-    /**
-     * 특정 지역에 해당하는 정보
-     *
-     * @param locale Locale 정보
-     * @return 특정 지역에 해당하는 정보
-     */
-    def getLocaleValue(locale: Locale): TLocaleVal =
-        getLocaleValueOrDefault(locale)
+  /**
+   * 특정 지역에 해당하는 정보
+   *
+   * @param locale Locale 정보
+   * @return 특정 지역에 해당하는 정보
+   */
+  def getLocaleValue(locale: Locale): TLocaleVal =
+    getLocaleValueOrDefault(locale)
 
-    /**
-    * 특정 지역의 정보를 가져옵니다. 만약 해당 지역의 정보가 없다면 엔티티의 정보를 이용한 정보를 제공합니다.
-    *
-    * @param locale 지역 정보
-    * @return 지역화 정보
-    */
-    def getLocaleValueOrDefault(locale: Locale = Locale.getDefault): TLocaleVal = {
-        if (localeMap == null || localeMap.size == 0)
-            return getDefaultLocale
+  /**
+  * 특정 지역의 정보를 가져옵니다. 만약 해당 지역의 정보가 없다면 엔티티의 정보를 이용한 정보를 제공합니다.
+  *
+  * @param locale 지역 정보
+  * @return 지역화 정보
+  */
+  def getLocaleValueOrDefault(locale: Locale = Locale.getDefault): TLocaleVal = {
+    if (localeMap == null || localeMap.size == 0)
+      return getDefaultLocale
 
-        if (locale == null || locale.getDisplayName == null)
-            return getDefaultLocale
+    if (locale == null || locale.getDisplayName == null)
+      return getDefaultLocale
 
-        localeMap.getOrElse(locale, getDefaultLocale)
-    }
+    localeMap.getOrElse(locale, getDefaultLocale)
+  }
 
-    /**
-     * 현 Thread Context 에 해당하는 지역의 정보를 제공합니다.
-     *
-     * @return 지역화 정보
-     */
-    def getCurrentLocaleValue: TLocaleVal = {
-        getLocaleValueOrDefault(Locale.getDefault)
-    }
+  /**
+   * 현 Thread Context 에 해당하는 지역의 정보를 제공합니다.
+   *
+   * @return 지역화 정보
+   */
+  def getCurrentLocaleValue: TLocaleVal = {
+    getLocaleValueOrDefault(Locale.getDefault)
+  }
 
-    /**
-     * 엔티티가 보유한 지역 정보
-     *
-     * @return
-     */
-    def getLocales: Set[Locale] = localeMap.keySet.toSet
+  /**
+   * 엔티티가 보유한 지역 정보
+   *
+   * @return
+   */
+  def getLocales: Set[Locale] = localeMap.keySet.toSet
 
-    /**
-     * 엔티티에 지역화 정보를 추가합니다.
-     *
-     * @param locale      지역 정보
-     * @param localeValue 해당 지역에 해당하는 정보
-     */
-    def addLocaleValue(locale: Locale, localeValue: TLocaleVal) {
-        localeMap.update(locale, localeValue)
-    }
+  /**
+   * 엔티티에 지역화 정보를 추가합니다.
+   *
+   * @param locale      지역 정보
+   * @param localeValue 해당 지역에 해당하는 정보
+   */
+  def addLocaleValue(locale: Locale, localeValue: TLocaleVal) {
+    localeMap.update(locale, localeValue)
+  }
 
-    /**
-     * 특정 지역의 정보를 제거합니다.
-     *
-     * @param locale 지역 정보
-     */
-    def removeLocaleValue(locale: Locale) {
-        localeMap.remove(locale)
-    }
+  /**
+   * 특정 지역의 정보를 제거합니다.
+   *
+   * @param locale 지역 정보
+   */
+  def removeLocaleValue(locale: Locale) {
+    localeMap.remove(locale)
+  }
 
 }

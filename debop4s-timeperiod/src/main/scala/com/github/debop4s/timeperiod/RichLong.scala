@@ -10,10 +10,10 @@ import org.joda.time.{Duration, DateTime}
  */
 class RichLong(val self: Long) extends AnyVal {
 
-    def toDateTime = new DateTime(self)
+  def toDateTime = new DateTime(self)
 
-    def toDuration = new Duration(self)
+  def toDuration = new Duration(self)
 
-    def toTimestamp = new Timestamp(self)
+  def toTimestamp = new Timestamp(self)
 
 }

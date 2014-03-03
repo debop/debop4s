@@ -15,18 +15,18 @@ import javax.persistence._
 @Access(AccessType.FIELD)
 class ScalaJpaEntity extends HibernateEntity[Long] {
 
-    @Id
-    @GeneratedValue
-    val id: Long = 0
+  @Id
+  @GeneratedValue
+  val id: Long = 0
 
-    override def getId: Long = id
+  override def getId: Long = id
 
-    @Column(name = "entityName", nullable = false, length = 32)
-    var name: String = _
+  @Column(name = "entityName", nullable = false, length = 32)
+  var name: String = _
 
-    override def hashCode(): Int = Hashs.compute(name)
+  override def hashCode(): Int = Hashs.compute(name)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-        .add("name", name)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("name", name)
 }

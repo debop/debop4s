@@ -29,94 +29,94 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackageClasses = Array(classOf[JpaAccountRepository], classOf[EventRepository]))
 class JpaRedisConfiguration {
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    def getDatabaseName = "hibernate"
+  def getDatabaseName = "hibernate"
 
-    def getMappedPackageNames: Array[String] =
-        Array(classOf[JpaAccount].getPackage.getName,
-                 classOf[Event].getPackage.getName)
+  def getMappedPackageNames: Array[String] =
+    Array(classOf[JpaAccount].getPackage.getName,
+           classOf[Event].getPackage.getName)
 
-    def getNamingStrategy: NamingStrategy = null
+  def getNamingStrategy: NamingStrategy = null
 
-    def jpaProperties: Properties = {
-        val props = new Properties()
+  def jpaProperties: Properties = {
+    val props = new Properties()
 
-        props.setProperty(AvailableSettings.FORMAT_SQL, "true")
-        // create | create-drop | spawn | spawn-drop | update | validate | none
-        props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create")
-        props.setProperty(AvailableSettings.POOL_SIZE, "30")
-        props.setProperty(AvailableSettings.SHOW_SQL, "true")
-        props.setProperty(AvailableSettings.FORMAT_SQL, "true")
-        props.setProperty(AvailableSettings.AUTOCOMMIT, "true")
+    props.setProperty(AvailableSettings.FORMAT_SQL, "true")
+    // create | create-drop | spawn | spawn-drop | update | validate | none
+    props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create")
+    props.setProperty(AvailableSettings.POOL_SIZE, "30")
+    props.setProperty(AvailableSettings.SHOW_SQL, "true")
+    props.setProperty(AvailableSettings.FORMAT_SQL, "true")
+    props.setProperty(AvailableSettings.AUTOCOMMIT, "true")
 
-        // Secondary Cache
-        props.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true")
-        props.setProperty(AvailableSettings.USE_QUERY_CACHE, "true")
-        props.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[SingletonRedisRegionFactory].getName)
-        props.setProperty(AvailableSettings.CACHE_REGION_PREFIX, "")
-        props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
+    // Secondary Cache
+    props.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true")
+    props.setProperty(AvailableSettings.USE_QUERY_CACHE, "true")
+    props.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[SingletonRedisRegionFactory].getName)
+    props.setProperty(AvailableSettings.CACHE_REGION_PREFIX, "")
+    props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
 
-        // props.setProperty(AvailableSettings.CONNECTION_PROVIDER, "com.zaxxer.hikari.hibernate.HikariConnectionProvider")
+    // props.setProperty(AvailableSettings.CONNECTION_PROVIDER, "com.zaxxer.hikari.hibernate.HikariConnectionProvider")
 
-        props
+    props
+  }
+
+  @Bean
+  def dataSource: DataSource = {
+    val config = new HikariConfig()
+    config.setMaximumPoolSize(200)
+
+    config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
+    config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
+    config.addDataSourceProperty("user", "sa")
+    config.addDataSourceProperty("password", "")
+
+    new HikariDataSource(config)
+  }
+
+  @Bean
+  def jdbcTemplate: JdbcTemplate = new JdbcTemplate(dataSource)
+
+  protected def setupEntityManagerFactory(factoryBean: LocalContainerEntityManagerFactoryBean) {
+    // 추가 작업 시 override 해서 사용하세요.
+  }
+
+  @Bean
+  def entityManagerFactory(): EntityManagerFactory = {
+    log.info("SessionFactory를 생성합니다.")
+
+    val factoryBean = new LocalContainerEntityManagerFactoryBean()
+
+    val packagenames = getMappedPackageNames
+    if (packagenames != null && packagenames.length > 0) {
+      log.debug(s"hibernate용 entity를 scan 합니다. packages=[$packagenames]")
+      factoryBean.setPackagesToScan(packagenames: _*)
     }
-
-    @Bean
-    def dataSource: DataSource = {
-        val config = new HikariConfig()
-        config.setMaximumPoolSize(200)
-
-        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
-        config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
-        config.addDataSourceProperty("user", "sa")
-        config.addDataSourceProperty("password", "")
-
-        new HikariDataSource(config)
-    }
-
-    @Bean
-    def jdbcTemplate: JdbcTemplate = new JdbcTemplate(dataSource)
-
-    protected def setupEntityManagerFactory(factoryBean: LocalContainerEntityManagerFactoryBean) {
-        // 추가 작업 시 override 해서 사용하세요.
-    }
-
-    @Bean
-    def entityManagerFactory(): EntityManagerFactory = {
-        log.info("SessionFactory를 생성합니다.")
-
-        val factoryBean = new LocalContainerEntityManagerFactoryBean()
-
-        val packagenames = getMappedPackageNames
-        if (packagenames != null && packagenames.length > 0) {
-            log.debug(s"hibernate용 entity를 scan 합니다. packages=[$packagenames]")
-            factoryBean.setPackagesToScan(packagenames: _*)
-        }
-        factoryBean.setDataSource(dataSource)
-        factoryBean.setJpaProperties(jpaProperties)
+    factoryBean.setDataSource(dataSource)
+    factoryBean.setJpaProperties(jpaProperties)
 
 
-        val adapter = new HibernateJpaVendorAdapter()
-        adapter.setGenerateDdl(true)
-        factoryBean.setJpaVendorAdapter(adapter)
+    val adapter = new HibernateJpaVendorAdapter()
+    adapter.setGenerateDdl(true)
+    factoryBean.setJpaVendorAdapter(adapter)
 
-        setupEntityManagerFactory(factoryBean)
+    setupEntityManagerFactory(factoryBean)
 
-        factoryBean.afterPropertiesSet()
-        log.info("EntityManagerFactory Bean에 대해 설정합니다.")
+    factoryBean.afterPropertiesSet()
+    log.info("EntityManagerFactory Bean에 대해 설정합니다.")
 
-        factoryBean.getObject
-    }
+    factoryBean.getObject
+  }
 
-    @Bean
-    def transactionManager(): PlatformTransactionManager =
-        new JpaTransactionManager(entityManagerFactory())
+  @Bean
+  def transactionManager(): PlatformTransactionManager =
+    new JpaTransactionManager(entityManagerFactory())
 
-    @Bean
-    def hibernateExceptionTranslator() = new HibernateExceptionTranslator()
+  @Bean
+  def hibernateExceptionTranslator() = new HibernateExceptionTranslator()
 
-    @Bean
-    def exceptionTranslation(): PersistenceExceptionTranslationPostProcessor =
-        new PersistenceExceptionTranslationPostProcessor()
+  @Bean
+  def exceptionTranslation(): PersistenceExceptionTranslationPostProcessor =
+    new PersistenceExceptionTranslationPostProcessor()
 }

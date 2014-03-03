@@ -15,41 +15,41 @@ abstract class QuarterTimeRange(private val _year: Int,
                                 private val _quarter: Quarter,
                                 val quarterCount: Int,
                                 private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(QuarterTimeRange.getPeriodOf(_year, _quarter, quarterCount, _calendar),
-                                 _calendar) {
+  extends CalendarTimeRange(QuarterTimeRange.getPeriodOf(_year, _quarter, quarterCount, _calendar),
+                             _calendar) {
 
-    val startQuarter: Quarter = _quarter
-    val endQuarter: Quarter = Times.getQuarterOfMonth(end.getMonthOfYear)
+  val startQuarter: Quarter = _quarter
+  val endQuarter: Quarter = Times.getQuarterOfMonth(end.getMonthOfYear)
 
-    override def startMonthOfYear: Int = Times.startMonthOfQuarter(startQuarter)
+  override def startMonthOfYear: Int = Times.startMonthOfQuarter(startQuarter)
 
-    override def endMonthOfYear: Int = Times.endMonthOfQuarter(endQuarter)
+  override def endMonthOfYear: Int = Times.endMonthOfQuarter(endQuarter)
 
-    def isMultipleCalendarYears: Boolean =
-        startYear != endYear
+  def isMultipleCalendarYears: Boolean =
+    startYear != endYear
 
-    def getMonths: Seq[MonthRange] = {
-        val months = ArrayBuffer[MonthRange]()
-        val monthCount = quarterCount * MonthsPerQuarter
-        for (m <- 0 until monthCount) {
-            months += MonthRange(start.plusMonths(m), calendar)
-        }
-        months
+  def getMonths: Seq[MonthRange] = {
+    val months = ArrayBuffer[MonthRange]()
+    val monthCount = quarterCount * MonthsPerQuarter
+    for (m <- 0 until monthCount) {
+      months += MonthRange(start.plusMonths(m), calendar)
     }
+    months
+  }
 }
 
 object QuarterTimeRange {
 
-    private[timerange] def getPeriodOf(year: Int,
-                                       quarter: Quarter,
-                                       quarterCount: Int,
-                                       calendar: ITimeCalendar): ITimePeriod = {
-        require(quarterCount > 0)
+  private[timerange] def getPeriodOf(year: Int,
+                                     quarter: Quarter,
+                                     quarterCount: Int,
+                                     calendar: ITimeCalendar): ITimePeriod = {
+    require(quarterCount > 0)
 
-        val yearStart = Times.asDate(year, 1, 1)
-        val start = yearStart.plusMonths((quarter.id - 1) * MonthsPerQuarter)
-        val end = start.plusMonths(quarterCount * MonthsPerQuarter)
+    val yearStart = Times.asDate(year, 1, 1)
+    val start = yearStart.plusMonths((quarter.id - 1) * MonthsPerQuarter)
+    val end = start.plusMonths(quarterCount * MonthsPerQuarter)
 
-        TimeRange(start, end)
-    }
+    TimeRange(start, end)
+  }
 }

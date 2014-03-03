@@ -16,42 +16,42 @@ import redis.api.pubsub.{Message, PMessage}
 class ConsoleLogRedisSubscriberActor(override val address: InetSocketAddress,
                                      val channels: Seq[String] = Seq("channel:logback:logs"),
                                      val patterns: Seq[String] = Nil)
-    extends RedisSubscriberActor(address, channels, patterns) {
+  extends RedisSubscriberActor(address, channels, patterns) {
 
-    private lazy val serializer = ScalaJacksonSerializer()
+  private lazy val serializer = ScalaJacksonSerializer()
 
-    /**
-    * Redis Pub/Sub Channel에서 메시지를 받았을 때 호출되는 메소드입니다.
-    */
-    override def onMessage(m: Message) {
-        Promises.exec[Unit] {
-            val doc = serializer.deserializeFromText(m.data, classOf[LogDocument])
+  /**
+  * Redis Pub/Sub Channel에서 메시지를 받았을 때 호출되는 메소드입니다.
+  */
+  override def onMessage(m: Message) {
+    Promises.exec[Unit] {
+      val doc = serializer.deserializeFromText(m.data, classOf[LogDocument])
 
-            println(s"Received Log Document: ${doc.timestamp} [${doc.levelStr}] ${doc.message}")
-            if (doc.stacktrace != null && doc.stacktrace.size > 0)
-                println(doc.stacktrace)
-        }
+      println(s"Received Log Document: ${doc.timestamp} [${doc.levelStr}] ${doc.message}")
+      if (doc.stacktrace != null && doc.stacktrace.size > 0)
+        println(doc.stacktrace)
     }
+  }
 
-    /**
-    * Redis Pub/Sub Channel에서 패턴 메시지를 받았을 때 호출되는 메소드입니다.
-    */
-    override def onPMessage(pm: PMessage) {
-        Promises.exec[Unit] {
-            val doc = serializer.deserializeFromText(pm.data, classOf[LogDocument])
+  /**
+  * Redis Pub/Sub Channel에서 패턴 메시지를 받았을 때 호출되는 메소드입니다.
+  */
+  override def onPMessage(pm: PMessage) {
+    Promises.exec[Unit] {
+      val doc = serializer.deserializeFromText(pm.data, classOf[LogDocument])
 
-            println(s"Received pattern message: ${doc.timestamp} [${doc.levelStr}] ${doc.message}")
-            if (doc.stacktrace != null && doc.stacktrace.size > 0)
-                println(doc.stacktrace)
-        }
+      println(s"Received pattern message: ${doc.timestamp} [${doc.levelStr}] ${doc.message}")
+      if (doc.stacktrace != null && doc.stacktrace.size > 0)
+        println(doc.stacktrace)
     }
+  }
 }
 
 object ConsoleLogRedisSubscriberActor {
 
-    def apply(address: InetSocketAddress = new InetSocketAddress("localhost", 6379),
-              channels: Seq[String] = Seq("channel:logback:logs"),
-              patterns: Seq[String] = Nil): ConsoleLogRedisSubscriberActor = {
-        new ConsoleLogRedisSubscriberActor(address, channels, patterns)
-    }
+  def apply(address: InetSocketAddress = new InetSocketAddress("localhost", 6379),
+            channels: Seq[String] = Seq("channel:logback:logs"),
+            patterns: Seq[String] = Nil): ConsoleLogRedisSubscriberActor = {
+    new ConsoleLogRedisSubscriberActor(address, channels, patterns)
+  }
 }

@@ -10,8 +10,8 @@ import com.github.debop4s.core.json.{JsonSerializer, JacksonSerializer}
  */
 class JacksonUserType extends AbstractJsonUserType {
 
-    private lazy val serializer = JacksonSerializer()
+  private lazy val serializer = JacksonSerializer()
 
-    override def jsonSerializer: JsonSerializer = serializer
+  override def jsonSerializer: JsonSerializer = serializer
 
 }

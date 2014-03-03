@@ -14,8 +14,8 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 @ComponentScan(basePackageClasses = Array(classOf[UserRepository]))
 class RedisCacheConfiguration {
 
-    @Bean
-    def redisCacheManager(): RedisCacheManager =
-        RedisCacheManager()
+  @Bean
+  def redisCacheManager(): RedisCacheManager =
+    RedisCacheManager()
 
 }

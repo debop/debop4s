@@ -14,53 +14,53 @@ import javax.persistence.{MappedSuperclass, PostLoad, PostPersist}
 @MappedSuperclass
 trait HibernateEntity[TId] extends PersistentObject {
 
-    def getId: TId
+  def getId: TId
 
-    @PostPersist
-    override def onPersist() {
-        super.onPersist()
+  @PostPersist
+  override def onPersist() {
+    super.onPersist()
+  }
+
+  @PostLoad
+  override def onLoad() {
+    super.onLoad()
+  }
+
+  override def equals(obj: Any): Boolean = {
+    val isSameType = (obj != null) && getClass.equals(obj.getClass)
+
+    if (isSameType) {
+      val entity = obj.asInstanceOf[HibernateEntity[TId]]
+      return hasSameNonDefaultIds(entity) ||
+             ((!isPersisted || !entity.isPersisted) && hasSameBusinessSignature(entity))
     }
+    false
+  }
 
-    @PostLoad
-    override def onLoad() {
-        super.onLoad()
+  override def hashCode(): Int =
+    if (getId == null) System.identityHashCode(this) else Hashs.compute(getId)
+
+
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("id", getId)
+
+  private def hasSameNonDefaultIds(entity: HibernateEntity[TId]): Boolean = {
+    if (entity == null)
+      false
+
+    val id = getId
+    val entityId = entity.getId
+    (id != null) && (entityId != null) && id.equals(entityId)
+  }
+
+  private def hasSameBusinessSignature(entity: HibernateEntity[TId]): Boolean = {
+    val notNull = entity != null
+    val hash = if (getId != null) Hashs.compute(getId) else hashCode()
+    if (notNull) {
+      val entityHash = if (entity.getId != null) Hashs.compute(entity.getId) else entity.hashCode()
+      hash == entityHash
     }
-
-    override def equals(obj: Any): Boolean = {
-        val isSameType = (obj != null) && getClass.equals(obj.getClass)
-
-        if (isSameType) {
-            val entity = obj.asInstanceOf[HibernateEntity[TId]]
-            return hasSameNonDefaultIds(entity) ||
-                   ((!isPersisted || !entity.isPersisted) && hasSameBusinessSignature(entity))
-        }
-        false
-    }
-
-    override def hashCode(): Int =
-        if (getId == null) System.identityHashCode(this) else Hashs.compute(getId)
-
-
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-        .add("id", getId)
-
-    private def hasSameNonDefaultIds(entity: HibernateEntity[TId]): Boolean = {
-        if (entity == null)
-            false
-
-        val id = getId
-        val entityId = entity.getId
-        (id != null) && (entityId != null) && id.equals(entityId)
-    }
-
-    private def hasSameBusinessSignature(entity: HibernateEntity[TId]): Boolean = {
-        val notNull = entity != null
-        val hash = if (getId != null) Hashs.compute(getId) else hashCode()
-        if (notNull) {
-            val entityHash = if (entity.getId != null) Hashs.compute(entity.getId) else entity.hashCode()
-            hash == entityHash
-        }
-        false
-    }
+    false
+  }
 }

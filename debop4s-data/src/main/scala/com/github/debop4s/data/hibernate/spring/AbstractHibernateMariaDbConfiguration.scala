@@ -15,17 +15,17 @@ import org.springframework.context.annotation.Bean
 abstract class AbstractHibernateMariaDbConfiguration extends AbstractHibernateConfiguration {
 
 
-    @Bean
-    override def dataSource: DataSource = {
-        buildDataSource(DRIVER_CLASS_MARIADB,
-                           "jdbc:mysql://localhost/" + getDatabaseName,
-                           "root",
-                           "root")
-    }
+  @Bean
+  override def dataSource: DataSource = {
+    buildDataSource(DRIVER_CLASS_MARIADB,
+                     "jdbc:mysql://localhost/" + getDatabaseName,
+                     "root",
+                     "root")
+  }
 
-    override def hibernateProperties: Properties = {
-        val props = super.hibernateProperties
-        props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
-        props
-    }
+  override def hibernateProperties: Properties = {
+    val props = super.hibernateProperties
+    props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
+    props
+  }
 }

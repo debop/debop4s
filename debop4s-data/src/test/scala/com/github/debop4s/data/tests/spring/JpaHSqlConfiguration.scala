@@ -1,6 +1,6 @@
 package com.github.debop4s.data.tests.spring
 
-import com.github.debop4s.data.jpa.spring.AbstractJpaHSqlConfiguration
+import com.github.debop4s.data.jpa.spring.AbstractJpaHSqlHikariConfiguration
 import com.github.debop4s.data.tests.mapping.Employee
 import java.util.Properties
 import org.hibernate.cfg.AvailableSettings
@@ -17,14 +17,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = Array("com.github.debop4s.data.tests"))
-class JpaHSqlConfiguration extends AbstractJpaHSqlConfiguration {
+class JpaHSqlConfiguration extends AbstractJpaHSqlHikariConfiguration {
 
-    override def getMappedPackageNames: Array[String] =
-        Array(classOf[Employee].getPackage.getName)
+  override def getMappedPackageNames: Array[String] =
+    Array(classOf[Employee].getPackage.getName)
 
-    override def jpaProperties: Properties = {
-        val props = super.jpaProperties
-        props.put(AvailableSettings.HBM2DDL_AUTO, "auto")
-        props
-    }
+  override def jpaProperties: Properties = {
+    val props = super.jpaProperties
+    props.put(AvailableSettings.HBM2DDL_AUTO, "auto")
+    props
+  }
 }

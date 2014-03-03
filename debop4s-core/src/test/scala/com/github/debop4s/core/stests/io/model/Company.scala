@@ -13,18 +13,18 @@ import scala.collection.mutable.ArrayBuffer
 @SerialVersionUID(4442244029750273886L)
 class Company extends ValueObject {
 
-    var code: String = _
-    var name: String = _
-    var description: String = _
-    var amount: Long = 0
+  var code: String = _
+  var name: String = _
+  var description: String = _
+  var amount: Long = 0
 
-    val users = ArrayBuffer[User]()
+  val users = ArrayBuffer[User]()
 
-    override def hashCode(): Int = Hashs.compute(code, name)
+  override def hashCode(): Int = Hashs.compute(code, name)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-        .add("code", code)
-        .add("name", name)
-        .add("amount", amount)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("code", code)
+    .add("name", name)
+    .add("amount", amount)
 }

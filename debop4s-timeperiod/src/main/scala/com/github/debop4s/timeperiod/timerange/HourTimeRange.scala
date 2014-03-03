@@ -13,28 +13,28 @@ import scala.collection.mutable.ArrayBuffer
 class HourTimeRange(private[this] val _moment: DateTime,
                     val hourCount: Int = 1,
                     private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(Times.relativeHourPeriod(_moment, hourCount), _calendar) {
+  extends CalendarTimeRange(Times.relativeHourPeriod(_moment, hourCount), _calendar) {
 
-    val endHour: Int = start.plusHours(hourCount).getHourOfDay
+  val endHour: Int = start.plusHours(hourCount).getHourOfDay
 
-    def getMinutes: Seq[MinuteRange] = {
-        val minutes = ArrayBuffer[MinuteRange]()
+  def getMinutes: Seq[MinuteRange] = {
+    val minutes = ArrayBuffer[MinuteRange]()
 
-        for (h <- 0 until hourCount) {
-            for (m <- 0 until MinutesPerHour) {
-                minutes += MinuteRange(start.plusHours(h).plusMinutes(m), calendar)
-            }
-        }
-
-        minutes
+    for (h <- 0 until hourCount) {
+      for (m <- 0 until MinutesPerHour) {
+        minutes += MinuteRange(start.plusHours(h).plusMinutes(m), calendar)
+      }
     }
+
+    minutes
+  }
 }
 
 object HourTimeRange {
 
-    def apply(moment: DateTime, hourCount: Int): HourTimeRange =
-        apply(moment, hourCount, DefaultTimeCalendar)
+  def apply(moment: DateTime, hourCount: Int): HourTimeRange =
+    apply(moment, hourCount, DefaultTimeCalendar)
 
-    def apply(moment: DateTime, hourCount: Int, calendar: ITimeCalendar): HourTimeRange =
-        new HourTimeRange(moment, hourCount, calendar)
+  def apply(moment: DateTime, hourCount: Int, calendar: ITimeCalendar): HourTimeRange =
+    new HourTimeRange(moment, hourCount, calendar)
 }

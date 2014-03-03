@@ -16,32 +16,32 @@ class RedisGeneralDataRegion(private[this] val _accessStrategyFactory: RedisAcce
                              private[this] val _cache: HibernateRedisCache,
                              private[this] val _regionName: String,
                              private[this] val _props: Properties)
-    extends RedisDataRegion(_accessStrategyFactory,
-                               _cache,
-                               _regionName,
-                               _props)
-            with GeneralDataRegion {
+  extends RedisDataRegion(_accessStrategyFactory,
+                           _cache,
+                           _regionName,
+                           _props)
+          with GeneralDataRegion {
 
 
-    override def get(key: Any): AnyRef = {
-        try {
-            val value = Promises.await(cache.get(regionName, key.toString, expireInSeconds)).asInstanceOf[AnyRef]
-            log.trace(s"cache item key=$key, value=$value")
-            value
-        } catch {
-            case e: Throwable => null
-        }
+  override def get(key: Any): AnyRef = {
+    try {
+      val value = Promises.await(cache.get(regionName, key.toString, expireInSeconds)).asInstanceOf[AnyRef]
+      log.trace(s"cache item key=$key, value=$value")
+      value
+    } catch {
+      case e: Throwable => null
     }
+  }
 
-    override def put(key: Any, value: Any) {
-        cache.set(regionName, key.toString, value, expireInSeconds)
-    }
+  override def put(key: Any, value: Any) {
+    cache.set(regionName, key.toString, value, expireInSeconds)
+  }
 
-    override def evict(key: Any) {
-        cache.delete(regionName, key.toString)
-    }
+  override def evict(key: Any) {
+    cache.delete(regionName, key.toString)
+  }
 
-    override def evictAll() {
-        cache.deleteRegion(regionName)
-    }
+  override def evictAll() {
+    cache.deleteRegion(regionName)
+  }
 }

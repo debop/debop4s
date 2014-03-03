@@ -17,91 +17,91 @@ import org.springframework.data.jpa.repository.support.{JpaEntityInformationSupp
  */
 object JpaUtils {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    val DELETE_ALL_QUERY_STRING: String = "delete from %s x"
-    val COUNT_QUERY_STRING: String = "select count(%s) from %s x"
+  val DELETE_ALL_QUERY_STRING: String = "delete from %s x"
+  val COUNT_QUERY_STRING: String = "select count(%s) from %s x"
 
-    def getQueryString(template: String, entityName: String): String = {
-        template.format(entityName)
+  def getQueryString(template: String, entityName: String): String = {
+    template.format(entityName)
+  }
+
+  def getEntityInformation[T](em: EntityManager, entityClass: Class[T]): JpaEntityInformation[T, _] =
+    JpaEntityInformationSupport.getMetadata(entityClass, em)
+
+  def getQuery[T](em: EntityManager, resultClass: Class[T], spec: Specification[T], pageable: Pageable): TypedQuery[T] = {
+    val sort = if (pageable == null) null else pageable.getSort
+    getQuery(em, resultClass, spec, sort)
+  }
+
+  def getQuery[T](em: EntityManager, resultClass: Class[T], spec: Specification[T], sort: Sort): TypedQuery[T] = {
+    val cb = em.getCriteriaBuilder
+    val query = cb.createQuery(resultClass)
+
+    val root = applySpecificationToCriteria(em, resultClass, spec, query)
+    query.select(root)
+
+    if (sort != null) {
+      query.orderBy(QueryUtils.toOrders(sort, root, cb))
     }
+    em.createQuery(query)
+  }
 
-    def getEntityInformation[T](em: EntityManager, entityClass: Class[T]): JpaEntityInformation[T, _] =
-        JpaEntityInformationSupport.getMetadata(entityClass, em)
+  private
+  def applySpecificationToCriteria[T, S](em: EntityManager,
+                                         resultClass: Class[T],
+                                         spec: Specification[T],
+                                         query: CriteriaQuery[_]): Root[T] = {
+    require(query != null)
 
-    def getQuery[T](em: EntityManager, resultClass: Class[T], spec: Specification[T], pageable: Pageable): TypedQuery[T] = {
-        val sort = if (pageable == null) null else pageable.getSort
-        getQuery(em, resultClass, spec, sort)
+    val root = query.from(resultClass)
+    if (spec != null) {
+      val cb = em.getCriteriaBuilder
+      val predicate: Predicate = spec.toPredicate(root, query, cb)
+
+      if (predicate != null) {
+        query.where(List(predicate): _*)
+      }
     }
+    root
+  }
 
-    def getQuery[T](em: EntityManager, resultClass: Class[T], spec: Specification[T], sort: Sort): TypedQuery[T] = {
-        val cb = em.getCriteriaBuilder
-        val query = cb.createQuery(resultClass)
+  def setParameters[X](query: TypedQuery[X], parameters: JpaParameter*) = {
+    if (parameters != null) {
+      parameters.foreach(p => {
+        log.trace(s"파라미터 설정. $p")
 
-        val root = applySpecificationToCriteria(em, resultClass, spec, query)
-        query.select(root)
+        p.value match {
+          case date: Date =>
+            query.setParameter(p.name, date, TemporalType.TIMESTAMP)
 
-        if (sort != null) {
-            query.orderBy(QueryUtils.toOrders(sort, root, cb))
+          case calendar: Calendar =>
+            query.setParameter(p.name, calendar, TemporalType.TIMESTAMP)
+
+          case dateTime: DateTime =>
+            query.setParameter(p.name, dateTime.toDate, TemporalType.TIMESTAMP)
+
+          case _ => query.setParameter(p.name, p.value)
         }
-        em.createQuery(query)
+      })
     }
+    query
+  }
 
-    private
-    def applySpecificationToCriteria[T, S](em: EntityManager,
-                                           resultClass: Class[T],
-                                           spec: Specification[T],
-                                           query: CriteriaQuery[_]): Root[T] = {
-        require(query != null)
+  def setFirstResult[T](query: TypedQuery[T], firstResult: Int) = {
+    if (firstResult >= 0)
+      query.setFirstResult(firstResult)
+    query
+  }
 
-        val root = query.from(resultClass)
-        if (spec != null) {
-            val cb = em.getCriteriaBuilder
-            val predicate: Predicate = spec.toPredicate(root, query, cb)
+  def setMaxResults[T](query: TypedQuery[T], maxResults: Int) = {
+    if (maxResults > 0)
+      query.setFirstResult(maxResults)
+    query
+  }
 
-            if (predicate != null) {
-                query.where(List(predicate): _*)
-            }
-        }
-        root
-    }
-
-    def setParameters[X](query: TypedQuery[X], parameters: JpaParameter*) = {
-        if (parameters != null) {
-            parameters.foreach(p => {
-                log.trace(s"파라미터 설정. $p")
-
-                p.value match {
-                    case date: Date =>
-                        query.setParameter(p.name, date, TemporalType.TIMESTAMP)
-
-                    case calendar: Calendar =>
-                        query.setParameter(p.name, calendar, TemporalType.TIMESTAMP)
-
-                    case dateTime: DateTime =>
-                        query.setParameter(p.name, dateTime.toDate, TemporalType.TIMESTAMP)
-
-                    case _ => query.setParameter(p.name, p.value)
-                }
-            })
-        }
-        query
-    }
-
-    def setFirstResult[T](query: TypedQuery[T], firstResult: Int) = {
-        if (firstResult >= 0)
-            query.setFirstResult(firstResult)
-        query
-    }
-
-    def setMaxResults[T](query: TypedQuery[T], maxResults: Int) = {
-        if (maxResults > 0)
-            query.setFirstResult(maxResults)
-        query
-    }
-
-    def setPaging[T](query: TypedQuery[T], firstResult: Int, maxResults: Int) = {
-        val q = setFirstResult(query, firstResult)
-        setMaxResults(q, maxResults)
-    }
+  def setPaging[T](query: TypedQuery[T], firstResult: Int, maxResults: Int) = {
+    val q = setFirstResult(query, firstResult)
+    setMaxResults(q, maxResults)
+  }
 }

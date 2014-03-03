@@ -10,12 +10,12 @@ import org.joda.time.Partial
  */
 class RichPartialProperty(val self: Partial.Property) extends AnyVal {
 
-    def partial: Partial = self.getPartial
+  def partial: Partial = self.getPartial
 
-    def apply(value: Int): Partial = self.setCopy(value)
+  def apply(value: Int): Partial = self.setCopy(value)
 
-    def apply(text: String): Partial = self.setCopy(text)
+  def apply(text: String): Partial = self.setCopy(text)
 
-    def apply(text: String, locale: Locale): Partial = self.setCopy(text, locale)
+  def apply(text: String, locale: Locale): Partial = self.setCopy(text, locale)
 
 }

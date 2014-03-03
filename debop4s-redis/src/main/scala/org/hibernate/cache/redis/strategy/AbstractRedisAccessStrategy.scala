@@ -13,32 +13,32 @@ import org.slf4j.LoggerFactory
  */
 abstract class AbstractRedisAccessStrategy[T <: RedisTransactionalDataRegion](val region: T, val settings: Settings) {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    def putFromLoad(key: Any, value: Any, txTimestamp: Long, version: Any): Boolean =
-        putFromLoad(key, value, txTimestamp, version, settings.isMinimalPutsEnabled)
+  def putFromLoad(key: Any, value: Any, txTimestamp: Long, version: Any): Boolean =
+    putFromLoad(key, value, txTimestamp, version, settings.isMinimalPutsEnabled)
 
-    def putFromLoad(key: Any, value: Any, txTimestamp: Long, version: Any, minimalPutOverride: Boolean): Boolean
+  def putFromLoad(key: Any, value: Any, txTimestamp: Long, version: Any, minimalPutOverride: Boolean): Boolean
 
-    def lockRegion: SoftLock = null
+  def lockRegion: SoftLock = null
 
-    def unlockRegion(lock: SoftLock) {
-        region.clear()
-    }
+  def unlockRegion(lock: SoftLock) {
+    region.clear()
+  }
 
-    def remove(key: Any) {
-        region.remove(key)
-    }
+  def remove(key: Any) {
+    region.remove(key)
+  }
 
-    def removeAll() {
-        region.clear()
-    }
+  def removeAll() {
+    region.clear()
+  }
 
-    def evict(key: Any) {
-        region.remove(key)
-    }
+  def evict(key: Any) {
+    region.remove(key)
+  }
 
-    def evictAll() {
-        removeAll()
-    }
+  def evictAll() {
+    removeAll()
+  }
 }

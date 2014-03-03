@@ -12,15 +12,15 @@ import org.joda.time.DateTime
  */
 trait ITimeLineMoment extends Ordered[DateTime] with Serializable {
 
-    def moment: DateTime
+  def moment: DateTime
 
-    def periods: ITimePeriodCollection
+  def periods: ITimePeriodCollection
 
-    def startCount: Int
+  def startCount: Int
 
-    def endCount: Int
+  def endCount: Int
 
-    override def compare(that: DateTime): Int = moment.compareTo(that)
+  override def compare(that: DateTime): Int = moment.compareTo(that)
 }
 
 /**
@@ -31,21 +31,21 @@ trait ITimeLineMoment extends Ordered[DateTime] with Serializable {
 @SerialVersionUID(8524596139661439627L)
 class TimeLineMoment(private[this] val _moment: DateTime) extends ValueObject with ITimeLineMoment {
 
-    private val _periods = new TimePeriodCollection()
+  private val _periods = new TimePeriodCollection()
 
-    def moment: DateTime = _moment
+  def moment: DateTime = _moment
 
-    def periods = _periods
+  def periods = _periods
 
-    def startCount: Int = _periods.count(x => x.start.equals(_moment))
+  def startCount: Int = _periods.count(x => x.start.equals(_moment))
 
-    def endCount: Int = _periods.count(x => x.end.equals(_moment))
+  def endCount: Int = _periods.count(x => x.end.equals(_moment))
 
-    override def hashCode() = Hashs.compute(_moment)
+  override def hashCode() = Hashs.compute(_moment)
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
-        .add("moment", moment)
-        .add("startCount", startCount)
-        .add("endCount", endCount)
+  override protected def buildStringHelper =
+    super.buildStringHelper
+    .add("moment", moment)
+    .add("startCount", startCount)
+    .add("endCount", endCount)
 }
