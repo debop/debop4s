@@ -17,6 +17,7 @@ import scala.collection.JavaConversions._
  * @author sunghyouk.bae@gmail.com
  * @since 2014. 3. 3.
  */
+@org.springframework.transaction.annotation.Transactional
 class ManyToManyTest extends AbstractJpaTest {
 
   private val log = LoggerFactory.getLogger(getClass)

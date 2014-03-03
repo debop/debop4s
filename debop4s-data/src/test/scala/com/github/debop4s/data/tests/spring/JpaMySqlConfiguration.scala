@@ -22,7 +22,7 @@ class JpaMySqlConfiguration extends AbstractJpaMySqlHikariConfiguration {
 
   override def jpaProperties: Properties = {
     val props = super.jpaProperties
-    props.put(AvailableSettings.HBM2DDL_AUTO, "auto")
+    props.put(AvailableSettings.HBM2DDL_AUTO, "create-drop")
     props
   }
 }

@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.JpaRepository
  * @author sunghyouk.bae@gmail.com
  * @since 2014. 2. 28.
  */
+@org.springframework.transaction.annotation.Transactional
 class JoinTest extends AbstractJpaTest {
 
   @PersistenceContext val em: EntityManager = null
