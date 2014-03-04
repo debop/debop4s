@@ -12,8 +12,8 @@
 
     <logger name="com.github.debop4s.data" level="TRACE"/>
 
-    <root level="INFO">
-        <appender-ref ref="console"/>
+    <root level="DEBUG">
+    <appender-ref ref="console"/>
     </root>
 
 </configuration>
