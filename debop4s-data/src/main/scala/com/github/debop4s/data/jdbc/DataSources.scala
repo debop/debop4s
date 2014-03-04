@@ -70,7 +70,7 @@ object DataSources {
    * @param passwd      사용자 패스워드
    * @return [[javax.sql.DataSource]] 인스턴스
    */
-  def getHikariDataSource(dataSourceClassName: String, url: String, username: String, passwd: String): DataSource = {
+  def getHikariDataSource(dataSourceClassName: String, url: String, username: String, passwd: String = ""): DataSource = {
     log.info("Hikari DataSource를 빌드합니다... " +
              s"dataSourceClassName=[$dataSourceClassName], url=[$url], username=[$username], passwd=[$passwd]")
 
@@ -103,6 +103,8 @@ object DataSources {
   *   dataSource.password=test
   *   dataSource.databaseName=mydb
   *   dataSource.serverName=localhost
+  *   dataSource.encoding=UTF-8
+  *   dataSource.useUnicode=true
   * }}}
   */
   def getHirakiDataSource(props: Properties): DataSource = {
