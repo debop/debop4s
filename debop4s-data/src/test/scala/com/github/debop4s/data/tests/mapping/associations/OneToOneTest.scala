@@ -18,7 +18,10 @@ class OneToOneTest extends AbstractJpaTest {
     @PersistenceContext val em: EntityManager = null
 
     @Test
-    def authorBiography() {}
+    def authorBiography() {
+
+        // TODO: 구현 중
+    }
 
     @Test
     def unidirectionalOneToOne() {
