@@ -10,52 +10,52 @@ import scala.concurrent.Future
  * Created by debop on 2014. 3. 1.
  */
 class PromisesTest extends AbstractCoreTest {
-  val callable = () => {
-    Thread.sleep(100)
-    1
-  }
-
-  test("new task") {
-    val task = Promises.exec[Int] {
-      callable()
+    val callable = () => {
+        Thread.sleep(100)
+        1
     }
-    task.isCompleted should equal(false)
 
-    Promises.await(task) should equal(1)
-    task.isCompleted should equal(true)
-    task.value.get.isSuccess should equal(true)
-    task.value.get.isFailure should equal(false)
-  }
+    test("new task") {
+        val task = Promises.exec[Int] {
+            callable()
+        }
+        task.isCompleted should equal(false)
 
-  test("start new task") {
-    val task = Promises.exec[Int] {
-      callable()
+        Promises.await(task) should equal(1)
+        task.isCompleted should equal(true)
+        task.value.get.isSuccess should equal(true)
+        task.value.get.isFailure should equal(false)
     }
-    task.isCompleted should equal(false)
 
-    Promises.await(task) should equal(1)
-    task.isCompleted should equal(true)
-    task.value.get.isSuccess should equal(true)
-    task.value.get.isFailure should equal(false)
-  }
+    test("start new task") {
+        val task = Promises.exec[Int] {
+            callable()
+        }
+        task.isCompleted should equal(false)
 
-  test("wait all") {
-    val count = 10
-    val tasks = new ArrayBuffer[Future[Int]]()
+        Promises.await(task) should equal(1)
+        task.isCompleted should equal(true)
+        task.value.get.isSuccess should equal(true)
+        task.value.get.isFailure should equal(false)
+    }
 
-    (0 until 10).foreach(_ =>
-      tasks += Promises.exec[Int] {
-        callable()
-      })
+    test("wait all") {
+        val count = 10
+        val tasks = new ArrayBuffer[Future[Int]]()
 
-    Promises.awaitAll(tasks).foreach(result => {
-      result should equal(1)
-    })
+        (0 until 10).foreach(_ =>
+            tasks += Promises.exec[Int] {
+                callable()
+            })
 
-    tasks.foreach(task => {
-      task.value.get.get should equal(1)
-      task.isCompleted should equal(true)
-      task.value.get.isSuccess should equal(true)
-    })
-  }
+        Promises.awaitAll(tasks).foreach(result => {
+            result should equal(1)
+        })
+
+        tasks.foreach(task => {
+            task.value.get.get should equal(1)
+            task.isCompleted should equal(true)
+            task.value.get.isSuccess should equal(true)
+        })
+    }
 }

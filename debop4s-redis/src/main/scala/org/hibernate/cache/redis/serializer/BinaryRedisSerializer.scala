@@ -10,27 +10,27 @@ import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, Byt
  */
 class BinaryRedisSerializer[T] extends RedisSerializer[T] {
 
-  override def serialize(graph: T): Array[Byte] = {
-    if (graph == null)
-      return EMPTY_BYTES
+    override def serialize(graph: T): Array[Byte] = {
+        if (graph == null)
+            return EMPTY_BYTES
 
-    val os = new ByteArrayOutputStream()
-    val oos = new ObjectOutputStream(os)
-    oos.writeObject(graph)
-    oos.flush()
+        val os = new ByteArrayOutputStream()
+        val oos = new ObjectOutputStream(os)
+        oos.writeObject(graph)
+        oos.flush()
 
-    os.toByteArray
-  }
+        os.toByteArray
+    }
 
-  override def deserialize(bytes: Array[Byte]): T = {
-    if (bytes == null || bytes.length == 0)
-      return null.asInstanceOf[T]
+    override def deserialize(bytes: Array[Byte]): T = {
+        if (bytes == null || bytes.length == 0)
+            return null.asInstanceOf[T]
 
-    val is = new ByteArrayInputStream(bytes)
-    val ois = new ObjectInputStream(is)
+        val is = new ByteArrayInputStream(bytes)
+        val ois = new ObjectInputStream(is)
 
-    ois.readObject().asInstanceOf[T]
-  }
+        ois.readObject().asInstanceOf[T]
+    }
 
 
 }

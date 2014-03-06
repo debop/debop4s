@@ -10,45 +10,45 @@ import org.joda.time._
  */
 class RichLocalDate(val self: LocalDate) extends AnyVal with Ordered[LocalDate] {
 
-  def -(period: ReadablePeriod): LocalDate = self.minus(period)
+    def -(period: ReadablePeriod): LocalDate = self.minus(period)
 
-  def -(builder: DurationBuilder): LocalDate = self.minus(builder.underlying)
+    def -(builder: DurationBuilder): LocalDate = self.minus(builder.underlying)
 
-  def +(period: ReadablePeriod): LocalDate = self.plus(period)
+    def +(period: ReadablePeriod): LocalDate = self.plus(period)
 
-  def +(builder: DurationBuilder): LocalDate = self.plus(builder.underlying)
+    def +(builder: DurationBuilder): LocalDate = self.plus(builder.underlying)
 
-  def day: Property = self.dayOfMonth()
+    def day: Property = self.dayOfMonth()
 
-  def week: Property = self.weekOfWeekyear()
+    def week: Property = self.weekOfWeekyear()
 
-  def weekyear: Property = self.weekyear()
+    def weekyear: Property = self.weekyear()
 
-  def month: Property = self.monthOfYear()
+    def month: Property = self.monthOfYear()
 
-  def year: Property = self.yearOfCentury()
+    def year: Property = self.yearOfCentury()
 
-  def century: Property = self.centuryOfEra()
+    def century: Property = self.centuryOfEra()
 
-  def era: Property = self.era
+    def era: Property = self.era
 
-  def withDay(day: Int) = self.withDayOfMonth(day)
+    def withDay(day: Int) = self.withDayOfMonth(day)
 
-  def withWeek(week: Int) = self.withWeekOfWeekyear(week)
+    def withWeek(week: Int) = self.withWeekOfWeekyear(week)
 
-  def withWeekyear(weekyear: Int) = self.withWeekyear(weekyear)
+    def withWeekyear(weekyear: Int) = self.withWeekyear(weekyear)
 
-  def withMonth(month: Int) = self.withMonthOfYear(month)
+    def withMonth(month: Int) = self.withMonthOfYear(month)
 
-  def withYear(year: Int) = self.withYear(year)
+    def withYear(year: Int) = self.withYear(year)
 
-  def withCentury(century: Int) = self.withCenturyOfEra(century)
+    def withCentury(century: Int) = self.withCenturyOfEra(century)
 
-  def withEra(era: Int) = self.withEra(era)
+    def withEra(era: Int) = self.withEra(era)
 
-  def compare(that: LocalDate) = self.compareTo(that)
+    def compare(that: LocalDate) = self.compareTo(that)
 
-  def interval = self.toInterval
+    def interval = self.toInterval
 
-  def interval(zone: DateTimeZone) = self.toInterval(zone)
+    def interval(zone: DateTimeZone) = self.toInterval(zone)
 }

@@ -21,27 +21,27 @@ import scala.collection.JavaConversions._
 @ContextConfiguration(classes = Array(classOf[CryptographyConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class EncryptorTest extends AbstractCoreTest {
 
-  @Autowired val ctx: ApplicationContext = null
+    @Autowired val ctx: ApplicationContext = null
 
-  // Spring Autowired 를 수행합니다.
-  new TestContextManager(this.getClass).prepareTestInstance(this)
+    // Spring Autowired 를 수행합니다.
+    new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  val PLAIN_TEXT = "동해물과 백두산이 마르고 닳도록~ Hello World! 1234567890 ~!@#$%^&*()"
+    val PLAIN_TEXT = "동해물과 백두산이 마르고 닳도록~ Hello World! 1234567890 ~!@#$%^&*()"
 
-  test("byte encryptor") {
-    val byteEncryptors = ctx.getBeansOfType(classOf[SymmetricEncryptor]).values()
+    test("byte encryptor") {
+        val byteEncryptors = ctx.getBeansOfType(classOf[SymmetricEncryptor]).values()
 
-    byteEncryptors.par.foreach(encryptor => {
-      log.debug(s"encryptor=$encryptor")
+        byteEncryptors.par.foreach(encryptor => {
+            log.debug(s"encryptor=$encryptor")
 
-      encryptor.setPassword("debop")
+            encryptor.setPassword("debop")
 
-      val encryptedBytes = encryptor.encrypt(Strings.getUtf8Bytes(PLAIN_TEXT))
-      val decryptedBytes = encryptor.decrypt(encryptedBytes)
+            val encryptedBytes = encryptor.encrypt(Strings.getUtf8Bytes(PLAIN_TEXT))
+            val decryptedBytes = encryptor.decrypt(encryptedBytes)
 
-      decryptedBytes should not equal null
-      Strings.getUtf8String(decryptedBytes) should equal(PLAIN_TEXT)
-    })
-  }
+            decryptedBytes should not equal null
+            Strings.getUtf8String(decryptedBytes) should equal(PLAIN_TEXT)
+        })
+    }
 
 }

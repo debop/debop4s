@@ -66,6 +66,7 @@ class OneToManyListTest extends AbstractJpaTest {
 }
 
 @javax.persistence.Entity
+@Access(javax.persistence.AccessType.FIELD)
 class OneToManyUser extends HibernateEntity[lang.Long] {
 
     @Id
@@ -92,6 +93,7 @@ class OneToManyUser extends HibernateEntity[lang.Long] {
 }
 
 @javax.persistence.Entity
+@Access(javax.persistence.AccessType.FIELD)
 class OneToManyAddress extends HibernateEntity[lang.Long] {
 
     @Id
@@ -107,6 +109,7 @@ class OneToManyAddress extends HibernateEntity[lang.Long] {
 }
 
 @javax.persistence.Entity
+@Access(javax.persistence.AccessType.FIELD)
 class OneToManyChild extends HibernateEntity[lang.Long] {
 
     def this(name: String) {
@@ -127,6 +130,7 @@ class OneToManyChild extends HibernateEntity[lang.Long] {
 }
 
 @javax.persistence.Entity
+@Access(javax.persistence.AccessType.FIELD)
 class OneToManyFather extends HibernateEntity[lang.Long] {
 
     @Id
@@ -137,8 +141,8 @@ class OneToManyFather extends HibernateEntity[lang.Long] {
 
     var name: String = _
 
-  @OneToMany(cascade = Array(javax.persistence.CascadeType.ALL), fetch = FetchType.EAGER)
-  @JoinTable(name = "Father_Child")
+    @OneToMany(cascade = Array(javax.persistence.CascadeType.ALL), fetch = FetchType.EAGER)
+    @JoinTable(name = "Father_Child")
     @OrderColumn(name = "birthday")
     @LazyCollection(LazyCollectionOption.EXTRA)
     val orderedChildren: util.List[OneToManyChild] = new util.ArrayList[OneToManyChild]()
@@ -148,6 +152,7 @@ class OneToManyFather extends HibernateEntity[lang.Long] {
 }
 
 @javax.persistence.Entity
+@Access(javax.persistence.AccessType.FIELD)
 class OneToManyOrder extends HibernateEntity[lang.Long] {
 
     @Id
@@ -158,12 +163,13 @@ class OneToManyOrder extends HibernateEntity[lang.Long] {
 
     var no: String = _
 
-  @OneToMany(mappedBy = "order", cascade = Array(javax.persistence.CascadeType.ALL), orphanRemoval = true)
-  @LazyCollection(LazyCollectionOption.EXTRA)
+    @OneToMany(mappedBy = "order", cascade = Array(javax.persistence.CascadeType.ALL), orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.EXTRA)
     val items: util.List[OneToManyOrderItem] = new util.ArrayList[OneToManyOrderItem]
 }
 
 @javax.persistence.Entity
+@Access(javax.persistence.AccessType.FIELD)
 class OneToManyOrderItem extends HibernateEntity[lang.Long] {
 
     @Id

@@ -15,18 +15,18 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
  * @since  2014. 1. 11. 오후 10:54
  */
 @ContextConfiguration(classes = Array(classOf[JpaMySqlConfiguration]),
-                       loader = classOf[AnnotationConfigContextLoader])
+                         loader = classOf[AnnotationConfigContextLoader])
 class MappingTest extends AbstractDataTest {
 
-  @PersistenceContext val em: EntityManager = null
-  @Autowired val jdbcTemplate: JdbcTemplate = null
+    @PersistenceContext val em: EntityManager = null
+    @Autowired val jdbcTemplate: JdbcTemplate = null
 
-  // Spring Autowired 를 수행합니다.
-  new TestContextManager(this.getClass).prepareTestInstance(this)
+    // Spring Autowired 를 수행합니다.
+    new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  @Test
-  def configurationSetup() {
-    assert(em != null)
-    assert(jdbcTemplate != null)
-  }
+    @Test
+    def configurationSetup() {
+        assert(em != null)
+        assert(jdbcTemplate != null)
+    }
 }

@@ -13,28 +13,28 @@ import org.springframework.scala.context.function.{FunctionalConfigApplicationCo
  */
 class FunctionalConfigurationTest extends FunSuite {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  val context = FunctionalConfigApplicationContext(classOf[CompressorConfiguration])
+    val context = FunctionalConfigApplicationContext(classOf[CompressorConfiguration])
 
-  val gzip = context.getBean(classOf[GZipCompressor])
-  val deflate = context.getBean(classOf[DeflateCompressor])
+    val gzip = context.getBean(classOf[GZipCompressor])
+    val deflate = context.getBean(classOf[DeflateCompressor])
 
-  test("compressor injection") {
-    log.debug("names=" + context.getBeanDefinitionNames.mkString(","))
+    test("compressor injection") {
+        log.debug("names=" + context.getBeanDefinitionNames.mkString(","))
 
-    assert(gzip != null)
-    assert(deflate != null)
-  }
+        assert(gzip != null)
+        assert(deflate != null)
+    }
 }
 
 class CompressorConfiguration extends FunctionalConfiguration {
 
-  bean() {
-    new GZipCompressor()
-  }
+    bean() {
+        new GZipCompressor()
+    }
 
-  bean() {
-    new DeflateCompressor()
-  }
+    bean() {
+        new DeflateCompressor()
+    }
 }

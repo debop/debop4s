@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Bean
  */
 abstract class AbstractJpaMariaDbConfiguration extends AbstractJpaMySqlConfiguration {
 
-  @Bean
-  override def dataSource: DataSource = {
-    buildDataSource(DRIVER_CLASS_MARIADB,
-                     s"jdbc:mysql://localhost/$getDatabaseName",
-                     "root",
-                     "root")
-  }
+    @Bean
+    override def dataSource: DataSource = {
+        buildDataSource(DRIVER_CLASS_MARIADB,
+                           s"jdbc:mysql://localhost/$getDatabaseName",
+                           "root",
+                           "root")
+    }
 }

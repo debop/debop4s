@@ -13,32 +13,32 @@ import scala.concurrent.duration._
  */
 class AsyncMySqlTest extends AbstractExperimentTest {
 
-  test("basic example") {
-    val configuration = new Configuration(host = "localhost",
-                                           username = "root",
-                                           password = Some("root"),
-                                           database = Some("hibernate"),
-                                           port = 3306)
-    val conn = new MySQLConnection(configuration)
+    test("basic example") {
+        val configuration = new Configuration(host = "localhost",
+                                                 username = "root",
+                                                 password = Some("root"),
+                                                 database = Some("hibernate"),
+                                                 port = 3306)
+        val conn = new MySQLConnection(configuration)
 
-    Await.ready(conn.connect, 5 seconds)
+        Await.ready(conn.connect, 5 seconds)
 
-    val future = conn.sendQuery("SELECT 0")
+        val future = conn.sendQuery("SELECT 0")
 
-    val mapResult = future.map(queryResult =>
-      queryResult.rows match {
-        case Some(resultSet) => {
-          val row = resultSet.head
-          row(0)
-        }
-        case None => -1
-      })
+        val mapResult = future.map(queryResult =>
+            queryResult.rows match {
+                case Some(resultSet) => {
+                    val row = resultSet.head
+                    row(0)
+                }
+                case None => -1
+            })
 
-    val result = Await.result(mapResult, 5 seconds)
+        val result = Await.result(mapResult, 5 seconds)
 
-    println(result)
+        println(result)
 
-    conn.disconnect
-  }
+        conn.disconnect
+    }
 
 }

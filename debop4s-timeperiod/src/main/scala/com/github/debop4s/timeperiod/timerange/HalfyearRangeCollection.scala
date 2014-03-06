@@ -13,17 +13,17 @@ import scala.collection.mutable.ArrayBuffer
  */
 object HalfyearRangeCollection {
 
-  def apply(year: Int, halfyear: Halfyear, halfyearCount: Int): HalfyearRangeCollection =
-    apply(year, halfyear, halfyearCount, DefaultTimeCalendar)
+    def apply(year: Int, halfyear: Halfyear, halfyearCount: Int): HalfyearRangeCollection =
+        apply(year, halfyear, halfyearCount, DefaultTimeCalendar)
 
-  def apply(year: Int, halfyear: Halfyear, halfyearCount: Int, calendar: ITimeCalendar): HalfyearRangeCollection =
-    new HalfyearRangeCollection(year, halfyear, halfyearCount, calendar)
+    def apply(year: Int, halfyear: Halfyear, halfyearCount: Int, calendar: ITimeCalendar): HalfyearRangeCollection =
+        new HalfyearRangeCollection(year, halfyear, halfyearCount, calendar)
 
-  def apply(moment: DateTime, halfyearCount: Int): HalfyearRangeCollection =
-    apply(moment, halfyearCount, DefaultTimeCalendar)
+    def apply(moment: DateTime, halfyearCount: Int): HalfyearRangeCollection =
+        apply(moment, halfyearCount, DefaultTimeCalendar)
 
-  def apply(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar): HalfyearRangeCollection =
-    new HalfyearRangeCollection(moment.getYear, Times.halfyearOf(moment), halfyearCount, calendar)
+    def apply(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar): HalfyearRangeCollection =
+        new HalfyearRangeCollection(moment.getYear, Times.halfyearOf(moment), halfyearCount, calendar)
 }
 
 
@@ -31,17 +31,17 @@ class HalfyearRangeCollection(private val _year: Int,
                               private val _halfyear: Halfyear,
                               private val _halfyearCount: Int,
                               private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends HalfyearTimeRange(_year, _halfyear, _halfyearCount, _calendar) {
+    extends HalfyearTimeRange(_year, _halfyear, _halfyearCount, _calendar) {
 
-  def getHalfyears: Seq[HalfyearRange] = {
-    val halfyears = ArrayBuffer[HalfyearRange]()
+    def getHalfyears: Seq[HalfyearRange] = {
+        val halfyears = ArrayBuffer[HalfyearRange]()
 
-    for (x <- 0 until halfyearCount) {
-      val yhy = Times.addHalfyear(startYear, startHalfyear, x)
-      halfyears += new HalfyearRange(yhy.year, yhy.halfyear, calendar)
+        for (x <- 0 until halfyearCount) {
+            val yhy = Times.addHalfyear(startYear, startHalfyear, x)
+            halfyears += new HalfyearRange(yhy.year, yhy.halfyear, calendar)
+        }
+
+        halfyears
     }
-
-    halfyears
-  }
 
 }

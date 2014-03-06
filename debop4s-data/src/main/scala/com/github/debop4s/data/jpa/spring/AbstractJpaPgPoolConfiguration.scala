@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Bean
  */
 abstract class AbstractJpaPgPoolConfiguration extends AbstractJpaPostgreSqlConfiguration {
 
-  @Bean
-  override def dataSource: DataSource = {
-    buildDataSource(DRIVER_CLASS_POSTGRESQL,
-                     s"jdbc:postgresql://localhost:9999/$getDatabaseName?Set=UTF8",
-                     "root",
-                     "root")
-  }
+    @Bean
+    override def dataSource: DataSource = {
+        buildDataSource(DRIVER_CLASS_POSTGRESQL,
+                           s"jdbc:postgresql://localhost:9999/$getDatabaseName?Set=UTF8",
+                           "root",
+                           "root")
+    }
 }

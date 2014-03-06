@@ -20,20 +20,20 @@ import scala.collection.JavaConversions._
 @ContextConfiguration(classes = Array(classOf[CryptographyConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class StringDigesterTest extends AbstractCoreTest {
 
-  @Autowired val ctx: ApplicationContext = null
+    @Autowired val ctx: ApplicationContext = null
 
-  // Spring Autowired 를 수행합니다.
-  new TestContextManager(this.getClass).prepareTestInstance(this)
+    // Spring Autowired 를 수행합니다.
+    new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  val PLAIN_TEXT = "동해물과 백두산이 마르고 닳도록~ Hello World! 1234567890 ~!@#$%^&*()"
+    val PLAIN_TEXT = "동해물과 백두산이 마르고 닳도록~ Hello World! 1234567890 ~!@#$%^&*()"
 
-  test("string digest") {
-    val digesters = ctx.getBeansOfType(classOf[StringDigester]).values()
+    test("string digest") {
+        val digesters = ctx.getBeansOfType(classOf[StringDigester]).values()
 
-    digesters.foreach(digester => {
-      log.debug(s"Digest message by $digester")
-      val digestedText = digester.digest(PLAIN_TEXT)
-      digester.matches(PLAIN_TEXT, digestedText) should equal(true)
-    })
-  }
+        digesters.foreach(digester => {
+            log.debug(s"Digest message by $digester")
+            val digestedText = digester.digest(PLAIN_TEXT)
+            digester.matches(PLAIN_TEXT, digestedText) should equal(true)
+        })
+    }
 }

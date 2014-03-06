@@ -14,31 +14,31 @@ class MonthRangeCollection(private[this] val _year: Int,
                            private[this] val _monthOfYear: Int,
                            private[this] val _monthCount: Int,
                            private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends MonthTimeRange(_year, _monthOfYear, _monthCount, _calendar) {
+    extends MonthTimeRange(_year, _monthOfYear, _monthCount, _calendar) {
 
-  def getMonths: Seq[MonthRange] = {
-    val months = ArrayBuffer[MonthRange]()
-    for (m <- 0 until monthCount) {
-      months += MonthRange(start.plusMonths(m), calendar)
+    def getMonths: Seq[MonthRange] = {
+        val months = ArrayBuffer[MonthRange]()
+        for (m <- 0 until monthCount) {
+            months += MonthRange(start.plusMonths(m), calendar)
+        }
+        months
     }
-    months
-  }
 }
 
 object MonthRangeCollection {
 
-  def apply(year: Int, monthOfYear: Int, monthCount: Int): MonthRangeCollection =
-    apply(year, monthOfYear, monthCount, DefaultTimeCalendar)
+    def apply(year: Int, monthOfYear: Int, monthCount: Int): MonthRangeCollection =
+        apply(year, monthOfYear, monthCount, DefaultTimeCalendar)
 
-  def apply(year: Int, monthOfYear: Int, monthCount: Int, calendar: ITimeCalendar): MonthRangeCollection =
-    new MonthRangeCollection(year, monthOfYear, monthCount, calendar)
+    def apply(year: Int, monthOfYear: Int, monthCount: Int, calendar: ITimeCalendar): MonthRangeCollection =
+        new MonthRangeCollection(year, monthOfYear, monthCount, calendar)
 
-  def apply(moment: DateTime, monthCount: Int): MonthRangeCollection = {
-    apply(moment, monthCount, DefaultTimeCalendar)
-  }
+    def apply(moment: DateTime, monthCount: Int): MonthRangeCollection = {
+        apply(moment, monthCount, DefaultTimeCalendar)
+    }
 
-  def apply(moment: DateTime, monthCount: Int, calendar: ITimeCalendar): MonthRangeCollection = {
-    new MonthRangeCollection(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
-  }
+    def apply(moment: DateTime, monthCount: Int, calendar: ITimeCalendar): MonthRangeCollection = {
+        new MonthRangeCollection(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
+    }
 
 }

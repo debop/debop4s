@@ -9,6 +9,6 @@ import org.slf4j.LoggerFactory
  */
 abstract class AbstractCoreTest extends FunSuite with Matchers with BeforeAndAfter {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
 }

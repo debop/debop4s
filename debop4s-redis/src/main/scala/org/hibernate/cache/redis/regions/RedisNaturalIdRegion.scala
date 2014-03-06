@@ -19,14 +19,14 @@ class RedisNaturalIdRegion(private[this] val _accessStrategyFactory: RedisAccess
                            private[this] val _settings: Settings,
                            private[this] val _metadata: CacheDataDescription,
                            private[this] val _props: Properties)
-  extends RedisTransactionalDataRegion(_accessStrategyFactory,
-                                        _cache,
-                                        _regionName,
-                                        _settings,
-                                        _metadata,
-                                        _props) with NaturalIdRegion {
+    extends RedisTransactionalDataRegion(_accessStrategyFactory,
+                                            _cache,
+                                            _regionName,
+                                            _settings,
+                                            _metadata,
+                                            _props) with NaturalIdRegion {
 
-  def buildAccessStrategy(accessType: AccessType): NaturalIdRegionAccessStrategy =
-    accessStrategyFactory.createNaturalIdRegionAccessStrategy(this, accessType)
+    def buildAccessStrategy(accessType: AccessType): NaturalIdRegionAccessStrategy =
+        accessStrategyFactory.createNaturalIdRegionAccessStrategy(this, accessType)
 
 }

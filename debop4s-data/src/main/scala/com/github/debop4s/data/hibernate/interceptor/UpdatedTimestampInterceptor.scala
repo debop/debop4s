@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory
  */
 class UpdatedTimestampInterceptor extends EmptyInterceptor {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  override def preFlush(entities: util.Iterator[_]) {
-    while (entities.hasNext) {
-      val entity = entities.next()
-      entity match {
-        case ute: UpdatedTimestampEntity => ute.updateUpdatedTimestamp()
-        case _ =>
-      }
+    override def preFlush(entities: util.Iterator[_]) {
+        while (entities.hasNext) {
+            val entity = entities.next()
+            entity match {
+                case ute: UpdatedTimestampEntity => ute.updateUpdatedTimestamp()
+                case _ =>
+            }
+        }
     }
-  }
 }

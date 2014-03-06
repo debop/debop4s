@@ -12,33 +12,33 @@ import org.hibernate.cfg.Settings
  */
 class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: RedisCollectionRegion,
                                                             private[this] val _settings: Settings)
-  extends AbstractRedisAccessStrategy(_region, _settings)
-          with CollectionRegionAccessStrategy {
+    extends AbstractRedisAccessStrategy(_region, _settings)
+    with CollectionRegionAccessStrategy {
 
-  override def getRegion = region
+    override def getRegion = region
 
-  override def get(key: Any, txTimestamp: Long): AnyRef =
-    region.get(key).asInstanceOf[AnyRef]
+    override def get(key: Any, txTimestamp: Long): AnyRef =
+        region.get(key).asInstanceOf[AnyRef]
 
-  override def putFromLoad(key: Any,
-                           value: Any,
-                           txTimestamp: Long,
-                           version: Any,
-                           minimalPutOverride: Boolean): Boolean = {
-    if (minimalPutOverride && region.contains(key)) {
-      log.debug(s"cancel put from load...")
-      return false
+    override def putFromLoad(key: Any,
+                             value: Any,
+                             txTimestamp: Long,
+                             version: Any,
+                             minimalPutOverride: Boolean): Boolean = {
+        if (minimalPutOverride && region.contains(key)) {
+            log.debug(s"cancel put from load...")
+            return false
+        }
+
+        region.put(key, value)
+        true
     }
 
-    region.put(key, value)
-    true
-  }
+    override def lockItem(key: Any, version: Any): SoftLock = null
 
-  override def lockItem(key: Any, version: Any): SoftLock = null
-
-  override def unlockItem(key: Any, lock: SoftLock) {
-    region.remove(key)
-  }
+    override def unlockItem(key: Any, lock: SoftLock) {
+        region.remove(key)
+    }
 }
 
 /**
@@ -49,47 +49,47 @@ class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _r
  */
 class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisEntityRegion,
                                                         private[this] val _settings: Settings)
-  extends AbstractRedisAccessStrategy(_region, _settings)
-          with EntityRegionAccessStrategy {
+    extends AbstractRedisAccessStrategy(_region, _settings)
+    with EntityRegionAccessStrategy {
 
-  override def getRegion = region
+    override def getRegion = region
 
-  override def get(key: Any, txTimestamp: Long): AnyRef =
-    region.get(key).asInstanceOf[AnyRef]
+    override def get(key: Any, txTimestamp: Long): AnyRef =
+        region.get(key).asInstanceOf[AnyRef]
 
-  override def putFromLoad(key: Any,
-                           value: Any,
-                           txTimestamp: Long,
-                           version: Any,
-                           minimalPutOverride: Boolean): Boolean = {
-    if (minimalPutOverride && region.contains(key)) {
-      log.debug(s"cancel put from load...")
-      return false
+    override def putFromLoad(key: Any,
+                             value: Any,
+                             txTimestamp: Long,
+                             version: Any,
+                             minimalPutOverride: Boolean): Boolean = {
+        if (minimalPutOverride && region.contains(key)) {
+            log.debug(s"cancel put from load...")
+            return false
+        }
+
+        region.put(key, value)
+        true
     }
 
-    region.put(key, value)
-    true
-  }
+    override def lockItem(key: Any, version: Any): SoftLock = null
 
-  override def lockItem(key: Any, version: Any): SoftLock = null
+    override def unlockItem(key: Any, lock: SoftLock) {
+        region.remove(key)
+    }
 
-  override def unlockItem(key: Any, lock: SoftLock) {
-    region.remove(key)
-  }
+    override def insert(key: Any, value: Any, version: Any): Boolean = false
 
-  override def insert(key: Any, value: Any, version: Any): Boolean = false
+    override def afterInsert(key: Any, value: Any, version: Any): Boolean = false
 
-  override def afterInsert(key: Any, value: Any, version: Any): Boolean = false
+    override def update(key: Any, value: Any, currentVersion: Any, previousVersion: Any): Boolean = {
+        remove(key)
+        true
+    }
 
-  override def update(key: Any, value: Any, currentVersion: Any, previousVersion: Any): Boolean = {
-    remove(key)
-    true
-  }
-
-  override def afterUpdate(key: Any, value: Any, currentVersion: Any, previousVersion: Any, lock: SoftLock): Boolean = {
-    unlockItem(key, lock)
-    true
-  }
+    override def afterUpdate(key: Any, value: Any, currentVersion: Any, previousVersion: Any, lock: SoftLock): Boolean = {
+        unlockItem(key, lock)
+        true
+    }
 }
 
 /**
@@ -100,45 +100,45 @@ class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _regio
  */
 class NonStrictReadWriteRedisNatualIdRegionAccessStrategy(private[this] val _region: RedisNaturalIdRegion,
                                                           private[this] val _settings: Settings)
-  extends AbstractRedisAccessStrategy(_region, _settings)
-          with NaturalIdRegionAccessStrategy {
+    extends AbstractRedisAccessStrategy(_region, _settings)
+    with NaturalIdRegionAccessStrategy {
 
-  override def getRegion = region
+    override def getRegion = region
 
-  override def get(key: Any, txTimestamp: Long) =
-    region.get(key).asInstanceOf[AnyRef]
+    override def get(key: Any, txTimestamp: Long) =
+        region.get(key).asInstanceOf[AnyRef]
 
-  override def putFromLoad(key: Any,
-                           value: Any,
-                           txTimestamp: Long,
-                           version: Any,
-                           minimalPutOverride: Boolean): Boolean = {
-    if (minimalPutOverride && region.contains(key)) {
-      log.debug(s"cancel put from load...")
-      return false
+    override def putFromLoad(key: Any,
+                             value: Any,
+                             txTimestamp: Long,
+                             version: Any,
+                             minimalPutOverride: Boolean): Boolean = {
+        if (minimalPutOverride && region.contains(key)) {
+            log.debug(s"cancel put from load...")
+            return false
+        }
+
+        region.put(key, value)
+        true
     }
 
-    region.put(key, value)
-    true
-  }
+    override def lockItem(key: Any, version: Any): SoftLock = null
 
-  override def lockItem(key: Any, version: Any): SoftLock = null
+    override def unlockItem(key: Any, lock: SoftLock) {
+        region.remove(key)
+    }
 
-  override def unlockItem(key: Any, lock: SoftLock) {
-    region.remove(key)
-  }
+    def insert(key: Any, value: Any): Boolean = false
 
-  def insert(key: Any, value: Any): Boolean = false
+    def afterInsert(key: Any, value: Any): Boolean = false
 
-  def afterInsert(key: Any, value: Any): Boolean = false
+    def update(key: Any, value: Any): Boolean = {
+        remove(key)
+        true
+    }
 
-  def update(key: Any, value: Any): Boolean = {
-    remove(key)
-    true
-  }
-
-  def afterUpdate(key: Any, value: Any, lock: SoftLock): Boolean = {
-    unlockItem(key, lock)
-    true
-  }
+    def afterUpdate(key: Any, value: Any, lock: SoftLock): Boolean = {
+        unlockItem(key, lock)
+        true
+    }
 }

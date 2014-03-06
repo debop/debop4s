@@ -11,15 +11,15 @@ import redis.api.pubsub.{Message, PMessage}
 abstract class AbstractRedisSubscriberActor(override val address: InetSocketAddress,
                                             val channels: Seq[String],
                                             val patterns: Seq[String] = Nil)
-  extends RedisSubscriberActor(address, channels, patterns) {
+    extends RedisSubscriberActor(address, channels, patterns) {
 
-  /**
-   * Redis Pub/Sub channels 에 데이터가 들어오면 호출되는 메소드입니다.
-   */
-  override def onMessage(m: Message) {}
+    /**
+     * Redis Pub/Sub channels 에 데이터가 들어오면 호출되는 메소드입니다.
+     */
+    override def onMessage(m: Message) {}
 
-  /**
-   * Redis Pub/Sub channels 에 Patten에 해당하는 데이터가 들어오면 호출되는 메소드입니다.
-   */
-  override def onPMessage(pm: PMessage) {}
+    /**
+     * Redis Pub/Sub channels 에 Patten에 해당하는 데이터가 들어오면 호출되는 메소드입니다.
+     */
+    override def onPMessage(pm: PMessage) {}
 }

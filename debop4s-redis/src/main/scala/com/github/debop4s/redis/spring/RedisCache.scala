@@ -20,166 +20,166 @@ class RedisCache(val name: String,
                  val redis: RedisClient,
                  expiration: Long = 0) extends Cache {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-  log.trace(s"create RedisCache name=$name, prefix=$prefix, expiration=$expiration, redis=$redis")
+    log.trace(s"create RedisCache name=$name, prefix=$prefix, expiration=$expiration, redis=$redis")
 
-  val PAGE_SIZE = 100
+    val PAGE_SIZE = 100
 
-  val serializer = new BinarySerializer()
+    val serializer = new BinarySerializer()
 
-  val setName = s"cache:keys:$name"
-  val cacheLockName = s"cache:lock:$name"
+    val setName = s"cache:keys:$name"
+    val cacheLockName = s"cache:lock:$name"
 
-  var waitTimeoutForLock = 100 // msec
+    var waitTimeoutForLock = 100 // msec
 
-  override def getNativeCache: AnyRef = redis
+    override def getNativeCache: AnyRef = redis
 
-  override def getName: String = name
+    override def getName: String = name
 
-  /**
-  * 캐시 항목을 조회합니다.
-  */
-  override def get(key: Any): ValueWrapper = {
-    log.trace(s"캐시 조회. key=$key")
+    /**
+    * 캐시 항목을 조회합니다.
+    */
+    override def get(key: Any): ValueWrapper = {
+        log.trace(s"캐시 조회. key=$key")
 
-    Promises.await(redis.get(computeKey(key)))
-    .map(bs => new SimpleValueWrapper(serializer.deserialize(bs.toArray, classOf[AnyRef])))
-    .getOrElse(null)
-  }
+        Promises.await(redis.get(computeKey(key)))
+        .map(bs => new SimpleValueWrapper(serializer.deserialize(bs.toArray, classOf[AnyRef])))
+        .getOrElse(null)
+    }
 
-  /**
-  * 캐시 항목을 조회합니다.
-  * Spring 4.0 이상에서 지원합니다.
-  */
-  override def get[T](key: Any, clazz: Class[T]): T = {
-    log.trace(s"캐시 조회. key=$key, clazz=$clazz")
+    /**
+    * 캐시 항목을 조회합니다.
+    * Spring 4.0 이상에서 지원합니다.
+    */
+    override def get[T](key: Any, clazz: Class[T]): T = {
+        log.trace(s"캐시 조회. key=$key, clazz=$clazz")
 
-    Promises.await(redis.get(computeKey(key)))
-    .map(bs => serializer.deserialize(bs.toArray, clazz))
-    .getOrElse(null.asInstanceOf[T])
-  }
+        Promises.await(redis.get(computeKey(key)))
+        .map(bs => serializer.deserialize(bs.toArray, clazz))
+        .getOrElse(null.asInstanceOf[T])
+    }
 
-  /**
-   * 캐시를 저장합니다.
-   */
-  override def put(key: Any, value: Any) {
-    log.trace(s"Spring Cache를 저장합니다. key=$key, value=$value")
-    val keyStr = computeKey(key)
-    withTransaction {
-      tx =>
-        tx.set(keyStr, serializer.serialize(value))
-        tx.zadd(setName, (0.0, keyStr))
-        if (expiration > 0) {
-          tx.expire(keyStr, expiration)
-          // 최신 캐시 항목에 의해 설정되기 때문에 매번 최대 값이 설정된다고 보면 된다.
-          tx.expire(setName, expiration)
+    /**
+     * 캐시를 저장합니다.
+     */
+    override def put(key: Any, value: Any) {
+        log.trace(s"Spring Cache를 저장합니다. key=$key, value=$value")
+        val keyStr = computeKey(key)
+        withTransaction {
+            tx =>
+                tx.set(keyStr, serializer.serialize(value))
+                tx.zadd(setName, (0.0, keyStr))
+                if (expiration > 0) {
+                    tx.expire(keyStr, expiration)
+                    // 최신 캐시 항목에 의해 설정되기 때문에 매번 최대 값이 설정된다고 보면 된다.
+                    tx.expire(setName, expiration)
+                }
         }
     }
-  }
 
-  /**
-  * 캐시 항목을 삭제합니다.
-  */
-  override def evict(key: Any) {
-    log.trace(s"캐시를 삭제합니다. key=$key")
-    val keyStr = computeKey(key)
-    withTransaction {
-      tx =>
-        tx.del(keyStr)
-        tx.zrem(setName, keyStr)
-    }
-  }
-
-  /**
-  * 모든 캐시 항목을 모두 삭제한다.
-  */
-  override def clear() {
-    try {
-      doClear()
-    } catch {
-      case e: Throwable => log.warn(s"캐시를 삭제하는데 예외가 발생했습니다. name=$name", e)
-    }
-  }
-
-  private def doClear() {
-    log.trace(s"Spring cache를 모두 제거합니다... name=$name")
-
-    if (Promises.await(redis.exists(cacheLockName))) {
-      return
-    }
-
-    try {
-      // Lock을 설정한다. 다른 clear 작업을 못하도록...
-      redis.set(cacheLockName, cacheLockName)
-
-      var offset = 0
-      var finished = false
-
-      do {
-        val futureKeys = redis.zrange(setName, offset * PAGE_SIZE, (offset + 1) * PAGE_SIZE - 1)
-        val keys = Promises.await(futureKeys).map(x => x.utf8String)
-
-        finished = keys.size < PAGE_SIZE
-        offset += 1
-
-        if (keys.nonEmpty) {
-          // 캐시 삭제
-          Promises.await(redis.del(keys.map(key => computeKey(key)): _*))
+    /**
+    * 캐시 항목을 삭제합니다.
+    */
+    override def evict(key: Any) {
+        log.trace(s"캐시를 삭제합니다. key=$key")
+        val keyStr = computeKey(key)
+        withTransaction {
+            tx =>
+                tx.del(keyStr)
+                tx.zrem(setName, keyStr)
         }
-      } while (!finished)
-
-      redis.del(setName)
-    } finally {
-      log.trace(s"Lock을 제거합니다. lock=$cacheLockName")
-      redis.del(cacheLockName)
     }
 
-    log.debug(s"Spring cache를 모두 삭제했습니다. name=$name")
-  }
-
-
-  def computeKey(key: Any): String = { prefix + key.toString }
-
-  private def wairForLock(redis: RedisClient): Boolean = {
-    var retry = false
-    var foundLock = false
-    do {
-      if (Promises.await(redis.exists(cacheLockName))) {
-        foundLock = true
+    /**
+    * 모든 캐시 항목을 모두 삭제한다.
+    */
+    override def clear() {
         try {
-          Thread.sleep(waitTimeoutForLock)
+            doClear()
         } catch {
-          case ignored: InterruptedException =>
-          case e: Exception => throw new RuntimeException("Fail to wait for lock.", e)
+            case e: Throwable => log.warn(s"캐시를 삭제하는데 예외가 발생했습니다. name=$name", e)
         }
-        retry = true
-      }
-    } while (retry)
-    foundLock
-  }
+    }
+
+    private def doClear() {
+        log.trace(s"Spring cache를 모두 제거합니다... name=$name")
+
+        if (Promises.await(redis.exists(cacheLockName))) {
+            return
+        }
+
+        try {
+            // Lock을 설정한다. 다른 clear 작업을 못하도록...
+            redis.set(cacheLockName, cacheLockName)
+
+            var offset = 0
+            var finished = false
+
+            do {
+                val futureKeys = redis.zrange(setName, offset * PAGE_SIZE, (offset + 1) * PAGE_SIZE - 1)
+                val keys = Promises.await(futureKeys).map(x => x.utf8String)
+
+                finished = keys.size < PAGE_SIZE
+                offset += 1
+
+                if (keys.nonEmpty) {
+                    // 캐시 삭제
+                    Promises.await(redis.del(keys.map(key => computeKey(key)): _*))
+                }
+            } while (!finished)
+
+            redis.del(setName)
+        } finally {
+            log.trace(s"Lock을 제거합니다. lock=$cacheLockName")
+            redis.del(cacheLockName)
+        }
+
+        log.debug(s"Spring cache를 모두 삭제했습니다. name=$name")
+    }
 
 
-  private def withTransaction(block: TransactionBuilder => Unit): Future[MultiBulk] = {
-    val tx = redis.transaction()
-    block(tx)
-    tx.exec()
-  }
+    def computeKey(key: Any): String = { prefix + key.toString }
+
+    private def wairForLock(redis: RedisClient): Boolean = {
+        var retry = false
+        var foundLock = false
+        do {
+            if (Promises.await(redis.exists(cacheLockName))) {
+                foundLock = true
+                try {
+                    Thread.sleep(waitTimeoutForLock)
+                } catch {
+                    case ignored: InterruptedException =>
+                    case e: Exception => throw new RuntimeException("Fail to wait for lock.", e)
+                }
+                retry = true
+            }
+        } while (retry)
+        foundLock
+    }
+
+
+    private def withTransaction(block: TransactionBuilder => Unit): Future[MultiBulk] = {
+        val tx = redis.transaction()
+        block(tx)
+        tx.exec()
+    }
 }
 
 object RedisCache {
 
-  implicit val akkaSystem = akka.actor.ActorSystem()
+    implicit val akkaSystem = akka.actor.ActorSystem()
 
-  def apply(name: String, prefix: String, redis: RedisClient, expiration: Long): RedisCache =
-    new RedisCache(name, prefix, redis, expiration)
+    def apply(name: String, prefix: String, redis: RedisClient, expiration: Long): RedisCache =
+        new RedisCache(name, prefix, redis, expiration)
 
-  def apply(name: String,
-            prefix: String,
-            expiration: Long = 0,
-            host: String = "locahost",
-            port: Int = 6379): RedisCache = {
-    val redis = RedisClient(host, port)
-    new RedisCache(name, prefix, redis, expiration)
-  }
+    def apply(name: String,
+              prefix: String,
+              expiration: Long = 0,
+              host: String = "locahost",
+              port: Int = 6379): RedisCache = {
+        val redis = RedisClient(host, port)
+        new RedisCache(name, prefix, redis, expiration)
+    }
 }

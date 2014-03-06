@@ -17,12 +17,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableJpaRepositories(basePackages = Array("com.github.debop4s.data.tests"))
 class JpaMySqlConfiguration extends AbstractJpaMySqlHikariConfiguration {
 
-  override def getMappedPackageNames: Array[String] =
-    Array(classOf[Employee].getPackage.getName)
+    override def getMappedPackageNames: Array[String] =
+        Array(classOf[Employee].getPackage.getName)
 
-  override def jpaProperties: Properties = {
-    val props = super.jpaProperties
-    props.put(AvailableSettings.HBM2DDL_AUTO, "create-drop")
-    props
-  }
+    override def jpaProperties: Properties = {
+        val props = super.jpaProperties
+        props.put(AvailableSettings.HBM2DDL_AUTO, "create-drop")
+        props
+    }
 }

@@ -23,110 +23,110 @@ import scala.collection.JavaConversions._
  */
 class HttpClient extends AutoCloseable {
 
-  private lazy val log = LoggerFactory.getLogger(classOf[HttpClient])
+    private lazy val log = LoggerFactory.getLogger(classOf[HttpClient])
 
-  lazy val connectionManager = new PoolingHttpClientConnectionManager()
+    lazy val connectionManager = new PoolingHttpClientConnectionManager()
 
-  val serializer = JacksonSerializer()
+    val serializer = JacksonSerializer()
 
-  var proxy: HttpHost = _
+    var proxy: HttpHost = _
 
-  def createHttpClient(): CloseableHttpClient = {
-    val builder = HttpClients.custom.setConnectionManager(connectionManager)
-    if (proxy != null)
-      builder.setRoutePlanner(new DefaultProxyRoutePlanner(proxy))
-    builder.build()
-  }
-
-  @varargs
-  def get(uriString: String, headers: Header*): String =
-    get(new URI(uriString), Charsets.UTF_8, headers: _*)
-
-  @varargs
-  def get(uriString: String, cs: Charset, headers: Header*): String =
-    get(new URI(uriString), cs, headers: _*)
-
-  @varargs
-  def get(uri: URI, headers: Header*): String =
-    get(uri, Charsets.UTF_8, headers: _*)
-
-  @varargs
-  def get(uri: URI, cs: Charset, headers: Header*): String = {
-    log.trace(s"HTTP GET uri=[$uri], headers=[$headers]")
-
-    val client = createHttpClient()
-    val httpget = new HttpGet(uri)
-
-    try {
-      if (headers != null)
-        headers.foreach(h => httpget.addHeader(h))
-      val response = client.execute(httpget)
-      EntityUtils.toString(response.getEntity, cs)
-    } finally {
-      client.close()
+    def createHttpClient(): CloseableHttpClient = {
+        val builder = HttpClients.custom.setConnectionManager(connectionManager)
+        if (proxy != null)
+            builder.setRoutePlanner(new DefaultProxyRoutePlanner(proxy))
+        builder.build()
     }
-  }
 
-  @varargs
-  def post(uriString: String, nvps: List[NameValuePair], headers: Header*): String =
-    post(uriString, nvps, Charsets.UTF_8, headers: _*)
+    @varargs
+    def get(uriString: String, headers: Header*): String =
+        get(new URI(uriString), Charsets.UTF_8, headers: _*)
 
-  @varargs
-  def post(uriString: String, nvps: List[NameValuePair], cs: Charset, headers: Header*): String =
-    post(new URI(uriString), nvps, cs, headers: _*)
+    @varargs
+    def get(uriString: String, cs: Charset, headers: Header*): String =
+        get(new URI(uriString), cs, headers: _*)
 
-  @varargs
-  def post(uri: URI, nvps: List[NameValuePair], headers: Header*): String =
-    post(uri, nvps, Charsets.UTF_8, headers: _*)
+    @varargs
+    def get(uri: URI, headers: Header*): String =
+        get(uri, Charsets.UTF_8, headers: _*)
 
-  @varargs
-  def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): String = {
-    assert(uri != null)
-    val client = createHttpClient()
-    val httppost = new HttpPost(uri)
+    @varargs
+    def get(uri: URI, cs: Charset, headers: Header*): String = {
+        log.trace(s"HTTP GET uri=[$uri], headers=[$headers]")
 
-    try {
-      if (nvps != null)
-        httppost.setEntity(new UrlEncodedFormEntity(nvps, cs))
-      if (headers != null)
-        headers.foreach(h => httppost.addHeader(h))
-      val response = client.execute(httppost)
-      EntityUtils.toString(response.getEntity, cs)
-    } finally {
-      client.close()
+        val client = createHttpClient()
+        val httpget = new HttpGet(uri)
+
+        try {
+            if (headers != null)
+                headers.foreach(h => httpget.addHeader(h))
+            val response = client.execute(httpget)
+            EntityUtils.toString(response.getEntity, cs)
+        } finally {
+            client.close()
+        }
     }
-  }
 
-  @varargs
-  def postJson[T](uri: URI, entity: T, headers: Header*): String =
-    postJson[T](uri, entity, Charsets.UTF_8, headers: _*)
+    @varargs
+    def post(uriString: String, nvps: List[NameValuePair], headers: Header*): String =
+        post(uriString, nvps, Charsets.UTF_8, headers: _*)
 
-  @varargs
-  def postJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): String = {
-    assert(uri != null)
-    val client = createHttpClient()
-    val httppost = new HttpPost(uri)
+    @varargs
+    def post(uriString: String, nvps: List[NameValuePair], cs: Charset, headers: Header*): String =
+        post(new URI(uriString), nvps, cs, headers: _*)
 
-    try {
-      if (entity != null) {
-        val text = serializer.serializeToText(entity)
-        httppost.setEntity(new StringEntity(text, cs))
-        httppost.addHeader("content-type", "application/json")
-      }
-      if (headers != null)
-        headers.foreach(h => httppost.addHeader(h))
-      val response = client.execute(httppost)
-      EntityUtils.toString(response.getEntity, cs)
-    } finally {
-      client.close()
+    @varargs
+    def post(uri: URI, nvps: List[NameValuePair], headers: Header*): String =
+        post(uri, nvps, Charsets.UTF_8, headers: _*)
+
+    @varargs
+    def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): String = {
+        assert(uri != null)
+        val client = createHttpClient()
+        val httppost = new HttpPost(uri)
+
+        try {
+            if (nvps != null)
+                httppost.setEntity(new UrlEncodedFormEntity(nvps, cs))
+            if (headers != null)
+                headers.foreach(h => httppost.addHeader(h))
+            val response = client.execute(httppost)
+            EntityUtils.toString(response.getEntity, cs)
+        } finally {
+            client.close()
+        }
     }
-  }
 
-  def close() {
-    try {
-      connectionManager.shutdown()
-    } catch {
-      case _: Throwable =>
+    @varargs
+    def postJson[T](uri: URI, entity: T, headers: Header*): String =
+        postJson[T](uri, entity, Charsets.UTF_8, headers: _*)
+
+    @varargs
+    def postJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): String = {
+        assert(uri != null)
+        val client = createHttpClient()
+        val httppost = new HttpPost(uri)
+
+        try {
+            if (entity != null) {
+                val text = serializer.serializeToText(entity)
+                httppost.setEntity(new StringEntity(text, cs))
+                httppost.addHeader("content-type", "application/json")
+            }
+            if (headers != null)
+                headers.foreach(h => httppost.addHeader(h))
+            val response = client.execute(httppost)
+            EntityUtils.toString(response.getEntity, cs)
+        } finally {
+            client.close()
+        }
     }
-  }
+
+    def close() {
+        try {
+            connectionManager.shutdown()
+        } catch {
+            case _: Throwable =>
+        }
+    }
 }

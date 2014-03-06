@@ -14,16 +14,16 @@ import org.springframework.context.annotation.Bean
  */
 abstract class AbstractHibernateH2Configuration extends AbstractHibernateConfiguration {
 
-  @Bean
-  override def dataSource: DataSource =
-    buildDataSource(DRIVER_CLASS_H2,
-                     "jdbc:h2:mem:" + getDatabaseName + ";MVCC=TRUE;DB_CLOSE_ON_EXIT=FALSE",
-                     "sa",
-                     "")
+    @Bean
+    override def dataSource: DataSource =
+        buildDataSource(DRIVER_CLASS_H2,
+                           "jdbc:h2:mem:" + getDatabaseName + ";MVCC=TRUE;DB_CLOSE_ON_EXIT=FALSE",
+                           "sa",
+                           "")
 
-  override def hibernateProperties: Properties = {
-    val props = super.hibernateProperties
-    props.put(AvailableSettings.DIALECT, DIALECT_H2)
-    props
-  }
+    override def hibernateProperties: Properties = {
+        val props = super.hibernateProperties
+        props.put(AvailableSettings.DIALECT, DIALECT_H2)
+        props
+    }
 }
