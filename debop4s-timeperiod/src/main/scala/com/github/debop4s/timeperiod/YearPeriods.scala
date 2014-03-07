@@ -6,12 +6,8 @@ import com.github.debop4s.timeperiod.utils.Times
 
 /**
  * 주차를 표현합니다.
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 1. 2. 오전 11:27
  */
 case class YearWeek(weekyear: Int, weekOfWeekyear: Int) {
-
     lazy val start = Times.startTimeOfWeek(weekyear, weekOfWeekyear)
     lazy val end = Times.endTimeOfMonth(weekyear, weekOfWeekyear)
 }

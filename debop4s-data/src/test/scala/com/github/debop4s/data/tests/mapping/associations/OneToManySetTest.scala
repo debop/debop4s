@@ -1,16 +1,16 @@
 package com.github.debop4s.data.tests.mapping.associations
 
+import com.github.debop4s.core.ValueObject
+import com.github.debop4s.core.utils.Hashs
 import com.github.debop4s.data.model.HibernateEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
+import com.github.debop4s.data.tests.mapping.associations.ProductStatus.ProductStatus
+import java.security.Timestamp
+import java.util.Date
 import java.{lang, util}
 import javax.persistence._
-import org.junit.Test
-import java.security.Timestamp
-import com.github.debop4s.core.utils.Hashs
 import org.hibernate.annotations.{Parent, LazyCollection, LazyCollectionOption}
-import com.github.debop4s.core.ValueObject
-import java.util.Date
-import com.github.debop4s.data.tests.mapping.associations.ProductStatus.ProductStatus
+import org.junit.Test
 import scala.beans.BeanProperty
 
 
@@ -27,8 +27,8 @@ class OneToManySetTest extends AbstractJpaTest {
     def bidding() {
 
         val item = new BiddingItem()
-        val bid1 = new Bid(item, BigDecimal(100.0))
-        val bid2 = new Bid(item, BigDecimal(200.0))
+        val bid1 = new Bid(item, new java.math.BigDecimal(100.0))
+        val bid2 = new Bid(item, new java.math.BigDecimal(200.0))
 
         em.persist(item)
         em.flush()
@@ -60,16 +60,17 @@ class OneToManySetTest extends AbstractJpaTest {
         val item = new ProductItem()
 
         val image1 = new ProductImage()
-        image1.name = "image1"
-        image1.item = item
         item.images.add(image1)
+        image1.setItem(item)
+        image1.name = "image1"
+
 
         val image2 = new ProductImage()
-        image2.name = "image1"
-        image2.item = item
         item.images.add(image2)
+        image2.item = item
+        image2.name = "image2"
 
-        //item.status = ProductStatus.Active
+        item.status = ProductStatus.Active
 
         em.persist(item)
         em.flush()
@@ -91,8 +92,6 @@ class OneToManySetTest extends AbstractJpaTest {
         em.remove(loaded2)
         em.flush()
         assert(em.find(classOf[ProductItem], item.id) == null)
-
-
     }
 }
 
@@ -100,7 +99,7 @@ class OneToManySetTest extends AbstractJpaTest {
 @Access(AccessType.FIELD)
 class Bid extends HibernateEntity[lang.Long] {
 
-    def this(item: BiddingItem, amount: BigDecimal) {
+    def this(item: BiddingItem, amount: java.math.BigDecimal) {
         this()
         this.item = item
         this.item.bids.add(this)
@@ -118,7 +117,7 @@ class Bid extends HibernateEntity[lang.Long] {
     var item: BiddingItem = _
 
     @Column(nullable = false)
-    var amount: BigDecimal = _
+    var amount: java.math.BigDecimal = _
 
     @Transient
     var timestamp: Timestamp = _
@@ -148,20 +147,20 @@ class BiddingItem extends HibernateEntity[lang.Long] {
 }
 
 @Embeddable
-@Access(AccessType.FIELD)
 class ProductImage extends ValueObject {
 
     // 이 놈은 @BeanProperty가 없으면 예외가 발생합니다.
     @Parent
     @BeanProperty
     var item: ProductItem = _
-
+    @BeanProperty
     var name: String = _
-
+    @BeanProperty
     var filename: String = _
-
-    var sizeX: Int = 0
-    var sizeY: Int = 0
+    @BeanProperty
+    var sizeX: lang.Integer = 0
+    @BeanProperty
+    var sizeY: lang.Integer = 0
 
     override def hashCode(): Int = Hashs.compute(name, filename)
 }
@@ -178,8 +177,8 @@ class ProductItem extends HibernateEntity[lang.Long] {
 
     var name: String = _
     var description: String = _
-    var initalPrice: BigDecimal = _
-    var reservePrice: BigDecimal = _
+    var initalPrice: java.math.BigDecimal = _
+    var reservePrice: java.math.BigDecimal = _
 
     @Temporal(TemporalType.DATE)
     var startDate: Date = _
@@ -188,7 +187,7 @@ class ProductItem extends HibernateEntity[lang.Long] {
     var endDate: Date = _
 
     @Column(name = "status")
-    var statusInt: Int = _
+    var statusInt: lang.Integer = _
 
     def status: ProductStatus = ProductStatus(statusInt)
 
@@ -198,6 +197,12 @@ class ProductItem extends HibernateEntity[lang.Long] {
     @ElementCollection(targetClass = classOf[ProductImage])
     @org.hibernate.annotations.Cascade(Array(org.hibernate.annotations.CascadeType.ALL))
     var images: util.Set[ProductImage] = new util.HashSet[ProductImage]()
+
+    def removeImage(image: ProductImage): Boolean = {
+        images.remove(image)
+    }
+
+    override def hashCode(): Int = Hashs.compute(name)
 }
 
 object ProductStatus extends Enumeration {
@@ -205,6 +210,6 @@ object ProductStatus extends Enumeration {
     type ProductStatus = Value
 
     val Unknown = Value(0, "Unknown")
-    val Active = Value(0, "Active")
-    val Inactive = Value(0, "Inactive")
+    val Active = Value(1, "Active")
+    val Inactive = Value(2, "Inactive")
 }

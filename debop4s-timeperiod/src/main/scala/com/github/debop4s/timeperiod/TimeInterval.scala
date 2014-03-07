@@ -73,18 +73,6 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
                    private[this] val _readonly: Boolean = false)
     extends TimePeriod(_start, _end, _readonly) with ITimeInterval {
 
-    //    def this(moment: DateTime,
-    //             startEdge: IntervalEdge,
-    //             endEdge: IntervalEdge,
-    //             intervalEnabled: Boolean,
-    //             readonly: Boolean) {
-    //        this(moment, moment, startEdge, endEdge, intervalEnabled, readonly)
-    //    }
-    //
-    //    def this() {
-    //        this(MinPeriodTime, MaxPeriodTime)
-    //    }
-
     def startEdge = _startEdge
 
     def startEdge_=(edge: IntervalEdge) { _startEdge = edge }
@@ -266,10 +254,13 @@ object TimeInterval {
               intervalEnabled: Boolean,
               readonly: Boolean): TimeInterval = {
         assert(period != null)
-        if (period.isAnytime)
-            Anytime
-        else
-            new TimeInterval(period.start, period.end, startEdge, endEdge, intervalEnabled, readonly)
+        if (period.isAnytime) Anytime
+        else new TimeInterval(period.start,
+                                 period.end,
+                                 startEdge,
+                                 endEdge,
+                                 intervalEnabled,
+                                 readonly)
     }
 }
 
