@@ -19,14 +19,14 @@ class RedisEntityRegion(private[this] val _accessStrategyFactory: RedisAccessStr
                         private[this] val _settings: Settings,
                         private[this] val _metadata: CacheDataDescription,
                         private[this] val _props: Properties)
-    extends RedisTransactionalDataRegion(_accessStrategyFactory,
-                                            _cache,
-                                            _regionName,
-                                            _settings,
-                                            _metadata,
-                                            _props) with EntityRegion {
+  extends RedisTransactionalDataRegion(_accessStrategyFactory,
+    _cache,
+    _regionName,
+    _settings,
+    _metadata,
+    _props) with EntityRegion {
 
-    def buildAccessStrategy(accessType: AccessType): EntityRegionAccessStrategy =
-        accessStrategyFactory.createEntityRegionAccessStrategy(this, accessType)
+  def buildAccessStrategy(accessType: AccessType): EntityRegionAccessStrategy =
+    accessStrategyFactory.createEntityRegionAccessStrategy(this, accessType)
 
 }

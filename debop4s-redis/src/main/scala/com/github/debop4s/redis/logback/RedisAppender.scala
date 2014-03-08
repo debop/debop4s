@@ -18,98 +18,112 @@ import scala.concurrent._
  */
 class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
 
-    implicit val akkaSystem = akka.actor.ActorSystem()
+  implicit val akkaSystem = akka.actor.ActorSystem()
 
-    lazy val serializer = ScalaJacksonSerializer()
-    protected var redis: RedisClient = null
+  lazy val serializer = ScalaJacksonSerializer()
+  protected var redis: RedisClient = null
 
-    var host = "localhost"
-    var port = RedisConsts.DEFAULT_PORT
-    var timeout = RedisConsts.DEFAULT_TIMEOUT
-    var password: String = ""
-    var database = RedisConsts.DEFAULT_DATABASE
+  var host = "localhost"
+  var port = RedisConsts.DEFAULT_PORT
+  var timeout = RedisConsts.DEFAULT_TIMEOUT
+  var password: String = ""
+  var database = RedisConsts.DEFAULT_DATABASE
 
-    var key: String = RedisAppender.DEFAULT_KEY
-    var serverName: String = ""
-    var applicationName: String = ""
+  var key: String = RedisAppender.DEFAULT_KEY
+  var serverName: String = ""
+  var applicationName: String = ""
 
-    def setHost(host: String = "localhost") { this.host = host }
+  def setHost(host: String = "localhost") {
+    this.host = host
+  }
 
-    def setPort(port: Int = 6379) { this.port = port }
+  def setPort(port: Int = 6379) {
+    this.port = port
+  }
 
-    def setPassword(password: String) { this.password = password }
+  def setPassword(password: String) {
+    this.password = password
+  }
 
-    def setDatabase(database: Int = 0) { this.database = database }
+  def setDatabase(database: Int = 0) {
+    this.database = database
+  }
 
-    def setKey(key: String = RedisAppender.DEFAULT_KEY) { this.key = key }
+  def setKey(key: String = RedisAppender.DEFAULT_KEY) {
+    this.key = key
+  }
 
-    def setServerName(serverName: String) { this.serverName = serverName }
+  def setServerName(serverName: String) {
+    this.serverName = serverName
+  }
 
-    def setApplicationName(applicationName: String) { this.applicationName = applicationName }
+  def setApplicationName(applicationName: String) {
+    this.applicationName = applicationName
+  }
 
-    override def start() {
-        print(s"start Redis Logging Appender")
-        synchronized {
-            if (redis == null) {
-                println(s"host=$host, port=$port, password=$password, database=$database ")
-                redis = RedisClient(host, port, Options.toOption(password), Some(database))
-            }
-            super.start()
-        }
+  override def start() {
+    print(s"start Redis Logging Appender")
+    synchronized {
+      if (redis == null) {
+        println(s"host=$host, port=$port, password=$password, database=$database ")
+        redis = RedisClient(host, port, Options.toOption(password), Some(database))
+      }
+      super.start()
     }
+  }
 
-    override def stop() {
-        super.stop()
-        redis = null
+  override def stop() {
+    super.stop()
+    redis = null
+  }
+
+  override def append(eventObject: LoggingEvent) {
+    if (eventObject == null)
+      return
+
+    Promises.exec[Future[Long]] {
+      val doc = createLogDocument(eventObject)
+      val jsonDoc = toJsonText(doc)
+      redis.lpush(key, jsonDoc)
     }
+  }
 
-    override def append(eventObject: LoggingEvent) {
-        if (eventObject == null)
-            return
+  protected def createLogDocument(event: LoggingEvent): LogDocument = {
+    val doc = new LogDocument()
 
-        Promises.exec[Future[Long]] {
-            val doc = createLogDocument(eventObject)
-            val jsonDoc = toJsonText(doc)
-            redis.lpush(key, jsonDoc)
-        }
+    doc.serverName = this.serverName
+    doc.applicationName = this.applicationName
+
+    doc.logger = event.getLoggerName
+    doc.levelInt = event.getLevel.levelInt
+    doc.levelStr = event.getLevel.levelStr
+    doc.threadName = event.getThreadName
+    doc.timestamp = new DateTime(event.getTimeStamp)
+    doc.message = event.getFormattedMessage
+
+    if (event.getMarker != null)
+      doc.marker = event.getMarker.getName
+
+    val tp = event.getThrowableProxy
+    if (tp != null) {
+      val tpStr = ThrowableProxyUtil.asString(tp)
+      val stacktrace = tpStr.replace("\t", "").split(CoreConstants.LINE_SEPARATOR)
+      if (stacktrace != null && stacktrace.length > 0)
+        doc.exception = stacktrace(0)
+      if (stacktrace.length > 1)
+        doc.stacktrace ++= stacktrace.drop(1)
     }
+    doc
+  }
 
-    protected def createLogDocument(event: LoggingEvent): LogDocument = {
-        val doc = new LogDocument()
-
-        doc.serverName = this.serverName
-        doc.applicationName = this.applicationName
-
-        doc.logger = event.getLoggerName
-        doc.levelInt = event.getLevel.levelInt
-        doc.levelStr = event.getLevel.levelStr
-        doc.threadName = event.getThreadName
-        doc.timestamp = new DateTime(event.getTimeStamp)
-        doc.message = event.getFormattedMessage
-
-        if (event.getMarker != null)
-            doc.marker = event.getMarker.getName
-
-        val tp = event.getThrowableProxy
-        if (tp != null) {
-            val tpStr = ThrowableProxyUtil.asString(tp)
-            val stacktrace = tpStr.replace("\t", "").split(CoreConstants.LINE_SEPARATOR)
-            if (stacktrace != null && stacktrace.length > 0)
-                doc.exception = stacktrace(0)
-            if (stacktrace.length > 1)
-                doc.stacktrace ++= stacktrace.drop(1)
-        }
-        doc
-    }
-
-    protected def toJsonText(document: LogDocument): String = {
-        serializer.serializeToText(document)
-    }
+  protected def toJsonText(document: LogDocument): String = {
+    serializer.serializeToText(document)
+  }
 }
 
 object RedisAppender {
 
-    val DEFAULT_KEY = "logback:logs"
+  val DEFAULT_KEY = "logback:logs"
 
-    def apply(): RedisAppender = new RedisAppender()
+  def apply(): RedisAppender = new RedisAppender()
 }

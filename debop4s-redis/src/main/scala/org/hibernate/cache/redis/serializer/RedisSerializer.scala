@@ -8,10 +8,10 @@ package org.hibernate.cache.redis.serializer
  */
 trait RedisSerializer[T] {
 
-    val EMPTY_BYTES = Array[Byte]()
+  val EMPTY_BYTES = Array[Byte]()
 
-    def serialize(graph: T): Array[Byte]
+  def serialize(graph: T): Array[Byte]
 
-    def deserialize(bytes: Array[Byte]): T
+  def deserialize(bytes: Array[Byte]): T
 
 }

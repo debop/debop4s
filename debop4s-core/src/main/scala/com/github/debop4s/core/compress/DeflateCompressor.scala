@@ -11,43 +11,43 @@ import org.slf4j.LoggerFactory
  */
 class DeflateCompressor extends Compressor {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
+  override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
 
-        val bos = new ByteArrayOutputStream()
-        val deflater = new DeflaterOutputStream(bos)
-        try {
-            deflater.write(plainBytes)
-            deflater.close()
+    val bos = new ByteArrayOutputStream()
+    val deflater = new DeflaterOutputStream(bos)
+    try {
+      deflater.write(plainBytes)
+      deflater.close()
 
-            bos.toByteArray
-        } finally {
-            bos.close()
-        }
+      bos.toByteArray
+    } finally {
+      bos.close()
     }
+  }
 
-    override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
+  override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
 
-        val bos = new ByteArrayOutputStream()
-        val bis = new ByteArrayInputStream(compressedBytes)
-        val inflater = new InflaterInputStream(bis)
+    val bos = new ByteArrayOutputStream()
+    val bis = new ByteArrayInputStream(compressedBytes)
+    val inflater = new InflaterInputStream(bis)
 
-        try {
-            val buff = new Array[Byte](BUFFER_SIZE)
-            var n = 0
+    try {
+      val buff = new Array[Byte](BUFFER_SIZE)
+      var n = 0
 
-            do {
-                n = inflater.read(buff, 0, BUFFER_SIZE)
-                if (n > 0) bos.write(buff, 0, n)
-            } while (n > 0)
+      do {
+        n = inflater.read(buff, 0, BUFFER_SIZE)
+        if (n > 0) bos.write(buff, 0, n)
+      } while (n > 0)
 
-            bos.toByteArray
-        }
-        finally {
-            inflater.close()
-            bis.close()
-            bos.close()
-        }
+      bos.toByteArray
     }
+    finally {
+      inflater.close()
+      bis.close()
+      bos.close()
+    }
+  }
 }

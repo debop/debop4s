@@ -13,36 +13,36 @@ import org.joda.time.DateTime
 class MonthRange(private[this] val _year: Int,
                  private[this] val _monthOfYear: Int,
                  private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends MonthTimeRange(_year, _monthOfYear, 1, _calendar) {
+  extends MonthTimeRange(_year, _monthOfYear, 1, _calendar) {
 
-    val daysInMonth = Times.getDaysInMonth(_year, _monthOfYear)
+  val daysInMonth = Times.getDaysInMonth(_year, _monthOfYear)
 
-    def year: Int = startYear
+  def year: Int = startYear
 
-    def monthOfYear: Int = startMonthOfYear
+  def monthOfYear: Int = startMonthOfYear
 
-    def addMonths(months: Int): MonthRange =
-        MonthRange(Times.startTimeOfMonth(start).plusMonths(months), calendar)
+  def addMonths(months: Int): MonthRange =
+    MonthRange(Times.startTimeOfMonth(start).plusMonths(months), calendar)
 
-    def nextMonth: MonthRange = addMonths(1)
+  def nextMonth: MonthRange = addMonths(1)
 
-    def previousMonth: MonthRange = addMonths(-1)
+  def previousMonth: MonthRange = addMonths(-1)
 }
 
 object MonthRange {
 
-    def apply(): MonthRange = apply(Times.now, DefaultTimeCalendar)
+  def apply(): MonthRange = apply(Times.now, DefaultTimeCalendar)
 
-    def apply(calendar: ITimeCalendar): MonthRange = apply(Times.now, calendar)
+  def apply(calendar: ITimeCalendar): MonthRange = apply(Times.now, calendar)
 
-    def apply(year: Int, monthOfYear: Int): MonthRange = apply(year, monthOfYear, DefaultTimeCalendar)
+  def apply(year: Int, monthOfYear: Int): MonthRange = apply(year, monthOfYear, DefaultTimeCalendar)
 
-    def apply(year: Int, monthOfYear: Int, calendar: ITimeCalendar): MonthRange =
-        new MonthRange(year, monthOfYear, calendar)
+  def apply(year: Int, monthOfYear: Int, calendar: ITimeCalendar): MonthRange =
+    new MonthRange(year, monthOfYear, calendar)
 
-    def apply(moment: DateTime): MonthRange =
-        apply(moment, DefaultTimeCalendar)
+  def apply(moment: DateTime): MonthRange =
+    apply(moment, DefaultTimeCalendar)
 
-    def apply(moment: DateTime, calendar: ITimeCalendar): MonthRange =
-        new MonthRange(moment.getYear, moment.getMonthOfYear, calendar)
+  def apply(moment: DateTime, calendar: ITimeCalendar): MonthRange =
+    new MonthRange(moment.getYear, moment.getMonthOfYear, calendar)
 }

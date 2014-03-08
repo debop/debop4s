@@ -19,19 +19,19 @@ abstract class AbstractValueObject extends ValueObject
  */
 trait ValueObject extends AnyRef with Serializable {
 
-    override
-    def equals(obj: Any): Boolean = {
-        obj match {
-            case vo: ValueObject => hashCode() == obj.hashCode()
-            case _ => false
-        }
+  override
+  def equals(obj: Any): Boolean = {
+    obj match {
+      case vo: ValueObject => hashCode() == obj.hashCode()
+      case _ => false
     }
+  }
 
-    override def hashCode(): Int = System.identityHashCode(this)
+  override def hashCode(): Int = System.identityHashCode(this)
 
-    override def toString: String = buildStringHelper.toString
+  override def toString: String = buildStringHelper.toString
 
-    protected def buildStringHelper: ToStringHelper = ToStringHelper(this)
+  protected def buildStringHelper: ToStringHelper = ToStringHelper(this)
 }
 
 

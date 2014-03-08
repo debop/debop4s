@@ -16,52 +16,52 @@ import org.slf4j.LoggerFactory
  */
 class JodaDateTimeTZUserType extends UserType {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    def sqlTypes() = Array(Types.TIMESTAMP, Types.VARCHAR)
+  def sqlTypes() = Array(Types.TIMESTAMP, Types.VARCHAR)
 
-    def returnedClass() = classOf[DateTime]
+  def returnedClass() = classOf[DateTime]
 
-    def equals(x: Any, y: Any) = Objects.equals(x, y)
+  def equals(x: Any, y: Any) = Objects.equals(x, y)
 
-    def hashCode(x: Any) = Objects.hashCode(x)
+  def hashCode(x: Any) = Objects.hashCode(x)
 
-    def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
-        val timestamp = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Timestamp]
-        val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
+  def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
+    val timestamp = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Timestamp]
+    val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
 
-        var value: DateTime = null
-        if (timezone == null) {
-            value = new DateTime(timestamp)
-        } else {
-            value = new DateTime(timestamp, DateTimeZone.forID(timezone))
-        }
-        log.trace(s"Load timestamp=[$timestamp], timezone=[$timezone] => value=[$value]")
+    var value: DateTime = null
+    if (timezone == null) {
+      value = new DateTime(timestamp)
+    } else {
+      value = new DateTime(timestamp, DateTimeZone.forID(timezone))
+    }
+    log.trace(s"Load timestamp=[$timestamp], timezone=[$timezone] => value=[$value]")
 
-        value
+    value
+  }
+
+  def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
+    val time = value.asInstanceOf[DateTime]
+    log.trace(s"Save DateTime with TimeZone... time=[$time]")
+
+    if (time == null) {
+      StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session)
+      StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, session)
+    } else {
+      StandardBasicTypes.TIMESTAMP.nullSafeSet(st, time.toDate, index, session)
+      StandardBasicTypes.STRING.nullSafeSet(st, time.getZone.getID, index + 1, session)
     }
 
-    def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
-        val time = value.asInstanceOf[DateTime]
-        log.trace(s"Save DateTime with TimeZone... time=[$time]")
+  }
 
-        if (time == null) {
-            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session)
-            StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, session)
-        } else {
-            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, time.toDate, index, session)
-            StandardBasicTypes.STRING.nullSafeSet(st, time.getZone.getID, index + 1, session)
-        }
+  def deepCopy(value: Any) = value.asInstanceOf[AnyRef]
 
-    }
+  def isMutable = true
 
-    def deepCopy(value: Any) = value.asInstanceOf[AnyRef]
+  def disassemble(value: Any) = deepCopy(value).asInstanceOf[Serializable]
 
-    def isMutable = true
+  def assemble(cached: Serializable, owner: Any) = deepCopy(cached)
 
-    def disassemble(value: Any) = deepCopy(value).asInstanceOf[Serializable]
-
-    def assemble(cached: Serializable, owner: Any) = deepCopy(cached)
-
-    def replace(original: Any, target: Any, owner: Any) = deepCopy(original)
+  def replace(original: Any, target: Any, owner: Any) = deepCopy(original)
 }

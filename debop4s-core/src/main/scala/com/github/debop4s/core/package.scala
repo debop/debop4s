@@ -9,29 +9,29 @@ import scala.concurrent.ExecutionContext
  */
 package object core {
 
-    implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
+  implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
-    val ShouldNotBeNull = "[%s] should not be null."
-    val ShouldBeNull = "[%s] should be null."
+  val ShouldNotBeNull = "[%s] should not be null."
+  val ShouldBeNull = "[%s] should be null."
 
-    val ShouldBeEquals = "%s=[%s] should be equals expected=[%s]"
-    val ShouldNotBeEquals = "%s=[%s] should not be equals expected=[%s]"
-    val ShouldBeEmptyString = "[%s] should be empty string."
-    val ShouldNotBeEmptyString = "[%s] should not be empty string."
+  val ShouldBeEquals = "%s=[%s] should be equals expected=[%s]"
+  val ShouldNotBeEquals = "%s=[%s] should not be equals expected=[%s]"
+  val ShouldBeEmptyString = "[%s] should be empty string."
+  val ShouldNotBeEmptyString = "[%s] should not be empty string."
 
-    val ShouldBeWhiteSpace = "[%s] should be white space."
-    val ShouldNotBeWhiteSpace = "[%s] should not be white space."
+  val ShouldBeWhiteSpace = "[%s] should be white space."
+  val ShouldNotBeWhiteSpace = "[%s] should not be white space."
 
-    val ShouldBeNumber = "[%s] should be number."
+  val ShouldBeNumber = "[%s] should be number."
 
-    val ShouldBePositiveNumber = "[%s] should be positive number"
-    val ShouldNotBePositiveNumber = "[%s] should not be positive number"
+  val ShouldBePositiveNumber = "[%s] should be positive number"
+  val ShouldNotBePositiveNumber = "[%s] should not be positive number"
 
-    val ShouldBeNegativeNumber = "[%s] should be negative number"
-    val ShouldNotBeNegativeNumber = "[%s] should not be negative number"
+  val ShouldBeNegativeNumber = "[%s] should be negative number"
+  val ShouldNotBeNegativeNumber = "[%s] should not be negative number"
 
-    val ShouldBeInRangeInt = "%s[%d]이 범위 [%d, %d) 를 벗어났습니다."
-    val ShouldBeInRangeDouble = "%s[%s]이 범위 [%s, %s) 를 벗어났습니다."
+  val ShouldBeInRangeInt = "%s[%d]이 범위 [%d, %d) 를 벗어났습니다."
+  val ShouldBeInRangeDouble = "%s[%s]이 범위 [%s, %s) 를 벗어났습니다."
 
 
 }

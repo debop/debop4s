@@ -15,9 +15,9 @@ class RedisTimestampsRegion(private[this] val _accessStrategyFactory: RedisAcces
                             private[this] val _cache: HibernateRedisCache,
                             private[this] val _regionName: String,
                             private[this] val _props: Properties)
-    extends RedisGeneralDataRegion(_accessStrategyFactory,
-                                      _cache,
-                                      _regionName,
-                                      _props)
-    with TimestampsRegion {
+  extends RedisGeneralDataRegion(_accessStrategyFactory,
+    _cache,
+    _regionName,
+    _props)
+  with TimestampsRegion {
 }

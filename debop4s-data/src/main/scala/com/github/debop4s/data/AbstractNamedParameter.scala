@@ -13,12 +13,12 @@ import scala.beans.BeanProperty
 abstract class AbstractNamedParameter(@BeanProperty val name: String,
                                       @BeanProperty val value: Any) extends ValueObject {
 
-    override def hashCode(): Int =
-        Hashs.compute(name)
+  override def hashCode(): Int =
+    Hashs.compute(name)
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
-        .add("name", name)
-        .add("value", value)
+  override protected def buildStringHelper =
+    super.buildStringHelper
+      .add("name", name)
+      .add("value", value)
 }
 

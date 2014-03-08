@@ -14,35 +14,35 @@ import scala.beans.BeanProperty
 class JsonTextObject(@BeanProperty val className: String,
                      @BeanProperty val jsonText: String) extends AbstractValueObject {
 
-    override def hashCode(): Int = Hashs.compute(className, jsonText)
+  override def hashCode(): Int = Hashs.compute(className, jsonText)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-        .add("className", className)
-        .add("jsonText", jsonText)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+      .add("className", className)
+      .add("jsonText", jsonText)
 }
 
 object JsonTextObject {
 
-    lazy val serializer = ScalaJacksonSerializer()
+  lazy val serializer = ScalaJacksonSerializer()
 
-    val Empty = apply()
+  val Empty = apply()
 
-    def apply(): JsonTextObject = new JsonTextObject(null, null)
+  def apply(): JsonTextObject = new JsonTextObject(null, null)
 
-    def apply(graph: Any): JsonTextObject = {
-        graph match {
-            case null => Empty
-            case src: JsonTextObject => apply(src)
-            case _ => new JsonTextObject(graph.getClass.getName, serializer.serializeToText(graph))
-        }
+  def apply(graph: Any): JsonTextObject = {
+    graph match {
+      case null => Empty
+      case src: JsonTextObject => apply(src)
+      case _ => new JsonTextObject(graph.getClass.getName, serializer.serializeToText(graph))
     }
+  }
 
-    def apply(className: String, jsonText: String): JsonTextObject =
-        new JsonTextObject(className, jsonText)
+  def apply(className: String, jsonText: String): JsonTextObject =
+    new JsonTextObject(className, jsonText)
 
-    def apply(src: JsonTextObject): JsonTextObject = {
-        require(src != null)
-        new JsonTextObject(src.className, src.jsonText)
-    }
+  def apply(src: JsonTextObject): JsonTextObject = {
+    require(src != null)
+    new JsonTextObject(src.className, src.jsonText)
+  }
 }

@@ -11,21 +11,21 @@ import org.hibernate.event.spi.{PreInsertEvent, PreUpdateEvent, PreUpdateEventLi
  */
 class UpdatedTimestampListener extends PreInsertEventListener with PreUpdateEventListener {
 
-    override def onPreInsert(event: PreInsertEvent): Boolean = {
-        event.getEntity match {
-            case x: UpdatedTimestampEntity =>
-                x.updateUpdatedTimestamp()
-                true
-            case _ => false
-        }
+  override def onPreInsert(event: PreInsertEvent): Boolean = {
+    event.getEntity match {
+      case x: UpdatedTimestampEntity =>
+        x.updateUpdatedTimestamp()
+        true
+      case _ => false
     }
+  }
 
-    override def onPreUpdate(event: PreUpdateEvent): Boolean = {
-        event.getEntity match {
-            case x: UpdatedTimestampEntity =>
-                x.updateUpdatedTimestamp()
-                true
-            case _ => false
-        }
+  override def onPreUpdate(event: PreUpdateEvent): Boolean = {
+    event.getEntity match {
+      case x: UpdatedTimestampEntity =>
+        x.updateUpdatedTimestamp()
+        true
+      case _ => false
     }
+  }
 }

@@ -11,16 +11,16 @@ import scala.collection.mutable.ArrayBuffer
 @SerialVersionUID(-8493624843659994378L)
 class CalendarPeriodCollectorFilter extends CalendarVisitorFilter with ICalendarPeriodCollectorFilter {
 
-    val collectingMonths = ArrayBuffer[MonthRangeInYear]()
-    val collectingDays = ArrayBuffer[DayRangeInMonth]()
-    val collectingHours = ArrayBuffer[HourRangeInDay]()
-    val collectingDayHours = ArrayBuffer[DayHourRange]()
+  val collectingMonths = ArrayBuffer[MonthRangeInYear]()
+  val collectingDays = ArrayBuffer[DayRangeInMonth]()
+  val collectingHours = ArrayBuffer[HourRangeInDay]()
+  val collectingDayHours = ArrayBuffer[DayHourRange]()
 
-    override def clear() {
-        super.clear()
-        collectingMonths.clear()
-        collectingDays.clear()
-        collectingHours.clear()
-        collectingDayHours.clear()
-    }
+  override def clear() {
+    super.clear()
+    collectingMonths.clear()
+    collectingDays.clear()
+    collectingHours.clear()
+    collectingDayHours.clear()
+  }
 }

@@ -57,7 +57,9 @@ public class JpaMySqlConnectionInterceptor {
 
     }
 
-    /** Connection을 readonly 속성을 true로  설정합니다. */
+    /**
+     * Connection을 readonly 속성을 true로  설정합니다.
+     */
     static class ConnectionReadOnlyWork implements Work {
 
         public boolean readOnly;
@@ -69,7 +71,9 @@ public class JpaMySqlConnectionInterceptor {
         }
     }
 
-    /** Connection의 readonly 속성을 기존 속성으로 변환합니다. */
+    /**
+     * Connection의 readonly 속성을 기존 속성으로 변환합니다.
+     */
     static class RestoreConnectionWork implements Work {
         public boolean readOnly;
 

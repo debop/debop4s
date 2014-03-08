@@ -19,52 +19,52 @@ import scala.collection.mutable.ArrayBuffer
  */
 class GcmSender(val serverApiKey: String) {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
 
-    lazy val serializer = new JacksonSerializer()
+  lazy val serializer = new JacksonSerializer()
 
-    def send(msg: GcmMessage, retry: Int = 3) {
-        require(msg != null)
-        require(msg.registrationIds != null && msg.registrationIds.size > 0)
+  def send(msg: GcmMessage, retry: Int = 3) {
+    require(msg != null)
+    require(msg.registrationIds != null && msg.registrationIds.size > 0)
 
-        val post = buildHttpPost(serverApiKey, msg)
-        var isSent = false
+    val post = buildHttpPost(serverApiKey, msg)
+    var isSent = false
 
-        val asyncHttp = new AsyncHttpClient()
+    val asyncHttp = new AsyncHttpClient()
 
-        Tasks.runWithRetry(retry) {
-            val response = asyncHttp.post(post)
-            isSent = response.getStatusLine.getStatusCode == HttpStatus.SC_OK
-        }
-        if (!isSent)
-            throw new RuntimeException(s"could not send message after $retry attempts")
+    Tasks.runWithRetry(retry) {
+      val response = asyncHttp.post(post)
+      isSent = response.getStatusLine.getStatusCode == HttpStatus.SC_OK
     }
+    if (!isSent)
+      throw new RuntimeException(s"could not send message after $retry attempts")
+  }
 
 
-    private def buildMessage(msg: GcmMessage) = serializer.serializeToText(msg)
+  private def buildMessage(msg: GcmMessage) = serializer.serializeToText(msg)
 
-    private def buildHttpHeader(apiKey: String): Seq[Header] = {
-        val headers = ArrayBuffer[Header]()
-        headers += new BasicHeader("Authorization", "key=" + apiKey)
-        headers += new BasicHeader("Content-Type", "application/json")
-        headers
-    }
+  private def buildHttpHeader(apiKey: String): Seq[Header] = {
+    val headers = ArrayBuffer[Header]()
+    headers += new BasicHeader("Authorization", "key=" + apiKey)
+    headers += new BasicHeader("Content-Type", "application/json")
+    headers
+  }
 
-    private def buildHttpPost(apiKey: String, msg: GcmMessage): HttpPost = {
-        val post = new HttpPost(GcmSender.GCM_SERVER_URI)
-        buildHttpHeader(apiKey).foreach(h => post.addHeader(h))
-        val text = buildMessage(msg)
-        post.setEntity(new StringEntity(text, Charsets.UTF_8))
-        post
-    }
+  private def buildHttpPost(apiKey: String, msg: GcmMessage): HttpPost = {
+    val post = new HttpPost(GcmSender.GCM_SERVER_URI)
+    buildHttpHeader(apiKey).foreach(h => post.addHeader(h))
+    val text = buildMessage(msg)
+    post.setEntity(new StringEntity(text, Charsets.UTF_8))
+    post
+  }
 }
 
 object GcmSender {
 
-    val GCM_SERVER_URL: String = "https://android.googleapis.com/gcm/send"
-    lazy val GCM_SERVER_URI = new URI(GCM_SERVER_URL)
+  val GCM_SERVER_URL: String = "https://android.googleapis.com/gcm/send"
+  lazy val GCM_SERVER_URI = new URI(GCM_SERVER_URL)
 
-    def apply(serverApiKey: String): GcmSender = new GcmSender(serverApiKey)
+  def apply(serverApiKey: String): GcmSender = new GcmSender(serverApiKey)
 
 }

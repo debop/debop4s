@@ -20,48 +20,48 @@ import scala.collection.JavaConversions._
 @org.springframework.transaction.annotation.Transactional
 class OneToManyListTest extends AbstractJpaTest {
 
-    private val log = LoggerFactory.getLogger(getClass)
+  private val log = LoggerFactory.getLogger(getClass)
 
-    @PersistenceContext val em: EntityManager = null
+  @PersistenceContext val em: EntityManager = null
 
-    @Test
-    def simpleOneToMany() {
-        val order = new OneToManyOrder
+  @Test
+  def simpleOneToMany() {
+    val order = new OneToManyOrder
 
-        val item1 = new OneToManyOrderItem
-        item1.name = "Item1"
-        item1.order = order
-        order.items.add(item1)
+    val item1 = new OneToManyOrderItem
+    item1.name = "Item1"
+    item1.order = order
+    order.items.add(item1)
 
-        val item2 = new OneToManyOrderItem
-        item2.name = "Item2"
-        item2.order = order
-        order.items.add(item2)
+    val item2 = new OneToManyOrderItem
+    item2.name = "Item2"
+    item2.order = order
+    order.items.add(item2)
 
-        em.persist(order)
-        em.flush()
-        em.clear()
+    em.persist(order)
+    em.flush()
+    em.clear()
 
-        val order2 = em.find(classOf[OneToManyOrder], order.id)
-        assert(order2 != null)
-        assert(order2.items.size == 2)
+    val order2 = em.find(classOf[OneToManyOrder], order.id)
+    assert(order2 != null)
+    assert(order2.items.size == 2)
 
-        val i1 = order2.items.head
-        order2.items.remove(i1)
-        em.persist(order2)
-        em.flush()
-        em.clear()
+    val i1 = order2.items.head
+    order2.items.remove(i1)
+    em.persist(order2)
+    em.flush()
+    em.clear()
 
-        val order3 = em.find(classOf[OneToManyOrder], order.id)
-        assert(order3 != null)
-        assert(order3.items.size == 1)
+    val order3 = em.find(classOf[OneToManyOrder], order.id)
+    assert(order3 != null)
+    assert(order3.items.size == 1)
 
-        em.remove(order3)
-        em.flush()
+    em.remove(order3)
+    em.flush()
 
-        assert(em.find(classOf[OneToManyOrder], order.id) == null)
+    assert(em.find(classOf[OneToManyOrder], order.id) == null)
 
-    }
+  }
 
 }
 
@@ -69,121 +69,121 @@ class OneToManyListTest extends AbstractJpaTest {
 @Access(javax.persistence.AccessType.FIELD)
 class OneToManyUser extends HibernateEntity[lang.Long] {
 
-    @Id
-    @GeneratedValue
-    var id: lang.Long = _
+  @Id
+  @GeneratedValue
+  var id: lang.Long = _
 
-    def getId = id
+  def getId = id
 
-    var city: String = _
+  var city: String = _
 
-    @OneToMany(cascade = Array(javax.persistence.CascadeType.ALL))
-    @JoinTable(name = "OneToMany_User_Address")
-    @MapKeyColumn(name = "nick")
-    @Fetch(FetchMode.SUBSELECT)
-    val addresses: util.Map[String, OneToManyAddress] = new util.HashMap[String, OneToManyAddress]
+  @OneToMany(cascade = Array(javax.persistence.CascadeType.ALL))
+  @JoinTable(name = "OneToMany_User_Address")
+  @MapKeyColumn(name = "nick")
+  @Fetch(FetchMode.SUBSELECT)
+  val addresses: util.Map[String, OneToManyAddress] = new util.HashMap[String, OneToManyAddress]
 
-    @ElementCollection
-    @JoinTable(name = "OneToMany_Nicks", joinColumns = Array(new JoinColumn(name = "userId")))
-    @Cascade(Array(org.hibernate.annotations.CascadeType.ALL))
-    val nicknames: util.Set[String] = new util.HashSet[String]
+  @ElementCollection
+  @JoinTable(name = "OneToMany_Nicks", joinColumns = Array(new JoinColumn(name = "userId")))
+  @Cascade(Array(org.hibernate.annotations.CascadeType.ALL))
+  val nicknames: util.Set[String] = new util.HashSet[String]
 
-    override def hashCode(): Int =
-        Hashs.compute(city)
+  override def hashCode(): Int =
+    Hashs.compute(city)
 }
 
 @javax.persistence.Entity
 @Access(javax.persistence.AccessType.FIELD)
 class OneToManyAddress extends HibernateEntity[lang.Long] {
 
-    @Id
-    @GeneratedValue
-    var id: lang.Long = _
+  @Id
+  @GeneratedValue
+  var id: lang.Long = _
 
-    def getId = id
+  def getId = id
 
-    var city: String = _
+  var city: String = _
 
-    override def hashCode(): Int =
-        super.hashCode()
+  override def hashCode(): Int =
+    super.hashCode()
 }
 
 @javax.persistence.Entity
 @Access(javax.persistence.AccessType.FIELD)
 class OneToManyChild extends HibernateEntity[lang.Long] {
 
-    def this(name: String) {
-        this()
-        this.name = name
-    }
+  def this(name: String) {
+    this()
+    this.name = name
+  }
 
-    @Id
-    @GeneratedValue
-    var id: lang.Long = _
+  @Id
+  @GeneratedValue
+  var id: lang.Long = _
 
-    def getId = id
+  def getId = id
 
-    var name: String = _
+  var name: String = _
 
-    @Temporal(TemporalType.DATE)
-    var birthday: Date = _
+  @Temporal(TemporalType.DATE)
+  var birthday: Date = _
 }
 
 @javax.persistence.Entity
 @Access(javax.persistence.AccessType.FIELD)
 class OneToManyFather extends HibernateEntity[lang.Long] {
 
-    @Id
-    @GeneratedValue
-    var id: lang.Long = _
+  @Id
+  @GeneratedValue
+  var id: lang.Long = _
 
-    def getId = id
+  def getId = id
 
-    var name: String = _
+  var name: String = _
 
-    @OneToMany(cascade = Array(javax.persistence.CascadeType.ALL), fetch = FetchType.EAGER)
-    @JoinTable(name = "Father_Child")
-    @OrderColumn(name = "birthday")
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    val orderedChildren: util.List[OneToManyChild] = new util.ArrayList[OneToManyChild]()
+  @OneToMany(cascade = Array(javax.persistence.CascadeType.ALL), fetch = FetchType.EAGER)
+  @JoinTable(name = "Father_Child")
+  @OrderColumn(name = "birthday")
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  val orderedChildren: util.List[OneToManyChild] = new util.ArrayList[OneToManyChild]()
 
-    override def hashCode(): Int =
-        Hashs.compute(name)
+  override def hashCode(): Int =
+    Hashs.compute(name)
 }
 
 @javax.persistence.Entity
 @Access(javax.persistence.AccessType.FIELD)
 class OneToManyOrder extends HibernateEntity[lang.Long] {
 
-    @Id
-    @GeneratedValue
-    var id: lang.Long = _
+  @Id
+  @GeneratedValue
+  var id: lang.Long = _
 
-    def getId = id
+  def getId = id
 
-    var no: String = _
+  var no: String = _
 
-    @OneToMany(mappedBy = "order", cascade = Array(javax.persistence.CascadeType.ALL), orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    val items: util.List[OneToManyOrderItem] = new util.ArrayList[OneToManyOrderItem]
+  @OneToMany(mappedBy = "order", cascade = Array(javax.persistence.CascadeType.ALL), orphanRemoval = true)
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  val items: util.List[OneToManyOrderItem] = new util.ArrayList[OneToManyOrderItem]
 }
 
 @javax.persistence.Entity
 @Access(javax.persistence.AccessType.FIELD)
 class OneToManyOrderItem extends HibernateEntity[lang.Long] {
 
-    @Id
-    @GeneratedValue
-    var id: lang.Long = _
+  @Id
+  @GeneratedValue
+  var id: lang.Long = _
 
-    def getId = id
+  def getId = id
 
-    @ManyToOne
-    var order: OneToManyOrder = _
+  @ManyToOne
+  var order: OneToManyOrder = _
 
-    var name: String = _
+  var name: String = _
 
-    override def hashCode(): Int =
-        Hashs.compute(name)
+  override def hashCode(): Int =
+    Hashs.compute(name)
 }
 

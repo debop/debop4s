@@ -10,42 +10,42 @@ import org.slf4j.LoggerFactory
  */
 object Tasks {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    /**
-     * 지정된 block을 성공할 때까지 수행햅니다.
-     */
-    def runWithRetry(attempts: Int, waitTime: Long = 1)(block: => Unit) {
-        var remains = attempts
-        while (remains > 0) {
-            try {
-                block
-                return
-            } catch {
-                case e: Throwable =>
-                    if (remains == 1) throw new RuntimeException(e)
-                    Thread.sleep(waitTime)
-            }
-            remains -= 1
-        }
+  /**
+   * 지정된 block을 성공할 때까지 수행햅니다.
+   */
+  def runWithRetry(attempts: Int, waitTime: Long = 1)(block: => Unit) {
+    var remains = attempts
+    while (remains > 0) {
+      try {
+        block
+        return
+      } catch {
+        case e: Throwable =>
+          if (remains == 1) throw new RuntimeException(e)
+          Thread.sleep(waitTime)
+      }
+      remains -= 1
     }
+  }
 
-    /**
-     * 지정된 func을 성공할 때까지 수행햅니다.
-     */
-    def callWithRetry[T](attempts: Int, waitTime: Long = 1)(func: () => T): T = {
-        var remains = attempts
-        while (remains > 0) {
-            try {
-                return func()
-            } catch {
-                case e: Throwable =>
-                    if (remains == 1) throw new RuntimeException(e)
-                    Thread.sleep(waitTime)
-            }
-            remains -= 1
-        }
-        null.asInstanceOf[T]
+  /**
+   * 지정된 func을 성공할 때까지 수행햅니다.
+   */
+  def callWithRetry[T](attempts: Int, waitTime: Long = 1)(func: () => T): T = {
+    var remains = attempts
+    while (remains > 0) {
+      try {
+        return func()
+      } catch {
+        case e: Throwable =>
+          if (remains == 1) throw new RuntimeException(e)
+          Thread.sleep(waitTime)
+      }
+      remains -= 1
     }
+    null.asInstanceOf[T]
+  }
 
 }

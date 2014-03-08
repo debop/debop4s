@@ -12,19 +12,19 @@ import scala.concurrent.Future
  */
 class RedisLogPublisher extends RedisAppender {
 
-    var channel = RedisConsts.DEFAULT_LOGBACK_CHANNEL
+  var channel = RedisConsts.DEFAULT_LOGBACK_CHANNEL
 
-    def setChannel(channel: String) {
-        this.channel = channel
+  def setChannel(channel: String) {
+    this.channel = channel
+  }
+
+  override def append(eventObject: LoggingEvent) {
+
+    Promises.exec[Future[Long]] {
+      val doc = createLogDocument(eventObject)
+      val jsonDoc = toJsonText(doc)
+
+      redis.publish(channel, jsonDoc)
     }
-
-    override def append(eventObject: LoggingEvent) {
-
-        Promises.exec[Future[Long]] {
-            val doc = createLogDocument(eventObject)
-            val jsonDoc = toJsonText(doc)
-
-            redis.publish(channel, jsonDoc)
-        }
-    }
+  }
 }
