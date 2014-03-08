@@ -1,7 +1,7 @@
 package com.github.debop4s.data.model
 
 import javax.persistence._
-import org.hibernate.annotations.{DynamicUpdate, DynamicInsert, GenericGenerator}
+import org.hibernate.annotations.{GenericGenerator, DynamicUpdate, DynamicInsert}
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
@@ -35,10 +35,11 @@ abstract class IntEntity extends HibernateEntity[java.lang.Integer] {
 @Access(AccessType.FIELD)
 @DynamicInsert
 @DynamicUpdate
-@GenericGenerator(name = "uuid", strategy = "uuid2")
 abstract class UuidEntity extends HibernateEntity[java.util.UUID] {
+
   @Id
   @GeneratedValue(generator = "uuid")
+  @GenericGenerator(name = "uuid", strategy = "uuid2")
   var id: java.util.UUID = _
 
   override def getId = id
