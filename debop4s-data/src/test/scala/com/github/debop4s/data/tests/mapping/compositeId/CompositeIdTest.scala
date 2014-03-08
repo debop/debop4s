@@ -15,6 +15,7 @@ import org.junit.Test
  */
 @org.springframework.transaction.annotation.Transactional
 class CompositeIdTest extends AbstractJpaTest {
+
   @PersistenceContext val em: EntityManager = null
 
   @Test

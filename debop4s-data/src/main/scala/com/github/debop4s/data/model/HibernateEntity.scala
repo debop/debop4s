@@ -2,6 +2,7 @@ package com.github.debop4s.data.model
 
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
 import javax.persistence._
+import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
 
 /**
  * Hibernate, JPA 의 모든 엔티티의 기본 클래스입니다.
@@ -13,6 +14,8 @@ import javax.persistence._
 // HINT: HibernateEntity가 class로 컴파일되어야 제대로 동작하게 되므로, 만약 동작하지 안는다면 abstract class를 추가로 구현해야 합니다.
 @MappedSuperclass
 @Access(AccessType.FIELD)
+@DynamicInsert
+@DynamicUpdate
 trait HibernateEntity[TId] extends PersistentObject {
 
   def getId: TId
@@ -41,7 +44,6 @@ trait HibernateEntity[TId] extends PersistentObject {
   override def hashCode(): Int =
     if (getId == null) System.identityHashCode(this) else Hashs.compute(getId)
 
-
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
       .add("id", getId)
@@ -60,7 +62,7 @@ trait HibernateEntity[TId] extends PersistentObject {
     val hash = if (getId != null) Hashs.compute(getId) else hashCode()
     if (notNull) {
       val entityHash = if (entity.getId != null) Hashs.compute(entity.getId) else entity.hashCode()
-      return hash == entityHash
+      hash == entityHash
     } else {
       false
     }
