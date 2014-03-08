@@ -41,13 +41,16 @@ trait HibernateEntity[TId] extends PersistentObject {
     false
   }
 
+  @inline
   override def hashCode(): Int =
     if (getId == null) System.identityHashCode(this) else Hashs.compute(getId)
 
+  @inline
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
       .add("id", getId)
 
+  @inline
   private def hasSameNonDefaultIds(entity: HibernateEntity[TId]): Boolean = {
     if (entity == null)
       false
@@ -57,6 +60,7 @@ trait HibernateEntity[TId] extends PersistentObject {
     (id != null) && (entityId != null) && id.equals(entityId)
   }
 
+  @inline
   private def hasSameBusinessSignature(entity: HibernateEntity[TId]): Boolean = {
     val notNull = entity != null
     val hash = if (getId != null) Hashs.compute(getId) else hashCode()

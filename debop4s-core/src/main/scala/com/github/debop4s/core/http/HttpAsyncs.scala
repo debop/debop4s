@@ -15,7 +15,9 @@ import scala.collection.JavaConversions._
 
 
 /**
- * com.github.debop4s.core.http.HttpAsyncs
+ * 비동기 방식 HTTP 통신을 수행합니다.
+ *
+ * TODO: spray-http 등 scala 고유의 비동기 library를 사용하도록 변경해야 한다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 13. 오후 1:05

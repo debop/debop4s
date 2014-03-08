@@ -3,7 +3,7 @@ package com.github.debop4s.core.utils
 import scala.collection.mutable
 
 /**
- * com.github.debop4s.core.tools.ToStringHelper
+ * 문자열을 취합해 하나의 문자열로 표현해줍니다. 객체의 toString 에 사용합니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 1:31
@@ -12,6 +12,7 @@ class ToStringHelper(val className: String) {
 
   val map = new mutable.LinkedHashMap[String, Any]()
 
+  @inline
   def add(name: String, value: Any): ToStringHelper = {
     addMap(name, value)
     this
@@ -36,6 +37,7 @@ class ToStringHelper(val className: String) {
     builder.toString()
   }
 
+  @inline
   private def addMap(name: String, value: Any) {
     map.put(name, value)
   }
