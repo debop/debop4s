@@ -21,11 +21,11 @@
             <artifactId>debop4s-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.debop4s</groupId>
-            <artifactId>debop4s-timeperiod</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.github.debop4s</groupId>-->
+            <!--<artifactId>debop4s-timeperiod</artifactId>-->
+            <!--<version>${project.parent.version}</version>-->
+        <!--</dependency>-->
 
         <!-- Akka -->
         <dependency>
@@ -42,12 +42,14 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Spring Data -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Hibernate -->
@@ -72,23 +74,18 @@
             <artifactId>rediscala_${scala.main.version}</artifactId>
         </dependency>
 
-        <!-- Tomcat Connection Pool -->
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Bone CP -->
         <dependency>
             <groupId>com.jolbox</groupId>
             <artifactId>bonecp</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Hikari CP -->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Database Drivers -->
