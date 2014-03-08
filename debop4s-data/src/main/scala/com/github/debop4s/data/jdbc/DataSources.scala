@@ -37,7 +37,7 @@ object DataSources {
 
   def getBoneCPDataSource(driverClass: String, url: String, username: String = "", passwd: String = ""): DataSource = {
     log.info("BoneCP DataSource를 빌드합니다... " +
-      s"driverClass=[$driverClass], url=[$url], username=[$username], passwd=[$passwd]")
+             s"driverClass=[$driverClass], url=[$url], username=[$username], passwd=[$passwd]")
 
     val ds = new BoneCPDataSource()
     ds.setDriverClass(driverClass)
@@ -66,7 +66,7 @@ object DataSources {
                           passwd: String = "",
                           props: Map[String, String] = HashMap()): DataSource = {
     log.info("Hikari DataSource를 빌드합니다... " +
-      s"dataSourceClassName=[$dataSourceClassName], url=[$url], username=[$username], passwd=[$passwd]")
+             s"dataSourceClassName=[$dataSourceClassName], url=[$url], username=[$username], passwd=[$passwd]")
 
     val config = new HikariConfig()
 

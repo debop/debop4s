@@ -107,7 +107,7 @@ class DateDiff(val start: DateTime,
     }
 
     (endYear * MonthsPerYear + endMonthOfYear) -
-      (calendar.getYear(compareDate) * MonthsPerYear + calendar.getMonthOfYear(compareDate))
+    (calendar.getYear(compareDate) * MonthsPerYear + calendar.getMonthOfYear(compareDate))
   }
 
   private def calcWeeks(): Long = {

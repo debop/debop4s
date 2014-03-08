@@ -51,7 +51,7 @@ class JpaDao {
 
     val entity = em.find(entityClass, id)
     if (entity == null) {
-      val msg = s"No ${getEntityInformation(entityClass)} entity with id [$id] exists"
+      val msg = s"No ${getEntityInformation(entityClass) } entity with id [$id] exists"
       throw new EmptyResultDataAccessException(msg, 1)
     }
     delete(entity)

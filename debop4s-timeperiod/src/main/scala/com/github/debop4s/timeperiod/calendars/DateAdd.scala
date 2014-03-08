@@ -98,7 +98,7 @@ class DateAdd {
       log.trace("예외 기간을 제외합니다.")
       val gapCalculator = new TimeGapCalculator[TimeRange]()
       searchPeriods.foreach { p =>
-      if (excludePeriods.hasOverlapPeriods(p)) {
+        if (excludePeriods.hasOverlapPeriods(p)) {
           log.trace("예외 기간에 속하지 않은 부분만 추려냅니다.")
           gapCalculator.getGaps(excludePeriods, p).foreach(gap => availablePeriods.add(gap))
         } else {
@@ -205,7 +205,7 @@ object DateAdd {
     periods
       .filter(period => period.end >= start)
       .foreach { period =>
-    if (period.hasInside(start)) {
+      if (period.hasInside(start)) {
         nearest = period
         moment = start
         log.trace(s"시작시각 이후 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")
@@ -234,7 +234,7 @@ object DateAdd {
       .foreach { period =>
 
     // start가 기간에 속한다면...
-    if (period.hasInside(start)) {
+      if (period.hasInside(start)) {
         nearest = period
         moment = start
         log.trace(s"시작시각 이전 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")

@@ -45,7 +45,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
         else years.getYears.sortWith(_.end > _.end)
 
       yearsToVisit.foreach { year =>
-        log.trace(s"Year 탐색: year=${year.year}")
+        log.trace(s"Year 탐색: year=${year.year }")
 
         val canVisitMonth =
           if (!year.overlapsWith(period)) false
@@ -59,7 +59,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
             else years.getMonths.sortWith(_.end > _.end)
 
           monthsToVisit.foreach { month =>
-            log.trace(s"Month 탐색: year=${month.year}, month=${month.monthOfYear}")
+            log.trace(s"Month 탐색: year=${month.year }, month=${month.monthOfYear }")
 
             val canVisitDay =
               if (!month.overlapsWith(period)) false
@@ -74,7 +74,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
                 else month.getDays.sortWith(_.end > _.end)
 
               daysToVisit.foreach { day =>
-                log.trace(s"Day 탐색: day=${day.start}")
+                log.trace(s"Day 탐색: day=${day.start }")
                 val canVisitHour =
                   if (!day.overlapsWith(period)) false
                   else if (!onVisitDay(day, context)) false
@@ -88,7 +88,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
                     else day.getHours.sortWith(_.end > _.end)
 
                   hoursToVisit.foreach { hour =>
-                  log.trace(s"Hour 탐색: hour=[${hour.hourOfDay}]")
+                    log.trace(s"Hour 탐색: hour=[${hour.hourOfDay }]")
 
                     val canVisitMinute = hour.overlapsWith(period) && onVisitHour(hour, context)
                     if (canVisitMinute) {
@@ -110,7 +110,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
   @inline
   protected def startYearVisit(year: YearRange, context: C, direction: SeekDirection): YearRange = {
-    log.trace(s"Year 단위로 탐색을 수행합니다. year=[${year.year}], context=[$context], seekDirection=[$seekDirection]")
+    log.trace(s"Year 단위로 탐색을 수행합니다. year=[${year.year }], context=[$context], seekDirection=[$seekDirection]")
 
     var lastVisited: YearRange = null
 

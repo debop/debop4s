@@ -94,7 +94,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
   /** 지정한 요소를 제거하고, 후속 ITimePeriod 들의 기간을 재조정합니다. (앞으로 당깁니다) */
   override def remove(o: Any): Boolean = {
     assert(o != null)
-    Guard.shouldBe(o.isInstanceOf[ITimePeriod], s"o is not ITimePeriod type. class=[${o.getClass}]")
+    Guard.shouldBe(o.isInstanceOf[ITimePeriod], s"o is not ITimePeriod type. class=[${o.getClass }]")
 
     if (size <= 0) return false
     val item = o.asInstanceOf[ITimePeriod]

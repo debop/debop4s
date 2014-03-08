@@ -27,7 +27,7 @@ class ConsoleLogRedisSubscriberActor(override val address: InetSocketAddress,
     Promises.exec[Unit] {
       val doc = serializer.deserializeFromText(m.data, classOf[LogDocument])
 
-      println(s"Received Log Document: ${doc.timestamp} [${doc.levelStr}] ${doc.message}")
+      println(s"Received Log Document: ${doc.timestamp } [${doc.levelStr }] ${doc.message }")
       if (doc.stacktrace != null && doc.stacktrace.size > 0)
         println(doc.stacktrace)
     }
@@ -40,7 +40,7 @@ class ConsoleLogRedisSubscriberActor(override val address: InetSocketAddress,
     Promises.exec[Unit] {
       val doc = serializer.deserializeFromText(pm.data, classOf[LogDocument])
 
-      println(s"Received pattern message: ${doc.timestamp} [${doc.levelStr}] ${doc.message}")
+      println(s"Received pattern message: ${doc.timestamp } [${doc.levelStr }] ${doc.message }")
       if (doc.stacktrace != null && doc.stacktrace.size > 0)
         println(doc.stacktrace)
     }

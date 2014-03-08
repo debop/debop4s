@@ -69,7 +69,7 @@ class FileUtilsTest extends AssertionsForJUnit {
       FileUtils.write(path, lines, Charsets.UTF_8, StandardOpenOption.WRITE)
 
       val readLines = FileUtils.readAllLines(path)
-      log.debug(s"readLines=${readLines.size}, lines=${lines.size}")
+      log.debug(s"readLines=${readLines.size }, lines=${lines.size }")
       assert(readLines.size == lines.size)
     }
     finally {

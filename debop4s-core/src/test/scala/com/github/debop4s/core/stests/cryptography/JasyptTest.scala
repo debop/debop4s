@@ -20,9 +20,9 @@ class JasyptTest extends AbstractCoreTest {
 
   test("load algorithms") {
     Security.getProviders.foreach(provider => {
-      log.debug(s"provider=${provider.getName}")
+      log.debug(s"provider=${provider.getName }")
       provider.getServices.foreach(service => {
-        log.debug(s"    Algorithm=${service.getAlgorithm}")
+        log.debug(s"    Algorithm=${service.getAlgorithm }")
       })
     })
   }

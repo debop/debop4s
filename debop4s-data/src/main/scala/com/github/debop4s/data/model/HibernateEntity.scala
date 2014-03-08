@@ -36,7 +36,7 @@ trait HibernateEntity[TId] extends PersistentObject {
     if (isSameType) {
       val entity = obj.asInstanceOf[HibernateEntity[TId]]
       return hasSameNonDefaultIds(entity) ||
-        ((!isPersisted || !entity.isPersisted) && hasSameBusinessSignature(entity))
+             ((!isPersisted || !entity.isPersisted) && hasSameBusinessSignature(entity))
     }
     false
   }

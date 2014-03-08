@@ -48,15 +48,17 @@ object Asyncs {
   }
 
   def invokeAll[T](tasks: Iterable[_ <: Callable[T]]): Iterable[T] = {
-    resultAll(tasks.map(x => future {
-      x.call()
-    }))
+    resultAll(tasks.map(x =>
+      future {
+        x.call()
+      }))
   }
 
   def invokeAll[T](tasks: Iterable[_ <: Callable[T]], timeout: Long, unit: TimeUnit) = {
-    resultAll(tasks.map(x => future {
-      x.call()
-    }), timeout, unit)
+    resultAll(tasks.map(x =>
+      future {
+        x.call()
+      }), timeout, unit)
   }
 
   def ready[T](awaitable: Awaitable[T]): Awaitable[T] = {

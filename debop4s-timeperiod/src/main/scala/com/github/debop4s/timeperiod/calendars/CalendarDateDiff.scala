@@ -53,8 +53,8 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
       return Duration.ZERO
 
     val filterIsEmpty = weekDays.size == 0 &&
-      workingHours.size == 0 &&
-      workingDayHours.size == 0
+                        workingHours.size == 0 &&
+                        workingDayHours.size == 0
     if (filterIsEmpty) {
       return new DateDiff(fromTime, toTime, calendar).difference
     }

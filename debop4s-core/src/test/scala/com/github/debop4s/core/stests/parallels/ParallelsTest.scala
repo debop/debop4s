@@ -16,12 +16,12 @@ class ParallelsTest extends AbstractCoreTest {
 
   val runnable: Unit = {
     (LowerBound until UpperBound).foreach(x => Hero.findRoot(x))
-    log.trace(s"FindRoot($UpperBound) = ${Hero.findRoot(UpperBound)}")
+    log.trace(s"FindRoot($UpperBound) = ${Hero.findRoot(UpperBound) }")
   }
 
   val runnable1 = (x: Int) => {
     (LowerBound until UpperBound).foreach(i => Hero.findRoot(i))
-    log.trace(s"FindRoot($UpperBound) = ${Hero.findRoot(UpperBound)}")
+    log.trace(s"FindRoot($UpperBound) = ${Hero.findRoot(UpperBound) }")
   }
 
   test("parallel runAction") {

@@ -338,7 +338,7 @@ class HibernateDao {
   }
 
   def deleteAllWithCascade(clazz: Class[_]) {
-    session.createQuery(s"delete from ${clazz.getName}").executeUpdate()
+    session.createQuery(s"delete from ${clazz.getName }").executeUpdate()
   }
 
   @varargs

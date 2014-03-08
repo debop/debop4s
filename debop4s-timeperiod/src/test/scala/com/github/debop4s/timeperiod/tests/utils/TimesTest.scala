@@ -323,7 +323,7 @@ class TimesTest extends AbstractTimePeriodTest {
   test("foreach years") {
     var count = 0
     Times.foreachYears(period).foreach(p => {
-      log.trace(s"year($count)= ${p.start.getYear}")
+      log.trace(s"year($count)= ${p.start.getYear }")
       count += 1
     })
     count should equal(period.end.getYear - period.start.getYear + 1)
@@ -338,7 +338,7 @@ class TimesTest extends AbstractTimePeriodTest {
   test("foreach months") {
     var count = 0
     Times.foreachMonths(period).foreach(p => {
-      log.trace(s"month($count)=${p.start.getMonthOfYear}")
+      log.trace(s"month($count)=${p.start.getMonthOfYear }")
       count += 1
     })
     val months = period.duration.getMillis / (MillisPerDay * MaxDaysPerMonth) + 2
@@ -349,7 +349,7 @@ class TimesTest extends AbstractTimePeriodTest {
     var count = 0
     val weeks = Times.foreachWeeks(period)
     weeks.foreach(p => {
-      log.trace(s"week($count) = [${p.start}] ~ [${p.end}], year week = ${Times.getWeekOfYear(p.start)}")
+      log.trace(s"week($count) = [${p.start }] ~ [${p.end }], year week = ${Times.getWeekOfYear(p.start) }")
       count += 1
     })
 
@@ -364,8 +364,8 @@ class TimesTest extends AbstractTimePeriodTest {
     days(0).start should equal(period.start)
     days.last.end should equal(period.end)
 
-    log.trace(s"last-1 = ${days(days.size - 2)}")
-    log.trace(s"last = ${days.last}")
+    log.trace(s"last-1 = ${days(days.size - 2) }")
+    log.trace(s"last = ${days.last }")
   }
 
   test("foreach hours") {
@@ -552,7 +552,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
       period.hasInside(moment) should equal(true)
       period.hasInside(endTime) should equal(false)
 
-      log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment)}")
+      log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment) }")
     })
   }
 
@@ -565,7 +565,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
       period.hasInside(moment) should equal(true)
       period.hasInside(endTime) should equal(false)
 
-      log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment)}")
+      log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment) }")
     })
   }
 
@@ -581,7 +581,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
         period.hasInside(moment) should equal(true)
         period.hasInside(endTime) should equal(false)
 
-        log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment)}")
+        log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment) }")
       }
     })
   }
@@ -838,7 +838,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
       val localZone = Times.timeZoneForOffsetMillis(offset)
 
       // id=[ROK], offset=[32400000], localZone=[+09:00]
-      log.trace(s"id=[$id], offset=[$offset], localZone=[${localZone.getID}}]")
+      log.trace(s"id=[$id], offset=[$offset], localZone=[${localZone.getID }}]")
       val localTimeZoneTime = utcNow.toDateTime(localZone)
 
       localTimeZoneTime.getMillis should equal(localNow.getMillis)
@@ -881,21 +881,21 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
 
   test("trim to seconds") {
     Times.trimToSecond(testDate) should
-      equal(asDate(testDate).plusHours(testDate.getHourOfDay).plusMinutes(testDate.getMinuteOfHour))
+    equal(asDate(testDate).plusHours(testDate.getHourOfDay).plusMinutes(testDate.getMinuteOfHour))
 
     (0 until SecondsPerMinute).par.foreach(s => {
       Times.trimToSecond(testDate, s) should
-        equal(asDate(testDate).plusHours(testDate.getHourOfDay).plusMinutes(testDate.getMinuteOfHour) + s.second)
+      equal(asDate(testDate).plusHours(testDate.getHourOfDay).plusMinutes(testDate.getMinuteOfHour) + s.second)
     })
   }
 
   test("trim to millis") {
     Times.trimToMillis(testDate) should
-      equal(testDate.withTime(testDate.getHourOfDay, testDate.getMinuteOfHour, testDate.getSecondOfMinute, 0))
+    equal(testDate.withTime(testDate.getHourOfDay, testDate.getMinuteOfHour, testDate.getSecondOfMinute, 0))
 
     (0 until MillisPerSecond).par.foreach(ms => {
       Times.trimToMillis(testDate, ms) should
-        equal(testDate.withTime(testDate.getHourOfDay, testDate.getMinuteOfHour, testDate.getSecondOfMinute, 0) + ms.millis)
+      equal(testDate.withTime(testDate.getHourOfDay, testDate.getMinuteOfHour, testDate.getSecondOfMinute, 0) + ms.millis)
     })
   }
 }

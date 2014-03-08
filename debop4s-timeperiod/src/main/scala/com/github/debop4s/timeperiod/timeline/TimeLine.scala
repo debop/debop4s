@@ -115,7 +115,7 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
     periods
       .filter(!_.isMoment)
       .foreach(mp => {
-      log.trace(s"moment period = $mp, type=${mp.getClass}")
+      log.trace(s"moment period = $mp, type=${mp.getClass }")
 
       val intersection = limits.getIntersection(mp)
       if (intersection != null && !intersection.isMoment) {

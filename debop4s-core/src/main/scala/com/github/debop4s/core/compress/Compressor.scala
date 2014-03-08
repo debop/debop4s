@@ -28,8 +28,8 @@ trait Compressor {
 
     val result = doCompress(plainBytes)
 
-    log.trace(s"데이터를 압축했습니다. 압축률=[${result.length * 100.0 / plainBytes.length}], " +
-      s"original=[${plainBytes.length}], compressed=[${result.length}]")
+    log.trace(s"데이터를 압축했습니다. 압축률=[${result.length * 100.0 / plainBytes.length }], " +
+              s"original=[${plainBytes.length }], compressed=[${result.length }]")
     result
   }
 
@@ -44,8 +44,8 @@ trait Compressor {
 
     val result = doDecompress(compressedBytes)
 
-    log.trace(s"데이터를 복했습니다. 압축률=[${result.length * 100.0 / result.length}], " +
-      s"압축=[${compressedBytes.length}}], 원본=[${result.length}]")
+    log.trace(s"데이터를 복했습니다. 압축률=[${result.length * 100.0 / result.length }], " +
+              s"압축=[${compressedBytes.length }}], 원본=[${result.length }]")
     result
   }
 }

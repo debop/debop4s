@@ -17,7 +17,7 @@ class TimepartTest extends AbstractTimePeriodTest {
     val now: DateTime = Times.now
     val time: Timepart = Timepart(now)
 
-    log.debug(s"now=[$now], time=[$time], zero=[${Times.zero}]")
+    log.debug(s"now=[$now], time=[$time], zero=[${Times.zero }]")
 
     assert(time.hour == now.getHourOfDay)
     assert(time.minute == now.getMinuteOfHour)

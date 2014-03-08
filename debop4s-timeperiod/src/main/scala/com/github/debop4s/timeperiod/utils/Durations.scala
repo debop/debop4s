@@ -60,25 +60,25 @@ object Durations {
 
   def days(days: Int, hours: Int, minutes: Int = 0, seconds: Int = 0, millis: Int = 0): Duration =
     Duration.millis(days * MillisPerDay +
-      hours * MillisPerHour +
-      minutes * MillisPerMinute +
-      seconds * MillisPerSecond +
-      millis)
+                    hours * MillisPerHour +
+                    minutes * MillisPerMinute +
+                    seconds * MillisPerSecond +
+                    millis)
 
   lazy val Hour: Duration = Duration.standardHours(1)
 
   def hours(hours: Int, minutes: Int = 0, seconds: Int = 0, millis: Int = 0): Duration =
     Duration.millis(hours * MillisPerHour +
-      minutes * MillisPerMinute +
-      seconds * MillisPerSecond +
-      millis)
+                    minutes * MillisPerMinute +
+                    seconds * MillisPerSecond +
+                    millis)
 
   lazy val Minute: Duration = Duration.standardMinutes(1)
 
   def minutes(minutes: Int, seconds: Int = 0, millis: Int = 0): Duration =
     Duration.millis(minutes * MillisPerMinute +
-      seconds * MillisPerSecond +
-      millis)
+                    seconds * MillisPerSecond +
+                    millis)
 
 
   lazy val Second: Duration = Duration.standardSeconds(1)

@@ -160,7 +160,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     log.trace(s"visit day... day=[$day], context=$context")
 
     if (context.scope != CollectKind.Hour) {
-      log.trace(s"Scope=[${context.scope}}]")
+      log.trace(s"Scope=[${context.scope }}]")
       return true
     }
 

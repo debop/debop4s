@@ -42,7 +42,7 @@ class WeeksTest extends AbstractTimePeriodTest {
   test("start week range of year") {
     (2000 to 2100).par.foreach(year => {
       val startWR = Weeks.getStartWeekRangeOfYear(year)
-      log.trace(s"year=$year, startWeek=${startWR.startDayStart}")
+      log.trace(s"year=$year, startWeek=${startWR.startDayStart }")
 
       new Duration(asDate(year - 1, 12, 28), startWR.startDayStart).getStandardDays should be > 0L
       new Duration(asDate(year, 1, 3), startWR.endDayStart).getStandardDays should be > 0L
@@ -61,7 +61,7 @@ class WeeksTest extends AbstractTimePeriodTest {
     (2000 to 2100).par.foreach(year => {
       val startWR = Weeks.getStartWeekRangeOfYear(year)
       val endWR = Weeks.getEndWeekRangeOfYear(year - 1)
-      log.trace(s"year=$year, startWR=${startWR.startDayStart}, endWR=${endWR.startDayStart}")
+      log.trace(s"year=$year, startWR=${startWR.startDayStart }, endWR=${endWR.startDayStart }")
 
       new Duration(asDate(year - 1, 12, 28), startWR.startDayStart).getStandardDays should be > 0L
       new Duration(asDate(year, 1, 3), startWR.endDayStart).getStandardDays should be > 0L
