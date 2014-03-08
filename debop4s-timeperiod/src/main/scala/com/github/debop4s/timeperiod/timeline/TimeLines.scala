@@ -12,6 +12,7 @@ object TimeLines {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
 
+  @inline
   def combinePeriods(moments: ITimeLineMomentCollection): ITimePeriodCollection = {
 
     log.trace("ITimeLineMomentCollection에서 모든 기간을 결합합니다...")
@@ -48,6 +49,7 @@ object TimeLines {
     periods
   }
 
+  @inline
   def intersectPeriods(moments: ITimeLineMomentCollection): ITimePeriodCollection = {
 
     log.trace("ITimeLineMomentCollection의 요소들의 모든 Period로부터 교집합에 해당하는 구간을 구합니다...")
@@ -79,9 +81,10 @@ object TimeLines {
     periods
   }
 
+  @inline
   def calculateGap(moments: ITimeLineMomentCollection, range: ITimePeriod): ITimePeriodCollection = {
     log.trace(s"ITimeLineMomentCollection의 모든 ITimePeriod에 속하지 않는 Gap을 구합니다(여집합)." +
-      s"moments=[$moments], range=[$range]")
+              s"moments=[$moments], range=[$range]")
 
     val gaps = new TimePeriodCollection
     if (moments.isEmpty) return gaps
@@ -101,7 +104,7 @@ object TimeLines {
     while (itemIndex < moments.size) {
       val moment = moments(itemIndex)
       assert(moment != null)
-      assert(moment.startCount > 0, s"moment.getStartCount() 값이 0보다 커야합니다. balance=[${moment.startCount}]")
+      assert(moment.startCount > 0, s"moment.getStartCount() 값이 0보다 커야합니다. balance=[${moment.startCount }]")
 
       var balance = moment.startCount
       var gapStart: ITimeLineMoment = null

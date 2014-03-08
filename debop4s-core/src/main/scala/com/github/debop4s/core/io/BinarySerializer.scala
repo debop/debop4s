@@ -19,6 +19,7 @@ class BinarySerializer extends Serializer {
    * @param graph 직렬화할 객체
    * @return 직렬화된 정보를 가진 바이트 배열
    */
+  @inline
   def serialize[T](graph: T): Array[Byte] = {
     if (graph == null)
       return Array.emptyByteArray
@@ -41,6 +42,7 @@ class BinarySerializer extends Serializer {
    * @param bytes 직렬화된 바이트 배열
    * @return 역직렬화된 객체 정보
    */
+  @inline
   def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T = {
     if (Arrays.isEmpty(bytes))
       return null.asInstanceOf[T]

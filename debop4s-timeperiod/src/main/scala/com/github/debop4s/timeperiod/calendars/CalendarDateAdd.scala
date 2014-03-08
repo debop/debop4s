@@ -87,12 +87,13 @@ class CalendarDateAdd extends DateAdd {
     end
   }
 
+  @inline
   override def calculateEnd(start: DateTime,
                             offset: Duration,
                             seekDir: SeekDirection = SeekDirection.Forward,
                             seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): (DateTime, Duration) = {
     log.trace("기준시각으로부터 오프셋만큼 떨어진 시각을 구합니다. " +
-      s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
+              s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
 
     Guard.shouldBe(offset >= Duration.ZERO, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
 
@@ -128,12 +129,13 @@ class CalendarDateAdd extends DateAdd {
       }
     }
     log.trace("기준시각으로부터 offset 기간만큼 떨어진 시각을 구했습니다. " +
-      s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
+              s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
     log.debug(s"결과: end=[$end], remaining=[$remaining]")
 
     (end, remaining)
   }
 
+  @inline
   private def findNextWeek(current: WeekRange): WeekRange = {
     log.trace(s"current week=[$current] 이후 week 기간을 구합니다...")
 
@@ -156,6 +158,7 @@ class CalendarDateAdd extends DateAdd {
     next
   }
 
+  @inline
   private def findPreviousWeek(current: WeekRange): WeekRange = {
     log.trace(s"current week=[$current] 이전 week 기간을 구합니다...")
 
@@ -178,6 +181,7 @@ class CalendarDateAdd extends DateAdd {
     previous
   }
 
+  @inline
   private def getAvailableWeekPeriods(limits: ITimePeriod): Seq[ITimePeriod] = {
     assert(limits != null)
     log.trace(s"가능한 주간 기간을 추출합니다... limits=[$limits]")
@@ -196,7 +200,7 @@ class CalendarDateAdd extends DateAdd {
     val weekCollector = CalendarPeriodCollector(filter, limits, SeekDirection.Forward, calendar)
     weekCollector.collectHours()
 
-    log.trace(s"가능한 주간 기간=${weekCollector.periods}")
+    log.trace(s"가능한 주간 기간=${weekCollector.periods }")
     weekCollector.periods
   }
 

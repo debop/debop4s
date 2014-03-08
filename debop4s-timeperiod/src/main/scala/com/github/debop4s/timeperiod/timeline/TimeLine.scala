@@ -81,6 +81,7 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
     TimeLines.intersectPeriods(moments)
   }
 
+  @inline
   def calculateGaps: ITimePeriodCollection = {
     log.trace("calculate gaps...")
     val gapPeriods = TimePeriodCollection()

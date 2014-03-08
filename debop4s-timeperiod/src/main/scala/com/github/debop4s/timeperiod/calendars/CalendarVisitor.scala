@@ -24,6 +24,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     startPeriodVisit(limits, context)
   }
 
+  @inline
   protected final def startPeriodVisit(period: ITimePeriod, context: C) {
     log.trace(s"기간을 탐색합니다. period=[$period], context=[$context], seekDirection=[$seekDirection]")
     Guard.shouldNotBeNull(period, "period")
@@ -43,7 +44,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
         if (isForward) years.getYears
         else years.getYears.sortWith(_.end > _.end)
 
-      yearsToVisit.foreach(year => {
+      yearsToVisit.foreach { year =>
         log.trace(s"Year 탐색: year=${year.year}")
 
         val canVisitMonth =
@@ -57,7 +58,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
             if (isForward) years.getMonths
             else years.getMonths.sortWith(_.end > _.end)
 
-          monthsToVisit.foreach(month => {
+          monthsToVisit.foreach { month =>
             log.trace(s"Month 탐색: year=${month.year}, month=${month.monthOfYear}")
 
             val canVisitDay =
@@ -72,7 +73,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
                 if (isForward) month.getDays
                 else month.getDays.sortWith(_.end > _.end)
 
-              daysToVisit.foreach(day => {
+              daysToVisit.foreach { day =>
                 log.trace(s"Day 탐색: day=${day.start}")
                 val canVisitHour =
                   if (!day.overlapsWith(period)) false
@@ -86,20 +87,20 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
                     if (isForward) day.getHours
                     else day.getHours.sortWith(_.end > _.end)
 
-                  hoursToVisit.foreach(hour => {
-                    log.trace(s"Hour 탐색: hour=[${hour.hourOfDay}]")
+                  hoursToVisit.foreach { hour =>
+                  log.trace(s"Hour 탐색: hour=[${hour.hourOfDay}]")
 
                     val canVisitMinute = hour.overlapsWith(period) && onVisitHour(hour, context)
                     if (canVisitMinute) {
                       enterMinutes(hour, context)
                     }
-                  })
+                  }
                 }
-              })
+              }
             }
-          })
+          }
         }
-      })
+      }
     }
 
     onVisitEnd()
@@ -107,6 +108,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     log.trace(s"기간에 대한 탐색을 완료했습니다. period=[$period], context=[$context], seekDirection=[$seekDirection]")
   }
 
+  @inline
   protected def startYearVisit(year: YearRange, context: C, direction: SeekDirection): YearRange = {
     log.trace(s"Year 단위로 탐색을 수행합니다. year=[${year.year}], context=[$context], seekDirection=[$seekDirection]")
 
@@ -133,6 +135,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     lastVisited
   }
 
+  @inline
   protected def startMonthVisit(month: MonthRange, context: C, direction: SeekDirection): MonthRange = {
     log.trace(s"Month 단위 탐색을 시작합니다. month=[$month], context=[$context], direction=[$direction]")
 
@@ -158,6 +161,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     lastVisited
   }
 
+  @inline
   protected def startDayVisit(day: DayRange, context: C, direction: SeekDirection): DayRange = {
     log.trace(s"Day 단위 탐색을 시작합니다. day=[$day], context=[$context], direction=[$direction]")
 
@@ -183,6 +187,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     lastVisited
   }
 
+  @inline
   protected def startHourVisit(hour: HourRange, context: C, direction: SeekDirection): HourRange = {
     log.trace(s"Hour 단위 탐색을 시작합니다. hour=[$hour], context=[$context], direction=[$direction]")
 
@@ -245,12 +250,14 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
   protected def onVisitMinute(minute: MinuteRange, context: C) = true
 
+  @inline
   protected def isMatchingYear(yr: YearRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(yr.year))
       false
     else checkExcludePeriods(yr)
   }
 
+  @inline
   protected def isMatchingMonth(mr: MonthRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(mr.year))
       false
@@ -259,6 +266,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     else checkExcludePeriods(mr)
   }
 
+  @inline
   protected def isMatchingDay(dr: DayRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(dr.year))
       false
@@ -272,6 +280,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
       checkExcludePeriods(dr)
   }
 
+  @inline
   protected def isMatchingHour(hr: HourRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(hr.year))
       false
@@ -287,6 +296,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
       checkExcludePeriods(hr)
   }
 
+  @inline
   protected def isMatchingMinute(mr: MinuteRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(mr.year))
       false
