@@ -19,7 +19,7 @@ class ScalaJpaEntity extends HibernateEntity[Long] {
   @GeneratedValue
   val id: Long = 0
 
-  override def getId: Long = id
+  def getId = id
 
   @Column(name = "entityName", nullable = false, length = 32)
   var name: String = _

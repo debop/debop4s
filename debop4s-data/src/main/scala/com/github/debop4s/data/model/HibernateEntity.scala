@@ -60,8 +60,9 @@ trait HibernateEntity[TId] extends PersistentObject {
     val hash = if (getId != null) Hashs.compute(getId) else hashCode()
     if (notNull) {
       val entityHash = if (entity.getId != null) Hashs.compute(entity.getId) else entity.hashCode()
-      hash == entityHash
+      return hash == entityHash
+    } else {
+      false
     }
-    false
   }
 }
