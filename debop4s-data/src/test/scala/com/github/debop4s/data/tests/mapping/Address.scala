@@ -10,4 +10,8 @@ case class Address(street: String = null,
                    state: String = null,
                    country: String = null,
                    zipcode: String = null) {
+
+  def this() {
+    this(null, null, null, null, null)
+  }
 }

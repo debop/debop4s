@@ -17,15 +17,15 @@ object Entities {
 
   def updateTreeNodePosition[T <: HibernateTreeEntity[T]](entity: T) {
     assert(entity != null)
-    val np = entity.getNodePosition
+    val np = entity.nodePosition
     if (entity.getParent != null) {
-      np.level = entity.getParent.getNodePosition.level + 1
-      if (!entity.getParent.getChildren.contains(entity)) {
-        np.order = entity.getParent.getChildren.size
+      np.lvl = entity.getParent.nodePosition.lvl + 1
+      if (!entity.getParent.children.contains(entity)) {
+        np.ord = entity.getParent.children.size
       }
     } else {
-      np.level = 0
-      np.order = 0
+      np.lvl = 0
+      np.ord = 0
     }
   }
 
@@ -44,22 +44,22 @@ object Entities {
   def setNodeOrder[T <: HibernateTreeEntity[T]](node: T, order: Int) {
     assert(node != null)
     if (node.getParent != null) {
-      node.getParent.getChildren.foreach(child => {
-        if (child.getNodePosition.order >= order)
-          child.getNodePosition.order = child.getNodePosition.order + 1
+      node.getParent.children.foreach(child => {
+        if (child.nodePosition.ord >= order)
+          child.nodePosition.ord = child.nodePosition.ord + 1
       })
     }
-    node.getNodePosition.order = order
+    node.nodePosition.ord = order
   }
 
   def setNodeOrder[T <: HibernateTreeEntity[T]](parent: T) {
     assert(parent != null)
 
     var order = 0
-    parent.getChildren.toList
-      .sortWith(_.getNodePosition.order < _.getNodePosition.order)
-      .foreach(n => {
-      n.getNodePosition.order = order
+    parent.children.toList
+    .sortWith(_.nodePosition.ord < _.nodePosition.ord)
+    .foreach(n => {
+      n.nodePosition.ord = order
       order += 1
     })
   }
@@ -85,7 +85,7 @@ object Entities {
     assert(parent != null)
     assert(child != null)
 
-    val ord = Math.max(0, Math.min(order, parent.getChildren.size - 1))
+    val ord = Math.max(0, Math.min(order, parent.children.size - 1))
     parent.addChild(child)
     setNodeOrder(child, ord)
   }

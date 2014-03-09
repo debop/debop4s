@@ -5,11 +5,15 @@ import com.mysema.query.types.{OrderSpecifier, EntityPath}
 import javax.persistence.{PersistenceContext, EntityManager}
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.{PageImpl, PageRequest, Page}
+import org.springframework.stereotype.{Repository, Component}
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * JpaQueryDslDaoHelper
  * Created by debop on 2014. 1. 29..
  */
+@Repository
+@Transactional(readOnly = true)
 class JpaQueryDslDao {
 
   private lazy val log = LoggerFactory.getLogger(getClass)

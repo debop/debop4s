@@ -57,12 +57,12 @@ object EntityTool {
   def updateTreeNodePosition[T <: HibernateTreeEntity[T]](entity: T) {
     require(entity != null)
 
-    val np = entity.getNodePosition
+    val np = entity.nodePosition
 
     if (entity.getParent != null) {
-      np.level = entity.getParent.getNodePosition.level + 1
-      if (!entity.getParent.getChildren.contains(entity)) {
-        np.order = entity.getParent.getChildren.size
+      np.lvl = entity.getParent.nodePosition.lvl + 1
+      if (!entity.getParent.children.contains(entity)) {
+        np.ord = entity.getParent.children.size
       }
     } else {
       np.setPosition(0, 0)
@@ -88,14 +88,14 @@ object EntityTool {
     require(node != null)
 
     if (node.getParent != null) {
-      node.getParent.getChildren.foreach(child => {
-        if (child.getNodePosition.order >= order) {
-          child.getNodePosition.order = child.getNodePosition.order + 1
+      node.getParent.children.foreach { child =>
+        if (child.nodePosition.ord >= order) {
+          child.nodePosition.ord = child.nodePosition.ord + 1
         }
-      })
-      node.getNodePosition.order = math.max(0, math.min(order, node.getParent.getChildren.size - 1))
+      }
+      node.nodePosition.ord = math.max(0, math.min(order, node.getParent.children.size - 1))
     } else {
-      node.getNodePosition.order = math.max(0, order)
+      node.nodePosition.ord = math.max(0, order)
     }
   }
 
@@ -103,11 +103,11 @@ object EntityTool {
     require(node != null)
 
     if (oldParent != null) {
-      oldParent.getChildren.add(node)
+      oldParent.children.add(node)
     }
 
     if (newParent != null) {
-      newParent.getChildren.add(node)
+      newParent.children.add(node)
     }
 
     node.setParent(newParent)
@@ -123,7 +123,7 @@ object EntityTool {
     require(parent != null)
     require(child != null)
 
-    val ord = math.max(0, math.min(order, parent.getChildren.size - 1))
+    val ord = math.max(0, math.min(order, parent.children.size - 1))
     parent.addChild(child)
     setNodeOrder(child, ord)
   }
@@ -147,7 +147,7 @@ object EntityTool {
   * Tree 상에서 현재 노드의 모든 자손 노드를 구합니다.
   */
   def descendents[T <: HibernateTreeEntity[T]](node: T): Seq[T] = {
-    Graphs.depthFirstScan[T](node, (x => x.getChildren.toIterable))
+    Graphs.depthFirstScan[T](node, (x => x.children.toIterable))
   }
 
   /**
