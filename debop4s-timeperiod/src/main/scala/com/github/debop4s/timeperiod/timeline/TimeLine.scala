@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 
 
 /**
- *  TimePeriod의 컬렉션을 가지며, 이를 통해 여러 기간에 대한 Union, Intersection, Gap 등을 구할 수 있도록 합니다.
+ * TimePeriod의 컬렉션을 가지며, 이를 통해 여러 기간에 대한 Union, Intersection, Gap 등을 구할 수 있도록 합니다.
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 31. 오후 8:16
  */
@@ -30,11 +30,16 @@ object TimeLine {
   def apply[T <: ITimePeriod](periods: ITimePeriodContainer): TimeLine[T] =
     apply(periods, null, null)
 
-  def apply[T <: ITimePeriod](periods: ITimePeriodContainer, limits: ITimePeriod): TimeLine[T] =
+  def apply[T <: ITimePeriod](periods: ITimePeriodContainer,
+                              limits: ITimePeriod): TimeLine[T] = {
     apply(periods, limits, null)
+  }
 
-  def apply[T <: ITimePeriod](periods: ITimePeriodContainer, limits: ITimePeriod, mapper: ITimePeriodMapper): TimeLine[T] =
+  def apply[T <: ITimePeriod](periods: ITimePeriodContainer,
+                              limits: ITimePeriod,
+                              mapper: ITimePeriodMapper): TimeLine[T] = {
     new TimeLine[T](periods, limits, mapper)
+  }
 }
 
 /**
@@ -87,8 +92,8 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
     val gapPeriods = TimePeriodCollection()
 
     _periods
-      .filter(x => limits.intersectsWith(x))
-      .foreach(x => gapPeriods.add(TimeRange(x)))
+    .filter(x => limits.intersectsWith(x))
+    .foreach { x => gapPeriods.add(TimeRange(x))}
 
     val moments = getTimeLineMoments(gapPeriods)
     if (moments == null || moments.size == 0)
@@ -113,9 +118,9 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
     val intersections = new TimePeriodCollection()
 
     periods
-      .filter(!_.isMoment)
-      .foreach(mp => {
-      log.trace(s"moment period = $mp, type=${mp.getClass }")
+    .filter(!_.isMoment)
+    .foreach { mp =>
+      log.trace(s"moment period = $mp, type=${mp.getClass}")
 
       val intersection = limits.getIntersection(mp)
       if (intersection != null && !intersection.isMoment) {
@@ -125,7 +130,7 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
         log.trace(s"add intersection. intersection=[$intersection]")
         intersections.add(intersection)
       }
-    })
+    }
     moments.addAll(intersections)
     log.trace(s"기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드했습니다. moments=[$moments]")
     moments
