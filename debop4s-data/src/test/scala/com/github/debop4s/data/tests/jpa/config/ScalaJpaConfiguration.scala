@@ -3,8 +3,9 @@ package com.github.debop4s.data.tests.jpa.config
 import com.github.debop4s.data.jpa.spring.AbstractJpaH2Configuration
 import java.util.Properties
 import org.hibernate.cfg.AvailableSettings
-import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 /**
  * ScalaJpaConfiguration 
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
  */
 @Configuration
 @EnableTransactionManagement
+@EnableJpaRepositories
+@ComponentScan(basePackages = Array("com.github.debop4s.data.jpa"))
 class ScalaJpaConfiguration extends AbstractJpaH2Configuration {
 
   override def getMappedPackageNames: Array[String] =

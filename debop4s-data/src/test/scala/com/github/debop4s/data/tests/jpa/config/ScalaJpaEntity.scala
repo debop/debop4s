@@ -1,7 +1,7 @@
 package com.github.debop4s.data.tests.jpa.config
 
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
-import com.github.debop4s.data.model.HibernateEntity
+import com.github.debop4s.data.model.{LongEntity, HibernateEntity}
 import javax.persistence._
 
 /**
@@ -13,13 +13,7 @@ import javax.persistence._
 @Entity
 @NamedQuery(name = "ScalaJapEntity.findByName", query = "select x from ScalaJpaEntity x where x.name = ?1")
 @Access(AccessType.FIELD)
-class ScalaJpaEntity extends HibernateEntity[Long] {
-
-  @Id
-  @GeneratedValue
-  val id: Long = 0
-
-  def getId = id
+class ScalaJpaEntity extends LongEntity {
 
   @Column(name = "entityName", nullable = false, length = 32)
   var name: String = _

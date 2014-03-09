@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
 /**
- * com.github.debop4s.data.hibernate.tools.EntityTool 
+ * 엔티티를 조작하는데 필요한 메소드를 제공합니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 25. 오후 3:28
@@ -21,7 +21,7 @@ object EntityTool {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
 
-  private lazy val json = JacksonSerializer()
+  lazy val json = JacksonSerializer()
 
   def asString(entity: ValueObject): String =
     if (entity == null) Strings.NULL_STR else entity.toString

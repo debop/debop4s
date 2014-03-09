@@ -47,9 +47,8 @@ object JpaUtils {
     em.createQuery(query)
   }
 
-  private
-  def applySpecificationToCriteria[T, S](em: EntityManager,
-                                         resultClass: Class[T],
+  private def applySpecificationToCriteria[T, S](em: EntityManager,
+                                                 resultClass: Class[T],
                                          spec: Specification[T],
                                          query: CriteriaQuery[_]): Root[T] = {
     require(query != null)

@@ -14,14 +14,14 @@ class JpaQueryDslDao {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
 
-  @PersistenceContext var em: EntityManager = _
+  @PersistenceContext val em: EntityManager = null
 
   def findOne[T](entityClass: Class[T], id: AnyRef) = em.find(entityClass, id)
 
   def findAll[T](path: EntityPath[T], query: JPAQuery, firstResult: Int, maxResults: Int): java.util.List[T] =
     query.offset(firstResult)
-      .limit(maxResults)
-      .list(path)
+    .limit(maxResults)
+    .list(path)
 
   def getPage[T <: Comparable[_]](path: EntityPath[T],
                                   query: JPAQuery,
@@ -30,9 +30,9 @@ class JpaQueryDslDao {
                                   orders: OrderSpecifier[T]*): Page[T] = {
     val totalCount = query.count()
     val entities = query.offset(pageNo * pageSize)
-      .limit(pageSize)
-      .orderBy(orders: _*)
-      .list(path)
+                   .limit(pageSize)
+                   .orderBy(orders: _*)
+                   .list(path)
 
     new PageImpl[T](entities, new PageRequest(pageNo, pageSize), totalCount)
   }
