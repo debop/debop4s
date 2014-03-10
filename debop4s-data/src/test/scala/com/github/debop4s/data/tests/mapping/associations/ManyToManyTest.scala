@@ -1,12 +1,12 @@
 package com.github.debop4s.data.tests.mapping.associations
 
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
-import com.github.debop4s.data.model.HibernateEntity
+import com.github.debop4s.data.model.{HibernateEntity, LongEntity}
 import com.github.debop4s.data.tests.AbstractJpaTest
 import java.lang.{Long => jLong}
 import java.util
 import javax.persistence._
-import org.hibernate.annotations.{LazyCollectionOption, LazyCollection}
+import org.hibernate.{ annotations => hba }
 import org.junit.Test
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
@@ -35,6 +35,7 @@ class ManyToManyTest extends AbstractJpaTest {
     owner.bankAccounts.add(soge)
 
     // mappedBy가 AccountOwner로 설정되었다는 것은 AccountOwner를 기준으로 cascading이 된다는 뜻이다.
+    // em.persist(soge)
     em.persist(owner)
     em.flush()
     em.clear()
@@ -82,11 +83,17 @@ class ManyToManyTest extends AbstractJpaTest {
 
 @Entity
 @Access(AccessType.FIELD)
-class AccountOwner extends HibernateEntity[jLong] {
+@hba.Cache(region = "association", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
+class AccountOwner extends HibernateEntity[java.lang.Long] {
 
+  // NOTE: LongEntity를 사용하고 싶지만, BankAccounts 에 association 되는 컬럼을 찾지 못하는 버그가 있다.
+  // NOTE: 어쩔 수 없이 id의 컬럼명을 정의하기 위해 (ownerId) 아래와 같이 정의하였다.
   @Id
   @GeneratedValue
-  var id: jLong = _
+  @Column(name="ownerId")
+  var id: java.lang.Long = _
 
   override def getId = id
 
@@ -96,24 +103,30 @@ class AccountOwner extends HibernateEntity[jLong] {
   @ManyToMany(cascade = Array(CascadeType.ALL))
   @JoinTable(name = "BankAccounts",
     joinColumns = Array(new JoinColumn(name = "ownerId")),
-    inverseJoinColumns = Array(new JoinColumn(name = "bacnkAccountId")))
-  @LazyCollection(LazyCollectionOption.EXTRA)
+    inverseJoinColumns = Array(new JoinColumn(name = "accountId")))
+  @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
   var bankAccounts: util.Set[BankAccount] = new util.HashSet[BankAccount]()
 
   override def hashCode(): Int = Hashs.compute(SSN)
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("SSN", SSN)
+    .add("SSN", SSN)
 }
 
 @Entity
 @Access(AccessType.FIELD)
-class BankAccount extends HibernateEntity[jLong] {
+@hba.Cache(region = "association", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
+class BankAccount extends HibernateEntity[java.lang.Long] {
 
+  // NOTE: LongEntity를 사용하고 싶지만, BankAccounts 에 association 되는 컬럼을 찾지 못하는 버그가 있다.
+  // NOTE: 어쩔 수 없이 id의 컬럼명을 정의하기 위해 (ownerId) 아래와 같이 정의하였다.
   @Id
   @GeneratedValue
-  var id: jLong = _
+  @Column(name="accountId")
+  var id: java.lang.Long = _
 
   override def getId = id
 

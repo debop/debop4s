@@ -815,15 +815,11 @@
                     </testAnalysisCacheFile>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <args>
-                        <!--<arg>-target:jvm-${jdk.version}</arg>-->
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
-                        <arg>-nowarn</arg>
-                        <!--<arg>-explaintypes</arg>-->
+                        <arg>-explaintypes</arg>
                     </args>
                     <javacArgs>
-                        <javacArg>-source</javacArg>
-                        <javacArg>${jdk.version}</javacArg>
                         <javacArg>-target</javacArg>
                         <javacArg>${jdk.version}</javacArg>
                         <javacArg>-Xlint:unchecked</javacArg>
@@ -832,7 +828,7 @@
                     <jvmArgs>
                         <jvmArg>-server</jvmArg>
                         <jvmArg>-Xms128m</jvmArg>
-                        <jvmArg>-Xmx4096m</jvmArg>
+                        <jvmArg>-Xmx8192m</jvmArg>
                     </jvmArgs>
                 </configuration>
                 <executions>
@@ -924,7 +920,7 @@
                 <version>2.15</version>
                 <configuration>
                     <skipTests>true</skipTests>
-                    <argLine>-Xmx4096m</argLine>
+                    <argLine>-Xmx8192m</argLine>
                     <argLine>-XX:+UseCompressedOops</argLine>
                     <argLine>-XX:+UseParallelOldGC</argLine>
                     <argLine>-Dfile.encoding=UTF-8</argLine>

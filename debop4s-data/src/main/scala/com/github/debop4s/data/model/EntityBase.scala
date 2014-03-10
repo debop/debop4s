@@ -1,12 +1,12 @@
 package com.github.debop4s.data.model
 
 import javax.persistence._
-import org.hibernate.annotations.{GenericGenerator, DynamicUpdate, DynamicInsert}
+import org.hibernate.{ annotations => hba }
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
-@DynamicInsert
-@DynamicUpdate
+@hba.DynamicInsert
+@hba.DynamicUpdate
 abstract class LongEntity extends HibernateEntity[java.lang.Long] {
 
   @Id
@@ -19,8 +19,8 @@ abstract class LongEntity extends HibernateEntity[java.lang.Long] {
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
-@DynamicInsert
-@DynamicUpdate
+@hba.DynamicInsert
+@hba.DynamicUpdate
 abstract class IntEntity extends HibernateEntity[java.lang.Integer] {
 
   @Id
@@ -33,22 +33,22 @@ abstract class IntEntity extends HibernateEntity[java.lang.Integer] {
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
-@DynamicInsert
-@DynamicUpdate
-abstract class UuidEntity extends HibernateEntity[java.util.UUID] {
+@hba.DynamicInsert
+@hba.DynamicUpdate
+abstract class UuidEntity extends HibernateEntity[String] {
 
   @Id
   @GeneratedValue(generator = "uuid")
-  @GenericGenerator(name = "uuid", strategy = "uuid2")
-  var id: java.util.UUID = _
+  @hba.GenericGenerator(name = "uuid", strategy = "uuid2")
+  var id: String = _
 
   override def getId = id
 }
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
-@DynamicInsert
-@DynamicUpdate
+@hba.DynamicInsert
+@hba.DynamicUpdate
 abstract class StringEntity extends HibernateEntity[String] {
 
   @Id

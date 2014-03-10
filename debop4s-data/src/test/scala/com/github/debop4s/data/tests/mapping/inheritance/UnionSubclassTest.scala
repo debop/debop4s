@@ -27,6 +27,7 @@ class UnionSubclassTest extends AbstractJpaTest {
     bankAccount.bankname = "bank name"
     bankAccount.owner = "debop"
     em.persist(bankAccount)
+    em.flush()
 
     val creditCard = new UnionSubclassCreditCard()
     creditCard.number = "1111-1111-1111-1111"
@@ -35,10 +36,11 @@ class UnionSubclassTest extends AbstractJpaTest {
     creditCard.expMonth = 12
     creditCard.owner = "debop"
     em.persist(creditCard)
-
     em.flush()
+
     em.clear()
 
+    assert(bankAccount.id != null)
     val bankAccount1 = em.find(classOf[UnionSubclassBankAccount], bankAccount.id)
     assert(bankAccount1 == bankAccount)
 
@@ -64,6 +66,8 @@ class UnionSubclassTest extends AbstractJpaTest {
 @Entity
 @hba.Cache(region = "inheritance", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 abstract class UnionSubclassBillingBase extends UuidEntity {
 
   @Column(name = "owner", nullable = false)
@@ -74,8 +78,6 @@ abstract class UnionSubclassBillingBase extends UuidEntity {
 
 @Entity
 @hba.Cache(region = "inheritance", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
-@hba.DynamicInsert
-@hba.DynamicUpdate
 class UnionSubclassBankAccount extends UnionSubclassBillingBase {
 
   @Column(nullable = false)
@@ -91,8 +93,6 @@ class UnionSubclassBankAccount extends UnionSubclassBillingBase {
 
 @Entity
 @hba.Cache(region = "inheritance", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
-@hba.DynamicInsert
-@hba.DynamicUpdate
 class UnionSubclassCreditCard extends UnionSubclassBillingBase {
 
   @Column(nullable = false)
