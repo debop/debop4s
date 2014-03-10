@@ -113,11 +113,11 @@ class JodaDateTimeEntity extends LongEntity {
   @hba.Type(`type` = "com.github.debop4s.data.hibernate.usertype.JodaDateTimeUserType")
   var end: DateTime = _
 
-  @Columns(columns = Array(new Column(name = "startTime"), new Column(name = "startTimeZone")))
+  @Columns(columns = Array(new Column(name = "startTime"), new Column(name = "startTimeZone", length=32)))
   @hba.Type(`type` = "com.github.debop4s.data.hibernate.usertype.JodaDateTimeTZUserType")
   var startTZ: DateTime = _
 
-  @Columns(columns = Array(new Column(name = "endTime"), new Column(name = "endTimeZone")))
+  @Columns(columns = Array(new Column(name = "endTime"), new Column(name = "endTimeZone", length=32)))
   @hba.Type(`type` = "com.github.debop4s.data.hibernate.usertype.JodaDateTimeTZUserType")
   var endTZ: DateTime = _
 

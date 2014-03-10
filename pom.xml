@@ -815,8 +815,7 @@
                     </testAnalysisCacheFile>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <args>
-                        <arg>-target:jvm-${jdk.version}</arg>
-                        <!--<arg>-optimise</arg>-->
+                        <!--<arg>-target:jvm-${jdk.version}</arg>-->
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
                         <arg>-nowarn</arg>
@@ -833,7 +832,7 @@
                     <jvmArgs>
                         <jvmArg>-server</jvmArg>
                         <jvmArg>-Xms128m</jvmArg>
-                        <jvmArg>-Xmx8192m</jvmArg>
+                        <jvmArg>-Xmx4096m</jvmArg>
                     </jvmArgs>
                 </configuration>
                 <executions>
@@ -925,7 +924,7 @@
                 <version>2.15</version>
                 <configuration>
                     <skipTests>true</skipTests>
-                    <argLine>-Xmx8192m</argLine>
+                    <argLine>-Xmx4096m</argLine>
                     <argLine>-XX:+UseCompressedOops</argLine>
                     <argLine>-XX:+UseParallelOldGC</argLine>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
@@ -949,32 +948,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- scala-doc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.2</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>net.alchim31.maven</groupId>
-                            <artifactId>scala-maven-plugin</artifactId>
-                            <version>3.1.6</version>
-                            <configuration>
-                                <jvmArgs>
-                                    <jvmArg>-Xms64m</jvmArg>
-                                    <jvmArg>-Xmx1024m</jvmArg>
-                                </jvmArgs>
-                            </configuration>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
             </plugin>
         </plugins>
     </build>

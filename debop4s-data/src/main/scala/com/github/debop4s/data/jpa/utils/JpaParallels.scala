@@ -13,7 +13,7 @@ object JpaParallels {
 
   def run[T](emf: EntityManagerFactory, collection: Iterable[T])(action: (EntityManager, T) => Unit) {
     collection
-    .par
+    //.par
     .foreach { elem => runUnit(emf.createEntityManager(), elem)(action) }
   }
 
@@ -34,7 +34,7 @@ object JpaParallels {
 
   def call[T, V](emf: EntityManagerFactory, collection: Iterable[T])(func: (EntityManager, T) => V): IndexedSeq[V] = {
     collection
-    .par
+    //.par
     .map { elem => callUnit(emf.createEntityManager(), elem)(func) }
     .toIndexedSeq
   }

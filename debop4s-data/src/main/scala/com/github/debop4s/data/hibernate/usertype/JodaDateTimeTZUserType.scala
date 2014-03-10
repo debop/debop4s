@@ -2,7 +2,7 @@ package com.github.debop4s.data.hibernate.usertype
 
 import java.io.Serializable
 import java.sql.{Timestamp, Types, ResultSet, PreparedStatement}
-import java.util.Objects
+import java.util.{Date, Objects}
 import org.hibernate.`type`.StandardBasicTypes
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
@@ -10,15 +10,15 @@ import org.joda.time.{DateTimeZone, DateTime}
 import org.slf4j.LoggerFactory
 
 /**
- * com.github.debop4s.data.hibernate.usertype.JodaDateTimeTZUserType
+ * DateTime을 UTC Time 과 Timzone으로 분리하여 저장하고, 관리합니다.
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 9. 오후 10:18
  */
 class JodaDateTimeTZUserType extends UserType {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-  def sqlTypes() = Array(Types.TIMESTAMP, Types.VARCHAR)
+  def sqlTypes() = Array(StandardBasicTypes.LONG.sqlType(), StandardBasicTypes.STRING.sqlType())
 
   def returnedClass() = classOf[DateTime]
 
@@ -27,7 +27,7 @@ class JodaDateTimeTZUserType extends UserType {
   def hashCode(x: Any) = Objects.hashCode(x)
 
   def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
-    val timestamp = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Timestamp]
+    val timestamp = StandardBasicTypes.LONG.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Long]
     val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
 
     var value: DateTime = null
@@ -36,20 +36,16 @@ class JodaDateTimeTZUserType extends UserType {
     } else {
       value = new DateTime(timestamp, DateTimeZone.forID(timezone))
     }
-    log.trace(s"Load timestamp=[$timestamp], timezone=[$timezone] => value=[$value]")
-
     value
   }
 
   def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
     val time = value.asInstanceOf[DateTime]
-    log.trace(s"Save DateTime with TimeZone... time=[$time]")
-
     if (time == null) {
-      StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session)
+      StandardBasicTypes.LONG.nullSafeSet(st, null, index, session)
       StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, session)
     } else {
-      StandardBasicTypes.TIMESTAMP.nullSafeSet(st, time.toDate, index, session)
+      StandardBasicTypes.LONG.nullSafeSet(st, time.toDateTime(DateTimeZone.UTC).getMillis, index, session)
       StandardBasicTypes.STRING.nullSafeSet(st, time.getZone.getID, index + 1, session)
     }
 

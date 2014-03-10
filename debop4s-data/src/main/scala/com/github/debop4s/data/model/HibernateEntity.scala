@@ -48,7 +48,7 @@ trait HibernateEntity[TId] extends PersistentObject {
   @inline
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("id", getId)
+    .add("id", getId)
 
   @inline
   private def hasSameNonDefaultIds(entity: HibernateEntity[TId]): Boolean = {
@@ -66,9 +66,9 @@ trait HibernateEntity[TId] extends PersistentObject {
     val hash = if (getId != null) Hashs.compute(getId) else hashCode()
     if (notNull) {
       val entityHash = if (entity.getId != null) Hashs.compute(entity.getId) else entity.hashCode()
-      hash == entityHash
-    } else {
-      false
+      return hash == entityHash
     }
+
+    false
   }
 }
