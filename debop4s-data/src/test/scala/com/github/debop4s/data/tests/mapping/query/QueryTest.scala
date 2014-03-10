@@ -4,7 +4,7 @@ import com.github.debop4s.core.utils.Hashs
 import com.github.debop4s.data.model.{StringEntity, LongEntity}
 import com.github.debop4s.data.tests.AbstractJpaTest
 import javax.persistence.{Query, EntityManager, PersistenceContext, Entity}
-import org.hibernate.annotations.{CacheConcurrencyStrategy, DynamicUpdate, DynamicInsert}
+import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
 import org.junit.Before
 import org.junit.Test
 import org.slf4j.LoggerFactory
@@ -84,21 +84,19 @@ class QueryTest extends AbstractJpaTest {
   }
 }
 
+// BUG: Hypothesis 같은 경우 hibernate-redis 캐시를 사용하게 하면 예외가 발생한다.
 
 @Entity
-@org.hibernate.annotations.Cache(region = "query", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 class Helicopter extends LongEntity {
 
   var name: String = _
 
-  @inline
   override def hashCode(): Int = Hashs.compute(name)
 }
 
 @Entity
-@org.hibernate.annotations.Cache(region = "query", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 class Hypothesis extends StringEntity {
@@ -106,6 +104,5 @@ class Hypothesis extends StringEntity {
   var description: String = _
   var position: Integer = _
 
-  @inline
   override def hashCode(): Int = Hashs.compute(description, position)
 }

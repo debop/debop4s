@@ -33,10 +33,6 @@ object JpaParallels {
   }
 
   def call[T, V](emf: EntityManagerFactory, collection: Iterable[T])(func: (EntityManager, T) => V): IndexedSeq[V] = {
-    require(emf != null)
-    require(collection != null)
-    require(func != null)
-
     collection
     .par
     .map { elem => callUnit(emf.createEntityManager(), elem)(func) }
@@ -48,7 +44,6 @@ object JpaParallels {
     tx.begin()
     try {
       val result = func(em, elem)
-      em.detach(result)
       tx.commit()
       return result
     } catch {

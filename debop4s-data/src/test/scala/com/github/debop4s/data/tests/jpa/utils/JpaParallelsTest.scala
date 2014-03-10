@@ -5,9 +5,9 @@ import com.github.debop4s.data.tests.AbstractJpaTest
 import com.github.debop4s.data.tests.mapping.associations.{OneToManyOrderItem, OneToManyOrder}
 import javax.persistence.{EntityManager, PersistenceContext}
 import org.hibernate.Hibernate
-import org.junit.Test
-import org.springframework.test.annotation.Rollback
+import org.junit.{Before, Test}
 import org.springframework.transaction.annotation.Transactional
+
 
 /**
  * 테스트 시 RDMBS의 Connection 수를 많이 늘리던가 entityCount 수를 줄여야 합니다.
@@ -18,25 +18,29 @@ class JpaParallelsTest extends AbstractJpaTest {
 
   @PersistenceContext val em: EntityManager = null
 
-  val entityCount = 500
+  val entityCount = 100
+
+  @Before
+  def before() {
+    em.createQuery("delete from OneToManyOrderItem").executeUpdate()
+    em.createQuery("delete from OneToManyOrder").executeUpdate()
+  }
 
   @Test
-  @Transactional
-  @Rollback(false)
   def parallelSaveAndRead() {
 
     JpaParallels.run(emf, (0 until entityCount).toIterable) { (em, x) =>
-      val order = createOrder(x)
-      em.persist(order)
+      em.persist(createOrder(x))
+      em.flush()
     }
 
     var orders =
       JpaParallels.call(emf, (0 until entityCount).toIterable) { (em, x) =>
         val order = em.find(classOf[OneToManyOrder], (x + 1).toLong)
+        Hibernate.initialize(order)
         Hibernate.initialize(order.items)
-        em.detach(order)
         order
-      }.sortBy(_.id)
+      }
 
     assert(orders.forall(x => x != null))
 
@@ -44,20 +48,20 @@ class JpaParallelsTest extends AbstractJpaTest {
     orders =
       JpaParallels.call(emf, (0 until entityCount).toIterable) { (em, x) =>
         val order = em.find(classOf[OneToManyOrder], (x + 1).toLong)
+        Hibernate.initialize(order)
         Hibernate.initialize(order.items)
-        em.detach(order)
         order
-      }.sortBy(_.id)
+      }
 
     assert(orders.forall(x => x != null))
 
     orders =
       JpaParallels.call(emf, (0 until entityCount).toIterable) { (em, x) =>
         val order = em.find(classOf[OneToManyOrder], (x + 1).toLong)
+        Hibernate.initialize(order)
         Hibernate.initialize(order.items)
-        em.detach(order)
         order
-      }.sortBy(_.id)
+      }
 
     assert(orders.forall(x => x != null))
   }
