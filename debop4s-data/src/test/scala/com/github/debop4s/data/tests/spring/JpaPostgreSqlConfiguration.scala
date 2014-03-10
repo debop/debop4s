@@ -1,6 +1,6 @@
 package com.github.debop4s.data.tests.spring
 
-import com.github.debop4s.data.jpa.spring.AbstractJpaH2HikariConfiguration
+import com.github.debop4s.data.jpa.spring.AbstractJpaPostgreSqlConfiguration
 import com.github.debop4s.data.tests.mapping.Employee
 import java.util.Properties
 import org.hibernate.cache.rediscala.SingletonRedisRegionFactory
@@ -10,16 +10,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 /**
- * JpaH2Configuration 
- *
- * @author sunghyouk.bae@gmail.com
- * @since 2014. 2. 28.
+ * Created by debop on 2014. 3. 10.
  */
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = Array("com.github.debop4s.data.tests"))
 @ComponentScan(basePackages = Array("com.github.debop4s.data.jpa"))
-class JpaH2Configuration extends AbstractJpaH2HikariConfiguration {
+class JpaPostgreSqlConfiguration extends AbstractJpaPostgreSqlConfiguration {
 
   override def getMappedPackageNames: Array[String] =
     Array(classOf[Employee].getPackage.getName)
@@ -27,7 +24,7 @@ class JpaH2Configuration extends AbstractJpaH2HikariConfiguration {
   override def jpaProperties: Properties = {
     val props = super.jpaProperties
 
-    props.put(AvailableSettings.HBM2DDL_AUTO, "create")
+    props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop")
 
     // add second cache provider using redis
     props.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true")

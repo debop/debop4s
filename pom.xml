@@ -809,26 +809,31 @@
                 <version>3.1.6</version>
                 <configuration>
                     <scalaVersion>${scala.version}</scalaVersion>
+                    <recompileMode>incremental</recompileMode>
                     <analysisCacheFile>${project.build.outputDirectory}/analysis-cache-file</analysisCacheFile>
                     <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
                     </testAnalysisCacheFile>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <args>
                         <arg>-target:jvm-${jdk.version}</arg>
+                        <!--<arg>-optimise</arg>-->
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
-                        <arg>-explaintypes</arg>
+                        <arg>-nowarn</arg>
+                        <!--<arg>-explaintypes</arg>-->
                     </args>
                     <javacArgs>
                         <javacArg>-source</javacArg>
                         <javacArg>${jdk.version}</javacArg>
                         <javacArg>-target</javacArg>
                         <javacArg>${jdk.version}</javacArg>
+                        <javacArg>-Xlint:unchecked</javacArg>
+                        <javacArg>-Xlint:deprecation</javacArg>
                     </javacArgs>
                     <jvmArgs>
                         <jvmArg>-server</jvmArg>
                         <jvmArg>-Xms128m</jvmArg>
-                        <jvmArg>-Xmx4096m</jvmArg>
+                        <jvmArg>-Xmx8192m</jvmArg>
                     </jvmArgs>
                 </configuration>
                 <executions>
@@ -856,6 +861,12 @@
                         <phase>process-test-resources</phase>
                         <goals>
                             <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>doc-jar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -938,6 +949,32 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- scala-doc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <version>2.2</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>net.alchim31.maven</groupId>
+                            <artifactId>scala-maven-plugin</artifactId>
+                            <version>3.1.6</version>
+                            <configuration>
+                                <jvmArgs>
+                                    <jvmArg>-Xms64m</jvmArg>
+                                    <jvmArg>-Xmx1024m</jvmArg>
+                                </jvmArgs>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
             </plugin>
         </plugins>
     </build>

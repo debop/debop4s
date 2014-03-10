@@ -1,17 +1,17 @@
 package com.github.debop4s.data.tests.mapping.simple
 
-import org.springframework.transaction.annotation.Transactional
-import com.github.debop4s.data.jpa.spring.AbstractJpaConfiguration
-import com.github.debop4s.data.tests.AbstractJpaTest
-import org.hibernate.{annotations => ha}
-import javax.persistence._
-import com.github.debop4s.data.model.LongEntity
-import java.util.Date
-import com.github.debop4s.core.utils.Hashs
-import org.springframework.beans.factory.annotation.Autowired
-import com.github.debop4s.data.jpa.repository.JpaDao
-import org.junit.Test
 import com.github.debop4s.core.io.Serializers
+import com.github.debop4s.core.utils.Hashs
+import com.github.debop4s.data.jpa.repository.JpaDao
+import com.github.debop4s.data.model.LongEntity
+import com.github.debop4s.data.tests.AbstractJpaTest
+import java.util.Date
+import javax.persistence._
+import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.{annotations => ha}
+import org.junit.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
 
 /**
@@ -91,6 +91,7 @@ class SimpleEntityTest extends AbstractJpaTest {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "simple", usage = CacheConcurrencyStrategy.READ_WRITE)
 @ha.DynamicInsert
 @ha.DynamicUpdate
 class LifecycleEntity extends LongEntity {
@@ -119,6 +120,7 @@ class LifecycleEntity extends LongEntity {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "simple", usage = CacheConcurrencyStrategy.READ_WRITE)
 @ha.DynamicInsert
 @ha.DynamicUpdate
 class SimpleEntity extends LongEntity {

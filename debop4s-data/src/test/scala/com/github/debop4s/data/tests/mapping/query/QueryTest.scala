@@ -1,14 +1,14 @@
 package com.github.debop4s.data.tests.mapping.query
 
-import org.springframework.transaction.annotation.Transactional
+import com.github.debop4s.core.utils.Hashs
+import com.github.debop4s.data.model.{StringEntity, LongEntity}
 import com.github.debop4s.data.tests.AbstractJpaTest
 import javax.persistence.{Query, EntityManager, PersistenceContext, Entity}
-import com.github.debop4s.data.model.{StringEntity, LongEntity}
-import com.github.debop4s.core.utils.Hashs
-import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
-import org.junit.Test
+import org.hibernate.annotations.{CacheConcurrencyStrategy, DynamicUpdate, DynamicInsert}
 import org.junit.Before
+import org.junit.Test
 import org.slf4j.LoggerFactory
+import org.springframework.transaction.annotation.Transactional
 
 
 /**
@@ -86,6 +86,7 @@ class QueryTest extends AbstractJpaTest {
 
 
 @Entity
+@org.hibernate.annotations.Cache(region = "query", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 class Helicopter extends LongEntity {
@@ -97,6 +98,7 @@ class Helicopter extends LongEntity {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "query", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 class Hypothesis extends StringEntity {

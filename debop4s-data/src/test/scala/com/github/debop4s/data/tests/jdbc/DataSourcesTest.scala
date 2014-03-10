@@ -22,12 +22,10 @@ class DataSourcesTest extends FunSuite with Matchers {
     conn.isClosed should equal(true)
   }
   test("HikariCP create multiple datasources by promgramatic") {
-    val ds =
-      DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL,
-        "jdbc:mysql://localhost:3306/test",
-        "sa",
-        "",
-        HashMap("characterEncoding" -> "UTF-8", "useUnicode" -> "true"))
+    val url = "jdbc:mysql://localhost:3306/test"
+    val props = HashMap("characterEncoding" -> "UTF-8", "useUnicode" -> "true")
+
+    val ds = DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL, url, props = props)
 
     ds should not be null
 

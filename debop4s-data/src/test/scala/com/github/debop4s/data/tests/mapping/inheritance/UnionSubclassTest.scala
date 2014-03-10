@@ -5,8 +5,9 @@ import com.github.debop4s.data.model.UuidEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
 import java.util.Date
 import javax.persistence._
+import org.hibernate.{annotations => hba}
 import org.junit.Test
-import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
+
 
 /**
  * 여러 테이블에 걸쳐 Identity를 유지하기 위해 Sequence 를 제작 (HSql, PostgreSql 에서만 지원)
@@ -52,7 +53,6 @@ class UnionSubclassTest extends AbstractJpaTest {
     assert(em.find(classOf[UnionSubclassBankAccount], bankAccount.id) == null)
     assert(em.find(classOf[UnionSubclassCreditCard], creditCard.id) == null)
   }
-
 }
 
 /**
@@ -62,6 +62,7 @@ class UnionSubclassTest extends AbstractJpaTest {
  * 여러 테이블에 걸쳐 Identity를 유지하기 위해 고유의 값을 가지도록 UUID를 사용한다.
  */
 @Entity
+@hba.Cache(region = "inheritance", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 abstract class UnionSubclassBillingBase extends UuidEntity {
 
@@ -72,8 +73,9 @@ abstract class UnionSubclassBillingBase extends UuidEntity {
 }
 
 @Entity
-@DynamicInsert
-@DynamicUpdate
+@hba.Cache(region = "inheritance", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class UnionSubclassBankAccount extends UnionSubclassBillingBase {
 
   @Column(nullable = false)
@@ -88,8 +90,9 @@ class UnionSubclassBankAccount extends UnionSubclassBillingBase {
 }
 
 @Entity
-@DynamicInsert
-@DynamicUpdate
+@hba.Cache(region = "inheritance", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class UnionSubclassCreditCard extends UnionSubclassBillingBase {
 
   @Column(nullable = false)

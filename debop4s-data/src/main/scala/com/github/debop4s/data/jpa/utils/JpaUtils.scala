@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.query.QueryUtils
 import org.springframework.data.jpa.repository.support.{JpaEntityInformationSupport, JpaEntityInformation}
 
+
 /**
  * JpaUtils
  * Created by debop on 2014. 2. 25.
@@ -49,8 +50,8 @@ object JpaUtils {
 
   private def applySpecificationToCriteria[T, S](em: EntityManager,
                                                  resultClass: Class[T],
-                                         spec: Specification[T],
-                                         query: CriteriaQuery[_]): Root[T] = {
+                                                 spec: Specification[T],
+                                                 query: CriteriaQuery[_]): Root[T] = {
     require(query != null)
 
     val root = query.from(resultClass)
@@ -102,5 +103,26 @@ object JpaUtils {
   def setPaging[T](query: TypedQuery[T], firstResult: Int, maxResults: Int) = {
     val q = setFirstResult(query, firstResult)
     setMaxResults(q, maxResults)
+  }
+
+  /**
+   *  Lazy Initialize 속성에 대해 Initialize 가 되었는지 확인합니다.
+   *  @see Hibernate#initialize 를 사용하는게 더 낫습니다.
+   */
+  def isLoaded(em: EntityManager, entity: AnyRef): Boolean = {
+    val unitUtil = em.getEntityManagerFactory.getPersistenceUnitUtil
+    unitUtil.isLoaded(entity)
+  }
+
+  /**
+  *  Lazy Initialize 속성에 대해 Initialize 가 되었는지 확인합니다.
+  *  {{{
+  *   isLoaded(dept, "employees")
+  *  }}}
+  *  @see Hibernate#initialize 를 사용하는게 더 낫습니다.
+  */
+  def isLoaded(em: EntityManager, entity: AnyRef, propertyName: String): Boolean = {
+    val unitUtil = em.getEntityManagerFactory.getPersistenceUnitUtil
+    unitUtil.isLoaded(entity, propertyName)
   }
 }

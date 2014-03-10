@@ -1,19 +1,18 @@
 package com.github.debop4s.data.tests.mapping.usertype
 
-import org.springframework.transaction.annotation.Transactional
-import com.github.debop4s.data.tests.AbstractJpaTest
-import javax.persistence._
-import org.hibernate.{annotations => hba}
-import com.github.debop4s.data.model.LongEntity
-import org.joda.time.DateTime
-import org.hibernate.annotations.Columns
-import com.github.debop4s.timeperiod.ITimeRange
 import com.github.debop4s.core.utils.{Strings, Hashs}
-import org.junit.Test
-import com.github.debop4s.timeperiod.utils.{Durations, Times}
-import com.github.debop4s.timeperiod._
+import com.github.debop4s.data.model.LongEntity
+import com.github.debop4s.data.tests.AbstractJpaTest
 import com.github.debop4s.data.tests.mapping.Employee
+import com.github.debop4s.timeperiod._
+import com.github.debop4s.timeperiod.utils.{Durations, Times}
 import java.nio.charset.Charset
+import javax.persistence._
+import org.hibernate.annotations.{CacheConcurrencyStrategy, Columns}
+import org.hibernate.{annotations => hba}
+import org.joda.time.DateTime
+import org.junit.Test
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Created by debop on 2014. 3. 9.
@@ -101,6 +100,7 @@ class UserTypeTest extends AbstractJpaTest {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "usertype", usage = CacheConcurrencyStrategy.READ_WRITE)
 @hba.DynamicInsert
 @hba.DynamicUpdate
 class JodaDateTimeEntity extends LongEntity {
@@ -134,6 +134,7 @@ class JodaDateTimeEntity extends LongEntity {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "usertype", usage = CacheConcurrencyStrategy.READ_WRITE)
 @hba.DynamicInsert
 @hba.DynamicUpdate
 class CompressedDataEntity extends LongEntity {
@@ -153,6 +154,9 @@ class CompressedDataEntity extends LongEntity {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "usertype", usage = CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class JsonEntity extends LongEntity {
 
   @hba.Columns(columns = Array(new Column(name = "className"), new Column(name = "jsonText", length = 2000)))

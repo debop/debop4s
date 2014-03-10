@@ -7,7 +7,8 @@ import java.lang
 import java.util
 import java.util.Date
 import javax.persistence._
-import org.hibernate.annotations._
+import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.{annotations => hba}
 import org.junit.Test
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
@@ -25,15 +26,16 @@ class OneToManyListTest extends AbstractJpaTest {
   @PersistenceContext val em: EntityManager = null
 
   @Test
+  @org.springframework.transaction.annotation.Transactional
   def simpleOneToMany() {
-    val order = new OneToManyOrder
+    val order = new OneToManyOrder()
 
-    val item1 = new OneToManyOrderItem
+    val item1 = new OneToManyOrderItem()
     item1.name = "Item1"
     item1.order = order
     order.items.add(item1)
 
-    val item2 = new OneToManyOrderItem
+    val item2 = new OneToManyOrderItem()
     item2.name = "Item2"
     item2.order = order
     order.items.add(item2)
@@ -80,20 +82,22 @@ class OneToManyUser extends HibernateEntity[lang.Long] {
   @OneToMany(cascade = Array(javax.persistence.CascadeType.ALL))
   @JoinTable(name = "OneToMany_User_Address")
   @MapKeyColumn(name = "nick")
-  @Fetch(FetchMode.SUBSELECT)
+  @hba.Fetch(hba.FetchMode.SUBSELECT)
   val addresses: util.Map[String, OneToManyAddress] = new util.HashMap[String, OneToManyAddress]
 
   @ElementCollection
   @JoinTable(name = "OneToMany_Nicks", joinColumns = Array(new JoinColumn(name = "userId")))
-  @Cascade(Array(org.hibernate.annotations.CascadeType.ALL))
+  @hba.Cascade(Array(hba.CascadeType.ALL))
   val nicknames: util.Set[String] = new util.HashSet[String]
 
   override def hashCode(): Int =
     Hashs.compute(city)
 }
 
-@javax.persistence.Entity
-@Access(javax.persistence.AccessType.FIELD)
+@Entity
+@org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class OneToManyAddress extends HibernateEntity[lang.Long] {
 
   @Id
@@ -108,8 +112,10 @@ class OneToManyAddress extends HibernateEntity[lang.Long] {
     super.hashCode()
 }
 
-@javax.persistence.Entity
-@Access(javax.persistence.AccessType.FIELD)
+@Entity
+@org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class OneToManyChild extends HibernateEntity[lang.Long] {
 
   def this(name: String) {
@@ -129,8 +135,10 @@ class OneToManyChild extends HibernateEntity[lang.Long] {
   var birthday: Date = _
 }
 
-@javax.persistence.Entity
-@Access(javax.persistence.AccessType.FIELD)
+@Entity
+@org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class OneToManyFather extends HibernateEntity[lang.Long] {
 
   @Id
@@ -144,15 +152,17 @@ class OneToManyFather extends HibernateEntity[lang.Long] {
   @OneToMany(cascade = Array(javax.persistence.CascadeType.ALL), fetch = FetchType.EAGER)
   @JoinTable(name = "Father_Child")
   @OrderColumn(name = "birthday")
-  @LazyCollection(LazyCollectionOption.EXTRA)
+  @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
   val orderedChildren: util.List[OneToManyChild] = new util.ArrayList[OneToManyChild]()
 
   override def hashCode(): Int =
     Hashs.compute(name)
 }
 
-@javax.persistence.Entity
-@Access(javax.persistence.AccessType.FIELD)
+@Entity
+@org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class OneToManyOrder extends HibernateEntity[lang.Long] {
 
   @Id
@@ -164,12 +174,14 @@ class OneToManyOrder extends HibernateEntity[lang.Long] {
   var no: String = _
 
   @OneToMany(mappedBy = "order", cascade = Array(javax.persistence.CascadeType.ALL), orphanRemoval = true)
-  @LazyCollection(LazyCollectionOption.EXTRA)
+  @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
   val items: util.List[OneToManyOrderItem] = new util.ArrayList[OneToManyOrderItem]
 }
 
-@javax.persistence.Entity
-@Access(javax.persistence.AccessType.FIELD)
+@Entity
+@org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class OneToManyOrderItem extends HibernateEntity[lang.Long] {
 
   @Id

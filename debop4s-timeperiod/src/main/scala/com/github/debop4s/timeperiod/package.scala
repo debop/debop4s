@@ -32,7 +32,9 @@ package object timeperiod {
   implicit def richAbstractPartial(v: AbstractPartial): RichAbstractPartial = new RichAbstractPartial(v)
 
   implicit def richAbstractReadableInstantFieldProperty(v: AbstractReadableInstantFieldProperty)
-  : RichAbstractReadableInstantFieldProperty = new RichAbstractReadableInstantFieldProperty(v)
+  : RichAbstractReadableInstantFieldProperty = {
+    new RichAbstractReadableInstantFieldProperty(v)
+  }
 
   implicit def richChronology(v: Chronology): RichChronology = new RichChronology(v)
 

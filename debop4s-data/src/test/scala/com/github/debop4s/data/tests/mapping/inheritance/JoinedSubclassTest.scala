@@ -5,7 +5,8 @@ import com.github.debop4s.data.model.LongEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
 import java.util
 import javax.persistence._
-import org.hibernate.annotations.{LazyCollectionOption, LazyCollection}
+import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.{annotations => hba}
 import org.junit.Test
 
 /**
@@ -69,6 +70,9 @@ abstract class JoinedSubclassPerson extends LongEntity {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "inheritance", usage = CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class JoinedSubclassCustomer extends JoinedSubclassPerson {
 
   @Column(nullable = false)
@@ -83,6 +87,9 @@ class JoinedSubclassCustomer extends JoinedSubclassPerson {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "inheritance", usage = CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class JoinedSubclassEmployee extends JoinedSubclassPerson {
 
   @Column(name = "empNo", nullable = false)
@@ -94,7 +101,7 @@ class JoinedSubclassEmployee extends JoinedSubclassPerson {
   var manager: JoinedSubclassEmployee = _
 
   @OneToMany(mappedBy = "manager", cascade = Array(CascadeType.ALL))
-  @LazyCollection(LazyCollectionOption.EXTRA)
+  @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
   var members: util.Set[JoinedSubclassEmployee] = new util.HashSet[JoinedSubclassEmployee]
 
   override def hashCode(): Int = Hashs.compute(super.hashCode(), empNo)

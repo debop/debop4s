@@ -4,7 +4,7 @@ import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
 import com.github.debop4s.data.model.{UpdatedTimestampEntity, HibernateEntity}
 import java.lang.{Long => jLong}
 import javax.persistence._
-import org.hibernate.annotations.{Type, DynamicUpdate, DynamicInsert}
+import org.hibernate.annotations.{CacheConcurrencyStrategy, Type, DynamicUpdate, DynamicInsert}
 import org.joda.time.DateTime
 
 /**
@@ -14,7 +14,7 @@ import org.joda.time.DateTime
  * @since 2014. 2. 26.
  */
 @Entity
-// @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @SequenceGenerator(name = "employee_seq", sequenceName = "employee_seq")
@@ -48,7 +48,7 @@ class Employee extends HibernateEntity[jLong] with UpdatedTimestampEntity {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("empNo", empNo)
-      .add("name", name)
-      .add("email", email)
+    .add("empNo", empNo)
+    .add("name", name)
+    .add("email", email)
 }

@@ -1,19 +1,18 @@
 package com.github.debop4s.data.tests.mapping.tree
 
-import com.github.debop4s.data.tests.AbstractJpaTest
-import org.springframework.transaction.annotation.Transactional
-import javax.persistence._
-import com.github.debop4s.data.model.{TreeNodePosition, LongEntity, HibernateTreeEntity}
-import java.util
-import org.hibernate.{annotations => hba}
 import com.github.debop4s.core.utils.Hashs
-import org.springframework.stereotype.Repository
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.beans.factory.annotation.Autowired
-import org.junit.Test
 import com.github.debop4s.data.jpa.repository.JpaQueryDslDao
+import com.github.debop4s.data.model.{LongEntity, HibernateTreeEntity}
+import com.github.debop4s.data.tests.AbstractJpaTest
+import java.util
 import javax.persistence.CascadeType
 import javax.persistence.Entity
+import javax.persistence._
+import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.{annotations => hba}
+import org.junit.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Created by debop on 2014. 3. 9.
@@ -61,6 +60,7 @@ class TreeNodeTest extends AbstractJpaTest {
 }
 
 @Entity
+@org.hibernate.annotations.Cache(region = "tree", usage = CacheConcurrencyStrategy.READ_WRITE)
 @hba.DynamicInsert
 @hba.DynamicUpdate
 @Access(AccessType.FIELD)

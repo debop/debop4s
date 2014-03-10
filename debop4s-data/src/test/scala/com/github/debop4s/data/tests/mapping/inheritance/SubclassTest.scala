@@ -5,7 +5,7 @@ import com.github.debop4s.data.model.LongEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
 import java.util.Date
 import javax.persistence._
-import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
+import org.hibernate.{annotations => hba}
 import org.junit.Test
 
 
@@ -60,8 +60,8 @@ class SubclassTest extends AbstractJpaTest {
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DynamicInsert
-@DynamicUpdate
+@hba.DynamicInsert
+@hba.DynamicUpdate
 abstract class SubclassBillingBase extends LongEntity {
 
   @Column(nullable = false)
@@ -72,8 +72,8 @@ abstract class SubclassBillingBase extends LongEntity {
 }
 
 @Entity
-@DynamicInsert
-@DynamicUpdate
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class SubclassBankAccount extends SubclassBillingBase {
 
   var account: String = _
@@ -84,8 +84,9 @@ class SubclassBankAccount extends SubclassBillingBase {
 }
 
 @Entity
-@DynamicInsert
-@DynamicUpdate
+@hba.Cache(region = "inheritance", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class SubclassCreditCard extends SubclassBillingBase {
 
   var companyName: String = _

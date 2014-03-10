@@ -45,7 +45,7 @@ object DataSources {
     ds.setUsername(username)
     ds.setPassword(passwd)
 
-    ds.setMaxConnectionsPerPartition(50)
+    ds.setMaxConnectionsPerPartition(100)
     ds.setMinConnectionsPerPartition(2)
     ds.setPartitionCount(processCount)
 
@@ -82,7 +82,7 @@ object DataSources {
     }
 
     config.setAcquireIncrement(processCount * 2)
-    config.setMaximumPoolSize(processCount * 50)
+    config.setMaximumPoolSize(processCount * 100)
     config.setConnectionTestQuery("SELECT 1")
 
     config.setRegisterMbeans(true)
