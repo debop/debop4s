@@ -1,19 +1,15 @@
-package com.github.debop4s.core.parallels
+package org.hibernate.cache.rediscala
 
-import com.github.debop4s.core._
 import java.util.concurrent.TimeUnit
 import scala.concurrent._
 import scala.concurrent.duration._
 
 /**
- * Scala Promise 를 사용합니다. 그냥 future 를 이용해도 됩니다.
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2013. 12. 11. 오후 1:10
+ * Created by debop on 2014. 3. 10.
  */
 object Promises {
 
-  // implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
+  implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
   def exec[V](block: => V): Future[V] = future {
     require(block != null)
