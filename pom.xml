@@ -12,12 +12,12 @@
     <modules>
         <module>debop4s-core</module>
         <module>debop4s-timeperiod</module>
+        <module>hibernate-rediscala</module>
         <module>debop4s-redis</module>
         <module>debop4s-mongo</module>
         <module>debop4s-data</module>
 
         <module>debop4s-experiments</module>
-        <module>hibernate-rediscala</module>
     </modules>
 
     <properties>

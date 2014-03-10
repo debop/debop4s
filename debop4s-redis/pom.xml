@@ -21,11 +21,11 @@
             <artifactId>debop4s-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.github.debop4s</groupId>-->
-            <!--<artifactId>debop4s-timeperiod</artifactId>-->
-            <!--<version>${project.parent.version}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>hibernate-rediscala</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <!-- Akka -->
         <dependency>
