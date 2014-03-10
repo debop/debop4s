@@ -1,6 +1,6 @@
 package com.github.debop4s.data.tests.mapping.associations
 
-import com.github.debop4s.core.utils.Hashs
+import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
 import com.github.debop4s.data.model.HibernateEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
 import java.lang
@@ -11,7 +11,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.hibernate.{annotations => hba}
 import org.junit.Test
 import org.slf4j.LoggerFactory
-import scala.collection.JavaConversions._
 
 
 /**
@@ -29,6 +28,7 @@ class OneToManyListTest extends AbstractJpaTest {
   @org.springframework.transaction.annotation.Transactional
   def simpleOneToMany() {
     val order = new OneToManyOrder()
+    order.no = "123456"
 
     val item1 = new OneToManyOrderItem()
     item1.name = "Item1"
@@ -48,7 +48,7 @@ class OneToManyListTest extends AbstractJpaTest {
     assert(order2 != null)
     assert(order2.items.size == 2)
 
-    val i1 = order2.items.head
+    val i1 = order2.items.iterator().next()
     order2.items.remove(i1)
     em.persist(order2)
     em.flush()
@@ -160,42 +160,53 @@ class OneToManyFather extends HibernateEntity[lang.Long] {
 }
 
 @Entity
-@org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
+// @org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
 @hba.DynamicInsert
 @hba.DynamicUpdate
 class OneToManyOrder extends HibernateEntity[lang.Long] {
 
   @Id
   @GeneratedValue
+  @Column(name = "orderId")
   var id: lang.Long = _
 
   def getId = id
 
   var no: String = _
 
-  @OneToMany(mappedBy = "order", cascade = Array(javax.persistence.CascadeType.ALL), orphanRemoval = true)
+  @OneToMany(mappedBy = "order", cascade = Array(CascadeType.ALL), orphanRemoval = true)
   @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
   val items: util.List[OneToManyOrderItem] = new util.ArrayList[OneToManyOrderItem]
+
+  @inline
+  override def hashCode(): Int = Hashs.compute(no)
+
+  @inline
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("no", no)
 }
 
 @Entity
-@org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
+// @org.hibernate.annotations.Cache(region = "association", usage = CacheConcurrencyStrategy.READ_WRITE)
 @hba.DynamicInsert
 @hba.DynamicUpdate
 class OneToManyOrderItem extends HibernateEntity[lang.Long] {
 
   @Id
   @GeneratedValue
+  @Column(name = "orderItemId")
   var id: lang.Long = _
 
   def getId = id
 
   @ManyToOne
+  @JoinColumn(name = "orderId")
   var order: OneToManyOrder = _
 
   var name: String = _
 
-  override def hashCode(): Int =
-    Hashs.compute(name)
+  @inline
+  override def hashCode(): Int = Hashs.compute(name)
 }
 

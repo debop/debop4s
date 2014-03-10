@@ -1,14 +1,15 @@
 package com.github.debop4s.data.tests.mapping.query
 
 import com.github.debop4s.core.utils.Hashs
-import com.github.debop4s.data.model.{StringEntity, LongEntity}
+import com.github.debop4s.data.model.{HibernateEntity, StringEntity, LongEntity}
 import com.github.debop4s.data.tests.AbstractJpaTest
-import javax.persistence.{Query, EntityManager, PersistenceContext, Entity}
-import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
+import javax.persistence._
+import org.hibernate.{ annotations => hba}
 import org.junit.Before
 import org.junit.Test
 import org.slf4j.LoggerFactory
 import org.springframework.transaction.annotation.Transactional
+import org.hibernate.annotations
 
 
 /**
@@ -51,6 +52,9 @@ class QueryTest extends AbstractJpaTest {
   def setup() {
     log.info("예제용 데이터 추가...")
 
+    em.createQuery("delete from Hypothesis").executeUpdate()
+    em.createQuery("delete from Helicopter").executeUpdate()
+
     val socrates = new Hypothesis()
     socrates.id = "13"
     socrates.description = "There are more than two dimensions over the shadows we see out of the cave"
@@ -84,12 +88,17 @@ class QueryTest extends AbstractJpaTest {
   }
 }
 
-// BUG: Hypothesis 같은 경우 hibernate-redis 캐시를 사용하게 하면 예외가 발생한다.
-
 @Entity
-@DynamicInsert
-@DynamicUpdate
-class Helicopter extends LongEntity {
+@hba.Cache(region = "simple.query", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
+class Helicopter extends HibernateEntity[java.lang.Long] {
+
+  @Id
+  @GeneratedValue
+  var id: java.lang.Long = _
+
+  override def getId = id
 
   var name: String = _
 
@@ -97,9 +106,15 @@ class Helicopter extends LongEntity {
 }
 
 @Entity
-@DynamicInsert
-@DynamicUpdate
-class Hypothesis extends StringEntity {
+@hba.Cache(region = "simple.query", usage = hba.CacheConcurrencyStrategy.READ_WRITE)
+@hba.DynamicInsert
+@hba.DynamicUpdate
+class Hypothesis extends HibernateEntity[String] {
+
+  @Id
+  var id: String = _
+
+  override def getId = id
 
   var description: String = _
   var position: Integer = _

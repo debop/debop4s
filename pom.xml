@@ -815,9 +815,11 @@
                     </testAnalysisCacheFile>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <args>
+                        <arg>-target:jvm-${jdk.version}</arg>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
-                        <arg>-explaintypes</arg>
+                        <!--<arg>-explaintypes</arg>-->
+                        <!--<arg>-nowarn</arg>-->
                     </args>
                     <javacArgs>
                         <javacArg>-target</javacArg>

@@ -13,11 +13,12 @@ object JpaParallels {
 
   def run[T](emf: EntityManagerFactory, collection: Iterable[T])(action: (EntityManager, T) => Unit) {
     collection
-    //.par
+    .par
     .foreach { elem => runUnit(emf.createEntityManager(), elem)(action) }
   }
 
-  def runUnit[T](em: EntityManager, elem: T)(action: (EntityManager, T) => Unit) {
+  @inline
+  private def runUnit[T](em: EntityManager, elem: T)(action: (EntityManager, T) => Unit) {
     val tx = em.getTransaction
     tx.begin()
     try {
@@ -34,12 +35,13 @@ object JpaParallels {
 
   def call[T, V](emf: EntityManagerFactory, collection: Iterable[T])(func: (EntityManager, T) => V): IndexedSeq[V] = {
     collection
-    //.par
+    .par
     .map { elem => callUnit(emf.createEntityManager(), elem)(func) }
     .toIndexedSeq
   }
 
-  def callUnit[T, V](em: EntityManager, elem: T)(func: (EntityManager, T) => V): V = {
+  @inline
+  private def callUnit[T, V](em: EntityManager, elem: T)(func: (EntityManager, T) => V): V = {
     val tx = em.getTransaction
     tx.begin()
     try {
