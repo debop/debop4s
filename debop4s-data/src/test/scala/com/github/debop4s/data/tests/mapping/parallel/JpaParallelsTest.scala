@@ -1,17 +1,18 @@
 package com.github.debop4s.data.tests.mapping.parallel
 
-import com.github.debop4s.data.jpa.utils.JpaParallels
+import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
+import com.github.debop4s.data.jpa.utils.{JpaParCallable, JpaParRunnable, JpaParallels}
+import com.github.debop4s.data.model.HibernateEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
+import java.{util, lang}
 import javax.persistence._
-import org.hibernate.{annotations, Hibernate}
+import org.hibernate.Hibernate
+import org.hibernate.{annotations => hba}
 import org.junit.{Before, Test}
 import org.slf4j.LoggerFactory
 import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.{Propagation, Transactional}
-import com.github.debop4s.data.model.HibernateEntity
-import java.{util, lang}
-import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
-import org.hibernate.{annotations => hba}
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * 테스트 시 RDMBS의 Connection 수를 많이 늘리던가 entityCount 수를 줄여야 합니다.
@@ -24,10 +25,11 @@ class JpaParallelsTest extends AbstractJpaTest {
 
   @PersistenceContext val em: EntityManager = null
 
-  val entityCount = 100
+  val entityCount = 1000
 
   @Before
   def before() {
+    // 캐시는 삭제되지 않는다!
     em.createQuery("delete from ParallelOneToManyOrderItem").executeUpdate()
     em.createQuery("delete from ParallelOneToManyOrder").executeUpdate()
   }
@@ -37,22 +39,19 @@ class JpaParallelsTest extends AbstractJpaTest {
   @Rollback(false)
   def parallelSaveAndRead() {
 
+    val orderIds = ArrayBuffer[Long]()
+
     JpaParallels.run(emf, (0 until entityCount).toIterable) { (em, x) =>
-      em.setFlushMode(FlushModeType.COMMIT)
       val order = createOrder(x)
       em.persist(order)
       em.flush()
-      log.debug(s"saved Order = $order")
+      orderIds += order.id
     }
 
-    Thread.sleep(100)
-
     var orders =
-      JpaParallels.call(emf, (0 until (entityCount - 1)).toIterable) { (em, x) =>
-        log.debug(s"load Order. ${x + 1L}")
-        val order = em.find(classOf[ParallelOneToManyOrder], x + 1L)
+      JpaParallels.call(emf, orderIds) { (em, x) =>
+        val order = em.find(classOf[ParallelOneToManyOrder], x)
         log.debug(s"loaded Order. $order")
-        // assert(order != null)
         Hibernate.initialize(order.items)
         order
       }
@@ -61,9 +60,9 @@ class JpaParallelsTest extends AbstractJpaTest {
 
     // 여기서부터는 hibernate-redis second 캐시에서도 잘 되는지 알아보기 위함입니다.
     orders =
-      JpaParallels.call(emf, (0 until (entityCount - 1)).toIterable) { (em, x) =>
-        val order = em.find(classOf[ParallelOneToManyOrder], x + 1L)
-        // assert(order != null)
+      JpaParallels.call(emf, orderIds) { (em, x) =>
+        val order = em.find(classOf[ParallelOneToManyOrder], x)
+        log.debug(s"loaded Order. $order")
         Hibernate.initialize(order.items)
         order
       }
@@ -71,14 +70,70 @@ class JpaParallelsTest extends AbstractJpaTest {
     assert(orders.forall(x => x != null))
 
     orders =
-      JpaParallels.call(emf, (0 until (entityCount - 1)).toIterable) { (em, x) =>
-        val order = em.find(classOf[ParallelOneToManyOrder], x + 1L)
-        // assert(order != null)
+      JpaParallels.call(emf, orderIds) { (em, x) =>
+        val order = em.find(classOf[ParallelOneToManyOrder], x)
+        log.debug(s"loaded Order. $order")
         Hibernate.initialize(order.items)
         order
       }
 
     assert(orders.forall(x => x != null))
+  }
+
+  @Test
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Rollback(false)
+  def parallelSaveAndReadForJava() {
+
+    val orderIds = ArrayBuffer[Long]()
+
+    JpaParallels.runAction(emf, (0 to entityCount).toIterable,
+      new JpaParRunnable[Int] {
+        override def run(em: EntityManager, x: Int): Unit = {
+          val order = createOrder(x)
+          em.persist(order)
+          em.flush()
+          orderIds += order.id
+        }
+      })
+
+    var orders =
+      JpaParallels.callFunc(emf, orderIds,
+        new JpaParCallable[Long, ParallelOneToManyOrder] {
+          override def call(em: EntityManager, id: Long): ParallelOneToManyOrder = {
+            val order = em.find(classOf[ParallelOneToManyOrder], id)
+            Hibernate.initialize(order.items)
+            order
+          }
+        })
+
+    assert(orders.forall(x => x != null))
+
+    // 여기서부터는 hibernate-redis second 캐시에서도 잘 되는지 알아보기 위함입니다.
+    orders =
+      JpaParallels.callFunc(emf, orderIds,
+        new JpaParCallable[Long, ParallelOneToManyOrder] {
+          override def call(em: EntityManager, id: Long): ParallelOneToManyOrder = {
+            val order = em.find(classOf[ParallelOneToManyOrder], id)
+            Hibernate.initialize(order.items)
+            order
+          }
+        })
+
+    assert(orders.forall(x => x != null))
+
+    orders =
+      JpaParallels.callFunc(emf, orderIds,
+        new JpaParCallable[Long, ParallelOneToManyOrder] {
+          override def call(em: EntityManager, id: Long): ParallelOneToManyOrder = {
+            val order = em.find(classOf[ParallelOneToManyOrder], id)
+            Hibernate.initialize(order.items)
+            order
+          }
+        })
+
+    assert(orders.forall(x => x != null))
+
   }
 
   private def createOrder(x: Long) = {
