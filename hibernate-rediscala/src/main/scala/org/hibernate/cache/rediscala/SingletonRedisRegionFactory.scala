@@ -6,7 +6,7 @@ import org.hibernate.cache.CacheException
 import org.hibernate.cfg.Settings
 
 /**
- * org.hibernate.cache.rediscala.SingletonRedisRegionFactory
+ * SingletonRedisRegionFactory
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 3:54

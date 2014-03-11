@@ -1,11 +1,9 @@
 package com.github.debop4s.data.model
 
 import com.github.debop4s.core.ValueObject
-import scala.collection.mutable
 import java.util
 import java.util.Locale
 import scala.collection.JavaConversions._
-import javax.persistence.Transient
 
 /**
 * 지역화 정보를 표현하는 trait 입니다.

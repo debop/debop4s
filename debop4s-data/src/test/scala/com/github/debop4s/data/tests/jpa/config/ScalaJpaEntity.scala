@@ -1,7 +1,7 @@
 package com.github.debop4s.data.tests.jpa.config
 
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
-import com.github.debop4s.data.model.{LongEntity, HibernateEntity}
+import com.github.debop4s.data.model.LongEntity
 import javax.persistence._
 
 /**
@@ -22,5 +22,5 @@ class ScalaJpaEntity extends LongEntity {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("name", name)
+    .add("name", name)
 }

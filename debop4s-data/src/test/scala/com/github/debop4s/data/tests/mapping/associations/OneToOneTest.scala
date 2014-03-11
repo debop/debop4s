@@ -6,9 +6,9 @@ import com.github.debop4s.data.tests.AbstractJpaTest
 import java.lang
 import java.util.Date
 import javax.persistence._
+import org.hibernate.annotations.Cascade
 import org.junit.Test
 import org.springframework.transaction.annotation.Transactional
-import org.hibernate.annotations.Cascade
 
 /**
  * OneToOneTest

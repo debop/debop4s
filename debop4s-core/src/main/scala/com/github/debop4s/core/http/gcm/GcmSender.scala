@@ -8,7 +8,6 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.message.BasicHeader
 import org.apache.http.{HttpStatus, Header}
-import org.slf4j.LoggerFactory
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -18,9 +17,6 @@ import scala.collection.mutable.ArrayBuffer
  * @since 2013. 12. 15. 오후 2:28
  */
 class GcmSender(val serverApiKey: String) {
-
-  private lazy val log = LoggerFactory.getLogger(getClass)
-
 
   lazy val serializer = new JacksonSerializer()
 
@@ -53,7 +49,8 @@ class GcmSender(val serverApiKey: String) {
 
   private def buildHttpPost(apiKey: String, msg: GcmMessage): HttpPost = {
     val post = new HttpPost(GcmSender.GCM_SERVER_URI)
-    buildHttpHeader(apiKey).foreach(h => post.addHeader(h))
+    buildHttpHeader(apiKey).foreach(post.addHeader)
+
     val text = buildMessage(msg)
     post.setEntity(new StringEntity(text, Charsets.UTF_8))
     post

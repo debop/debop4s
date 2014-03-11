@@ -60,7 +60,7 @@ class MinuteRangeCollectionTest extends AbstractTimePeriodTest {
     val minuteCounts = Array(1, 24, 48, 64, 128)
     val now = Times.now
 
-    minuteCounts.foreach(minuteCount => {
+    minuteCounts.foreach { minuteCount =>
       val minuteRanges = MinuteRangeCollection(now, minuteCount)
       val startTime = Times.trimToSecond(now).plus(minuteRanges.calendar.startOffset)
       val endTime = startTime.plusMinutes(minuteCount).plus(minuteRanges.calendar.endOffset)
@@ -72,12 +72,12 @@ class MinuteRangeCollectionTest extends AbstractTimePeriodTest {
       val items = minuteRanges.getMinutes
       items.size should equal(minuteCount)
 
-      (0 until minuteCount).par.foreach(m => {
+      (0 until minuteCount).par.foreach { m =>
         items(m).start should equal(startTime + m.minute)
         items(m).end should equal(minuteRanges.calendar.mapEnd(startTime + (m + 1).minute))
         items(m).unmappedEnd should equal(startTime + (m + 1).minute)
-      })
-    })
+      }
+    }
   }
 
 }

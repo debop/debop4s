@@ -82,8 +82,8 @@ class Beer extends HibernateEntity[lang.Long] {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("name", name)
-      .add("price", price)
+    .add("name", name)
+    .add("price", price)
 }
 
 
@@ -108,7 +108,7 @@ class Brewery extends HibernateEntity[lang.Long] {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("name", name)
+    .add("name", name)
 }
 
 @Entity
@@ -133,7 +133,7 @@ class Jug extends HibernateEntity[lang.Long] {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("name", name)
+    .add("name", name)
 }
 
 
@@ -163,7 +163,7 @@ class JugMember(private[this] val _name: String) extends HibernateEntity[lang.Lo
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("name", name)
+    .add("name", name)
 }
 
 @Entity
@@ -187,7 +187,7 @@ class SalesForce extends HibernateEntity[lang.Long] {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("corporation", corporation)
+    .add("corporation", corporation)
 }
 
 @Entity

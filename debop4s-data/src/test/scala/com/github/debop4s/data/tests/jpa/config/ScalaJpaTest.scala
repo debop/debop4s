@@ -1,5 +1,6 @@
 package com.github.debop4s.data.tests.jpa.config
 
+import com.github.debop4s.data.jpa.repository.JpaDao
 import com.github.debop4s.data.tests.AbstractDataTest
 import javax.persistence.{EntityManager, PersistenceContext, EntityManagerFactory}
 import org.junit.Test
@@ -9,7 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.support.AnnotationConfigContextLoader
 import org.springframework.test.context.{TestContextManager, ContextConfiguration}
 import org.springframework.transaction.annotation.Transactional
-import com.github.debop4s.data.jpa.repository.JpaDao
 
 /**
  * ScalaJpaTest 

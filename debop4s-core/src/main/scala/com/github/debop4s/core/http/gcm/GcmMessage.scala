@@ -23,10 +23,10 @@ class GcmMessage extends ValueObject {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("collapseKey", collapseKey)
-      .add("timeToLive", timeToLive)
-      .add("delayWhileIdle", delayWhileIdle)
-      .add("data", data)
+    .add("collapseKey", collapseKey)
+    .add("timeToLive", timeToLive)
+    .add("delayWhileIdle", delayWhileIdle)
+    .add("data", data)
 
   class Builder {
     val registrationIds = mutable.HashSet[String]()

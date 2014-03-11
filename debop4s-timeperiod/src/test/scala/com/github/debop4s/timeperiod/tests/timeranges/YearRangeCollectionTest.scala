@@ -41,7 +41,7 @@ class YearRangeCollectionTest extends AbstractTimePeriodTest {
     val now = Times.now
     val today = Times.today
 
-    yearCounts.foreach(yearCount => {
+    yearCounts.foreach { yearCount =>
       val yearRanges = YearRangeCollection(now, yearCount)
       val startTime = yearRanges.calendar.mapStart(Times.trimToYear(today))
       val endTime = yearRanges.calendar.mapEnd(startTime + yearCount.year)
@@ -51,7 +51,7 @@ class YearRangeCollectionTest extends AbstractTimePeriodTest {
 
       val items = yearRanges.getYears
 
-      (0 until yearCount).par.foreach(y => {
+      (0 until yearCount).par.foreach { y =>
         val item = items(y)
 
         item.start should equal(startTime + y.year)
@@ -61,8 +61,8 @@ class YearRangeCollectionTest extends AbstractTimePeriodTest {
         item.unmappedEnd should equal(startTime + (y + 1).year)
 
         item.isSamePeriod(YearRange(yearRanges.start + y.year)) should equal(true)
-      })
-    })
+      }
+    }
   }
 
 }

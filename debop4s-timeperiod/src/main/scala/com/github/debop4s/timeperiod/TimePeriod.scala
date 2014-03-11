@@ -212,6 +212,6 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
 
   override protected def buildStringHelper =
     super.buildStringHelper
-      .add("start", start)
-      .add("end", end)
+    .add("start", start)
+    .add("end", end)
 }

@@ -479,7 +479,7 @@ class TimeRangeTest extends AbstractTimePeriodTest {
     assert(range.getIntersection(range) == range)
     assert(range.getIntersection(TimeRange(start.minusMillis(1), end.plusMillis(1))) == range)
     assert(range.getIntersection(TimeRange(start.plusMillis(1), end.minusMillis(1))) == TimeRange(start.plusMillis(1), end
-      .minusMillis(1)))
+                                                                                                                       .minusMillis(1)))
   }
 
   test("getRelation with Period") {

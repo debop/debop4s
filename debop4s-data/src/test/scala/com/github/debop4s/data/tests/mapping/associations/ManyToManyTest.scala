@@ -1,12 +1,12 @@
 package com.github.debop4s.data.tests.mapping.associations
 
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
-import com.github.debop4s.data.model.{HibernateEntity, LongEntity}
+import com.github.debop4s.data.model.HibernateEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
 import java.lang.{Long => jLong}
 import java.util
 import javax.persistence._
-import org.hibernate.{ annotations => hba }
+import org.hibernate.{annotations => hba}
 import org.junit.Test
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
@@ -68,7 +68,9 @@ class ManyToManyTest extends AbstractJpaTest {
     assert(owner3.bankAccounts.size == 1)
     assert(owner3.bankAccounts.exists(x => x.id == barclays.id))
 
-    owner3.bankAccounts.foreach(x => log.debug(s"BankAccount=$x"))
+    owner3.bankAccounts.foreach { x =>
+      log.debug(s"BankAccount=$x")
+    }
 
     val barclays2 = owner3.bankAccounts.head
     barclays.owners.clear()
@@ -92,7 +94,7 @@ class AccountOwner extends HibernateEntity[java.lang.Long] {
   // NOTE: 어쩔 수 없이 id의 컬럼명을 정의하기 위해 (ownerId) 아래와 같이 정의하였다.
   @Id
   @GeneratedValue
-  @Column(name="ownerId")
+  @Column(name = "ownerId")
   var id: java.lang.Long = _
 
   override def getId = id
@@ -125,7 +127,7 @@ class BankAccount extends HibernateEntity[java.lang.Long] {
   // NOTE: 어쩔 수 없이 id의 컬럼명을 정의하기 위해 (ownerId) 아래와 같이 정의하였다.
   @Id
   @GeneratedValue
-  @Column(name="accountId")
+  @Column(name = "accountId")
   var id: java.lang.Long = _
 
   override def getId = id

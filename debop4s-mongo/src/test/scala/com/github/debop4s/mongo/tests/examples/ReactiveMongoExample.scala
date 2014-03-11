@@ -39,10 +39,10 @@ class ReactiveMongoExample extends AbstractMongoTest {
     val filter = BSONDocument("publishDate" -> 1, "_id" -> 1)
 
     val future = collection
-      .find(query, filter)
-      .cursor[BSONDocument]
-      .enumerate()
-      .apply(Iteratee.foreach { doc => println("found document: " + BSONDocument.pretty(doc)) })
+                 .find(query, filter)
+                 .cursor[BSONDocument]
+                 .enumerate()
+                 .apply(Iteratee.foreach { doc => println("found document: " + BSONDocument.pretty(doc)) })
     Asyncs.ready(future)
   }
 

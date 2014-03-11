@@ -24,14 +24,14 @@ class MonthRangeTest extends AbstractTimePeriodTest {
   test("default calendar") {
     val yearStart = Times.startTimeOfYear(Times.now)
 
-    (0 until MonthsPerYear).par.foreach(m => {
+    (0 until MonthsPerYear).par.foreach { m =>
       val mr = MonthRange(yearStart + m.month)
       mr.year should equal(yearStart.getYear)
       mr.monthOfYear should equal(m + 1)
 
       mr.unmappedStart should equal(yearStart + m.month)
       mr.unmappedEnd should equal(yearStart + (m + 1).month)
-    })
+    }
   }
 
   test("get days") {
@@ -40,11 +40,11 @@ class MonthRangeTest extends AbstractTimePeriodTest {
     val days = mr.getDays
 
     var index = 0
-    days.foreach(day => {
+    days.foreach { day =>
       day.start should equal(mr.start + index.day)
       day.end should equal(day.calendar.mapEnd(day.start + 1.day))
       index += 1
-    })
+    }
     index should equal(Times.getDaysInMonth(mr.year, mr.monthOfYear))
   }
 
@@ -58,9 +58,9 @@ class MonthRangeTest extends AbstractTimePeriodTest {
 
     mr should equal(mr.addMonths(0))
 
-    (-60 until 120).par.foreach(m => {
+    (-60 until 120).par.foreach { m =>
       mr.addMonths(m).start should equal(startMonth + m.month)
-    })
+    }
   }
 
 }

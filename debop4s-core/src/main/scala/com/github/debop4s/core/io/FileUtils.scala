@@ -33,7 +33,7 @@ object FileUtils {
   @varargs
   def combine(base: Path, others: String*): Path = {
     var result = base
-    others.foreach(x => result = result.resolve(x))
+    others.foreach { x => result = result.resolve(x) }
     result
   }
 
@@ -123,14 +123,14 @@ object FileUtils {
     assert(path != null)
 
     val fileChannel = AsynchronousFileChannel
-      .open(path, openOptions: _*)
+                      .open(path, openOptions: _*)
     try {
       val buffer = ByteBuffer
-        .allocate(fileChannel
-        .size()
-        .asInstanceOf[Int])
+                   .allocate(fileChannel
+                             .size()
+                             .asInstanceOf[Int])
       val result = fileChannel
-        .read(buffer, 0)
+                   .read(buffer, 0)
       result.get()
       buffer.flip()
       buffer.array()
@@ -180,7 +180,7 @@ object FileUtils {
   def readAllLinesAsync(path: Path, cs: Charset, openOptions: OpenOption*) = future {
     val future = readAllBytesAsync(path, openOptions: _*)
     readAllLines(Await
-      .result(future, 60 seconds), cs)
+                 .result(future, 60 seconds), cs)
   }
 
   def readAllLinesAsync(is: InputStream): Future[IndexedSeq[String]] = {

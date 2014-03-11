@@ -3,7 +3,7 @@ package org.hibernate.cache.rediscala.serializer
 import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
 
 /**
- * org.hibernate.cache.rediscala.serializer.BinaryRedisSerializer
+ * BinaryRedisSerializer
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오전 11:20

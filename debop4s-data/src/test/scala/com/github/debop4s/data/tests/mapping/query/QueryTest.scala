@@ -1,15 +1,14 @@
 package com.github.debop4s.data.tests.mapping.query
 
 import com.github.debop4s.core.utils.Hashs
-import com.github.debop4s.data.model.{HibernateEntity, StringEntity, LongEntity}
+import com.github.debop4s.data.model.HibernateEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
 import javax.persistence._
-import org.hibernate.{ annotations => hba}
+import org.hibernate.{annotations => hba}
 import org.junit.Before
 import org.junit.Test
 import org.slf4j.LoggerFactory
 import org.springframework.transaction.annotation.Transactional
-import org.hibernate.annotations
 
 
 /**

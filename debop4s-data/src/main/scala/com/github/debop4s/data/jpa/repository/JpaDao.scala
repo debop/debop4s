@@ -100,8 +100,9 @@ class JpaDao {
       val query = em.createQuery(existsQuery, classOf[java.lang.Long])
 
       if (entityInformation.hasCompositeId) {
-        idAttributeNames.foreach(name =>
-          query.setParameter(name, entityInformation.getCompositeIdAttributeValue(id, name)))
+        idAttributeNames.foreach { name =>
+          query.setParameter(name, entityInformation.getCompositeIdAttributeValue(id, name))
+        }
       } else {
         query.setParameter(idAttributeNames.iterator().next(), id)
       }

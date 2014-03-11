@@ -101,9 +101,9 @@ public class LocalTest extends JUnitSuite {
         @Override
         public ToStringHelper buildStringHelper() {
             return super.buildStringHelper()
-                    .add("name", name)
-                    .add("password", password)
-                    .add("age", age);
+                        .add("name", name)
+                        .add("password", password)
+                        .add("age", age);
         }
 
         private static final long serialVersionUID = 2697543433170138506L;

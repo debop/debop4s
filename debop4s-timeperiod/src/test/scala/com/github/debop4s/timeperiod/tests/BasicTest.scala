@@ -25,12 +25,12 @@ class BasicTest extends FunSuite with Matchers with BeforeAndAfter {
   test("DateTime setter") {
     val actual =
       DateTime.parse("2014-01-01T01:01:01.123+0900")
-        .withYear(2013)
-        .withMonthOfYear(3)
-        .withDayOfMonth(2)
-        .withHourOfDay(7)
-        .withMinuteOfHour(8)
-        .withSecondOfMinute(9)
+      .withYear(2013)
+      .withMonthOfYear(3)
+      .withDayOfMonth(2)
+      .withHourOfDay(7)
+      .withMinuteOfHour(8)
+      .withSecondOfMinute(9)
 
     val expected = DateTime.parse("2013-03-02T07:08:09.123+0900")
     assert(actual == expected)

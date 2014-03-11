@@ -51,8 +51,6 @@ class HibernateRedisCache(val redis: RedisClient) {
    * @return return cached entity, if not exists return null.
    */
   def get(region: String, key: String, expireInSeconds: Long = 0): Future[Any] = {
-    // log.trace(s"캐시 값을 조회합니다... region=$region, key=$key")
-
     // 값을 가져오고, 값이 있고, expiration이 설정되어 있다면 갱신합니다.
     //
     redis.hget(region, key).map((item: Option[ByteString]) => {
@@ -69,40 +67,37 @@ class HibernateRedisCache(val redis: RedisClient) {
   * 지정한 region에 있는 모든 캐시 키를 조회합니다.
   */
   def keysInRegion(region: String): Future[Seq[String]] = {
-    // log.trace(s"retrieve all client item key in region=$region")
     redis.hkeys(region)
   }
 
   def keySizeInRegion(region: String): Future[Long] = redis.hlen(region)
 
   def getAll(region: String): Future[Map[String, Any]] = {
-    redis.hgetall(region).map(kvs => {
+    redis.hgetall(region).map { kvs =>
       kvs.map(x => (x._1, valueSerializer.deserialize(x._2.toArray)))
-    })
+    }
   }
 
   @varargs
   def multiGet(region: String, keys: String*): Future[Seq[Any]] = {
-    redis.hmget(region, keys: _*).map(results => {
-      results.map(x => {
+    redis.hmget(region, keys: _*).map { results =>
+      results.map { x =>
         x.map(v => valueSerializer.deserialize(v.toArray))
         .getOrElse(null)
-      })
-    })
+      }
+    }
   }
 
   def multiGet(region: String, keys: Iterable[String]): Future[Seq[Any]] = {
-    redis.hmget(region, keys.toSeq: _*).map(results => {
-      results.map(x => {
+    redis.hmget(region, keys.toSeq: _*).map { results =>
+      results.map { x =>
         x.map(v => valueSerializer.deserialize(v.toArray))
         .getOrElse(null)
-      })
-    })
+      }
+    }
   }
 
   def set(region: String, key: String, value: Any, expiry: Long = 0, unit: TimeUnit = TimeUnit.SECONDS): Future[Any] = {
-    // log.trace(s"cache 값을 설정합니다... region=$region, key=$key, value=$value, expiry=$expiry, unit=$unit")
-
     val v = ByteString(valueSerializer.serialize(value))
     val result = redis.hset(region, key, v)
 
@@ -123,27 +118,27 @@ class HibernateRedisCache(val redis: RedisClient) {
 
     if (keysToExpire != null && keysToExpire.nonEmpty) {
       log.trace(s"cache item들을 expire 시킵니다. region=$region, keys=$keysToExpire")
-      keysToExpire.par.foreach(key => {
+
+      keysToExpire.par.foreach { key =>
         redis.hdel(region, key.utf8String)
-      })
+      }
       redis.zremrangebyscore(regionExpire, Limit(0), Limit(score))
     }
   }
 
-  def delete(region: String, key: String) = {
+  def delete(region: String, key: String): Future[Long] = {
     val deleted = redis.hdel(region, key)
     redis.zrem(regionExpireKey(region), key)
-    log.trace(s"캐시 항목을 삭제했습니다. region=$region, key=$key")
     deleted
   }
 
   @varargs
   def multiDelete(region: String, keys: String*) {
     val regionExpire = regionExpireKey(region)
-    keys.par.foreach(key => {
+    keys.par.foreach { key =>
       redis.hdel(region, key)
       redis.zrem(regionExpire, key)
-    })
+    }
   }
 
   def multiDelete(region: String, keys: Iterable[String]) {
@@ -153,7 +148,6 @@ class HibernateRedisCache(val redis: RedisClient) {
   def deleteRegion(region: String) {
     redis.del(region)
     redis.del(regionExpireKey(region))
-    log.debug(s"Region을 삭제했습니다. region=$region")
   }
 
   def flushDb() = {
@@ -168,8 +162,12 @@ class HibernateRedisCache(val redis: RedisClient) {
   }
 
   private def regionExpireKey(region: String) = region + ":expire"
+
 }
 
+/**
+ * HibernateRedisCache Companion Object
+ */
 object HibernateRedisCache {
 
   implicit val akkaSystem = akka.actor.ActorSystem()

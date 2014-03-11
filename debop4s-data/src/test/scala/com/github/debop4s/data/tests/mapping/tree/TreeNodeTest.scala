@@ -5,8 +5,6 @@ import com.github.debop4s.data.jpa.repository.JpaQueryDslDao
 import com.github.debop4s.data.model.{LongEntity, HibernateTreeEntity}
 import com.github.debop4s.data.tests.AbstractJpaTest
 import java.util
-import javax.persistence.CascadeType
-import javax.persistence.Entity
 import javax.persistence._
 import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.hibernate.{annotations => hba}

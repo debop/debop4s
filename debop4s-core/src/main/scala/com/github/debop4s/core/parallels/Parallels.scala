@@ -19,10 +19,10 @@ object Parallels {
 
   def mapAsOrdered[T <: Ordered[T], V](items: Iterable[T], mapper: T => V): Iterable[V] = {
     items.par
-      .map(x => (x, mapper(x)))
-      .toList
-      .sortWith(_._1 < _._1)
-      .map(_._2)
+    .map(x => (x, mapper(x)))
+    .toList
+    .sortWith(_._1 < _._1)
+    .map(_._2)
   }
 
   def mapAsParallel[T, V](items: Iterable[T], mapper: T => V): Iterable[V] =
@@ -55,7 +55,7 @@ object Parallels {
 
   def runAction1(range: Range)(block: Int => Unit) {
     assert(range != null)
-    range.par.foreach(i => block(i))
+    range.par.foreach { i => block(i) }
   }
 
   def runEach[V](elements: Iterable[V])(block: V => Unit) {

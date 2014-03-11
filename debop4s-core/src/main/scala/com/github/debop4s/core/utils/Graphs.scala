@@ -33,8 +33,8 @@ object Graphs {
       scanned += current
 
       getAdjacent(current).par
-        .filter(!scanned.contains(_))
-        .foreach(node => toScan.enqueue(node))
+      .filter(!scanned.contains(_))
+      .foreach(toScan.enqueue(_))
     }
     scanned.toSeq
   }
@@ -69,8 +69,8 @@ object Graphs {
       scanned += current
 
       getAdjacent(current).par
-        .filter(!scanned.contains(_))
-        .foreach(node => toScan.push(node))
+      .filter(!scanned.contains(_))
+      .foreach(toScan.push(_))
     }
     scanned.toSeq
   }

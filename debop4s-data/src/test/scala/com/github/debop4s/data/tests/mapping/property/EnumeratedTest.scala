@@ -1,16 +1,16 @@
 package com.github.debop4s.data.tests.mapping.property
 
-import org.springframework.transaction.annotation.{Propagation, Transactional}
-import com.github.debop4s.data.tests.AbstractJpaTest
+import com.github.debop4s.core.utils.Hashs
+import com.github.debop4s.data.jpa.repository.JpaDao
 import com.github.debop4s.data.model.LongEntity
-import javax.persistence.{EnumType, Enumerated, Entity}
-import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
+import com.github.debop4s.data.tests.AbstractJpaTest
 import com.github.debop4s.data.tests.mapping.property.OrdinalEnum.OrdinalEnum
 import com.github.debop4s.data.tests.mapping.property.StringEnum.StringEnum
-import com.github.debop4s.core.utils.Hashs
-import org.springframework.beans.factory.annotation.Autowired
-import com.github.debop4s.data.jpa.repository.JpaDao
+import javax.persistence.Entity
+import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
 import org.junit.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Created by debop on 2014. 3. 9.

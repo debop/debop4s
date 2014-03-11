@@ -19,28 +19,28 @@ class JasyptTest extends AbstractCoreTest {
   val DigesterAlgorithms = Array("MD5", "SHA", "SHA-256", "SHA-384", "SHA-512")
 
   test("load algorithms") {
-    Security.getProviders.foreach(provider => {
+    Security.getProviders.foreach { provider =>
       log.debug(s"provider=${provider.getName }")
-      provider.getServices.foreach(service => {
+      provider.getServices.foreach { service =>
         log.debug(s"    Algorithm=${service.getAlgorithm }")
-      })
-    })
+      }
+    }
   }
 
   test("load algorithm of message digest") {
-    Security.getAlgorithms("MessageDigest").foreach(algorithm => {
+    Security.getAlgorithms("MessageDigest").foreach { algorithm =>
       log.debug(s"MessageDigest algorithm=$algorithm")
-    })
+    }
   }
 
   test("load ciphers") {
-    Security.getAlgorithms("Cipher").foreach(algorithm => {
+    Security.getAlgorithms("Cipher").foreach { algorithm =>
       log.debug(s"Symmetric algorithm=$algorithm")
-    })
+    }
   }
 
   test("standard string digest") {
-    DigesterAlgorithms.foreach(algorithm => {
+    DigesterAlgorithms.foreach { algorithm =>
       val digester = new StandardStringDigester()
       digester.setAlgorithm(algorithm)
       digester.setIterations(10)
@@ -50,7 +50,7 @@ class JasyptTest extends AbstractCoreTest {
       digester.matches("Password", digest) should equal(false)
       digester.matches("passworD", digest) should equal(false)
       digester.matches("password", digest) should equal(true)
-    })
+    }
   }
 
   test("pooled string digest") {
@@ -77,7 +77,7 @@ class JasyptTest extends AbstractCoreTest {
     "PBEWITHSHA1ANDDESEDE", "PBEWITHSHA1ANDRC2_40", "RC2")
 
   test("basic test encryptor") {
-    Security.getAlgorithms("Cipher").foreach(algorithm => {
+    Security.getAlgorithms("Cipher").foreach { algorithm =>
 
       log.debug(s"Algorithm=$algorithm")
 
@@ -88,13 +88,13 @@ class JasyptTest extends AbstractCoreTest {
       val decrypted = encryptor.decrypt(encrypted)
 
       decrypted should equal(PLAIN_TEXT)
-    })
+    }
   }
 
   val PBEAlgorithms = Array("PBEWITHSHA1ANDDESEDE", "PBEWITHMD5ANDDES", "PBEWITHSHA1ANDRC2_40")
 
   test("standard PBE String encryptor") {
-    PBEAlgorithms.foreach(algorithm => {
+    PBEAlgorithms.foreach { algorithm =>
       log.debug(s"StandardPBEStringEncryptor algorith=$algorithm")
       try {
         val encryptor = new StandardPBEStringEncryptor()
@@ -108,11 +108,11 @@ class JasyptTest extends AbstractCoreTest {
       } catch {
         case e: Throwable => log.error(s"$algorithm 은 지원하지 않습니다.", e)
       }
-    })
+    }
   }
 
   test("standard PBE Byte encryptor") {
-    PBEAlgorithms.foreach(algorithm => {
+    PBEAlgorithms.foreach { algorithm =>
       log.debug(s"StandardPBEByteEncryptor algorith=$algorithm")
       try {
         val encryptor = new StandardPBEByteEncryptor()
@@ -126,6 +126,6 @@ class JasyptTest extends AbstractCoreTest {
       } catch {
         case e: Throwable => log.error(s"$algorithm 은 지원하지 않습니다.", e)
       }
-    })
+    }
   }
 }

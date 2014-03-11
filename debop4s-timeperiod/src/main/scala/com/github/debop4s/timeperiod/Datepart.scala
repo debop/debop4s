@@ -31,7 +31,7 @@ class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
   override protected def buildStringHelper =
     super.buildStringHelper
-      .add("value", value)
+    .add("value", value)
 }
 
 object Datepart {

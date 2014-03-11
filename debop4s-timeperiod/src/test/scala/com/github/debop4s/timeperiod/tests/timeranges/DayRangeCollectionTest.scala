@@ -44,13 +44,15 @@ class DayRangeCollectionTest extends AbstractTimePeriodTest {
     val dayList = days.getDays
     assert(dayList.size == dayCount)
 
-    (0 until dayCount).foreach(i => assert(dayList(i).isSamePeriod(DayRange(start + i.day))))
+    (0 until dayCount).foreach { i =>
+      assert(dayList(i).isSamePeriod(DayRange(start + i.day)))
+    }
   }
 
   test("calendar hours") {
     val dayCounts = Array(1, 6, 48, 180, 480)
 
-    dayCounts.par.foreach(dayCount => {
+    dayCounts.par.foreach { dayCount =>
       val today = Times.today
       val days = DayRangeCollection(today, dayCount)
 
@@ -68,7 +70,7 @@ class DayRangeCollectionTest extends AbstractTimePeriodTest {
         assert(items(i).end == days.calendar.mapEnd(start + (i + 1).hour))
         assert(items(i).isSamePeriod(HourRange(days.start + i.hour)))
       }
-    })
+    }
   }
 
 }

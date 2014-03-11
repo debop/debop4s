@@ -91,11 +91,11 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
     val count = 100
     val keys = ArrayBuffer[String]()
 
-    (0 until count).foreach(x => {
+    (0 until count).foreach { x =>
       val key = "key-" + x
       client.set(REGION, key, x)
       keys += key
-    })
+    }
 
     val future = client.multiGet(REGION, keys)
     future.map(values => values.size should equal(keys.size))
@@ -105,23 +105,23 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
     val count = 100
     val keys = ArrayBuffer[String]()
 
-    (0 until count).foreach(x => {
+    (0 until count).foreach { x =>
       val key = "key-" + x
       client.set(REGION, key, x)
       keys += key
-    })
+    }
 
     val future = client.multiGet(REGION, keys)
     future.map(values => values.size should equal(keys.size))
 
     client.multiDelete(REGION, keys)
 
-    (0 until count).foreach(x => {
+    (0 until count).foreach { x =>
       val key = "key-" + x
       client.get(REGION, key) map {
         v => assert(v == null)
       }
-    })
+    }
   }
 
   test("keys in region") {
@@ -130,24 +130,20 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
     val count = 100
     val keys = ArrayBuffer[String]()
 
-    (0 until count).foreach(x => {
+    (0 until count).foreach { x =>
       val key = "key-" + x
       client.set(REGION, key, x)
       keys += key
-    })
+    }
 
-    client.keysInRegion(REGION) map {
-      keys => {
-        keys.size should equal(count)
-      }
+    client.keysInRegion(REGION) map { keys =>
+      keys.size should equal(count)
     }
 
     client.deleteRegion(REGION)
 
-    client.keysInRegion(REGION) map {
-      keys => {
-        keys.size should equal(0)
-      }
+    client.keysInRegion(REGION) map { keys =>
+      keys.size should equal(0)
     }
   }
 }

@@ -30,8 +30,8 @@ class DayRangeInMonth(val startDayOfMonth: Int,
 
   override protected def buildStringHelper =
     super.buildStringHelper
-      .add("startDayOfMonth", startDayOfMonth)
-      .add("endDayOfMonth", endDayOfMonth)
+    .add("startDayOfMonth", startDayOfMonth)
+    .add("endDayOfMonth", endDayOfMonth)
 }
 
 object DayRangeInMonth {

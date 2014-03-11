@@ -39,26 +39,28 @@ object HibernateTool {
                              listener: T,
                              eventTypes: EventType[T]*) {
     val registry = sessionFactory.asInstanceOf[SessionFactoryImpl]
-      .getServiceRegistry
-      .getService(classOf[EventListenerRegistry])
+                   .getServiceRegistry
+                   .getService(classOf[EventListenerRegistry])
 
-    eventTypes.foreach(et =>
+    eventTypes.foreach { et =>
       registry
-        .getEventListenerGroup(et)
-        .appendListener(listener))
+      .getEventListenerGroup(et)
+      .appendListener(listener)
+    }
   }
 
   def registEventListener[T](sessionFactory: SessionFactory,
                              listener: T,
                              eventTypes: Iterable[EventType[T]]) {
     val registry = sessionFactory.asInstanceOf[SessionFactoryImpl]
-      .getServiceRegistry
-      .getService(classOf[EventListenerRegistry])
+                   .getServiceRegistry
+                   .getService(classOf[EventListenerRegistry])
 
-    eventTypes.foreach(et =>
+    eventTypes.foreach { et =>
       registry
-        .getEventListenerGroup(et)
-        .appendListener(listener))
+      .getEventListenerGroup(et)
+      .appendListener(listener)
+    }
   }
 
   def registUpdateTimestampEventListener(sessionFactory: SessionFactory) {

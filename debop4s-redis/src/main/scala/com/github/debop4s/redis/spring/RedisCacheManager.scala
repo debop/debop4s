@@ -41,7 +41,7 @@ class RedisCacheManager(val redis: RedisClient) extends CacheManager with Dispos
     log.trace(s"get cache... name=$name")
 
     caches.get(name)
-      .getOrElse {
+    .getOrElse {
       val expiration = computeExpiration(name)
       val prefix = if (usePrefix) cachePrefix.prefix(name) else ""
 
@@ -62,6 +62,6 @@ class RedisCacheManager(val redis: RedisClient) extends CacheManager with Dispos
 
   private def computeExpiration(name: String): Long = {
     expires.get(name)
-      .getOrElse(defaultExpiration)
+    .getOrElse(defaultExpiration)
   }
 }

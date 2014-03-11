@@ -18,8 +18,8 @@ class HourRangeInDay(val start: Timepart,
 
   override protected def buildStringHelper =
     super.buildStringHelper
-      .add("start", start)
-      .add("end", end)
+    .add("start", start)
+    .add("end", end)
 }
 
 object HourRangeInDay {

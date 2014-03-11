@@ -29,74 +29,82 @@ class DurationsTest extends AbstractTimePeriodTest {
   }
 
   test("halfyear duration") {
-    Halfyear.values.par.foreach(hy => {
+    Halfyear.values.par.foreach { hy =>
       val months = Times.getMonthsOfHalfyear(hy)
       var duration = Durations.Zero
 
-      months.foreach(m => {
+      months.foreach { m =>
         val daysInMonth = Times.getDaysInMonth(currentYear, m)
         duration = duration + (daysInMonth * MillisPerDay)
-      })
+      }
       Durations.halfyear(currentYear, hy) should equal(duration)
-    })
+    }
   }
 
   test("quarter duration") {
-    Quarter.values.par.foreach(q => {
+    Quarter.values.par.foreach { q =>
       val months = Times.getMonthsOfQuarter(q)
       var duration = Durations.Zero
 
-      months.foreach(m => {
+      months.foreach { m =>
         val daysInMonth = Times.getDaysInMonth(currentYear, m)
         duration = duration + (daysInMonth * MillisPerDay)
-      })
+      }
       Durations.quarter(currentYear, q) should equal(duration)
-    })
+    }
   }
 
   test("month duration") {
-    (1 to MonthsPerYear).par.foreach(m => {
+    (1 to MonthsPerYear).par.foreach { m =>
       Durations.month(currentYear, m) should equal(Duration.millis(Times.getDaysInMonth(currentYear, m) * MillisPerDay))
-    })
+    }
   }
 
   test("week duration") {
     Durations.Week should equal(Duration.millis(DaysPerWeek * MillisPerDay))
 
-    range.par.foreach(w => {
+    range.par.foreach { w =>
       Durations.weeks(w) should equal(Duration.standardDays(w * DaysPerWeek))
-    })
+    }
   }
 
   test("day duration") {
     Durations.Day.getMillis should equal(MillisPerDay)
 
-    range.par.foreach(d => {
+    range.par.foreach { d =>
       Durations.days(d) should equal(Duration.standardDays(d))
-    })
+    }
   }
 
   test("hour duration") {
     Durations.Hour should equal(Duration.standardHours(1))
 
-    range.par.foreach(h => Durations.hours(h) should equal(Duration.standardHours(h)))
+    range.par.foreach { h =>
+      Durations.hours(h) should equal(Duration.standardHours(h))
+    }
   }
 
   test("minute duration") {
     Durations.Minute should equal(Duration.standardMinutes(1))
 
-    range.par.foreach(m => Durations.minutes(m) should equal(Duration.standardMinutes(m)))
+    range.par.foreach { m =>
+      Durations.minutes(m) should equal(Duration.standardMinutes(m))
+    }
   }
 
   test("second duration") {
     Durations.Second should equal(Duration.standardSeconds(1))
 
-    range.par.foreach(s => Durations.seconds(s) should equal(Duration.standardSeconds(s)))
+    range.par.foreach { s =>
+      Durations.seconds(s) should equal(Duration.standardSeconds(s))
+    }
   }
 
   test("millis duration") {
     Durations.Millisecond.getMillis should equal(1)
 
-    range.par.foreach(ms => Durations.millis(ms).getMillis should equal(ms))
+    range.par.foreach { ms =>
+      Durations.millis(ms).getMillis should equal(ms)
+    }
   }
 }

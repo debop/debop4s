@@ -22,9 +22,9 @@ object Mappers {
   val mapper = new ModelMapper()
 
   mapper.getConfiguration
-    .setFieldMatchingEnabled(true)
-    .setMatchingStrategy(MatchingStrategies.STANDARD)
-    .setFieldAccessLevel(AccessLevel.PRIVATE)
+  .setFieldMatchingEnabled(true)
+  .setMatchingStrategy(MatchingStrategies.STANDARD)
+  .setFieldAccessLevel(AccessLevel.PRIVATE)
 
   def map[T <: AnyRef](src: AnyRef, dest: T) {
     mapper.map(src, dest)

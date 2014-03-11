@@ -94,9 +94,9 @@ class HttpClientTest extends JUnitSuite {
   def fluentPost() {
     val response =
       Request.Post(URI_STRING)
-        .bodyForm(Form.form.add("username", "vip").add("password", "secret").build)
-        .execute
-        .returnResponse
+      .bodyForm(Form.form.add("username", "vip").add("password", "secret").build)
+      .execute
+      .returnResponse
     assert(response != null)
     assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
     log.debug(EntityUtils.toString(response.getEntity, Charsets.UTF_8))
@@ -128,7 +128,7 @@ class HttpClientTest extends JUnitSuite {
       Parallels.runAction(10) {
         try {
           val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁")
-            .setParameter("oq", "배성혁").build
+                         .setParameter("oq", "배성혁").build
           val httpGet: HttpGet = new HttpGet(uri)
           val futureResponse = client.execute(httpGet, null)
           val response = futureResponse.get

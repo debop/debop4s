@@ -24,7 +24,7 @@ class Company extends ValueObject {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("code", code)
-      .add("name", name)
-      .add("amount", amount)
+    .add("code", code)
+    .add("name", name)
+    .add("amount", amount)
 }

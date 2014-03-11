@@ -1,13 +1,13 @@
 package com.github.debop4s.data.tests.mapping.property
 
-import org.springframework.transaction.annotation.Transactional
+import com.github.debop4s.core.utils.Hashs
+import com.github.debop4s.data.jpa.repository.JpaDao
+import com.github.debop4s.data.model.LongEntity
 import com.github.debop4s.data.tests.AbstractJpaTest
 import javax.persistence.{Lob, Entity}
-import com.github.debop4s.data.model.LongEntity
-import com.github.debop4s.core.utils.Hashs
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
-import com.github.debop4s.data.jpa.repository.JpaDao
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Created by debop on 2014. 3. 9.

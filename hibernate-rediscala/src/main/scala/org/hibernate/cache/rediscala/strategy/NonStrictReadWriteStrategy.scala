@@ -3,6 +3,7 @@ package org.hibernate.cache.rediscala.strategy
 import org.hibernate.cache.rediscala.regions.{RedisNaturalIdRegion, RedisEntityRegion, RedisCollectionRegion}
 import org.hibernate.cache.spi.access.{NaturalIdRegionAccessStrategy, SoftLock, CollectionRegionAccessStrategy, EntityRegionAccessStrategy}
 import org.hibernate.cfg.Settings
+import org.slf4j.LoggerFactory
 
 /**
  * NonStrictReadWriteRedisCollectionRegionAccessStrategy
@@ -14,6 +15,8 @@ class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _r
                                                             private[this] val _settings: Settings)
   extends AbstractRedisAccessStrategy(_region, _settings)
   with CollectionRegionAccessStrategy {
+
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
   override def getRegion = region
 
@@ -52,6 +55,8 @@ class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _regio
   extends AbstractRedisAccessStrategy(_region, _settings)
   with EntityRegionAccessStrategy {
 
+  private lazy val log = LoggerFactory.getLogger(getClass)
+
   override def getRegion = region
 
   override def get(key: Any, txTimestamp: Long): AnyRef =
@@ -86,7 +91,11 @@ class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _regio
     true
   }
 
-  override def afterUpdate(key: Any, value: Any, currentVersion: Any, previousVersion: Any, lock: SoftLock): Boolean = {
+  override def afterUpdate(key: Any,
+                           value: Any,
+                           currentVersion: Any,
+                           previousVersion: Any,
+                           lock: SoftLock): Boolean = {
     unlockItem(key, lock)
     true
   }
@@ -102,6 +111,8 @@ class NonStrictReadWriteRedisNatualIdRegionAccessStrategy(private[this] val _reg
                                                           private[this] val _settings: Settings)
   extends AbstractRedisAccessStrategy(_region, _settings)
   with NaturalIdRegionAccessStrategy {
+
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
   override def getRegion = region
 

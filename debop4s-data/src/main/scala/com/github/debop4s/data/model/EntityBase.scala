@@ -1,7 +1,7 @@
 package com.github.debop4s.data.model
 
 import javax.persistence._
-import org.hibernate.{ annotations => hba }
+import org.hibernate.{annotations => hba}
 
 @MappedSuperclass
 @Access(AccessType.FIELD)

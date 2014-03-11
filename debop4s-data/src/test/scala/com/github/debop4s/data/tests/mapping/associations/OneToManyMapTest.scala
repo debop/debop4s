@@ -70,7 +70,7 @@ class Car extends HibernateEntity[lang.Long] {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("name", name)
+    .add("name", name)
 }
 
 @Embeddable

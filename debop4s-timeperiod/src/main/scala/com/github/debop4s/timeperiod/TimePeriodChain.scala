@@ -71,11 +71,11 @@ trait ITimePeriodChain extends ITimePeriodContainer {
     if (prevItem != null) {
       log.trace("선행 period에 기초하여 삽입한 period와 후행 period들의 시간을 조정합니다...")
       item.setup(prevItem.end, prevItem.end.plus(itemDuration))
-      (index + 1 until size).foreach(i => {
-        val p: ITimePeriod = get(i)
+      (index + 1 until size).foreach { i =>
+        val p = get(i)
         val startTime: DateTime = p.start + itemDuration
         p.setup(startTime, startTime + p.duration)
-      })
+      }
     }
 
     if (nextItem != null) {
@@ -83,11 +83,11 @@ trait ITimePeriodChain extends ITimePeriodContainer {
       var nextStart: DateTime = nextItem.start.minus(itemDuration)
       item.setup(nextStart, nextStart + itemDuration)
 
-      (0 until index - 1).foreach(i => {
-        val p: ITimePeriod = get(i)
+      (0 until index - 1).foreach { i =>
+        val p = get(i)
         nextStart = p.start - itemDuration
         p.setup(nextStart, nextStart + p.duration)
-      })
+      }
     }
   }
 

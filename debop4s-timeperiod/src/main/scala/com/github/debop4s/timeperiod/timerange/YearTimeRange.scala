@@ -20,7 +20,9 @@ class YearTimeRange(private[this] val _year: Int,
   def getHalfyears: Seq[HalfyearRange] = {
     val halfyears = new ArrayBuffer[HalfyearRange](yearCount)
     for (y <- 0 until yearCount) {
-      Halfyear.values.foreach(hy => halfyears += new HalfyearRange(startYear + y, hy, calendar))
+      Halfyear.values.foreach { hy =>
+        halfyears += new HalfyearRange(startYear + y, hy, calendar)
+      }
     }
     halfyears
   }
@@ -28,7 +30,9 @@ class YearTimeRange(private[this] val _year: Int,
   def getQuarters: Seq[QuarterRange] = {
     val quarters = new ArrayBuffer[QuarterRange](yearCount)
     for (y <- 0 until yearCount) {
-      Quarter.values.foreach(q => quarters += new QuarterRange(startYear + y, q, calendar))
+      Quarter.values.foreach { q =>
+        quarters += new QuarterRange(startYear + y, q, calendar)
+      }
     }
     quarters
   }

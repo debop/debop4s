@@ -178,7 +178,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("periods", periods)
+    .add("periods", periods)
 }
 
 @SerialVersionUID(-7112720659283751048L)

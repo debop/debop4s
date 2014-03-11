@@ -4,8 +4,8 @@ import com.github.debop4s.data.jpa.spring.AbstractJpaH2Configuration
 import java.util.Properties
 import org.hibernate.cfg.AvailableSettings
 import org.springframework.context.annotation.{ComponentScan, Configuration}
-import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.transaction.annotation.EnableTransactionManagement
 
 /**
  * ScalaJpaConfiguration 

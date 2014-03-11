@@ -5,7 +5,6 @@ import com.github.debop4s.core.BinaryStringFormat.BinaryStringFormat
 import com.github.debop4s.core.parallels.Asyncs
 import com.github.debop4s.core.utils.{Streams, Strings}
 import java.io.{OutputStream, InputStream}
-import org.slf4j.LoggerFactory
 import scala.concurrent.Future
 
 /**
@@ -14,8 +13,6 @@ import scala.concurrent.Future
  * @since  2013. 12. 9. 오후 10:57
  */
 object Compressors {
-
-  private lazy val log = LoggerFactory.getLogger(getClass)
 
   def compressString(compressor: Compressor,
                      plainText: String,

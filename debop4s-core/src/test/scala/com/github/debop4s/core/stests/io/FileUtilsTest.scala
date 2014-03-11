@@ -62,7 +62,7 @@ class FileUtilsTest extends AssertionsForJUnit {
 
     val lineCount = 100
     val lines = new ArrayBuffer[String](lineCount)
-    (0 until lineCount).foreach(x => lines += TEST_TEXT.trim)
+    (0 until lineCount).foreach { _ => lines += TEST_TEXT.trim }
 
     try {
       FileUtils.createFile(path)

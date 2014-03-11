@@ -353,7 +353,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
     assert(block.getIntersection(TimeBlock(start.minusHours(2), start.minusHours(1))) == null)
     assert(block.getIntersection(TimeBlock(start.minusMillis(1), start)) == TimeBlock(start))
     assert(block.getIntersection(TimeBlock(start.minusHours(1), start.plusMillis(1))) == TimeBlock(start, start
-      .plusMillis(1)))
+                                                                                                          .plusMillis(1)))
 
     // after
     assert(block.getIntersection(TimeBlock(end.plusHours(1), end.plusHours(2))) == null)
@@ -364,7 +364,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
     assert(block.getIntersection(block) == block)
     assert(block.getIntersection(TimeBlock(start.minusMillis(1), end.plusMillis(1))) == block)
     assert(block.getIntersection(TimeBlock(start.plusMillis(1), end.minusMillis(1))) == TimeBlock(start.plusMillis(1), end
-      .minusMillis(1)))
+                                                                                                                       .minusMillis(1)))
   }
 
   test("relation") {

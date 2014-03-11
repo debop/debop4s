@@ -209,9 +209,9 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
   test("calendar get gap") {
     val calendars = Array(TimeCalendar.getDefault, TimeCalendar.getEmptyOffset)
 
-    calendars.foreach(calendar => {
+    calendars.foreach { calendar =>
 
-      // simulation of same reservations
+    // simulation of same reservations
       val excludePeriods = TimePeriodCollection(DayRangeCollection(2011, 3, 7, 2, calendar),
         DayRangeCollection(2011, 3, 16, 2, calendar))
 
@@ -220,16 +220,16 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
       val days = DayRangeCollection(limits.start, limits.duration.getStandardDays.toInt + 1, calendar)
 
       // limits의 내부이고, 주말인 DayRange를 제외목록에 추가합니다.
-      days.getDays.foreach(day => {
+      days.getDays.foreach { day =>
         if (limits.hasInside(day) && Times.isWeekend(day.dayOfWeek)) {
           excludePeriods.add(day)
         }
-      })
+      }
 
       val calculator = TimeGapCalculator(calendar)
       val gaps = calculator.getGaps(excludePeriods, limits)
 
-      gaps.foreach(gap => log.trace(s"$gap"))
+      // gaps.foreach(gap => log.trace(s"$gap"))
 
       gaps.size should equal(4)
       gaps(0).isSamePeriod(TimeRange(asDate(2011, 3, 4), Durations.days(1))) should equal(true)
@@ -237,6 +237,6 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
       gaps(2).isSamePeriod(TimeRange(asDate(2011, 3, 14), Durations.days(2))) should equal(true)
       gaps(3).isSamePeriod(TimeRange(asDate(2011, 3, 18), Durations.days(1))) should equal(true)
 
-    })
+    }
   }
 }

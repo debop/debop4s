@@ -8,7 +8,7 @@ import org.hibernate.cache.spi.{CollectionRegion, CacheDataDescription}
 import org.hibernate.cfg.Settings
 
 /**
- * org.hibernate.cache.rediscala.regions.RedisCollectionRegion
+ * RedisCollectionRegion
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 1:11

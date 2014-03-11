@@ -32,9 +32,7 @@ trait StringDigester {
    * @return 메시지 일치 여부
    */
   def matches(message: String, digest: String): Boolean = {
-    val matches = standardStringDigester.matches(message, digest)
-    log.trace(s"문자열이 암호화된 문자열과 같은지 확인합니다. message=[$message], digest=[$digest], metch=[$matches]")
-    matches
+    standardStringDigester.matches(message, digest)
   }
 }
 
@@ -56,6 +54,7 @@ class MD5StringDigester(iterations: Option[Int] = None) extends AbstractStringDi
   def algorithm: String = "MD5"
 }
 
+/** SHA1 String Digester */
 @Component
 class SHA1StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
 

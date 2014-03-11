@@ -1,19 +1,19 @@
 package com.github.debop4s.data.tests.mapping.property
 
-import com.github.debop4s.data.tests.AbstractJpaTest
-import org.springframework.transaction.annotation.Transactional
-import com.github.debop4s.data.jpa.repository.JpaDao
-import org.springframework.beans.factory.annotation.Autowired
 import com.github.debop4s.core.ValueObject
-import com.github.debop4s.data.model.{LongEntity, HibernateLocaleEntity, LocaleValue}
 import com.github.debop4s.core.utils.Hashs
+import com.github.debop4s.data.jpa.repository.JpaDao
+import com.github.debop4s.data.model.{LongEntity, HibernateLocaleEntity, LocaleValue}
+import com.github.debop4s.data.tests.AbstractJpaTest
 import java.util
 import java.util.Locale
+import javax.persistence.Entity
 import javax.persistence._
 import org.hibernate.annotations._
-import org.junit.Test
 import org.hibernate.{annotations => ha}
-import javax.persistence.Entity
+import org.junit.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Created by debop on 2014. 3. 9.

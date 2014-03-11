@@ -27,8 +27,8 @@ class MonthRangeInYear(val startMonthOfYear: Int, val endMonthOfYear: Int)
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("startMonthOfYear", startMonthOfYear)
-      .add("endMonthOfYear", endMonthOfYear)
+    .add("startMonthOfYear", startMonthOfYear)
+    .add("endMonthOfYear", endMonthOfYear)
 }
 
 object MonthRangeInYear {

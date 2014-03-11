@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
  */
 abstract class AbstractRedisAccessStrategy[T <: RedisTransactionalDataRegion](val region: T, val settings: Settings) {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
   def putFromLoad(key: Any, value: Any, txTimestamp: Long, version: Any): Boolean =
     putFromLoad(key, value, txTimestamp, version, settings.isMinimalPutsEnabled)

@@ -109,10 +109,10 @@ class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCa
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("locale", locale)
-      .add("startOffset", startOffset)
-      .add("endOffset", endOffset)
-      .add("firstDayOfWeek", firstDayOfWeek)
+    .add("locale", locale)
+    .add("startOffset", startOffset)
+    .add("endOffset", endOffset)
+    .add("firstDayOfWeek", firstDayOfWeek)
 }
 
 object TimeCalendar {

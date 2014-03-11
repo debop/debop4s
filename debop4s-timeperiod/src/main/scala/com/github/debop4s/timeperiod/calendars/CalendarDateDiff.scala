@@ -71,7 +71,10 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
     val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
     val gaps: ITimePeriodCollection = gapCalculator.getGaps(collector.periods, differenceRange)
     var difference = Duration.ZERO
-    gaps.foreach(gap => difference = difference.plus(gap.duration))
+
+    gaps.foreach { gap =>
+      difference = difference.plus(gap.duration)
+    }
 
     log.trace(s"fromTime=[$fromTime] ~ toTime=[$toTime]의 Working Time을 구했습니다. difference=[$difference]")
 

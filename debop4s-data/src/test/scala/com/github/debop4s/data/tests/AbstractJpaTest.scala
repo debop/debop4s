@@ -1,6 +1,6 @@
 package com.github.debop4s.data.tests
 
-import com.github.debop4s.data.tests.spring.{JpaMySqlConfiguration, JpaH2Configuration}
+import com.github.debop4s.data.tests.spring.JpaMySqlConfiguration
 import javax.persistence.EntityManagerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.support.AnnotationConfigContextLoader

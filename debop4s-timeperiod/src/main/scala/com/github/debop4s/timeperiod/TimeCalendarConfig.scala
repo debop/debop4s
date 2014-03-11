@@ -23,9 +23,9 @@ class TimeCalendarConfig(val locale: Locale = Locale.getDefault,
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("locale", locale)
-      .add("startOffset", startOffset)
-      .add("endOffset", endOffset)
+    .add("locale", locale)
+    .add("startOffset", startOffset)
+    .add("endOffset", endOffset)
 }
 
 object TimeCalendarConfig {

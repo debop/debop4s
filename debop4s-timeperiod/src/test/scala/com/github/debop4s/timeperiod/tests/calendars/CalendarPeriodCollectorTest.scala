@@ -25,11 +25,11 @@ class CalendarPeriodCollectorTest extends AbstractTimePeriodTest {
     log.trace(s"Collect years... periods=${collector.periods }")
 
     var i = 0
-    collector.periods.foreach(period => {
+    collector.periods.foreach { period =>
       log.trace(s"period=$period")
       period.isSamePeriod(YearRange(filter.years(i))) should equal(true)
       i += 1
-    })
+    }
   }
 
   test("collect months") {

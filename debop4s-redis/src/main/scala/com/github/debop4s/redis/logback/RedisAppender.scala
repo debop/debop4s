@@ -8,8 +8,8 @@ import com.github.debop4s.core.utils.Options
 import com.github.debop4s.redis.RedisConsts
 import org.joda.time.DateTime
 import redis.RedisClient
-import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 /**
  * log를 client 에 쓰는 logback 용 appender 입니다.

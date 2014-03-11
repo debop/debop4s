@@ -356,8 +356,8 @@ object Times {
 
   def endTimeOfHalfyear(year: Int, halfyear: Halfyear): DateTime =
     startTimeOfHalfyear(year, halfyear)
-      .plusMonths(MonthsPerHalfyear)
-      .minus(1)
+    .plusMonths(MonthsPerHalfyear)
+    .minus(1)
 
   def startTimeOfQuarter(moment: DateTime): DateTime =
     startTimeOfQuarter(moment.getYear, moment.getMonthOfYear)
@@ -376,8 +376,8 @@ object Times {
 
   def endTimeOfQuarter(year: Int, quarter: Quarter): DateTime =
     startTimeOfQuarter(year, quarter)
-      .plusMonths(MonthsPerQuarter)
-      .minus(1)
+    .plusMonths(MonthsPerQuarter)
+    .minus(1)
 
   def startTimeOfLastQuarter(moment: DateTime): DateTime =
     startTimeOfQuarter(moment.minusMonths(MonthsPerQuarter))

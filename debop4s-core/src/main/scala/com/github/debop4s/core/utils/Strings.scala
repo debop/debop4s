@@ -234,8 +234,10 @@ object Strings {
       builder.append(asString(items.head))
 
       items
-        .takeRight(items.size - 1)
-        .foreach(x => builder.append(sep).append(asString(x)))
+      .takeRight(items.size - 1)
+      .foreach { x =>
+        builder.append(sep).append(asString(x))
+      }
     }
     builder.toString()
   }

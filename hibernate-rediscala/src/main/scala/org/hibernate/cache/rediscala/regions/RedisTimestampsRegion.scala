@@ -6,7 +6,7 @@ import org.hibernate.cache.rediscala.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.spi.TimestampsRegion
 
 /**
- * org.hibernate.cache.rediscala.regions.RedisTimestampsRegion
+ * RedisTimestampsRegion
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 1:38

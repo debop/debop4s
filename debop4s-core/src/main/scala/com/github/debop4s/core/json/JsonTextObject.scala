@@ -18,8 +18,8 @@ class JsonTextObject(@BeanProperty val className: String,
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("className", className)
-      .add("jsonText", jsonText)
+    .add("className", className)
+    .add("jsonText", jsonText)
 }
 
 object JsonTextObject {

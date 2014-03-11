@@ -45,7 +45,7 @@ class TimeLineMoment(private[this] val _moment: DateTime) extends ValueObject wi
 
   override protected def buildStringHelper =
     super.buildStringHelper
-      .add("moment", moment)
-      .add("startCount", startCount)
-      .add("endCount", endCount)
+    .add("moment", moment)
+    .add("startCount", startCount)
+    .add("endCount", endCount)
 }

@@ -41,7 +41,11 @@ object Hashs {
       NULL_VALUE
 
     var hash = NULL_VALUE
-    objs.foreach(x => hash = hash * FACTOR + computeInternal(x))
+
+    objs.foreach { x =>
+      hash = hash * FACTOR + computeInternal(x)
+    }
+
     hash
   }
 }

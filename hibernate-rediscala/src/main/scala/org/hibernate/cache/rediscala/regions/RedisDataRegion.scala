@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 
 
 /**
- * org.hibernate.cache.rediscala.regions.RedisDataRegion
+ * RedisDataRegion
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오전 9:25

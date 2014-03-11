@@ -7,7 +7,7 @@ import org.hibernate.cache.spi.QueryResultsRegion
 
 
 /**
- * org.hibernate.cache.rediscala.regions.RedisQueryResultsRegion
+ * RedisQueryResultsRegion
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 1:37

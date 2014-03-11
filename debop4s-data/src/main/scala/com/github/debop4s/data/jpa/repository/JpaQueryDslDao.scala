@@ -5,7 +5,7 @@ import com.mysema.query.types.{OrderSpecifier, EntityPath}
 import javax.persistence.{PersistenceContext, EntityManager}
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.{PageImpl, PageRequest, Page}
-import org.springframework.stereotype.{Repository, Component}
+import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 /**

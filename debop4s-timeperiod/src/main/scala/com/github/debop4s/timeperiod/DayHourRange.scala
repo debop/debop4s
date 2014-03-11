@@ -18,7 +18,7 @@ class DayHourRange(val dayOfWeek: DayOfWeek,
 
   override protected def buildStringHelper =
     super.buildStringHelper
-      .add("dayOfWeek", dayOfWeek)
+    .add("dayOfWeek", dayOfWeek)
 }
 
 object DayHourRange {

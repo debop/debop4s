@@ -8,7 +8,7 @@ import org.hibernate.cache.spi.{CacheDataDescription, TransactionalDataRegion}
 import org.hibernate.cfg.Settings
 
 /**
- * org.hibernate.cache.rediscala.regions.RedisTransactionalDataRegion
+ * RedisTransactionalDataRegion
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 12:00

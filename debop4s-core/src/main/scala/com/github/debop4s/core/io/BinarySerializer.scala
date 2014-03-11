@@ -2,7 +2,6 @@ package com.github.debop4s.core.io
 
 import com.github.debop4s.core.utils.Arrays
 import java.io._
-import org.slf4j.LoggerFactory
 
 /**
  * Binary Serializer
@@ -11,8 +10,6 @@ import org.slf4j.LoggerFactory
  * @since 2013. 12. 10. 오후 5:37
  */
 class BinarySerializer extends Serializer {
-
-  private lazy val log = LoggerFactory.getLogger(classOf[BinarySerializer])
 
   /**
    * 객체를 직렬화 합니다.
@@ -50,9 +47,8 @@ class BinarySerializer extends Serializer {
     val bis = new ByteArrayInputStream(bytes)
     try {
       val ois = new ObjectInputStream(bis)
-      val result = ois.readObject().asInstanceOf[T]
-      log.trace(s"역직렬화를 수행했습니다. 객체=[$result]")
-      result
+
+      ois.readObject().asInstanceOf[T]
     } finally {
       bis.close()
     }

@@ -44,7 +44,7 @@ class MonthRangeCollectionTest extends AbstractTimePeriodTest {
     val now = Times.now
     val today = Times.today
 
-    monthCounts.par.foreach(m => {
+    monthCounts.par.foreach { m =>
       val mrs = MonthRangeCollection(now, m)
       val startTime = mrs.calendar.mapStart(Times.trimToDay(today))
       val endTime = mrs.calendar.mapEnd(startTime + m.month)
@@ -68,6 +68,6 @@ class MonthRangeCollectionTest extends AbstractTimePeriodTest {
         val ym = Times.addMonth(now.getYear, now.getMonthOfYear, i)
         item.isSamePeriod(MonthRange(ym.year, ym.monthOfYear)) should equal(true)
       }
-    })
+    }
   }
 }

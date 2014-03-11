@@ -1,8 +1,8 @@
 package com.github.debop4s.data.hibernate.usertype
 
 import java.io.Serializable
-import java.sql.{Timestamp, Types, ResultSet, PreparedStatement}
-import java.util.{Date, Objects}
+import java.sql.{ResultSet, PreparedStatement}
+import java.util.Objects
 import org.hibernate.`type`.StandardBasicTypes
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType

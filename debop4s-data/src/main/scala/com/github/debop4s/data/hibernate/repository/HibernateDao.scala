@@ -109,14 +109,14 @@ class HibernateDao {
   @varargs
   def find(dc: DetachedCriteria, orders: Order*) =
     HibernateTool.addOrders(dc, orders: _*)
-      .getExecutableCriteria(session)
-      .list().toList
+    .getExecutableCriteria(session)
+    .list().toList
 
   @varargs
   def find(dc: DetachedCriteria, firstResult: Int, maxResults: Int, orders: Order*): List[_] = {
     val crit = HibernateTool.addOrders(dc, orders: _*).getExecutableCriteria(session)
     HibernateTool.setPaging(crit, firstResult, maxResults)
-      .list().toList
+    .list().toList
   }
 
   @varargs
@@ -275,10 +275,10 @@ class HibernateDao {
   @varargs
   def count(query: Query, parameters: HibernateParameter*): Long =
     HibernateTool.setParameters(query, parameters: _*)
-      .setResultTransformer(CriteriaSpecification.PROJECTION)
-      .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY)
-      .uniqueResult()
-      .asInstanceOf[Long]
+    .setResultTransformer(CriteriaSpecification.PROJECTION)
+    .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY)
+    .uniqueResult()
+    .asInstanceOf[Long]
 
   @varargs
   def countByHql(hql: String, parameters: HibernateParameter*): Long =
@@ -321,7 +321,7 @@ class HibernateDao {
   @varargs
   def deleteAll(entities: AnyRef*) {
     val s = session
-    entities.foreach(entity => s.delete(entity))
+    entities.foreach(_ => s.delete(_))
   }
 
   def deleteAll(clazz: Class[_]) {
@@ -378,17 +378,17 @@ class HibernateDao {
 
   def reportOne[P](projectClass: Class[P], projectionList: ProjectionList, criteria: Criteria): P =
     buildProjectionCriteria(projectClass, criteria, projectionList, true)
-      .uniqueResult()
-      .asInstanceOf[P]
+    .uniqueResult()
+    .asInstanceOf[P]
 
   def reportOne[P](projectClass: Class[P], projectionList: ProjectionList, dc: DetachedCriteria): P =
     reportOne(projectClass, projectionList, dc.getExecutableCriteria(session))
 
   def report[P](projectClass: Class[P], projectionList: ProjectionList, criteria: Criteria): IndexedSeq[P] =
     buildProjectionCriteria(projectClass, criteria, projectionList)
-      .list()
-      .toIndexedSeq
-      .asInstanceOf[IndexedSeq[P]]
+    .list()
+    .toIndexedSeq
+    .asInstanceOf[IndexedSeq[P]]
 
   def report[P](projectClass: Class[P],
                 projectionList: ProjectionList,
@@ -397,9 +397,9 @@ class HibernateDao {
                 maxResults: Int): List[P] = {
     val crit = buildProjectionCriteria(projectClass, criteria, projectionList)
     HibernateTool.setPaging(crit, firstResult, maxResults)
-      .list()
-      .toList
-      .asInstanceOf[List[P]]
+    .list()
+    .toList
+    .asInstanceOf[List[P]]
   }
 
   def report[P](projectClass: Class[P],

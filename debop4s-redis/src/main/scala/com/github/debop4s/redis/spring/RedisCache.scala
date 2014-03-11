@@ -44,8 +44,8 @@ class RedisCache(val name: String,
     log.trace(s"캐시 조회. key=$key")
 
     Promises.await(redis.get(computeKey(key)))
-      .map(bs => new SimpleValueWrapper(serializer.deserialize(bs.toArray, classOf[AnyRef])))
-      .getOrElse(null)
+    .map(bs => new SimpleValueWrapper(serializer.deserialize(bs.toArray, classOf[AnyRef])))
+    .getOrElse(null)
   }
 
   /**
@@ -56,8 +56,8 @@ class RedisCache(val name: String,
     log.trace(s"캐시 조회. key=$key, clazz=$clazz")
 
     Promises.await(redis.get(computeKey(key)))
-      .map(bs => serializer.deserialize(bs.toArray, clazz))
-      .getOrElse(null.asInstanceOf[T])
+    .map(bs => serializer.deserialize(bs.toArray, clazz))
+    .getOrElse(null.asInstanceOf[T])
   }
 
   /**

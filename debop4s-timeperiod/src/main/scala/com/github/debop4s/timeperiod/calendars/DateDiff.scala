@@ -35,25 +35,25 @@ class DateDiff(val start: DateTime,
 
   lazy val elapsedStartHours =
     start.plusYears(elapsedYears.toInt)
-      .plusMonths(elapsedMonths.toInt)
-      .plusDays(elapsedDays.toInt)
+    .plusMonths(elapsedMonths.toInt)
+    .plusDays(elapsedDays.toInt)
 
   lazy val elapsedHours = new Duration(elapsedStartHours, end).getStandardHours.toLong
 
   lazy val elapsedStartMinutes =
     start.plusYears(elapsedYears.toInt)
-      .plusMonths(elapsedMonths.toInt)
-      .plusDays(elapsedDays.toInt)
-      .plusHours(elapsedHours.toInt)
+    .plusMonths(elapsedMonths.toInt)
+    .plusDays(elapsedDays.toInt)
+    .plusHours(elapsedHours.toInt)
 
   lazy val elapsedMinutes = new Duration(elapsedStartMinutes, end).getStandardMinutes.toLong
 
   lazy val elapsedStartSeconds =
     start.plusYears(elapsedYears.toInt)
-      .plusMonths(elapsedMonths.toInt)
-      .plusDays(elapsedDays.toInt)
-      .plusHours(elapsedHours.toInt)
-      .plusMinutes(elapsedMinutes.toInt)
+    .plusMonths(elapsedMonths.toInt)
+    .plusDays(elapsedDays.toInt)
+    .plusHours(elapsedHours.toInt)
+    .plusMinutes(elapsedMinutes.toInt)
 
   lazy val elapsedSeconds = new Duration(elapsedStartSeconds, end).getStandardSeconds.toLong
 
@@ -129,11 +129,11 @@ class DateDiff(val start: DateTime,
 
   override def toString: String =
     ToStringHelper(this)
-      .add("start", start)
-      .add("end", end)
-      .add("diffrence", difference)
-      .add("calendar", calendar)
-      .toString
+    .add("start", start)
+    .add("end", end)
+    .add("diffrence", difference)
+    .add("calendar", calendar)
+    .toString
 }
 
 

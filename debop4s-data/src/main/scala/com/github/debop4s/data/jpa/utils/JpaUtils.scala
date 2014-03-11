@@ -66,41 +66,45 @@ object JpaUtils {
     root
   }
 
-  def setParameters[X](query: TypedQuery[X], parameters: JpaParameter*) = {
-    if (parameters != null) {
-      parameters.foreach(p => {
-        log.trace(s"파라미터 설정. $p")
+  def setParameters[X](query: TypedQuery[X], parameters: JpaParameter*): TypedQuery[X] = {
+    if (parameters == null || parameters.length == 0)
+      return query
 
-        p.value match {
-          case date: Date =>
-            query.setParameter(p.name, date, TemporalType.TIMESTAMP)
 
-          case calendar: Calendar =>
-            query.setParameter(p.name, calendar, TemporalType.TIMESTAMP)
+    parameters.foreach { p =>
+      log.trace(s"파라미터 설정. $p")
 
-          case dateTime: DateTime =>
-            query.setParameter(p.name, dateTime.toDate, TemporalType.TIMESTAMP)
+      p.value match {
+        case date: Date =>
+          query.setParameter(p.name, date, TemporalType.TIMESTAMP)
 
-          case _ => query.setParameter(p.name, p.value)
-        }
-      })
+        case calendar: Calendar =>
+          query.setParameter(p.name, calendar, TemporalType.TIMESTAMP)
+
+        case dateTime: DateTime =>
+          query.setParameter(p.name, dateTime.toDate, TemporalType.TIMESTAMP)
+
+        case _ => query.setParameter(p.name, p.value)
+      }
     }
     query
   }
 
-  def setFirstResult[T](query: TypedQuery[T], firstResult: Int) = {
-    if (firstResult >= 0)
+  def setFirstResult[T](query: TypedQuery[T], firstResult: Int): TypedQuery[T] = {
+    if (firstResult >= 0) {
       query.setFirstResult(firstResult)
+    }
     query
   }
 
-  def setMaxResults[T](query: TypedQuery[T], maxResults: Int) = {
-    if (maxResults > 0)
+  def setMaxResults[T](query: TypedQuery[T], maxResults: Int): TypedQuery[T] = {
+    if (maxResults > 0) {
       query.setFirstResult(maxResults)
+    }
     query
   }
 
-  def setPaging[T](query: TypedQuery[T], firstResult: Int, maxResults: Int) = {
+  def setPaging[T](query: TypedQuery[T], firstResult: Int, maxResults: Int): TypedQuery[T] = {
     val q = setFirstResult(query, firstResult)
     setMaxResults(q, maxResults)
   }

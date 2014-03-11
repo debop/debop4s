@@ -17,15 +17,15 @@ class WeeksTest extends AbstractTimePeriodTest {
   val testTimes = Array(asDate(2003, 12, 28), asDate(2014, 12, 30))
 
   test("year and week") {
-    testTimes.foreach(m => {
+    testTimes.foreach { m =>
       val yw = Weeks.getYearAndWeek(m)
       yw.weekyear should equal(m.getWeekyear)
       yw.weekOfWeekyear should equal(m.getWeekOfWeekyear)
-    })
+    }
   }
 
   test("parallel year and week") {
-    (2000 to 2100).par.foreach(year => {
+    (2000 to 2100).par.foreach { year =>
       val startDay = Times.startTimeOfYear(year)
       val endDay = Times.endTimeOfYear(year - 1)
 
@@ -36,7 +36,7 @@ class WeeksTest extends AbstractTimePeriodTest {
         endYW should not equal startYW
       else
         endYW should equal(startYW)
-    })
+    }
   }
 
   test("start week range of year") {
@@ -50,15 +50,15 @@ class WeeksTest extends AbstractTimePeriodTest {
   }
 
   test("endYearAndWeek") {
-    (1980 to 2200).par.foreach(year => {
+    (1980 to 2200).par.foreach { year =>
       val yw = Weeks.getEndYearAndWeek(year)
       yw.weekyear should equal(year)
       yw.weekOfWeekyear should be >= 52
-    })
+    }
   }
 
   test("end week range of year") {
-    (2000 to 2100).par.foreach(year => {
+    (2000 to 2100).par.foreach { year =>
       val startWR = Weeks.getStartWeekRangeOfYear(year)
       val endWR = Weeks.getEndWeekRangeOfYear(year - 1)
       log.trace(s"year=$year, startWR=${startWR.startDayStart }, endWR=${endWR.startDayStart }")
@@ -68,11 +68,11 @@ class WeeksTest extends AbstractTimePeriodTest {
 
       endWR.startDayStart.plusWeeks(1) should equal(startWR.startDayStart)
       endWR.endDayStart.plusDays(1) should equal(startWR.startDayStart)
-    })
+    }
   }
 
   test("get week range") {
-    (2000 to 2100).par.foreach(year => {
+    (2000 to 2100).par.foreach { year =>
       val endDay = Times.endTimeOfYear(year - 1)
       val startDay = Times.startTimeOfYear(year)
 
@@ -92,11 +92,11 @@ class WeeksTest extends AbstractTimePeriodTest {
         startDayWeekRange should equal(endDayWeekRange)
       else
         startDayWeekRange should not equal endDayWeekRange
-    })
+    }
   }
 
   test("add WeekOfYears") {
-    (2000 to 2100).par.foreach(weekyear => {
+    (2000 to 2100).par.foreach { weekyear =>
       val step = 2
       val maxAddWeeks = 40
 
@@ -119,7 +119,7 @@ class WeeksTest extends AbstractTimePeriodTest {
           prevResult = result
         }
       }
-    })
+    }
   }
 
 }

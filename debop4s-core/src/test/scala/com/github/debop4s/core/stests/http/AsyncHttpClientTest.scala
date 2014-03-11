@@ -30,34 +30,37 @@ class AsyncHttpClientTest extends FunSuite {
 
   private def googleSearchURI(searchStr: String) =
     new URIBuilder()
-      .setPath(URI_STRING + "/search")
-      .setParameter("q", searchStr)
-      .build()
+    .setPath(URI_STRING + "/search")
+    .setParameter("q", searchStr)
+    .build()
 
   test("http get method") {
     val httpgets = (0 until TEST_COUNT).map(_ => new HttpGet(googleSearchURI("배성혁")))
     val httpResponses = HttpAsyncs.getAsParallel(httpgets: _*)
-    httpResponses.par.foreach(response => {
+
+    httpResponses.par.foreach { response =>
       assert(response != null)
       assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
       log.debug(EntityUtils.toString(response.getEntity))
-    })
+    }
   }
 
   test("http post method") {
     val httpposts = (0 until TEST_COUNT).map(_ => new HttpPost(googleSearchURI("배성혁")))
     val httpResponses = HttpAsyncs.postAsParallel(httpposts: _*)
-    httpResponses.par.foreach(response => {
+
+    httpResponses.par.foreach { response =>
       assert(response != null)
       assert(response.getStatusLine.getStatusCode == HttpStatus.SC_METHOD_NOT_ALLOWED)
       log.debug(EntityUtils.toString(response.getEntity))
-    })
+    }
   }
 
   test("ssl test") {
     val uri = new URIBuilder().setScheme("https").setHost("issues.apache.org").setPort(443).build()
     val client = HttpAsyncClients.createDefault()
     val httpget = new HttpGet(uri)
+
     try {
       client.start()
       val future = client.execute(httpget, null)
@@ -81,11 +84,11 @@ class AsyncHttpClientTest extends FunSuite {
 
   test("ssl get sdg") {
     val uri: URI = new URIBuilder()
-      .setScheme("https")
-      .setHost("sdg.sktelecom.com")
-      .setPort(443)
-      .setPath("/api/1-0/devices")
-      .build
+                   .setScheme("https")
+                   .setHost("sdg.sktelecom.com")
+                   .setPort(443)
+                   .setPath("/api/1-0/devices")
+                   .build
 
     val httpGet: HttpGet = new HttpGet(uri)
     httpGet.setHeader("BP_Access_Token",
@@ -109,16 +112,19 @@ class AsyncHttpClientTest extends FunSuite {
 
   test("execute ssl") {
     val uri: URI = new URIBuilder()
-      .setScheme("https")
-      .setHost("sdg.sktelecom.com")
-      .setPort(443)
-      .setPath("/api/1-0/devices")
-      .build
+                   .setScheme("https")
+                   .setHost("sdg.sktelecom.com")
+                   .setPort(443)
+                   .setPath("/api/1-0/devices")
+                   .build
 
     val httpGet: HttpGet = new HttpGet(uri)
+
     httpGet.setHeader("BP_Access_Token",
       "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
+
     httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
+
     val response: HttpResponse = HttpAsyncs.executeSSL(httpGet)
     assert(response != null)
     assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
@@ -127,17 +133,20 @@ class AsyncHttpClientTest extends FunSuite {
 
   test("custom ssl") {
     val uri = new URIBuilder()
-      .setScheme("https")
-      .setHost("sdg.sktelecom.com")
-      .setPort(443)
-      .setPath("/api/1-0/devices")
-      .build
+              .setScheme("https")
+              .setHost("sdg.sktelecom.com")
+              .setPort(443)
+              .setPath("/api/1-0/devices")
+              .build
 
     val httpGet: HttpGet = new HttpGet(uri)
+
     httpGet.setHeader("BP_Access_Token",
       "DCEOB729f3iK8yhbWvRrqHsq5PleOL8EL8C-4WaR6jE6Y47xbJ56zqXVbVHLhPplunETg71Iw0koOITrU3I8LV")
     httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
+
     val client: CloseableHttpAsyncClient = createHttpAsyncClient(uri)
+
     try {
       client.start()
       val future = client.execute(httpGet, null)

@@ -79,8 +79,8 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
 
   def addAll(periods: Iterable[_ <: ITimePeriod]) {
     periods
-      .filter(x => x != null)
-      .foreach(add)
+    .filter(x => x != null)
+    .foreach(add)
   }
 
   def remove(period: ITimePeriod) {
@@ -128,7 +128,7 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
 
   override def toString(): String =
     ToStringHelper(this)
-      .add("moments", _moments)
-      .toString
+    .add("moments", _moments)
+    .toString
 
 }

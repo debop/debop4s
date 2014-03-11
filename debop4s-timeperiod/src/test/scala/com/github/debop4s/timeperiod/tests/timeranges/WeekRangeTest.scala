@@ -27,14 +27,14 @@ class WeekRangeTest extends AbstractTimePeriodTest {
   test("default calendar") {
     val yearStart = Times.startTimeOfYear(Times.now)
 
-    (1 until 50).par.foreach(w => {
+    (1 until 50).par.foreach { w =>
       val wr = WeekRange(yearStart + w.week)
       wr.weekyear should equal(yearStart.getWeekyear)
       wr.weekOfWeekyear should equal(w + 1)
 
       wr.unmappedStart should equal(Times.startTimeOfWeek(yearStart + w.week))
       wr.unmappedEnd should equal(Times.startTimeOfWeek(yearStart + (w + 1).week))
-    })
+    }
   }
 
   test("getDays") {
@@ -43,11 +43,11 @@ class WeekRangeTest extends AbstractTimePeriodTest {
 
     val days = wr.getDays
     var index = 0
-    days.foreach(day => {
+    days.foreach { day =>
       day.start should equal(wr.start + index.day)
       day.end should equal(day.calendar.mapEnd(day.start + 1.day))
       index += 1
-    })
+    }
     index should equal(DaysPerWeek)
   }
 
@@ -62,8 +62,8 @@ class WeekRangeTest extends AbstractTimePeriodTest {
     wr.nextWeek.start should equal(startWeek + 1.week)
     wr.addWeeks(0) should equal(wr)
 
-    (-60 to 120).par.foreach(w => {
+    (-60 to 120).par.foreach { w =>
       wr.addWeeks(w).start should equal(startWeek + w.week)
-    })
+    }
   }
 }

@@ -48,7 +48,9 @@ class MultipleInterceptor extends EmptyInterceptor {
                         propertyNames: Array[String],
                         types: Array[Type]) {
     if (exists) {
-      interceptors.foreach(x => x.onDelete(entity, id, state, propertyNames, types))
+      interceptors.foreach { x =>
+        x.onDelete(entity, id, state, propertyNames, types)
+      }
     }
   }
 
@@ -59,7 +61,9 @@ class MultipleInterceptor extends EmptyInterceptor {
                             propertyNames: Array[String],
                             types: Array[Type]): Boolean = {
     if (exists) {
-      interceptors.foreach(x => x.onFlushDirty(entity, id, currentState, previousState, propertyNames, types))
+      interceptors.foreach { x =>
+        x.onFlushDirty(entity, id, currentState, previousState, propertyNames, types)
+      }
     }
     false
   }
@@ -70,7 +74,9 @@ class MultipleInterceptor extends EmptyInterceptor {
                       propertyNames: Array[String],
                       types: Array[Type]): Boolean = {
     if (exists) {
-      interceptors.foreach(x => x.onSave(entity, id, state, propertyNames, types))
+      interceptors.foreach { x =>
+        x.onSave(entity, id, state, propertyNames, types)
+      }
     }
     false
   }
@@ -81,7 +87,9 @@ class MultipleInterceptor extends EmptyInterceptor {
                       propertyNames: Array[String],
                       types: Array[Type]): Boolean = {
     if (exists) {
-      interceptors.foreach(x => x.onLoad(entity, id, state, propertyNames, types))
+      interceptors.foreach { x =>
+        x.onLoad(entity, id, state, propertyNames, types)
+      }
     }
     false
   }

@@ -43,19 +43,20 @@ class PromisesTest extends AbstractCoreTest {
     val count = 10
     val tasks = new ArrayBuffer[Future[Int]]()
 
-    (0 until 10).foreach(_ =>
+    (0 until 10).foreach { _ =>
       tasks += Promises.exec[Int] {
         callable()
-      })
+      }
+    }
 
-    Promises.awaitAll(tasks).foreach(result => {
+    Promises.awaitAll(tasks).foreach { result =>
       result should equal(1)
-    })
+    }
 
-    tasks.foreach(task => {
+    tasks.foreach { task =>
       task.value.get.get should equal(1)
       task.isCompleted should equal(true)
       task.value.get.isSuccess should equal(true)
-    })
+    }
   }
 }

@@ -17,7 +17,7 @@ class HibernateParameter(@BeanProperty override val name: String,
 
   override protected def buildStringHelper =
     super.buildStringHelper
-      .add("paramType", paramType)
+    .add("paramType", paramType)
 }
 
 object HibernateParameter {

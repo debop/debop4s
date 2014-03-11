@@ -20,7 +20,7 @@ class User extends ValueObject {
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
-      .add("name", name)
-      .add("empNo", empNo)
-      .add("address", address)
+    .add("name", name)
+    .add("empNo", empNo)
+    .add("address", address)
 }

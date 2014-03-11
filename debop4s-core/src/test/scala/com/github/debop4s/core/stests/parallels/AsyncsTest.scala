@@ -42,7 +42,7 @@ class AsyncsTest extends AbstractCoreTest {
     val count = 10
     val tasks = new ArrayBuffer[Future[Int]]()
 
-    (0 until 10).foreach(_ => tasks += Asyncs.run(callable()))
+    (0 until 10).foreach { _ => tasks += Asyncs.run(callable()) }
 
     Asyncs.readyAll(tasks)
 

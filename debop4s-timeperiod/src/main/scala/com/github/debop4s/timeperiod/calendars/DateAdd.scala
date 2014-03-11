@@ -203,8 +203,8 @@ object DateAdd {
     var difference = MaxDuration
 
     periods
-      .filter(period => period.end >= start)
-      .foreach { period =>
+    .filter(period => period.end >= start)
+    .foreach { period =>
       if (period.hasInside(start)) {
         nearest = period
         moment = start
@@ -230,8 +230,8 @@ object DateAdd {
     var difference = MaxDuration
 
     periods
-      .filter(period => period.start <= start)
-      .foreach { period =>
+    .filter(period => period.start <= start)
+    .foreach { period =>
 
     // start가 기간에 속한다면...
       if (period.hasInside(start)) {

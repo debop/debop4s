@@ -3,6 +3,7 @@ package org.hibernate.cache.rediscala.strategy
 import org.hibernate.cache.rediscala.regions.{RedisNaturalIdRegion, RedisEntityRegion, RedisCollectionRegion}
 import org.hibernate.cache.spi.access.{SoftLock, NaturalIdRegionAccessStrategy, EntityRegionAccessStrategy, CollectionRegionAccessStrategy}
 import org.hibernate.cfg.Settings
+import org.slf4j.LoggerFactory
 
 /**
  * org.hibernate.cache.rediscala.strategy.ReadWriteRedisCollectionRegionAccessStrategy
@@ -14,6 +15,8 @@ class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: Re
                                                    private[this] val _settings: Settings)
   extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
   with CollectionRegionAccessStrategy {
+
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
   def getRegion = region
 
@@ -32,6 +35,8 @@ class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisE
   extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
   with EntityRegionAccessStrategy {
 
+  private lazy val log = LoggerFactory.getLogger(getClass)
+
   def getRegion = region
 
   //    override def get(key: Any, txTimestamp: Long): AnyRef =
@@ -47,12 +52,19 @@ class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisE
     true
   }
 
-  override def update(key: Any, value: Any, currentVersion: Any, previousVersion: Any): Boolean = {
+  override def update(key: Any,
+                      value: Any,
+                      currentVersion: Any,
+                      previousVersion: Any): Boolean = {
     region.put(key, value)
     true
   }
 
-  override def afterUpdate(key: Any, value: Any, currentVersion: Any, previousVersion: Any, lock: SoftLock): Boolean = {
+  override def afterUpdate(key: Any,
+                           value: Any,
+                           currentVersion: Any,
+                           previousVersion: Any,
+                           lock: SoftLock): Boolean = {
     region.put(key, value)
     true
   }
@@ -68,6 +80,8 @@ class ReadWriteRedisNaturalIdRegionAccessStrategy(private[this] val _region: Red
                                                   private[this] val _settings: Settings)
   extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
   with NaturalIdRegionAccessStrategy {
+
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
   def getRegion = region
 

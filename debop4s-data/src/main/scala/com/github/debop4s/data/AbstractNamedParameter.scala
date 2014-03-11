@@ -18,7 +18,7 @@ abstract class AbstractNamedParameter(@BeanProperty val name: String,
 
   override protected def buildStringHelper =
     super.buildStringHelper
-      .add("name", name)
-      .add("value", value)
+    .add("name", name)
+    .add("value", value)
 }
 

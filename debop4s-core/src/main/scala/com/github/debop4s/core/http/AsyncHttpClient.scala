@@ -15,23 +15,20 @@ import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.nio.reactor.ConnectingIOReactor
 import org.apache.http.{HttpException, HttpResponse}
-import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 
 /**
- * com.github.debop4s.core.http.AsyncHttpClient
+ * 비동기 Http Client
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 13. 오전 9:57
  */
 class AsyncHttpClient {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
   lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
 
 
   def execute(request: HttpUriRequest): HttpResponse = {
-    log.trace(s"Http Request를 수행합니다. request=[$request]")
     val client = HttpAsyncClients.createDefault()
 
     try {
@@ -44,7 +41,6 @@ class AsyncHttpClient {
   }
 
   def executeSSL(request: HttpUriRequest): HttpResponse = {
-    log.trace(s"Http Request를 수행합니다. request=[$request]")
     val client = createHttpAsyncClient(request.getURI)
 
     try {
@@ -140,14 +136,8 @@ class AsyncHttpClient {
     if (uri != null && uri.getScheme != null) {
       val scheme: String = uri.getScheme
       if (scheme.toLowerCase == "https") {
-        try {
-          val strategy: SSLIOSessionStrategy = createSslIOSessionStrategy
-          return HttpAsyncClients.custom.setSSLStrategy(strategy).build
-        }
-        catch {
-          case e: Exception =>
-            log.error("HttpAsyncClient 를 생성하는데 실패했습니다.", e)
-        }
+        val strategy: SSLIOSessionStrategy = createSslIOSessionStrategy
+        return HttpAsyncClients.custom.setSSLStrategy(strategy).build
       }
     }
     HttpAsyncClients.createDefault
@@ -155,14 +145,13 @@ class AsyncHttpClient {
 
   private def createSslIOSessionStrategy: SSLIOSessionStrategy = {
     try {
-      log.trace("SSLIOSessionStrategy를 생성합니다...")
       val trustStore: KeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
       trustStore.load(null, null)
 
       val sslcontext: SSLContext =
         SSLContexts.custom
-          .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy)
-          .build
+        .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy)
+        .build
       new SSLIOSessionStrategy(sslcontext,
         Array[String]("TLSv1"),
         null,

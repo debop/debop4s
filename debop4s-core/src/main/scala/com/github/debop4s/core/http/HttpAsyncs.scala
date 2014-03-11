@@ -39,7 +39,7 @@ object HttpAsyncs {
 
   def buildHttpGet(uri: URI, headers: Header*): HttpGet = {
     val httpget = new HttpGet(uri)
-    headers.foreach(h => httpget.addHeader(h))
+    headers.foreach(httpget.addHeader)
     httpget
   }
 
@@ -70,7 +70,7 @@ object HttpAsyncs {
   @varargs
   def getAsParallel(cs: Charset, uris: URI*): Iterable[String] =
     client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
-      .map(r => getContent(r, cs))
+    .map(r => getContent(r, cs))
 
   @varargs
   def getAsParallel(httpgets: HttpGet*): Iterable[HttpResponse] =
@@ -85,7 +85,7 @@ object HttpAsyncs {
     val httppost = new HttpPost(uri)
     if (nvps != null)
       httppost.setEntity(new UrlEncodedFormEntity(nvps, cs))
-    headers.foreach(h => httppost.addHeader(h))
+    headers.foreach(httppost.addHeader)
     httppost
   }
 
@@ -109,7 +109,7 @@ object HttpAsyncs {
       httppost.setEntity(new StringEntity(text, cs))
       httppost.addHeader("content-type", "application/json")
     }
-    headers.foreach(h => httppost.addHeader(h))
+    headers.foreach(httppost.addHeader)
     httppost
   }
 
@@ -128,7 +128,7 @@ object HttpAsyncs {
   @varargs
   def buildHttpDelete(uri: URI, headers: Header*): HttpDelete = {
     val httpdelete = new HttpDelete(uri)
-    headers.foreach(h => httpdelete.setHeader(h))
+    headers.foreach(httpdelete.setHeader)
     httpdelete
   }
 

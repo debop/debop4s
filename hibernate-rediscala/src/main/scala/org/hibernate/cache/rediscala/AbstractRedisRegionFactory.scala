@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 import scala.collection.mutable
 
 /**
- * org.hibernate.client.redis.AbstractRedisRegionFactory
+ * AbstractRedisRegionFactory
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 20. 오후 2:16

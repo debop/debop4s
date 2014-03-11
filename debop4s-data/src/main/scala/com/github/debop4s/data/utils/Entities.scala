@@ -44,10 +44,10 @@ object Entities {
   def setNodeOrder[T <: HibernateTreeEntity[T]](node: T, order: Int) {
     assert(node != null)
     if (node.getParent != null) {
-      node.getParent.children.foreach(child => {
+      node.getParent.children.foreach { child =>
         if (child.nodePosition.ord >= order)
           child.nodePosition.ord = child.nodePosition.ord + 1
-      })
+      }
     }
     node.nodePosition.ord = order
   }
@@ -58,10 +58,10 @@ object Entities {
     var order = 0
     parent.children.toList
     .sortWith(_.nodePosition.ord < _.nodePosition.ord)
-    .foreach(n => {
+    .foreach { n =>
       n.nodePosition.ord = order
       order += 1
-    })
+    }
   }
 
   def changeParent[T <: HibernateTreeEntity[T]](node: T, oldParent: T, newParent: T) {
