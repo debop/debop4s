@@ -25,13 +25,15 @@ class JpaParallelsTest extends AbstractJpaTest {
 
   @PersistenceContext val em: EntityManager = null
 
-  val entityCount = 1000
+  val entityCount = 100
 
   @Before
   def before() {
     // 캐시는 삭제되지 않는다!
     em.createQuery("delete from ParallelOneToManyOrderItem").executeUpdate()
     em.createQuery("delete from ParallelOneToManyOrder").executeUpdate()
+    em.flush()
+    em.clear()
   }
 
   @Test
@@ -51,7 +53,6 @@ class JpaParallelsTest extends AbstractJpaTest {
     var orders =
       JpaParallels.call(emf, orderIds) { (em, x) =>
         val order = em.find(classOf[ParallelOneToManyOrder], x)
-        log.debug(s"loaded Order. $order")
         Hibernate.initialize(order.items)
         order
       }
@@ -62,7 +63,6 @@ class JpaParallelsTest extends AbstractJpaTest {
     orders =
       JpaParallels.call(emf, orderIds) { (em, x) =>
         val order = em.find(classOf[ParallelOneToManyOrder], x)
-        log.debug(s"loaded Order. $order")
         Hibernate.initialize(order.items)
         order
       }
@@ -72,7 +72,6 @@ class JpaParallelsTest extends AbstractJpaTest {
     orders =
       JpaParallels.call(emf, orderIds) { (em, x) =>
         val order = em.find(classOf[ParallelOneToManyOrder], x)
-        log.debug(s"loaded Order. $order")
         Hibernate.initialize(order.items)
         order
       }

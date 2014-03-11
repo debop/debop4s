@@ -1,6 +1,7 @@
 package com.github.debop4s.core
 
 import com.github.debop4s.core.utils.ToStringHelper
+import scala.annotation.switch
 
 /**
  * DDD 의 Value Object를 표현합니다.
@@ -21,7 +22,7 @@ trait ValueObject extends AnyRef with Serializable {
 
   @inline
   override def equals(obj: Any): Boolean = {
-    obj match {
+    (obj: @switch) match {
       case vo: ValueObject => hashCode() == obj.hashCode()
       case _ => false
     }
