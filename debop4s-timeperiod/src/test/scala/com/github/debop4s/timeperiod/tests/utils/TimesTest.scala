@@ -752,7 +752,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
   }
 
   test("toDateTime") {
-    val dateString = testDate.toString
+    val dateString = testDate.toString()
     log.trace(s"dateString=$dateString")
 
     val parseTime = Times.toDateTime(dateString)

@@ -9,8 +9,7 @@ import java.util
 import java.util.Locale
 import javax.persistence.Entity
 import javax.persistence._
-import org.hibernate.annotations._
-import org.hibernate.{annotations => ha}
+import org.hibernate.{annotations => hba}
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
@@ -72,8 +71,8 @@ class SampleLocaleValue extends ValueObject with LocaleValue {
 }
 
 @Entity
-@DynamicInsert
-@DynamicUpdate
+@hba.DynamicInsert
+@hba.DynamicUpdate
 class SampleLocaleEntity extends LongEntity with HibernateLocaleEntity[SampleLocaleValue] {
 
   var title: String = _
@@ -82,8 +81,8 @@ class SampleLocaleEntity extends LongEntity with HibernateLocaleEntity[SampleLoc
   @CollectionTable(name = "SampleLocaleEntityLocale", joinColumns = Array(new JoinColumn(name = "entityId")))
   @MapKeyClass(classOf[Locale])
   @ElementCollection(targetClass = classOf[SampleLocaleValue], fetch = FetchType.EAGER)
-  @ha.Cascade(Array(ha.CascadeType.ALL))
-  @LazyCollection(LazyCollectionOption.EXTRA)
+  @hba.Cascade(Array(hba.CascadeType.ALL))
+  @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
   override val localeMap: util.Map[Locale, SampleLocaleValue] = new util.HashMap[Locale, SampleLocaleValue]()
 
   override protected def createDefaultLocaleVal: SampleLocaleValue = {
