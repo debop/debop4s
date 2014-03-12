@@ -19,22 +19,22 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @ComponentScan(basePackages = Array("com.github.debop4s.data.jpa"))
 class JpaMySqlConfiguration extends AbstractJpaMySqlHikariConfiguration {
 
-  override def getMappedPackageNames: Array[String] =
-    Array(classOf[Employee].getPackage.getName)
+    override def getMappedPackageNames: Array[String] =
+        Array(classOf[Employee].getPackage.getName)
 
-  override def jpaProperties: Properties = {
-    val props = super.jpaProperties
+    override def jpaProperties: Properties = {
+        val props = super.jpaProperties
 
-    props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop")
-    props.setProperty(AvailableSettings.SHOW_SQL, "false")
+        props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop")
+        props.setProperty(AvailableSettings.SHOW_SQL, "false")
 
-    // add second cache provider using redis
-    props.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true")
-    props.setProperty(AvailableSettings.USE_QUERY_CACHE, "true")
-    props.setProperty(AvailableSettings.CACHE_REGION_PREFIX, "debop4s")
-    props.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[SingletonRedisRegionFactory].getName)
-    props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
+        // add second cache provider using redis
+        props.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true")
+        props.setProperty(AvailableSettings.USE_QUERY_CACHE, "true")
+        props.setProperty(AvailableSettings.CACHE_REGION_PREFIX, "debop4s")
+        props.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[SingletonRedisRegionFactory].getName)
+        props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
 
-    props
-  }
+        props
+    }
 }

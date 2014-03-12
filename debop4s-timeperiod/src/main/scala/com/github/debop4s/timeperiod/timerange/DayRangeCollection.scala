@@ -13,31 +13,31 @@ import scala.collection.mutable.ArrayBuffer
 class DayRangeCollection(private[this] val _moment: DateTime,
                          private[this] val _dayCount: Int,
                          private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends DayTimeRange(Times.asDate(_moment), _dayCount, _calendar) {
+    extends DayTimeRange(Times.asDate(_moment), _dayCount, _calendar) {
 
-  def getDays: Seq[DayRange] = {
-    val days = ArrayBuffer[DayRange]()
-    val startDay = Times.asDate(start)
-    (0 until dayCount).foreach { d =>
-      days += new DayRange(startDay.plusDays(d), calendar)
+    def getDays: Seq[DayRange] = {
+        val days = ArrayBuffer[DayRange]()
+        val startDay = Times.asDate(start)
+        (0 until dayCount).foreach { d =>
+            days += new DayRange(startDay.plusDays(d), calendar)
+        }
+        days
     }
-    days
-  }
 }
 
 object DayRangeCollection {
 
-  def apply(moment: DateTime, dayCount: Int): DayRangeCollection =
-    apply(moment, dayCount, DefaultTimeCalendar)
+    def apply(moment: DateTime, dayCount: Int): DayRangeCollection =
+        apply(moment, dayCount, DefaultTimeCalendar)
 
-  def apply(moment: DateTime, dayCount: Int, calendar: ITimeCalendar): DayRangeCollection =
-    new DayRangeCollection(moment, dayCount, calendar)
+    def apply(moment: DateTime, dayCount: Int, calendar: ITimeCalendar): DayRangeCollection =
+        new DayRangeCollection(moment, dayCount, calendar)
 
-  def apply(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int): DayRangeCollection =
-    apply(year, monthOfYear, dayOfMonth, dayCount, DefaultTimeCalendar)
+    def apply(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int): DayRangeCollection =
+        apply(year, monthOfYear, dayOfMonth, dayCount, DefaultTimeCalendar)
 
 
-  def apply(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int, calendar: ITimeCalendar): DayRangeCollection =
-    new DayRangeCollection(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
+    def apply(year: Int, monthOfYear: Int, dayOfMonth: Int, dayCount: Int, calendar: ITimeCalendar): DayRangeCollection =
+        new DayRangeCollection(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
 
 }

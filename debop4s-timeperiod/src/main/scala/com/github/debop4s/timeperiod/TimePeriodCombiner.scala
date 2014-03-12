@@ -9,9 +9,9 @@ import com.github.debop4s.timeperiod.timeline.TimeLine
  */
 class TimePeriodCombiner[T <: ITimePeriod](val mapper: ITimePeriodMapper = null) {
 
-  def combinePeriods(periods: Iterable[ITimePeriod]): ITimePeriodCollection =
-    TimeLine(TimePeriodCollection(periods), null, mapper).combinePeriods
+    def combinePeriods(periods: Iterable[ITimePeriod]): ITimePeriodCollection =
+        TimeLine(TimePeriodCollection(periods), null, mapper).combinePeriods
 
-  def combinePeriods(periods: ITimePeriodContainer): ITimePeriodCollection =
-    TimeLine(periods, null, mapper).combinePeriods
+    def combinePeriods(periods: ITimePeriodContainer): ITimePeriodCollection =
+        TimeLine(periods, null, mapper).combinePeriods
 }

@@ -10,20 +10,20 @@ import org.slf4j.LoggerFactory
  */
 object Cryptos {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-  val RANDOM_NUMBER_GENERATION = "SHA1PRNG"
-  lazy val random: SecureRandom = SecureRandom.getInstance(RANDOM_NUMBER_GENERATION)
+    val RANDOM_NUMBER_GENERATION = "SHA1PRNG"
+    lazy val random: SecureRandom = SecureRandom.getInstance(RANDOM_NUMBER_GENERATION)
 
-  /**
-  * 난수 데이터를 발생시킵니다.
-  */
-  def randomBytes(num: Int): Array[Byte] = {
-    if (num <= 0)
-      return Array[Byte]()
+    /**
+    * 난수 데이터를 발생시킵니다.
+    */
+    def randomBytes(num: Int): Array[Byte] = {
+        if (num <= 0)
+            return Array[Byte]()
 
-    val bytes = new Array[Byte](num)
-    random.nextBytes(bytes)
-    bytes
-  }
+        val bytes = new Array[Byte](num)
+        random.nextBytes(bytes)
+        bytes
+    }
 }

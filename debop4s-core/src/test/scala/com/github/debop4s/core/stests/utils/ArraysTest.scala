@@ -12,17 +12,17 @@ import scala.collection.mutable.ArrayBuffer
  */
 class ArraysTest extends FunSuite with Matchers with BeforeAndAfter {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  test("iterable to array") {
-    val buffer = new ArrayBuffer[Int](100)
-    Range(0, 100).foreach { i => buffer += i }
+    test("iterable to array") {
+        val buffer = new ArrayBuffer[Int](100)
+        Range(0, 100).foreach { i => buffer += i }
 
-    val array = Arrays.asArray[Int](buffer)
+        val array = Arrays.asArray[Int](buffer)
 
-    assert(array.length == buffer.length)
-    assert(array(0) == 0)
-    assert(array(50) == 50)
-  }
+        assert(array.length == buffer.length)
+        assert(array(0) == 0)
+        assert(array(50) == 50)
+    }
 
 }

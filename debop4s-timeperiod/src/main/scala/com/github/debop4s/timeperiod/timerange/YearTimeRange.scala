@@ -15,51 +15,51 @@ import scala.collection.mutable.ArrayBuffer
 class YearTimeRange(private[this] val _year: Int,
                     val yearCount: Int,
                     private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends YearCalendarTimeRange(Times.relativeYearPeriod(Times.startTimeOfYear(_year), yearCount), _calendar) {
+    extends YearCalendarTimeRange(Times.relativeYearPeriod(Times.startTimeOfYear(_year), yearCount), _calendar) {
 
-  def getHalfyears: Seq[HalfyearRange] = {
-    val halfyears = new ArrayBuffer[HalfyearRange](yearCount)
-    for (y <- 0 until yearCount) {
-      Halfyear.values.foreach { hy =>
-        halfyears += new HalfyearRange(startYear + y, hy, calendar)
-      }
+    def getHalfyears: Seq[HalfyearRange] = {
+        val halfyears = new ArrayBuffer[HalfyearRange](yearCount)
+        for (y <- 0 until yearCount) {
+            Halfyear.values.foreach { hy =>
+                halfyears += new HalfyearRange(startYear + y, hy, calendar)
+            }
+        }
+        halfyears
     }
-    halfyears
-  }
 
-  def getQuarters: Seq[QuarterRange] = {
-    val quarters = new ArrayBuffer[QuarterRange](yearCount)
-    for (y <- 0 until yearCount) {
-      Quarter.values.foreach { q =>
-        quarters += new QuarterRange(startYear + y, q, calendar)
-      }
+    def getQuarters: Seq[QuarterRange] = {
+        val quarters = new ArrayBuffer[QuarterRange](yearCount)
+        for (y <- 0 until yearCount) {
+            Quarter.values.foreach { q =>
+                quarters += new QuarterRange(startYear + y, q, calendar)
+            }
+        }
+        quarters
     }
-    quarters
-  }
 
-  def getMonths: Seq[MonthRange] = {
-    val months = new ArrayBuffer[MonthRange](yearCount * MonthsPerYear)
-    for (y <- 0 until yearCount) {
-      val baseTime = start.plusYears(y)
-      for (m <- 0 until MonthsPerYear)
-        months += MonthRange(baseTime.plusMonths(m), calendar)
+    def getMonths: Seq[MonthRange] = {
+        val months = new ArrayBuffer[MonthRange](yearCount * MonthsPerYear)
+        for (y <- 0 until yearCount) {
+            val baseTime = start.plusYears(y)
+            for (m <- 0 until MonthsPerYear)
+                months += MonthRange(baseTime.plusMonths(m), calendar)
+        }
+        months
     }
-    months
-  }
 }
 
 object YearTimeRange {
 
-  def apply(year: Int, yearCount: Int): YearTimeRange =
-    apply(year, yearCount, DefaultTimeCalendar)
+    def apply(year: Int, yearCount: Int): YearTimeRange =
+        apply(year, yearCount, DefaultTimeCalendar)
 
-  def apply(year: Int, yearCount: Int, calendar: ITimeCalendar): YearTimeRange =
-    new YearTimeRange(year, yearCount, calendar)
+    def apply(year: Int, yearCount: Int, calendar: ITimeCalendar): YearTimeRange =
+        new YearTimeRange(year, yearCount, calendar)
 
-  def apply(moment: DateTime, yearCount: Int): YearTimeRange =
-    apply(moment, yearCount, DefaultTimeCalendar)
+    def apply(moment: DateTime, yearCount: Int): YearTimeRange =
+        apply(moment, yearCount, DefaultTimeCalendar)
 
 
-  def apply(moment: DateTime, yearCount: Int, calendar: ITimeCalendar): YearTimeRange =
-    new YearTimeRange(moment.getYear, yearCount, calendar)
+    def apply(moment: DateTime, yearCount: Int, calendar: ITimeCalendar): YearTimeRange =
+        new YearTimeRange(moment.getYear, yearCount, calendar)
 }

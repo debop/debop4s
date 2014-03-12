@@ -21,52 +21,52 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
                                val props: Properties) extends Region {
 
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  val expireInSeconds = HibernateRedisUtil.expireInSeconds(regionName)
+    val expireInSeconds = HibernateRedisUtil.expireInSeconds(regionName)
 
-  override def getName: String = regionName
+    override def getName: String = regionName
 
-  var regionDeleted = false
+    var regionDeleted = false
 
-  override def destroy(): Unit = synchronized {
-    if (regionDeleted)
-      return
+    override def destroy(): Unit = synchronized {
+        if (regionDeleted)
+            return
 
-    log.debug(s"delete cache region. region=$regionName")
+        log.debug(s"delete cache region. region=$regionName")
 
-    try {
-      cache.deleteRegion(regionName)
-    } catch {
-      case ignored: Throwable =>
-    } finally {
-      regionDeleted = true
+        try {
+            cache.deleteRegion(regionName)
+        } catch {
+            case ignored: Throwable =>
+        } finally {
+            regionDeleted = true
+        }
     }
-  }
 
-  override def contains(key: Any): Boolean = {
-    Promises.await(cache.exists(regionName, key.toString))
-  }
+    override def contains(key: Any): Boolean = {
+        Promises.await(cache.exists(regionName, key.toString))
+    }
 
-  override def getSizeInMemory: Long = {
-    Promises.await(cache.dbSize)
-  }
+    override def getSizeInMemory: Long = {
+        Promises.await(cache.dbSize)
+    }
 
-  override def getElementCountInMemory: Long = {
-    Promises.await(cache.keySizeInRegion(regionName))
-  }
+    override def getElementCountInMemory: Long = {
+        Promises.await(cache.keySizeInRegion(regionName))
+    }
 
-  override def getElementCountOnDisk: Long = -1L
+    override def getElementCountOnDisk: Long = -1L
 
-  override def toMap: util.Map[Any, Any] = {
-    val map = Promises.await(cache.getAll(regionName))
-    val results = new util.HashMap[Any, Any]()
-    map.foreach(x => results.put(x._1.asInstanceOf[Any], x._2.asInstanceOf[Any]))
-    results
-  }
+    override def toMap: util.Map[Any, Any] = {
+        val map = Promises.await(cache.getAll(regionName))
+        val results = new util.HashMap[Any, Any]()
+        map.foreach(x => results.put(x._1.asInstanceOf[Any], x._2.asInstanceOf[Any]))
+        results
+    }
 
-  override def nextTimestamp: Long = HibernateRedisUtil.nextTimestamp()
+    override def nextTimestamp: Long = HibernateRedisUtil.nextTimestamp()
 
-  override def getTimeout: Int = 0
+    override def getTimeout: Int = 0
 
 }

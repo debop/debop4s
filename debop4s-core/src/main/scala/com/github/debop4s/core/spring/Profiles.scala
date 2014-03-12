@@ -8,13 +8,13 @@ package com.github.debop4s.core.spring
  */
 class Profiles extends Enumeration {
 
-  type Profiles = Value
+    type Profiles = Value
 
-  val LOCAL = Value(0, "LOCAL")
+    val LOCAL = Value(0, "LOCAL")
 
-  val DEVELOP = Value(1, "DEVELOP")
+    val DEVELOP = Value(1, "DEVELOP")
 
-  val TEST = Value(2, "TEST")
+    val TEST = Value(2, "TEST")
 
-  val PRODUCTION = Value(3, "PRODUCTION")
+    val PRODUCTION = Value(3, "PRODUCTION")
 }

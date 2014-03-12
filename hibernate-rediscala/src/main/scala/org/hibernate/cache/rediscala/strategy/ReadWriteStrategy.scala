@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory
  */
 class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: RedisCollectionRegion,
                                                    private[this] val _settings: Settings)
-  extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-  with CollectionRegionAccessStrategy {
+    extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
+    with CollectionRegionAccessStrategy {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-  def getRegion = region
+    def getRegion = region
 
-  override def get(key: Any, txTimestamp: Long): AnyRef =
-    super.get(key, txTimestamp)
+    override def get(key: Any, txTimestamp: Long): AnyRef =
+        super.get(key, txTimestamp)
 }
 
 /**
@@ -32,42 +32,42 @@ class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: Re
  */
 class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisEntityRegion,
                                                private[this] val _settings: Settings)
-  extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-  with EntityRegionAccessStrategy {
+    extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
+    with EntityRegionAccessStrategy {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-  def getRegion = region
+    def getRegion = region
 
-  //    override def get(key: Any, txTimestamp: Long): AnyRef =
-  //        super.get(key, txTimestamp)
+    //    override def get(key: Any, txTimestamp: Long): AnyRef =
+    //        super.get(key, txTimestamp)
 
-  override def insert(key: Any, value: Any, version: Any): Boolean = {
-    region.put(key, value)
-    true
-  }
+    override def insert(key: Any, value: Any, version: Any): Boolean = {
+        region.put(key, value)
+        true
+    }
 
-  override def afterInsert(key: Any, value: Any, version: Any): Boolean = {
-    region.put(key, value)
-    true
-  }
+    override def afterInsert(key: Any, value: Any, version: Any): Boolean = {
+        region.put(key, value)
+        true
+    }
 
-  override def update(key: Any,
-                      value: Any,
-                      currentVersion: Any,
-                      previousVersion: Any): Boolean = {
-    region.put(key, value)
-    true
-  }
+    override def update(key: Any,
+                        value: Any,
+                        currentVersion: Any,
+                        previousVersion: Any): Boolean = {
+        region.put(key, value)
+        true
+    }
 
-  override def afterUpdate(key: Any,
-                           value: Any,
-                           currentVersion: Any,
-                           previousVersion: Any,
-                           lock: SoftLock): Boolean = {
-    region.put(key, value)
-    true
-  }
+    override def afterUpdate(key: Any,
+                             value: Any,
+                             currentVersion: Any,
+                             previousVersion: Any,
+                             lock: SoftLock): Boolean = {
+        region.put(key, value)
+        true
+    }
 }
 
 /**
@@ -78,34 +78,34 @@ class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisE
  */
 class ReadWriteRedisNaturalIdRegionAccessStrategy(private[this] val _region: RedisNaturalIdRegion,
                                                   private[this] val _settings: Settings)
-  extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-  with NaturalIdRegionAccessStrategy {
+    extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
+    with NaturalIdRegionAccessStrategy {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-  def getRegion = region
+    def getRegion = region
 
-  //    override def get(key: Any, txTimestamp: Long): AnyRef =
-  //        super.get(key, txTimestamp)
+    //    override def get(key: Any, txTimestamp: Long): AnyRef =
+    //        super.get(key, txTimestamp)
 
-  override def insert(key: Any, value: Any): Boolean = {
-    region.put(key, value)
-    true
-  }
+    override def insert(key: Any, value: Any): Boolean = {
+        region.put(key, value)
+        true
+    }
 
-  override def afterInsert(key: Any, value: Any): Boolean = {
-    region.put(key, value)
-    true
-  }
+    override def afterInsert(key: Any, value: Any): Boolean = {
+        region.put(key, value)
+        true
+    }
 
-  override def update(key: Any, value: Any): Boolean = {
-    region.put(key, value)
-    true
-  }
+    override def update(key: Any, value: Any): Boolean = {
+        region.put(key, value)
+        true
+    }
 
-  override def afterUpdate(key: Any, value: Any, lock: SoftLock): Boolean = {
-    region.put(key, value)
-    true
-  }
+    override def afterUpdate(key: Any, value: Any, lock: SoftLock): Boolean = {
+        region.put(key, value)
+        true
+    }
 }
 

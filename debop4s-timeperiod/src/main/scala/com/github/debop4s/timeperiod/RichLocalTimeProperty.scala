@@ -10,21 +10,21 @@ import org.joda.time.LocalTime
  */
 class RichLocalTimeProperty(val self: LocalTime.Property) extends AnyVal {
 
-  def localTime: LocalTime = self.getLocalTime
+    def localTime: LocalTime = self.getLocalTime
 
-  def roundCeiling: LocalTime = self.roundCeilingCopy()
+    def roundCeiling: LocalTime = self.roundCeilingCopy()
 
-  def roundFloor: LocalTime = self.roundFloorCopy()
+    def roundFloor: LocalTime = self.roundFloorCopy()
 
-  def roundDown: LocalTime = self.roundFloorCopy()
+    def roundDown: LocalTime = self.roundFloorCopy()
 
-  def roundUp: LocalTime = self.roundCeilingCopy()
+    def roundUp: LocalTime = self.roundCeilingCopy()
 
-  def round: LocalTime = self.roundHalfEvenCopy()
+    def round: LocalTime = self.roundHalfEvenCopy()
 
-  def apply(value: Int): LocalTime = self.setCopy(value)
+    def apply(value: Int): LocalTime = self.setCopy(value)
 
-  def apply(text: String): LocalTime = self.setCopy(text)
+    def apply(text: String): LocalTime = self.setCopy(text)
 
-  def apply(text: String, locale: Locale): LocalTime = self.setCopy(text, locale)
+    def apply(text: String, locale: Locale): LocalTime = self.setCopy(text, locale)
 }

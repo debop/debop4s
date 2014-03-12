@@ -11,9 +11,9 @@ import com.github.debop4s.timeperiod._
 @SerialVersionUID(-7922671338410846872L)
 class YearCalendarTimeRange(private val _period: ITimePeriod,
                             private val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends CalendarTimeRange(_period, _calendar) {
+    extends CalendarTimeRange(_period, _calendar) {
 
-  def yearBaseMonth: Int = 1
+    def yearBaseMonth: Int = 1
 
-  def baseYear: Int = startYear
+    def baseYear: Int = startYear
 }

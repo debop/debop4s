@@ -7,7 +7,6 @@ import com.github.debop4s.data.model.{LongEntity, HibernateLocaleEntity, LocaleV
 import com.github.debop4s.data.tests.AbstractJpaTest
 import java.util
 import java.util.Locale
-import javax.persistence.Entity
 import javax.persistence._
 import org.hibernate.{annotations => hba}
 import org.junit.Test
@@ -20,54 +19,54 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class LocaledEntityTest extends AbstractJpaTest {
 
-  @Autowired val dao: JpaDao = null
+    @Autowired val dao: JpaDao = null
 
-  @Test
-  def localedEntity() {
-    val entity = new SampleLocaleEntity()
-    entity.title = "제목-Original"
-    entity.description = "설명-Original"
-    entity.addLocaleValue(Locale.KOREAN, new SampleLocaleValue("제목", "설명"))
-    entity.addLocaleValue(Locale.ENGLISH, new SampleLocaleValue("Title", "Description"))
+    @Test
+    def localedEntity() {
+        val entity = new SampleLocaleEntity()
+        entity.title = "제목-Original"
+        entity.description = "설명-Original"
+        entity.addLocaleValue(Locale.KOREAN, new SampleLocaleValue("제목", "설명"))
+        entity.addLocaleValue(Locale.ENGLISH, new SampleLocaleValue("Title", "Description"))
 
-    dao.persist(entity)
-    dao.flush()
-    dao.clear()
+        dao.persist(entity)
+        dao.flush()
+        dao.clear()
 
-    val loaded = dao.findOne(classOf[SampleLocaleEntity], entity.id)
-    assert(loaded != null)
-    assert(loaded.localeMap.size() == 2)
+        val loaded = dao.findOne(classOf[SampleLocaleEntity], entity.id)
+        assert(loaded != null)
+        assert(loaded.localeMap.size() == 2)
 
-    assert(loaded.getLocaleValue(Locale.KOREAN).title == "제목")
-    assert(loaded.getLocaleValue(Locale.KOREAN).description == "설명")
-    assert(loaded.getLocaleValue(Locale.ENGLISH).title == "Title")
-    assert(loaded.getLocaleValue(Locale.ENGLISH).description == "Description")
+        assert(loaded.getLocaleValue(Locale.KOREAN).title == "제목")
+        assert(loaded.getLocaleValue(Locale.KOREAN).description == "설명")
+        assert(loaded.getLocaleValue(Locale.ENGLISH).title == "Title")
+        assert(loaded.getLocaleValue(Locale.ENGLISH).description == "Description")
 
-    // 지원하지 않는 Locale 정보가 있다면, entity의 기본값을 사용합니다.
-    assert(loaded.getLocaleValue(Locale.CHINESE).title == "제목-Original")
-    assert(loaded.getLocaleValue(Locale.CHINESE).description == "설명-Original")
+        // 지원하지 않는 Locale 정보가 있다면, entity의 기본값을 사용합니다.
+        assert(loaded.getLocaleValue(Locale.CHINESE).title == "제목-Original")
+        assert(loaded.getLocaleValue(Locale.CHINESE).description == "설명-Original")
 
-    dao.delete(loaded)
-    dao.flush()
+        dao.delete(loaded)
+        dao.flush()
 
-    assert(dao.findOne(classOf[SampleLocaleEntity], entity.id) == null)
-  }
+        assert(dao.findOne(classOf[SampleLocaleEntity], entity.id) == null)
+    }
 
 }
 
 @Embeddable
 class SampleLocaleValue extends ValueObject with LocaleValue {
 
-  def this(title: String, description: String) {
-    this()
-    this.title = title
-    this.description = description
-  }
+    def this(title: String, description: String) {
+        this()
+        this.title = title
+        this.description = description
+    }
 
-  var title: String = _
-  var description: String = _
+    var title: String = _
+    var description: String = _
 
-  override def hashCode(): Int = Hashs.compute(title)
+    override def hashCode(): Int = Hashs.compute(title)
 }
 
 @Entity
@@ -75,20 +74,20 @@ class SampleLocaleValue extends ValueObject with LocaleValue {
 @hba.DynamicUpdate
 class SampleLocaleEntity extends LongEntity with HibernateLocaleEntity[SampleLocaleValue] {
 
-  var title: String = _
-  var description: String = _
+    var title: String = _
+    var description: String = _
 
-  @CollectionTable(name = "SampleLocaleEntityLocale", joinColumns = Array(new JoinColumn(name = "entityId")))
-  @MapKeyClass(classOf[Locale])
-  @ElementCollection(targetClass = classOf[SampleLocaleValue], fetch = FetchType.EAGER)
-  @hba.Cascade(Array(hba.CascadeType.ALL))
-  @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
-  override val localeMap: util.Map[Locale, SampleLocaleValue] = new util.HashMap[Locale, SampleLocaleValue]()
+    @CollectionTable(name = "SampleLocaleEntityLocale", joinColumns = Array(new JoinColumn(name = "entityId")))
+    @MapKeyClass(classOf[Locale])
+    @ElementCollection(targetClass = classOf[SampleLocaleValue], fetch = FetchType.EAGER)
+    @hba.Cascade(Array(hba.CascadeType.ALL))
+    @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
+    override val localeMap: util.Map[Locale, SampleLocaleValue] = new util.HashMap[Locale, SampleLocaleValue]()
 
-  override protected def createDefaultLocaleVal: SampleLocaleValue = {
-    new SampleLocaleValue(title, description)
-  }
+    override protected def createDefaultLocaleVal: SampleLocaleValue = {
+        new SampleLocaleValue(title, description)
+    }
 
-  @inline
-  override def hashCode(): Int = Hashs.compute(title)
+    @inline
+    override def hashCode(): Int = Hashs.compute(title)
 }

@@ -9,11 +9,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy
 @SerialVersionUID(5597936606448211014L)
 class Item extends Serializable {
 
-  @Id
-  @GeneratedValue
-  var id: Long = _
+    @Id
+    @GeneratedValue
+    var id: Long = _
 
-  var name: String = _
+    var name: String = _
 
-  var description: String = _
+    var description: String = _
 }

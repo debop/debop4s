@@ -16,48 +16,48 @@ import org.slf4j.LoggerFactory
  */
 class JodaDateTimeTZUserType extends UserType {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-  def sqlTypes() = Array(StandardBasicTypes.LONG.sqlType(), StandardBasicTypes.STRING.sqlType())
+    def sqlTypes() = Array(StandardBasicTypes.LONG.sqlType(), StandardBasicTypes.STRING.sqlType())
 
-  def returnedClass() = classOf[DateTime]
+    def returnedClass() = classOf[DateTime]
 
-  def equals(x: Any, y: Any) = Objects.equals(x, y)
+    def equals(x: Any, y: Any) = Objects.equals(x, y)
 
-  def hashCode(x: Any) = Objects.hashCode(x)
+    def hashCode(x: Any) = Objects.hashCode(x)
 
-  def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
-    val timestamp = StandardBasicTypes.LONG.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Long]
-    val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
+    def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
+        val timestamp = StandardBasicTypes.LONG.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Long]
+        val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
 
-    var value: DateTime = null
-    if (timezone == null) {
-      value = new DateTime(timestamp)
-    } else {
-      value = new DateTime(timestamp, DateTimeZone.forID(timezone))
-    }
-    value
-  }
-
-  def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
-    val time = value.asInstanceOf[DateTime]
-    if (time == null) {
-      StandardBasicTypes.LONG.nullSafeSet(st, null, index, session)
-      StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, session)
-    } else {
-      StandardBasicTypes.LONG.nullSafeSet(st, time.toDateTime(DateTimeZone.UTC).getMillis, index, session)
-      StandardBasicTypes.STRING.nullSafeSet(st, time.getZone.getID, index + 1, session)
+        var value: DateTime = null
+        if (timezone == null) {
+            value = new DateTime(timestamp)
+        } else {
+            value = new DateTime(timestamp, DateTimeZone.forID(timezone))
+        }
+        value
     }
 
-  }
+    def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
+        val time = value.asInstanceOf[DateTime]
+        if (time == null) {
+            StandardBasicTypes.LONG.nullSafeSet(st, null, index, session)
+            StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, session)
+        } else {
+            StandardBasicTypes.LONG.nullSafeSet(st, time.toDateTime(DateTimeZone.UTC).getMillis, index, session)
+            StandardBasicTypes.STRING.nullSafeSet(st, time.getZone.getID, index + 1, session)
+        }
 
-  def deepCopy(value: Any) = value.asInstanceOf[AnyRef]
+    }
 
-  def isMutable = true
+    def deepCopy(value: Any) = value.asInstanceOf[AnyRef]
 
-  def disassemble(value: Any) = deepCopy(value).asInstanceOf[Serializable]
+    def isMutable = true
 
-  def assemble(cached: Serializable, owner: Any) = deepCopy(cached)
+    def disassemble(value: Any) = deepCopy(value).asInstanceOf[Serializable]
 
-  def replace(original: Any, target: Any, owner: Any) = deepCopy(original)
+    def assemble(cached: Serializable, owner: Any) = deepCopy(cached)
+
+    def replace(original: Any, target: Any, owner: Any) = deepCopy(original)
 }

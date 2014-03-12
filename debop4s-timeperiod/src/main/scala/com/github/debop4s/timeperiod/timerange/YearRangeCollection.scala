@@ -14,29 +14,29 @@ import scala.collection.mutable.ArrayBuffer
 class YearRangeCollection(private[this] val _year: Int,
                           private[this] val _yearCount: Int,
                           private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends YearTimeRange(_year, _yearCount, _calendar) {
+    extends YearTimeRange(_year, _yearCount, _calendar) {
 
-  def getYears: Seq[YearRange] = {
-    val years = ArrayBuffer[YearRange]()
-    for (y <- 0 until yearCount) {
-      years += new YearRange(startYear + y, calendar)
+    def getYears: Seq[YearRange] = {
+        val years = ArrayBuffer[YearRange]()
+        for (y <- 0 until yearCount) {
+            years += new YearRange(startYear + y, calendar)
+        }
+        years
     }
-    years
-  }
 }
 
 object YearRangeCollection {
 
-  def apply(year: Int, yearCount: Int): YearRangeCollection =
-    apply(year, yearCount, DefaultTimeCalendar)
+    def apply(year: Int, yearCount: Int): YearRangeCollection =
+        apply(year, yearCount, DefaultTimeCalendar)
 
-  def apply(year: Int, yearCount: Int, calendar: ITimeCalendar): YearRangeCollection =
-    new YearRangeCollection(year, yearCount, calendar)
+    def apply(year: Int, yearCount: Int, calendar: ITimeCalendar): YearRangeCollection =
+        new YearRangeCollection(year, yearCount, calendar)
 
-  def apply(moment: DateTime, yearCount: Int): YearRangeCollection =
-    apply(moment, yearCount, DefaultTimeCalendar)
+    def apply(moment: DateTime, yearCount: Int): YearRangeCollection =
+        apply(moment, yearCount, DefaultTimeCalendar)
 
-  def apply(moment: DateTime, yearCount: Int, calendar: ITimeCalendar): YearRangeCollection =
-    new YearRangeCollection(moment.getYear, yearCount, calendar)
+    def apply(moment: DateTime, yearCount: Int, calendar: ITimeCalendar): YearRangeCollection =
+        new YearRangeCollection(moment.getYear, yearCount, calendar)
 
 }

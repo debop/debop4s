@@ -12,74 +12,74 @@ import scala.util.Random
  */
 object Arrays {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
-  private lazy val RANDOM: Random = new Random(System.currentTimeMillis())
+    private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val RANDOM: Random = new Random(System.currentTimeMillis())
 
-  val EMPTY_BYTE_ARRAY = Array[Byte](0)
+    val EMPTY_BYTE_ARRAY = Array[Byte](0)
 
-  def isEmpty[T](array: Array[T]): Boolean =
-    (array eq null) || (array.length == 0)
+    def isEmpty[T](array: Array[T]): Boolean =
+        (array eq null) || (array.length == 0)
 
-  def isEmpty[T](iterable: Iterable[T]): Boolean =
-    (iterable eq null) || (!iterable.iterator.hasNext)
+    def isEmpty[T](iterable: Iterable[T]): Boolean =
+        (iterable eq null) || (!iterable.iterator.hasNext)
 
-  def contains[T](array: Array[T], target: T): Boolean = {
-    if (isEmpty(array)) false
-    else array.contains(target)
-  }
+    def contains[T](array: Array[T], target: T): Boolean = {
+        if (isEmpty(array)) false
+        else array.contains(target)
+    }
 
-  def indexOf[T](array: Array[T], target: T): Int = {
-    if (isEmpty(array)) -1
-    else array.indexOf(target)
-  }
+    def indexOf[T](array: Array[T], target: T): Int = {
+        if (isEmpty(array)) -1
+        else array.indexOf(target)
+    }
 
-  def lastIndexOf[T](array: Array[T], target: T): Int =
-    array.lastIndexOf(target)
+    def lastIndexOf[T](array: Array[T], target: T): Int =
+        array.lastIndexOf(target)
 
-  def asArray[T: ClassTag](iterable: Iterable[T]): Array[T] =
-    iterable.toArray
+    def asArray[T: ClassTag](iterable: Iterable[T]): Array[T] =
+        iterable.toArray
 
-  def asArray[T: ClassTag](collection: java.util.Collection[T]): Array[T] =
-    collection.toBuffer.toArray
+    def asArray[T: ClassTag](collection: java.util.Collection[T]): Array[T] =
+        collection.toBuffer.toArray
 
-  def asString[T](iterable: Iterable[T]): String = iterable.mkString(",")
+    def asString[T](iterable: Iterable[T]): String = iterable.mkString(",")
 
-  def mkArray[T: ClassTag](elems: T*) = Array[T](elems: _*)
-
-
-  def getRandomBytes(numBytes: Int): Array[Byte] = {
-    val bytes = new Array[Byte](numBytes)
-    RANDOM.nextBytes(bytes)
-    bytes
-  }
+    def mkArray[T: ClassTag](elems: T*) = Array[T](elems: _*)
 
 
-  def copyOf[T: ClassTag](original: Array[T], newLength: Int): Array[T] = {
-    assert(original != null)
-    val copy = new Array[T](newLength)
-    Array.copy(original, 0, copy, 0, math.min(original.length, newLength))
-    copy
-  }
+    def getRandomBytes(numBytes: Int): Array[Byte] = {
+        val bytes = new Array[Byte](numBytes)
+        RANDOM.nextBytes(bytes)
+        bytes
+    }
 
-  def fill[T](a: Array[T], fromIndex: Int, toIndex: Int, v: T) {
-    rangeCheck(a.length, fromIndex, toIndex)
-    for (i <- fromIndex until toIndex)
-      a(i) = v
-  }
 
-  private def rangeCheck(length: Int, fromIndex: Int, toIndex: Int) {
-    if (fromIndex > toIndex)
-      throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")")
-    if (fromIndex < 0)
-      throw new ArrayIndexOutOfBoundsException(fromIndex)
-    if (toIndex > length)
-      throw new ArrayIndexOutOfBoundsException(toIndex)
-  }
+    def copyOf[T: ClassTag](original: Array[T], newLength: Int): Array[T] = {
+        assert(original != null)
+        val copy = new Array[T](newLength)
+        Array.copy(original, 0, copy, 0, math.min(original.length, newLength))
+        copy
+    }
 
-  def toSeq[T](iterable: java.lang.Iterable[_ <: T]): collection.IndexedSeq[T] =
-    iterable.toIndexedSeq
+    def fill[T](a: Array[T], fromIndex: Int, toIndex: Int, v: T) {
+        rangeCheck(a.length, fromIndex, toIndex)
+        for (i <- fromIndex until toIndex)
+            a(i) = v
+    }
 
-  def toSet[T](iterable: java.lang.Iterable[_ <: T]): collection.Set[T] =
-    iterable.toSet
+    private def rangeCheck(length: Int, fromIndex: Int, toIndex: Int) {
+        if (fromIndex > toIndex)
+            throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")")
+        if (fromIndex < 0)
+            throw new ArrayIndexOutOfBoundsException(fromIndex)
+        if (toIndex > length)
+            throw new ArrayIndexOutOfBoundsException(toIndex)
+    }
+
+    def toSeq[T](iterable: java.lang.Iterable[_ <: T]): collection.IndexedSeq[T] =
+        iterable.toIndexedSeq
+
+    def toSet[T](iterable: java.lang.Iterable[_ <: T]): collection.Set[T] =
+        iterable.toSet
 
 }
