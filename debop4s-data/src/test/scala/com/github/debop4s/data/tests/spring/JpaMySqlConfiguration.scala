@@ -26,7 +26,7 @@ class JpaMySqlConfiguration extends AbstractJpaMySqlHikariConfiguration {
         val props = super.jpaProperties
 
         props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop")
-        props.setProperty(AvailableSettings.SHOW_SQL, "false")
+        props.setProperty(AvailableSettings.SHOW_SQL, "true")
 
         // add second cache provider using redis
         props.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true")

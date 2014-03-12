@@ -71,21 +71,19 @@ object DataSources {
         val config = new HikariConfig()
 
         config.setDataSourceClassName(dataSourceClassName)
-
         config.addDataSourceProperty("url", url)
         config.addDataSourceProperty("user", username)
         config.addDataSourceProperty("password", passwd)
 
-        props.foreach {
-            prop =>
-                config.addDataSourceProperty(prop._1, prop._2)
+        for((name,value) <- props) {
+            config.addDataSourceProperty(name, value)
         }
 
-        config.setAcquireIncrement(processCount * 2)
+        config.setAcquireIncrement(processCount)
         config.setMaximumPoolSize(processCount * 100)
         config.setConnectionTestQuery("SELECT 1")
-
         config.setRegisterMbeans(true)
+        config.setUseInstrumentation(false)
 
         new HikariDataSource(config)
     }

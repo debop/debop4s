@@ -21,6 +21,7 @@ class DataSourcesTest extends FunSuite with Matchers {
         conn.close()
         conn.isClosed should equal(true)
     }
+
     test("HikariCP create multiple datasources by promgramatic") {
         val url = "jdbc:mysql://localhost:3306/test"
         val props = HashMap("characterEncoding" -> "UTF-8", "useUnicode" -> "true")
@@ -56,6 +57,4 @@ class DataSourcesTest extends FunSuite with Matchers {
             conn.close()
         }
     }
-
-
 }

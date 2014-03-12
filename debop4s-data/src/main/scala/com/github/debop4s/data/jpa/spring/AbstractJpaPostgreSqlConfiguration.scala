@@ -15,7 +15,7 @@ abstract class AbstractJpaPostgreSqlConfiguration extends AbstractJpaConfigurati
     @Bean
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_POSTGRESQL,
-            s"jdbc:postgresql://localhost/$getDatabaseName?SET=UTF8",
+            s"jdbc:postgresql://localhost:5432/$getDatabaseName?charSet=UTF8",
             "root",
             "root")
     }
@@ -35,7 +35,7 @@ abstract class AbstractJpaPostgreSqlHikariConfiguration extends AbstractJpaPostg
     @Bean
     override def dataSource: DataSource = {
         DataSources.getHikariDataSource(DATASOURCE_CLASS_POSTGRESQL,
-            s"jdbc:postgresql://localhost/$getDatabaseName?SET=UTF8",
+            s"jdbc:postgresql://localhost:5432/$getDatabaseName?charSet=UTF8",
             "root",
             "root")
     }

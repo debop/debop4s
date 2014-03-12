@@ -34,71 +34,95 @@ trait JpaParCallable[T, R] {
 object JpaParallels {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val processCount = Runtime.getRuntime.availableProcessors()
 
-    def run[T](emf: EntityManagerFactory, collection: Iterable[T])(action: (EntityManager, T) => Unit) {
+    def run[T](emf: EntityManagerFactory, collection: Iterable[T])
+              (action: (EntityManager, T) => Unit) {
         require(emf != null)
-        collection.par.foreach { elem =>
-            runUnit(emf.createEntityManager(), elem)(action)
-        }
-    }
+        require(action != null)
 
-    def runAction[T](emf: EntityManagerFactory, collection: Iterable[T], runnable: JpaParRunnable[T]) {
-        require(emf != null)
         collection.par.foreach { elem =>
             val em = emf.createEntityManager()
-            runUnit(em, elem) { (em, x) =>
-                runnable.run(em, x)
+            try {
+                runInternal(em, elem)(action)
+            } finally {
+                em.close()
             }
         }
     }
 
-    @inline
-    private def runUnit[T](em: EntityManager, elem: T)(action: (EntityManager, T) => Unit) {
+    def runAction[T](emf: EntityManagerFactory,
+                     collection: Iterable[T],
+                     runnable: JpaParRunnable[T]) {
+        require(emf != null)
+        require(runnable != null)
+
+        collection.par.foreach { elem =>
+            val em = emf.createEntityManager()
+            try {
+                runInternal(em, elem) { (em1, x) => runnable.run(em1, x) }
+            } finally {
+                em.close()
+            }
+        }
+    }
+
+    private def runInternal[T](em: EntityManager, elem: T)(action: (EntityManager, T) => Unit) {
         val tx = em.getTransaction
-        tx.begin()
         try {
+            tx.begin()
             action(em, elem)
             tx.commit()
         } catch {
             case e: Throwable =>
-                tx.rollback()
+                if (tx != null) tx.rollback()
                 log.error(s"병렬 작업에 실패했습니다.", e)
-        } finally {
-            em.close()
         }
     }
 
-    def call[T, V](emf: EntityManagerFactory, collection: Iterable[T])(func: (EntityManager, T) => V): IndexedSeq[V] = {
+    def call[T, V](emf: EntityManagerFactory, collection: Iterable[T])
+                  (func: (EntityManager, T) => V): IndexedSeq[V] = {
         require(emf != null)
-        collection.par.map { elem =>
-            callUnit(emf.createEntityManager(), elem)(func)
-        }.toIndexedSeq
-    }
+        require(func != null)
 
-    def callFunc[T, V](emf: EntityManagerFactory, collection: Iterable[T], callable: JpaParCallable[T, V]): IndexedSeq[V] = {
-        require(emf != null)
         collection.par.map { elem =>
             val em = emf.createEntityManager()
-            callUnit(em, elem) { (em, x) =>
-                callable.call(em, x)
+            try {
+                callInternal(em, elem)(func)
+            } finally {
+                em.close()
             }
         }.toIndexedSeq
     }
 
-    @inline
-    private def callUnit[T, V](em: EntityManager, elem: T)(func: (EntityManager, T) => V): V = {
+    def callFunc[T, V](emf: EntityManagerFactory,
+                       collection: Iterable[T],
+                       callable: JpaParCallable[T, V]): IndexedSeq[V] = {
+        require(emf != null)
+        require(callable != null)
+
+        collection.par.map { elem =>
+            val em = emf.createEntityManager()
+            try {
+                callInternal(em, elem) { (em1, x) => callable.call(em1, x) }
+            } finally {
+                em.close()
+            }
+        }.toIndexedSeq
+    }
+
+    private def callInternal[T, V](em: EntityManager, elem: T)
+                                  (func: (EntityManager, T) => V): V = {
         val tx = em.getTransaction
-        tx.begin()
         try {
+            tx.begin()
             val result = func(em, elem)
             tx.commit()
             return result
         } catch {
             case e: Throwable =>
-                tx.rollback()
+                if (tx != null) tx.rollback()
                 log.error(s"병렬 작업에 실패했습니다.", e)
-        } finally {
-            em.close()
         }
         null.asInstanceOf[V]
     }
