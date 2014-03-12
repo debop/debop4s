@@ -7,7 +7,7 @@ import com.github.debop4s.data.tests.AbstractJpaTest
 import java.util
 import java.util.Date
 import javax.persistence._
-import org.hibernate.annotations.{LazyCollectionOption, LazyCollection, LazyToOneOption, LazyToOne}
+import org.hibernate.annotations.LazyCollectionOption
 import org.junit.Test
 
 /**
@@ -129,12 +129,10 @@ class OrderDetailIdentifier extends ValueObject {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderId")
-    @LazyToOne(LazyToOneOption.PROXY)
     var order: Order = _
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId")
-    @LazyToOne(LazyToOneOption.PROXY)
     var product: Product = _
 
     override def hashCode(): Int = Hashs.compute(order, product)
@@ -171,7 +169,6 @@ class Order extends LongEntity {
     var orderDate: Date = _
 
     @OneToMany(mappedBy = "id.order", cascade = Array(CascadeType.ALL), orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.EXTRA)
     var orderDetails: util.List[OrderDetail] = new util.ArrayList[OrderDetail]
 
     override def hashCode(): Int = Hashs.compute(number)
