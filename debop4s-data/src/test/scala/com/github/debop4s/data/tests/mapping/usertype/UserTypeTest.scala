@@ -7,13 +7,11 @@ import com.github.debop4s.data.tests.mapping.Employee
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.{Durations, Times}
 import java.nio.charset.Charset
-import java.util.Date
 import javax.persistence._
 import org.hibernate.annotations.{CacheConcurrencyStrategy, Columns}
 import org.hibernate.{annotations => hba}
 import org.joda.time.DateTime
 import org.junit.Test
-import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
 /**
@@ -27,11 +25,8 @@ class UserTypeTest extends AbstractJpaTest {
     val PLAIN_TEXT: String = "동해물과 백두산이 마르고 닳도록 "
 
     @Test
-    @Rollback(false)
     def jodaDateTimeUserType() {
         val entity = new JodaDateTimeEntity()
-
-        entity.now = new Date()
 
         entity.start = Times.today
         entity.end = entity.start + 1.day
@@ -51,14 +46,17 @@ class UserTypeTest extends AbstractJpaTest {
         assert(loaded == entity)
         assert(loaded.start == entity.start)
         assert(loaded.end == entity.end)
-        assert(loaded.startTZ == Times.trimToMillis(entity.startTZ))
-        assert(loaded.endTZ == Times.trimToMillis(entity.endTZ))
+
+        // NOTE: MySQL 은 milliseconds 를 저장하지 않고, H2 는 Milliseconds 까지 저장합니다.
+        assert(Times.trimToMillis(loaded.startTZ) == Times.trimToMillis(entity.startTZ))
+        assert(Times.trimToMillis(loaded.endTZ) == Times.trimToMillis(entity.endTZ))
+
         assert(loaded.range1 == entity.range1)
         assert(loaded.range2 == entity.range2)
 
-        //        em.remove(loaded)
-        //        em.flush()
-        //        assert(em.find(classOf[JodaDateTimeEntity], loaded.id) == null)
+        em.remove(loaded)
+        em.flush()
+        assert(em.find(classOf[JodaDateTimeEntity], loaded.id) == null)
     }
 
     @Test
@@ -109,9 +107,6 @@ class UserTypeTest extends AbstractJpaTest {
 @hba.DynamicInsert
 @hba.DynamicUpdate
 class JodaDateTimeEntity extends LongEntity {
-
-    @Temporal(TemporalType.TIMESTAMP)
-    var now: Date = _
 
     @Column(name = "jodaStart")
     @hba.Type(`type` = "com.github.debop4s.data.hibernate.usertype.JodaDateTimeUserType")

@@ -9,7 +9,7 @@ import java.security.Timestamp
 import java.util.Date
 import java.{lang, util}
 import javax.persistence._
-import org.hibernate.annotations.Parent
+import org.hibernate.annotations.{Parent, LazyCollection, LazyCollectionOption}
 import org.junit.Test
 import scala.beans.BeanProperty
 
@@ -140,6 +140,7 @@ class BiddingItem extends HibernateEntity[lang.Long] {
     var description: String = _
 
     @OneToMany(mappedBy = "item", cascade = Array(CascadeType.ALL), orphanRemoval = true)
+    @LazyCollection(value = LazyCollectionOption.EXTRA)
     var bids: util.Set[Bid] = new util.HashSet[Bid]()
 
     override def hashCode(): Int = Hashs.compute(name)
