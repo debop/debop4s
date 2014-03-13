@@ -27,7 +27,7 @@ abstract class AbstractHibernateConfiguration {
 
     lazy val log = LoggerFactory.getLogger(getClass)
 
-    def getDatabaseName = "hibernate"
+    def getDatabaseName = "hibernate4s"
 
     def getMappedPackageNames: Array[String]
 
@@ -36,10 +36,10 @@ abstract class AbstractHibernateConfiguration {
     def hibernateProperties: Properties = {
         val props = new Properties()
 
-        props.setProperty(AvailableSettings.FORMAT_SQL, "true")
-        props.setProperty(AvailableSettings
-                          .HBM2DDL_AUTO, "create") // create | create-drop | spawn | spawn-drop | update | validate | none
-        props.setProperty(AvailableSettings.POOL_SIZE, "30")
+        // create | create-drop | spawn | spawn-drop | update | validate | none
+        props.setProperty(AvailableSettings.HBM2DDL_AUTO, "none")
+
+        props.setProperty(AvailableSettings.POOL_SIZE, "100")
         props.setProperty(AvailableSettings.SHOW_SQL, "true")
         props.setProperty(AvailableSettings.FORMAT_SQL, "true")
         props.setProperty(AvailableSettings.AUTOCOMMIT, "true")

@@ -2,6 +2,7 @@ package com.github.debop4s.data.jpa.utils
 
 import javax.persistence.{EntityManagerFactory, EntityManager}
 import org.slf4j.LoggerFactory
+import org.springframework.transaction.annotation.{Isolation, Transactional}
 
 /**
 * 병렬로 JPA 관련 작업을 수행합니다.
@@ -31,6 +32,7 @@ trait JpaParCallable[T, R] {
  * JPA 작업을 병렬로 수행할 수 있도록 합니다.
  * Created by debop on 2014. 3. 10.
  */
+@deprecated("아우 왜 부정기적으로 안되는지 잘 모르겠다...")
 object JpaParallels {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
@@ -80,6 +82,7 @@ object JpaParallels {
         }
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     def call[T, V](emf: EntityManagerFactory, collection: Iterable[T])
                   (func: (EntityManager, T) => V): IndexedSeq[V] = {
         require(emf != null)

@@ -26,17 +26,16 @@ abstract class AbstractJpaConfiguration {
 
     def getMappedPackageNames: Array[String]
 
-    def getDatabaseName = "hibernate"
+    def getDatabaseName = "hibernate4s"
 
     def getNamingStrategy: NamingStrategy = null
 
     def jpaProperties: Properties = {
         val props = new Properties()
 
-        props.setProperty(AvailableSettings.FORMAT_SQL, "true")
         // create | create-drop | spawn | spawn-drop | update | validate | none
-        props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create")
-        props.setProperty(AvailableSettings.POOL_SIZE, "30")
+        props.setProperty(AvailableSettings.HBM2DDL_AUTO, "none")
+        props.setProperty(AvailableSettings.POOL_SIZE, "100")
         props.setProperty(AvailableSettings.SHOW_SQL, "true")
         props.setProperty(AvailableSettings.FORMAT_SQL, "true")
         props.setProperty(AvailableSettings.AUTOCOMMIT, "true")
