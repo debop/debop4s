@@ -11,7 +11,6 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.{HttpClients, CloseableHttpClient}
 import org.apache.http.impl.conn.{DefaultProxyRoutePlanner, PoolingHttpClientConnectionManager}
 import org.apache.http.util.EntityUtils
-import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
 
@@ -22,8 +21,6 @@ import scala.collection.JavaConversions._
  * @since 2013. 12. 13. 오전 9:57
  */
 class HttpClient extends AutoCloseable {
-
-    private lazy val log = LoggerFactory.getLogger(classOf[HttpClient])
 
     lazy val connectionManager = new PoolingHttpClientConnectionManager()
 
@@ -52,14 +49,12 @@ class HttpClient extends AutoCloseable {
 
     @varargs
     def get(uri: URI, cs: Charset, headers: Header*): String = {
-        log.trace(s"HTTP GET uri=[$uri], headers=[$headers]")
-
         val client = createHttpClient()
         val httpget = new HttpGet(uri)
 
         try {
             if (headers != null)
-                headers.foreach(h => httpget.addHeader(h))
+                headers.foreach(httpget.addHeader)
             val response = client.execute(httpget)
             EntityUtils.toString(response.getEntity, cs)
         } finally {
@@ -88,8 +83,10 @@ class HttpClient extends AutoCloseable {
         try {
             if (nvps != null)
                 httppost.setEntity(new UrlEncodedFormEntity(nvps, cs))
+
             if (headers != null)
-                headers.foreach(h => httppost.addHeader(h))
+                headers.foreach(httppost.addHeader)
+
             val response = client.execute(httppost)
             EntityUtils.toString(response.getEntity, cs)
         } finally {
@@ -98,8 +95,9 @@ class HttpClient extends AutoCloseable {
     }
 
     @varargs
-    def postJson[T](uri: URI, entity: T, headers: Header*): String =
+    def postJson[T](uri: URI, entity: T, headers: Header*): String = {
         postJson[T](uri, entity, Charsets.UTF_8, headers: _*)
+    }
 
     @varargs
     def postJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): String = {
@@ -114,7 +112,7 @@ class HttpClient extends AutoCloseable {
                 httppost.addHeader("content-type", "application/json")
             }
             if (headers != null)
-                headers.foreach(h => httppost.addHeader(h))
+                headers.foreach(httppost.addHeader)
             val response = client.execute(httppost)
             EntityUtils.toString(response.getEntity, cs)
         } finally {

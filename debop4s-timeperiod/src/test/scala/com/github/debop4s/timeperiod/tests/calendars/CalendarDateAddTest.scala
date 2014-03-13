@@ -18,7 +18,7 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
         val calendarDateAdd = CalendarDateAdd()
         val now = Times.now
 
-        (-10 until 20).par.foreach(index => {
+        (-10 until 20).par.foreach { index =>
             val offset = index * 5
 
             calendarDateAdd.add(now, Durations.days(offset)) should equal(now + offset.day)
@@ -26,7 +26,7 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
 
             calendarDateAdd.subtract(now, Durations.days(offset)) should equal(now - offset.day)
             calendarDateAdd.subtract(now, Durations.days(-offset)) should equal(now + offset.day)
-        })
+        }
     }
 
     test("period limits add") {
@@ -156,7 +156,7 @@ class CalendarDateAddTest extends AbstractTimePeriodTest {
         dateAdd.addWorkingWeekDays()
         dateAdd.excludePeriods.add(DayRange(2011, 4, 4, dateAdd.calendar))
         dateAdd.workingHours ++= List(HourRangeInDay(Timepart(8, 30), Timepart(12)),
-                                         HourRangeInDay(Timepart(13, 30), Timepart(18)))
+            HourRangeInDay(Timepart(13, 30), Timepart(18)))
 
 
         val start = new DateTime(2011, 4, 1, 9, 0)

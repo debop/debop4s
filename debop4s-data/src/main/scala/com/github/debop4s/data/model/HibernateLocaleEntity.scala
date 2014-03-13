@@ -1,8 +1,9 @@
 package com.github.debop4s.data.model
 
 import com.github.debop4s.core.ValueObject
+import java.util
 import java.util.Locale
-import scala.collection.mutable
+import scala.collection.JavaConversions._
 
 /**
 * 지역화 정보를 표현하는 trait 입니다.
@@ -22,16 +23,12 @@ trait LocaleValue extends ValueObject {}
 @SerialVersionUID(-2891849618560053560L)
 trait HibernateLocaleEntity[TLocaleVal <: LocaleValue] extends PersistentObject {
 
-    private var defaultLocaleVal: TLocaleVal = _
-
-    protected val localeMap = mutable.HashMap[Locale, TLocaleVal]()
+    protected val localeMap: util.Map[Locale, TLocaleVal] = new util.HashMap[Locale, TLocaleVal]()
 
     protected def createDefaultLocaleVal: TLocaleVal
 
     def getDefaultLocale: TLocaleVal = {
-        if (defaultLocaleVal == null)
-            defaultLocaleVal = createDefaultLocaleVal
-        defaultLocaleVal
+        createDefaultLocaleVal
     }
 
     /**

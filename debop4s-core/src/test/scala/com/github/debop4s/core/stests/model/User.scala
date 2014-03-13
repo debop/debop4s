@@ -61,9 +61,9 @@ object User {
         user.officeAddress = new Address("운니동 삼환빌딩 10F", "555-5555")
         user.officeAddress.properties ++= ArrayBuffer("office", "addr")
 
-        (0 until favoriteMovieSize).foreach(x => {
+        (0 until favoriteMovieSize).foreach { x =>
             user.favoriteMovies += "Favorite Movie number-" + x
-        })
+        }
 
         user
     }

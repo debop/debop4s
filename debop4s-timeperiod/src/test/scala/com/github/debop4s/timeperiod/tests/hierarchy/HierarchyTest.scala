@@ -29,30 +29,46 @@ abstract class Period(private var _start: DateTime,
 
     def start = _start
 
-    protected def start_=(v: DateTime) = { _start = v }
+    protected def start_=(v: DateTime) = {
+        _start = v
+    }
 
     def getStart = _start
 
-    protected def setStart(v: DateTime) = { _start = v }
+    protected def setStart(v: DateTime) = {
+        _start = v
+    }
 
     def end = _end
 
-    protected def end_=(v: DateTime) = { _end = v }
+    protected def end_=(v: DateTime) = {
+        _end = v
+    }
 
     def readonly = _readonly
 
-    protected def readonly_=(v: Boolean) = { _readonly = v }
+    protected def readonly_=(v: Boolean) = {
+        _readonly = v
+    }
 }
 
 class Range(_start: DateTime, _end: DateTime, _readonly: Boolean = false) extends Period(_start, _end, _readonly) {
 
-    override def start_=(v: DateTime) = { super.start_=(v) }
+    override def start_=(v: DateTime) = {
+        super.start_=(v)
+    }
 
-    override def setStart(v: DateTime) = { super.start_$eq(v) }
+    override def setStart(v: DateTime) = {
+        super.start_$eq(v)
+    }
 
-    override def end_=(v: DateTime) = { super.end_=(v) }
+    override def end_=(v: DateTime) = {
+        super.end_=(v)
+    }
 
-    override def readonly_=(v: Boolean) = { super.readonly_=(v) }
+    override def readonly_=(v: Boolean) = {
+        super.readonly_=(v)
+    }
 }
 
 

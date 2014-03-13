@@ -17,9 +17,9 @@ abstract class AbstractHibernateHSqlConfiguration extends AbstractHibernateConfi
     @Bean
     override def dataSource: DataSource =
         buildDataSource(DRIVER_CLASS_HSQL,
-                           "jdbc:hsqldb:mem:" + getDatabaseName + ";MVCC=TRUE;",
-                           "sa",
-                           "")
+            "jdbc:hsqldb:mem:" + getDatabaseName + ";MVCC=TRUE;",
+            "sa",
+            "")
 
     override def hibernateProperties: Properties = {
         val props = super.hibernateProperties

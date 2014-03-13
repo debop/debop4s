@@ -5,30 +5,34 @@ import com.github.debop4s.core.utils.{Hashs, ToStringHelper}
 import javax.persistence.{Embeddable, Column}
 
 /**
- * com.github.debop4s.data.model.TreeNodePosition
+ * TREE 상에서 NODE의 위치를 나타냅니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 24. 오후 4:03
  */
 @SerialVersionUID(3455568346636164669L)
 @Embeddable
-case class TreeNodePosition(var level: Int = 0, var order: Int = 0) extends ValueObject {
+case class TreeNodePosition(var lvl: Int, var ord: Int) extends ValueObject {
 
-    @Column(name = "treeLevel")
-    def getLevel: Int = level
-
-    @Column(name = "treeOrder")
-    def getOrder: Int = order
-
-    def setPosition(level: Int, order: Int) {
-        this.level = level
-        this.order = order
+    def this() {
+        this(0, 0)
     }
 
-    override def hashCode(): Int = Hashs.compute(level, order)
+    @Column(name = "nodeLevel")
+    def getLvl: Int = lvl
+
+    @Column(name = "nodeOrder")
+    def getOrd: Int = ord
+
+    def setPosition(level: Int, order: Int) {
+        this.lvl = level
+        this.ord = order
+    }
+
+    override def hashCode(): Int = Hashs.compute(lvl, ord)
 
     override protected def buildStringHelper: ToStringHelper =
         super.buildStringHelper
-        .add("level", level)
-        .add("order", order)
+        .add("lvl", lvl)
+        .add("ord", ord)
 }

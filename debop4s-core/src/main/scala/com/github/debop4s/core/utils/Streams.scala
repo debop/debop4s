@@ -2,7 +2,6 @@ package com.github.debop4s.core.utils
 
 import java.io.{ByteArrayOutputStream, OutputStream, InputStream}
 import java.nio.charset.Charset
-import lombok.Cleanup
 import org.slf4j.LoggerFactory
 
 /**
@@ -36,10 +35,14 @@ object Streams {
     }
 
     def toByteArray(is: InputStream): Array[Byte] = {
-        @Cleanup
+
         val os = new ByteArrayOutputStream()
-        copy(is, os)
-        os.toByteArray
+        try {
+            copy(is, os)
+            os.toByteArray
+        } finally {
+            os.close()
+        }
     }
 
     def toOutputStream(bytes: Array[Byte]): OutputStream = {

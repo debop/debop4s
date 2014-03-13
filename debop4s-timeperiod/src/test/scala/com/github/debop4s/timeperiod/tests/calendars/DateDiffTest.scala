@@ -51,7 +51,7 @@ class DateDiffTest extends AbstractTimePeriodTest {
     test("years difference") {
         val years = Array(1, 3, 15, 60, 100)
 
-        years.par.foreach(year => {
+        years.par.foreach { year =>
             val date1 = Times.now
             val date2 = date1 + year.year
             val date3 = date1 - year.year
@@ -98,7 +98,7 @@ class DateDiffTest extends AbstractTimePeriodTest {
             dateDiff13.minutes should equal(date13Days * HoursPerDay * MinutesPerHour)
             dateDiff13.seconds should equal(date13Days * HoursPerDay * MinutesPerHour * SecondsPerMinute)
 
-        })
+        }
     }
 
     test("quarters difference") {
@@ -225,7 +225,7 @@ class DateDiffTest extends AbstractTimePeriodTest {
 
         val days = Array(1, 3)
 
-        days.par.foreach(day => {
+        days.par.foreach { day =>
             val date1 = new DateTime(2011, 5, 19, 15, 32, 44, 245)
             val date2 = date1 + day.day
             val date3 = date1 - day.day
@@ -269,14 +269,14 @@ class DateDiffTest extends AbstractTimePeriodTest {
             dateDiff13.hours should equal(days13 * HoursPerDay)
             dateDiff13.minutes should equal(days13 * HoursPerDay * MinutesPerHour)
             dateDiff13.seconds should equal(days13 * HoursPerDay * MinutesPerHour * SecondsPerMinute)
-        })
+        }
     }
 
     test("hours difference") {
 
         val hours = Array(1, 3, 5)
 
-        hours.par.foreach(hour => {
+        hours.par.foreach { hour =>
             val date1 = new DateTime(2011, 5, 19, 15, 32, 44, 245)
             val date2 = date1 + hour.hour
             val date3 = date1 - hour.hour
@@ -320,14 +320,14 @@ class DateDiffTest extends AbstractTimePeriodTest {
             dateDiff13.hours should equal(hours13)
             dateDiff13.minutes should equal(hours13 * MinutesPerHour)
             dateDiff13.seconds should equal(hours13 * MinutesPerHour * SecondsPerMinute)
-        })
+        }
     }
 
     test("minutes difference") {
 
         val minutes = Array(1, 3, 5)
 
-        minutes.par.foreach(minute => {
+        minutes.par.foreach { minute =>
             val date1 = new DateTime(2011, 5, 19, 15, 32, 44, 245)
             val date2 = date1 + minute.minute
             val date3 = date1 - minute.minute
@@ -371,14 +371,14 @@ class DateDiffTest extends AbstractTimePeriodTest {
             dateDiff13.hours should equal(0)
             dateDiff13.minutes should equal(minutes13)
             dateDiff13.seconds should equal(minutes13 * SecondsPerMinute)
-        })
+        }
     }
 
     test("seconds difference") {
 
         val seconds = Array(1, 3, 5)
 
-        seconds.par.foreach(second => {
+        seconds.par.foreach { second =>
             val date1 = new DateTime(2011, 5, 19, 15, 32, 44, 245)
             val date2 = date1 + second.second
             val date3 = date1 - second.second
@@ -422,13 +422,13 @@ class DateDiffTest extends AbstractTimePeriodTest {
             dateDiff13.hours should equal(0)
             dateDiff13.minutes should equal(0)
             dateDiff13.seconds should equal(seconds13)
-        })
+        }
     }
 
     test("positive duration") {
         val diffs = Array(1, 3, 5)
 
-        diffs.par.foreach(diff => {
+        diffs.par.foreach { diff =>
             val date1 = Times.now
             val date2 = date1 + diff.year + diff.month + diff.day + diff.hour + diff.minute + diff.second
             val date3 = date1 - diff.year - diff.month - diff.day - diff.hour - diff.minute - diff.second
@@ -450,6 +450,6 @@ class DateDiffTest extends AbstractTimePeriodTest {
             dateDiff13.elapsedHours should equal(-diff)
             dateDiff13.elapsedMinutes should equal(-diff)
             dateDiff13.elapsedSeconds should equal(-diff)
-        })
+        }
     }
 }

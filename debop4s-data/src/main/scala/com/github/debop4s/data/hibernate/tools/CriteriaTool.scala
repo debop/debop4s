@@ -7,7 +7,7 @@ import org.springframework.data.domain.Sort
 import scala.collection.JavaConversions._
 
 /**
- * com.github.debop4s.data.hibernate.tools.CriteriaTool
+ * [[Criteria]] 빌드를 위한 Helper Object 입니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 24. 오후 6:09

@@ -17,9 +17,9 @@ abstract class AbstractHibernatePostgreSqlConfiguration extends AbstractHibernat
     @Bean
     override def dataSource: DataSource =
         buildDataSource(DRIVER_CLASS_POSTGRESQL,
-                           "jdbc:postgresql://localhost/" + getDatabaseName,
-                           "root",
-                           "root")
+            "jdbc:postgresql://localhost/" + getDatabaseName,
+            "root",
+            "root")
 
     override def hibernateProperties: Properties = {
         val props = super.hibernateProperties

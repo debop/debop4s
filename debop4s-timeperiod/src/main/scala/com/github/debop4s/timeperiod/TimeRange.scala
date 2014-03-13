@@ -71,8 +71,8 @@ class TimeRange(private[this] val _start: DateTime = MinPeriodTime,
             TimeRange(this)
         else
             TimeRange(if (hasStart) start.plus(offset) else start,
-                         if (hasEnd) end.plus(offset) else end,
-                         readonly)
+                if (hasEnd) end.plus(offset) else end,
+                readonly)
     }
 
     def expandStartTo(moment: DateTime) {
@@ -168,13 +168,13 @@ object TimeRange {
 
     def apply(start: Option[DateTime], end: Option[DateTime]): TimeRange = {
         apply(start.getOrElse(MinPeriodTime),
-                 end.getOrElse(MaxPeriodTime),
-                 readonly = false)
+            end.getOrElse(MaxPeriodTime),
+            readonly = false)
     }
 
     def apply(start: Option[DateTime], end: Option[DateTime], readonly: Option[Boolean]): TimeRange = {
         apply(start.getOrElse(MinPeriodTime),
-                 end.getOrElse(MaxPeriodTime),
-                 readonly.getOrElse(false))
+            end.getOrElse(MaxPeriodTime),
+            readonly.getOrElse(false))
     }
 }

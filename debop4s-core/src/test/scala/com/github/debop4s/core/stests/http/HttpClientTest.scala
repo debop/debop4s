@@ -4,7 +4,6 @@ import com.github.debop4s.core.http.HttpClient
 import com.github.debop4s.core.parallels.Parallels
 import com.github.debop4s.core.utils.{Strings, Charsets}
 import java.net.URI
-import lombok.Cleanup
 import org.apache.http.client.ResponseHandler
 import org.apache.http.client.fluent.{Form, Request}
 import org.apache.http.client.methods.HttpGet
@@ -62,7 +61,7 @@ class HttpClientTest extends JUnitSuite {
     @Test
     @Ignore("POST 메소드 처리를 해주는 URL이 있어야 합니다.")
     def postWithParams() {
-        @Cleanup val httpClient = new HttpClient()
+        val httpClient = new HttpClient()
 
         val uri: URI = new URIBuilder(URI_STRING).build
         val nvps = new ArrayBuffer[NameValuePair]()
@@ -105,7 +104,7 @@ class HttpClientTest extends JUnitSuite {
 
     @Test
     def asyncGet() {
-        @Cleanup val client = HttpAsyncClients.createDefault()
+        val client = HttpAsyncClients.createDefault()
 
         client.start()
         val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁").setParameter("oq", "배성혁").build

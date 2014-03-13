@@ -39,7 +39,7 @@ class BinarySerializerTest extends FunSuite with Matchers with BeforeAndAfter {
             user.address = "ADDR_" + i
             company.users += user
         }
-        log.debug(s"user count = ${company.users.size}")
+        log.debug(s"user count = ${company.users.size }")
 
         val copied: Company = serializer.deserialize[Company](serializer.serialize(company), classOf[Company])
         assert(copied != null)

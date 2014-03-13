@@ -7,13 +7,17 @@
     <groupId>com.github.debop4s</groupId>
     <artifactId>debop4s-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.2.0</version>
 
     <modules>
         <module>debop4s-core</module>
         <module>debop4s-timeperiod</module>
+        <module>hibernate-rediscala</module>
         <module>debop4s-redis</module>
+        <module>debop4s-mongo</module>
         <module>debop4s-data</module>
+
+        <module>debop4s-experiments</module>
     </modules>
 
     <properties>
@@ -21,10 +25,11 @@
         <scala.version>2.10.3</scala.version>
         <scala.main.version>2.10</scala.main.version>
         <akka.version>2.2.3</akka.version>
+        <spray.version>1.2.0</spray.version>
 
         <springframework.version>4.0.2.RELEASE</springframework.version>
-        <hibernate.version>4.3.2.Final</hibernate.version>
-        <querydsl.version>3.3.0</querydsl.version>
+        <hibernate.version>4.3.4.Final</hibernate.version>
+        <querydsl.version>3.3.1</querydsl.version>
 
         <hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -75,12 +80,6 @@
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
 
-        <!-- project lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
@@ -90,21 +89,6 @@
         <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.carrotsearch</groupId>
-            <artifactId>junit-benchmarks</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -472,12 +456,12 @@
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-mongodb</artifactId>
-                <version>1.3.3.RELEASE</version>
+                <version>1.4.0.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-mongodb-cross-store</artifactId>
-                <version>1.3.3.RELEASE</version>
+                <version>1.4.0.RELEASE</version>
             </dependency>
 
             <!-- Spring Boot -->
@@ -575,6 +559,11 @@
             </dependency>
             <dependency>
                 <groupId>com.mysema.querydsl</groupId>
+                <artifactId>querydsl-codegen</artifactId>
+                <version>${querydsl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysema.querydsl</groupId>
                 <artifactId>querydsl-jpa-codegen</artifactId>
                 <version>${querydsl.version}</version>
             </dependency>
@@ -584,11 +573,11 @@
                 <version>${querydsl.version}</version>
             </dependency>
 
-            <!-- MongoDB -->
+            <!-- Mongo Client -->
             <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongo-java-driver</artifactId>
-                <version>2.11.3</version>
+                <groupId>org.reactivemongo</groupId>
+                <artifactId>reactivemongo_${scala.main.version}</artifactId>
+                <version>0.10.0</version>
             </dependency>
 
             <!-- Redis Client for Scala -->
@@ -620,6 +609,13 @@
                 <version>0.8.0.RELEASE</version>
             </dependency>
 
+            <!-- HikariCP -->
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>1.3.3</version>
+            </dependency>
+
             <!-- Database Drivers -->
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -639,6 +635,13 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.29</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>9.1-901.jdbc4</version>
                 <scope>test</scope>
             </dependency>
 
@@ -767,7 +770,7 @@
         <repository>
             <id>typesafe</id>
             <name>Typesafe Repository</name>
-            <url>http://repo.typesafe.com/typesafe/releases/</url>
+            <url>http://repo.typesafe.com/typesafe/releases</url>
         </repository>
         <repository>
             <id>maven2-repository.dev.java.net</id>
@@ -778,7 +781,7 @@
         <repository>
             <id>rediscala</id>
             <name>RedisScala</name>
-            <url>https://github.com/etaty/rediscala-mvn/raw/master/releases/</url>
+            <url>https://github.com/etaty/rediscala-mvn/raw/master/releases</url>
         </repository>
     </repositories>
 
@@ -806,8 +809,7 @@
                 <version>3.1.6</version>
                 <configuration>
                     <scalaVersion>${scala.version}</scalaVersion>
-                    <!--<recompileMode>incremental</recompileMode>-->
-                    <!--<useZincServer>true</useZincServer>-->
+                    <recompileMode>incremental</recompileMode>
                     <analysisCacheFile>${project.build.outputDirectory}/analysis-cache-file</analysisCacheFile>
                     <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
                     </testAnalysisCacheFile>
@@ -816,17 +818,19 @@
                         <arg>-target:jvm-${jdk.version}</arg>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
-                        <arg>-explaintypes</arg>
+                        <!--<arg>-explaintypes</arg>-->
+                        <!--<arg>-nowarn</arg>-->
                     </args>
                     <javacArgs>
-                        <javacArg>-source</javacArg>
-                        <javacArg>${jdk.version}</javacArg>
                         <javacArg>-target</javacArg>
                         <javacArg>${jdk.version}</javacArg>
+                        <javacArg>-Xlint:unchecked</javacArg>
+                        <javacArg>-Xlint:deprecation</javacArg>
                     </javacArgs>
                     <jvmArgs>
+                        <jvmArg>-server</jvmArg>
                         <jvmArg>-Xms128m</jvmArg>
-                        <jvmArg>-Xmx4096m</jvmArg>
+                        <jvmArg>-Xmx8192m</jvmArg>
                     </jvmArgs>
                 </configuration>
                 <executions>
@@ -839,10 +843,27 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>scala-compile-generated</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDir>target/jpa-export</sourceDir>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>scala-test-compile</id>
                         <phase>process-test-resources</phase>
                         <goals>
                             <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>doc-jar</goal>
                         </goals>
                     </execution>
                 </executions>

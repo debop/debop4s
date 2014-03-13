@@ -18,9 +18,9 @@ abstract class AbstractHibernateMariaDbConfiguration extends AbstractHibernateCo
     @Bean
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_MARIADB,
-                           "jdbc:mysql://localhost/" + getDatabaseName,
-                           "root",
-                           "root")
+            "jdbc:mysql://localhost/" + getDatabaseName,
+            "root",
+            "root")
     }
 
     override def hibernateProperties: Properties = {

@@ -25,11 +25,11 @@ class DaySeekerTest extends AbstractTimePeriodTest {
         assert(day2 != null)
         day2.isSamePeriod(start.nextDay) should equal(true)
 
-        (-10 until 20).par.foreach(i => {
+        (-10 until 20).par.foreach { i =>
             val offset = i * 5
             val day = daySeeker.findDay(start, offset)
             day.isSamePeriod(start.addDays(offset)) should equal(true)
-        })
+        }
     }
 
     test("simple backward") {
@@ -39,30 +39,30 @@ class DaySeekerTest extends AbstractTimePeriodTest {
         val day1 = daySeeker.findDay(start, 0)
         day1.isSamePeriod(start) should equal(true)
 
-        (-10 until 20).par.foreach(i => {
+        (-10 until 20).par.foreach { i =>
             val offset = i * 5
             val day = daySeeker.findDay(start, offset)
             day.isSamePeriod(start.addDays(-offset)) should equal(true)
-        })
+        }
     }
 
     test("seek direction") {
         val start = DayRange()
         val daySeeker = DaySeeker()
 
-        (-10 until 20).par.foreach(i => {
+        (-10 until 20).par.foreach { i =>
             val offset = i * 5
             val day = daySeeker.findDay(start, offset)
             day.isSamePeriod(start.addDays(offset)) should equal(true)
-        })
+        }
 
         val backwardSeeker = DaySeeker(SeekDirection.Backward)
 
-        (-10 until 20).foreach(i => {
+        (-10 until 20).foreach { i =>
             val offset = i * 5
             val day = backwardSeeker.findDay(start, offset)
             day.isSamePeriod(start.addDays(-offset)) should equal(true)
-        })
+        }
     }
 
     test("min date") {

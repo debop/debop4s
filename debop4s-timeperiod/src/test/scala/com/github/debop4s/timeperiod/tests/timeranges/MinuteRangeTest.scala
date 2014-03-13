@@ -31,7 +31,7 @@ class MinuteRangeTest extends AbstractTimePeriodTest {
         val now = Times.now
         val today = Times.today
 
-        (0 until MinutesPerHour).par.foreach(m => {
+        (0 until MinutesPerHour).par.foreach { m =>
             val mr = MinuteRange(today + m.minute)
 
             mr.year should equal(today.getYear)
@@ -41,7 +41,7 @@ class MinuteRangeTest extends AbstractTimePeriodTest {
             mr.minuteOfHour should equal(m)
             mr.start should equal(mr.calendar.mapStart(today + m.minute))
             mr.end should equal(mr.calendar.mapEnd(today + (m + 1).minute))
-        })
+        }
     }
 
     test("constructor") {
@@ -87,7 +87,7 @@ class MinuteRangeTest extends AbstractTimePeriodTest {
         nextRange.hourOfDay should equal(expectedNextRange.hourOfDay)
         nextRange.minuteOfHour should equal(expectedNextRange.minuteOfHour)
 
-        (-100 to 100).par.foreach(m => {
+        (-100 to 100).par.foreach { m =>
             val r1 = mr2.addMinutes(m)
             val r2 = mr2.addMinutes(m)
             r1.year should equal(r2.year)
@@ -95,7 +95,7 @@ class MinuteRangeTest extends AbstractTimePeriodTest {
             r1.dayOfMonth should equal(r2.dayOfMonth)
             r1.hourOfDay should equal(r2.hourOfDay)
             r1.minuteOfHour should equal(r2.minuteOfHour)
-        })
+        }
     }
 
     test("getMinutes") {
@@ -104,14 +104,14 @@ class MinuteRangeTest extends AbstractTimePeriodTest {
 
         minutes.size should equal(MinutesPerHour)
 
-        (0 until MinutesPerHour).par.foreach(i => {
+        (0 until MinutesPerHour).par.foreach { i =>
             val m = minutes(i)
 
             m.start should equal(hr.start + i.minute)
             m.unmappedStart should equal(hr.calendar.unmapStart(hr.start) + i.minute)
             m.end should equal(m.calendar.mapEnd(hr.start + (i + 1).minute))
             m.unmappedEnd should equal(hr.start + (i + 1).minute)
-        })
+        }
     }
 
 }

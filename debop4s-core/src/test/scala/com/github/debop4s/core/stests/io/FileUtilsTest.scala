@@ -2,7 +2,7 @@ package com.github.debop4s.core.stests.io
 
 import com.github.debop4s.core.io.FileUtils
 import com.github.debop4s.core.parallels.Promises
-import com.github.debop4s.core.utils.Strings
+import com.github.debop4s.core.utils.{Charsets, Strings}
 import java.nio.file.{StandardOpenOption, Paths, Path}
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
@@ -62,14 +62,14 @@ class FileUtilsTest extends AssertionsForJUnit {
 
         val lineCount = 100
         val lines = new ArrayBuffer[String](lineCount)
-        (0 until lineCount).foreach(x => lines += TEST_TEXT.trim)
+        (0 until lineCount).foreach { _ => lines += TEST_TEXT.trim }
 
         try {
             FileUtils.createFile(path)
-            FileUtils.write(path, lines, Strings.UTF8, StandardOpenOption.WRITE)
+            FileUtils.write(path, lines, Charsets.UTF_8, StandardOpenOption.WRITE)
 
             val readLines = FileUtils.readAllLines(path)
-            log.debug(s"readLines=${readLines.size}, lines=${lines.size}")
+            log.debug(s"readLines=${readLines.size }, lines=${lines.size }")
             assert(readLines.size == lines.size)
         }
         finally {
@@ -85,9 +85,9 @@ class FileUtilsTest extends AssertionsForJUnit {
 
         try {
             val writeResult = FileUtils.writeAsync(path,
-                                                      Strings.replicate(TEST_TEXT, lineCount).getBytes(FileUtils.UTF8),
-                                                      StandardOpenOption.CREATE,
-                                                      StandardOpenOption.WRITE)
+                Strings.replicate(TEST_TEXT, lineCount).getBytes(FileUtils.UTF8),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.WRITE)
             Promises.await(writeResult)
             val readResult = FileUtils.readAllLinesAsync(path, FileUtils.UTF8, StandardOpenOption.READ)
             val lines = Promises.await(readResult, 60 seconds)

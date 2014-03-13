@@ -39,13 +39,13 @@ class QuarterRangeTest extends AbstractTimePeriodTest {
     test("default calendar") {
         val yearStart = Times.startTimeOfYear(Times.currentYear)
 
-        Quarter.values.par.foreach(quarter => {
+        Quarter.values.par.foreach { quarter =>
             val offset = quarter.id - 1
             val qr = QuarterRange(yearStart + (MonthsPerQuarter * offset).month)
 
             qr.start should equal(qr.calendar.mapStart(yearStart + (MonthsPerQuarter * offset).month))
             qr.end should equal(qr.calendar.mapEnd(yearStart + (MonthsPerQuarter * (offset + 1)).month))
-        })
+        }
     }
 
     test("moment") {

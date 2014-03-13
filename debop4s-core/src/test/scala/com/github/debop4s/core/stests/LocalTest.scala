@@ -33,15 +33,17 @@ class LocalTest extends FunSuite with Matchers with BeforeAndAfter {
 
         val storedUser = Local.get(key).asInstanceOf[User]
         assert(storedUser != null)
-        assert(storedUser === user)
-        assert(user.name === storedUser.name)
-        assert(user.password === storedUser.password)
-        assert(user.age === storedUser.age)
+        assert(storedUser == user)
+        assert(user.name == storedUser.name)
+        assert(user.password == storedUser.password)
+        assert(user.age == storedUser.age)
     }
 
     test("get or create if not exists") {
         val key = "Local.GetOrCreate.Key"
-        val user = Local.getOrCreate(key, () => new User("user", "P" + Thread.currentThread().getId, 2))
+        val user = Local.getOrCreate(key, {
+            new User("user", "P" + Thread.currentThread().getId, 2)
+        })
         Thread.sleep(5)
 
         val storedUser = Local.get(key).asInstanceOf[User]

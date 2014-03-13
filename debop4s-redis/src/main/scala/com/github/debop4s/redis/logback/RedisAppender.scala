@@ -4,11 +4,11 @@ import ch.qos.logback.classic.spi.{ThrowableProxyUtil, LoggingEvent}
 import ch.qos.logback.core.{CoreConstants, UnsynchronizedAppenderBase}
 import com.github.debop4s.core.json.ScalaJacksonSerializer
 import com.github.debop4s.core.logback.LogDocument
-import com.github.debop4s.core.parallels.Promises
 import com.github.debop4s.core.utils.Options
 import com.github.debop4s.redis.RedisConsts
 import org.joda.time.DateTime
 import redis.RedisClient
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**
@@ -33,19 +33,33 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
     var serverName: String = ""
     var applicationName: String = ""
 
-    def setHost(host: String = "localhost") { this.host = host }
+    def setHost(host: String = "localhost") {
+        this.host = host
+    }
 
-    def setPort(port: Int = 6379) { this.port = port }
+    def setPort(port: Int = 6379) {
+        this.port = port
+    }
 
-    def setPassword(password: String) { this.password = password }
+    def setPassword(password: String) {
+        this.password = password
+    }
 
-    def setDatabase(database: Int = 0) { this.database = database }
+    def setDatabase(database: Int = 0) {
+        this.database = database
+    }
 
-    def setKey(key: String = RedisAppender.DEFAULT_KEY) { this.key = key }
+    def setKey(key: String = RedisAppender.DEFAULT_KEY) {
+        this.key = key
+    }
 
-    def setServerName(serverName: String) { this.serverName = serverName }
+    def setServerName(serverName: String) {
+        this.serverName = serverName
+    }
 
-    def setApplicationName(applicationName: String) { this.applicationName = applicationName }
+    def setApplicationName(applicationName: String) {
+        this.applicationName = applicationName
+    }
 
     override def start() {
         print(s"start Redis Logging Appender")
@@ -67,13 +81,18 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
         if (eventObject == null)
             return
 
-        Promises.exec[Future[Long]] {
-            val doc = createLogDocument(eventObject)
-            val jsonDoc = toJsonText(doc)
-            redis.lpush(key, jsonDoc)
+        future {
+            try {
+                val doc = createLogDocument(eventObject)
+                val jsonDoc = toJsonText(doc)
+                redis.lpush(key, jsonDoc)
+            }
         }
     }
 
+    /**
+     * 로그 정보를 [[LogDocument]] 빌드합니다.
+     */
     protected def createLogDocument(event: LoggingEvent): LogDocument = {
         val doc = new LogDocument()
 

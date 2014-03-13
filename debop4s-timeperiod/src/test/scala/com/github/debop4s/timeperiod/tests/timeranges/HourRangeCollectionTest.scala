@@ -60,7 +60,7 @@ class HourRangeCollectionTest extends AbstractTimePeriodTest {
         val hourCounts = Array(1, 24, 48, 64, 128)
         val now = Times.now
 
-        hourCounts.foreach(hourCount => {
+        hourCounts.foreach { hourCount =>
             val hourRanges = HourRangeCollection(now, hourCount)
             val startTime = Times.trimToMinute(now) + hourRanges.calendar.startOffset
             val endTime = startTime.plusHours(hourCount) + hourRanges.calendar.endOffset
@@ -68,12 +68,12 @@ class HourRangeCollectionTest extends AbstractTimePeriodTest {
             val items = hourRanges.getHours
             items.size should equal(hourCount)
 
-            Parallels.runAction1(hourCount)(h => {
+            Parallels.runAction1(hourCount) { h =>
                 items(h).start should equal(startTime.plusHours(h))
                 items(h).end should equal(hourRanges.calendar.mapEnd(startTime.plusHours(h + 1)))
                 items(h).unmappedEnd should equal(startTime.plusHours(h + 1))
-            })
-        })
+            }
+        }
     }
 
 }

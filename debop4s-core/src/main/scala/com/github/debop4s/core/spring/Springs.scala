@@ -27,7 +27,9 @@ object Springs {
         globalContext.asInstanceOf[GenericApplicationContext]
     }
 
-    def isInitialized = synchronized {globalContext != null}
+    def isInitialized = synchronized {
+        globalContext != null
+    }
 
     def initialize(ctx: ApplicationContext) {
         require(ctx != null, "application context is null")

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.query.QueryUtils
 import org.springframework.data.jpa.repository.support.{JpaEntityInformationSupport, JpaEntityInformation}
 
+
 /**
  * JpaUtils
  * Created by debop on 2014. 2. 25.
@@ -47,11 +48,10 @@ object JpaUtils {
         em.createQuery(query)
     }
 
-    private
-    def applySpecificationToCriteria[T, S](em: EntityManager,
-                                           resultClass: Class[T],
-                                           spec: Specification[T],
-                                           query: CriteriaQuery[_]): Root[T] = {
+    private def applySpecificationToCriteria[T, S](em: EntityManager,
+                                                   resultClass: Class[T],
+                                                   spec: Specification[T],
+                                                   query: CriteriaQuery[_]): Root[T] = {
         require(query != null)
 
         val root = query.from(resultClass)
@@ -66,42 +66,67 @@ object JpaUtils {
         root
     }
 
-    def setParameters[X](query: TypedQuery[X], parameters: JpaParameter*) = {
-        if (parameters != null) {
-            parameters.foreach(p => {
-                log.trace(s"파라미터 설정. $p")
+    def setParameters[X](query: TypedQuery[X], parameters: JpaParameter*): TypedQuery[X] = {
+        if (parameters == null || parameters.length == 0)
+            return query
 
-                p.value match {
-                    case date: Date =>
-                        query.setParameter(p.name, date, TemporalType.TIMESTAMP)
 
-                    case calendar: Calendar =>
-                        query.setParameter(p.name, calendar, TemporalType.TIMESTAMP)
+        parameters.foreach { p =>
+            log.trace(s"파라미터 설정. $p")
 
-                    case dateTime: DateTime =>
-                        query.setParameter(p.name, dateTime.toDate, TemporalType.TIMESTAMP)
+            p.value match {
+                case date: Date =>
+                    query.setParameter(p.name, date, TemporalType.TIMESTAMP)
 
-                    case _ => query.setParameter(p.name, p.value)
-                }
-            })
+                case calendar: Calendar =>
+                    query.setParameter(p.name, calendar, TemporalType.TIMESTAMP)
+
+                case dateTime: DateTime =>
+                    query.setParameter(p.name, dateTime.toDate, TemporalType.TIMESTAMP)
+
+                case _ => query.setParameter(p.name, p.value)
+            }
         }
         query
     }
 
-    def setFirstResult[T](query: TypedQuery[T], firstResult: Int) = {
-        if (firstResult >= 0)
+    def setFirstResult[T](query: TypedQuery[T], firstResult: Int): TypedQuery[T] = {
+        if (firstResult >= 0) {
             query.setFirstResult(firstResult)
+        }
         query
     }
 
-    def setMaxResults[T](query: TypedQuery[T], maxResults: Int) = {
-        if (maxResults > 0)
+    def setMaxResults[T](query: TypedQuery[T], maxResults: Int): TypedQuery[T] = {
+        if (maxResults > 0) {
             query.setFirstResult(maxResults)
+        }
         query
     }
 
-    def setPaging[T](query: TypedQuery[T], firstResult: Int, maxResults: Int) = {
+    def setPaging[T](query: TypedQuery[T], firstResult: Int, maxResults: Int): TypedQuery[T] = {
         val q = setFirstResult(query, firstResult)
         setMaxResults(q, maxResults)
+    }
+
+    /**
+     *  Lazy Initialize 속성에 대해 Initialize 가 되었는지 확인합니다.
+     *  @see Hibernate#initialize 를 사용하는게 더 낫습니다.
+     */
+    def isLoaded(em: EntityManager, entity: AnyRef): Boolean = {
+        val unitUtil = em.getEntityManagerFactory.getPersistenceUnitUtil
+        unitUtil.isLoaded(entity)
+    }
+
+    /**
+    *  Lazy Initialize 속성에 대해 Initialize 가 되었는지 확인합니다.
+    *  {{{
+    *   isLoaded(dept, "employees")
+    *  }}}
+    *  @see Hibernate#initialize 를 사용하는게 더 낫습니다.
+    */
+    def isLoaded(em: EntityManager, entity: AnyRef, propertyName: String): Boolean = {
+        val unitUtil = em.getEntityManagerFactory.getPersistenceUnitUtil
+        unitUtil.isLoaded(entity, propertyName)
     }
 }

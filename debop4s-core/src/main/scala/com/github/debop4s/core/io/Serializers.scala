@@ -1,12 +1,11 @@
 package com.github.debop4s.core.io
 
-import com.github.debop4s.core.BinaryStringFormat
-import com.github.debop4s.core.parallels.Asyncs
-import com.github.debop4s.core.utils.{Arrays, Streams, Strings}
+import com.github.debop4s.core._
+import com.github.debop4s.core.utils.{Streams, Strings}
 import java.io.{InputStream, ByteArrayOutputStream, OutputStream}
 import java.util.Objects
 import org.slf4j.LoggerFactory
-import scala.concurrent.Future
+import scala.concurrent._
 
 /**
  *
@@ -17,18 +16,20 @@ import scala.concurrent.Future
  */
 object Serializers {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
+
     lazy val serializer = new BinarySerializer()
 
     def serializeAsString[T](serializer: Serializer, graph: T): String = {
         if (graph == null)
-            Strings.EMPTY_STR
-        else
-            Strings.getStringFromBytes(serializer.serialize(graph), BinaryStringFormat.HexDecimal)
+            return Strings.EMPTY_STR
+
+        Strings.getStringFromBytes(serializer.serialize(graph), BinaryStringFormat.HexDecimal)
     }
 
-    def deserializeAsString[T](serializer: Serializer, str: String, clazz: Class[T]): T = {
-        serializer.deserialize(Strings.getBytesFromHexString(str), clazz)
+    def deserializeFromString[T](serializer: Serializer, str: String, clazz: Class[T]): T = {
+        if (Strings.isEmpty(str)) null.asInstanceOf[T]
+        else serializer.deserialize(Strings.getBytesFromHexString(str), clazz)
     }
 
     def serializeAsStream[T](serializer: Serializer, graph: T): OutputStream = {
@@ -41,38 +42,31 @@ object Serializers {
         else serializer.deserialize[T](Streams.toByteArray(inputStream), clazz)
     }
 
-    def serializeObject[T](graph: T): Array[Byte] = serializer.serialize(graph)
+    def serializeObject[T](graph: T): Array[Byte] =
+        serializer.serialize(graph)
 
     def deserializeObject[T](bytes: Array[Byte], clazz: Class[T]): T =
         serializer.deserialize[T](bytes, clazz)
 
     def copyObject[T](graph: T): T = {
         if (Objects.equals(graph, null))
+            return null.asInstanceOf[T]
+
+        deserializeObject[T](serializeObject(graph), graph.getClass.asInstanceOf[Class[T]])
+    }
+
+    def serializeObjectAsync[T](graph: T): Future[Array[Byte]] = future {
+        serializer.serialize(graph)
+    }
+
+    def deserializeObjectAsync[T](bytes: Array[Byte], clazz: Class[T]): Future[T] = future {
+        serializer.deserialize(bytes, clazz)
+    }
+
+    def copyObjectAsync[T](graph: T): Future[T] = future {
+        if (Objects.equals(graph, null)) {
             null.asInstanceOf[T]
-        else
-            deserializeObject[T](serializeObject(graph), graph.getClass.asInstanceOf[Class[T]])
-    }
-
-    def serializeObjectAsync[T](graph: T): Future[Array[Byte]] = {
-        if (Objects.equals(graph, null))
-            Asyncs.getTaskHasResult(Array.emptyByteArray)
-        else Asyncs.startNew {
-            serializer.serialize(graph)
-        }
-    }
-
-    def deserializeObjectAsync[T](bytes: Array[Byte], clazz: Class[T]): Future[T] = {
-        if (Arrays.isEmpty(bytes))
-            Asyncs.getTaskHasResult(null.asInstanceOf[T])
-        else Asyncs.startNew {
-            serializer.deserialize(bytes, clazz)
-        }
-    }
-
-    def copyObjectAsync[T](graph: T): Future[T] = {
-        if (Objects.equals(graph, null))
-            Asyncs.getTaskHasResult(null.asInstanceOf[T])
-        else Asyncs.startNew {
+        } else {
             val bytes = serializer.serialize(graph)
             serializer.deserialize(bytes, graph.getClass)
         }

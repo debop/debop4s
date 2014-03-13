@@ -25,7 +25,7 @@ class JpaDao {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    @PersistenceContext var em: EntityManager = _
+    @PersistenceContext val em: EntityManager = null
 
     var lockProvider: LockMetadataProvider = null
     protected var countQueryPlaceholder = "*"
@@ -46,12 +46,12 @@ class JpaDao {
     }
 
     @Transactional
-    def delete[T](entityClass: Class[T], id: Serializable) {
+    def delete[T](entityClass: Class[T], id: java.io.Serializable) {
         require(id != null)
 
         val entity = em.find(entityClass, id)
         if (entity == null) {
-            val msg = s"No ${getEntityInformation(entityClass)} entity with id [$id] exists"
+            val msg = s"No ${getEntityInformation(entityClass) } entity with id [$id] exists"
             throw new EmptyResultDataAccessException(msg, 1)
         }
         delete(entity)
@@ -69,7 +69,7 @@ class JpaDao {
 
         if (entities.iterator.hasNext) {
             val deleteQuery = QueryUtils.getQueryString(JpaUtils.DELETE_ALL_QUERY_STRING,
-                                                           getEntityInformation(entityClass).getEntityName)
+                getEntityInformation(entityClass).getEntityName)
             val javaIter = JavaConversions.asJavaIterable(entities)
             QueryUtils.applyAndBind(deleteQuery, javaIter, em).executeUpdate()
         }
@@ -85,7 +85,7 @@ class JpaDao {
         em.createQuery(getDeleteAllQueryString(entityClass)).executeUpdate()
     }
 
-    def exists[T](entityClass: Class[T], id: Serializable): Boolean = {
+    def exists[T](entityClass: Class[T], id: java.io.Serializable): Boolean = {
         require(id != null)
         log.trace(s"엔티티 존재여부 확인 중... entityClass=[$entityClass], id=[$id]")
 
@@ -98,9 +98,11 @@ class JpaDao {
             val existsQuery = QueryUtils.getExistsQueryString(entityName, placeHolder, idAttributeNames)
 
             val query = em.createQuery(existsQuery, classOf[java.lang.Long])
+
             if (entityInformation.hasCompositeId) {
-                idAttributeNames.foreach(name =>
-                    query.setParameter(name, entityInformation.getCompositeIdAttributeValue(id, name)))
+                idAttributeNames.foreach { name =>
+                    query.setParameter(name, entityInformation.getCompositeIdAttributeValue(id, name))
+                }
             } else {
                 query.setParameter(idAttributeNames.iterator().next(), id)
             }
@@ -110,7 +112,7 @@ class JpaDao {
         }
     }
 
-    def findOne[T](entityClass: Class[T], id: Serializable): T = {
+    def findOne[T](entityClass: Class[T], id: java.io.Serializable): T = {
         require(id != null)
         val lockMode = if (lockProvider == null) null else lockProvider.getLockModeType
 
@@ -139,4 +141,10 @@ class JpaDao {
         .getResultList
 
     }
+
+    def persist(entity: AnyRef) { em.persist(entity) }
+
+    def flush() { em.flush() }
+
+    def clear() { em.clear() }
 }

@@ -1,6 +1,5 @@
 package com.github.debop4s.timeperiod.timerange
 
-import com.github.debop4s.core.utils.Hashs
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime

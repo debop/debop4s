@@ -17,9 +17,9 @@ abstract class AbstractHibernateMySqlConfiguration extends AbstractHibernateConf
     @Bean
     override def dataSource: DataSource =
         buildDataSource(DRIVER_CLASS_MYSQL,
-                           "jdbc:mysql://localhost/" + getDatabaseName,
-                           "root",
-                           "root")
+            "jdbc:mysql://localhost/" + getDatabaseName,
+            "root",
+            "root")
 
     override def hibernateProperties: Properties = {
         val props = super.hibernateProperties

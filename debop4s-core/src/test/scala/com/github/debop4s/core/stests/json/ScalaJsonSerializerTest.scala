@@ -19,7 +19,7 @@ class ScalaJsonSerializerTest extends AbstractCoreTest {
         serializers.foreach {
             serializer =>
 
-                println(s"JsonSerializer=${serializer.getClass}")
+                println(s"JsonSerializer=${serializer.getClass }")
 
                 val bytes = serializer.serialize(user)
                 val deserializedUser = serializer.deserialize(bytes, classOf[User])

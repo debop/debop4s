@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import scala.beans.BeanProperty
 
 /**
- * com.github.debop4s.timeperiod.TimePeriod
+ * 기간을 나타내는 기본 Trait 입니다.
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 8:15
  */
@@ -90,8 +90,9 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
 
     override lazy val log = LoggerFactory.getLogger(getClass)
 
-    private var (startTime, endTime) = Times.adjustPeriod(Options.toOption(_start).getOrElse(MinPeriodTime),
-                                                             Options.toOption(_end).getOrElse(MaxPeriodTime))
+    private var (startTime, endTime) =
+        Times.adjustPeriod(Options.toOption(_start).getOrElse(MinPeriodTime),
+            Options.toOption(_end).getOrElse(MaxPeriodTime))
 
     @BeanProperty
     def start = startTime
@@ -113,7 +114,9 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
 
     def isReadonly = readonly
 
-    protected def setReadonly(v: Boolean) { readonly = v }
+    protected def setReadonly(v: Boolean) {
+        readonly = v
+    }
 
     @BeanProperty
     def duration = new Duration(start, end)

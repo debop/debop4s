@@ -33,7 +33,7 @@ object FileUtils {
     @varargs
     def combine(base: Path, others: String*): Path = {
         var result = base
-        others.foreach(x => result = result.resolve(x))
+        others.foreach { x => result = result.resolve(x) }
         result
     }
 

@@ -51,8 +51,8 @@ class YearRangeTest extends AbstractTimePeriodTest {
         yr.previousYear.start should equal(startYear - 1.year)
         yr.nextYear.start should equal(startYear + 1.year)
 
-        (-60 to 120).par.foreach(y => {
+        (-60 to 120).par.foreach { y =>
             yr.addYears(y).start should equal(startYear + y.year)
-        })
+        }
     }
 }

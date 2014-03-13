@@ -17,7 +17,7 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
  */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[RedisCacheConfiguration]),
-                         loader = classOf[AnnotationConfigContextLoader])
+    loader = classOf[AnnotationConfigContextLoader])
 class RedisCacheTest extends AbstractRedisTest {
 
     @Autowired private val cacheManager: RedisCacheManager = null

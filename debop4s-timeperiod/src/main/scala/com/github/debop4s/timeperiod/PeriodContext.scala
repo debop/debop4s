@@ -28,7 +28,9 @@ object PeriodContext {
 
         def getTimeCalendar: ITimeCalendar = calendar
 
-        def setTimeCalendar(cal: ITimeCalendar) = { calendar = cal }
+        def setTimeCalendar(cal: ITimeCalendar) = {
+            calendar = cal
+        }
 
         def locale = calendar.getLocale
 

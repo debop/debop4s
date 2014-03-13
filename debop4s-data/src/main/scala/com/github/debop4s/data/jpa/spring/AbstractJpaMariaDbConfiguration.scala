@@ -13,8 +13,8 @@ abstract class AbstractJpaMariaDbConfiguration extends AbstractJpaMySqlConfigura
     @Bean
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_MARIADB,
-                           s"jdbc:mysql://localhost/$getDatabaseName",
-                           "root",
-                           "root")
+            s"jdbc:mysql://localhost/$getDatabaseName",
+            "root",
+            "root")
     }
 }

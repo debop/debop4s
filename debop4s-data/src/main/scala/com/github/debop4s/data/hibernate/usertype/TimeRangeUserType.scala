@@ -10,14 +10,14 @@ import org.hibernate.usertype.CompositeUserType
 import org.joda.time.DateTime
 
 /**
- * com.github.debop4s.data.hibernate.usertype.TimeRangeUserType 
+ * [[ITimePeriod]] 정보를 
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 3:26
  */
 class TimeRangeUserType extends CompositeUserType {
 
-    private def asTimeRange(value: Any): ITimePeriod = {
+    private def asTimePeriod(value: Any): ITimePeriod = {
         value match {
             case x: ITimePeriod => x.asInstanceOf[ITimePeriod]
             case _ => null
@@ -31,7 +31,7 @@ class TimeRangeUserType extends CompositeUserType {
     override def returnedClass(): Class[_] = classOf[TimeRange]
 
     override def getPropertyValue(component: Any, property: Int): AnyRef = {
-        val timeRange = asTimeRange(component)
+        val timeRange = asTimePeriod(component)
         if (timeRange != null) {
             property match {
                 case 0 => return timeRange.start
@@ -43,10 +43,10 @@ class TimeRangeUserType extends CompositeUserType {
     }
 
     override def setPropertyValue(component: Any, property: Int, value: Any) {
-        val range = asTimeRange(component)
+        val period = asTimePeriod(component)
         property match {
-            case 0 => range.setup(value.asInstanceOf[DateTime], range.end)
-            case 1 => range.setup(range.start, value.asInstanceOf[DateTime])
+            case 0 => period.setup(value.asInstanceOf[DateTime], period.end)
+            case 1 => period.setup(period.start, value.asInstanceOf[DateTime])
             case _ =>
         }
     }
@@ -55,18 +55,22 @@ class TimeRangeUserType extends CompositeUserType {
         val start = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session)
         val end = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(1), session)
 
-        TimeRange(Options.toOption(start).map(new DateTime(_)),
-                     Options.toOption(end).map(new DateTime(_)))
+        TimeRange(
+            Options.toOption(start).map(new DateTime(_)).getOrElse(null),
+            Options.toOption(end).map(new DateTime(_)).getOrElse(null)
+        )
     }
 
     override def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) {
-        val range = asTimeRange(value)
-        if (range == null) {
+        val period = asTimePeriod(value)
+        if (period == null) {
             StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session)
             StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index + 1, session)
         } else {
-            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, range.start, index, session)
-            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, range.end, index + 1, session)
+            val start = Options.toOption(period.start).map(_.toDate).getOrElse(null)
+            val end = Options.toOption(period.end).map(_.toDate).getOrElse(null)
+            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, start, index, session)
+            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, end, index + 1, session)
         }
     }
 
@@ -79,7 +83,7 @@ class TimeRangeUserType extends CompositeUserType {
 
     override def deepCopy(value: Any): AnyRef =
         if (value == null) null
-        else TimeRange(asTimeRange(value))
+        else TimeRange(asTimePeriod(value))
 
     override def replace(original: Any, target: Any, session: SessionImplementor, owner: Any): AnyRef =
         deepCopy(original)

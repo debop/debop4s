@@ -15,7 +15,7 @@ class BusinessCaseTest extends AbstractTimePeriodTest {
 
         val now = Times.now
 
-        (0 until 500).par.foreach(i => {
+        (0 until 500).par.foreach { i =>
             val current = now + i.day
             val currentFiveSeconds = TimeRange(Times.trimToSecond(current, 15), Times.trimToSecond(current, 20))
 
@@ -27,8 +27,7 @@ class BusinessCaseTest extends AbstractTimePeriodTest {
             DayRange(current).hasInside(currentFiveSeconds) should equal(true)
             HourRange(current).hasInside(currentFiveSeconds) should equal(true)
             MinuteRange(current).hasInside(currentFiveSeconds) should equal(true)
-
-        })
+        }
 
         val anytime = TimeRange()
 

@@ -42,10 +42,11 @@ object HibernateTool {
                        .getServiceRegistry
                        .getService(classOf[EventListenerRegistry])
 
-        eventTypes.foreach(et =>
+        eventTypes.foreach { et =>
             registry
             .getEventListenerGroup(et)
-            .appendListener(listener))
+            .appendListener(listener)
+        }
     }
 
     def registEventListener[T](sessionFactory: SessionFactory,
@@ -55,10 +56,11 @@ object HibernateTool {
                        .getServiceRegistry
                        .getService(classOf[EventListenerRegistry])
 
-        eventTypes.foreach(et =>
+        eventTypes.foreach { et =>
             registry
             .getEventListenerGroup(et)
-            .appendListener(listener))
+            .appendListener(listener)
+        }
     }
 
     def registUpdateTimestampEventListener(sessionFactory: SessionFactory) {

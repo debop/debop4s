@@ -73,29 +73,23 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
                    private[this] val _readonly: Boolean = false)
     extends TimePeriod(_start, _end, _readonly) with ITimeInterval {
 
-    //    def this(moment: DateTime,
-    //             startEdge: IntervalEdge,
-    //             endEdge: IntervalEdge,
-    //             intervalEnabled: Boolean,
-    //             readonly: Boolean) {
-    //        this(moment, moment, startEdge, endEdge, intervalEnabled, readonly)
-    //    }
-    //
-    //    def this() {
-    //        this(MinPeriodTime, MaxPeriodTime)
-    //    }
-
     def startEdge = _startEdge
 
-    def startEdge_=(edge: IntervalEdge) { _startEdge = edge }
+    def startEdge_=(edge: IntervalEdge) {
+        _startEdge = edge
+    }
 
     def endEdge = _endEdge
 
-    def endEdge_=(edge: IntervalEdge) { _endEdge = edge }
+    def endEdge_=(edge: IntervalEdge) {
+        _endEdge = edge
+    }
 
     def intervalEnabled = _intervalEnabled
 
-    def intervalEnabled_=(v: Boolean) { _intervalEnabled = v }
+    def intervalEnabled_=(v: Boolean) {
+        _intervalEnabled = v
+    }
 
     def isStartOpen: Boolean = _startEdge eq IntervalEdge.Opened
 
@@ -213,11 +207,11 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
     /** 현재 IInterval에서 오프셋만큼 이동한 {@link ITimeInterval}을 반환합니다. */
     override def copy(offset: Duration = Duration.ZERO): ITimeInterval = {
         new TimeInterval(getStartInterval.plus(offset),
-                            getEndInterval.plus(offset),
-                            getStartEdge,
-                            getEndEdge,
-                            isIntervalEnabled,
-                            isReadonly)
+            getEndInterval.plus(offset),
+            getStartEdge,
+            getEndEdge,
+            isIntervalEnabled,
+            isReadonly)
     }
 
     override def reset() {
@@ -266,10 +260,13 @@ object TimeInterval {
               intervalEnabled: Boolean,
               readonly: Boolean): TimeInterval = {
         assert(period != null)
-        if (period.isAnytime)
-            Anytime
-        else
-            new TimeInterval(period.start, period.end, startEdge, endEdge, intervalEnabled, readonly)
+        if (period.isAnytime) Anytime
+        else new TimeInterval(period.start,
+            period.end,
+            startEdge,
+            endEdge,
+            intervalEnabled,
+            readonly)
     }
 }
 

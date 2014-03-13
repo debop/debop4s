@@ -1,6 +1,5 @@
 package com.github.debop4s.timeperiod.timerange
 
-import com.github.debop4s.core.utils.ToStringHelper
 import com.github.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times

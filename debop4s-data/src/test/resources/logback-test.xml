@@ -11,7 +11,9 @@
     </appender>
 
     <logger name="com.github.debop4s.data" level="TRACE"/>
+    <logger name="com.zaxxer.hikari.HikariDataSource" level="ERROR"/>
 
+    <logger name="org.hibernate.SQL" level="INFO"/>
     <root level="INFO">
         <appender-ref ref="console"/>
     </root>

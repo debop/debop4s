@@ -22,14 +22,14 @@ class CalendarPeriodCollectorTest extends AbstractTimePeriodTest {
 
         collector.collectYears()
 
-        log.trace(s"Collect years... periods=${collector.periods}")
+        log.trace(s"Collect years... periods=${collector.periods }")
 
         var i = 0
-        collector.periods.foreach(period => {
+        collector.periods.foreach { period =>
             log.trace(s"period=$period")
             period.isSamePeriod(YearRange(filter.years(i))) should equal(true)
             i += 1
-        })
+        }
     }
 
     test("collect months") {
@@ -40,7 +40,7 @@ class CalendarPeriodCollectorTest extends AbstractTimePeriodTest {
         val collector = new CalendarPeriodCollector(filter, limits)
 
         collector.collectMonths()
-        log.trace(s"Collect months... periods=${collector.periods}")
+        log.trace(s"Collect months... periods=${collector.periods }")
 
         collector.periods.size should equal(2)
         collector.periods(0).isSamePeriod(MonthRange(2010, 1)) should equal(true)

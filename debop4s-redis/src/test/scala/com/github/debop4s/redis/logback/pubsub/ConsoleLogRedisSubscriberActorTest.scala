@@ -22,9 +22,9 @@ class ConsoleLogRedisSubscriberActorTest extends AbstractRedisTest {
         val patterns = Seq()
 
         RedisSubscriberActorFactory.create(classOf[ConsoleLogRedisSubscriberActor],
-                                              address,
-                                              channels,
-                                              patterns)
+            address,
+            channels,
+            patterns)
     }
 
     before {

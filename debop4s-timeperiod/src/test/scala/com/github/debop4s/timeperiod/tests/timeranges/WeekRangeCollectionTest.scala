@@ -49,7 +49,7 @@ class WeekRangeCollectionTest extends AbstractTimePeriodTest {
         val now = Times.now
         val today = Times.today
 
-        weekCounts.foreach(weekCount => {
+        weekCounts.foreach { weekCount =>
             val wrs = WeekRangeCollection(now, weekCount)
 
             val startTime = wrs.calendar.mapStart(Times.startTimeOfWeek(today))
@@ -60,7 +60,7 @@ class WeekRangeCollectionTest extends AbstractTimePeriodTest {
 
             val items = wrs.getWeeks
 
-            (0 until weekCount).par.foreach(w => {
+            (0 until weekCount).par.foreach { w =>
                 val item = items(w)
 
                 item.start should equal(startTime.plusWeeks(w))
@@ -72,9 +72,9 @@ class WeekRangeCollectionTest extends AbstractTimePeriodTest {
                 item.isSamePeriod(WeekRange(wrs.start + w.week)) should equal(true)
 
                 val yw = Weeks.addWeekOfYears(now.getWeekyear, now.getWeekOfWeekyear, w)
-                println(s"item=$item, yw=${WeekRange(yw)}")
+                println(s"item=$item, yw=${WeekRange(yw) }")
                 item.isSamePeriod(WeekRange(yw)) should equal(true)
-            })
-        })
+            }
+        }
     }
 }

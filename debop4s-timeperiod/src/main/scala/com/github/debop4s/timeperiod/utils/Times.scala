@@ -67,14 +67,14 @@ object Times {
      */
     def timeZoneOffset(zone: DateTimeZone): Int = zone.getOffset(0)
 
-    def timeZoneForOffsetMillis(millisOffset: Int): DateTimeZone = DateTimeZone.forOffsetMillis(millisOffset)
+    def timeZoneForOffsetMillis(millisOffset: Int): DateTimeZone =
+        DateTimeZone.forOffsetMillis(millisOffset)
 
     def availableTimeZone(): Set[DateTimeZone] =
         DateTimeZone.getAvailableIDs.map(id => DateTimeZone.forID(id)).toSet
 
     def availableOffsetMillis(): Set[Int] =
         availableTimeZone().map(tz => tz.getOffset(0))
-
 
     def datepart(moment: DateTime): Datepart = Datepart(moment)
 
@@ -85,7 +85,13 @@ object Times {
 
     def asDate(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 
-    def asDateTime(year: Int, monthOfYear: Int = 1, dayOfMonth: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, millis: Int = 0): DateTime =
+    def asDateTime(year: Int,
+                   monthOfYear: Int = 1,
+                   dayOfMonth: Int = 1,
+                   hour: Int = 0,
+                   minute: Int = 0,
+                   second: Int = 0,
+                   millis: Int = 0): DateTime =
         new DateTime(year, monthOfYear, dayOfMonth, hour, minute, second, millis)
 
     def asString(period: ITimePeriod): String =
@@ -193,6 +199,7 @@ object Times {
     def getDaysInMonth(year: Int, month: Int): Int =
         asDate(year, month).plusMonths(1).minusDays(1).getDayOfMonth
 
+    @inline
     def getStartOfWeek(moment: DateTime): DateTime = {
         val day = asDate(moment)
         val dow = day.getDayOfWeek
@@ -202,12 +209,14 @@ object Times {
     def getWeekOfMonth(moment: DateTime): Int =
         moment.getWeekOfWeekyear - startTimeOfMonth(moment).getWeekOfWeekyear + 1
 
-    def getWeekOfYear(moment: DateTime): YearWeek = getWeekOfYear(moment, DefaultTimeCalendar)
+    def getWeekOfYear(moment: DateTime): YearWeek =
+        getWeekOfYear(moment, DefaultTimeCalendar)
 
     def getWeekOfYear(moment: DateTime, calendar: ITimeCalendar): YearWeek =
         YearWeek(moment.getWeekyear, moment.getWeekOfWeekyear)
 
-    def getWeeksOfYear(year: Int): Int = getWeeksOfYear(year, DefaultTimeCalendar)
+    def getWeeksOfYear(year: Int): Int =
+        getWeeksOfYear(year, DefaultTimeCalendar)
 
     def getWeeksOfYear(year: Int, calendar: ITimeCalendar): Int = {
         var lastDay = asDate(year, 12, 31)
@@ -226,6 +235,7 @@ object Times {
 
     def prevDayOfWeek(day: DayOfWeek): DayOfWeek = addDayOfWeek(day, -1)
 
+    @inline
     def addDayOfWeek(day: DayOfWeek, days: Int): DayOfWeek = {
         if (days == 0) return day
 
@@ -234,6 +244,7 @@ object Times {
         DayOfWeek((offset % DaysPerWeek) + 1)
     }
 
+    @inline
     def isSameTime(left: DateTime, right: DateTime, unit: PeriodUnit): Boolean = {
         unit match {
             case PeriodUnit.Year => isSameYear(left, right)
@@ -401,36 +412,41 @@ object Times {
         startTimeOfWeek(new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(weekOfWeekYear))
     }
 
-    def endTimeOfWeek(moment: DateTime): DateTime = startTimeOfWeek(moment).plusWeeks(1).minus(1)
+    def endTimeOfWeek(moment: DateTime): DateTime =
+        startTimeOfWeek(moment).plusWeeks(1).minus(1)
 
-    def endTimeOfWeek(year: Int, weekOfYear: Int): DateTime = startTimeOfWeek(year, weekOfYear).plusWeeks(1).minus(1)
+    def endTimeOfWeek(year: Int, weekOfYear: Int): DateTime =
+        startTimeOfWeek(year, weekOfYear).plusWeeks(1).minus(1)
 
 
-    def startTimeOfLastWeek(moment: DateTime): DateTime = startTimeOfWeek(moment).minusWeeks(1)
+    def startTimeOfLastWeek(moment: DateTime): DateTime =
+        startTimeOfWeek(moment).minusWeeks(1)
 
-    def startTimeOfLastWeek(year: Int, weekOfYear: Int): DateTime = startTimeOfWeek(year, weekOfYear).minusWeeks(1)
+    def startTimeOfLastWeek(year: Int, weekOfYear: Int): DateTime =
+        startTimeOfWeek(year, weekOfYear).minusWeeks(1)
 
-    def endTimeOfLastWeek(moment: DateTime): DateTime = startTimeOfWeek(moment).minus(1)
+    def endTimeOfLastWeek(moment: DateTime): DateTime =
+        startTimeOfWeek(moment).minus(1)
 
-    def endTimeOfLastWeek(year: Int, weekOfYear: Int): DateTime = startTimeOfWeek(year, weekOfYear).minus(1)
-
+    def endTimeOfLastWeek(year: Int, weekOfYear: Int): DateTime =
+        startTimeOfWeek(year, weekOfYear).minus(1)
 
     def startTimeOfDay(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 
     def endTimeOfDay(moment: DateTime): DateTime = startTimeOfDay(moment).plusDays(1).minus(1)
 
 
-    def startTimeOfHour(moment: DateTime): DateTime = trimToMinute(moment)
+    def startTimeOfHour(moment: DateTime) = trimToMinute(moment)
 
-    def endTimeOfHour(moment: DateTime): DateTime = startTimeOfHour(moment).plusHours(1).minus(1)
+    def endTimeOfHour(moment: DateTime) = startTimeOfHour(moment).plusHours(1).minus(1)
 
-    def startTimeOfMinute(moment: DateTime): DateTime = trimToSecond(moment)
+    def startTimeOfMinute(moment: DateTime) = trimToSecond(moment)
 
-    def endTimeOfMinute(moment: DateTime): DateTime = startTimeOfMinute(moment).plusMinutes(1).minus(1)
+    def endTimeOfMinute(moment: DateTime) = startTimeOfMinute(moment).plusMinutes(1).minus(1)
 
-    def startTimeOfSecond(moment: DateTime): DateTime = trimToMillis(moment)
+    def startTimeOfSecond(moment: DateTime) = trimToMillis(moment)
 
-    def endTimeOfSecond(moment: DateTime): DateTime = startTimeOfMinute(moment).plusSeconds(1).minus(1)
+    def endTimeOfSecond(moment: DateTime) = startTimeOfMinute(moment).plusSeconds(1).minus(1)
 
     def halfyearOf(monthOfYear: Int): Halfyear = if (monthOfYear < 7) Halfyear.First else Halfyear.Second
 
@@ -451,6 +467,7 @@ object Times {
     def nextDayOfWeek(moment: DateTime): DateTime =
         nextDayOfWeek(moment, DayOfWeek(moment.getDayOfWeek))
 
+    @inline
     def nextDayOfWeek(moment: DateTime, dayOfWeek: DayOfWeek): DateTime = {
         val dow = dayOfWeek.id
         var next = moment.plusDays(1)
@@ -463,6 +480,7 @@ object Times {
     def prevDayOfWeek(moment: DateTime): DateTime =
         prevDayOfWeek(moment, DayOfWeek(moment.getDayOfWeek))
 
+    @inline
     def prevDayOfWeek(moment: DateTime, dayOfWeek: DayOfWeek): DateTime = {
         val dow = dayOfWeek
         var previous = moment.minusDays(1)
@@ -527,29 +545,41 @@ object Times {
 
     def since(moment: DateTime, duration: Duration): DateTime = moment.plus(duration)
 
+    @inline
     def min(a: DateTime, b: DateTime): DateTime = {
-        if (a != null && b != null) {if (a < b) a else b}
+        if (a != null && b != null) {
+            if (a < b) a else b
+        }
         else if (a == null) b
         else if (b == null) a
         else null
     }
 
+    @inline
     def max(a: DateTime, b: DateTime): DateTime = {
-        if (a != null && b != null) {if (a > b) a else b}
+        if (a != null && b != null) {
+            if (a > b) a else b
+        }
         else if (a == null) b
         else if (b == null) a
         else null
     }
 
+    @inline
     def min(a: Duration, b: Duration): Duration = {
-        if (a != null && b != null) {if (a < b) a else b}
+        if (a != null && b != null) {
+            if (a < b) a else b
+        }
         else if (a == null) b
         else if (b == null) a
         else null
     }
 
+    @inline
     def max(a: Duration, b: Duration): Duration = {
-        if (a != null && b != null) {if (a > b) a else b}
+        if (a != null && b != null) {
+            if (a > b) a else b
+        }
         else if (a == null) b
         else if (b == null) a
         else null
@@ -565,28 +595,40 @@ object Times {
             (start, duration)
     }
 
-    def getTimeBlock(start: DateTime, duration: Duration): TimeBlock = TimeBlock(start, duration, false)
+    def getTimeBlock(start: DateTime, duration: Duration): TimeBlock =
+        TimeBlock(start, duration, readonly = false)
 
-    def getTimeBlock(start: DateTime, end: DateTime): TimeBlock = TimeBlock(start, end, false)
+    def getTimeBlock(start: DateTime, end: DateTime): TimeBlock =
+        TimeBlock(start, end, readonly = false)
 
-    def getTimeRange(start: DateTime, duration: Duration): TimeRange = TimeRange(start, duration, false)
+    def getTimeRange(start: DateTime, duration: Duration): TimeRange =
+        TimeRange(start, duration, readonly = false)
 
-    def getTimeRange(start: DateTime, end: DateTime): TimeRange = TimeRange(start, end, false)
+    def getTimeRange(start: DateTime, end: DateTime): TimeRange =
+        TimeRange(start, end, readonly = false)
 
-    def relativeYearPeriod(start: DateTime, years: Int): TimeRange = TimeRange(trimToMonth(start), trimToMonth(start).plusYears(years))
+    def relativeYearPeriod(start: DateTime, years: Int): TimeRange =
+        TimeRange(trimToMonth(start), trimToMonth(start).plusYears(years))
 
-    def relativeMonthPeriod(start: DateTime, months: Int): TimeRange = TimeRange(trimToDay(start), trimToDay(start).plusMonths(months))
+    def relativeMonthPeriod(start: DateTime, months: Int): TimeRange =
+        TimeRange(trimToDay(start), trimToDay(start).plusMonths(months))
 
-    def relativeWeekPeriod(start: DateTime, weeks: Int): TimeRange = TimeRange(trimToHour(start), trimToHour(start).plusWeeks(weeks))
+    def relativeWeekPeriod(start: DateTime, weeks: Int): TimeRange =
+        TimeRange(trimToHour(start), trimToHour(start).plusWeeks(weeks))
 
-    def relativeDayPeriod(start: DateTime, days: Int): TimeRange = TimeRange(trimToHour(start), trimToHour(start).plusDays(days))
+    def relativeDayPeriod(start: DateTime, days: Int): TimeRange =
+        TimeRange(trimToHour(start), trimToHour(start).plusDays(days))
 
-    def relativeHourPeriod(start: DateTime, hours: Int): TimeRange = TimeRange(trimToMinute(start), trimToMinute(start).plusHours(hours))
+    def relativeHourPeriod(start: DateTime, hours: Int): TimeRange =
+        TimeRange(trimToMinute(start), trimToMinute(start).plusHours(hours))
 
-    def relativeMinutePeriod(start: DateTime, minutes: Int): TimeRange = TimeRange(trimToSecond(start), trimToSecond(start).plusMinutes(minutes))
+    def relativeMinutePeriod(start: DateTime, minutes: Int): TimeRange =
+        TimeRange(trimToSecond(start), trimToSecond(start).plusMinutes(minutes))
 
-    def relativeSecondPeriod(start: DateTime, seconds: Int): TimeRange = TimeRange(trimToMillis(start), trimToMillis(start).plusSeconds(seconds))
+    def relativeSecondPeriod(start: DateTime, seconds: Int): TimeRange =
+        TimeRange(trimToMillis(start), trimToMillis(start).plusSeconds(seconds))
 
+    @inline
     def getPeriodOf(moment: DateTime, unit: PeriodUnit, calendar: ITimeCalendar = DefaultTimeCalendar): ITimePeriod = {
         log.trace(s"일자[$moment]가 속한 기간 종류[$unit]의 기간을 구합니다.")
 
@@ -606,6 +648,7 @@ object Times {
         }
     }
 
+    @inline
     def getPeriodsOf(moment: DateTime,
                      unit: PeriodUnit,
                      periodCount: Int,
@@ -623,8 +666,8 @@ object Times {
             case PeriodUnit.Minute => getMinuteRanges(moment, periodCount, calendar)
             case PeriodUnit.Second =>
                 CalendarTimeRange(trimToMillis(moment),
-                                     trimToMillis(moment).plusSeconds(periodCount),
-                                     calendar)
+                    trimToMillis(moment).plusSeconds(periodCount),
+                    calendar)
 
             case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
         }
@@ -748,6 +791,7 @@ object Times {
         relation
     }
 
+    @inline
     def intersectWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
         val isIntersect =
             hasInside(period, target.start) ||
@@ -759,11 +803,13 @@ object Times {
         isIntersect
     }
 
-    lazy val NotOverlapedRelations = Array(PeriodRelation.After,
-                                              PeriodRelation.StartTouching,
-                                              PeriodRelation.EndTouching,
-                                              PeriodRelation.Before)
+    lazy val NotOverlapedRelations =
+        Array(PeriodRelation.After,
+            PeriodRelation.StartTouching,
+            PeriodRelation.EndTouching,
+            PeriodRelation.Before)
 
+    @inline
     def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
         val relation = getRelation(period, target)
         val isOverlaps = !NotOverlapedRelations.contains(relation)
@@ -882,6 +928,7 @@ object Times {
         }
     }
 
+    @inline
     def foreachYears(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
         log.trace(s"기간[$period]에 대해 Year 단위로 열거합니다...")
@@ -914,6 +961,7 @@ object Times {
         years
     }
 
+    @inline
     def foreachHalfyears(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
         log.trace(s"기간[$period]에 대해 HalfYear 단위로 열거합니다...")
@@ -949,6 +997,7 @@ object Times {
         halfyears
     }
 
+    @inline
     def foreachQuarters(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
         log.trace(s"기간[$period]에 대해 Quarter 단위로 열거합니다...")
@@ -984,6 +1033,7 @@ object Times {
         quarters
     }
 
+    @inline
     def foreachMonths(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
         log.trace(s"기간[$period]에 대해 월(Month) 단위로 열거합니다...")
@@ -1018,6 +1068,7 @@ object Times {
         months
     }
 
+    @inline
     def foreachWeeks(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
         log.trace(s"기간[$period]에 대해 주(Week) 단위로 열거합니다...")
@@ -1056,6 +1107,7 @@ object Times {
         weeks
     }
 
+    @inline
     def foreachDays(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
         log.trace(s"기간[$period]에 대해 일(Day) 단위로 열거합니다...")
@@ -1086,6 +1138,7 @@ object Times {
         days
     }
 
+    @inline
     def foreachHours(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
         log.trace(s"기간[$period]에 대해 시간(Hour) 단위로 열거합니다...")
@@ -1118,6 +1171,7 @@ object Times {
         hours
     }
 
+    @inline
     def foreachMinutes(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
         log.trace(s"기간[$period]에 대해 분(Minute) 단위로 열거합니다...")

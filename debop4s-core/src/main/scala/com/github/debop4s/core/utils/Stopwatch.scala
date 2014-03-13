@@ -27,7 +27,9 @@ class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
 
     def getElapsedTime = elapsedTime
 
-    private def cleanUp() { System.gc() }
+    private def cleanUp() {
+        System.gc()
+    }
 
     def reset() {
         startTime = 0
@@ -50,11 +52,11 @@ class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
             endTime = System.nanoTime()
             elapsedTime = endTime - startTime
         }
-        log.debug(s"$msg elapsed time=[${nanoToMillis(elapsedTime)}] msecs.")
+        log.debug(s"$msg elapsed time=[${nanoToMillis(elapsedTime) }] msecs.")
         nanoToMillis(elapsedTime)
     }
 
-    override def toString: String = s"$msg elapsed time=[${nanoToMillis(elapsedTime)}] msecs."
+    override def toString: String = s"$msg elapsed time=[${nanoToMillis(elapsedTime) }] msecs."
 
     private def nanoToMillis(nano: Double): Double = nano / NANO_TO_MILLISECONDS
 }

@@ -45,6 +45,7 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
 
     def difference(moment: DateTime): Duration = difference(moment, Times.now)
 
+    @inline
     def difference(fromTime: DateTime, toTime: DateTime): Duration = {
         log.trace(s"fromTime=[$fromTime] ~ toTime=[$toTime]의 Working Time을 구합니다.")
 
@@ -60,17 +61,20 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
 
         val differenceRange = new TimeRange(fromTime, toTime)
         val limits = new TimeRange(Times.startTimeOfDay(differenceRange.start),
-                                      Times.startTimeOfDay(differenceRange.end.plusDays(1)))
+            Times.startTimeOfDay(differenceRange.end.plusDays(1)))
         val collector = new CalendarPeriodCollector(collectorFilter,
-                                                       limits,
-                                                       SeekDirection.Forward,
-                                                       calendar)
+            limits,
+            SeekDirection.Forward,
+            calendar)
 
         // Gap을 계산합니다.
         val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
         val gaps: ITimePeriodCollection = gapCalculator.getGaps(collector.periods, differenceRange)
         var difference = Duration.ZERO
-        gaps.foreach(gap => difference = difference.plus(gap.duration))
+
+        gaps.foreach { gap =>
+            difference = difference.plus(gap.duration)
+        }
 
         log.trace(s"fromTime=[$fromTime] ~ toTime=[$toTime]의 Working Time을 구했습니다. difference=[$difference]")
 

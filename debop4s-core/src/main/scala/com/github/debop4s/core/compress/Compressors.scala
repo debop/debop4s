@@ -5,7 +5,6 @@ import com.github.debop4s.core.BinaryStringFormat.BinaryStringFormat
 import com.github.debop4s.core.parallels.Asyncs
 import com.github.debop4s.core.utils.{Streams, Strings}
 import java.io.{OutputStream, InputStream}
-import org.slf4j.LoggerFactory
 import scala.concurrent.Future
 
 /**
@@ -14,8 +13,6 @@ import scala.concurrent.Future
  * @since  2013. 12. 9. 오후 10:57
  */
 object Compressors {
-
-    private lazy val log = LoggerFactory.getLogger(getClass)
 
     def compressString(compressor: Compressor,
                        plainText: String,
@@ -30,7 +27,7 @@ object Compressors {
     def compressStringAsync(compressor: Compressor,
                             plainText: String,
                             stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): Future[String] = {
-        Asyncs.startNew {
+        Asyncs.run {
             compressString(compressor, plainText, stringFormat)
         }
     }
@@ -48,7 +45,7 @@ object Compressors {
     def decomperssStringAsync(compressor: Compressor,
                               compressedText: String,
                               stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): Future[String] = {
-        Asyncs.startNew {
+        Asyncs.run {
             decompressString(compressor, compressedText, stringFormat)
         }
     }
@@ -59,7 +56,7 @@ object Compressors {
     }
 
     def compressStreamAsync(compressor: Compressor, inputStream: InputStream): Future[OutputStream] = {
-        Asyncs.startNew {
+        Asyncs.run {
             compressStream(compressor, inputStream)
         }
     }
@@ -70,7 +67,7 @@ object Compressors {
     }
 
     def decompressStreamAsync(compressor: Compressor, inputStream: InputStream): Future[OutputStream] = {
-        Asyncs.startNew {
+        Asyncs.run {
             decompressStream(compressor, inputStream)
         }
     }

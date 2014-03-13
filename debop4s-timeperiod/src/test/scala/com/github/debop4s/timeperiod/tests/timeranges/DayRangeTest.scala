@@ -26,16 +26,16 @@ class DayRangeTest extends AbstractTimePeriodTest {
     test("defaultCalendar") {
         val yearStart = startTimeOfYear(now)
 
-        (1 to MonthsPerYear).par.foreach(m => {
+        (1 to MonthsPerYear).par.foreach { m =>
             val monthStart = asDate(yearStart.getYear, m, 1)
             val monthEnd = endTimeOfMonth(monthStart)
 
-            (1 until monthEnd.getDayOfMonth).foreach(day => {
+            (1 until monthEnd.getDayOfMonth).foreach { day =>
                 val dayRange = DayRange(monthStart.plusDays(day - 1))
                 dayRange.year should equal(yearStart.getYear)
                 dayRange.monthOfYear should equal(monthStart.getMonthOfYear)
-            })
-        })
+            }
+        }
     }
 
     test("construct test") {
@@ -69,11 +69,11 @@ class DayRangeTest extends AbstractTimePeriodTest {
         val hours = dayRange.getHours
 
         var index = 0
-        hours.foreach(h => {
+        hours.foreach { h =>
             h.start should equal(dayRange.start.plusHours(index))
             h.end should equal(h.calendar.mapEnd(h.start.plusHours(1)))
             index += 1
-        })
+        }
         index should equal(HoursPerDay)
     }
 

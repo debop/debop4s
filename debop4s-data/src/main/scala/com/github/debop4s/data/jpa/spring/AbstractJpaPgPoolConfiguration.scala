@@ -13,8 +13,8 @@ abstract class AbstractJpaPgPoolConfiguration extends AbstractJpaPostgreSqlConfi
     @Bean
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_POSTGRESQL,
-                           s"jdbc:postgresql://localhost:9999/$getDatabaseName?Set=UTF8",
-                           "root",
-                           "root")
+            s"jdbc:postgresql://localhost:9999/$getDatabaseName?Set=UTF8",
+            "root",
+            "root")
     }
 }

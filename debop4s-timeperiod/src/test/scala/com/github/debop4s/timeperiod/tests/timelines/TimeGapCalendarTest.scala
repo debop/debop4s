@@ -40,7 +40,7 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
 
     test("period is outside with limits") {
         val excludePeriods = TimePeriodCollection(TimeRange(asDate(2011, 2, 1), asDate(2011, 2, 5)),
-                                                     TimeRange(asDate(2011, 4, 1), asDate(2011, 4, 5)))
+            TimeRange(asDate(2011, 4, 1), asDate(2011, 4, 5)))
         val gaps = calculator.getGaps(excludePeriods, limits)
 
         gaps.size shouldBe 1
@@ -50,7 +50,7 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
     test("period is outside touching limits") {
         val limits = new MonthRange(2011, 3)
         val excludePeriods = TimePeriodCollection(TimeRange(asDate(2011, 2, 1), asDate(2011, 3, 5)),
-                                                     TimeRange(asDate(2011, 3, 20), asDate(2011, 4, 15)))
+            TimeRange(asDate(2011, 3, 20), asDate(2011, 4, 15)))
         val gaps = calculator.getGaps(excludePeriods, limits)
 
         gaps.size shouldBe 1
@@ -101,8 +101,8 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
 
         val excludePeriods =
             TimePeriodCollection(TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 30, 8, 30)),
-                                    TimeRange(new DateTime(2011, 3, 30, 8, 30), new DateTime(2011, 3, 30, 12, 0)),
-                                    TimeRange(new DateTime(2011, 3, 30, 10, 0), new DateTime(2011, 3, 31, 0, 0)))
+                TimeRange(new DateTime(2011, 3, 30, 8, 30), new DateTime(2011, 3, 30, 12, 0)),
+                TimeRange(new DateTime(2011, 3, 30, 10, 0), new DateTime(2011, 3, 31, 0, 0)))
 
         val gaps = calculator.getGaps(excludePeriods, limits)
         gaps.size should equal(2)
@@ -115,8 +115,8 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
 
         val excludePeriods =
             TimePeriodCollection(TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 31, 0, 0)),
-                                    TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 30, 12, 0)),
-                                    TimeRange(new DateTime(2011, 3, 30, 12, 0), new DateTime(2011, 3, 31, 0, 0)))
+                TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 30, 12, 0)),
+                TimeRange(new DateTime(2011, 3, 30, 12, 0), new DateTime(2011, 3, 31, 0, 0)))
 
         val gaps = calculator.getGaps(excludePeriods, limits)
         gaps.size should equal(2)
@@ -129,9 +129,9 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
 
         val excludePeriods =
             TimePeriodCollection(TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 31, 0, 0)),
-                                    TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 30, 6, 30)),
-                                    TimeRange(new DateTime(2011, 3, 30, 8, 30), new DateTime(2011, 3, 30, 12, 0)),
-                                    TimeRange(new DateTime(2011, 3, 30, 22, 30), new DateTime(2011, 3, 31, 0, 0)))
+                TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 30, 6, 30)),
+                TimeRange(new DateTime(2011, 3, 30, 8, 30), new DateTime(2011, 3, 30, 12, 0)),
+                TimeRange(new DateTime(2011, 3, 30, 22, 30), new DateTime(2011, 3, 31, 0, 0)))
 
         val gaps = calculator.getGaps(excludePeriods, limits)
         gaps.size should equal(2)
@@ -144,7 +144,7 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
 
         val excludePeriods =
             TimePeriodCollection(TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 31, 0, 0)),
-                                    TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 31, 0, 0)))
+                TimeRange(new DateTime(2011, 3, 30, 0, 0), new DateTime(2011, 3, 31, 0, 0)))
 
         val gaps = calculator.getGaps(excludePeriods, limits)
         gaps.size should equal(2)
@@ -209,27 +209,27 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
     test("calendar get gap") {
         val calendars = Array(TimeCalendar.getDefault, TimeCalendar.getEmptyOffset)
 
-        calendars.foreach(calendar => {
+        calendars.foreach { calendar =>
 
-            // simulation of same reservations
+        // simulation of same reservations
             val excludePeriods = TimePeriodCollection(DayRangeCollection(2011, 3, 7, 2, calendar),
-                                                         DayRangeCollection(2011, 3, 16, 2, calendar))
+                DayRangeCollection(2011, 3, 16, 2, calendar))
 
             // overall search ranges
             val limits = CalendarTimeRange(asDate(2011, 3, 4), asDate(2011, 3, 21), calendar)
             val days = DayRangeCollection(limits.start, limits.duration.getStandardDays.toInt + 1, calendar)
 
             // limits의 내부이고, 주말인 DayRange를 제외목록에 추가합니다.
-            days.getDays.foreach(day => {
+            days.getDays.foreach { day =>
                 if (limits.hasInside(day) && Times.isWeekend(day.dayOfWeek)) {
                     excludePeriods.add(day)
                 }
-            })
+            }
 
             val calculator = TimeGapCalculator(calendar)
             val gaps = calculator.getGaps(excludePeriods, limits)
 
-            gaps.foreach(gap => log.trace(s"$gap"))
+            // gaps.foreach(gap => log.trace(s"$gap"))
 
             gaps.size should equal(4)
             gaps(0).isSamePeriod(TimeRange(asDate(2011, 3, 4), Durations.days(1))) should equal(true)
@@ -237,6 +237,6 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
             gaps(2).isSamePeriod(TimeRange(asDate(2011, 3, 14), Durations.days(2))) should equal(true)
             gaps(3).isSamePeriod(TimeRange(asDate(2011, 3, 18), Durations.days(1))) should equal(true)
 
-        })
+        }
     }
 }

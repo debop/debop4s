@@ -32,9 +32,7 @@ trait StringDigester {
      * @return 메시지 일치 여부
      */
     def matches(message: String, digest: String): Boolean = {
-        val matches = standardStringDigester.matches(message, digest)
-        log.trace(s"문자열이 암호화된 문자열과 같은지 확인합니다. message=[$message], digest=[$digest], metch=[$matches]")
-        matches
+        standardStringDigester.matches(message, digest)
     }
 }
 
@@ -44,19 +42,25 @@ abstract class AbstractStringDigester(iterations: Option[Int] = None) extends St
     standardStringDigester.setIterations(iterations.getOrElse(5))
 }
 
+/** MD5 String Digester */
 @Component
 class MD5StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
 
-    def this() { this(Some(5)) }
+    def this() {
+        this(Some(5))
+    }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "MD5"
 }
 
+/** SHA1 String Digester */
 @Component
 class SHA1StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
 
-    def this() { this(Some(5)) }
+    def this() {
+        this(Some(5))
+    }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "SHA-1"
@@ -65,7 +69,9 @@ class SHA1StringDigester(iterations: Option[Int] = None) extends AbstractStringD
 @Component
 class SHA256StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
 
-    def this() { this(Some(5)) }
+    def this() {
+        this(Some(5))
+    }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "SHA-256"
@@ -75,7 +81,9 @@ class SHA256StringDigester(iterations: Option[Int] = None) extends AbstractStrin
 @Component
 class SHA384StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
 
-    def this() { this(Some(5)) }
+    def this() {
+        this(Some(5))
+    }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "SHA-384"
@@ -85,7 +93,9 @@ class SHA384StringDigester(iterations: Option[Int] = None) extends AbstractStrin
 @Component
 class SHA512StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
 
-    def this() { this(Some(5)) }
+    def this() {
+        this(Some(5))
+    }
 
     /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
     def algorithm: String = "SHA-512"

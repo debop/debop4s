@@ -16,7 +16,8 @@ class ArraysTest extends FunSuite with Matchers with BeforeAndAfter {
 
     test("iterable to array") {
         val buffer = new ArrayBuffer[Int](100)
-        Range(0, 100).foreach(i => buffer += i)
+        Range(0, 100).foreach { i => buffer += i }
+
         val array = Arrays.asArray[Int](buffer)
 
         assert(array.length == buffer.length)

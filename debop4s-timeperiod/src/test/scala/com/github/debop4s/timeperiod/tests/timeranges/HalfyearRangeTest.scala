@@ -90,25 +90,25 @@ class HalfyearRangeTest extends AbstractTimePeriodTest {
         val h1quarters = h1.getQuarters
 
         var h1index = 0
-        h1quarters.foreach(qr => {
+        h1quarters.foreach { qr =>
             log.trace(s"qr=$qr")
             qr.quarter should equal(if (h1index == 0) Quarter.First else Quarter.Second)
             qr.start should equal(h1.start.plusMonths(h1index * MonthsPerQuarter))
             qr.end should equal(h1.calendar.mapEnd(qr.start.plusMonths(MonthsPerQuarter)))
             h1index += 1
-        })
+        }
 
         val h2 = HalfyearRange(currentYear, Halfyear.Second, calendar)
         val h2quarters = h2.getQuarters
 
         var h2index = 0
-        h2quarters.foreach(qr => {
+        h2quarters.foreach { qr =>
             log.trace(s"qr=$qr")
             qr.quarter should equal(if (h2index == 0) Quarter.Third else Quarter.Fourth)
             qr.start should equal(h2.start.plusMonths(h2index * MonthsPerQuarter))
             qr.end should equal(qr.calendar.mapEnd(qr.start.plusMonths(MonthsPerQuarter)))
             h2index += 1
-        })
+        }
     }
 
     test("halfyear getMonths") {
@@ -118,11 +118,11 @@ class HalfyearRangeTest extends AbstractTimePeriodTest {
         months.size should equal(MonthsPerHalfyear)
 
         var index = 0
-        months.foreach(m => {
+        months.foreach { m =>
             m.start should equal(h1.start.plusMonths(index))
             m.end should equal(calendar.mapEnd(m.start.plusMonths(1)))
             index += 1
-        })
+        }
     }
 
     test("add halfyears") {

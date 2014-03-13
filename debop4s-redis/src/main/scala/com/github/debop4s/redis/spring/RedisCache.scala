@@ -139,7 +139,9 @@ class RedisCache(val name: String,
     }
 
 
-    def computeKey(key: Any): String = { prefix + key.toString }
+    def computeKey(key: Any): String = {
+        prefix + key.toString
+    }
 
     private def wairForLock(redis: RedisClient): Boolean = {
         var retry = false

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scala.jdbc.core.JdbcTemplate
 import org.springframework.test.context.support.AnnotationConfigContextLoader
 import org.springframework.test.context.{TestContextManager, ContextConfiguration}
+import org.springframework.transaction.annotation.{Propagation, Transactional}
 
 /**
  * com.github.debop4s.data.tests.mapping.MappingTest
@@ -15,7 +16,8 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
  * @since  2014. 1. 11. 오후 10:54
  */
 @ContextConfiguration(classes = Array(classOf[JpaMySqlConfiguration]),
-                         loader = classOf[AnnotationConfigContextLoader])
+    loader = classOf[AnnotationConfigContextLoader])
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 class MappingTest extends AbstractDataTest {
 
     @PersistenceContext val em: EntityManager = null

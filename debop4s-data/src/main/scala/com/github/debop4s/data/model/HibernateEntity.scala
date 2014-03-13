@@ -1,7 +1,8 @@
 package com.github.debop4s.data.model
 
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
-import javax.persistence.{MappedSuperclass, PostLoad, PostPersist}
+import javax.persistence._
+import org.hibernate.annotations.{DynamicUpdate, DynamicInsert}
 
 /**
  * Hibernate, JPA 의 모든 엔티티의 기본 클래스입니다.
@@ -12,6 +13,9 @@ import javax.persistence.{MappedSuperclass, PostLoad, PostPersist}
 // HINT: @MappedSuperclass 는 @PostPersist, @PostLoad 등이 제대로 동작하도록 하기 위함입니다.
 // HINT: HibernateEntity가 class로 컴파일되어야 제대로 동작하게 되므로, 만약 동작하지 안는다면 abstract class를 추가로 구현해야 합니다.
 @MappedSuperclass
+@Access(AccessType.FIELD)
+@DynamicInsert
+@DynamicUpdate
 trait HibernateEntity[TId] extends PersistentObject {
 
     def getId: TId
@@ -37,14 +41,16 @@ trait HibernateEntity[TId] extends PersistentObject {
         false
     }
 
+    @inline
     override def hashCode(): Int =
         if (getId == null) System.identityHashCode(this) else Hashs.compute(getId)
 
-
+    @inline
     override protected def buildStringHelper: ToStringHelper =
         super.buildStringHelper
         .add("id", getId)
 
+    @inline
     private def hasSameNonDefaultIds(entity: HibernateEntity[TId]): Boolean = {
         if (entity == null)
             false
@@ -54,13 +60,15 @@ trait HibernateEntity[TId] extends PersistentObject {
         (id != null) && (entityId != null) && id.equals(entityId)
     }
 
+    @inline
     private def hasSameBusinessSignature(entity: HibernateEntity[TId]): Boolean = {
         val notNull = entity != null
         val hash = if (getId != null) Hashs.compute(getId) else hashCode()
         if (notNull) {
             val entityHash = if (entity.getId != null) Hashs.compute(entity.getId) else entity.hashCode()
-            hash == entityHash
+            return hash == entityHash
         }
+
         false
     }
 }

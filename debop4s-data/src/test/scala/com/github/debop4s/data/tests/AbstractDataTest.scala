@@ -1,8 +1,7 @@
 package com.github.debop4s.data.tests
 
-import org.scalatest.Matchers
-import org.scalatest.junit.JUnitSuite
 import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitSuite
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 /**

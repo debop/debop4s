@@ -1,12 +1,12 @@
 package com.github.debop4s.core.parallels
 
-import java.util.concurrent.Callable
+import com.github.debop4s.core._
+import java.util.concurrent.{TimeUnit, Callable}
 import org.slf4j.LoggerFactory
-import scala.collection.JavaConversions._
-import scala.concurrent
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.duration.{FiniteDuration, Duration}
+
+//import scala.concurrent.duration._
 
 /**
  * Scala 에서 비동기 작업을 수행합니다.
@@ -17,114 +17,72 @@ object Asyncs {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    lazy val EMPTY_RUNNABLE = new Runnable {def run() { /* nothing to do. */ }}
-
-    def newTask[T](callable: Callable[T]): Future[T] = future {callable.call()}
-
-    def newTask[T](function: => T): Future[T] = future {
-        function
+    lazy val EMPTY_RUNNABLE = new Runnable {
+        def run() {
+            /* nothing to do. */
+        }
     }
 
-    def newTask[T](runnable: Runnable, result: T): Future[T] = future {
-        runnable.run()
-        result
-    }
+    lazy val defaultDuration: Duration = new FiniteDuration(15, TimeUnit.MINUTES)
 
-    def newTask(runnable: Runnable) = future {runnable.run()}
-
-    def newTaskBlock[T](result: T)(block: => Unit): Future[T] = future {
-        block
-        result
-    }
-
-    def newTaskBlock(block: => Unit): Future[Unit] = future {
-        block
-    }
-
-    def startNew[V](callable: Callable[V]): concurrent.Future[V] = future {
+    def run[V](callable: Callable[V]): concurrent.Future[V] = future {
         callable.call()
     }
 
-    def startNew[V](block: => V): concurrent.Future[V] = future {
+    def run[V](block: => V): concurrent.Future[V] = future {
         block
-    }
-
-    def startNew[V](runnable: Runnable, result: V): Future[V] = future {
-        runnable.run()
-        result
-    }
-
-    def startNewBlock[V](result: V)(block: => Unit): Future[V] = future {
-        block
-        result
-    }
-
-    def startNewBlock(block: => Unit): Future[Void] = startNewBlock[Void](null)(block)
-
-
-    def continueTask[T, V](prevTask: Future[T], result: V)(block: T => Unit): Future[V] = future {
-        block(Await.result(prevTask, 60 seconds))
-        result
     }
 
     def continueTask[T, V](prevTask: Future[T])(block: T => V): Future[V] = future {
-        block(Await.result(prevTask, 60 seconds))
+        block(Await.result(prevTask, defaultDuration))
     }
 
-    def getTaskHasResult[T](result: T): Future[T] = newTask(EMPTY_RUNNABLE, result)
-
-    def runAsync[T, R](elements: Iterable[T],
-                       function: T => R): List[Future[R]] = {
+    def runAll[T, R](elements: Iterable[T],
+                     function: T => R): List[Future[R]] = {
         assert(function != null)
 
-        elements.map(x => future {
-            function(x)
-        }).toList
+        elements.map(x =>
+            future {
+                function(x)
+            }).toList
     }
 
-    def invokeAll[T](tasks: Seq[_ <: Callable[T]]) = {
-        resultAll(tasks.map(x => future {x.call()}))
+    def invokeAll[T](tasks: Iterable[_ <: Callable[T]]): Iterable[T] = {
+        resultAll(tasks.map(x =>
+            future {
+                x.call()
+            }))
     }
 
-    def invokeAll[T](tasks: Seq[_ <: Callable[T]], timeout: Long, unit: TimeUnit) {
-        resultAll(tasks.map(x => future {x.call()}), timeout, unit)
+    def invokeAll[T](tasks: Iterable[_ <: Callable[T]], timeout: Long, unit: TimeUnit) = {
+        resultAll(tasks.map(x =>
+            future {
+                x.call()
+            }), timeout, unit)
     }
 
-    def runAll[T](tasks: java.lang.Iterable[_ <: Future[T]]) {
-        resultAll(tasks)
+    def ready[T](awaitable: Awaitable[T]): Awaitable[T] = {
+        Await.ready(awaitable, defaultDuration)
+    }
+
+    def result[T](awaitable: Awaitable[T]): T = {
+        Await.result(awaitable, defaultDuration)
     }
 
     def resultAll[T](tasks: Iterable[_ <: Future[T]]): Iterable[T] = {
-        tasks.map(task => Await.result(task, 60 seconds))
+        tasks.map(task => Await.result(task, defaultDuration))
     }
 
     def resultAll[T](tasks: Iterable[_ <: Future[T]], timeout: Long, unit: TimeUnit): Iterable[T] = {
         tasks.map(task => Await.result(task, Duration(timeout, unit)))
     }
 
-    def waitAll[T](futures: Iterable[_ <: Future[T]]) {
+    def readyAll[T](futures: Iterable[_ <: Future[T]]) {
         while (!futures.forall(task => {
-            Await.ready(task, 15 seconds)
+            Await.ready(task, defaultDuration)
             task.isCompleted
         })) {
             Thread.sleep(1)
         }
     }
-
-    def waitAllTasks[T](futures: Iterable[_ <: Future[T]]) {
-        while (!futures.forall(task => {
-            Await.ready(task, 15 seconds)
-            task.isCompleted
-        })) {
-            Thread.sleep(1)
-        }
-    }
-
-    def ready[T](awaitable: Awaitable[T]) = {
-        Await.ready(awaitable, 60 seconds)
-    }
-
-    def result[T](awaitable: Awaitable[T]): T =
-        Await.result(awaitable, 60 seconds)
-
 }

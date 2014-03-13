@@ -30,10 +30,10 @@ class StringDigesterTest extends AbstractCoreTest {
     test("string digest") {
         val digesters = ctx.getBeansOfType(classOf[StringDigester]).values()
 
-        digesters.foreach(digester => {
+        digesters.foreach { digester =>
             log.debug(s"Digest message by $digester")
             val digestedText = digester.digest(PLAIN_TEXT)
             digester.matches(PLAIN_TEXT, digestedText) should equal(true)
-        })
+        }
     }
 }

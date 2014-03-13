@@ -15,13 +15,13 @@ class ParallelsTest extends AbstractCoreTest {
     private val UpperBound = 1000
 
     val runnable: Unit = {
-        (LowerBound until UpperBound).foreach(x => Hero.findRoot(x))
-        log.trace(s"FindRoot($UpperBound) = ${Hero.findRoot(UpperBound)}")
+        (LowerBound until UpperBound).foreach { x => Hero.findRoot(x) }
+        log.trace(s"FindRoot($UpperBound) = ${Hero.findRoot(UpperBound) }")
     }
 
     val runnable1 = (x: Int) => {
-        (LowerBound until UpperBound).foreach(i => Hero.findRoot(i))
-        log.trace(s"FindRoot($UpperBound) = ${Hero.findRoot(UpperBound)}")
+        (LowerBound until UpperBound).foreach { x => Hero.findRoot(x) }
+        log.trace(s"FindRoot($UpperBound) = ${Hero.findRoot(UpperBound) }")
     }
 
     test("parallel runAction") {
@@ -29,7 +29,9 @@ class ParallelsTest extends AbstractCoreTest {
     }
 
     test("parallel runAction1") {
-        Parallels.runAction1(100)(x => {runnable1(x)})
+        Parallels.runAction1(100)(x => {
+            runnable1(x)
+        })
     }
 
     test("parallel runnable") {
@@ -46,6 +48,7 @@ object Hero {
 
     private val Tolerance = 1.0e-1
 
+    @inline
     def findRoot(number: Double): Double = {
         var guess = 1.0
         var error = 1.0

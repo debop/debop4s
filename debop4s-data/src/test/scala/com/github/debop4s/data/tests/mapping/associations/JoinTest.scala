@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.JpaRepository
  * @author sunghyouk.bae@gmail.com
  * @since 2014. 2. 28.
  */
+@org.springframework.transaction.annotation.Transactional
 class JoinTest extends AbstractJpaTest {
 
     @PersistenceContext val em: EntityManager = null
@@ -35,6 +36,7 @@ class JoinTest extends AbstractJpaTest {
 }
 
 @Embeddable
+@Access(AccessType.FIELD)
 class JoinAddress extends ValueObject {
 
     var street: String = _
@@ -45,6 +47,7 @@ class JoinAddress extends ValueObject {
 }
 
 @Entity
+@Access(AccessType.FIELD)
 class JoinAddressEntity extends HibernateEntity[Long] {
 
     @Id
@@ -61,6 +64,7 @@ class JoinAddressEntity extends HibernateEntity[Long] {
 }
 
 @Entity
+@Access(AccessType.FIELD)
 @Table(name = "JoinCustomer")
 @SecondaryTable(name = "JoinCustomerAddress", pkJoinColumns = Array(new PrimaryKeyJoinColumn(name = "customerId")))
 class JoinCustomer extends HibernateEntity[java.lang.Long] {
@@ -76,9 +80,9 @@ class JoinCustomer extends HibernateEntity[java.lang.Long] {
 
     @Embedded
     @AttributeOverrides(Array(new AttributeOverride(name = "street", column = new Column(name = "street", table = "JoinCustomerAddress")),
-                                 new AttributeOverride(name = "city", column = new Column(name = "city", table = "JoinCustomerAddress")),
-                                 new AttributeOverride(name = "zipcode", column = new Column(name = "zipcode", table = "JoinCustomerAddress"))
-                             ))
+        new AttributeOverride(name = "city", column = new Column(name = "city", table = "JoinCustomerAddress")),
+        new AttributeOverride(name = "zipcode", column = new Column(name = "zipcode", table = "JoinCustomerAddress"))
+    ))
     val joinAddress: JoinAddress = new JoinAddress()
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -96,6 +100,7 @@ class JoinCustomer extends HibernateEntity[java.lang.Long] {
 
 
 @Entity
+@Access(AccessType.FIELD)
 class JoinUser extends HibernateEntity[java.lang.Long] {
 
     @Id

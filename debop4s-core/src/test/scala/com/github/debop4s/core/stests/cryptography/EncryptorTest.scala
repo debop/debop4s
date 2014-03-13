@@ -31,7 +31,7 @@ class EncryptorTest extends AbstractCoreTest {
     test("byte encryptor") {
         val byteEncryptors = ctx.getBeansOfType(classOf[SymmetricEncryptor]).values()
 
-        byteEncryptors.par.foreach(encryptor => {
+        byteEncryptors.par.foreach { encryptor =>
             log.debug(s"encryptor=$encryptor")
 
             encryptor.setPassword("debop")
@@ -41,7 +41,7 @@ class EncryptorTest extends AbstractCoreTest {
 
             decryptedBytes should not equal null
             Strings.getUtf8String(decryptedBytes) should equal(PLAIN_TEXT)
-        })
+        }
     }
 
 }

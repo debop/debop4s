@@ -57,8 +57,8 @@ object MinuteRangeCollection {
               minuteCount: Int,
               calendar: ITimeCalendar): MinuteRangeCollection = {
         new MinuteRangeCollection(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour),
-                                     minuteCount,
-                                     calendar)
+            minuteCount,
+            calendar)
     }
 
 

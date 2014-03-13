@@ -131,36 +131,37 @@ class TimesTest extends AbstractTimePeriodTest {
     }
 
     test("prev month") {
-        (1 until MonthsPerYear).par.foreach(m => {
+        (1 until MonthsPerYear).par.foreach { m =>
             val expected = if (m <= 1) MonthsPerYear + m - 1 else m - 1
             prevMonth(2000, m).monthOfYear should equal(expected)
-        })
+        }
     }
 
     test("add months") {
-        (1 to MonthsPerYear).par.foreach(m =>
-            addMonth(2000, m, 1).monthOfYear should equal(m % MonthsPerYear + 1))
+        (1 to MonthsPerYear).par.foreach { m =>
+            addMonth(2000, m, 1).monthOfYear should equal(m % MonthsPerYear + 1)
+        }
 
-        (1 to MonthsPerYear).par.foreach(m => {
+        (1 to MonthsPerYear).par.foreach { m =>
             val expected = if (m <= 1) MonthsPerYear + m - 1 else m - 1
             addMonth(2000, m, -1).monthOfYear should equal(expected)
-        })
+        }
 
-        (1 to 3 * MonthsPerYear).par.foreach(m => {
+        (1 to 3 * MonthsPerYear).par.foreach { m =>
             val ym = addMonth(2013, 1, m)
             ym.year should equal(2013 + m / MonthsPerYear)
             ym.monthOfYear should equal(m % MonthsPerYear + 1)
-        })
+        }
     }
 
     test("week of year") {
         val period = TimeRange(asDate(2008, 12, 31), asDate(2014, 12, 31))
-        foreachDays(period).par.foreach(p => {
+        foreachDays(period).par.foreach { p =>
             val moment = p.start
             val expected = YearWeek(moment.getWeekyear, moment.getWeekOfWeekyear)
             val actual = getWeekOfYear(moment)
             actual should equal(expected)
-        })
+        }
     }
 
     test("dayStart") {
@@ -322,10 +323,10 @@ class TimesTest extends AbstractTimePeriodTest {
 
     test("foreach years") {
         var count = 0
-        Times.foreachYears(period).foreach(p => {
-            log.trace(s"year($count)= ${p.start.getYear}")
+        Times.foreachYears(period).foreach { p =>
+            log.trace(s"year($count)= ${p.start.getYear }")
             count += 1
-        })
+        }
         count should equal(period.end.getYear - period.start.getYear + 1)
     }
 
@@ -337,10 +338,10 @@ class TimesTest extends AbstractTimePeriodTest {
 
     test("foreach months") {
         var count = 0
-        Times.foreachMonths(period).foreach(p => {
-            log.trace(s"month($count)=${p.start.getMonthOfYear}")
+        Times.foreachMonths(period).foreach { p =>
+            log.trace(s"month($count)=${p.start.getMonthOfYear }")
             count += 1
-        })
+        }
         val months = period.duration.getMillis / (MillisPerDay * MaxDaysPerMonth) + 2
         count should equal(months)
     }
@@ -348,10 +349,10 @@ class TimesTest extends AbstractTimePeriodTest {
     test("foreach weeks") {
         var count = 0
         val weeks = Times.foreachWeeks(period)
-        weeks.foreach(p => {
-            log.trace(s"week($count) = [${p.start}] ~ [${p.end}], year week = ${Times.getWeekOfYear(p.start)}")
+        weeks.foreach { p =>
+            log.trace(s"week($count) = [${p.start }] ~ [${p.end }], year week = ${Times.getWeekOfYear(p.start) }")
             count += 1
-        })
+        }
 
         weeks(0).start should equal(period.start)
         weeks.last.end should equal(period.end)
@@ -364,8 +365,8 @@ class TimesTest extends AbstractTimePeriodTest {
         days(0).start should equal(period.start)
         days.last.end should equal(period.end)
 
-        log.trace(s"last-1 = ${days(days.size - 2)}")
-        log.trace(s"last = ${days.last}")
+        log.trace(s"last-1 = ${days(days.size - 2) }")
+        log.trace(s"last = ${days.last }")
     }
 
     test("foreach hours") {
@@ -387,16 +388,16 @@ class TimesTest extends AbstractTimePeriodTest {
     test("foreach periods") {
         val notTesting = Array(PeriodUnit.All, PeriodUnit.Second, PeriodUnit.Millisecond)
 
-        PeriodUnit.values.foreach(unit => {
+        PeriodUnit.values.foreach { unit =>
             if (!notTesting.contains(unit)) {
                 Times.foreachPeriods(period, unit).par.size should be > 0
             }
-        })
+        }
     }
     test("foreach periods as parallels") {
         val notTesting = Array(PeriodUnit.All, PeriodUnit.Second, PeriodUnit.Millisecond)
 
-        PeriodUnit.values.foreach(unit => {
+        PeriodUnit.values.foreach { unit =>
             if (!notTesting.contains(unit)) {
                 val count = new AtomicInteger(0)
                 val periods = Times.foreachPeriods(period, unit)
@@ -404,7 +405,7 @@ class TimesTest extends AbstractTimePeriodTest {
 
                 periods.size should equal(count.get())
             }
-        })
+        }
     }
 
 
@@ -546,33 +547,33 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getPeriodOf") {
         PeriodUnit.values.par
         .filter(unit => unit != PeriodUnit.All && unit != PeriodUnit.Millisecond)
-        .foreach(unit => {
+        .foreach { unit =>
             val moment = startTime
             val period = Times.getPeriodOf(moment, unit)
             period.hasInside(moment) should equal(true)
             period.hasInside(endTime) should equal(false)
 
-            log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment)}")
-        })
+            log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment) }")
+        }
     }
 
     test("periodOf with calendar") {
         PeriodUnit.values.par
         .filter(unit => unit != PeriodUnit.All && unit != PeriodUnit.Millisecond)
-        .foreach(unit => {
+        .foreach { unit =>
             val moment = startTime
             val period = Times.getPeriodOf(moment, unit, EmptyOffsetTimeCalendar)
             period.hasInside(moment) should equal(true)
             period.hasInside(endTime) should equal(false)
 
-            log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment)}")
-        })
+            log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment) }")
+        }
     }
 
     test("getPeriodsOf") {
         PeriodUnit.values.par
         .filter(unit => unit != PeriodUnit.All && unit != PeriodUnit.Millisecond)
-        .foreach(unit => {
+        .foreach { unit =>
 
             for (count <- 1 to 5) {
                 val moment = startTime
@@ -581,9 +582,9 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
                 period.hasInside(moment) should equal(true)
                 period.hasInside(endTime) should equal(false)
 
-                log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment)}")
+                log.trace(s"unit=$unit : period=$period hasInside=${period.hasInside(moment) }")
             }
-        })
+        }
     }
 
     test("getYearRange") {
@@ -597,7 +598,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getYearRanges") {
-        (1 until PeriodCount).par.foreach(i => {
+        (1 until PeriodCount).par.foreach { i =>
             val yrs = getYearRanges(startTime, i, EmptyOffsetTimeCalendar)
             val start = startTimeOfYear(startTime)
 
@@ -605,7 +606,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
             yrs.startYear should equal(start.getYear)
             yrs.end should equal(start + i.year)
             yrs.endYear should equal(start.getYear + i)
-        })
+        }
     }
 
     test("getHalfyearRange") {
@@ -617,14 +618,14 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getHalfyearRanges") {
-        (1 until PeriodCount).par.foreach(i => {
+        (1 until PeriodCount).par.foreach { i =>
             val hys = getHalfyearRanges(startTime, i, EmptyOffsetTimeCalendar)
             val start = startTimeOfHalfyear(startTime)
 
             hys.start should equal(start)
             hys.end should equal(start + (i * MonthsPerHalfyear).month)
             hys.halfyearCount should equal(i)
-        })
+        }
     }
 
     test("getQuarterRange") {
@@ -636,14 +637,14 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getQuarterRanges") {
-        (1 until PeriodCount).par.foreach(q => {
+        (1 until PeriodCount).par.foreach { q =>
             val qrs = getQuarterRanges(startTime, q, EmptyOffsetTimeCalendar)
             val start = startTimeOfQuarter(startTime)
 
             qrs.start should equal(start)
             qrs.end should equal(start + (q * MonthsPerQuarter).month)
             qrs.quarterCount should equal(q)
-        })
+        }
     }
 
     test("getMonthRange") {
@@ -655,14 +656,14 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getMonthRanges") {
-        (1 until PeriodCount).par.foreach(m => {
+        (1 until PeriodCount).par.foreach { m =>
             val qrs = Times.getMonthRanges(startTime, m, EmptyOffsetTimeCalendar)
             val start = Times.startTimeOfMonth(startTime)
 
             qrs.start should equal(start)
             qrs.end should equal(start + m.month)
             qrs.monthCount should equal(m)
-        })
+        }
     }
 
     test("getWeekRange") {
@@ -674,14 +675,14 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getWeekRanges") {
-        (1 until PeriodCount).par.foreach(w => {
+        (1 until PeriodCount).par.foreach { w =>
             val qrs = Times.getWeekRanges(startTime, w, EmptyOffsetTimeCalendar)
             val start = Times.startTimeOfWeek(startTime)
 
             qrs.start should equal(start)
             qrs.end should equal(start + w.week)
             qrs.weekCount should equal(w)
-        })
+        }
     }
 
     test("getDayRange") {
@@ -693,14 +694,14 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getDayRanges") {
-        (1 until PeriodCount).par.foreach(d => {
+        (1 until PeriodCount).par.foreach { d =>
             val qrs = Times.getDayRanges(startTime, d, EmptyOffsetTimeCalendar)
             val start = Times.startTimeOfDay(startTime)
 
             qrs.start should equal(start)
             qrs.end should equal(start + d.day)
             qrs.dayCount should equal(d)
-        })
+        }
     }
 
     test("getHourRange") {
@@ -712,14 +713,14 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getHourRanges") {
-        (1 until PeriodCount).par.foreach(h => {
+        (1 until PeriodCount).par.foreach { h =>
             val qrs = Times.getHourRanges(startTime, h, EmptyOffsetTimeCalendar)
             val start = Times.startTimeOfHour(startTime)
 
             qrs.start should equal(start)
             qrs.end should equal(start + h.hour)
             qrs.hourCount should equal(h)
-        })
+        }
     }
 
     test("getMinuteRange") {
@@ -731,14 +732,14 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getMinuteRanges") {
-        (1 until PeriodCount).par.foreach(m => {
+        (1 until PeriodCount).par.foreach { m =>
             val qrs = Times.getMinuteRanges(startTime, m, EmptyOffsetTimeCalendar)
             val start = Times.startTimeOfMinute(startTime)
 
             qrs.start should equal(start)
             qrs.end should equal(start + m.minute)
             qrs.minuteCount should equal(m)
-        })
+        }
     }
 
 
@@ -769,9 +770,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
 
     test("with TimeZone") {
         val localTime = Times.now
-
         val utcTime = Times.asUtc(localTime)
-
         log.trace(s"local=$localTime, utc=$utcTime")
     }
 
@@ -789,13 +788,13 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("available date time zone") {
         val utcNow = Times.nowUtc()
 
-        DateTimeZone.getAvailableIDs.par.foreach(id => {
+        DateTimeZone.getAvailableIDs.par.foreach { id =>
             val tz = DateTimeZone.forID(id)
             val tzNow = utcNow.toDateTime(tz)
 
             val offset = tz.getOffset(tzNow)
             log.trace(s"ID=$id, TimeZone=$tz, local=$tzNow, utc=$utcNow, offset=$offset")
-        })
+        }
 
         val seoul = utcNow.withZone(DateTimeZone.forID("Asia/Seoul"))
         log.trace(s"utcNow=$utcNow, Seoul=$seoul")
@@ -811,7 +810,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
         val utcNow = Times.nowUtc()
         val localNow = utcNow.toLocalDateTime
 
-        DateTimeZone.getAvailableIDs.par.foreach(id => {
+        DateTimeZone.getAvailableIDs.par.foreach { id =>
             val tz = DateTimeZone.forID(id)
             val tzTime = utcNow.toDateTime(tz)
 
@@ -822,12 +821,12 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
             val localZone = DateTimeZone.forOffsetMillis(offset)
             val localTimeZoneTime = utcNow.toDateTime(localZone)
             localTimeZoneTime.getMillis should equal(tzTime.getMillis)
-        })
+        }
     }
 
     test("Times get timezone offset") {
         val utcNow = Times.nowUtc
-        DateTimeZone.getAvailableIDs.par.foreach(id => {
+        DateTimeZone.getAvailableIDs.par.foreach { id =>
             val tz = DateTimeZone.forID(id)
             val localNow = utcNow.toDateTime(tz)
 
@@ -838,19 +837,19 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
             val localZone = Times.timeZoneForOffsetMillis(offset)
 
             // id=[ROK], offset=[32400000], localZone=[+09:00]
-            log.trace(s"id=[$id], offset=[$offset], localZone=[${localZone.getID}}]")
+            log.trace(s"id=[$id], offset=[$offset], localZone=[${localZone.getID }}]")
             val localTimeZoneTime = utcNow.toDateTime(localZone)
 
             localTimeZoneTime.getMillis should equal(localNow.getMillis)
-        })
+        }
     }
 
     test("trim to month") {
         Times.trimToMonth(testDate) should equal(asDate(testDate.getYear, 1, 1))
 
-        (0 until MonthsPerYear).par.foreach(m => {
+        (0 until MonthsPerYear).par.foreach { m =>
             Times.trimToMonth(testDate, m + 1) should equal(asDate(testDate.getYear, m + 1, 1))
-        })
+        }
     }
 
     test("trim to day") {
@@ -858,44 +857,44 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
 
         val days = Times.getDaysInMonth(testDate.getYear, testDate.getMonthOfYear)
 
-        (0 until days).par.foreach(day => {
+        (0 until days).par.foreach { day =>
             Times.trimToDay(testDate, day + 1) should equal(asDate(testDate.getYear, testDate.getMonthOfYear, day + 1))
-        })
+        }
     }
 
     test("trim to hour") {
         Times.trimToHour(testDate) should equal(asDate(testDate))
 
-        (0 until HoursPerDay).par.foreach(h => {
+        (0 until HoursPerDay).par.foreach { h =>
             Times.trimToHour(testDate, h) should equal(asDate(testDate) + h.hour)
-        })
+        }
     }
 
     test("trim to minutes") {
         Times.trimToMinute(testDate) should equal(asDate(testDate).plusHours(testDate.getHourOfDay))
 
-        (0 until MinutesPerHour).par.foreach(m => {
+        (0 until MinutesPerHour).par.foreach { m =>
             Times.trimToMinute(testDate, m) should equal(asDate(testDate).plusHours(testDate.getHourOfDay) + m.minute)
-        })
+        }
     }
 
     test("trim to seconds") {
         Times.trimToSecond(testDate) should
         equal(asDate(testDate).plusHours(testDate.getHourOfDay).plusMinutes(testDate.getMinuteOfHour))
 
-        (0 until SecondsPerMinute).par.foreach(s => {
+        (0 until SecondsPerMinute).par.foreach { s =>
             Times.trimToSecond(testDate, s) should
             equal(asDate(testDate).plusHours(testDate.getHourOfDay).plusMinutes(testDate.getMinuteOfHour) + s.second)
-        })
+        }
     }
 
     test("trim to millis") {
         Times.trimToMillis(testDate) should
         equal(testDate.withTime(testDate.getHourOfDay, testDate.getMinuteOfHour, testDate.getSecondOfMinute, 0))
 
-        (0 until MillisPerSecond).par.foreach(ms => {
+        (0 until MillisPerSecond).par.foreach { ms =>
             Times.trimToMillis(testDate, ms) should
             equal(testDate.withTime(testDate.getHourOfDay, testDate.getMinuteOfHour, testDate.getSecondOfMinute, 0) + ms.millis)
-        })
+        }
     }
 }

@@ -321,7 +321,7 @@ class HibernateDao {
     @varargs
     def deleteAll(entities: AnyRef*) {
         val s = session
-        entities.foreach(entity => s.delete(entity))
+        entities.foreach(x => s.delete(x))
     }
 
     def deleteAll(clazz: Class[_]) {
@@ -338,7 +338,7 @@ class HibernateDao {
     }
 
     def deleteAllWithCascade(clazz: Class[_]) {
-        session.createQuery(s"delete from ${clazz.getName}").executeUpdate()
+        session.createQuery(s"delete from ${clazz.getName }").executeUpdate()
     }
 
     @varargs

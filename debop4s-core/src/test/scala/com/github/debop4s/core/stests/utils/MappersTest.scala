@@ -1,11 +1,10 @@
 package com.github.debop4s.core.stests.utils
 
+import com.github.debop4s.core.stests.AbstractCoreTest
 import com.github.debop4s.core.utils.Mappers
-import org.scalatest.BeforeAndAfter
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
-import com.github.debop4s.core.stests.AbstractCoreTest
 
 /**
  * com.github.debop4s.core.tests.tools.MappersTest
@@ -46,11 +45,15 @@ class MappersTest extends AbstractCoreTest {
 
 
 class A(var x: Int) {
-    def this() { this(0) }
+    def this() {
+        this(0)
+    }
 
     var y: String = _
 }
 
 class B(var x: Int) {
-    def this() { this(0) }
+    def this() {
+        this(0)
+    }
 }

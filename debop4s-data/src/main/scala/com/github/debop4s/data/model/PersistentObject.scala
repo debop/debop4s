@@ -30,6 +30,7 @@ trait PersistentObject extends ValueObject {
         persisted = true
     }
 
+    @inline
     override protected def buildStringHelper: ToStringHelper =
         super.buildStringHelper
         .add("persisted", persisted)

@@ -2,8 +2,9 @@ package com.github.debop4s.data.tests.mapping
 
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
 import com.github.debop4s.data.model.{UpdatedTimestampEntity, HibernateEntity}
+import java.lang.{Long => jLong}
 import javax.persistence._
-import org.hibernate.annotations.{Type, DynamicUpdate, DynamicInsert}
+import org.hibernate.annotations.{CacheConcurrencyStrategy, Type, DynamicUpdate, DynamicInsert}
 import org.joda.time.DateTime
 
 /**
@@ -13,20 +14,20 @@ import org.joda.time.DateTime
  * @since 2014. 2. 26.
  */
 @Entity
-// @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @SequenceGenerator(name = "employee_seq", sequenceName = "employee_seq")
 @Access(AccessType.FIELD)
 @SerialVersionUID(6936596398947403315L)
-class Employee extends HibernateEntity[Long] with UpdatedTimestampEntity {
+class Employee extends HibernateEntity[jLong] with UpdatedTimestampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "employee_seq")
     @Column(name = "employeeId")
-    protected var id: Long = _
+    protected var id: jLong = _
 
-    def getId = id
+    def getId: jLong = id
 
     @Column(name = "empNo", nullable = false, length = 32)
     var empNo: String = _
@@ -41,7 +42,7 @@ class Employee extends HibernateEntity[Long] with UpdatedTimestampEntity {
     var birthDay: DateTime = _
 
     @Embedded
-    var address: Address = Address(null, null, null, null, null)
+    var address: Address = Address()
 
     override def hashCode(): Int = Hashs.compute(empNo, name)
 

@@ -18,7 +18,9 @@ class DayRangeCollection(private[this] val _moment: DateTime,
     def getDays: Seq[DayRange] = {
         val days = ArrayBuffer[DayRange]()
         val startDay = Times.asDate(start)
-        (0 until dayCount).foreach(d => days += new DayRange(startDay.plusDays(d), calendar))
+        (0 until dayCount).foreach { d =>
+            days += new DayRange(startDay.plusDays(d), calendar)
+        }
         days
     }
 }

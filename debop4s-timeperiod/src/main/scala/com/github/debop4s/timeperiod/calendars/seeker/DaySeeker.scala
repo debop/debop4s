@@ -31,9 +31,9 @@ class DaySeeker(private[this] val _filter: CalendarVisitorFilter,
                 private[this] val _seekDir: SeekDirection = SeekDirection.Forward,
                 private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarVisitor[CalendarVisitorFilter, DaySeekerContext](_filter,
-                                                                        TimeRange.Anytime,
-                                                                        _seekDir,
-                                                                        _calendar) {
+        TimeRange.Anytime,
+        _seekDir,
+        _calendar) {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
