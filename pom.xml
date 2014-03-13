@@ -831,6 +831,7 @@
                         <jvmArg>-server</jvmArg>
                         <jvmArg>-Xms128m</jvmArg>
                         <jvmArg>-Xmx8192m</jvmArg>
+                        <jvmArg>-XX:MaxPermSize=512m</jvmArg>
                     </jvmArgs>
                 </configuration>
                 <executions>
@@ -916,6 +917,7 @@
             </plugin>
 
             <!-- scalatest 를 사용하도록 하고, surefire는 사용하지 않도록 합니다. -->
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -923,12 +925,14 @@
                 <configuration>
                     <skipTests>true</skipTests>
                     <argLine>-Xmx8192m</argLine>
-                    <argLine>-XX:+UseCompressedOops</argLine>
-                    <argLine>-XX:+UseParallelOldGC</argLine>
+                    <argLine>-XX:MaxPermSize=1024m</argLine>
+                    <argLine>-XX:+UseParNewGC</argLine>
+                    <argLine>-XX:+CMSClassUnloadingEnabled</argLine>
+                    <argLine>-XX:+CMSPermGenSweepingEnabled</argLine>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
-
+            -->
             <!-- enable scalatest -->
             <plugin>
                 <groupId>org.scalatest</groupId>
