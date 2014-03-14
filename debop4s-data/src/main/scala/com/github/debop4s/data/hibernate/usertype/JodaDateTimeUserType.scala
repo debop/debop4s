@@ -7,21 +7,19 @@ import org.hibernate.`type`.StandardBasicTypes
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
 import org.joda.time.DateTime
-import org.slf4j.LoggerFactory
 
 /**
  * Joda-Time 라이브러리의 [[org.joda.time.DateTime]] 수형을 표현하는 UserType 입니다.
  * 저장 시에는 Timestamp 값이 저장되고, 로드 시에는 [[org.joda.time.DateTime]]으로 변환됩니다.
+ *
+ * NOTE: MySql 의 DateTime은 milliseconds 를 지원하지 않습니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 11. 28. 오후 3:52
  */
 class JodaDateTimeUserType extends UserType {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
-
     private def asDateTime(value: Any): DateTime = {
-        log.trace(s"DB 값을 DateTime으로 변환합니다. value=[$value]")
         value match {
             case x: java.lang.Long => new DateTime(x)
             case x: Long => new DateTime(x)
@@ -45,7 +43,10 @@ class JodaDateTimeUserType extends UserType {
     }
 
     def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
-        val date = if (value == null) null else value.asInstanceOf[DateTime].toDate
+        val date = value match {
+            case x: DateTime => x.toDate
+            case _ => null
+        }
         StandardBasicTypes.TIMESTAMP.nullSafeSet(st, date, index, session)
     }
 

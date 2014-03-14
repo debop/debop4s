@@ -6,7 +6,7 @@ import com.github.debop4s.data.tests.AbstractJpaTest
 import java.lang
 import java.util
 import javax.persistence._
-import org.hibernate.annotations.LazyCollection
+import org.hibernate.annotations.{LazyCollectionOption, LazyCollection, LazyToOneOption, LazyToOne}
 import org.junit.Test
 
 /**
@@ -75,6 +75,7 @@ class Beer extends HibernateEntity[lang.Long] {
     @ManyToOne(fetch = FetchType.LAZY, optional = false,
         cascade = Array(CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH))
     @JoinColumn(nullable = false)
+    @LazyToOne(LazyToOneOption.PROXY)
     var brewery: Brewery = _
 
     override def hashCode(): Int = Hashs.compute(name)
@@ -99,6 +100,7 @@ class Brewery extends HibernateEntity[lang.Long] {
     var name: String = _
 
     @OneToMany(cascade = Array(CascadeType.ALL), fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.EXTRA)
     val beers: util.Set[Beer] = new util.HashSet[Beer]()
 
     override def hashCode(): Int =
@@ -153,6 +155,7 @@ class JugMember(private[this] val _name: String) extends HibernateEntity[lang.Lo
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "memberOf", nullable = false)
+    @LazyToOne(LazyToOneOption.PROXY)
     var memberOf: Jug = _
 
     override def hashCode(): Int =
@@ -176,6 +179,7 @@ class SalesForce extends HibernateEntity[lang.Long] {
     var corporation: String = _
 
     @OneToMany(mappedBy = "salesForce", cascade = Array(CascadeType.ALL))
+    @LazyCollection(LazyCollectionOption.EXTRA)
     val salesGuys: util.Set[SalesGuy] = new util.HashSet[SalesGuy]
 
     override def hashCode(): Int =
@@ -205,6 +209,7 @@ class SalesGuy extends HibernateEntity[lang.Long] {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = Array(CascadeType.ALL))
     @JoinColumn(name = "salesForceId")
+    @LazyToOne(LazyToOneOption.PROXY)
     var salesForce: SalesForce = _
 
 }
