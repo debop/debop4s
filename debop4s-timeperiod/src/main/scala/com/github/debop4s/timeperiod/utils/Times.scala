@@ -9,6 +9,7 @@ import com.github.debop4s.timeperiod.PeriodUnit.PeriodUnit
 import com.github.debop4s.timeperiod.Quarter.Quarter
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.timerange._
+import java.util.Calendar
 import org.joda.time.{Duration, DateTimeZone, DateTime}
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
@@ -206,8 +207,18 @@ object Times {
         day - (dow - 1).day
     }
 
-    def getWeekOfMonth(moment: DateTime): Int =
-        moment.getWeekOfWeekyear - startTimeOfMonth(moment).getWeekOfWeekyear + 1
+    /**
+    * 해당 시각의 월-주차를 계산합니다.
+    */
+    @deprecated("use getMonthAndWeekOfMonth")
+    def getWeekOfMonth(moment: DateTime): Int = {
+        // moment.getWeekOfWeekyear - startTimeOfMonth(moment).getWeekOfWeekyear + 1
+        val calendar = Calendar.getInstance()
+        calendar.setTimeInMillis(moment.getMillis)
+        calendar.setMinimalDaysInFirstWeek(1)
+        calendar.setFirstDayOfWeek(Calendar.MONDAY)
+        calendar.get(Calendar.WEEK_OF_MONTH)
+    }
 
     def getWeekOfYear(moment: DateTime): YearWeek =
         getWeekOfYear(moment, DefaultTimeCalendar)
@@ -547,9 +558,7 @@ object Times {
 
     @inline
     def min(a: DateTime, b: DateTime): DateTime = {
-        if (a != null && b != null) {
-            if (a < b) a else b
-        }
+        if (a != null && b != null) {if (a < b) a else b}
         else if (a == null) b
         else if (b == null) a
         else null
@@ -557,9 +566,7 @@ object Times {
 
     @inline
     def max(a: DateTime, b: DateTime): DateTime = {
-        if (a != null && b != null) {
-            if (a > b) a else b
-        }
+        if (a != null && b != null) {if (a > b) a else b}
         else if (a == null) b
         else if (b == null) a
         else null
@@ -567,9 +574,7 @@ object Times {
 
     @inline
     def min(a: Duration, b: Duration): Duration = {
-        if (a != null && b != null) {
-            if (a < b) a else b
-        }
+        if (a != null && b != null) {if (a < b) a else b}
         else if (a == null) b
         else if (b == null) a
         else null
@@ -577,9 +582,7 @@ object Times {
 
     @inline
     def max(a: Duration, b: Duration): Duration = {
-        if (a != null && b != null) {
-            if (a > b) a else b
-        }
+        if (a != null && b != null) {if (a > b) a else b}
         else if (a == null) b
         else if (b == null) a
         else null
