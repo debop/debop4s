@@ -47,8 +47,6 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
 
     @inline
     def difference(fromTime: DateTime, toTime: DateTime): Duration = {
-        log.trace(s"fromTime=[$fromTime] ~ toTime=[$toTime]의 Working Time을 구합니다.")
-
         if (fromTime.equals(toTime))
             return Duration.ZERO
 

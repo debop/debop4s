@@ -63,7 +63,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     private def collectInternal(scope: CollectKind) {
         val context = new CalendarPeriodCollectorContext(scope)
         // context.scope = scope
-        log.trace(s"collect periods... scope=$scope")
         startPeriodVisit(context)
     }
 
@@ -90,8 +89,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
             return true
         }
 
-        years.getYears
-        .filter(y => isMatchingYear(y, context) && checkLimits(y))
+        years.getYears.filter(y => isMatchingYear(y, context) && checkLimits(y))
         .foreach(y => periods.add(y))
 
         false
@@ -99,8 +97,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
 
     @inline
     override protected def onVisitYear(year: YearRange, context: CalendarPeriodCollectorContext): Boolean = {
-        log.trace(s"visit year... year=[$year], context=$context")
-
         if (context.scope != CollectKind.Month)
             return true
 
@@ -113,12 +109,16 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         } else {
             filter.collectingMonths.foreach { m =>
                 if (m.isSingleMonth) {
-                    val month = new MonthRange(year.year, m.startMonthOfYear, year.calendar)
+                    val month = MonthRange(year.year, m.startMonthOfYear, year.calendar)
                     if (monthFilter(month)) {
                         periods.add(month)
                     }
                 } else {
-                    val months = new MonthRangeCollection(year.year, m.startMonthOfYear, m.endMonthOfYear - m.startMonthOfYear, year.calendar)
+                    val months =
+                        MonthRangeCollection(year.year,
+                            m.startMonthOfYear,
+                            m.endMonthOfYear - m.startMonthOfYear,
+                            year.calendar)
                     val isMatching = months.getMonths.forall(m => isMatchingMonth(m, context))
                     if (isMatching && checkLimits(months)) {
                         periods.addAll(months.getMonths)
@@ -131,8 +131,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
 
     @inline
     override protected def onVisitMonth(month: MonthRange, context: CalendarPeriodCollectorContext): Boolean = {
-        log.trace(s"visit month... month=[$month], context=$context")
-
         if (context.scope != CollectKind.Day)
             return true
 
@@ -143,12 +141,22 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         } else {
             filter.collectingDays.foreach { day =>
                 if (day.isSingleDay) {
-                    val dayRange = DayRange(month.year, month.monthOfYear, day.startDayOfMonth, month.calendar)
+                    val dayRange =
+                        DayRange(month.year,
+                            month.monthOfYear,
+                            day.startDayOfMonth,
+                            month.calendar)
+
                     if (isMatchingDay(dayRange, context) && checkLimits(dayRange)) {
                         periods.add(dayRange)
                     }
                 } else {
-                    val days = DayRangeCollection(month.year, month.monthOfYear, day.startDayOfMonth, day.endDayOfMonth - day.startDayOfMonth, month.calendar)
+                    val days =
+                        DayRangeCollection(month.year,
+                            month.monthOfYear,
+                            day.startDayOfMonth,
+                            day.endDayOfMonth - day.startDayOfMonth,
+                            month.calendar)
                     val isMatching = days.getDays.forall(d => isMatchingDay(d, context))
                     if (isMatching && checkLimits(days)) {
                         periods.addAll(days.getDays)
@@ -161,8 +169,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
 
     @inline
     override protected def onVisitDay(day: DayRange, context: CalendarPeriodCollectorContext): Boolean = {
-        log.trace(s"visit day... day=[$day], context=$context")
-
         if (context.scope != CollectKind.Hour) {
             log.trace(s"Scope=[${context.scope}}]")
             return true
@@ -171,10 +177,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         if (filter.collectingHours.size == 0) {
             day.getHours
             .filter(h => isMatchingHour(h, context) && checkLimits(h))
-            .foreach { h =>
-                log.trace(s"add hour. $h")
-                periods.add(h)
-            }
+            .foreach(h => periods.add(h))
         } else if (isMatchingDay(day, context)) {
             filter.collectingHours.foreach { h =>
                 val start = h.start.getDateTime(day.start)
@@ -182,7 +185,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                 val hours = CalendarTimeRange(start, end, day.calendar)
 
                 if (checkExcludePeriods(hours) && checkLimits(hours)) {
-                    log.trace(s"add hours. $hours")
                     periods.add(hours)
                 }
             }

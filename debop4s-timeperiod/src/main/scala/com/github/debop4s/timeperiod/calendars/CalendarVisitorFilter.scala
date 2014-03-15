@@ -16,13 +16,13 @@ import scala.collection.mutable.ArrayBuffer
 @SerialVersionUID(3032428178497692848L)
 class CalendarVisitorFilter extends ICalendarVisitorFilter {
 
-    val _excludePeriods = TimePeriodCollection()
-    val _years = ArrayBuffer[Int]()
-    val _monthOfYears = ArrayBuffer[Int]()
-    val _dayOfMonths = ArrayBuffer[Int]()
-    val _hourOfDays = ArrayBuffer[Int]()
-    val _minuteOfHours = ArrayBuffer[Int]()
-    val _weekDays = mutable.HashSet[DayOfWeek]()
+    lazy val _excludePeriods = TimePeriodCollection()
+    lazy val _years = ArrayBuffer[Int]()
+    lazy val _monthOfYears = ArrayBuffer[Int]()
+    lazy val _dayOfMonths = ArrayBuffer[Int]()
+    lazy val _hourOfDays = ArrayBuffer[Int]()
+    lazy val _minuteOfHours = ArrayBuffer[Int]()
+    lazy val _weekDays = mutable.HashSet[DayOfWeek]()
 
     def excludePeriods: ITimePeriodCollection = _excludePeriods
 

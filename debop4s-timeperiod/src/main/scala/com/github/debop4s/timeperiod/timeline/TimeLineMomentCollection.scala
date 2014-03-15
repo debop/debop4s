@@ -105,6 +105,7 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
         if (item == null) {
             item = new TimeLineMoment(moment)
             _moments += item
+
             // 정렬을 수행한다!!!
             _moments = _moments.sortBy(_.moment)
 
@@ -121,8 +122,6 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
 
             if (item.periods.size == 0)
                 _moments -= item
-
-            log.trace(s"TimeLineMoment를 제거했습니다. item=[$item]")
         }
     }
 

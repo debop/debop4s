@@ -54,7 +54,7 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
 
     require(_periods != null)
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     private val _limits = if (_aLimits != null) TimeRange(_aLimits) else TimeRange(_periods)
 
@@ -88,14 +88,13 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
 
     @inline
     def calculateGaps: ITimePeriodCollection = {
-        log.trace("calculate gaps...")
-        val gapPeriods = TimePeriodCollection()
+        val tpc = TimePeriodCollection()
 
         _periods
         .filter(x => limits.intersectsWith(x))
-        .foreach { x => gapPeriods.add(TimeRange(x)) }
+        .foreach { x => tpc.add(TimeRange(x))}
 
-        val moments = getTimeLineMoments(gapPeriods)
+        val moments = getTimeLineMoments(tpc)
         if (moments == null || moments.size == 0)
             return TimePeriodCollection(limits)
 
@@ -106,33 +105,27 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
     private def getTimeLineMoments: ITimeLineMomentCollection =
         getTimeLineMoments(_periods)
 
+    @inline
     private def getTimeLineMoments(periods: Iterable[ITimePeriod]): ITimeLineMomentCollection = {
-        log.trace(s"기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드합니다... periods=$periods")
-
         val moments = TimeLineMomentCollection()
         if (periods == null || periods.size == 0)
             return moments
 
         // setup gap set with all start/end points
-        //
         val intersections = new TimePeriodCollection()
 
         periods
         .filter(!_.isMoment)
         .foreach { mp =>
-            log.trace(s"moment period = $mp, type=${mp.getClass }")
-
             val intersection = limits.getIntersection(mp)
             if (intersection != null && !intersection.isMoment) {
                 if (mapper != null) {
                     intersection.setup(mapPeriodStart(intersection.start), mapPeriodEnd(intersection.end))
                 }
-                log.trace(s"add intersection. intersection=[$intersection]")
                 intersections.add(intersection)
             }
         }
         moments.addAll(intersections)
-        log.trace(s"기간 컬렉션으로부터 ITimeLineMoment 컬렉션을 빌드했습니다. moments=[$moments]")
         moments
     }
 
