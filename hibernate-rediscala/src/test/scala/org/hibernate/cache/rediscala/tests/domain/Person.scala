@@ -39,7 +39,7 @@ class Person extends Serializable {
     var tailsmans: util.List[String] = new util.ArrayList[String]()
 
     override def equals(obj: Any): Boolean = {
-        if ((obj != null) && obj.isInstanceOf[PhoneNumber]) hashCode == obj.hashCode
+        if ((obj != null) && obj.isInstanceOf[Person]) hashCode == obj.hashCode
         else false
     }
 

@@ -11,7 +11,7 @@ import scala.annotation.varargs
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 12. 오후 4:57
  */
-object Hashs {
+private[tests] object Hashs {
 
     /** The constant NULL_VALUE. */
     val NULL_VALUE = 0

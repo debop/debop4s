@@ -1,6 +1,6 @@
 package com.github.debop4s.core.stests.compressor
 
-import com.github.debop4s.core.compress.{DeflateCompressor, Compressor, GZipCompressor}
+import com.github.debop4s.core.compress.{SnappyCompressor, DeflateCompressor, Compressor, GZipCompressor}
 import com.github.debop4s.core.utils.Charsets
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
@@ -26,11 +26,16 @@ class CompressorTest extends FunSuite with Matchers with BeforeAndAfter {
         compressorTest(deflater)
     }
 
+    test("snappy test") {
+        val snappy = new SnappyCompressor()
+        compressorTest(snappy)
+    }
+
     private def compressorTest(compressor: Compressor) {
         assert(compressor.compress(null) == Array.emptyByteArray)
         assert(compressor.compress(Array.emptyByteArray) == Array.emptyByteArray)
 
-        val text = "동해물과 백두산이 마르고 닳도록 Hello World!" * 100
+        val text = "동해물과 백두산이 마르고 닳도록 Hello World! " * 100
         val compressedBytes = compressor.compress(text.getBytes(Charsets.UTF_8))
         assert(compressedBytes != null)
         assert(compressedBytes != Array.emptyByteArray)
@@ -41,6 +46,6 @@ class CompressorTest extends FunSuite with Matchers with BeforeAndAfter {
 
         val text2 = new String(textBytes, Charsets.UTF_8)
         assert(text2 != null)
-        assert(text2 === text)
+        assert(text2 == text)
     }
 }

@@ -16,8 +16,10 @@
         <module>debop4s-redis</module>
         <module>debop4s-mongo</module>
         <module>debop4s-data</module>
+        <module>debop4s-autocomplete</module>
 
         <module>debop4s-experiments</module>
+
     </modules>
 
     <properties>
@@ -253,6 +255,13 @@
                 <artifactId>guava-testlib</artifactId>
                 <version>15.0</version>
                 <scope>test</scope>
+            </dependency>
+
+            <!-- Snappy-java -->
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>1.1.0.1</version>
             </dependency>
 
             <!-- Jackson JSON Serializer -->

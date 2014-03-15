@@ -16,4 +16,6 @@ class Item extends Serializable {
     var name: String = _
 
     var description: String = _
+
+
 }

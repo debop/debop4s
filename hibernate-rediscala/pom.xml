@@ -48,6 +48,12 @@
             <artifactId>rediscala_${scala.main.version}</artifactId>
         </dependency>
 
+        <!-- Snappy-java -->
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+        </dependency>
+
         <!-- Bone CP -->
         <dependency>
             <groupId>com.jolbox</groupId>

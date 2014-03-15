@@ -68,6 +68,12 @@
             <artifactId>guava</artifactId>
         </dependency>
 
+        <!-- Snappy-java -->
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+        </dependency>
+
         <!-- 암호화 -->
         <dependency>
             <groupId>org.jasypt</groupId>
