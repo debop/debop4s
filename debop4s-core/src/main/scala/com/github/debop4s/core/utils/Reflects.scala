@@ -12,7 +12,7 @@ import scala.reflect._
  */
 object Reflects {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     /**
      * Java의 Primitive 수형에 대한 Box된 Scala 클래스를 Unbox한 Java Primitive 수형 타입을 구합니다.
@@ -62,7 +62,7 @@ object Reflects {
      * @return 생성된 인스턴스
      */
     def newInstance[T](initArgs: Any*)(implicit tag: ClassTag[T]): T = {
-        log.trace(s"인스턴스를 생성합니다. type=[${tag.runtimeClass.getName }]")
+        log.trace(s"인스턴스를 생성합니다. type=[${tag.runtimeClass.getName}]")
 
         if (initArgs == null || initArgs.length == 0)
             return newInstance[T]
@@ -85,7 +85,7 @@ object Reflects {
         if (initArgs == null || initArgs.length == 0)
             return newInstance[T]
 
-        log.trace(s"인스턴스를 생성합니다. type=[${classTag[T].runtimeClass.getName }]")
+        log.trace(s"인스턴스를 생성합니다. type=[${classTag[T].runtimeClass.getName}]")
 
         val parameterTypes =
             if (initArgsTypes != null) initArgsTypes.toArray

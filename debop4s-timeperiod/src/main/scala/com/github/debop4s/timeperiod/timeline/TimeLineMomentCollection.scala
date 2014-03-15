@@ -8,7 +8,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
-* [[ITimeLineMoment] 의 컬렉션입니다.
+* [[ITimeLineMoment]] 의 컬렉션입니다.
 * @author 배성혁 sunghyouk.bae@gmail.com
 * @since  2013. 12. 31. 오후 8:17
 */
@@ -39,7 +39,7 @@ trait ITimeLineMomentCollection extends mutable.Iterable[ITimeLineMoment] with S
 
 
 /**
- * com.github.debop4s.timeperiod.timeline.TimeLineMomentCollection
+ * TimeLineMomentCollection
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 31. 오후 8:39
  */

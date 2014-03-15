@@ -19,29 +19,29 @@ object Mappers {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    val mapper = new ModelMapper()
+    lazy val mapper = new ModelMapper()
 
     mapper.getConfiguration
     .setFieldMatchingEnabled(true)
     .setMatchingStrategy(MatchingStrategies.STANDARD)
     .setFieldAccessLevel(AccessLevel.PRIVATE)
 
-    def map[T <: AnyRef](src: AnyRef, dest: T) {
+    def map[T <: AnyRef](src: Any, dest: T) {
         mapper.map(src, dest)
     }
 
-    def map[T: ClassTag](src: AnyRef) = mapper.map[T](src, classTag[T].runtimeClass)
+    def map[T: ClassTag](src: Any) = mapper.map[T](src, classTag[T].runtimeClass)
 
     def mapAll[T: ClassTag](srcs: Iterable[_]): Seq[T] = {
         val targetClass = classTag[T].runtimeClass
         srcs.toSeq.map(src => mapper.map(src, targetClass).asInstanceOf[T])
     }
 
-    def mapAsync[T <: AnyRef](src: AnyRef, dest: T): Future[Unit] = future {
+    def mapAsync[T <: AnyRef](src: Any, dest: T): Future[Unit] = future {
         map[T](src, dest)
     }
 
-    def mapAsync[T: ClassTag](src: AnyRef): Future[T] = future {
+    def mapAsync[T: ClassTag](src: Any): Future[T] = future {
         map[T](src)
     }
 

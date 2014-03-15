@@ -20,21 +20,22 @@ class ToStringHelper(val className: String) {
 
     @inline
     override def toString: String = {
-        val builder = new StringBuilder()
-
-        builder.append("{")
-        var sep = ""
-        var first = true
-        for (x <- map) {
-            builder.append(sep)
-            builder.append(x._1).append("=").append(x._2)
-            if (first) {
-                first = false
-                sep = ","
-            }
-        }
-        builder.append("}")
-        builder.toString()
+        map.mkString("{", ",", "}")
+        //        val builder = new StringBuilder()
+        //
+        //        builder.append("{")
+        //        var sep = ""
+        //        var first = true
+        //        for (x <- map) {
+        //            builder.append(sep)
+        //            builder.append(x._1).append("=").append(x._2)
+        //            if (first) {
+        //                first = false
+        //                sep = ","
+        //            }
+        //        }
+        //        builder.append("}")
+        //        builder.toString()
     }
 
     @inline

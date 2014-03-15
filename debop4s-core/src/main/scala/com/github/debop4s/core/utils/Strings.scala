@@ -277,6 +277,71 @@ object Strings {
     }
 
     @inline
+    def subSequence(cs: CharSequence, fromIndex: Int = 0): CharSequence = {
+        if (cs == null) null else cs.subSequence(fromIndex, cs.length())
+    }
+
+    @inline
+    def indexOf(cs: CharSequence, searchChar: Int, fromIndex: Int = 0): Int = {
+        cs match {
+            case s: String => s.indexOf(searchChar, fromIndex)
+            case _ =>
+                val sz = cs.length()
+                for (i <- fromIndex until sz) {
+                    if (cs.charAt(i) == searchChar)
+                        return i
+                }
+                return -1
+        }
+    }
+
+    @inline
+    def lastIndexOf(cs: CharSequence, searchChar: Int, fromIndex: Int = 0): Int = {
+        cs match {
+            case s: String => s.lastIndexOf(searchChar, fromIndex)
+            case _ =>
+                var start = fromIndex
+                val sz = cs.length()
+                if (start >= sz)
+                    start = sz - 1
+                for (i <- start to 0 by -1) {
+                    if (cs.charAt(i) == searchChar)
+                        return i
+                }
+                return -1
+        }
+    }
+
+    @inline
+    def toCharArray(cs: CharSequence): Array[Char] = {
+        cs match {
+            case s: String => s.toCharArray
+            case _ =>
+                val sz = cs.length()
+                val array = new Array[Char](sz)
+                for (i <- 0 until sz) {
+                    array(i) = cs.charAt(i)
+                }
+                array
+        }
+    }
+
+    def regionMathches(cs: CharSequence,
+                       ignoreCase: Boolean,
+                       toffset: Int,
+                       other: CharSequence,
+                       ooffset: Int,
+                       len: Int): Boolean = {
+        if (cs.isInstanceOf[String] && other.isInstanceOf[String]) {
+            cs.asInstanceOf[String].regionMatches(ignoreCase, toffset, other.asInstanceOf[String], ooffset, len)
+        } else {
+            // todo String#regionMatches, String#indexOf 를 참고해서 구현해야 한다.
+            cs.toString.regionMatches(ignoreCase, toffset, other.toString, ooffset, len)
+        }
+    }
+
+
+    @inline
     def join(items: java.lang.Iterable[_])(implicit separator: String = COMMA_STR): String =
         items.mkString(separator)
 

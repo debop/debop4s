@@ -5,7 +5,7 @@ import org.apache.commons.pool2.impl.{GenericObjectPoolConfig, GenericObjectPool
 import org.slf4j.LoggerFactory
 
 /**
- * com.github.debop4s.core.pool.PoolBase
+ * AbstractObjectPool
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 11. 오후 4:35
@@ -59,7 +59,7 @@ abstract class AbstractObjectPool[T <: AnyRef](val config: GenericObjectPoolConf
         pool.invalidateObject(broken)
     }
 
-    def destroy() {
+    def destroy() = synchronized {
         if (!pool.isClosed) {
             pool.close()
             log.debug("Pool을 제거했습니다.")
