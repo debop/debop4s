@@ -68,6 +68,27 @@
             <version>${spray.version}</version>
         </dependency>
 
+        <!-- Infinispan -->
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-spring</artifactId>
+        </dependency>
+
+        <!-- "Java Concurrency in Practice" book annotations -->
+        <dependency>
+            <groupId>net.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>
+        </dependency>
+
+
         <!-- Bone CP -->
         <dependency>
             <groupId>com.jolbox</groupId>

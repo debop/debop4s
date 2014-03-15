@@ -16,9 +16,9 @@ class WeekRangeCollection(private[this] val _year: Int,
                           private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends WeekTimeRange(Times.startTimeOfWeek(_year, _weekOfYear), _weekCount, _calendar) {
 
-
+    @inline
     def getWeeks: Seq[WeekRange] = {
-        val weeks = ArrayBuffer[WeekRange]()
+        val weeks = new ArrayBuffer[WeekRange](weekCount)
         for (w <- 0 until weekCount) {
             weeks += WeekRange(start.plusWeeks(w), calendar)
         }

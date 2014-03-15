@@ -17,6 +17,7 @@ class MinuteTimeRange(private[this] val _start: DateTime,
     extends CalendarTimeRange(Times.relativeMinutePeriod(_start, minuteCount), _calendar) {
 
     assert(minuteCount > 0)
+
     val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
 }
 

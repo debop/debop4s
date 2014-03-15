@@ -19,8 +19,9 @@ class MinuteRangeCollection(private[this] val _moment: DateTime,
 
     lazy val minutes: Seq[MinuteRange] = getMinutes
 
+    @inline
     def getMinutes: Seq[MinuteRange] = {
-        val minutes = ArrayBuffer[MinuteRange]()
+        val minutes = new ArrayBuffer[MinuteRange](minuteCount)
         val startMin = Times.trimToSecond(start)
 
         for (m <- 0 until minuteCount) {

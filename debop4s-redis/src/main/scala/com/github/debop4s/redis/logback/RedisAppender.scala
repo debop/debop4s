@@ -21,7 +21,7 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
     implicit val akkaSystem = akka.actor.ActorSystem()
 
     lazy val serializer = ScalaJacksonSerializer()
-    protected var redis: RedisClient = null
+    @volatile protected var redis: RedisClient = null
 
     var host = "localhost"
     var port = RedisConsts.DEFAULT_PORT

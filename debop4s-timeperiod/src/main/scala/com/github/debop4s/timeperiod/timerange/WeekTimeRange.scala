@@ -24,10 +24,11 @@ class WeekTimeRange(private[this] val _moment: DateTime,
 
     def endWeekOfYear: Int = Times.getWeekOfYear(end).weekOfWeekyear
 
+    @inline
     def getDays: Seq[DayRange] = {
         val startDay = startDayStart
         val dayCount = weekCount * DaysPerWeek
-        val days = ArrayBuffer[DayRange]()
+        val days = new ArrayBuffer[DayRange](dayCount)
         for (d <- 0 until dayCount) {
             days += new DayRange(startDay.plusDays(d), calendar)
         }

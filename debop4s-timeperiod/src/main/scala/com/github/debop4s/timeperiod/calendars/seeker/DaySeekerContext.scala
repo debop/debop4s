@@ -18,6 +18,7 @@ class DaySeekerContext(val startDay: DayRange,
 
     def isFinished: Boolean = remainingDays == 0
 
+    @inline
     def processDay(day: DayRange) {
         if (isFinished)
             return

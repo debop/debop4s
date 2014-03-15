@@ -46,11 +46,12 @@ class HalfyearTimeRange(val year: Int,
 
     def isMultipleCalendarYears: Boolean = startYear != endYear
 
+    @inline
     def getQuarters: Seq[QuarterRange] = {
         val quarterCount = halfyearCount * QuartersPerHalfyear
         val startQuarter = Times.quarterOf(startMonthOfYear)
 
-        val quarters = ArrayBuffer[QuarterRange]()
+        val quarters = new ArrayBuffer[QuarterRange](quarterCount)
         for (q <- 0 until quarterCount) {
             val yq = Times.addQuarter(startYear, startQuarter, q)
             quarters += new QuarterRange(yq.year, yq.quarter, calendar)
@@ -58,9 +59,10 @@ class HalfyearTimeRange(val year: Int,
         quarters
     }
 
+    @inline
     def getMonths: Seq[MonthRange] = {
         val monthCount = halfyearCount * MonthsPerHalfyear
-        val months = ArrayBuffer[MonthRange]()
+        val months = new ArrayBuffer[MonthRange](monthCount)
 
         for (m <- 0 until monthCount) {
             val ym = Times.addMonth(startYear, startMonthOfYear, m)

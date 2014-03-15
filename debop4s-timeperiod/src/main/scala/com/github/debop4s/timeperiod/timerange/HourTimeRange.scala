@@ -17,8 +17,9 @@ class HourTimeRange(private[this] val _moment: DateTime,
 
     val endHour: Int = start.plusHours(hourCount).getHourOfDay
 
+    @inline
     def getMinutes: Seq[MinuteRange] = {
-        val minutes = ArrayBuffer[MinuteRange]()
+        val minutes = new ArrayBuffer[MinuteRange](hourCount * MinutesPerHour)
 
         for (h <- 0 until hourCount) {
             for (m <- 0 until MinutesPerHour) {

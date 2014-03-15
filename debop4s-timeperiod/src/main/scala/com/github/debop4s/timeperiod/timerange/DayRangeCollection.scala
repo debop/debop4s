@@ -15,8 +15,9 @@ class DayRangeCollection(private[this] val _moment: DateTime,
                          private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends DayTimeRange(Times.asDate(_moment), _dayCount, _calendar) {
 
+    @inline
     def getDays: Seq[DayRange] = {
-        val days = ArrayBuffer[DayRange]()
+        val days = new ArrayBuffer[DayRange](dayCount)
         val startDay = Times.asDate(start)
         (0 until dayCount).foreach { d =>
             days += new DayRange(startDay.plusDays(d), calendar)

@@ -19,6 +19,7 @@
         <module>debop4s-autocomplete</module>
 
         <module>debop4s-experiments</module>
+        <module>hibernate-lucene-korean</module>
 
     </modules>
 
@@ -34,6 +35,8 @@
         <querydsl.version>3.3.1</querydsl.version>
 
         <hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
+
+        <infinispan.version>6.0.1.Final</infinispan.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -98,6 +101,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Google Caliper : https://code.google.com/p/caliper/ -->
+        <dependency>
+            <groupId>com.google.caliper</groupId>
+            <artifactId>caliper</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -532,6 +542,13 @@
                 <version>${hibernate.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-infinispan</artifactId>
+                <version>${hibernate.version}</version>
+                <scope>test</scope>
+            </dependency>
+
 
             <!-- Hibernate-Validator -->
             <dependency>
@@ -595,6 +612,37 @@
                 <artifactId>rediscala_${scala.main.version}</artifactId>
                 <version>1.3</version>
             </dependency>
+
+            <!-- Infinispan -->
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>${infinispan.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-commons</artifactId>
+                <version>${infinispan.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-spring</artifactId>
+                <version>${infinispan.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-query-dsl</artifactId>
+                <version>${infinispan.version}</version>
+            </dependency>
+
+            <!-- "Java Concurrency in Practice" book annotations -->
+            <!-- Hint: 이게 없으면 Infinispan 에서 compile 에러가 납니다. -->
+            <dependency>
+                <groupId>net.jcip</groupId>
+                <artifactId>jcip-annotations</artifactId>
+                <version>1.0</version>
+            </dependency>
+
 
             <!-- Cassandra -->
             <dependency>
@@ -743,6 +791,14 @@
                 <scope>test</scope>
             </dependency>
 
+            <!-- Google Caliper : https://code.google.com/p/caliper/ -->
+            <dependency>
+                <groupId>com.google.caliper</groupId>
+                <artifactId>caliper</artifactId>
+                <version>1.0-beta-1</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -826,6 +882,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <args>
                         <arg>-target:jvm-${jdk.version}</arg>
+                        <arg>-optimise</arg>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
                         <!--<arg>-explaintypes</arg>-->

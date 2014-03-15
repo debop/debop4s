@@ -16,8 +16,9 @@ class MonthRangeCollection(private[this] val _year: Int,
                            private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends MonthTimeRange(_year, _monthOfYear, _monthCount, _calendar) {
 
+    @inline
     def getMonths: Seq[MonthRange] = {
-        val months = ArrayBuffer[MonthRange]()
+        val months = new ArrayBuffer[MonthRange](monthCount)
         for (m <- 0 until monthCount) {
             months += MonthRange(start.plusMonths(m), calendar)
         }

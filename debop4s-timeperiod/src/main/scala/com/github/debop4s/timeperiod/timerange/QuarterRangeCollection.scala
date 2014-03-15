@@ -18,8 +18,9 @@ class QuarterRangeCollection(private val _year: Int,
                              private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends QuarterTimeRange(_year, _quarter, _quarterCount, _calendar) {
 
+    @inline
     def getQuarters: Seq[QuarterRange] = {
-        val quarters = ArrayBuffer[QuarterRange]()
+        val quarters = new ArrayBuffer[QuarterRange](quarterCount)
         for (q <- 0 until quarterCount) {
             quarters += QuarterRange(start.plusMonths(q * MonthsPerQuarter), calendar)
         }

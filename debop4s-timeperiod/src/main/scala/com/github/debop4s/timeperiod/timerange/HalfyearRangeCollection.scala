@@ -33,8 +33,9 @@ class HalfyearRangeCollection(private val _year: Int,
                               private val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends HalfyearTimeRange(_year, _halfyear, _halfyearCount, _calendar) {
 
+    @inline
     def getHalfyears: Seq[HalfyearRange] = {
-        val halfyears = ArrayBuffer[HalfyearRange]()
+        val halfyears = new ArrayBuffer[HalfyearRange](halfyearCount)
 
         for (x <- 0 until halfyearCount) {
             val yhy = Times.addHalfyear(startYear, startHalfyear, x)

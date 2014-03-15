@@ -905,11 +905,7 @@ object Times {
         if (left.size != right.size)
             return false
 
-        for (x <- left; y <- right) {
-            if (x != y)
-                return false
-        }
-        true
+        left.sameElements(right)
     }
 
     def isWeekday(dayOfWeek: DayOfWeek): Boolean = Weekdays.contains(dayOfWeek)
@@ -1207,7 +1203,6 @@ object Times {
 
         minutes
     }
-
 
     def assertHasPeriod(period: ITimePeriod) {
         assert(period != null && period.hasPeriod, s"기간이 설정되지 않았습니다. period=$period")

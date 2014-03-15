@@ -52,6 +52,7 @@ class CalendarDateAdd extends DateAdd {
     /**
      * start 시각으로부터 offset 기간이 지난 시각을 계산합니다.
      */
+    @inline
     override def add(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode): DateTime = {
         log.trace(s"Add... start=$start, offset=$offset 시각을 계산합니다. seekBoundary=$seekBoundary")
 
@@ -71,6 +72,7 @@ class CalendarDateAdd extends DateAdd {
     /**
      * start 시각으로부터 offset 기간 전 시각을 계산합니다.
      */
+    @inline
     override def subtract(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode): DateTime = {
         log.trace(s"subtract... start=[$start] - offset=[$offset] 시각을 계산합니다. seekBoundary=$seekBoundary")
 

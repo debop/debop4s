@@ -28,9 +28,11 @@ abstract class QuarterTimeRange(private val _year: Int,
     def isMultipleCalendarYears: Boolean =
         startYear != endYear
 
+    @inline
     def getMonths: Seq[MonthRange] = {
-        val months = ArrayBuffer[MonthRange]()
         val monthCount = quarterCount * MonthsPerQuarter
+        val months = new ArrayBuffer[MonthRange](monthCount)
+
         for (m <- 0 until monthCount) {
             months += MonthRange(start.plusMonths(m), calendar)
         }

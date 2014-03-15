@@ -16,8 +16,9 @@ class YearRangeCollection(private[this] val _year: Int,
                           private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends YearTimeRange(_year, _yearCount, _calendar) {
 
+    @inline
     def getYears: Seq[YearRange] = {
-        val years = ArrayBuffer[YearRange]()
+        val years = new ArrayBuffer[YearRange](yearCount)
         for (y <- 0 until yearCount) {
             years += new YearRange(startYear + y, calendar)
         }

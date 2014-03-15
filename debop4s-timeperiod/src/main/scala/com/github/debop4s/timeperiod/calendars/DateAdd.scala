@@ -1,6 +1,5 @@
 package com.github.debop4s.timeperiod.calendars
 
-import com.github.debop4s.core.Guard
 import com.github.debop4s.timeperiod.SeekBoundaryMode.SeekBoundaryMode
 import com.github.debop4s.timeperiod.SeekDirection.SeekDirection
 import com.github.debop4s.timeperiod._
@@ -81,7 +80,7 @@ class DateAdd {
                                seekBoundary: SeekBoundaryMode): (DateTime, Duration) = {
         log.trace("기준시각으로부터 오프셋만큼 떨어진 시각을 구합니다. " +
                   s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
-        Guard.shouldBe(offset >= Duration.ZERO, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
+        assert(offset >= Duration.ZERO, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
 
         var remaining = offset
         var end: DateTime = null
@@ -97,13 +96,14 @@ class DateAdd {
         } else {
             log.trace("예외 기간을 제외합니다.")
             val gapCalculator = new TimeGapCalculator[TimeRange]()
-            searchPeriods.foreach { p =>
-                if (excludePeriods.hasOverlapPeriods(p)) {
-                    log.trace("예외 기간에 속하지 않은 부분만 추려냅니다.")
-                    gapCalculator.getGaps(excludePeriods, p).foreach(gap => availablePeriods.add(gap))
-                } else {
-                    availablePeriods.add(p)
-                }
+            searchPeriods.foreach {
+                p =>
+                    if (excludePeriods.hasOverlapPeriods(p)) {
+                        log.trace("예외 기간에 속하지 않은 부분만 추려냅니다.")
+                        gapCalculator.getGaps(excludePeriods, p).foreach(gap => availablePeriods.add(gap))
+                    } else {
+                        availablePeriods.add(p)
+                    }
             }
         }
 
@@ -136,48 +136,50 @@ class DateAdd {
         }
 
         if (seekDir == SeekDirection.Forward) {
-            (availablePeriods.indexOf(startPeriod) until availablePeriods.size).foreach { i =>
-                val gap = availablePeriods(i)
-                val gapRemaining = new Duration(seekMoment, gap.end)
-                log.trace(s"Seek forward... " +
-                          s"gap=[$gap], gapRemaining=[$gapRemaining], remaining=[$remaining], seekMoment=[$seekMoment]")
+            (availablePeriods.indexOf(startPeriod) until availablePeriods.size).foreach {
+                i =>
+                    val gap = availablePeriods(i)
+                    val gapRemaining = new Duration(seekMoment, gap.end)
+                    log.trace(s"Seek forward... " +
+                              s"gap=[$gap], gapRemaining=[$gapRemaining], remaining=[$remaining], seekMoment=[$seekMoment]")
 
-                val isTargetPeriod =
-                    if (seekBoundary == SeekBoundaryMode.Fill) gapRemaining >= remaining
-                    else gapRemaining > remaining
+                    val isTargetPeriod =
+                        if (seekBoundary == SeekBoundaryMode.Fill) gapRemaining >= remaining
+                        else gapRemaining > remaining
 
-                if (isTargetPeriod) {
-                    end = seekMoment + remaining
-                    remaining = null
-                    return (end, remaining)
-                }
-                remaining = remaining - gapRemaining
-                if (i == availablePeriods.size - 1) {
-                    return (null, remaining)
-                }
-                seekMoment = availablePeriods(i + 1).start
+                    if (isTargetPeriod) {
+                        end = seekMoment + remaining
+                        remaining = null
+                        return (end, remaining)
+                    }
+                    remaining = remaining - gapRemaining
+                    if (i == availablePeriods.size - 1) {
+                        return (null, remaining)
+                    }
+                    seekMoment = availablePeriods(i + 1).start
             }
         } else {
-            (availablePeriods.indexOf(startPeriod) to 0 by -1).foreach { i =>
-                val gap = availablePeriods(i)
-                val gapRemaining = new Duration(gap.start, seekMoment)
-                log.trace(s"Seek backward. " +
-                          s"gap=[$gap], gapRemaining=[$gapRemaining], remaining=[$remaining], seekMoment=[$seekMoment]")
+            (availablePeriods.indexOf(startPeriod) to 0 by -1).foreach {
+                i =>
+                    val gap = availablePeriods(i)
+                    val gapRemaining = new Duration(gap.start, seekMoment)
+                    log.trace(s"Seek backward. " +
+                              s"gap=[$gap], gapRemaining=[$gapRemaining], remaining=[$remaining], seekMoment=[$seekMoment]")
 
-                val isTargetPeriod =
-                    if (seekBoundary == SeekBoundaryMode.Fill) gapRemaining >= remaining
-                    else gapRemaining > remaining
+                    val isTargetPeriod =
+                        if (seekBoundary == SeekBoundaryMode.Fill) gapRemaining >= remaining
+                        else gapRemaining > remaining
 
-                if (isTargetPeriod) {
-                    end = seekMoment - remaining
-                    remaining = null
-                    return (end, remaining)
-                }
-                remaining = remaining - gapRemaining
-                if (i == 0) {
-                    return (null, remaining)
-                }
-                seekMoment = availablePeriods(i - 1).end
+                    if (isTargetPeriod) {
+                        end = seekMoment - remaining
+                        remaining = null
+                        return (end, remaining)
+                    }
+                    remaining = remaining - gapRemaining
+                    if (i == 0) {
+                        return (null, remaining)
+                    }
+                    seekMoment = availablePeriods(i - 1).end
             }
         }
 
@@ -204,19 +206,20 @@ object DateAdd {
 
         periods
         .filter(period => period.end >= start)
-        .foreach { period =>
-            if (period.hasInside(start)) {
-                nearest = period
-                moment = start
-                log.trace(s"시작시각 이후 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")
-                return (nearest, moment)
-            }
-            val periodToMoment = new Duration(start, period.start)
-            if (periodToMoment < difference) {
-                difference = periodToMoment
-                nearest = period
-                moment = period.start
-            }
+        .foreach {
+            period =>
+                if (period.hasInside(start)) {
+                    nearest = period
+                    moment = start
+                    log.trace(s"시작시각 이후 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")
+                    return (nearest, moment)
+                }
+                val periodToMoment = new Duration(start, period.start)
+                if (periodToMoment < difference) {
+                    difference = periodToMoment
+                    nearest = period
+                    moment = period.start
+                }
         }
         log.trace(s"시작시각 이후 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")
         (nearest, moment)
@@ -232,9 +235,8 @@ object DateAdd {
         periods
         .filter(period => period.start <= start)
         .foreach { period =>
-
-        // start가 기간에 속한다면...
             if (period.hasInside(start)) {
+                // start가 기간에 속한다면...
                 nearest = period
                 moment = start
                 log.trace(s"시작시각 이전 기간을 찾았습니다. start=[$start], moment=[$moment], nearest=[$nearest]")

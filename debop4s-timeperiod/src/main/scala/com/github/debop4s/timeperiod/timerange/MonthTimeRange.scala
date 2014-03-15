@@ -16,9 +16,10 @@ class MonthTimeRange(private[this] val _year: Int,
                      private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
+    @inline
     def getDays: Seq[DayRange] = {
         val startMonth = Times.startTimeOfMonth(start)
-        val days = ArrayBuffer[DayRange]()
+        val days = new ArrayBuffer[DayRange](monthCount * MaxDaysPerMonth)
 
         for (m <- 0 until monthCount) {
             val month = startMonth + m.month

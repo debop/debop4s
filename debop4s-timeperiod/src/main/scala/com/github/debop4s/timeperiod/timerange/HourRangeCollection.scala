@@ -16,10 +16,11 @@ class HourRangeCollection(private[this] val _moment: DateTime,
                           private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends HourTimeRange(Times.trimToSecond(_moment), _hourCount, _calendar) {
 
+    @inline
     def getHours: Seq[HourRange] = {
         val startHour = Times.trimToMinute(start)
 
-        val hours = ArrayBuffer[HourRange]()
+        val hours = new ArrayBuffer[HourRange](hourCount)
         for (h <- 0 until hourCount) {
             hours += new HourRange(startHour.plusHours(h), calendar)
         }

@@ -106,35 +106,27 @@ package object timeperiod {
     //    implicit def xmlGregCalendar2DateTime(calendar: XMLGregorianCalendar): DateTime =
     //        new DateTime(calendar.toGregorianCalendar.getTimeInMillis)
 
-    type Year = Int
-    type Month = Int
-    type Day = Int
-    type Hour = Int
-    type Minute = Int
-    type Second = Int
-    type Millis = Int
-
-    implicit def tuple2Time(t: (Year, Month, Day)): DateTime = {
+    implicit def tuple2Time(t: (Int, Int, Int)): DateTime = {
         val (year, month, day) = t
         new DateTime(year, month, day, 0, 0, 0, 0)
     }
 
-    implicit def tuple2Time(t: (Year, Month, Day, Hour)): DateTime = {
+    implicit def tuple2Time(t: (Int, Int, Int, Int)): DateTime = {
         val (year, month, day, hour) = t
         new DateTime(year, month, day, hour, 0, 0, 0)
     }
 
-    implicit def tuple2Time(t: (Year, Month, Day, Hour, Minute)): DateTime = {
+    implicit def tuple2Time(t: (Int, Int, Int, Int, Int)): DateTime = {
         val (year, month, day, hour, minute) = t
         new DateTime(year, month, day, hour, minute, 0, 0)
     }
 
-    implicit def tuple2Time(t: (Year, Month, Day, Hour, Minute, Second)): DateTime = {
+    implicit def tuple2Time(t: (Int, Int, Int, Int, Int, Int)): DateTime = {
         val (year, month, day, hour, minute, second) = t
         new DateTime(year, month, day, hour, minute, second, 0)
     }
 
-    implicit def tuple2Time(t: (Year, Month, Day, Hour, Minute, Second, Millis)): DateTime = {
+    implicit def tuple2Time(t: (Int, Int, Int, Int, Int, Int, Int)): DateTime = {
         val (year, month, day, hour, minute, second, millis) = t
         new DateTime(year, month, day, hour, minute, second, millis)
     }

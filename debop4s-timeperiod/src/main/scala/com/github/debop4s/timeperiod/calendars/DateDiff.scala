@@ -67,6 +67,7 @@ class DateDiff(val start: DateTime,
 
     def endMonthOfYear = calendar.getMonthOfYear(end)
 
+    @inline
     private def calcYears(): Long = {
         if (Objects.equals(start, end)) 0
 
@@ -81,6 +82,7 @@ class DateDiff(val start: DateTime,
         endYear - calendar.getYear(compareDate)
     }
 
+    @inline
     private def calcQuarters(): Long = {
         if (Objects.equals(start, end)) 0
 
@@ -93,6 +95,7 @@ class DateDiff(val start: DateTime,
         (y2 * QuartersPerYear + q2.id) - (y1 * QuartersPerYear + q1.id)
     }
 
+    @inline
     private def calcMonths(): Long = {
         if (Objects.equals(start, end)) 0
 
@@ -110,6 +113,7 @@ class DateDiff(val start: DateTime,
         (calendar.getYear(compareDate) * MonthsPerYear + calendar.getMonthOfYear(compareDate))
     }
 
+    @inline
     private def calcWeeks(): Long = {
         if (Objects.equals(start, end)) 0
 
@@ -120,6 +124,7 @@ class DateDiff(val start: DateTime,
         else (new Duration(w1, w2).getStandardDays / DaysPerWeek).toLong
     }
 
+    @inline
     private def roundEx(n: Double): Double =
         if (n >= 0.0) Math.round(n) else -Math.round(-n)
 

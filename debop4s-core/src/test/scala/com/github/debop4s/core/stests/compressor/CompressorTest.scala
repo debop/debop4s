@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
  */
 class CompressorTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     test("gzip test") {
 

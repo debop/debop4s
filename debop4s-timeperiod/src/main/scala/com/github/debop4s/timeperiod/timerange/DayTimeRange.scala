@@ -20,9 +20,10 @@ class DayTimeRange(private[this] val _start: DateTime,
 
     def endDayOfWeek: DayOfWeek = calendar.getDayOfWeek(end)
 
+    @inline
     def getHours: Seq[HourRange] = {
         val day = startDayStart
-        val hours = ArrayBuffer[HourRange]()
+        val hours = new ArrayBuffer[HourRange](dayCount * HoursPerDay)
 
         for (d <- 0 until dayCount) {
             for (h <- 0 until HoursPerDay) {
