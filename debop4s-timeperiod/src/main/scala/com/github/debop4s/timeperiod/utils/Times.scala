@@ -210,7 +210,6 @@ object Times {
     /**
     * 해당 시각의 월-주차를 계산합니다.
     */
-    @deprecated("use getMonthAndWeekOfMonth")
     def getWeekOfMonth(moment: DateTime): Int = {
         // moment.getWeekOfWeekyear - startTimeOfMonth(moment).getWeekOfWeekyear + 1
         val calendar = Calendar.getInstance()
@@ -229,6 +228,7 @@ object Times {
     def getWeeksOfYear(year: Int): Int =
         getWeeksOfYear(year, DefaultTimeCalendar)
 
+    @inline
     def getWeeksOfYear(year: Int, calendar: ITimeCalendar): Int = {
         var lastDay = asDate(year, 12, 31)
         while (lastDay.getWeekyear > year) {
@@ -289,7 +289,7 @@ object Times {
         isSameYear(left, right) && left.getMonthOfYear == right.getMonthOfYear
 
     def isSameWeek(left: DateTime, right: DateTime): Boolean =
-        isSameYear(left, right) && left.getWeekOfWeekyear == right.getWeekOfWeekyear
+        left.weekyear == right.weekyear && left.getWeekOfWeekyear == right.getWeekOfWeekyear
 
     def isSameDay(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) && left.getDayOfYear == right.getDayOfYear
@@ -419,9 +419,8 @@ object Times {
 
     def startTimeOfWeek(moment: DateTime): DateTime = getStartOfWeek(moment)
 
-    def startTimeOfWeek(weekyear: Int, weekOfWeekYear: Int): DateTime = {
+    def startTimeOfWeek(weekyear: Int, weekOfWeekYear: Int): DateTime =
         startTimeOfWeek(new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(weekOfWeekYear))
-    }
 
     def endTimeOfWeek(moment: DateTime): DateTime =
         startTimeOfWeek(moment).plusWeeks(1).minus(1)
@@ -821,6 +820,7 @@ object Times {
         isOverlaps
     }
 
+    @inline
     def getIntersectionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
         var intersection: TimeBlock = null
         if (intersectWith(period, target)) {
@@ -834,6 +834,7 @@ object Times {
         intersection
     }
 
+    @inline
     def getUnionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
         val start = min(period.start, target.start)
         val end = max(period.end, target.end)
@@ -841,6 +842,7 @@ object Times {
         TimeBlock(start, end, period.isReadonly)
     }
 
+    @inline
     def getIntersectionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
         require(period != null)
         require(target != null)
@@ -857,6 +859,7 @@ object Times {
         intersection
     }
 
+    @inline
     def getUnionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
         val start = min(period.start, target.start)
         val end = max(period.end, target.end)
@@ -868,24 +871,27 @@ object Times {
     def trimToYear(moment: DateTime): DateTime =
         asDate(moment.getYear)
 
-    def trimToMonth(moment: DateTime, monthOfYear: Int = 1): DateTime =
+    def trimToMonth(moment: DateTime, monthOfYear: Int = 1) =
         asDate(moment.getYear, monthOfYear)
 
-    def trimToDay(moment: DateTime, dayOfMonth: Int = 1): DateTime =
+    def trimToDay(moment: DateTime, dayOfMonth: Int = 1) =
         asDate(moment.getYear, moment.getMonthOfYear, dayOfMonth)
 
-    def trimToHour(moment: DateTime, hourOfDay: Int = 0): DateTime =
-        getDate(moment).withHourOfDay(hourOfDay)
+    def trimToHour(moment: DateTime, hourOfDay: Int = 0) =
+        asDate(moment).withHourOfDay(hourOfDay)
 
-    def trimToMinute(moment: DateTime, minuteOfHour: Int = 0): DateTime =
-        trimToHour(moment, moment.getHourOfDay).withMinuteOfHour(minuteOfHour)
+    def trimToMinute(m: DateTime, minuteOfHour: Int = 0) =
+        asDate(m).withTime(m.getHourOfDay, minuteOfHour, 0, 0)
 
-    def trimToSecond(moment: DateTime, secondOfMinute: Int = 0): DateTime =
-        trimToMinute(moment, moment.getMinuteOfHour).withSecondOfMinute(secondOfMinute)
+    //trimToHour(moment, moment.getHourOfDay).withMinuteOfHour(minuteOfHour)
 
-    def trimToMillis(moment: DateTime, millisOfSecond: Int = 0): DateTime =
-        moment.withMillisOfSecond(millisOfSecond)
+    def trimToSecond(m: DateTime, secondOfMinute: Int = 0) =
+        asDate(m).withTime(m.getHourOfDay, m.getMinuteOfHour, secondOfMinute, 0)
 
+    // trimToMinute(moment, moment.getMinuteOfHour).withSecondOfMinute(secondOfMinute)
+
+    def trimToMillis(m: DateTime, millisOfSecond: Int = 0) =
+        m.withMillisOfSecond(millisOfSecond)
 
     def assertValidPeriod(start: DateTime, end: DateTime) {
         if (start != null && end != null) {
@@ -902,10 +908,8 @@ object Times {
         require(left != null)
         require(right != null)
 
-        if (left.size != right.size)
-            return false
-
-        left.sameElements(right)
+        if (left.size != right.size) false
+        else left.sameElements(right)
     }
 
     def isWeekday(dayOfWeek: DayOfWeek): Boolean = Weekdays.contains(dayOfWeek)
@@ -930,10 +934,8 @@ object Times {
     @inline
     def foreachYears(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
-        log.trace(s"기간[$period]에 대해 Year 단위로 열거합니다...")
 
         val years = ArrayBuffer[ITimePeriod]()
-
         if (period.isAnytime)
             return years
 
@@ -963,10 +965,8 @@ object Times {
     @inline
     def foreachHalfyears(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
-        log.trace(s"기간[$period]에 대해 HalfYear 단위로 열거합니다...")
 
         val halfyears = ArrayBuffer[ITimePeriod]()
-
         if (period.isAnytime)
             return halfyears
 
@@ -999,10 +999,8 @@ object Times {
     @inline
     def foreachQuarters(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
-        log.trace(s"기간[$period]에 대해 Quarter 단위로 열거합니다...")
 
         val quarters = ArrayBuffer[ITimePeriod]()
-
         if (period.isAnytime)
             return quarters
 
@@ -1035,7 +1033,6 @@ object Times {
     @inline
     def foreachMonths(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
-        log.trace(s"기간[$period]에 대해 월(Month) 단위로 열거합니다...")
 
         val months = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
@@ -1070,7 +1067,6 @@ object Times {
     @inline
     def foreachWeeks(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
-        log.trace(s"기간[$period]에 대해 주(Week) 단위로 열거합니다...")
 
         val weeks = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
@@ -1109,9 +1105,8 @@ object Times {
     @inline
     def foreachDays(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
-        log.trace(s"기간[$period]에 대해 일(Day) 단위로 열거합니다...")
 
-        val days = ArrayBuffer[ITimePeriod]()
+        val days = new ArrayBuffer[ITimePeriod](MaxDaysPerMonth)
         if (period.isAnytime)
             return days
 
@@ -1140,9 +1135,8 @@ object Times {
     @inline
     def foreachHours(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
-        log.trace(s"기간[$period]에 대해 시간(Hour) 단위로 열거합니다...")
 
-        val hours = ArrayBuffer[ITimePeriod]()
+        val hours = new ArrayBuffer[ITimePeriod](HoursPerDay)
         if (period.isAnytime)
             return hours
 
@@ -1173,9 +1167,8 @@ object Times {
     @inline
     def foreachMinutes(period: ITimePeriod): Seq[ITimePeriod] = {
         require(period != null)
-        log.trace(s"기간[$period]에 대해 분(Minute) 단위로 열거합니다...")
 
-        val minutes = ArrayBuffer[ITimePeriod]()
+        val minutes = new ArrayBuffer[ITimePeriod](MinutesPerHour)
         if (period.isAnytime)
             return minutes
 

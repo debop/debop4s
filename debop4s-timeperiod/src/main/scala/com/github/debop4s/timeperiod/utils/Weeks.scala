@@ -46,6 +46,7 @@ object Weeks {
         else minusWeeks(yw, weeks)
     }
 
+    @inline
     private def plusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
         var newWeeks = weeks + yw.weekOfWeekyear
 
@@ -65,6 +66,7 @@ object Weeks {
         YearWeek(weekyear, math.max(newWeeks, 1))
     }
 
+    @inline
     private def minusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
         var week = weeks + yw.weekOfWeekyear
 
