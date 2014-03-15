@@ -9,10 +9,14 @@ import org.xerial.snappy.Snappy
 class SnappyRedisSerializer[T](val innerSerializer: RedisSerializer[T]) extends RedisSerializer[T] {
 
     override def serialize(graph: T): Array[Byte] = {
+        if (graph == null)
+            return EMPTY_BYTES
         Snappy.compress(innerSerializer.serialize(graph))
     }
 
     override def deserialize(bytes: Array[Byte]): T = {
+        if (bytes == null || bytes.length == 0)
+            return null.asInstanceOf[T]
         innerSerializer.deserialize(Snappy.uncompress(bytes)).asInstanceOf[T]
     }
 }
