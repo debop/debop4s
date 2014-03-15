@@ -15,14 +15,12 @@ class TrieMapTest extends AbstractCoreTest {
 
     val count = 50000
 
-    test("TrieMap 테스트") {
-
-    }
-
     test("ParTrieMap 테스트") {
         val entries = 1 until count map { num => Entry(num.toDouble)}
         val results = ParTrieMap[Double, Entry]()
-        for (e <- entries) results += ((e.num, e))
+        for (e <- entries) {
+            results += ((e.num, e))
+        }
 
         // compre squre root
         while (results.nonEmpty) {

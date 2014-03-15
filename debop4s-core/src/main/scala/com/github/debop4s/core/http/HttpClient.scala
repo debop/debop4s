@@ -22,7 +22,7 @@ import scala.collection.JavaConversions._
  */
 class HttpClient extends AutoCloseable {
 
-    lazy val connectionManager = new PoolingHttpClientConnectionManager()
+    private lazy val connectionManager = new PoolingHttpClientConnectionManager()
 
     val serializer = JacksonSerializer()
 
@@ -48,6 +48,7 @@ class HttpClient extends AutoCloseable {
         get(uri, Charsets.UTF_8, headers: _*)
 
     @varargs
+    @inline
     def get(uri: URI, cs: Charset, headers: Header*): String = {
         val client = createHttpClient()
         val httpget = new HttpGet(uri)
@@ -55,6 +56,7 @@ class HttpClient extends AutoCloseable {
         try {
             if (headers != null)
                 headers.foreach(httpget.addHeader)
+
             val response = client.execute(httpget)
             EntityUtils.toString(response.getEntity, cs)
         } finally {
@@ -75,6 +77,7 @@ class HttpClient extends AutoCloseable {
         post(uri, nvps, Charsets.UTF_8, headers: _*)
 
     @varargs
+    @inline
     def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): String = {
         assert(uri != null)
         val client = createHttpClient()
@@ -100,6 +103,7 @@ class HttpClient extends AutoCloseable {
     }
 
     @varargs
+    @inline
     def postJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): String = {
         assert(uri != null)
         val client = createHttpClient()
@@ -113,6 +117,7 @@ class HttpClient extends AutoCloseable {
             }
             if (headers != null)
                 headers.foreach(httppost.addHeader)
+
             val response = client.execute(httppost)
             EntityUtils.toString(response.getEntity, cs)
         } finally {

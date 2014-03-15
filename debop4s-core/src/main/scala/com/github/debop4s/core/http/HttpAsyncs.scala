@@ -147,6 +147,7 @@ object HttpAsyncs {
     def deleteAsParallel(deletes: HttpDelete*): Iterable[HttpResponse] =
         client.deleteAsParallel(deletes: _*)
 
+    @inline
     def getContent(response: HttpResponse, cs: Charset = Charsets.UTF_8): String = {
         if (response == null || response.getEntity == null)
             return Strings.EMPTY_STR

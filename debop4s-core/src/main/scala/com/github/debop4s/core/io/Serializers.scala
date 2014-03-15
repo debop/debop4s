@@ -64,11 +64,10 @@ object Serializers {
     }
 
     def copyObjectAsync[T](graph: T): Future[T] = future {
-        if (Objects.equals(graph, null)) {
-            null.asInstanceOf[T]
-        } else {
-            val bytes = serializer.serialize(graph)
-            serializer.deserialize(bytes, graph.getClass)
-        }
+        if (Objects.equals(graph, null))
+            return null
+
+        val bytes = serializer.serialize(graph)
+        serializer.deserialize(bytes, graph.getClass)
     }
 }

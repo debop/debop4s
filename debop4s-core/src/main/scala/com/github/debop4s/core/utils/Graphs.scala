@@ -1,8 +1,8 @@
 package com.github.debop4s.core.utils
 
-import com.github.debop4s.core.parallels.Promises
 import org.slf4j.LoggerFactory
 import scala.collection.mutable
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**
@@ -20,6 +20,7 @@ object Graphs {
     * @param source 시작 노드
     * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
     */
+    @inline
     def breadthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): Seq[T] = {
         require(source != null)
         require(getAdjacent != null)
@@ -32,9 +33,9 @@ object Graphs {
             val current = toScan.dequeue()
             scanned += current
 
-            getAdjacent(current).par
-            .filter(!scanned.contains(_))
-            .foreach(toScan.enqueue(_))
+            getAdjacent(current)
+            .filter(x => !scanned.contains(x))
+            .foreach(x => toScan.enqueue(x))
         }
         scanned.toSeq
     }
@@ -44,10 +45,8 @@ object Graphs {
     * @param source 시작 노드
     * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
     */
-    def breathFirstScanAsync[T](source: T, getAdjacent: T => Iterable[T]): Future[Seq[T]] = {
-        Promises.exec[Seq[T]] {
-            breadthFirstScan(source, getAdjacent)
-        }
+    def breathFirstScanAsync[T](source: T, getAdjacent: T => Iterable[T]): Future[Seq[T]] = future {
+        breadthFirstScan(source, getAdjacent)
     }
 
     /**
@@ -55,6 +54,7 @@ object Graphs {
     * @param source 시작 노드
     * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
     */
+    @inline
     def depthFirstScan[T](source: T, getAdjacent: T => Iterable[T]): Seq[T] = {
         require(source != null)
         require(getAdjacent != null)
@@ -68,9 +68,9 @@ object Graphs {
             val current = toScan.pop()
             scanned += current
 
-            getAdjacent(current).par
-            .filter(!scanned.contains(_))
-            .foreach(toScan.push(_))
+            getAdjacent(current)
+            .filter(x => !scanned.contains(x))
+            .foreach(toScan.push)
         }
         scanned.toSeq
     }
@@ -80,9 +80,7 @@ object Graphs {
     * @param source 시작 노드
     * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
     */
-    def depthFirstScanAsync[T](source: T, getAdjacent: T => Iterable[T]): Future[Seq[T]] = {
-        Promises.exec[Seq[T]] {
-            depthFirstScan(source, getAdjacent)
-        }
+    def depthFirstScanAsync[T](source: T, getAdjacent: T => Iterable[T]): Future[Seq[T]] = future {
+        depthFirstScan(source, getAdjacent)
     }
 }

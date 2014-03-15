@@ -15,6 +15,7 @@ object Streams {
 
     val BUFFER_SIZE = 4096
 
+    @inline
     def copy(inputStream: InputStream, outputStream: OutputStream): Long = {
         assert(inputStream != null)
         assert(outputStream != null)
@@ -34,8 +35,8 @@ object Streams {
         size
     }
 
+    @inline
     def toByteArray(is: InputStream): Array[Byte] = {
-
         val os = new ByteArrayOutputStream()
         try {
             copy(is, os)
@@ -45,6 +46,7 @@ object Streams {
         }
     }
 
+    @inline
     def toOutputStream(bytes: Array[Byte]): OutputStream = {
         if (bytes == null || bytes.length == 0)
             return new ByteArrayOutputStream()
@@ -56,9 +58,9 @@ object Streams {
 
     def toOutputStream(str: String, cs: Charset = Charsets.UTF_8): OutputStream = {
         if (Strings.isEmpty(str))
-            new ByteArrayOutputStream()
-        else
-            toOutputStream(str.getBytes(cs))
+            return new ByteArrayOutputStream()
+
+        toOutputStream(str.getBytes(cs))
     }
 
     def toString(is: InputStream): String = Strings.getUtf8String(toByteArray(is))

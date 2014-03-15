@@ -5,7 +5,6 @@ import java.lang.String
 import java.net.URI
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods._
 import org.apache.http.conn.ssl.{TrustSelfSignedStrategy, SSLContexts}
@@ -25,7 +24,7 @@ import scala.annotation.varargs
  */
 class AsyncHttpClient {
 
-    lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
+    private lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
 
 
     def execute(request: HttpUriRequest): HttpResponse = {
@@ -143,15 +142,16 @@ class AsyncHttpClient {
         HttpAsyncClients.createDefault
     }
 
+    @inline
     private def createSslIOSessionStrategy: SSLIOSessionStrategy = {
         try {
             val trustStore: KeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
             trustStore.load(null, null)
 
-            val sslcontext: SSLContext =
-                SSLContexts.custom
-                .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy)
-                .build
+            val sslcontext = SSLContexts.custom
+                             .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy)
+                             .build
+
             new SSLIOSessionStrategy(sslcontext,
                 Array[String]("TLSv1"),
                 null,

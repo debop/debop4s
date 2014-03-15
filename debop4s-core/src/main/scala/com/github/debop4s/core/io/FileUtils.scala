@@ -6,6 +6,7 @@ import java.nio.channels.AsynchronousFileChannel
 import java.nio.charset.Charset
 import java.nio.file._
 import java.nio.file.attribute.{BasicFileAttributes, FileAttribute}
+import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
@@ -33,7 +34,7 @@ object FileUtils {
     @varargs
     def combine(base: Path, others: String*): Path = {
         var result = base
-        others.foreach { x => result = result.resolve(x) }
+        others.foreach { x => result = result.resolve(x)}
         result
     }
 
@@ -59,7 +60,7 @@ object FileUtils {
     }
 
     @varargs
-    def copyAsync(src: Path, target: Path, options: CopyOption*): concurrent.Future[Unit] = future {
+    def copyAsync(src: Path, target: Path, options: CopyOption*) = future {
         copy(src, target, options: _*)
     }
 
@@ -69,7 +70,7 @@ object FileUtils {
     }
 
     @varargs
-    def moveAsync(src: Path, dest: Path, options: CopyOption*): concurrent.Future[Unit] = future {
+    def moveAsync(src: Path, dest: Path, options: CopyOption*) = future {
         move(src, dest, options: _*)
     }
 
@@ -83,6 +84,7 @@ object FileUtils {
             delete(path)
     }
 
+    @inline
     def deleteDirectory(dir: Path, deep: Boolean = true) {
         if (!deep)
             deleteIfExists(dir)
@@ -106,7 +108,6 @@ object FileUtils {
         deleteDirectory(dir, deep)
     }
 
-
     def exists(path: Path): Boolean = Files.exists(path, LinkOption.NOFOLLOW_LINKS)
 
     @varargs
@@ -119,18 +120,15 @@ object FileUtils {
         readAllBytesAsync(path, StandardOpenOption.READ)
 
     @varargs
+    @inline
     def readAllBytesAsync(path: Path, openOptions: OpenOption*): concurrent.Future[Array[Byte]] = future {
         assert(path != null)
 
         val fileChannel = AsynchronousFileChannel
                           .open(path, openOptions: _*)
         try {
-            val buffer = ByteBuffer
-                         .allocate(fileChannel
-                                   .size()
-                                   .asInstanceOf[Int])
-            val result = fileChannel
-                         .read(buffer, 0)
+            val buffer = ByteBuffer.allocate(fileChannel.size().toInt)
+            val result = fileChannel.read(buffer, 0)
             result.get()
             buffer.flip()
             buffer.array()
@@ -148,6 +146,7 @@ object FileUtils {
         readAllLines(is, UTF8)
     }
 
+    @inline
     def readAllLines(is: InputStream, cs: Charset): IndexedSeq[String] = {
         val lines = ArrayBuffer[String]()
         val reader = new BufferedReader(new InputStreamReader(is, cs))
@@ -177,10 +176,9 @@ object FileUtils {
     }
 
     @varargs
-    def readAllLinesAsync(path: Path, cs: Charset, openOptions: OpenOption*) = future {
+    def readAllLinesAsync(path: Path, cs: Charset, openOptions: OpenOption*): Future[IndexedSeq[String]] = future {
         val future = readAllBytesAsync(path, openOptions: _*)
-        readAllLines(Await
-                     .result(future, 60 seconds), cs)
+        readAllLines(Await.result(future, 60 seconds), cs)
     }
 
     def readAllLinesAsync(is: InputStream): Future[IndexedSeq[String]] = {
@@ -218,30 +216,28 @@ object FileUtils {
         // write(path, lines, cs, options: _*)
     }
 
-    def writeAsync(path: Path, input: Array[Byte]): Future[Int] = {
+    def writeAsync(path: Path, input: Array[Byte]): Future[Integer] = {
         writeAsync(path, input, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
-    def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Int] = {
-        val promise = Promise[Int]()
-
+    @inline
+    def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Integer] = future {
         val fileChannel = AsynchronousFileChannel.open(path, options: _*)
         try {
             val future = fileChannel.write(ByteBuffer.wrap(input), 0)
-            promise.success(future.get())
+            future.get(15, TimeUnit.MINUTES)
         } finally {
             fileChannel.close()
         }
-        promise.future
     }
 
-    def writeAsync(path: Path, lines: Iterable[String], cs: Charset = UTF8): Future[Int] = {
+    def writeAsync(path: Path, lines: Iterable[String], cs: Charset = UTF8): Future[Integer] = {
         writeAsync(path, lines, cs, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
-    def writeAsync(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Future[Int] = {
+    def writeAsync(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Future[Integer] = {
         val allText = lines.mkString(System.lineSeparator())
         writeAsync(path, cs.encode(allText).array(), options: _*)
     }

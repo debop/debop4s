@@ -47,11 +47,10 @@ trait SymmetricEncryptor {
      */
     def encrypt(input: Array[Byte]): Array[Byte] = {
         if (input == null || input.length == 0)
-            Array.emptyByteArray
-        else {
-            log.trace(s"데이터를 암호화합니다. algorithm=[$algorithm]")
-            byteEncryptor.encrypt(input)
-        }
+            return Array.emptyByteArray
+
+        log.trace(s"데이터를 암호화합니다. algorithm=[$algorithm]")
+        byteEncryptor.encrypt(input)
     }
 
     /**
@@ -62,11 +61,10 @@ trait SymmetricEncryptor {
      */
     def decrypt(input: Array[Byte]): Array[Byte] = {
         if (input == null || input.length == 0)
-            Array.emptyByteArray
-        else {
-            log.trace(s"데이터를 복호화합니다. algorithm=[$algorithm]")
-            byteEncryptor.decrypt(input)
-        }
+            return Array.emptyByteArray
+
+        log.trace(s"데이터를 복호화합니다. algorithm=[$algorithm]")
+        byteEncryptor.decrypt(input)
     }
 }
 
