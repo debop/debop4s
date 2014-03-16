@@ -1,10 +1,10 @@
 package com.github.debop4s.redis.logback.pubsub
 
 import ch.qos.logback.classic.spi.LoggingEvent
-import com.github.debop4s.core.parallels.Promises
 import com.github.debop4s.redis.RedisConsts
 import com.github.debop4s.redis.logback.RedisAppender
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 /**
  * RedisLogPublisher
@@ -19,12 +19,12 @@ class RedisLogPublisher extends RedisAppender {
     }
 
     override def append(eventObject: LoggingEvent) {
-
-        Promises.exec[Future[Long]] {
+        val f = future {
             val doc = createLogDocument(eventObject)
-            val jsonDoc = toJsonText(doc)
-
-            redis.publish(channel, jsonDoc)
+            toJsonText(doc)
+        }
+        f onSuccess {
+            case text: String => redis.publish(channel, text)
         }
     }
 }

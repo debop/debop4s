@@ -53,14 +53,29 @@ class HibernateRedisCache(val redis: RedisClient) {
     def get(region: String, key: String, expireInSeconds: Long = 0): Future[Any] = {
         // 값을 가져오고, 값이 있고, expiration이 설정되어 있다면 갱신합니다.
         //
-        redis.hget(region, key).map((item: Option[ByteString]) => {
-            if (expireInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
-                val score = System.currentTimeMillis + expireInSeconds * 1000L
-                redis.zadd(regionExpireKey(region), (score, key))
-            }
-            item.map((x: ByteString) => valueSerializer.deserialize(x.toArray))
-            .getOrElse(null)
-        })
+        //        redis.hget(region, key).map { item =>
+        //            if (expireInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
+        //                val score = System.currentTimeMillis + expireInSeconds * 1000L
+        //                redis.zadd(regionExpireKey(region), (score, key))
+        //            }
+        //            item
+        //            .map(x => valueSerializer.deserialize(x.toArray))
+        //            .getOrElse(null)
+        //        }
+
+        val promise = Promise[Any]()
+
+        val get = redis.hget(region, key)
+        get onSuccess {
+            case v: Option[ByteString] =>
+                if (expireInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
+                    val score = System.currentTimeMillis + expireInSeconds * 1000L
+                    redis.zadd(regionExpireKey(region), (score, key))
+                }
+                val value = v.map(x => valueSerializer.deserialize(x.toArray)).getOrElse(null)
+                promise.success(value)
+        }
+        promise.future
     }
 
     /**
@@ -97,19 +112,35 @@ class HibernateRedisCache(val redis: RedisClient) {
         }
     }
 
-    def set(region: String, key: String, value: Any, expiry: Long = 0, unit: TimeUnit = TimeUnit.SECONDS): Future[Any] = {
-        val v = ByteString(valueSerializer.serialize(value))
-        val result = redis.hset(region, key, v)
-
-        val expireInSeconds = unit.toSeconds(expiry)
-        if (expireInSeconds > 0) {
-            val score: Long = System.currentTimeMillis + expireInSeconds * 1000L
-            redis.zadd(regionExpireKey(region), (score, key))
+    def set(region: String, key: String, value: Any, expiry: Long = 0, unit: TimeUnit = TimeUnit.SECONDS): Future[Boolean] = {
+        //        val v = ByteString(valueSerializer.serialize(value))
+        //        val result = redis.hset(region, key, v)
+        //
+        //        val expireInSeconds = unit.toSeconds(expiry)
+        //        if (expireInSeconds > 0) {
+        //            val score: Long = System.currentTimeMillis + expireInSeconds * 1000L
+        //            redis.zadd(regionExpireKey(region), (score, key))
+        //        }
+        //        result
+        val f = future {
+            ByteString(valueSerializer.serialize(value))
         }
-        result
+        val p = Promise[Boolean]()
+        f onComplete { v =>
+            val set = redis.hset(region, key, v.get)
+            set onComplete { ret =>
+                p complete ret
+                val expireInSeconds = unit.toSeconds(expiry)
+                if (expireInSeconds > 0) {
+                    val score: Long = System.currentTimeMillis + expireInSeconds * 1000L
+                    redis.zadd(regionExpireKey(region), (score, key))
+                }
+            }
+        }
+        p.future
     }
 
-    def expire(region: String) {
+    def expire(region: String) = future {
         val regionExpire = regionExpireKey(region)
         val score = System.currentTimeMillis()
 
@@ -133,7 +164,7 @@ class HibernateRedisCache(val redis: RedisClient) {
     }
 
     @varargs
-    def multiDelete(region: String, keys: String*) {
+    def multiDelete(region: String, keys: String*) = future {
         val regionExpire = regionExpireKey(region)
         keys.par.foreach { key =>
             redis.hdel(region, key)
@@ -145,12 +176,12 @@ class HibernateRedisCache(val redis: RedisClient) {
         multiDelete(region, keys.toSeq: _*)
     }
 
-    def deleteRegion(region: String) {
+    def deleteRegion(region: String) = future {
         redis.del(region)
         redis.del(regionExpireKey(region))
     }
 
-    def flushDb() = {
+    def flushDb() = future {
         log.info(s"Redis DB 전체를 flush 합니다...")
         redis.flushdb()
     }
