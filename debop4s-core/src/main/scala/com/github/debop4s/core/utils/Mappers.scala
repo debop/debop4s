@@ -11,6 +11,8 @@ import scala.reflect._
 
 /**
  * [[ModelMapper]]를 이용하여, 서로 상이한 수형 간의 정보를 복사할 수 있도록 합니다.
+ * NOTE: 이 것은 Java 객체에 대해서는 잘 되지만, scala 객체에서는 되지 않는다.
+ * Scala 에서는 이 방법보다. implict 변환 함수를 이용하는 것이 낫다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 12. 오후 2:14

@@ -322,7 +322,7 @@
             <dependency>
                 <groupId>org.modelmapper</groupId>
                 <artifactId>modelmapper</artifactId>
-                <version>0.6.1</version>
+                <version>0.6.3</version>
             </dependency>
 
             <!-- 암호화 -->
