@@ -21,16 +21,19 @@ class BinarySerializer extends Serializer {
         if (graph == null)
             return Array.emptyByteArray
 
-        val bos = new ByteArrayOutputStream()
-        val oos = new ObjectOutputStream(bos)
+        var bos = None: Option[ByteArrayOutputStream]
+        var oos = None: Option[ObjectOutputStream]
         try {
-            oos.writeObject(graph)
-            oos.flush()
+            bos = Some(new ByteArrayOutputStream())
+            oos = Some(new ObjectOutputStream(bos.get))
 
-            bos.toByteArray
+            oos.get.writeObject(graph)
+            oos.get.flush()
+
+            bos.get.toByteArray
         } finally {
-            oos.close()
-            bos.close()
+            if (oos.isDefined) oos.get.close()
+            if (bos.isDefined) bos.get.close()
         }
     }
 
@@ -44,13 +47,15 @@ class BinarySerializer extends Serializer {
         if (Arrays.isEmpty(bytes))
             return null.asInstanceOf[T]
 
-        val bis = new ByteArrayInputStream(bytes)
+        var bis = None: Option[ByteArrayInputStream]
+
         try {
-            val ois = new ObjectInputStream(bis)
+            bis = Some(new ByteArrayInputStream(bytes))
+            val ois = new ObjectInputStream(bis.get)
 
             ois.readObject().asInstanceOf[T]
         } finally {
-            bis.close()
+            if (bis.isDefined) bis.get.close()
         }
     }
 }

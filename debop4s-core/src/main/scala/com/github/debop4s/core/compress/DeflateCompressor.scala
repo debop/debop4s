@@ -4,17 +4,16 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.util.zip.{InflaterInputStream, DeflaterOutputStream}
 
 /**
- * com.github.debop4s.core.compress.DeflateCompressor
+ * DeflateCompressor
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 9. 오후 10:56
  */
 class DeflateCompressor extends Compressor {
 
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
-
         val bos = new ByteArrayOutputStream()
-        val deflater = new DeflaterOutputStream(bos)
         try {
+            val deflater = new DeflaterOutputStream(bos)
             deflater.write(plainBytes)
             deflater.close()
 
@@ -27,23 +26,26 @@ class DeflateCompressor extends Compressor {
     override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
 
         val bos = new ByteArrayOutputStream()
-        val bis = new ByteArrayInputStream(compressedBytes)
-        val inflater = new InflaterInputStream(bis)
+        var bis = None: Option[ByteArrayInputStream]
+        var inflater = None: Option[InflaterInputStream]
 
         try {
+            bis = Some(new ByteArrayInputStream(compressedBytes))
+            inflater = Some(new InflaterInputStream(bis.get))
+
             val buff = new Array[Byte](BUFFER_SIZE)
             var n = 0
 
             do {
-                n = inflater.read(buff, 0, BUFFER_SIZE)
+                n = inflater.get.read(buff, 0, BUFFER_SIZE)
                 if (n > 0) bos.write(buff, 0, n)
             } while (n > 0)
 
             bos.toByteArray
         }
         finally {
-            inflater.close()
-            bis.close()
+            if (inflater.isDefined) inflater.get.close()
+            if (bis.isDefined) bis.get.close()
             bos.close()
         }
     }
