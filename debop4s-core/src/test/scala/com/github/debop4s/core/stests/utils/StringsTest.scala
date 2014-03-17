@@ -43,6 +43,8 @@ class StringsTest extends AbstractCoreTest {
     }
 
     test("Strings join") {
+        implicit val separator = ","
+
         val strs = Array("a", "bc", "def")
         assert(Strings.join(strs) == "a,bc,def")
         assert(Strings.join(strs)("") == "abcdef")

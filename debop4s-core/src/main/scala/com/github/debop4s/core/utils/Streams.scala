@@ -65,7 +65,7 @@ object Streams {
 
     def toString(is: InputStream): String = Strings.getUtf8String(toByteArray(is))
 
-    def toString(is: InputStream, cs: Charset = Charsets.UTF_8): String =
+    def toString(is: InputStream, cs: Charset): String =
         Strings.getUtf8String(toByteArray(is))
 
 

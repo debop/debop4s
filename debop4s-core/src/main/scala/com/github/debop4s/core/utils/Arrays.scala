@@ -36,11 +36,11 @@ object Arrays {
     def lastIndexOf[T](array: Array[T], target: T): Int =
         array.lastIndexOf(target)
 
+    /**
+     *
+     */
     def asArray[T: ClassTag](iterable: Iterable[T]): Array[T] =
         iterable.toArray
-
-    def asArray[T: ClassTag](collection: java.util.Collection[T]): Array[T] =
-        collection.toBuffer.toArray
 
     def asString[T](iterable: Iterable[T]): String = iterable.mkString(",")
 
@@ -52,7 +52,6 @@ object Arrays {
         RANDOM.nextBytes(bytes)
         bytes
     }
-
 
     def copyOf[T: ClassTag](original: Array[T], newLength: Int): Array[T] = {
         assert(original != null)

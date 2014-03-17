@@ -32,7 +32,7 @@ object Guard {
 
     @varargs
     def shouldBe(cond: Boolean, fmt: String, args: Any*) {
-        assert(cond, String.format(fmt, args))
+        assert(cond, fmt.format(args: _*))
     }
 
     def shouldBeEquals(actual: Any, expected: Any, actualName: String) {

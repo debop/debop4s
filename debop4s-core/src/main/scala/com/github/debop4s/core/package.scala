@@ -31,7 +31,7 @@ package object core {
     val ShouldNotBeNegativeNumber = "[%s] should not be negative number"
 
     val ShouldBeInRangeInt = "%s[%d]이 범위 [%d, %d) 를 벗어났습니다."
-    val ShouldBeInRangeDouble = "%s[%s]이 범위 [%s, %s) 를 벗어났습니다."
+    val ShouldBeInRangeDouble = "%s[%f]이 범위 [%f, %f) 를 벗어났습니다."
 
 
 }
