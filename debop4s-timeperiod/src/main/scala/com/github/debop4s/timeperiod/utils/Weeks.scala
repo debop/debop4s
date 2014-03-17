@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 
 /**
- * com.github.debop4s.timeperiod.utils.Weeks
+ * com.github.debop4s.timeperiod.base.Weeks
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 2. 오후 9:23
  */

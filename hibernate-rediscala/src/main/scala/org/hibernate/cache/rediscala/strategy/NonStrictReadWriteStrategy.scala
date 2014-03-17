@@ -3,7 +3,6 @@ package org.hibernate.cache.rediscala.strategy
 import org.hibernate.cache.rediscala.regions.{RedisNaturalIdRegion, RedisEntityRegion, RedisCollectionRegion}
 import org.hibernate.cache.spi.access.{NaturalIdRegionAccessStrategy, SoftLock, CollectionRegionAccessStrategy, EntityRegionAccessStrategy}
 import org.hibernate.cfg.Settings
-import org.slf4j.LoggerFactory
 
 /**
  * NonStrictReadWriteRedisCollectionRegionAccessStrategy
@@ -16,8 +15,6 @@ class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _r
     extends AbstractRedisAccessStrategy(_region, _settings)
     with CollectionRegionAccessStrategy {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
-
     override def getRegion = region
 
     override def get(key: Any, txTimestamp: Long): AnyRef =
@@ -29,7 +26,6 @@ class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _r
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            log.debug(s"cancel put from load...")
             return false
         }
 
@@ -55,8 +51,6 @@ class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _regio
     extends AbstractRedisAccessStrategy(_region, _settings)
     with EntityRegionAccessStrategy {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
-
     override def getRegion = region
 
     override def get(key: Any, txTimestamp: Long): AnyRef =
@@ -68,7 +62,6 @@ class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _regio
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            log.debug(s"cancel put from load...")
             return false
         }
 
@@ -112,8 +105,6 @@ class NonStrictReadWriteRedisNatualIdRegionAccessStrategy(private[this] val _reg
     extends AbstractRedisAccessStrategy(_region, _settings)
     with NaturalIdRegionAccessStrategy {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
-
     override def getRegion = region
 
     override def get(key: Any, txTimestamp: Long) =
@@ -125,7 +116,6 @@ class NonStrictReadWriteRedisNatualIdRegionAccessStrategy(private[this] val _reg
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            log.debug(s"cancel put from load...")
             return false
         }
 

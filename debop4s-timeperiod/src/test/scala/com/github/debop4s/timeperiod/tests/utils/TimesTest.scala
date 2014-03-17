@@ -11,7 +11,7 @@ import scala.actors.threadpool.AtomicInteger
 import scala.collection.JavaConversions._
 
 /**
- * com.github.debop4s.timeperiod.tests.utils.TimesTest
+ * com.github.debop4s.timeperiod.tests.base.TimesTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 17. 오후 1:42

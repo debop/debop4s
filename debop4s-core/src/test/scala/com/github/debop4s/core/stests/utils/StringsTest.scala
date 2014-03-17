@@ -2,7 +2,6 @@ package com.github.debop4s.core.stests.utils
 
 import com.github.debop4s.core.stests.AbstractCoreTest
 import com.github.debop4s.core.utils.Strings
-import com.github.debop4s.core.utils.Strings._
 
 /**
  * StringsTest
@@ -11,36 +10,36 @@ import com.github.debop4s.core.utils.Strings._
 class StringsTest extends AbstractCoreTest {
 
     test("Strings.isNull") {
-        assert(isNull(null))
-        assert(!isNull(""))
-        assert(!isNotNull(null))
-        assert(isNotNull(""))
+        assert(Strings.isNull(null))
+        assert(!Strings.isNull(""))
+        assert(!Strings.isNotNull(null))
+        assert(Strings.isNotNull(""))
     }
 
     test("Strings.isEmpty") {
-        assert(isEmpty(null))
-        assert(isEmpty(""))
-        assert(isEmpty("      "))
-        assert(!isEmpty("null"))
+        assert(Strings.isEmpty(null))
+        assert(Strings.isEmpty(""))
+        assert(Strings.isEmpty("      "))
+        assert(!Strings.isEmpty("null"))
 
-        assert(!isNotEmpty(null))
-        assert(!isNotEmpty(""))
-        assert(!isNotEmpty("      "))
-        assert(isNotEmpty("null"))
+        assert(!Strings.isNotEmpty(null))
+        assert(!Strings.isNotEmpty(""))
+        assert(!Strings.isNotEmpty("      "))
+        assert(Strings.isNotEmpty("null"))
     }
 
     test("Strings isWhitespace printable 문자열이 아니면 빈 문자열로 본다.") {
-        assert(isWhitespace(null))
-        assert(isWhitespace(""))
-        assert(isWhitespace("   \t  "))
-        assert(isWhitespace("   \r  "))
-        assert(!isWhitespace("null"))
+        assert(Strings.isWhitespace(null))
+        assert(Strings.isWhitespace(""))
+        assert(Strings.isWhitespace("   \t  "))
+        assert(Strings.isWhitespace("   \r  "))
+        assert(!Strings.isWhitespace("null"))
 
-        assert(!isNotWhitespace(null))
-        assert(!isNotWhitespace(""))
-        assert(!isNotWhitespace("  \t    "))
-        assert(!isNotWhitespace("  \r    "))
-        assert(isNotWhitespace("null"))
+        assert(!Strings.isNotWhitespace(null))
+        assert(!Strings.isNotWhitespace(""))
+        assert(!Strings.isNotWhitespace("  \t    "))
+        assert(!Strings.isNotWhitespace("  \r    "))
+        assert(Strings.isNotWhitespace("null"))
     }
 
     test("Strings join") {
@@ -53,18 +52,18 @@ class StringsTest extends AbstractCoreTest {
     test("String split") {
 
         val str = "동해,물 || 백두,산 a BaB"
-        val strArr = split(str, ",", "||", "A")
+        val strArr = Strings.split(str, ",", "||", "A")
         assert(strArr.sameElements(Array("동해", "물", "백두", "산", "B", "B")))
 
-        val strArr2 = split(str, false, true, ",", "||", "A")
+        val strArr2 = Strings.split(str, false, true, ",", "||", "A")
         assert(strArr2.sameElements(Array("동해", "물", "백두", "산 a BaB")))
     }
 
     test("Base64 converting") {
         val text = "동해물과 백두산이 Hello Word! http://github.com/debop"
 
-        val base64String = encodeBase64String(text)
-        val converted = decodeBase64String(base64String)
+        val base64String = Strings.encodeBase64String(text)
+        val converted = Strings.decodeBase64String(base64String)
         assert(converted == text)
     }
 

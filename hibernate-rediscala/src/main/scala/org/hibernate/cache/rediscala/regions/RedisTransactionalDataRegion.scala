@@ -6,6 +6,8 @@ import org.hibernate.cache.rediscala.client.HibernateRedisCache
 import org.hibernate.cache.rediscala.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.spi.{CacheDataDescription, TransactionalDataRegion}
 import org.hibernate.cfg.Settings
+import org.slf4j.LoggerFactory
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * RedisTransactionalDataRegion
@@ -22,6 +24,7 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
     extends RedisDataRegion(_accessStrategyFactory, _cache, _regionName, _props)
     with TransactionalDataRegion {
 
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     override def getCacheDataDescription: CacheDataDescription = metadata
 
@@ -29,13 +32,9 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
 
     def get(key: Any): Any = {
         try {
-            val value = Promises.await(cache.get(regionName, key.toString, expireInSeconds))
-            log.trace(s"cache item key=$key, value=$value")
-            value
+            Promises.await(cache.get(regionName, key.toString, expireInSeconds))
         } catch {
-            case e: Throwable =>
-                log.warn(s"Fail to get cache item... key=$key", e)
-                return null
+            case e: Throwable => return null
         }
     }
 
@@ -44,11 +43,17 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
     }
 
     def remove(key: Any) {
-        cache.delete(regionName, key.toString)
+        val fut = cache.delete(regionName, key.toString)
+        fut onFailure {
+            case e: Throwable => log.warn(s"Fail to delete key. region=$regionName, key=$key", e)
+        }
     }
 
     def clear() {
-        cache.deleteRegion(regionName)
+        val f = cache.deleteRegion(regionName)
+        f onFailure {
+            case e: Throwable => log.warn(s"Fail to delete region [$regionName]", e)
+        }
     }
 
     def evict(key: String) {

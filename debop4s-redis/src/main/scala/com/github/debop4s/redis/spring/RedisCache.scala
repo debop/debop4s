@@ -31,7 +31,7 @@ class RedisCache(val name: String,
     val setName = s"cache:keys:$name"
     val cacheLockName = s"cache:lock:$name"
 
-    var waitTimeoutForLock = 100 // msec
+    var waitTimeoutForLock = 5 // msec
 
     override def getNativeCache: AnyRef = redis
 
@@ -55,6 +55,8 @@ class RedisCache(val name: String,
     override def get[T](key: Any, clazz: Class[T]): T = {
         log.trace(s"캐시 조회. key=$key, clazz=$clazz")
 
+        waitForLock(redis)
+
         Promises.await(redis.get(computeKey(key)))
         .map(bs => serializer.deserialize(bs.toArray, clazz))
         .getOrElse(null.asInstanceOf[T])
@@ -66,15 +68,16 @@ class RedisCache(val name: String,
     override def put(key: Any, value: Any) {
         log.trace(s"Spring Cache를 저장합니다. key=$key, value=$value")
         val keyStr = computeKey(key)
-        withTransaction {
-            tx =>
-                tx.set(keyStr, serializer.serialize(value))
-                tx.zadd(setName, (0.0, keyStr))
-                if (expiration > 0) {
-                    tx.expire(keyStr, expiration)
-                    // 최신 캐시 항목에 의해 설정되기 때문에 매번 최대 값이 설정된다고 보면 된다.
-                    tx.expire(setName, expiration)
-                }
+
+        waitForLock(redis)
+        withTransaction { tx =>
+            tx.set(keyStr, serializer.serialize(value))
+            tx.zadd(setName, (0.0, keyStr))
+            if (expiration > 0) {
+                tx.expire(keyStr, expiration)
+                // 최신 캐시 항목에 의해 설정되기 때문에 매번 최대 값이 설정된다고 보면 된다.
+                tx.expire(setName, expiration)
+            }
         }
     }
 
@@ -123,8 +126,8 @@ class RedisCache(val name: String,
                 finished = keys.size < PAGE_SIZE
                 offset += 1
 
+                // 캐시 삭제
                 if (keys.nonEmpty) {
-                    // 캐시 삭제
                     Promises.await(redis.del(keys.map(key => computeKey(key)): _*))
                 }
             } while (!finished)
@@ -143,10 +146,11 @@ class RedisCache(val name: String,
         prefix + key.toString
     }
 
-    private def wairForLock(redis: RedisClient): Boolean = {
+    private def waitForLock(redis: RedisClient): Boolean = {
         var retry = false
         var foundLock = false
         do {
+            retry = false
             if (Promises.await(redis.exists(cacheLockName))) {
                 foundLock = true
                 try {

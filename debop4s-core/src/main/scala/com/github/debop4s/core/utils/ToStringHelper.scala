@@ -4,38 +4,36 @@ import scala.collection.mutable
 
 /**
  * 문자열을 취합해 하나의 문자열로 표현해줍니다. 객체의 toString 에 사용합니다.
+ * [[ValueObject]] 를 상속받는 객체는 `buildStringHelper`를 재정의 하시면 됩니다.
  *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2013. 12. 10. 오후 1:31
+ * @author sunghyouk.bae@gmail.com
  */
 class ToStringHelper(val className: String) {
 
     val map = new mutable.LinkedHashMap[String, Any]()
 
-    @inline
     def add(name: String, value: Any): ToStringHelper = {
-        addMap(name, value)
+        map.put(name, value)
         this
     }
 
-    @inline
     override def toString: String = {
-        map.mkString("{", ",", "}")
-        //        val builder = new StringBuilder()
-        //
-        //        builder.append("{")
-        //        var sep = ""
-        //        var first = true
-        //        for (x <- map) {
-        //            builder.append(sep)
-        //            builder.append(x._1).append("=").append(x._2)
-        //            if (first) {
-        //                first = false
-        //                sep = ","
-        //            }
-        //        }
-        //        builder.append("}")
-        //        builder.toString()
+        val builder = new StringBuilder(32)
+
+        builder.append(className)
+        builder.append("{")
+        var sep = ""
+        var first = true
+        for ((n, v) <- map) {
+            builder.append(sep)
+            builder.append(n).append("=").append(v)
+            if (first) {
+                first = false
+                sep = ","
+            }
+        }
+        builder.append("}")
+        builder.toString()
     }
 
     @inline
@@ -45,5 +43,5 @@ class ToStringHelper(val className: String) {
 }
 
 object ToStringHelper {
-    def apply(self: Any) = new ToStringHelper(self.getClass.getName)
+    def apply(self: Any) = new ToStringHelper(self.getClass.getSimpleName)
 }

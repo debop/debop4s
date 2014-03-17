@@ -1,15 +1,13 @@
-package org.hibernate.cache.rediscala.serializer
+package com.github.debop4s.redis.serializer
 
 import java.io
 import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
 
 /**
  * BinaryRedisSerializer
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오전 11:20
+ * @author Sunghyouk Bae
  */
-private[rediscala] class BinaryRedisSerializer[T] extends RedisSerializer[T] {
+class BinaryRedisSerializer[T] extends RedisSerializer[T] {
 
     override def serialize(graph: T): Array[Byte] = {
         if (graph == null)

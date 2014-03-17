@@ -6,7 +6,6 @@ import org.hibernate.cache.rediscala.client.HibernateRedisCache
 import org.hibernate.cache.rediscala.strategy.RedisAccessStrategyFactory
 import org.hibernate.cache.rediscala.{Promises, HibernateRedisUtil}
 import org.hibernate.cache.spi.Region
-import org.slf4j.LoggerFactory
 
 
 /**
@@ -20,9 +19,6 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
                                val regionName: String,
                                val props: Properties) extends Region {
 
-
-    lazy val log = LoggerFactory.getLogger(getClass)
-
     val expireInSeconds = HibernateRedisUtil.expireInSeconds(regionName)
 
     override def getName: String = regionName
@@ -32,13 +28,8 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
     override def destroy(): Unit = synchronized {
         if (regionDeleted)
             return
-
-        log.debug(s"delete cache region. region=$regionName")
-
         try {
             cache.deleteRegion(regionName)
-        } catch {
-            case ignored: Throwable =>
         } finally {
             regionDeleted = true
         }

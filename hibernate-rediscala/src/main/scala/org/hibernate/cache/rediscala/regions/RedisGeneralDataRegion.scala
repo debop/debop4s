@@ -26,7 +26,6 @@ class RedisGeneralDataRegion(private[this] val _accessStrategyFactory: RedisAcce
     override def get(key: Any): AnyRef = {
         try {
             val value = Promises.await(cache.get(regionName, key.toString, expireInSeconds)).asInstanceOf[AnyRef]
-            log.trace(s"cache item key=$key, value=$value")
             value
         } catch {
             case e: Throwable => null

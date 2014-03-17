@@ -7,7 +7,7 @@ import java.util.Locale
 import org.joda.time.Duration
 
 /**
- * com.github.debop4s.timeperiod.tests.utils.DurationsTest
+ * com.github.debop4s.timeperiod.tests.base.DurationsTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 17. 오전 11:15

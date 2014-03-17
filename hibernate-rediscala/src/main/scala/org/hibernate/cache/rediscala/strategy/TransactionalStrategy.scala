@@ -16,8 +16,6 @@ class TransactionalRedisCollectionAccessStrategy(private[this] val _region: Redi
     extends AbstractRedisAccessStrategy(_region, _settings)
     with CollectionRegionAccessStrategy {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
-
     override def getRegion = region
 
     override def get(key: Any, txTimestamp: Long): AnyRef =
@@ -29,7 +27,6 @@ class TransactionalRedisCollectionAccessStrategy(private[this] val _region: Redi
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            log.debug(s"cancel put from load...")
             return false
         }
         region.put(key, value)
@@ -54,8 +51,6 @@ class TransactionalRedisEntityRegionAccessStrategy(private[this] val _region: Re
     extends AbstractRedisAccessStrategy(_region, _settings)
     with EntityRegionAccessStrategy {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
-
     override def getRegion = region
 
     override def get(key: Any, txTimestamp: Long): AnyRef =
@@ -67,7 +62,6 @@ class TransactionalRedisEntityRegionAccessStrategy(private[this] val _region: Re
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            log.debug(s"cancel put from load...")
             return false
         }
 
@@ -129,8 +123,7 @@ class TransactionalRedisNatualIdRegionAccessStrategy(private[this] val _region: 
                              version: Any,
                              minimalPutOverride: Boolean): Boolean = {
         if (minimalPutOverride && region.contains(key)) {
-            log.debug(s"cancel put from load...")
-            false
+            return false
         }
         region.put(key, value)
         true
