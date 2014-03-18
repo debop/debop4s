@@ -15,6 +15,7 @@ import scala.concurrent
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.util.{Failure, Success, Try}
 
 /**
  * File 관련 Object
@@ -104,7 +105,7 @@ object FileUtils {
         }
     }
 
-    def deleteDirectoryAsync(dir: Path, deep: Boolean = true): concurrent.Future[Unit] = future {
+    def deleteDirectoryAsync(dir: Path, deep: Boolean = true) = future {
         deleteDirectory(dir, deep)
     }
 
@@ -121,7 +122,7 @@ object FileUtils {
 
     @varargs
     @inline
-    def readAllBytesAsync(path: Path, openOptions: OpenOption*): concurrent.Future[Array[Byte]] = future {
+    def readAllBytesAsync(path: Path, openOptions: OpenOption*): Future[Array[Byte]] = future {
         assert(path != null)
 
         val fileChannel = AsynchronousFileChannel
@@ -149,15 +150,16 @@ object FileUtils {
     @inline
     def readAllLines(is: InputStream, cs: Charset): IndexedSeq[String] = {
         val lines = ArrayBuffer[String]()
-        val reader = new BufferedReader(new InputStreamReader(is, cs))
+        var reader = None: Option[BufferedReader]
         try {
-            var line = reader.readLine()
+            reader = Some(new BufferedReader(new InputStreamReader(is, cs)))
+            var line = reader.get.readLine()
             while (line != null) {
                 lines += line
-                line = reader.readLine()
+                line = reader.get.readLine()
             }
         } finally {
-            reader.close()
+            if (reader.isDefined) reader.get.close()
         }
         lines
     }
@@ -167,12 +169,22 @@ object FileUtils {
     }
 
     def readAllLines(input: Array[Byte], cs: Charset): IndexedSeq[String] = {
-        val is = new ByteArrayInputStream(input)
-        try {
-            readAllLines(is, cs)
-        } finally {
-            is.close()
+        // scala 고유의 Option, Try 기능을 활용합니다.
+        Try(new ByteArrayInputStream(input)) match {
+            case Success(is) =>
+                val results = readAllLines(is, cs)
+                is.close()
+                results
+            case Failure(e) =>
+                log.error("Fail to read bytes.", e)
+                throw new RuntimeException("Fail to read bytes.", e)
         }
+        //        val is = new ByteArrayInputStream(input)
+        //        try {
+        //            readAllLines(is, cs)
+        //        } finally {
+        //            is.close()
+        //        }
     }
 
     @varargs
@@ -213,31 +225,43 @@ object FileUtils {
     @varargs
     def write(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Path = {
         Files.write(path, lines.toSeq, cs, options: _*)
-        // write(path, lines, cs, options: _*)
     }
 
-    def writeAsync(path: Path, input: Array[Byte]): Future[Integer] = {
+    def writeAsync(path: Path, input: Array[Byte]): Future[Option[Int]] = {
         writeAsync(path, input, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
     @inline
-    def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Integer] = future {
-        val fileChannel = AsynchronousFileChannel.open(path, options: _*)
-        try {
-            val future = fileChannel.write(ByteBuffer.wrap(input), 0)
-            future.get(15, TimeUnit.MINUTES)
-        } finally {
-            fileChannel.close()
+    def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Option[Int]] = future {
+        val fileChannel = Try(AsynchronousFileChannel.open(path, options: _*))
+        fileChannel match {
+            case Success(channel) =>
+                try {
+                    val future = channel.write(ByteBuffer.wrap(input), 0)
+                    Some(future.get(15, TimeUnit.MINUTES))
+                } finally {
+                    channel.close()
+                }
+            case Failure(e) =>
+                throw new RuntimeException("Fail to write to file.", e)
+                None
         }
+        //        val fileChannel = AsynchronousFileChannel.open(path, options: _*)
+        //        try {
+        //            val future = fileChannel.write(ByteBuffer.wrap(input), 0)
+        //            future.get(15, TimeUnit.MINUTES)
+        //        } finally {
+        //            fileChannel.close()
+        //        }
     }
 
-    def writeAsync(path: Path, lines: Iterable[String], cs: Charset = UTF8): Future[Integer] = {
+    def writeAsync(path: Path, lines: Iterable[String], cs: Charset = UTF8): Future[Option[Int]] = {
         writeAsync(path, lines, cs, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
-    def writeAsync(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Future[Integer] = {
+    def writeAsync(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Future[Option[Int]] = {
         val allText = lines.mkString(System.lineSeparator())
         writeAsync(path, cs.encode(allText).array(), options: _*)
     }

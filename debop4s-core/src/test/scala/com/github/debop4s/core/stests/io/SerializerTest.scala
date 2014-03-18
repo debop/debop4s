@@ -8,7 +8,7 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 
 /**
- * com.github.debop4s.core.tests.io.SerializerTest
+ * SerializerTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 8:52
