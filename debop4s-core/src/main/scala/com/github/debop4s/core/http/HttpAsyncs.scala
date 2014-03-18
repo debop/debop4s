@@ -12,6 +12,7 @@ import org.apache.http.{NameValuePair, Header, HttpResponse}
 import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
+import scala.util.{Failure, Success, Try}
 
 
 /**
@@ -29,10 +30,13 @@ object HttpAsyncs {
     lazy val client = new AsyncHttpClient()
     lazy val serializer = JacksonSerializer()
 
-    def execute(request: HttpUriRequest): HttpResponse = client.execute(request)
+    def execute(request: HttpUriRequest): Try[HttpResponse] = {
+        client.execute(request)
+    }
 
-    def executeSSL(request: HttpUriRequest): HttpResponse =
+    def executeSSL(request: HttpUriRequest): Try[HttpResponse] = {
         client.executeSSL(request)
+    }
 
     def buildHttpGet(uriString: String, headers: Header*): HttpGet =
         buildHttpGet(new URI(uriString), headers: _*)
@@ -43,19 +47,22 @@ object HttpAsyncs {
         httpget
     }
 
-    def get(uriString: String, headers: Header*): HttpResponse =
+    def get(uriString: String, headers: Header*): Try[HttpResponse] = {
         client.get(buildHttpGet(uriString, headers: _*))
+    }
 
-    def get(uriString: String, cs: Charset, headers: Header*): String =
+    def get(uriString: String, cs: Charset, headers: Header*): Try[String] = Try {
         getContent(get(uriString, headers: _*), cs)
+    }
 
-    def get(uri: URI, headers: Header*): HttpResponse =
+    def get(uri: URI, headers: Header*): Try[HttpResponse] =
         client.get(buildHttpGet(uri, headers: _*))
 
-    def get(uri: URI, cs: Charset, headers: Header*): String =
+    def get(uri: URI, cs: Charset, headers: Header*): Try[String] = Try {
         getContent(get(uri, headers: _*), cs)
+    }
 
-    def get(httpget: HttpGet): HttpResponse = client.get(httpget)
+    def get(httpget: HttpGet): Try[HttpResponse] = client.get(httpget)
 
     //    def getAsParallel(uriStrings: String*): List[HttpResponse] =
     //        client.getAsParallel(uriStrings.map(x => buildHttpGet(x)).toSeq: _*)
@@ -73,7 +80,7 @@ object HttpAsyncs {
         .map(r => getContent(r, cs))
 
     @varargs
-    def getAsParallel(httpgets: HttpGet*): Iterable[HttpResponse] =
+    def getAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] =
         client.getAsParallel(httpgets: _*)
 
     @varargs
@@ -90,15 +97,15 @@ object HttpAsyncs {
     }
 
     @varargs
-    def post(uri: URI, nvps: List[NameValuePair], headers: Header*): HttpResponse =
+    def post(uri: URI, nvps: List[NameValuePair], headers: Header*): Try[HttpResponse] =
         post(uri, nvps, Charsets.UTF_8, headers: _*)
 
     @varargs
-    def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): HttpResponse =
+    def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): Try[HttpResponse] =
         client.post(buildHttpPost(uri, nvps, cs, headers: _*))
 
     @varargs
-    def postAsParallel(posts: HttpPost*): Iterable[HttpResponse] =
+    def postAsParallel(posts: HttpPost*): Iterable[Try[HttpResponse]] =
         client.postAsParallel(posts: _*)
 
     @varargs
@@ -114,11 +121,11 @@ object HttpAsyncs {
     }
 
     @varargs
-    def postByJson[T](uri: URI, entity: T, headers: Header*): HttpResponse =
+    def postByJson[T](uri: URI, entity: T, headers: Header*): Try[HttpResponse] =
         postByJson(uri, entity, Charsets.UTF_8, headers: _*)
 
     @varargs
-    def postByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpResponse =
+    def postByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): Try[HttpResponse] =
         client.post(buildHttpPostByJson(uri, entity, cs, headers: _*))
 
     @varargs
@@ -133,30 +140,27 @@ object HttpAsyncs {
     }
 
     @varargs
-    def delete(uriString: String, headers: Header*): HttpResponse =
+    def delete(uriString: String, headers: Header*): Try[HttpResponse] =
         client.delete(buildHttpDelete(uriString))
 
     @varargs
-    def delete(uri: URI, headers: Header*): HttpResponse =
+    def delete(uri: URI, headers: Header*): Try[HttpResponse] =
         client.delete(buildHttpDelete(uri))
 
-    def delete(delete: HttpDelete): HttpResponse =
+    def delete(delete: HttpDelete): Try[HttpResponse] =
         client.delete(delete)
 
     @varargs
-    def deleteAsParallel(deletes: HttpDelete*): Iterable[HttpResponse] =
+    def deleteAsParallel(deletes: HttpDelete*): Iterable[Try[HttpResponse]] =
         client.deleteAsParallel(deletes: _*)
 
     @inline
-    def getContent(response: HttpResponse, cs: Charset = Charsets.UTF_8): String = {
-        if (response == null || response.getEntity == null)
-            return Strings.EMPTY_STR
-
-        try {
-            EntityUtils.toString(response.getEntity, cs)
-        } catch {
-            case e: Throwable =>
-                log.error("HttpResponse에서 Content를 추출하는데 실패했습니다.", e)
+    def getContent(response: Try[HttpResponse], cs: Charset = Charsets.UTF_8): String = {
+        response match {
+            case Success(r) =>
+                EntityUtils.toString(r.getEntity, cs)
+            case Failure(e) =>
+                log.error("HttpResponse로부터 Content를 추출하는데 실패했습니다.", e)
                 Strings.EMPTY_STR
         }
     }

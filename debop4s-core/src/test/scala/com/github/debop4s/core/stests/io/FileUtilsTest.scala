@@ -62,14 +62,14 @@ class FileUtilsTest extends AssertionsForJUnit {
 
         val lineCount = 100
         val lines = new ArrayBuffer[String](lineCount)
-        (0 until lineCount).foreach { _ => lines += TEST_TEXT.trim }
+        (0 until lineCount).foreach { _ => lines += TEST_TEXT.trim}
 
         try {
             FileUtils.createFile(path)
             FileUtils.write(path, lines, Charsets.UTF_8, StandardOpenOption.WRITE)
 
             val readLines = FileUtils.readAllLines(path)
-            log.debug(s"readLines=${readLines.size }, lines=${lines.size }")
+            log.debug(s"readLines=${readLines.size}, lines=${lines.size}")
             assert(readLines.size == lines.size)
         }
         finally {
@@ -84,14 +84,18 @@ class FileUtilsTest extends AssertionsForJUnit {
         FileUtils.deleteIfExists(path)
 
         try {
-            val writeResult = FileUtils.writeAsync(path,
-                Strings.replicate(TEST_TEXT, lineCount).getBytes(FileUtils.UTF8),
-                StandardOpenOption.CREATE,
-                StandardOpenOption.WRITE)
+            val writeResult =
+                FileUtils.writeAsync(path,
+                    Strings.replicate(TEST_TEXT, lineCount).getBytes(FileUtils.UTF8),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE)
             Promises.await(writeResult)
+
             val readResult = FileUtils.readAllLinesAsync(path, FileUtils.UTF8, StandardOpenOption.READ)
             val lines = Promises.await(readResult, 60 seconds)
-            assert(lines.size == lineCount)
+
+            assert(lines.isSuccess)
+            assert(lines.getOrElse(Seq()).size == lineCount)
         } finally {
             FileUtils.deleteIfExists(path)
         }

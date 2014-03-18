@@ -21,9 +21,8 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
     val REGION = client.DEFAULT_REGION_NAME
 
     test("connection") {
-        client.ping.map {
-            r =>
-                assertThat(r).isEqualTo("pong")
+        client.ping.map { r =>
+            assertThat(r).isEqualTo("pong")
         }
     }
 

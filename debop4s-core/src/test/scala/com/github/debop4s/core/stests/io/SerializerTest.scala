@@ -40,10 +40,10 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
         val compressors = Array[Compressor](new GZipCompressor(), new DeflateCompressor())
         val serializers = Array[Serializer](new BinarySerializer())
 
-        compressors.par.foreach { compressor =>
-            serializers.par.foreach { serializer =>
+        compressors.foreach { compressor =>
+            serializers.foreach { serializer =>
                 val cs = new CompressableSerializer(serializer, compressor)
-                log.debug(s"encryptor=[${compressor.getClass }], serializer=[${serializer.getClass }]")
+                log.debug(s"encryptor=[${compressor.getClass}], serializer=[${serializer.getClass}]")
 
                 val bytes = cs.serialize(company)
                 val deserialized = cs.deserialize(bytes, classOf[Company])
@@ -59,10 +59,10 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
         val encryptors = Array[SymmetricEncryptor](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
         val serializers = Array[Serializer](new BinarySerializer())
 
-        encryptors.par.foreach { encryptor =>
-            serializers.par.foreach { serializer =>
+        encryptors.foreach { encryptor =>
+            serializers.foreach { serializer =>
                 val es = new EncryptableSerializer(serializer, encryptor)
-                log.debug(s"encryptor=[${encryptor.getClass }], serializer=[${serializer.getClass }]")
+                log.debug(s"encryptor=[${encryptor.getClass}], serializer=[${serializer.getClass}]")
 
                 val bytes = es.serialize(company)
                 val deserialized = es.deserialize(bytes, classOf[Company])

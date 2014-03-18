@@ -104,12 +104,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Google Caliper : https://code.google.com/p/caliper/ -->
-        <dependency>
-            <groupId>com.google.caliper</groupId>
-            <artifactId>caliper</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -272,6 +266,13 @@
                 <groupId>org.xerial.snappy</groupId>
                 <artifactId>snappy-java</artifactId>
                 <version>1.1.0.1</version>
+            </dependency>
+
+            <!-- Message Pack -->
+            <dependency>
+                <groupId>org.msgpack</groupId>
+                <artifactId>msgpack-scala_${scala.main.version}</artifactId>
+                <version>0.6.8</version>
             </dependency>
 
             <!-- Jackson JSON Serializer -->
@@ -791,14 +792,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- Google Caliper : https://code.google.com/p/caliper/ -->
-            <dependency>
-                <groupId>com.google.caliper</groupId>
-                <artifactId>caliper</artifactId>
-                <version>1.0-beta-1</version>
-                <scope>test</scope>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -848,6 +841,7 @@
             <name>RedisScala</name>
             <url>https://github.com/etaty/rediscala-mvn/raw/master/releases</url>
         </repository>
+
     </repositories>
 
     <build>

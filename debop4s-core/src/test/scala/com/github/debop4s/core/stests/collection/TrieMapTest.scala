@@ -13,10 +13,10 @@ class TrieMapTest extends AbstractCoreTest {
         var sqrt = num
     }
 
-    val count = 50000
+    val count = 50
 
     test("ParTrieMap 테스트") {
-        val entries = 1 until count map { num => Entry(num.toDouble)}
+        val entries = 1 to count map { num => Entry(num.toDouble)}
         val results = ParTrieMap[Double, Entry]()
         for (e <- entries) {
             results += ((e.num, e))
@@ -33,6 +33,7 @@ class TrieMapTest extends AbstractCoreTest {
                 }
             }
         }
+        println(entries)
     }
 
 }

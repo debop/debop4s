@@ -54,6 +54,13 @@
             <artifactId>snappy-java</artifactId>
         </dependency>
 
+        <!-- Message Pack -->
+        <dependency>
+            <groupId>org.msgpack</groupId>
+            <artifactId>msgpack-scala_${scala.main.version}</artifactId>
+            <version>0.6.8</version>
+        </dependency>
+
         <!-- Bone CP -->
         <dependency>
             <groupId>com.jolbox</groupId>

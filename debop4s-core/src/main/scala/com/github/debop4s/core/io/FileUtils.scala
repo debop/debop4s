@@ -143,32 +143,33 @@ object FileUtils {
         Files.readAllLines(path, cs).toList
     }
 
-    def readAllLines(is: InputStream): IndexedSeq[String] = {
+    def readAllLines(is: InputStream): Try[Seq[String]] = {
         readAllLines(is, UTF8)
     }
 
     @inline
-    def readAllLines(is: InputStream, cs: Charset): IndexedSeq[String] = {
+    def readAllLines(is: InputStream, cs: Charset): Try[Seq[String]] = Try {
         val lines = ArrayBuffer[String]()
-        var reader = None: Option[BufferedReader]
-        try {
-            reader = Some(new BufferedReader(new InputStreamReader(is, cs)))
-            var line = reader.get.readLine()
-            while (line != null) {
-                lines += line
-                line = reader.get.readLine()
-            }
-        } finally {
-            if (reader.isDefined) reader.get.close()
+        val br = Try(new BufferedReader(new InputStreamReader(is, cs)))
+
+        br match {
+            case Success(reader) =>
+                var line = reader.readLine()
+                while (line != null) {
+                    lines += line
+                    line = reader.readLine()
+                }
+            case Failure(e) =>
+                throw new RuntimeException("Cannot read file.", e)
         }
         lines
     }
 
-    def readAllLines(input: Array[Byte]): IndexedSeq[String] = {
+    def readAllLines(input: Array[Byte]): Try[Seq[String]] = {
         readAllLines(input, UTF8)
     }
 
-    def readAllLines(input: Array[Byte], cs: Charset): IndexedSeq[String] = {
+    def readAllLines(input: Array[Byte], cs: Charset): Try[Seq[String]] = {
         // scala 고유의 Option, Try 기능을 활용합니다.
         Try(new ByteArrayInputStream(input)) match {
             case Success(is) =>
@@ -188,64 +189,65 @@ object FileUtils {
     }
 
     @varargs
-    def readAllLinesAsync(path: Path, cs: Charset, openOptions: OpenOption*): Future[IndexedSeq[String]] = future {
+    def readAllLinesAsync(path: Path, cs: Charset, openOptions: OpenOption*): Future[Try[Seq[String]]] = future {
         val future = readAllBytesAsync(path, openOptions: _*)
         readAllLines(Await.result(future, 60 seconds), cs)
     }
 
-    def readAllLinesAsync(is: InputStream): Future[IndexedSeq[String]] = {
+    def readAllLinesAsync(is: InputStream): Future[Try[Seq[String]]] = {
         readAllLinesAsync(is, UTF8)
     }
 
-    def readAllLinesAsync(is: InputStream, cs: Charset): Future[IndexedSeq[String]] = future {
+    def readAllLinesAsync(is: InputStream, cs: Charset): Future[Try[Seq[String]]] = future {
         readAllLines(is, cs)
     }
 
-    def readAllLinesAsync(input: Array[Byte]): Future[IndexedSeq[String]] = {
+    def readAllLinesAsync(input: Array[Byte]): Future[Try[Seq[String]]] = {
         readAllLinesAsync(input, UTF8)
     }
 
-    def readAllLinesAsync(input: Array[Byte], cs: Charset): Future[IndexedSeq[String]] = future {
+    def readAllLinesAsync(input: Array[Byte], cs: Charset): Future[Try[Seq[String]]] = future {
         readAllLines(input, cs)
     }
 
-    def write(path: Path, input: Array[Byte]): Path = {
+    def write(path: Path, input: Array[Byte]): Try[Path] = {
         write(path, input, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
-    def write(path: Path, input: Array[Byte], options: OpenOption*): Path = {
+    def write(path: Path, input: Array[Byte], options: OpenOption*): Try[Path] = Try {
         Files.write(path, input, options: _*)
     }
 
-    def write(path: Path, lines: Iterable[String], cs: Charset = UTF8): Path = {
+    def write(path: Path, lines: Iterable[String], cs: Charset = UTF8): Try[Path] = {
         write(path, lines, cs, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
-    def write(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Path = {
+    def write(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Try[Path] = Try {
         Files.write(path, lines.toSeq, cs, options: _*)
     }
 
-    def writeAsync(path: Path, input: Array[Byte]): Future[Option[Int]] = {
+    def writeAsync(path: Path, input: Array[Byte]): Future[Try[Int]] = {
         writeAsync(path, input, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
     @inline
-    def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Option[Int]] = future {
-        val fileChannel = Try(AsynchronousFileChannel.open(path, options: _*))
-        fileChannel match {
-            case Success(channel) =>
-                try {
-                    val future = channel.write(ByteBuffer.wrap(input), 0)
-                    Some(future.get(15, TimeUnit.MINUTES))
-                } finally {
-                    channel.close()
-                }
-            case Failure(e) =>
-                throw new RuntimeException("Fail to write to file.", e)
-                None
+    def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Try[Int]] = future {
+        Try {
+            val fileChannel = Try(AsynchronousFileChannel.open(path, options: _*))
+            fileChannel match {
+                case Success(channel) =>
+                    try {
+                        val future = channel.write(ByteBuffer.wrap(input), 0)
+                        future.get(15, TimeUnit.MINUTES)
+                    } finally {
+                        channel.close()
+                    }
+                case Failure(e) =>
+                    throw new RuntimeException("Fail to write to file.", e)
+            }
         }
         //        val fileChannel = AsynchronousFileChannel.open(path, options: _*)
         //        try {
@@ -256,12 +258,12 @@ object FileUtils {
         //        }
     }
 
-    def writeAsync(path: Path, lines: Iterable[String], cs: Charset = UTF8): Future[Option[Int]] = {
+    def writeAsync(path: Path, lines: Iterable[String], cs: Charset = UTF8): Future[Try[Int]] = {
         writeAsync(path, lines, cs, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
-    def writeAsync(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Future[Option[Int]] = {
+    def writeAsync(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Future[Try[Int]] = {
         val allText = lines.mkString(System.lineSeparator())
         writeAsync(path, cs.encode(allText).array(), options: _*)
     }

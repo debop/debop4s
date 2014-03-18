@@ -40,8 +40,9 @@ class AsyncHttpClientTest extends FunSuite {
 
         httpResponses.par.foreach { response =>
             assert(response != null)
-            assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-            log.debug(EntityUtils.toString(response.getEntity))
+            assert(response.isSuccess)
+            assert(response.get.getStatusLine.getStatusCode == HttpStatus.SC_OK)
+            log.trace(EntityUtils.toString(response.get.getEntity))
         }
     }
 
@@ -51,8 +52,9 @@ class AsyncHttpClientTest extends FunSuite {
 
         httpResponses.par.foreach { response =>
             assert(response != null)
-            assert(response.getStatusLine.getStatusCode == HttpStatus.SC_METHOD_NOT_ALLOWED)
-            log.debug(EntityUtils.toString(response.getEntity))
+            assert(response.isSuccess)
+            assert(response.get.getStatusLine.getStatusCode == HttpStatus.SC_METHOD_NOT_ALLOWED)
+            log.trace(EntityUtils.toString(response.get.getEntity))
         }
     }
 
@@ -67,7 +69,7 @@ class AsyncHttpClientTest extends FunSuite {
             val response = future.get(15, TimeUnit.SECONDS)
             assert(response != null)
             assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-            log.debug(EntityUtils.toString(response.getEntity))
+            log.trace(EntityUtils.toString(response.getEntity))
         } finally {
             client.close()
         }
@@ -78,8 +80,9 @@ class AsyncHttpClientTest extends FunSuite {
 
         val response = HttpAsyncs.get(uri)
         assert(response != null)
-        assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-        log.debug(EntityUtils.toString(response.getEntity))
+        assert(response.isSuccess)
+        assert(response.get.getStatusLine.getStatusCode == HttpStatus.SC_OK)
+        log.trace(EntityUtils.toString(response.get.getEntity))
     }
 
     test("ssl get sdg") {
@@ -96,18 +99,20 @@ class AsyncHttpClientTest extends FunSuite {
 
         httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
         val client: AsyncHttpClient = new AsyncHttpClient
-        val response: HttpResponse = client.getSSL(httpGet)
+        val response = client.getSSL(httpGet)
         assert(response != null)
-        assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-        log.debug(EntityUtils.toString(response.getEntity))
+        assert(response.isSuccess)
+        assert(response.get.getStatusLine.getStatusCode == HttpStatus.SC_OK)
+        log.trace(EntityUtils.toString(response.get.getEntity))
     }
 
     test("execute") {
         val uri: URI = new URIBuilder().setScheme("https").setHost("issues.apache.org").setPort(443).build
-        val response: HttpResponse = HttpAsyncs.execute(new HttpGet(uri))
+        val response = HttpAsyncs.execute(new HttpGet(uri))
         assert(response != null)
-        assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-        log.debug(EntityUtils.toString(response.getEntity))
+        assert(response.isSuccess)
+        assert(response.get.getStatusLine.getStatusCode == HttpStatus.SC_OK)
+        log.trace(EntityUtils.toString(response.get.getEntity))
     }
 
     test("execute ssl") {
@@ -125,10 +130,11 @@ class AsyncHttpClientTest extends FunSuite {
 
         httpGet.setHeader(HttpHeaders.ACCEPT, "application/json")
 
-        val response: HttpResponse = HttpAsyncs.executeSSL(httpGet)
+        val response = HttpAsyncs.executeSSL(httpGet)
         assert(response != null)
-        assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-        log.debug(EntityUtils.toString(response.getEntity))
+        assert(response.isSuccess)
+        assert(response.get.getStatusLine.getStatusCode == HttpStatus.SC_OK)
+        log.trace(EntityUtils.toString(response.get.getEntity))
     }
 
     test("custom ssl") {
@@ -153,7 +159,7 @@ class AsyncHttpClientTest extends FunSuite {
             val response: HttpResponse = future.get(15, TimeUnit.SECONDS)
             assert(response != null)
             assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-            log.debug(EntityUtils.toString(response.getEntity))
+            log.trace(EntityUtils.toString(response.getEntity))
         }
         finally {
             client.close()

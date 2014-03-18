@@ -15,6 +15,7 @@ import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.nio.reactor.ConnectingIOReactor
 import org.apache.http.{HttpException, HttpResponse}
 import scala.annotation.varargs
+import scala.util.Try
 
 /**
  * 비동기 Http Client
@@ -27,9 +28,8 @@ class AsyncHttpClient {
     private lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
 
 
-    def execute(request: HttpUriRequest): HttpResponse = {
+    def execute(request: HttpUriRequest): Try[HttpResponse] = Try {
         val client = HttpAsyncClients.createDefault()
-
         try {
             client.start()
             val future = client.execute(request, null)
@@ -39,9 +39,8 @@ class AsyncHttpClient {
         }
     }
 
-    def executeSSL(request: HttpUriRequest): HttpResponse = {
+    def executeSSL(request: HttpUriRequest): Try[HttpResponse] = Try {
         val client = createHttpAsyncClient(request.getURI)
-
         try {
             client.start()
             val future = client.execute(request, null)
@@ -51,75 +50,75 @@ class AsyncHttpClient {
         }
     }
 
-    def get(httpget: HttpGet): HttpResponse = execute(httpget)
+    def get(httpget: HttpGet): Try[HttpResponse] = execute(httpget)
 
-    def getSSL(httpget: HttpGet): HttpResponse = executeSSL(httpget)
+    def getSSL(httpget: HttpGet): Try[HttpResponse] = executeSSL(httpget)
 
     @varargs
-    def getAsParallel(httpgets: HttpGet*): Iterable[HttpResponse] =
+    def getAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(httpgets)(request => get(request))
 
     @varargs
-    def getSSLAsParallel(httpgets: HttpGet*): Iterable[HttpResponse] =
+    def getSSLAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(httpgets)(request => getSSL(request))
 
-    def post(httppost: HttpPost): HttpResponse = execute(httppost)
+    def post(httppost: HttpPost): Try[HttpResponse] = execute(httppost)
 
-    def postSSL(httppost: HttpPost): HttpResponse = executeSSL(httppost)
+    def postSSL(httppost: HttpPost): Try[HttpResponse] = executeSSL(httppost)
 
     @varargs
-    def postAsParallel(httpposts: HttpPost*): Iterable[HttpResponse] =
+    def postAsParallel(httpposts: HttpPost*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(httpposts)(request => execute(request))
 
     @varargs
-    def postSSLAsParallel(httpposts: HttpPost*): Iterable[HttpResponse] =
+    def postSSLAsParallel(httpposts: HttpPost*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(httpposts)(request => executeSSL(request))
 
-    def delete(httpdelete: HttpDelete): HttpResponse = execute(httpdelete)
+    def delete(httpdelete: HttpDelete): Try[HttpResponse] = execute(httpdelete)
 
-    def deleteSSL(httpdelete: HttpDelete): HttpResponse = executeSSL(httpdelete)
+    def deleteSSL(httpdelete: HttpDelete): Try[HttpResponse] = executeSSL(httpdelete)
 
     @varargs
-    def deleteAsParallel(httpdeletes: HttpDelete*): Iterable[HttpResponse] =
+    def deleteAsParallel(httpdeletes: HttpDelete*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(httpdeletes)(request => execute(request))
 
     @varargs
-    def deleteSSLAsParallel(httpdeletes: HttpDelete*): Iterable[HttpResponse] =
+    def deleteSSLAsParallel(httpdeletes: HttpDelete*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(httpdeletes)(request => executeSSL(request))
 
-    def put(httpput: HttpPut): HttpResponse = execute(httpput)
+    def put(httpput: HttpPut): Try[HttpResponse] = execute(httpput)
 
-    def putSSL(httpput: HttpPut): HttpResponse = executeSSL(httpput)
+    def putSSL(httpput: HttpPut): Try[HttpResponse] = executeSSL(httpput)
 
     @varargs
-    def putAsParallel(httpputs: HttpPut*): Iterable[HttpResponse] =
+    def putAsParallel(httpputs: HttpPut*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(httpputs)(request => execute(request))
 
     @varargs
-    def putSSLAsParallel(httpputs: HttpPut*): Iterable[HttpResponse] =
+    def putSSLAsParallel(httpputs: HttpPut*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(httpputs)(request => executeSSL(request))
 
-    def patch(patch: HttpPatch): HttpResponse = execute(patch)
+    def patch(patch: HttpPatch): Try[HttpResponse] = execute(patch)
 
-    def patchSSL(patch: HttpPatch): HttpResponse = executeSSL(patch)
+    def patchSSL(patch: HttpPatch): Try[HttpResponse] = executeSSL(patch)
 
     @varargs
-    def patchAsParallel(patchs: HttpPatch*): Iterable[HttpResponse] =
+    def patchAsParallel(patchs: HttpPatch*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(patchs)(request => execute(request))
 
-    def patchSSLAsParallel(patchs: HttpPatch*): Iterable[HttpResponse] =
+    def patchSSLAsParallel(patchs: HttpPatch*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(patchs)(request => executeSSL(request))
 
-    def head(head: HttpHead): HttpResponse = execute(head)
+    def head(head: HttpHead): Try[HttpResponse] = execute(head)
 
-    def headSSL(head: HttpHead): HttpResponse = executeSSL(head)
+    def headSSL(head: HttpHead): Try[HttpResponse] = executeSSL(head)
 
     @varargs
-    def headAsParallel(heads: HttpHead*): Iterable[HttpResponse] =
+    def headAsParallel(heads: HttpHead*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(heads)(request => execute(request))
 
     @varargs
-    def headSSLAsParallel(heads: HttpHead*): Iterable[HttpResponse] =
+    def headSSLAsParallel(heads: HttpHead*): Iterable[Try[HttpResponse]] =
         Parallels.callEach(heads)(request => executeSSL(request))
 
     private def createConnectionIOReactor(): ConnectingIOReactor =

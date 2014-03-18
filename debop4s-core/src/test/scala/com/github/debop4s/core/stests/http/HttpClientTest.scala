@@ -39,7 +39,7 @@ class HttpClientTest extends JUnitSuite {
         val httpClient = new HttpClient()
         try {
             val responseStr = httpClient.get(URI_STRING)
-            log.debug(s"RESPONSE HTML=$responseStr")
+            log.trace(s"RESPONSE HTML=$responseStr")
         } finally {
             httpClient.close()
         }
@@ -51,8 +51,9 @@ class HttpClientTest extends JUnitSuite {
         val httpClient = new HttpClient()
         try {
             val responseStr = httpClient.get(URI_STRING)
-            assert(Strings.isNotEmpty(responseStr))
-            log.debug(responseStr)
+            assert(responseStr.isSuccess)
+            assert(Strings.isNotEmpty(responseStr.getOrElse("")))
+            log.trace(responseStr.getOrElse(""))
         } finally {
             httpClient.close()
         }
@@ -67,8 +68,8 @@ class HttpClientTest extends JUnitSuite {
         val nvps = new ArrayBuffer[NameValuePair]()
         nvps += new BasicNameValuePair("q", "배성혁")
         val responseStr = httpClient.post(uri, nvps.toList)
-        assert(Strings.isNotEmpty(responseStr))
-        log.debug(responseStr)
+        assert(Strings.isNotEmpty(responseStr.getOrElse("")))
+        log.trace(responseStr.getOrElse(""))
 
     }
 
@@ -79,13 +80,13 @@ class HttpClientTest extends JUnitSuite {
         val responseHandler: ResponseHandler[String] = new BasicResponseHandler
         val responseBody = HttpClients.createDefault.execute(httpGet, responseHandler)
         assert(responseBody != null)
-        log.debug(responseBody)
+        log.trace(responseBody)
     }
 
     @Test
     def fluentGet() {
         val response: HttpResponse = Request.Get(URI_STRING).execute.returnResponse
-        log.debug(EntityUtils.toString(response.getEntity))
+        log.trace(EntityUtils.toString(response.getEntity))
         assertThat(response.getStatusLine.getStatusCode).isEqualTo(HttpStatus.SC_OK)
     }
 
@@ -99,7 +100,7 @@ class HttpClientTest extends JUnitSuite {
             .returnResponse
         assert(response != null)
         assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-        log.debug(EntityUtils.toString(response.getEntity, Charsets.UTF_8))
+        log.trace(EntityUtils.toString(response.getEntity, Charsets.UTF_8))
     }
 
     @Test
@@ -111,12 +112,12 @@ class HttpClientTest extends JUnitSuite {
         val httpGet: HttpGet = new HttpGet(uri)
         val futureResponse = client.execute(httpGet, null)
         while (!futureResponse.isDone) {
-            log.debug("...")
+            log.trace("...")
             Thread.sleep(1L)
         }
         val response = futureResponse.get
         assert(response != null)
-        log.debug(EntityUtils.toString(response.getEntity, Charsets.UTF_8))
+        log.trace(EntityUtils.toString(response.getEntity, Charsets.UTF_8))
     }
 
     @Test
@@ -133,7 +134,7 @@ class HttpClientTest extends JUnitSuite {
                     val futureResponse = client.execute(httpGet, null)
                     val response = futureResponse.get
                     assert(response != null)
-                    log.debug(EntityUtils.toString(response.getEntity))
+                    log.trace(EntityUtils.toString(response.getEntity))
                 }
                 catch {
                     case e: Exception =>
