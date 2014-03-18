@@ -54,11 +54,10 @@
             <artifactId>snappy-java</artifactId>
         </dependency>
 
-        <!-- Message Pack -->
+        <!-- Fast Serialization -->
         <dependency>
-            <groupId>org.msgpack</groupId>
-            <artifactId>msgpack-scala_${scala.main.version}</artifactId>
-            <version>0.6.8</version>
+            <groupId>de.ruedigermoeller</groupId>
+            <artifactId>fst</artifactId>
         </dependency>
 
         <!-- Bone CP -->

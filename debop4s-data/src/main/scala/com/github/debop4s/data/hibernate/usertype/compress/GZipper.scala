@@ -8,7 +8,7 @@ import com.github.debop4s.core.compress.{Compressor, GZipCompressor}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 6:29
  */
-trait GZipper {
+private[data] trait GZipper {
 
     private lazy val _compressor = new GZipCompressor()
 

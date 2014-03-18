@@ -1,8 +1,8 @@
 package com.github.debop4s.core.stests.io
 
-import com.github.debop4s.core.compress.{Compressor, DeflateCompressor, GZipCompressor}
+import com.github.debop4s.core.compress.{SnappyCompressor, Compressor, DeflateCompressor, GZipCompressor}
 import com.github.debop4s.core.cryptography.{TripleDESEncryptor, DESEncryptor, RC2Encryptor, SymmetricEncryptor}
-import com.github.debop4s.core.io.{EncryptableSerializer, CompressableSerializer, BinarySerializer, Serializer}
+import com.github.debop4s.core.io._
 import com.github.debop4s.core.stests.io.model.{User, Company}
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
  */
 class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     var company: Company = _
 
@@ -37,8 +37,8 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
 
     test("comparessable serialize") {
-        val compressors = Array[Compressor](new GZipCompressor(), new DeflateCompressor())
-        val serializers = Array[Serializer](new BinarySerializer())
+        val compressors = Array[Compressor](new GZipCompressor(), new DeflateCompressor(), new SnappyCompressor())
+        val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer())
 
         compressors.foreach { compressor =>
             serializers.foreach { serializer =>
@@ -57,7 +57,7 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
     test("encryptable serialize") {
         val encryptors = Array[SymmetricEncryptor](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
-        val serializers = Array[Serializer](new BinarySerializer())
+        val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer())
 
         encryptors.foreach { encryptor =>
             serializers.foreach { serializer =>

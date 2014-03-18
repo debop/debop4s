@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 5:48
  */
-class CompressableSerializer(serializer: Serializer, val compressor: Compressor)
-    extends SerializerDecorator(serializer) {
+class CompressableSerializer(private val _serializer: Serializer, val compressor: Compressor)
+    extends SerializerDecorator(_serializer) {
 
     private lazy val log = LoggerFactory.getLogger(classOf[CompressableSerializer])
 

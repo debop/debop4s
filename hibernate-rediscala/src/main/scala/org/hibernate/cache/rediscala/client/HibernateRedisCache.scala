@@ -1,7 +1,7 @@
 package org.hibernate.cache.rediscala.client
 
 import akka.util.ByteString
-import org.hibernate.cache.rediscala.serializer.{SnappyRedisSerializer, BinaryRedisSerializer}
+import org.hibernate.cache.rediscala.serializer.{FstRedisSerializer, SnappyRedisSerializer}
 import org.slf4j.LoggerFactory
 import redis.RedisClient
 import redis.api.Limit
@@ -30,7 +30,8 @@ class HibernateRedisCache(val redis: RedisClient) {
 
     val DEFAULT_REGION_NAME = "hibernate"
 
-    private val valueSerializer = new SnappyRedisSerializer[Any](new BinaryRedisSerializer[Any]()) // new BinaryRedisSerializer[Any]()
+    //private val valueSerializer = new SnappyRedisSerializer[Any](new BinaryRedisSerializer[Any]())
+    private val valueSerializer = new SnappyRedisSerializer[Any](new FstRedisSerializer[Any]())
 
     def ping: Future[String] = redis.ping()
 

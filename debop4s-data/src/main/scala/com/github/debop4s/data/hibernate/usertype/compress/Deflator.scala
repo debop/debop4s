@@ -8,7 +8,7 @@ import com.github.debop4s.core.compress.{Compressor, DeflateCompressor}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 6:28
  */
-trait Deflator {
+private[data] trait Deflator {
 
     private lazy val _compressor = new DeflateCompressor()
 

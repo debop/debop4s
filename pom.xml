@@ -268,11 +268,11 @@
                 <version>1.1.0.1</version>
             </dependency>
 
-            <!-- Message Pack -->
+            <!-- Fast Serialization -->
             <dependency>
-                <groupId>org.msgpack</groupId>
-                <artifactId>msgpack-scala_${scala.main.version}</artifactId>
-                <version>0.6.8</version>
+                <groupId>de.ruedigermoeller</groupId>
+                <artifactId>fst</artifactId>
+                <version>1.40</version>
             </dependency>
 
             <!-- Jackson JSON Serializer -->

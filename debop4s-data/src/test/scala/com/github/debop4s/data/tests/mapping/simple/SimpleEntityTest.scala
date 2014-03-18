@@ -91,7 +91,7 @@ class SimpleEntityTest extends AbstractJpaTest {
 }
 
 @Entity
-@org.hibernate.annotations.Cache(region = "simple", usage = CacheConcurrencyStrategy.READ_WRITE)
+//@org.hibernate.annotations.Cache(region = "simple", usage = CacheConcurrencyStrategy.READ_WRITE)
 @ha.DynamicInsert
 @ha.DynamicUpdate
 class LifecycleEntity extends LongEntity {
