@@ -33,7 +33,7 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
             writer.close()
         }
         val lines = Files.readAllLines(path, Charsets.UTF_8)
-        lines.foreach { line => log.debug(s"line:$line") }
+        lines.foreach {line => log.debug(s"line:$line")}
         Files.deleteIfExists(path)
     }
 
@@ -86,18 +86,13 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
         val in = new InputStreamReader(is, charset)
         val br = new BufferedReader(in)
 
-        try {
-            val lines = ArrayBuffer[String]()
-            while (true) {
-                val line = br.readLine
-                if (line == null)
-                    return lines
-                lines += line
-            }
-            lines
-        } catch {
-            case e: Exception =>
-                throw new RuntimeException(e)
+        val lines = ArrayBuffer[String]()
+        while (true) {
+            val line = br.readLine
+            if (line == null)
+                return lines
+            lines += line
         }
+        lines
     }
 }

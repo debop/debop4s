@@ -4,6 +4,7 @@ import com.github.debop4s.core.BinaryStringFormat
 import com.github.debop4s.core.BinaryStringFormat.BinaryStringFormat
 import com.github.debop4s.core.utils.{Streams, Strings}
 import java.io.{OutputStream, InputStream}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**

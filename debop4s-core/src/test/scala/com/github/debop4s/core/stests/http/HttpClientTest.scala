@@ -47,7 +47,12 @@ class HttpClientTest extends JUnitSuite {
 
     @Test
     def httpGetWithParams() {
-        val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁").setParameter("oq", "배성혁").build
+        val uri = new URIBuilder()
+                  .setPath(URI_STRING + "/search")
+                  .setParameter("q", "배성혁")
+                  .setParameter("oq", "배성혁")
+                  .build
+
         val httpClient = new HttpClient()
         try {
             val responseStr = httpClient.get(URI_STRING)
@@ -122,8 +127,9 @@ class HttpClientTest extends JUnitSuite {
 
     @Test
     def asyncMultipleGet() {
-        val connectionManager: PoolingNHttpClientConnectionManager = new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor)
+        val connectionManager = new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor)
         val client = HttpAsyncClients.custom.setConnectionManager(connectionManager).build
+
         try {
             client.start()
             Parallels.runAction(10) {
