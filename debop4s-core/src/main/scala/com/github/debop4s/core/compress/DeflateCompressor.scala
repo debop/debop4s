@@ -12,6 +12,7 @@ class DeflateCompressor extends Compressor {
 
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
         val bos = new ByteArrayOutputStream()
+
         try {
             val deflater = new DeflaterOutputStream(bos)
             deflater.write(plainBytes)

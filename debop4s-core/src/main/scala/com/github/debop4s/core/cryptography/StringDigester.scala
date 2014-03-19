@@ -36,7 +36,7 @@ trait StringDigester {
     }
 }
 
-abstract class AbstractStringDigester(iterations: Option[Int] = None) extends StringDigester {
+abstract class AbstractStringDigester(val iterations: Option[Int] = None) extends StringDigester {
 
     standardStringDigester.setAlgorithm(algorithm)
     standardStringDigester.setIterations(iterations.getOrElse(5))
@@ -44,7 +44,8 @@ abstract class AbstractStringDigester(iterations: Option[Int] = None) extends St
 
 /** MD5 String Digester */
 @Component
-class MD5StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+class MD5StringDigester(private val _iterations: Option[Int] = None)
+    extends AbstractStringDigester(_iterations) {
 
     def this() {
         this(Some(5))
@@ -56,7 +57,8 @@ class MD5StringDigester(iterations: Option[Int] = None) extends AbstractStringDi
 
 /** SHA1 String Digester */
 @Component
-class SHA1StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+class SHA1StringDigester(private val _iterations: Option[Int] = None)
+    extends AbstractStringDigester(_iterations) {
 
     def this() {
         this(Some(5))
@@ -67,7 +69,8 @@ class SHA1StringDigester(iterations: Option[Int] = None) extends AbstractStringD
 }
 
 @Component
-class SHA256StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+class SHA256StringDigester(private val _iterations: Option[Int] = None)
+    extends AbstractStringDigester(_iterations) {
 
     def this() {
         this(Some(5))
@@ -79,7 +82,8 @@ class SHA256StringDigester(iterations: Option[Int] = None) extends AbstractStrin
 }
 
 @Component
-class SHA384StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+class SHA384StringDigester(private val _iterations: Option[Int] = None)
+    extends AbstractStringDigester(_iterations) {
 
     def this() {
         this(Some(5))
@@ -91,7 +95,8 @@ class SHA384StringDigester(iterations: Option[Int] = None) extends AbstractStrin
 }
 
 @Component
-class SHA512StringDigester(iterations: Option[Int] = None) extends AbstractStringDigester(iterations) {
+class SHA512StringDigester(private val _iterations: Option[Int] = None)
+    extends AbstractStringDigester(_iterations) {
 
     def this() {
         this(Some(5))

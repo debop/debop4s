@@ -35,7 +35,7 @@ object FileUtils {
     @varargs
     def combine(base: Path, others: String*): Path = {
         var result = base
-        others.foreach { x => result = result.resolve(x)}
+        others.foreach {x => result = result.resolve(x)}
         result
     }
 
@@ -87,9 +87,9 @@ object FileUtils {
 
     @inline
     def deleteDirectory(dir: Path, deep: Boolean = true) {
-        if (!deep)
+        if (!deep) {
             deleteIfExists(dir)
-        else {
+        } else {
             val visitor = new SimpleFileVisitor[Path] {
                 override def postVisitDirectory(dir: Path, exc: IOException) = {
                     Files.delete(dir)
@@ -109,7 +109,8 @@ object FileUtils {
         deleteDirectory(dir, deep)
     }
 
-    def exists(path: Path): Boolean = Files.exists(path, LinkOption.NOFOLLOW_LINKS)
+    def exists(path: Path): Boolean =
+        Files.exists(path, LinkOption.NOFOLLOW_LINKS)
 
     @varargs
     def exists(path: Path, linkOptions: LinkOption*): Boolean =
@@ -125,16 +126,18 @@ object FileUtils {
     def readAllBytesAsync(path: Path, openOptions: OpenOption*): Future[Array[Byte]] = future {
         assert(path != null)
 
-        val fileChannel = AsynchronousFileChannel
-                          .open(path, openOptions: _*)
+        var fileChannel = None: Option[AsynchronousFileChannel]
+
         try {
-            val buffer = ByteBuffer.allocate(fileChannel.size().toInt)
-            val result = fileChannel.read(buffer, 0)
+            fileChannel = Some(AsynchronousFileChannel.open(path, openOptions: _*))
+            val buffer = ByteBuffer.allocate(fileChannel.get.size().toInt)
+            val result = fileChannel.get.read(buffer, 0)
             result.get()
             buffer.flip()
             buffer.array()
         } finally {
-            fileChannel.close()
+            if (fileChannel.isDefined)
+                fileChannel.get.close()
         }
     }
 

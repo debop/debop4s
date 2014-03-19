@@ -37,6 +37,9 @@ object Streams {
 
     @inline
     def toByteArray(is: InputStream): Array[Byte] = {
+        if (is == null)
+            Array.emptyByteArray
+
         val os = new ByteArrayOutputStream()
         try {
             copy(is, os)
@@ -63,10 +66,11 @@ object Streams {
         toOutputStream(str.getBytes(cs))
     }
 
-    def toString(is: InputStream): String = Strings.getUtf8String(toByteArray(is))
+    def toString(is: InputStream): String =
+        Strings.getUtf8String(toByteArray(is))
 
     def toString(is: InputStream, cs: Charset): String =
-        Strings.getUtf8String(toByteArray(is))
+        new String(toByteArray(is), cs)
 
 
     // TODO: Scala 고유의 Stream 처리 기능을 제공하자.

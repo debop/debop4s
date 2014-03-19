@@ -13,6 +13,7 @@ class GZipCompressor extends Compressor {
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
         var bos = None: Option[ByteArrayOutputStream]
         var gzip = None: Option[GZIPOutputStream]
+
         try {
             bos = Some(new ByteArrayOutputStream())
             gzip = Some(new GZIPOutputStream(bos.get))
@@ -29,6 +30,7 @@ class GZipCompressor extends Compressor {
         var bos = None: Option[ByteArrayOutputStream]
         var bis = None: Option[ByteArrayInputStream]
         var gzip = None: Option[GZIPInputStream]
+
         try {
             bos = Some(new ByteArrayOutputStream())
             bis = Some(new ByteArrayInputStream(compressedBytes))
