@@ -103,6 +103,13 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Scala Meter -->
+        <dependency>
+            <groupId>com.github.axel22</groupId>
+            <artifactId>scalameter_${scala.main.version}</artifactId>
+            <version>0.4</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -789,6 +796,13 @@
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest_${scala.main.version}</artifactId>
                 <version>2.1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Scala Meter -->
+            <dependency>
+                <groupId>com.github.axel22</groupId>
+                <artifactId>scalameter_${scala.main.version}</artifactId>
+                <version>0.4</version>
                 <scope>test</scope>
             </dependency>
 

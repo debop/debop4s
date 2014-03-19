@@ -91,7 +91,7 @@ class SimpleEntityTest extends AbstractJpaTest {
 }
 
 @Entity
-//@org.hibernate.annotations.Cache(region = "simple", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "simple", usage = CacheConcurrencyStrategy.READ_WRITE)
 @ha.DynamicInsert
 @ha.DynamicUpdate
 class LifecycleEntity extends LongEntity {
@@ -99,23 +99,27 @@ class LifecycleEntity extends LongEntity {
     @Index(name = "ix_lifecycleentity_name", columnList = "name")
     var name: String = _
 
+    // NOTE: Higernate @Generated 는 JPA 에서는 작동하지 않는다. JPA에서는 @PrePersist @PreUpdate 를 사용해야 합니다.
     // @ha.Generated(ha.GenerationTime.INSERT)
     @Column(name = "createdAt", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     var createdAt: Date = _
-
-    @PrePersist
-    def onPrePersist() {
-        if (createdAt == null) createdAt = new Date()
-        updatedAt = new Date()
-    }
 
     // @ha.Generated(ha.GenerationTime.ALWAYS)
     @Column(name = "updatedAt", insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     var updatedAt: Date = _
 
-    @inline
+    @PrePersist
+    def onPrePersist() {
+        if (createdAt == null) createdAt = new Date()
+    }
+
+    @PreUpdate
+    def onPreUpdate() {
+        updatedAt = new Date()
+    }
+
     override def hashCode(): Int = Hashs.compute(name)
 }
 
@@ -128,6 +132,5 @@ class SimpleEntity extends LongEntity {
     var name: String = _
     var description: String = _
 
-    @inline
     override def hashCode(): Int = Hashs.compute(name)
 }
