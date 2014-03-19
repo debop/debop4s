@@ -75,6 +75,7 @@ class UserTypeTest extends AbstractJpaTest {
 
         em.remove(loaded)
         em.flush()
+        em.clear()
         assert(em.find(classOf[CompressedDataEntity], entity.id) == null)
     }
 
