@@ -1,8 +1,5 @@
 package com.github.debop4s.redis.base
 
-import akka.util.ByteString
-import org.springframework.beans.factory.annotation.Autowired
-import redis.RedisClient
 import scala.annotation.varargs
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -12,7 +9,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * @author Sunghyouk Bae
  */
 abstract class AbstractRedisSet[T <: java.io.Serializable] extends AbstractRedis[T] {
-
 
     def get(key: String, field: String, clazz: Class[T]): Future[Option[T]] = {
         redis.hget[T](key, field)

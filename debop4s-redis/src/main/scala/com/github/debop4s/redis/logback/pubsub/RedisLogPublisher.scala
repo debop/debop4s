@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**
- * RedisLogPublisher
+ * 로그 정보를 Redis PUB/SUB Channel 로 publish 합니다.
  * Created by debop on 2014. 2. 22.
  */
 class RedisLogPublisher extends RedisAppender {

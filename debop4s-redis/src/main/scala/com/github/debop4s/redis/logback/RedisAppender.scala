@@ -20,7 +20,7 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
 
     implicit val akkaSystem = akka.actor.ActorSystem()
 
-    lazy val serializer = ScalaJacksonSerializer()
+    private lazy val serializer = ScalaJacksonSerializer()
     @volatile protected var redis: RedisClient = null
 
     var host = "localhost"
@@ -82,11 +82,9 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
             return
 
         future {
-            try {
-                val doc = createLogDocument(eventObject)
-                val jsonDoc = toJsonText(doc)
-                redis.lpush(key, jsonDoc)
-            }
+            val doc = createLogDocument(eventObject)
+            val jsonDoc = toJsonText(doc)
+            redis.lpush(key, jsonDoc)
         }
     }
 

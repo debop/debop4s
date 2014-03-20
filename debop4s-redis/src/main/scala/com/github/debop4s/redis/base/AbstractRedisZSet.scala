@@ -1,7 +1,6 @@
 package com.github.debop4s.redis.base
 
 import com.github.debop4s.core.parallels.Asyncs
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import redis.RedisClient
 import scala.annotation.varargs
@@ -13,8 +12,6 @@ import scala.concurrent.Future
  * @author Sunghyouk Bae
  */
 abstract class AbstractRedisZSet {
-
-    private lazy val log = LoggerFactory.getLogger(getClass)
 
     @Autowired protected val redis: RedisClient = null
 

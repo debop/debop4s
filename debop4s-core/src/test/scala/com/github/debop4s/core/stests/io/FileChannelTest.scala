@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * com.github.debop4s.core.tests.io.FileChannelTest
+ * FileChannelTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 11:44
@@ -33,7 +33,7 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
             writer.close()
         }
         val lines = Files.readAllLines(path, Charsets.UTF_8)
-        lines.foreach {line => log.debug(s"line:$line")}
+        lines.foreach { line => log.debug(s"line:$line")}
         Files.deleteIfExists(path)
     }
 

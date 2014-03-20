@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit
 import redis.RedisClient
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Success
+import scala.concurrent.Future
 
 /**
  * Redis 에 응용할 수 있는 응용 기능을 제공합니다.
@@ -16,55 +17,53 @@ class RedisHelper(val redis: RedisClient) {
      * 특정 키 값을 1 증가 시키고, 그 값을 반환한다.
      * Id 값 관리에 유용하다.
      */
-    def increseAndGet(key: String, increment: Long = 1): Long = {
-        val future =
-            redis.incrby(key, increment).andThen {
-                case Success(x) => redis.get(key)
-            }.andThen {
-                case Success(x) => x.toLong
-            }
-        Asyncs.result(future)
+    def increseAndGet(key: String, increment: Long = 1): Future[Long] = {
+        redis.incrby(key, increment)
+        .andThen {
+            case Success(x) => redis.get(key) //.map(x => x.get.toString().toLong)
+        }
+        //        }.andThen {
+        //            case Success(x) => x.toLong
+        //        }
     }
 
     /**
      * 특정 키 값을 1 감소 시키고, 그 값을 반환한다.
      * Id 값 관리에 유용하다.
      */
-    def decreaseAndGet(key: String, decrement: Long = 1): Long = {
-        val future =
-            redis.decrby(key, decrement).andThen {
-                case Success(x) => redis.get(key)
-            }.andThen {
-                case Success(x) => x.toLong
-            }
-        Asyncs.result(future)
+    def decreaseAndGet(key: String, decrement: Long = 1): Future[Long] = {
+        redis.decrby(key, decrement)
+        .andThen {
+            case Success(x) => redis.get(key)
+        }
+        //            .andThen {
+        //                case Success(x) => x.toLong
+        //            }
+
     }
 
     /**
      * lock 을 설정합니다.
      */
-    def lock(lockName: String): Boolean = {
+    def lock(lockName: String): Future[Boolean] = {
         require(lockName != null && lockName.length > 0)
-        val future = redis.set(lockName, lockName)
-        Asyncs.result(future)
+        redis.set(lockName, lockName)
     }
 
     /**
      * lock 을 설정하는데, expiration을 설정할 수 있습니다. expire 되면 lock 은 자동으로 사라집니다.
      */
-    def lockEx(lockName: String, expireInSecond: Long): Boolean = {
+    def lockEx(lockName: String, expireInSecond: Long): Future[Boolean] = {
         require(lockName != null && lockName.length > 0)
-        val future = redis.setex(lockName, expireInSecond, lockName)
-        Asyncs.result(future)
+        redis.setex(lockName, expireInSecond, lockName)
     }
 
     /**
      * 지정된 Lock 을 unlock 시킵니다.
      */
-    def unlock(lockName: String): Boolean = {
+    def unlock(lockName: String): Future[Boolean] = {
         require(lockName != null && lockName.length > 0)
-        val future = redis.del(lockName)
-        Asyncs.result(future) > 0
+        redis.del(lockName).map(x => x > 0)
     }
 
     /**
@@ -99,7 +98,7 @@ class RedisHelper(val redis: RedisClient) {
      * @param lockName Lock name
      * @param timeout 대기 최대 시간 (단위 milliseconds)
      */
-    def waitForUnlock(lockName: String, timeout: Long, unit: TimeUnit) {
+    def waitForUnlock(lockName: String, timeout: Long, unit: TimeUnit): Boolean = {
         val timeoutInMillis = unit.toMillis(timeout)
         waitForUnlock(lockName, timeoutInMillis)
     }

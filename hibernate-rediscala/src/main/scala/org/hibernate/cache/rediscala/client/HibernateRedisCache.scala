@@ -26,10 +26,7 @@ class HibernateRedisCache(val redis: RedisClient) {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    val DEFAULT_EXPIRY_IN_SECONDS = 0
-
-    val DEFAULT_REGION_NAME = "hibernate"
-
+    // Cache Value 를 Fast-Serialization 을 이용하면 속도가 5배 정도 빨라지고, Snappy를 이용하여 압축을 수행하면 15배 정도 빨라진다.
     //private val valueSerializer = new SnappyRedisSerializer[Any](new BinaryRedisSerializer[Any]())
     private val valueSerializer = new SnappyRedisSerializer[Any](new FstRedisSerializer[Any]())
 
@@ -52,28 +49,18 @@ class HibernateRedisCache(val redis: RedisClient) {
      * @param timeoutInSeconds expiration timeout value
      * @return return cached entity, if not exists return null.
      */
+    @inline
     def get(region: String, key: String, expireInSeconds: Long = 0): Future[Any] = {
         // 값을 가져오고, 값이 있고, expiration이 설정되어 있다면 갱신합니다.
-        //
-        //        redis.hget(region, key).map { item =>
-        //            if (expireInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
-        //                val score = System.currentTimeMillis + expireInSeconds * 1000L
-        //                redis.zadd(regionExpireKey(region), (score, key))
-        //            }
-        //            item
-        //            .map(x => valueSerializer.deserialize(x.toArray))
-        //            .getOrElse(null)
-        //        }
-
         val promise = Promise[Any]()
-
         val get = redis.hget(region, key)
+
         get onComplete { v =>
             if (v.isSuccess) {
                 val value = v.map(x => valueSerializer.deserialize(x.get.toArray)).getOrElse(null)
                 promise success value
 
-                // 값을 가져오고, 값이 있고, expiration이 설정되어 있다면 갱신합니다.
+                // expiration이 설정되어 있다면 갱신합니다.
                 if (expireInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
                     val score = System.currentTimeMillis + expireInSeconds * 1000L
                     redis.zadd(regionExpireKey(region), (score, key))
@@ -102,39 +89,30 @@ class HibernateRedisCache(val redis: RedisClient) {
 
     @varargs
     def multiGet(region: String, keys: String*): Future[Seq[Any]] = {
-        redis.hmget(region, keys: _*).map {
-            results =>
-                results.map { (x: Option[ByteString]) =>
-                    x.map(v => valueSerializer.deserialize(v.toArray)).getOrElse(null)
-                }
+        redis.hmget(region, keys: _*).map { results =>
+            results.map { (x: Option[ByteString]) =>
+                x.map(v => valueSerializer.deserialize(v.toArray)).getOrElse(null)
+            }
         }
     }
 
     def multiGet(region: String, keys: Iterable[String]): Future[Seq[Any]] = {
-        redis.hmget(region, keys.toSeq: _*).map {
-            results =>
-                results.map {
-                    x =>
-                        x.map(v => valueSerializer.deserialize(v.toArray))
-                        .getOrElse(null)
-                }
+        redis.hmget(region, keys.toSeq: _*).map { results =>
+            results.map { x =>
+                x.map(v => valueSerializer.deserialize(v.toArray))
+                .getOrElse(null)
+            }
         }
     }
 
+    @inline
     def set(region: String, key: String, value: Any, expiry: Long = 0, unit: TimeUnit = TimeUnit.SECONDS): Future[Boolean] = {
-        //        val v = ByteString(valueSerializer.serialize(value))
-        //        val result = redis.hset(region, key, v)
-        //
-        //        val expireInSeconds = unit.toSeconds(expiry)
-        //        if (expireInSeconds > 0) {
-        //            val score: Long = System.currentTimeMillis + expireInSeconds * 1000L
-        //            redis.zadd(regionExpireKey(region), (score, key))
-        //        }
-        //        result
+        val p = Promise[Boolean]()
+        // 값 변환
         val f = future {
             ByteString(valueSerializer.serialize(value))
         }
-        val p = Promise[Boolean]()
+
         f onComplete { (v: Try[ByteString]) =>
             val set = redis.hset(region, key, v.get)
             set onComplete { (ret: Try[Boolean]) =>
@@ -151,20 +129,18 @@ class HibernateRedisCache(val redis: RedisClient) {
         p.future
     }
 
-    def expire(region: String) = future {
+    @inline
+    def expire(region: String): Future[Any] = future {
         val regionExpire = regionExpireKey(region)
         val score = System.currentTimeMillis()
 
-        val results = redis.zrangebyscore(regionExpire, Limit(0), Limit(score))
-        val keysToExpire: Seq[ByteString] = Await.result(results, 10 seconds)
+        val results = redis.zrangebyscore(regionExpire, Limit(0), Limit(score)).map(xs => xs.map(_.utf8String))
+        val keysToExpire: Seq[String] = Await.result(results, 10 seconds)
 
         if (keysToExpire != null && keysToExpire.nonEmpty) {
             log.trace(s"cache item들을 expire 시킵니다. region=$region, keys=$keysToExpire")
 
-            keysToExpire.par.foreach {
-                key =>
-                    redis.hdel(region, key.utf8String)
-            }
+            keysToExpire.par.foreach(key => redis.hdel(region, key))
             redis.zremrangebyscore(regionExpire, Limit(0), Limit(score))
         }
     }
@@ -176,12 +152,17 @@ class HibernateRedisCache(val redis: RedisClient) {
     }
 
     @varargs
-    def multiDelete(region: String, keys: String*) = future {
-        val regionExpire = regionExpireKey(region)
-        keys.par.foreach {
-            key =>
+    def multiDelete(region: String, keys: String*): Future[Boolean] = {
+        if (keys == null || keys.isEmpty)
+            return Future(false)
+
+        future {
+            val regionExpire = regionExpireKey(region)
+            keys.foreach { key =>
                 redis.hdel(region, key)
                 redis.zrem(regionExpire, key)
+            }
+            true
         }
     }
 
@@ -214,6 +195,12 @@ class HibernateRedisCache(val redis: RedisClient) {
 object HibernateRedisCache {
 
     implicit val akkaSystem = akka.actor.ActorSystem()
+
+    // Cache expiration 기본 값 (0 이면 expire 하지 않는다)
+    val DEFAULT_EXPIRY_IN_SECONDS = 0
+
+    // default resion name
+    val DEFAULT_REGION_NAME = "hibernate"
 
     def apply(): HibernateRedisCache =
         apply(RedisClient())

@@ -18,7 +18,7 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
 
     val client = HibernateRedisCache()
 
-    val REGION = client.DEFAULT_REGION_NAME
+    val REGION = HibernateRedisCache.DEFAULT_REGION_NAME
 
     test("connection") {
         client.ping.map { r =>
@@ -124,6 +124,7 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
     }
 
     test("keys in region") {
+
         Promises.await(client.flushDb())
 
         val count = 100
@@ -135,14 +136,13 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
             keys += key
         }
 
-        client.keysInRegion(REGION) map { keys =>
-            keys.size should equal(count)
-        }
+        // 비동기 기다리는 거 손 쉽게 하려고...
+        Thread.sleep(10)
+
+        client.keysInRegion(REGION) map { keys => assert(keys.size == count)}
 
         client.deleteRegion(REGION)
 
-        client.keysInRegion(REGION) map { keys =>
-            keys.size should equal(0)
-        }
+        client.keysInRegion(REGION) map { keys => assert(keys.size == 0)}
     }
 }
