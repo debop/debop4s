@@ -1,7 +1,6 @@
 package com.github.debop4s.core.stests.utils
 
-import com.github.debop4s.core.stests.AbstractCoreTest
-import com.github.debop4s.core.stests.io.YearWeek
+import com.github.debop4s.core.stests.{YearWeek, AbstractCoreTest}
 import com.github.debop4s.core.utils.Hashs
 
 /**

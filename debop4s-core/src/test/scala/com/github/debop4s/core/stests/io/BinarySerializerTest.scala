@@ -2,8 +2,9 @@ package com.github.debop4s.core.stests.io
 
 import com.github.debop4s.core.io.BinarySerializer
 import com.github.debop4s.core.stests.io.model.{User, Company}
-import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.scalatest.BeforeAndAfter
 import org.slf4j.LoggerFactory
+import com.github.debop4s.core.stests.{AbstractCoreTest, YearWeek}
 
 /**
  * com.github.debop4s.core.tests.io.BinarySerializerTest
@@ -11,9 +12,9 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 8:06
  */
-class BinarySerializerTest extends FunSuite with Matchers with BeforeAndAfter {
+class BinarySerializerTest extends AbstractCoreTest {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    override lazy val log = LoggerFactory.getLogger(getClass)
 
     test("serialize/deserialize") {
         val ser = new BinarySerializer()
@@ -51,5 +52,3 @@ class BinarySerializerTest extends FunSuite with Matchers with BeforeAndAfter {
         }
     }
 }
-
-case class YearWeek(year: Int = 0, week: Int = 1)
