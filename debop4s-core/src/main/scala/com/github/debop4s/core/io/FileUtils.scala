@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
 import scala.concurrent
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
@@ -35,7 +35,7 @@ object FileUtils {
     @varargs
     def combine(base: Path, others: String*): Path = {
         var result = base
-        others.foreach {x => result = result.resolve(x)}
+        others.foreach { x => result = result.resolve(x)}
         result
     }
 
@@ -152,7 +152,7 @@ object FileUtils {
 
     @inline
     def readAllLines(is: InputStream, cs: Charset): Try[Seq[String]] = Try {
-        val lines = ArrayBuffer[String]()
+        val lines = ListBuffer[String]()
         val br = Try(new BufferedReader(new InputStreamReader(is, cs)))
 
         br match {

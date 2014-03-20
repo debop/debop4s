@@ -25,22 +25,21 @@ class RedisGeneralDataRegion(private[this] val _accessStrategyFactory: RedisAcce
 
     override def get(key: Any): AnyRef = {
         try {
-            val value = Promises.await(cache.get(regionName, key.toString, expireInSeconds)).asInstanceOf[AnyRef]
-            value
+            Promises.await(cache.get(regionName, key.toString, expireInSeconds)).asInstanceOf[AnyRef]
         } catch {
             case e: Throwable => null
         }
     }
 
     override def put(key: Any, value: Any) {
-        cache.set(regionName, key.toString, value, expireInSeconds)
+        Promises.await(cache.set(regionName, key.toString, value, expireInSeconds))
     }
 
     override def evict(key: Any) {
-        cache.delete(regionName, key.toString)
+        Promises.await(cache.delete(regionName, key.toString))
     }
 
     override def evictAll() {
-        cache.deleteRegion(regionName)
+        Promises.await(cache.deleteRegion(regionName))
     }
 }

@@ -2,7 +2,7 @@ package com.github.debop4s.core.stests.io.model
 
 import com.github.debop4s.core.ValueObject
 import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
 
 /**
  * com.github.debop4s.core.tests.io.model.Company
@@ -18,7 +18,7 @@ class Company extends ValueObject {
     var description: String = _
     var amount: Long = 0
 
-    val users = ArrayBuffer[User]()
+    val users = ListBuffer[User]()
 
     override def hashCode(): Int = Hashs.compute(code, name)
 

@@ -92,18 +92,17 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
      * 로그 정보를 [[LogDocument]] 빌드합니다.
      */
     protected def createLogDocument(event: LoggingEvent): LogDocument = {
-        val doc = new LogDocument()
+        val doc = new LogDocument() {
+            serverName = this.serverName
+            applicationName = this.applicationName
 
-        doc.serverName = this.serverName
-        doc.applicationName = this.applicationName
-
-        doc.logger = event.getLoggerName
-        doc.levelInt = event.getLevel.levelInt
-        doc.levelStr = event.getLevel.levelStr
-        doc.threadName = event.getThreadName
-        doc.timestamp = new DateTime(event.getTimeStamp)
-        doc.message = event.getFormattedMessage
-
+            logger = event.getLoggerName
+            levelInt = event.getLevel.levelInt
+            levelStr = event.getLevel.levelStr
+            threadName = event.getThreadName
+            timestamp = new DateTime(event.getTimeStamp)
+            message = event.getFormattedMessage
+        }
         if (event.getMarker != null)
             doc.marker = event.getMarker.getName
 
@@ -111,10 +110,12 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
         if (tp != null) {
             val tpStr = ThrowableProxyUtil.asString(tp)
             val stacktrace = tpStr.replace("\t", "").split(CoreConstants.LINE_SEPARATOR)
-            if (stacktrace != null && stacktrace.length > 0)
+
+            if (stacktrace != null && !stacktrace.isEmpty)
                 doc.exception = stacktrace(0)
-            if (stacktrace.length > 1)
-                doc.stacktrace ++= stacktrace.drop(1)
+
+            if (stacktrace != null && stacktrace.length > 1)
+                doc.stacktrace ++= stacktrace.tail
         }
         doc
     }

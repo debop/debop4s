@@ -83,6 +83,7 @@ class SimpleEntityTest extends AbstractJpaTest {
 
         dao.delete(loaded2)
         dao.flush()
+        dao.clear()
 
         assert(dao.findOne(classOf[SimpleEntity], saved2.id) == null)
 

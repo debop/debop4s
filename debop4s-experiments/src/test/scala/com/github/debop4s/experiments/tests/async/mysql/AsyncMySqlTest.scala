@@ -27,10 +27,10 @@ class AsyncMySqlTest extends AbstractExperimentTest {
 
         val mapResult = future.map(queryResult =>
             queryResult.rows match {
-                case Some(resultSet) => {
-                    val row = resultSet.head
-                    row(0)
-                }
+                case Some(resultSet) =>
+                    val row = resultSet.headOption
+                    if (row.isDefined) row.get(0) else -1
+
                 case None => -1
             })
 

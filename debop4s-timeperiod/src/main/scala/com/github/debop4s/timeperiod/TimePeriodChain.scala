@@ -16,10 +16,10 @@ import scala.annotation.varargs
 trait ITimePeriodChain extends ITimePeriodContainer {
 
     override def head: ITimePeriod =
-        if (size > 0) periods.head else null
+        periods.headOption.getOrElse(null)
 
     override def last: ITimePeriod =
-        if (size > 0) periods.last else null
+        periods.lastOption.getOrElse(null)
 
     override def set(index: Int, elem: ITimePeriod): ITimePeriod = {
         remove(index)
@@ -91,22 +91,27 @@ trait ITimePeriodChain extends ITimePeriodContainer {
         }
     }
 
-    /** 지정한 요소를 제거하고, 후속 ITimePeriod 들의 기간을 재조정합니다. (앞으로 당깁니다) */
+    /**
+     * 지정한 요소를 제거하고, 후속 ITimePeriod 들의 기간을 재조정합니다. (앞으로 당깁니다)
+     */
     override def remove(o: Any): Boolean = {
         assert(o != null)
-        Guard.shouldBe(o.isInstanceOf[ITimePeriod], s"o is not ITimePeriod type. class=[${o.getClass }]")
+        if (!o.isInstanceOf[ITimePeriod])
+            return false
 
         if (size <= 0) return false
         val item = o.asInstanceOf[ITimePeriod]
 
-        log.trace(s"요소 [$item]를 컬렉션에서 제거합니다...")
-
         val itemDuration = item.duration
         val index: Int = indexOf(item)
-        var next: ITimePeriod = null
-        if (itemDuration.getMillis > 0 && index >= 0 && index < size - 1) next = get(index)
+
+        val next: ITimePeriod =
+            if (itemDuration.getMillis > 0 && index >= 0 && index < size - 1)
+                get(index)
+            else null
 
         var removed = false
+
         if (periods contains item) {
             periods -= item
             removed = true
@@ -125,7 +130,9 @@ trait ITimePeriodChain extends ITimePeriodContainer {
         removed
     }
 
-    /** 지정한 요소를 제거하고, 후속 ITimePeriod 들의 기간을 재조정합니다. (앞으로 당깁니다) */
+    /**
+     * 지정한 요소를 제거하고, 후속 ITimePeriod 들의 기간을 재조정합니다. (앞으로 당깁니다)
+     */
     override def remove(index: Int): ITimePeriod =
         periods.remove(index)
 

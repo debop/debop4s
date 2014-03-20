@@ -9,7 +9,7 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.message.BasicHeader
 import org.apache.http.{HttpStatus, Header}
 import org.slf4j.LoggerFactory
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
 import scala.util.{Success, Failure}
 
 /**
@@ -52,10 +52,10 @@ class GcmSender(val serverApiKey: String) {
     private def buildMessage(msg: GcmMessage) = serializer.serializeToText(msg)
 
     private def buildHttpHeader(apiKey: String): Seq[Header] = {
-        val headers = ArrayBuffer[Header]()
-        headers += new BasicHeader("Authorization", "key=" + apiKey)
-        headers += new BasicHeader("Content-Type", "application/json")
-        headers
+        ListBuffer[Header](
+            new BasicHeader("Authorization", "key=" + apiKey),
+            new BasicHeader("Content-Type", "application/json")
+        )
     }
 
     private def buildHttpPost(apiKey: String, msg: GcmMessage): HttpPost = {

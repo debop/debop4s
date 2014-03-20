@@ -36,6 +36,7 @@ object Strings {
     @inline
     def asString(x: Any): String = x match {
         case null => NULL_STR
+        case None => None.toString
         case _ => x.toString
     }
 
@@ -267,12 +268,16 @@ object Strings {
     @varargs
     @inline
     def concat(items: Any*)(implicit separator: String = ""): String = {
-        if (items == null || items.length == 0)
+        if (items == null || items.isEmpty)
             return ""
 
         val builder = new StringBuilder
-        builder.append(asString(items.head))
-        items.drop(1).foreach(x => builder.append(separator).append(asString(x)))
+
+        builder.append(asString(items.headOption.getOrElse("")))
+        items
+        .tail
+        .foreach(x => builder.append(separator).append(asString(x)))
+
         builder.toString()
     }
 

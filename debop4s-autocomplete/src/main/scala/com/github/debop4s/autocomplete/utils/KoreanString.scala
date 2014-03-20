@@ -1,6 +1,6 @@
 package com.github.debop4s.autocomplete.utils
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
 
 /**
  * KoreanString
@@ -56,7 +56,7 @@ object KoreanString {
     * 한글 초성만 반환합니다.
 */
     def getChosung(str: String): Seq[Char] = {
-        val chosungs = ArrayBuffer[Char]()
+        val chosungs = ListBuffer[Char]()
         val count = str.length
 
         for (i <- 0 until count) {

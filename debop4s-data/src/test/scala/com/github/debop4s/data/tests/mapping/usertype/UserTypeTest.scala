@@ -56,7 +56,9 @@ class UserTypeTest extends AbstractJpaTest {
 
         em.remove(loaded)
         em.flush()
-        assert(em.find(classOf[JodaDateTimeEntity], loaded.id) == null)
+        em.clear()
+
+        assert(em.find(classOf[JodaDateTimeEntity], entity.id) == null)
     }
 
     @Test
@@ -99,6 +101,7 @@ class UserTypeTest extends AbstractJpaTest {
 
         em.remove(loaded)
         em.flush()
+        em.clear()
         assert(em.find(classOf[JsonEntity], entity.id) == null)
     }
 }

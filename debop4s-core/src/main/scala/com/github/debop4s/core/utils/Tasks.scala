@@ -23,7 +23,7 @@ object Tasks {
                 return
             } catch {
                 case e: Throwable =>
-                    if (remains == 1) throw new RuntimeException(e)
+                    if (remains <= 1) throw new RuntimeException(e)
                     Thread.sleep(waitTime)
             }
             remains -= 1
@@ -40,7 +40,7 @@ object Tasks {
                 return func()
             } catch {
                 case e: Throwable =>
-                    if (remains == 1) throw new RuntimeException(e)
+                    if (remains <= 1) throw new RuntimeException(e)
                     Thread.sleep(waitTime)
             }
             remains -= 1

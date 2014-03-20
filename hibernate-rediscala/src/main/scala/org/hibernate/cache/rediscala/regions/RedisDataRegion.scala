@@ -29,7 +29,7 @@ abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessS
         if (regionDeleted)
             return
         try {
-            cache.deleteRegion(regionName)
+            Promises.await(cache.deleteRegion(regionName))
         } finally {
             regionDeleted = true
         }

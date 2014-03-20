@@ -39,21 +39,23 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
     }
 
     def put(key: Any, value: Any) {
-        cache.set(regionName, key.toString, value, expireInSeconds)
+        Promises.await(cache.set(regionName, key.toString, value, expireInSeconds))
     }
 
     def remove(key: Any) {
-        val fut = cache.delete(regionName, key.toString)
-        fut onFailure {
+        val task = cache.delete(regionName, key.toString)
+        task onFailure {
             case e: Throwable => log.warn(s"Fail to delete key. region=$regionName, key=$key", e)
         }
+        Promises.await(task)
     }
 
     def clear() {
-        val f = cache.deleteRegion(regionName)
-        f onFailure {
+        val task = cache.deleteRegion(regionName)
+        task onFailure {
             case e: Throwable => log.warn(s"Fail to delete region [$regionName]", e)
         }
+        Promises.await(task)
     }
 
     def evict(key: String) {

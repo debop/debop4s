@@ -2,7 +2,7 @@ package com.github.debop4s.autocomplete.tests.utils
 
 import com.github.debop4s.autocomplete.tests.AbstractAutoCompleteTest
 import com.github.debop4s.autocomplete.utils.KoreanString
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
 
 /**
  * KoreanStringTest
@@ -19,6 +19,6 @@ class KoreanStringTest extends AbstractAutoCompleteTest {
         assert(chosungs(0) == 'ㅂ')
         assert(chosungs(1) == 'ㅅ')
         assert(chosungs(2) == 'ㅎ')
-        assert(chosungs == ArrayBuffer('ㅂ', 'ㅅ', 'ㅎ'))
+        assert(chosungs == ListBuffer('ㅂ', 'ㅅ', 'ㅎ'))
     }
 }
