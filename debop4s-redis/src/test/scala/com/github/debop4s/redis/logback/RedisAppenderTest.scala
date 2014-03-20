@@ -3,7 +3,6 @@ package com.github.debop4s.redis.logback
 import com.github.debop4s.core.parallels.Parallels
 import com.github.debop4s.redis.AbstractRedisTest
 import org.slf4j.LoggerFactory
-import redis.RedisClient
 
 /**
  * RedisAppenderTest
@@ -12,9 +11,6 @@ import redis.RedisClient
 class RedisAppenderTest extends AbstractRedisTest {
 
     lazy val log = LoggerFactory.getLogger(getClass)
-
-    implicit val akkaSystem = akka.actor.ActorSystem()
-    private val redis: RedisClient = RedisClient()
 
     test("logging message") {
         Parallels.runAction(10) {

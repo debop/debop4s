@@ -3,7 +3,6 @@ package com.github.debop4s.redis.logback.pubsub
 import akka.actor.Props
 import com.github.debop4s.redis.AbstractRedisTest
 import java.net.InetSocketAddress
-import redis.RedisClient
 import redis.actors.RedisSubscriberActor
 import redis.api.pubsub.{Message, PMessage}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,10 +14,7 @@ import scala.concurrent.duration._
  */
 class RedisPubSubTest extends AbstractRedisTest {
 
-    implicit val akkaSystem = akka.actor.ActorSystem()
-    val redis = RedisClient()
-
-    test("pubsub") {
+    test("pub/sub test") {
         akkaSystem.scheduler.schedule(10 millis, 50 millis) {
             redis.publish("time", System.currentTimeMillis())
         }

@@ -21,7 +21,6 @@ object RedisSubscriberActorFactory {
     */
     @varargs
     def create[T <: RedisSubscriberActor](actorClass: Class[T], args: Any*) {
-
         val props = Props(actorClass, args: _*)
         akkaSystem.actorOf(props)
     }
@@ -35,7 +34,6 @@ object RedisSubscriberActorFactory {
     */
     @varargs
     def create[T <: RedisSubscriberActor](name: String, actorClass: Class[T], args: Any*) {
-
         val props = Props(actorClass, args: _*)
         akkaSystem.actorOf(props, name)
     }

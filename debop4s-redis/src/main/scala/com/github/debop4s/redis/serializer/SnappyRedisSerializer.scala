@@ -21,5 +21,16 @@ class SnappyRedisSerializer[T](val inner: RedisSerializer[T]) extends RedisSeria
 
         inner.deserialize(Snappy.uncompress(bytes)).asInstanceOf[T]
     }
+}
 
+object SnappyRedisSerializer {
+
+    def apply[T](): SnappyRedisSerializer[T] = {
+        apply(new FstRedisSerializer[T]())
+    }
+
+    def apply[T](inner: RedisSerializer[T]): SnappyRedisSerializer[T] = {
+        require(inner != null)
+        new SnappyRedisSerializer[T](inner)
+    }
 }

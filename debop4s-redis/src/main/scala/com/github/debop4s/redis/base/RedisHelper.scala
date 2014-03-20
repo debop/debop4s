@@ -4,8 +4,8 @@ import com.github.debop4s.core.parallels.Asyncs
 import java.util.concurrent.TimeUnit
 import redis.RedisClient
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.Success
 import scala.concurrent.Future
+import scala.util.Success
 
 /**
  * Redis 에 응용할 수 있는 응용 기능을 제공합니다.
@@ -20,26 +20,19 @@ class RedisHelper(val redis: RedisClient) {
     def increseAndGet(key: String, increment: Long = 1): Future[Long] = {
         redis.incrby(key, increment)
         .andThen {
-            case Success(x) => redis.get(key) //.map(x => x.get.toString().toLong)
+            case Success(x) => redis.get(key).map(x => x.getOrElse(0))
         }
-        //        }.andThen {
-        //            case Success(x) => x.toLong
-        //        }
     }
 
     /**
      * 특정 키 값을 1 감소 시키고, 그 값을 반환한다.
      * Id 값 관리에 유용하다.
      */
-    def decreaseAndGet(key: String, decrement: Long = 1): Future[Long] = {
+    def decreaseAndGet(key: String, decrement: Long = 1) = {
         redis.decrby(key, decrement)
         .andThen {
-            case Success(x) => redis.get(key)
+            case Success(x) => redis.get(key).map(x => x.getOrElse(0))
         }
-        //            .andThen {
-        //                case Success(x) => x.toLong
-        //            }
-
     }
 
     /**
@@ -71,7 +64,7 @@ class RedisHelper(val redis: RedisClient) {
      * @param lockName Lock name
      * @param timeout 대기 최대 시간 (단위 milliseconds)
      */
-    def waitForUnlock(lockName: String, timeout: Long = Long.MaxValue): Boolean = {
+    def waitForUnlock(lockName: String, timeout: Long): Boolean = {
         var retry = false
         var foundLock = false
 
