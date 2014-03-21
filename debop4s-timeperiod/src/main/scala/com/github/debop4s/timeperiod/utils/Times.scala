@@ -13,8 +13,8 @@ import java.util.Calendar
 import org.joda.time.{Duration, DateTimeZone, DateTime}
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
-import scala.collection.mutable.ArrayBuffer
-import scala.collection.parallel.ParIterable
+import scala.collection.mutable.ListBuffer
+import scala.collection.parallel
 
 /**
  * com.github.debop4s.timeperiod.tools.Times
@@ -916,7 +916,7 @@ object Times {
     def isWeekend(dayOfWeek: DayOfWeek): Boolean = Weekends.contains(dayOfWeek)
 
 
-    def foreachPeriods(period: ITimePeriod, unit: PeriodUnit): Iterable[ITimePeriod] = {
+    def foreachPeriods(period: ITimePeriod, unit: PeriodUnit) = {
         unit match {
             case PeriodUnit.Year => foreachYears(period)
             case PeriodUnit.Halfyear => foreachHalfyears(period)
@@ -931,10 +931,10 @@ object Times {
     }
 
     @inline
-    def foreachYears(period: ITimePeriod): Iterable[ITimePeriod] = {
+    def foreachYears(period: ITimePeriod): ListBuffer[ITimePeriod] = {
         require(period != null)
 
-        val years = ArrayBuffer[ITimePeriod]()
+        val years = ListBuffer[ITimePeriod]()
         if (period.isAnytime)
             return years
 
@@ -962,10 +962,10 @@ object Times {
     }
 
     @inline
-    def foreachHalfyears(period: ITimePeriod): Iterable[ITimePeriod] = {
+    def foreachHalfyears(period: ITimePeriod): ListBuffer[ITimePeriod] = {
         require(period != null)
 
-        val halfyears = ArrayBuffer[ITimePeriod]()
+        val halfyears = ListBuffer[ITimePeriod]()
         if (period.isAnytime)
             return halfyears
 
@@ -996,10 +996,10 @@ object Times {
     }
 
     @inline
-    def foreachQuarters(period: ITimePeriod): Iterable[ITimePeriod] = {
+    def foreachQuarters(period: ITimePeriod): ListBuffer[ITimePeriod] = {
         require(period != null)
 
-        val quarters = ArrayBuffer[ITimePeriod]()
+        val quarters = ListBuffer[ITimePeriod]()
         if (period.isAnytime)
             return quarters
 
@@ -1030,10 +1030,10 @@ object Times {
     }
 
     @inline
-    def foreachMonths(period: ITimePeriod): Iterable[ITimePeriod] = {
+    def foreachMonths(period: ITimePeriod): ListBuffer[ITimePeriod] = {
         require(period != null)
 
-        val months = ArrayBuffer[ITimePeriod]()
+        val months = ListBuffer[ITimePeriod]()
         if (period.isAnytime)
             return months
 
@@ -1064,17 +1064,17 @@ object Times {
     }
 
     @inline
-    def foreachWeeks(period: ITimePeriod): Iterable[ITimePeriod] = {
+    def foreachWeeks(period: ITimePeriod): ListBuffer[ITimePeriod] = {
         require(period != null)
 
-        val weeks = ArrayBuffer[ITimePeriod]()
+        val weeks = ListBuffer[ITimePeriod]()
         if (period.isAnytime)
             return weeks
 
         assertHasPeriod(period)
 
         if (isSameWeek(period.start, period.end)) {
-            weeks :+ TimeRange(period)
+            weeks += TimeRange(period)
             return weeks
         }
 
@@ -1102,10 +1102,10 @@ object Times {
     }
 
     @inline
-    def foreachDays(period: ITimePeriod): Iterable[ITimePeriod] = {
+    def foreachDays(period: ITimePeriod): ListBuffer[ITimePeriod] = {
         require(period != null)
 
-        val days = new ArrayBuffer[ITimePeriod](MaxDaysPerMonth)
+        val days = ListBuffer[ITimePeriod]()
         if (period.isAnytime)
             return days
 
@@ -1132,10 +1132,10 @@ object Times {
     }
 
     @inline
-    def foreachHours(period: ITimePeriod): Iterable[ITimePeriod] = {
+    def foreachHours(period: ITimePeriod): ListBuffer[ITimePeriod] = {
         require(period != null)
 
-        val hours = new ArrayBuffer[ITimePeriod](HoursPerDay)
+        val hours = ListBuffer[ITimePeriod]()
         if (period.isAnytime)
             return hours
 
@@ -1164,10 +1164,10 @@ object Times {
     }
 
     @inline
-    def foreachMinutes(period: ITimePeriod): Iterable[ITimePeriod] = {
+    def foreachMinutes(period: ITimePeriod): ListBuffer[ITimePeriod] = {
         require(period != null)
 
-        val minutes = new ArrayBuffer[ITimePeriod](MinutesPerHour)
+        val minutes = ListBuffer[ITimePeriod]()
         if (period.isAnytime)
             return minutes
 
@@ -1196,6 +1196,295 @@ object Times {
         minutes
     }
 
+    def periodsStream(period: ITimePeriod, unit: PeriodUnit): Stream[ITimePeriod] = {
+        unit match {
+            case PeriodUnit.Year => yearsStream(period)
+            case PeriodUnit.Halfyear => halfyearsStream(period)
+            case PeriodUnit.Quarter => quartersStream(period)
+            case PeriodUnit.Month => monthsStream(period)
+            case PeriodUnit.Week => weeksStream(period)
+            case PeriodUnit.Day => daysStream(period)
+            case PeriodUnit.Hour => hoursStream(period)
+            case PeriodUnit.Minute => minutesStream(period)
+            case _ => throw new NotSupportedException(s"지원하지 않는 PeriodUnit 입니다. unit=[$unit]")
+        }
+    }
+
+    @inline
+    def yearsStream(period: ITimePeriod): Stream[ITimePeriod] = {
+        require(period != null)
+
+        if (period.isAnytime)
+            Stream.empty[ITimePeriod]
+
+        if (isSameYear(period.start, period.end)) {
+            return TimeRange(period) #:: Stream.empty[ITimePeriod]
+        }
+
+        val head = TimeRange(period.start, endTimeOfYear(period.start))
+
+        val current = startTimeOfYear(period.start).plusYears(1)
+        val endYear = period.end.getYear
+        val calendar = DefaultTimeCalendar
+
+        def nextYears(current: DateTime): Stream[ITimePeriod] = {
+            if (current.getYear < endYear) {
+                yearRange(current, calendar) #:: nextYears(current.plusYears(1))
+            } else if (current < period.end) {
+                TimeRange(startTimeOfYear(current), period.end) #:: Stream.empty[ITimePeriod]
+            } else {
+                Stream.empty[ITimePeriod]
+            }
+        }
+
+        head #:: nextYears(current)
+    }
+
+    @inline
+    def halfyearsStream(period: ITimePeriod): Stream[ITimePeriod] = {
+        require(period != null)
+
+        if (period.isAnytime)
+            return Stream.empty[ITimePeriod]
+
+        assertHasPeriod(period)
+
+        if (isSameHalfyear(period.start, period.end)) {
+            return TimeRange(period) #:: Stream.empty[ITimePeriod]
+        }
+
+        var current = endTimeOfHalfyear(period.start)
+        val head = TimeRange(period.start, current)
+
+        val endHashcode = period.end.getYear * 10 + halfyearOf(period.end).id
+        val calendar = DefaultTimeCalendar
+        current = current.plusDays(1)
+
+        def nextHalfyears(current: DateTime): Stream[ITimePeriod] = {
+            if (current.getYear * 10 + halfyearOf(current).id < endHashcode) {
+                halfyearRange(current, calendar) #:: nextHalfyears(current.plusMonths(MonthsPerHalfyear))
+            } else if (current < period.end) {
+                TimeRange(startTimeOfHalfyear(current), period.end) #:: Stream.empty[ITimePeriod]
+            } else {
+                Stream.empty[ITimePeriod]
+            }
+        }
+
+        head #:: nextHalfyears(current)
+    }
+
+    @inline
+    def quartersStream(period: ITimePeriod): Stream[ITimePeriod] = {
+        require(period != null)
+
+        if (period.isAnytime)
+            return Stream.empty[ITimePeriod]
+
+        assertHasPeriod(period)
+
+        if (isSameQuarter(period.start, period.end)) {
+            TimeRange(period) #:: Stream.empty[ITimePeriod]
+        }
+
+        var current = endTimeOfQuarter(period.start)
+        val head = TimeRange(period.start, current)
+
+        val endHashcode = period.end.getYear * 10 + quarterOf(period.end).id
+        current = current + 1.days
+        val calendar = DefaultTimeCalendar
+
+        def nextQuarters(current: DateTime): Stream[ITimePeriod] = {
+            if (current.getYear * 10 + quarterOf(current).id < endHashcode) {
+                quarterRange(current, calendar) #:: nextQuarters(current.plusMonths(MonthsPerQuarter))
+            } else if (current < period.end) {
+                TimeRange(startTimeOfQuarter(current), period.end) #:: Stream.empty[ITimePeriod]
+            } else {
+                Stream.empty[ITimePeriod]
+            }
+        }
+
+        head #:: nextQuarters(current)
+    }
+
+    @inline
+    def monthsStream(period: ITimePeriod): Stream[ITimePeriod] = {
+        require(period != null)
+
+        if (period.isAnytime)
+            return Stream.empty[ITimePeriod]
+
+        assertHasPeriod(period)
+
+        if (isSameMonth(period.start, period.end)) {
+            return TimeRange(period) #:: Stream.empty[ITimePeriod]
+        }
+
+        var current = endTimeOfMonth(period.start)
+        val head = TimeRange(period.start, current)
+
+        val monthEnd = startTimeOfMonth(period.end)
+        val calendar = DefaultTimeCalendar
+
+        current = current.plusDays(1)
+
+        def nextMonth(current: DateTime): Stream[ITimePeriod] = {
+            if (current < monthEnd) {
+                monthRange(current, calendar) #:: nextMonth(current.plusMonths(1))
+            } else {
+                val last = startTimeOfMonth(current)
+                if (last < period.end) {
+                    TimeRange(current, period.end) #:: Stream.empty[ITimePeriod]
+                } else {
+                    Stream.empty[ITimePeriod]
+                }
+            }
+        }
+        head #:: nextMonth(current)
+    }
+
+    @inline
+    def weeksStream(period: ITimePeriod): Stream[ITimePeriod] = {
+        require(period != null)
+
+        if (period.isAnytime)
+            return Stream.empty[ITimePeriod]
+
+        assertHasPeriod(period)
+
+        if (isSameWeek(period.start, period.end)) {
+            return TimeRange(period) #:: Stream.empty[ITimePeriod]
+        }
+
+        var current = period.start
+        val endWeek = endTimeOfWeek(current)
+        if (endWeek >= period.end) {
+            return TimeRange(current, period.end) #:: Stream.empty[ITimePeriod]
+        }
+
+        val head = TimeRange(current, endWeek)
+        current = endWeek.plusWeeks(1)
+        val calendar = DefaultTimeCalendar
+
+        def nextWeeks(current: DateTime): Stream[ITimePeriod] = {
+            if (current < period.end) {
+                weekRange(current, calendar) #:: nextWeeks(current.plusWeeks(1))
+            } else {
+                val last = startTimeOfWeek(current)
+                if (last < period.end) {
+                    TimeRange(current, period.end) #:: Stream.empty[ITimePeriod]
+                } else {
+                    Stream.empty[ITimePeriod]
+                }
+            }
+        }
+        head #:: nextWeeks(current)
+    }
+
+    /**
+     * 배열로 전체 정보를 가지는 게 아니라 Stream 을 이용하여 지연된 작업을 수행합니다.
+     */
+    @inline
+    def daysStream(period: ITimePeriod): Stream[ITimePeriod] = {
+        require(period != null)
+
+        if (period.isAnytime)
+            return Stream.empty[ITimePeriod]
+
+        assertHasPeriod(period)
+
+        if (isSameDay(period.start, period.end)) {
+            return TimeRange(period) #:: Stream.empty[ITimePeriod]
+        }
+
+        val endDay = period.end.withTimeAtStartOfDay()
+        val current = period.start.withTimeAtStartOfDay().plusDays(1)
+
+        val head = TimeRange(period.start, endTimeOfDay(period.start))
+
+        def nextDays(current: DateTime): Stream[ITimePeriod] = {
+            if (current < endDay) {
+                dayRange(current, DefaultTimeCalendar) #:: nextDays(current.plusDays(1))
+            } else if (period.end.getMillisOfDay > 0) {
+                TimeRange(endDay, period.end) #:: Stream.empty[ITimePeriod]
+            } else {
+                Stream.empty[ITimePeriod]
+            }
+        }
+
+        head #:: nextDays(current)
+    }
+
+    /**
+     * 배열로 전체 정보를 가지는 게 아니라 Stream 을 이용하여 지연된 작업을 수행합니다.
+     */
+    @inline
+    def hoursStream(period: ITimePeriod): Stream[ITimePeriod] = {
+        require(period != null)
+
+        if (period.isAnytime)
+            return Stream.empty[ITimePeriod]
+
+        assertHasPeriod(period)
+
+        if (isSameHour(period.start, period.end)) {
+            return TimeRange(period) #:: Stream.empty[ITimePeriod]
+        }
+
+        val endHour = period.end
+        val current = trimToHour(period.start, period.start.getHourOfDay + 1)
+        val maxHour = endHour.minusHours(1)
+
+
+        val head = TimeRange(period.start, endTimeOfHour(period.start))
+
+        def nextHours(current: DateTime): Stream[ITimePeriod] = {
+            if (current <= maxHour) {
+                hourRange(current, DefaultTimeCalendar) #:: nextHours(current.plusHours(1))
+            } else if (endHour.minusHours(endHour.getHourOfDay).getMillisOfDay > 0) {
+                TimeRange(startTimeOfHour(endHour), endHour) #:: Stream.empty[ITimePeriod]
+            } else {
+                Stream.empty
+            }
+        }
+
+        head #:: nextHours(current)
+    }
+
+    /**
+    * 배열로 전체 정보를 가지는 게 아니라 Stream 을 이용하여 지연된 작업을 수행합니다.
+    */
+    @inline
+    def minutesStream(period: ITimePeriod): Stream[ITimePeriod] = {
+        require(period != null)
+
+        if (period.isAnytime)
+            return Stream.empty
+
+        assertHasPeriod(period)
+
+        val endMin = period.end
+        val current = trimToMinute(period.start, period.start.getMinuteOfHour + 1)
+        val maxMin = endMin - 1.minutes
+
+        if (isSameMinute(period.start, period.end)) {
+            return TimeRange(period) #:: Stream.empty[ITimePeriod]
+        }
+
+        val head = TimeRange(period.start, endTimeOfMinute(period.start))
+
+        def nextMinutes(current: DateTime): Stream[ITimePeriod] = {
+            if (current <= maxMin) {
+                Stream.cons(minuteRange(current, DefaultTimeCalendar), nextMinutes(current.plusMinutes(1)))
+            } else if (endMin.minusMinutes(endMin.getMinuteOfHour).getMillisOfDay > 0) {
+                Stream.cons(TimeRange(startTimeOfMinute(endMin), period.end), Stream.empty)
+            } else {
+                Stream.empty
+            }
+        }
+
+        head #:: nextMinutes(current)
+    }
+
     def assertHasPeriod(period: ITimePeriod) {
         assert(period != null && period.hasPeriod, s"기간이 설정되지 않았습니다. period=$period")
     }
@@ -1207,7 +1496,7 @@ object Times {
         foreachPeriods(period, unit).map(p => func(p))
     }
 
-    def runPeriodsAsParallel[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): ParIterable[(ITimePeriod, T)] = {
+    def runPeriodsAsParallel[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): parallel.ParIterable[(ITimePeriod, T)] = {
         require(period != null)
         require(func != null)
 

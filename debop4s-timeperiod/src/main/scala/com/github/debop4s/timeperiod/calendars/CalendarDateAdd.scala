@@ -27,7 +27,7 @@ class CalendarDateAdd extends DateAdd {
     val workingHours = ArrayBuffer[HourRangeInDay]()
     val workingDayHours = ArrayBuffer[DayHourRange]()
 
-    override def getIncludePeriods = throw new NotSupportedException("IncludePeriods는 지원하지 않습니다.")
+    override def includePeriods = throw new NotSupportedException("IncludePeriods는 지원하지 않습니다.")
 
     /**
      * 주중 (월-금)을 working day로 추가합니다.
@@ -106,10 +106,10 @@ class CalendarDateAdd extends DateAdd {
         var week = WeekRange(start, calendar)
 
         while (week != null) {
-            includePeriods.clear()
-            includePeriods.addAll(getAvailableWeekPeriods(week))
+            _includePeriods.clear()
+            _includePeriods.addAll(getAvailableWeekPeriods(week))
 
-            log.trace(s"가능한 기간=[$includePeriods]")
+            log.trace(s"가능한 기간=[${_includePeriods}]")
 
             val results = super.calculateEnd(moment, remaining, seekDir, seekBoundary)
             end = results._1
@@ -143,12 +143,12 @@ class CalendarDateAdd extends DateAdd {
 
         var next: WeekRange = null
 
-        if (getExcludePeriods.size == 0) {
+        if (excludePeriods.size == 0) {
             next = current.nextWeek
         } else {
             val limits = TimeRange(current.end + 1.millis, null.asInstanceOf[DateTime])
             val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
-            val remainingPeriods = gapCalculator.getGaps(excludePeriods, limits)
+            val remainingPeriods = gapCalculator.gaps(excludePeriods, limits)
 
             if (remainingPeriods.size > 0)
                 next = WeekRange(remainingPeriods(0).start, calendar)
@@ -166,12 +166,12 @@ class CalendarDateAdd extends DateAdd {
 
         var previous: WeekRange = null
 
-        if (getExcludePeriods.size == 0) {
+        if (excludePeriods.size == 0) {
             previous = current.previousWeek
         } else {
             val limits = new TimeRange(MinPeriodTime, current.start - 1.millis)
             val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
-            val remainingPeriods = gapCalculator.getGaps(excludePeriods, limits)
+            val remainingPeriods = gapCalculator.gaps(excludePeriods, limits)
 
             if (remainingPeriods.size > 0)
                 previous = WeekRange(remainingPeriods.get(remainingPeriods.size - 1).end, calendar)

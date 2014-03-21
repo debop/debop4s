@@ -68,7 +68,7 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
         if (periods.size == 0)
             return new TimePeriodCollection()
 
-        val moments = getTimeLineMoments
+        val moments = timeLineMoments
         if (moments == null || moments.size == 0)
             return TimePeriodCollection(TimeRange(this._periods))
 
@@ -79,7 +79,7 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
         if (periods.size == 0)
             return new TimePeriodCollection()
 
-        val moments = getTimeLineMoments
+        val moments = timeLineMoments
         if (moments == null || moments.size == 0)
             return new TimePeriodCollection()
 
@@ -94,7 +94,7 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
         .filter(x => limits.intersectsWith(x))
         .foreach { x => tpc.add(TimeRange(x))}
 
-        val moments = getTimeLineMoments(tpc)
+        val moments = timeLineMoments(tpc)
         if (moments == null || moments.size == 0)
             return TimePeriodCollection(limits)
 
@@ -102,11 +102,11 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
         TimeLines.calculateGap(moments, range)
     }
 
-    private def getTimeLineMoments: ITimeLineMomentCollection =
-        getTimeLineMoments(_periods)
+    private def timeLineMoments: ITimeLineMomentCollection =
+        timeLineMoments(_periods)
 
     @inline
-    private def getTimeLineMoments(periods: Iterable[ITimePeriod]): ITimeLineMomentCollection = {
+    private def timeLineMoments(periods: Iterable[ITimePeriod]): ITimeLineMomentCollection = {
         val moments = TimeLineMomentCollection()
         if (periods == null || periods.size == 0)
             return moments

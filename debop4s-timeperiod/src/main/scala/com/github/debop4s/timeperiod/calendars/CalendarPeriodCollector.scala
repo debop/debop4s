@@ -89,7 +89,8 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
             return true
         }
 
-        years.years.filter(y => isMatchingYear(y, context) && checkLimits(y))
+        years.years
+        .filter(y => isMatchingYear(y, context) && checkLimits(y))
         .foreach(y => periods.add(y))
 
         false
@@ -170,7 +171,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     @inline
     override protected def onVisitDay(day: DayRange, context: CalendarPeriodCollectorContext): Boolean = {
         if (context.scope != CollectKind.Hour) {
-            log.trace(s"Scope=[${context.scope}}]")
             return true
         }
 

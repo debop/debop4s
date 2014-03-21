@@ -12,7 +12,7 @@ class TimeGapCalculator[T <: ITimePeriod](val mapper: ITimeCalendar = null) {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    def getGaps(excludePeriods: ITimePeriodContainer, limits: ITimePeriod = null): ITimePeriodCollection = {
+    def gaps(excludePeriods: ITimePeriodContainer, limits: ITimePeriod = null): ITimePeriodCollection = {
         require(excludePeriods != null)
 
         val timeLine = new TimeLine[T](excludePeriods, limits, mapper)
