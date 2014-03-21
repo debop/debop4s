@@ -2,7 +2,6 @@ package com.github.debop4s.timeperiod.timerange
 
 import com.github.debop4s.timeperiod._
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.YearRangeCollection
@@ -17,12 +16,10 @@ class YearRangeCollection(private[this] val _year: Int,
     extends YearTimeRange(_year, _yearCount, _calendar) {
 
     @inline
-    def getYears: Seq[YearRange] = {
-        val years = new ArrayBuffer[YearRange](yearCount)
-        for (y <- 0 until yearCount) {
-            years += new YearRange(startYear + y, calendar)
+    def years = {
+        (0 until yearCount).view.map { y =>
+            YearRange(startYear + y, calendar)
         }
-        years
     }
 }
 

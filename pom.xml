@@ -866,7 +866,7 @@
                 <version>2.2</version>
                 <configuration>
                     <downloadSources>true</downloadSources>
-                    <downloadJavadocs>true</downloadJavadocs>
+                    <downloadJavadocs>false</downloadJavadocs>
                     <dependenciesAsLibraries>true</dependenciesAsLibraries>
                     <useFullNames>false</useFullNames>
                 </configuration>
@@ -935,12 +935,14 @@
                             <goal>testCompile</goal>
                         </goals>
                     </execution>
+                    <!--
                     <execution>
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>doc-jar</goal>
                         </goals>
                     </execution>
+                    -->
                 </executions>
             </plugin>
 
@@ -977,6 +979,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -989,7 +992,7 @@
                     </execution>
                 </executions>
             </plugin>
-
+            -->
             <!-- scalatest 를 사용하도록 하고, surefire는 사용하지 않도록 합니다. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

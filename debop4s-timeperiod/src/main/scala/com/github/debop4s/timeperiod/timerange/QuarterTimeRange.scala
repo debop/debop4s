@@ -3,7 +3,6 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod.Quarter.Quarter
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.QuarterTimeRange
@@ -29,14 +28,12 @@ abstract class QuarterTimeRange(private val _year: Int,
         startYear != endYear
 
     @inline
-    def getMonths: Seq[MonthRange] = {
+    def months = {
         val monthCount = quarterCount * MonthsPerQuarter
-        val months = new ArrayBuffer[MonthRange](monthCount)
 
-        for (m <- 0 until monthCount) {
-            months += MonthRange(start.plusMonths(m), calendar)
+        (0 until monthCount).view.map { m =>
+            MonthRange(start.plusMonths(m), calendar)
         }
-        months
     }
 }
 

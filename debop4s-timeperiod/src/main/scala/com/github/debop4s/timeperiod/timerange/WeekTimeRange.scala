@@ -3,7 +3,6 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.WeekTimeRange
@@ -25,14 +24,13 @@ class WeekTimeRange(private[this] val _moment: DateTime,
     def endWeekOfYear: Int = Times.weekOfYear(end).weekOfWeekyear
 
     @inline
-    def getDays: Seq[DayRange] = {
+    def days = {
         val startDay = startDayStart
         val dayCount = weekCount * DaysPerWeek
-        val days = new ArrayBuffer[DayRange](dayCount)
-        for (d <- 0 until dayCount) {
-            days += new DayRange(startDay.plusDays(d), calendar)
+
+        (0 until dayCount).view.map { d =>
+            DayRange(startDay.plusDays(d), calendar)
         }
-        days
     }
 }
 

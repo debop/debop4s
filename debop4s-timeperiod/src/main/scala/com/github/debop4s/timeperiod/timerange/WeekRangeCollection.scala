@@ -3,26 +3,23 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.WeekRangeCollection
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 28. 오후 11:25
  */
-class WeekRangeCollection(private[this] val _year: Int,
-                          private[this] val _weekOfYear: Int,
-                          private[this] val _weekCount: Int,
-                          private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends WeekTimeRange(Times.startTimeOfWeek(_year, _weekOfYear), _weekCount, _calendar) {
+class WeekRangeCollection(private[this] val year: Int,
+                          private[this] val weekOfYear: Int,
+                          private[this] val weekCount: Int,
+                          private[this] val calendar: ITimeCalendar = DefaultTimeCalendar)
+    extends WeekTimeRange(Times.startTimeOfWeek(year, weekOfYear), weekCount, calendar) {
 
     @inline
-    def getWeeks: Seq[WeekRange] = {
-        val weeks = new ArrayBuffer[WeekRange](weekCount)
-        for (w <- 0 until weekCount) {
-            weeks += WeekRange(start.plusWeeks(w), calendar)
+    def getWeeks = {
+        (0 until weekCount).view.map { w =>
+            WeekRange(start.plusWeeks(w), calendar)
         }
-        weeks
     }
 }
 

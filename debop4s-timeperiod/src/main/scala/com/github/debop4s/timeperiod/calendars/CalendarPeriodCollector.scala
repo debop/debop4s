@@ -89,7 +89,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
             return true
         }
 
-        years.getYears.filter(y => isMatchingYear(y, context) && checkLimits(y))
+        years.years.filter(y => isMatchingYear(y, context) && checkLimits(y))
         .foreach(y => periods.add(y))
 
         false
@@ -103,7 +103,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         val monthFilter = (m: MonthRange) => isMatchingMonth(m, context) && checkLimits(m)
 
         if (filter.collectingMonths.size == 0) {
-            year.getMonths
+            year.months
             .filter(monthFilter)
             .foreach(m => periods.add(m))
         } else {
@@ -135,7 +135,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
             return true
 
         if (filter.collectingDays.size == 0) {
-            month.getDays
+            month.days
             .filter(d => isMatchingDay(d, context) && checkLimits(d))
             .foreach(d => periods.add(d))
         } else {

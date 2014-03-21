@@ -37,7 +37,7 @@ class MonthRangeTest extends AbstractTimePeriodTest {
     test("get days") {
         val now = Times.now
         val mr = MonthRange()
-        val days = mr.getDays
+        val days = mr.days
 
         var index = 0
         days.foreach { day =>

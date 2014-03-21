@@ -41,8 +41,8 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
         if (onVisitYears(years, context) && enterYears(years, context)) {
             val yearsToVisit =
-                if (isForward) years.getYears
-                else years.getYears.sortWith(_.end > _.end)
+                if (isForward) years.years
+                else years.years.sortWith(_.end > _.end)
 
             yearsToVisit.foreach { year =>
                 val canVisitMonth =
@@ -53,8 +53,8 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
                 if (canVisitMonth) {
                     val monthsToVisit =
-                        if (isForward) years.getMonths
-                        else years.getMonths.sortWith(_.end > _.end)
+                        if (isForward) years.months
+                        else years.months.sortWith(_.end > _.end)
 
                     monthsToVisit.foreach { month =>
                         val canVisitDay =
@@ -65,8 +65,8 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
                         if (canVisitDay) {
                             val daysToVisit =
-                                if (isForward) month.getDays
-                                else month.getDays.sortWith(_.end > _.end)
+                                if (isForward) month.days
+                                else month.days.sortWith(_.end > _.end)
 
                             daysToVisit.foreach { day =>
                                 val canVisitHour =

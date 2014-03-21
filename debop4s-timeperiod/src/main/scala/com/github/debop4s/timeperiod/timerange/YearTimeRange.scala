@@ -3,7 +3,6 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.YearTimeRange
@@ -18,36 +17,34 @@ class YearTimeRange(private[this] val _year: Int,
     extends YearCalendarTimeRange(Times.relativeYearPeriod(Times.startTimeOfYear(_year), yearCount), _calendar) {
 
     @inline
-    def getHalfyears: Seq[HalfyearRange] = {
-        val halfyears = new ArrayBuffer[HalfyearRange](yearCount)
-        for (y <- 0 until yearCount) {
-            Halfyear.values.foreach { hy =>
-                halfyears += new HalfyearRange(startYear + y, hy, calendar)
-            }
+    def halfyears = {
+        for {
+            y <- (0 until yearCount).view
+            hy <- Halfyear.values.view
+        } yield {
+            HalfyearRange(startYear + y, hy, calendar)
         }
-        halfyears
     }
 
     @inline
-    def getQuarters: Seq[QuarterRange] = {
-        val quarters = new ArrayBuffer[QuarterRange](yearCount)
-        for (y <- 0 until yearCount) {
-            Quarter.values.foreach { q =>
-                quarters += new QuarterRange(startYear + y, q, calendar)
-            }
+    def quarters = {
+        for {
+            y <- (0 until yearCount).view
+            q <- Quarter.values.view
+        } yield {
+            QuarterRange(startYear + y, q, calendar)
         }
-        quarters
     }
 
     @inline
-    def getMonths: Seq[MonthRange] = {
-        val months = new ArrayBuffer[MonthRange](yearCount * MonthsPerYear)
-        for (y <- 0 until yearCount) {
-            val baseTime = start.plusYears(y)
-            for (m <- 0 until MonthsPerYear)
-                months += MonthRange(baseTime.plusMonths(m), calendar)
+    def months = {
+        for {
+            y <- (0 until yearCount).view
+            baseTime = start.plusYears(y)
+            m <- (0 until MonthsPerYear).view
+        } yield {
+            MonthRange(baseTime.plusMonths(m), calendar)
         }
-        months
     }
 }
 

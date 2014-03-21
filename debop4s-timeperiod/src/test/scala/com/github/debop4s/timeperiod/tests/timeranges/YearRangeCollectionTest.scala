@@ -21,7 +21,7 @@ class YearRangeCollectionTest extends AbstractTimePeriodTest {
         yrs.startYear should equal(startYear)
         yrs.endYear should equal(startYear)
 
-        val years = yrs.getYears
+        val years = yrs.years
         years.size should equal(1)
         years(0).isSamePeriod(YearRange(startYear)) should equal(true)
     }
@@ -49,7 +49,7 @@ class YearRangeCollectionTest extends AbstractTimePeriodTest {
             yearRanges.start should equal(startTime)
             yearRanges.end should equal(endTime)
 
-            val items = yearRanges.getYears
+            val items = yearRanges.years
 
             (0 until yearCount).par.foreach { y =>
                 val item = items(y)

@@ -2,6 +2,7 @@ package com.github.debop4s.timeperiod.timerange
 
 import com.github.debop4s.timeperiod._
 import org.joda.time.DateTime
+import scala.collection.SeqView
 
 /**
  * MonthRangeCollection
@@ -16,7 +17,7 @@ class MonthRangeCollection(private[this] val _year: Int,
     extends MonthTimeRange(_year, _monthOfYear, _monthCount, _calendar) {
 
     @inline
-    def months = {
+    def months: SeqView[MonthRange, Seq[_]] = {
         (0 until monthCount).view.map { m =>
             MonthRange(start.plusMonths(m), calendar)
         }

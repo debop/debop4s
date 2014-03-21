@@ -33,7 +33,7 @@ class QuarterRangeCollectionTest extends AbstractTimePeriodTest {
         qr.endYear should equal(startYear)
         qr.endQuarter should equal(startQuarter)
 
-        val quarters = qr.getQuarters
+        val quarters = qr.quarters
         quarters.size should equal(1)
         quarters(0).isSamePeriod(QuarterRange(startYear, startQuarter)) should equal(true)
     }
@@ -51,7 +51,7 @@ class QuarterRangeCollectionTest extends AbstractTimePeriodTest {
         qrs.endYear should equal(startYear + 1)
         qrs.endQuarter should equal(Quarter.First)
 
-        val quarters = qrs.getQuarters
+        val quarters = qrs.quarters
 
         quarters.size should equal(quarterCount)
         quarters(0).isSamePeriod(QuarterRange(startYear, Quarter.First)) should equal(true)
@@ -74,7 +74,7 @@ class QuarterRangeCollectionTest extends AbstractTimePeriodTest {
         qrs.endYear should equal(startYear + 1)
         qrs.endQuarter should equal(Quarter.Second)
 
-        val quarters = qrs.getQuarters
+        val quarters = qrs.quarters
 
         quarters.size should equal(quarterCount)
         quarters(0).isSamePeriod(QuarterRange(startYear, Quarter.Second)) should equal(true)

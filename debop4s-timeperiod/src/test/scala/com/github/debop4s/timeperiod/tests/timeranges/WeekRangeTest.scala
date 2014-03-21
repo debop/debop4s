@@ -41,7 +41,7 @@ class WeekRangeTest extends AbstractTimePeriodTest {
         val now = Times.now
         val wr = WeekRange()
 
-        val days = wr.getDays
+        val days = wr.days
         var index = 0
         days.foreach { day =>
             day.start should equal(wr.start + index.day)

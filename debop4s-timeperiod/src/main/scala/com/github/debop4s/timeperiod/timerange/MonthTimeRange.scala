@@ -3,7 +3,7 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.SeqView
 
 /**
  * com.github.debop4s.timeperiod.timerange.MonthTimeRange
@@ -17,19 +17,17 @@ class MonthTimeRange(private[this] val _year: Int,
     extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
     @inline
-    def getDays: Seq[DayRange] = {
+    def days: SeqView[DayRange, Seq[_]] = {
         val startMonth = Times.startTimeOfMonth(start)
-        val days = new ArrayBuffer[DayRange](monthCount * MaxDaysPerMonth)
 
-        for (m <- 0 until monthCount) {
-            val month = startMonth + m.month
-            val daysOfMonth = Times.daysInMonth(month.getYear, month.getMonthOfYear)
-
-            for (d <- 0 until daysOfMonth) {
-                days += DayRange(month + d.day, calendar)
-            }
+        for {
+            m <- (0 until monthCount).view
+            month = startMonth + m.month
+            dayOfMonth = Times.daysInMonth(month.getYear, month.getMonthOfYear)
+            d <- (0 until dayOfMonth).view
+        } yield {
+            DayRange(month + d.day, calendar)
         }
-        days
     }
 }
 
