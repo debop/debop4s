@@ -507,7 +507,7 @@ object Times {
     def hasDate(moment: DateTime): Boolean = moment.withTimeAtStartOfDay().getMillis > 0
 
     def setDate(moment: DateTime, date: DateTime): DateTime =
-        Datepart(date).getDateTime(Timepart(moment))
+        Datepart(date).toDateTime(Timepart(moment))
 
     def setDate(moment: DateTime, year: Int, monthOfYear: Int, dayOfMonth: Int): DateTime =
         setDate(moment, asDate(year, monthOfYear, dayOfMonth))

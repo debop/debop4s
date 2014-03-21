@@ -3,7 +3,6 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.HourTimeRange
@@ -18,16 +17,13 @@ class HourTimeRange(private[this] val _moment: DateTime,
     val endHour: Int = start.plusHours(hourCount).getHourOfDay
 
     @inline
-    def getMinutes: Seq[MinuteRange] = {
-        val minutes = new ArrayBuffer[MinuteRange](hourCount * MinutesPerHour)
-
-        for (h <- 0 until hourCount) {
-            for (m <- 0 until MinutesPerHour) {
-                minutes += MinuteRange(start.plusHours(h).plusMinutes(m), calendar)
-            }
+    def minutes: Seq[MinuteRange] = {
+        for {
+            h <- 0 until hourCount
+            m <- 0 until MinutesPerHour
+        } yield {
+            MinuteRange(start.plusHours(h).plusMinutes(m), calendar)
         }
-
-        minutes
     }
 }
 

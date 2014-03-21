@@ -35,10 +35,6 @@ class HalfyearRangeCollectionTest extends AbstractTimePeriodTest {
         val halfyearList = halfyears.halfyears
         halfyearList.size should equal(1)
         halfyearList.head.isSamePeriod(new HalfyearRange(startYear, startHalfyear)) should equal(true)
-
-        val halfyearView = halfyears.halfyearsView
-        halfyearView.size should equal(1)
-        halfyearView.head.isSamePeriod(new HalfyearRange(startYear, startHalfyear)) should equal(true)
     }
 
     test("first calendar halfyears") {
@@ -59,13 +55,6 @@ class HalfyearRangeCollectionTest extends AbstractTimePeriodTest {
         halfyearList(0).isSamePeriod(HalfyearRange(startYear, Halfyear.First)) should equal(true)
         halfyearList(1).isSamePeriod(HalfyearRange(startYear, Halfyear.Second)) should equal(true)
         halfyearList(2).isSamePeriod(HalfyearRange(startYear + 1, Halfyear.First)) should equal(true)
-
-        val halfyearView = halfyears.halfyearsView
-
-        halfyearView.size should equal(halfyearCount)
-        halfyearView(0).isSamePeriod(HalfyearRange(startYear, Halfyear.First)) should equal(true)
-        halfyearView(1).isSamePeriod(HalfyearRange(startYear, Halfyear.Second)) should equal(true)
-        halfyearView(2).isSamePeriod(HalfyearRange(startYear + 1, Halfyear.First)) should equal(true)
     }
 
     test("secondCalendarHalfyears") {

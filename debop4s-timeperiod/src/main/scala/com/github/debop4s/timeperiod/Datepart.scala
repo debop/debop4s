@@ -14,16 +14,16 @@ class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
     def dayOfMonth = value.getDayOfMonth
 
-    def getDateTime(time: Timepart): DateTime = {
+    def toDateTime(time: Timepart): DateTime = {
         if (time != null) value + time.value.getMillis
         else value
     }
 
-    def getDateTime(hourOfDay: Int, minuteOfHour: Int = 0, secondOfMinute: Int = 0, millisOfSecond: Int = 0): DateTime =
-        getDateTime(Timepart(hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond))
+    def toDateTime(hourOfDay: Int, minuteOfHour: Int = 0, secondOfMinute: Int = 0, millisOfSecond: Int = 0): DateTime =
+        toDateTime(Timepart(hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond))
 
-    def getDateTime(millis: Long): DateTime =
-        getDateTime(Timepart(millis.toDateTime))
+    def toDateTime(millis: Long): DateTime =
+        toDateTime(Timepart(millis.toDateTime))
 
     def compare(that: Datepart) = value.compareTo(that.value)
 
@@ -36,13 +36,12 @@ class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
 object Datepart {
 
-    def today() = apply()
+    def today(): Datepart = apply()
 
     def apply(): Datepart = new Datepart(Times.today)
 
     def apply(year: Int, monthOfYear: Int = 1, dayOfMonth: Int = 1): Datepart =
         new Datepart(Times.asDate(year, monthOfYear, dayOfMonth))
-
 
     def apply(moment: DateTime): Datepart =
         new Datepart(moment.withTimeAtStartOfDay())

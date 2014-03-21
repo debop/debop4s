@@ -10,6 +10,22 @@ import org.joda.time.DateTime
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오후 6:16
  */
+class HalfyearRange(private[this] val _year: Int,
+                    private[this] val _halfyear: Halfyear,
+                    private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
+    extends HalfyearTimeRange(_year, _halfyear, 1, _calendar) {
+
+    def addHalfyears(count: Int): HalfyearRange = {
+        val yhy = Times.addHalfyear(startYear, startHalfyear, count)
+        new HalfyearRange(yhy.year, yhy.halfyear, calendar)
+    }
+
+    def nextHalfyear: HalfyearRange = addHalfyears(1)
+
+    def previousHalfyear: HalfyearRange = addHalfyears(-1)
+
+}
+
 object HalfyearRange {
 
     def apply(): HalfyearRange = apply(Times.today)
@@ -28,20 +44,4 @@ object HalfyearRange {
 
     def apply(moment: DateTime, calendar: ITimeCalendar): HalfyearRange =
         new HalfyearRange(moment.getYear, Times.halfyearOf(moment), calendar)
-}
-
-class HalfyearRange(private[this] val _year: Int,
-                    private[this] val _halfyear: Halfyear,
-                    private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends HalfyearTimeRange(_year, _halfyear, 1, _calendar) {
-
-    def addHalfyears(count: Int): HalfyearRange = {
-        val yhy = Times.addHalfyear(startYear, startHalfyear, count)
-        new HalfyearRange(yhy.year, yhy.halfyear, calendar)
-    }
-
-    def nextHalfyear: HalfyearRange = addHalfyears(1)
-
-    def previousHalfyear: HalfyearRange = addHalfyears(-1)
-
 }

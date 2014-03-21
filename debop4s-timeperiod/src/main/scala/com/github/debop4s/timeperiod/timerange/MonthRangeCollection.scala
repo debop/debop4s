@@ -2,10 +2,9 @@ package com.github.debop4s.timeperiod.timerange
 
 import com.github.debop4s.timeperiod._
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
 
 /**
- * com.github.debop4s.timeperiod.timerange.MonthRangeCollection
+ * MonthRangeCollection
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오후 4:51
  */
@@ -17,12 +16,10 @@ class MonthRangeCollection(private[this] val _year: Int,
     extends MonthTimeRange(_year, _monthOfYear, _monthCount, _calendar) {
 
     @inline
-    def getMonths: Seq[MonthRange] = {
-        val months = new ArrayBuffer[MonthRange](monthCount)
-        for (m <- 0 until monthCount) {
-            months += MonthRange(start.plusMonths(m), calendar)
+    def months = {
+        (0 until monthCount).view.map { m =>
+            MonthRange(start.plusMonths(m), calendar)
         }
-        months
     }
 }
 

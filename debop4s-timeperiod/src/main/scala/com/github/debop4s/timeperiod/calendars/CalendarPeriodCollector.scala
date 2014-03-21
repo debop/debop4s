@@ -119,9 +119,9 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                             m.startMonthOfYear,
                             m.endMonthOfYear - m.startMonthOfYear,
                             year.calendar)
-                    val isMatching = months.getMonths.forall(m => isMatchingMonth(m, context))
+                    val isMatching = months.months.forall(m => isMatchingMonth(m, context))
                     if (isMatching && checkLimits(months)) {
-                        periods.addAll(months.getMonths)
+                        periods.addAll(months.months)
                     }
                 }
             }

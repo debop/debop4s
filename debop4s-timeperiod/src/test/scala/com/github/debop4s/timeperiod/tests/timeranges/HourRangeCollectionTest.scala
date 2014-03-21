@@ -28,14 +28,14 @@ class HourRangeCollectionTest extends AbstractTimePeriodTest {
         hours.endDayOfMonth should equal(startTime.getDayOfMonth)
         hours.endHourOfDay should equal(startTime.getHourOfDay + 1)
 
-        val hourList = hours.getHours
+        val hourList = hours.hours
         hourList.size should equal(1)
-        hourList(0).isSamePeriod(HourRange(startTime, EmptyOffsetTimeCalendar)) should equal(true)
+        hourList.head.isSamePeriod(HourRange(startTime, EmptyOffsetTimeCalendar)) should equal(true)
     }
 
     test("calendar hours") {
         val startTime = new DateTime(2004, 2, 11, 22, 0)
-        val hourCount = 4
+        val hourCount = 14
         val hours = HourRangeCollection(startTime, hourCount, EmptyOffsetTimeCalendar)
 
         hours.hourCount should equal(hourCount)
@@ -49,7 +49,7 @@ class HourRangeCollectionTest extends AbstractTimePeriodTest {
         hours.endDayOfMonth should equal(startTime.getDayOfMonth + 1)
         hours.endHourOfDay should equal((startTime.getHourOfDay + hourCount) % 24)
 
-        val hourList = hours.getHours
+        val hourList = hours.hours
         hourList.size should equal(hourCount)
         for (h <- 0 until hourCount) {
             hourList(h).isSamePeriod(HourRange(startTime.plusHours(h), EmptyOffsetTimeCalendar)) should equal(true)
@@ -65,7 +65,7 @@ class HourRangeCollectionTest extends AbstractTimePeriodTest {
             val startTime = Times.trimToMinute(now) + hourRanges.calendar.startOffset
             val endTime = startTime.plusHours(hourCount) + hourRanges.calendar.endOffset
 
-            val items = hourRanges.getHours
+            val items = hourRanges.hours
             items.size should equal(hourCount)
 
             Parallels.runAction1(hourCount) { h =>

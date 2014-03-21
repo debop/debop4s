@@ -3,7 +3,6 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.MinuteRangeCollection
@@ -17,17 +16,12 @@ class MinuteRangeCollection(private[this] val _moment: DateTime,
     extends MinuteTimeRange(_moment, _minuteCount, _calendar) {
 
 
-    lazy val minutes: Seq[MinuteRange] = getMinutes
-
     @inline
-    def getMinutes: Seq[MinuteRange] = {
-        val minutes = new ArrayBuffer[MinuteRange](minuteCount)
+    def minutes = {
         val startMin = Times.trimToSecond(start)
-
-        for (m <- 0 until minuteCount) {
-            minutes += new MinuteRange(startMin.plusMinutes(m), calendar)
+        (0 until minuteCount).view.map { m =>
+            MinuteRange(startMin + m.minute, calendar)
         }
-        minutes
     }
 }
 

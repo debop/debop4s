@@ -18,7 +18,7 @@ class MonthRangeCollectionTest extends AbstractTimePeriodTest {
         val mrs = MonthRangeCollection(startYear, startMonth, 1)
         mrs.monthCount should equal(1)
 
-        val months = mrs.getMonths
+        val months = mrs.months
         months.size should equal(1)
         months(0).isSamePeriod(new MonthRange(startYear, startMonth)) should equal(true)
 
@@ -52,7 +52,7 @@ class MonthRangeCollectionTest extends AbstractTimePeriodTest {
             mrs.start should equal(startTime)
             mrs.end should equal(endTime)
 
-            val items = mrs.getMonths
+            val items = mrs.months
 
             for (i <- 0 until m) {
                 val item = items(i)

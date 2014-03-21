@@ -3,7 +3,7 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.SeqView
 
 /**
  * com.github.debop4s.timeperiod.timerange.HourCollectionRange
@@ -17,14 +17,12 @@ class HourRangeCollection(private[this] val _moment: DateTime,
     extends HourTimeRange(Times.trimToSecond(_moment), _hourCount, _calendar) {
 
     @inline
-    def getHours: Seq[HourRange] = {
+    def hours: SeqView[HourRange, Seq[_]] = {
         val startHour = Times.trimToMinute(start)
 
-        val hours = new ArrayBuffer[HourRange](hourCount)
-        for (h <- 0 until hourCount) {
-            hours += new HourRange(startHour.plusHours(h), calendar)
+        (0 until hourCount).view.map { h =>
+            HourRange(startHour + h.hour, calendar)
         }
-        hours
     }
 }
 
@@ -54,6 +52,4 @@ object HourRangeCollection {
               calendar: ITimeCalendar): HourRangeCollection = {
         new HourRangeCollection(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, 0), hourCount, calendar)
     }
-
-
 }

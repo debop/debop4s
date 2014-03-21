@@ -100,7 +100,7 @@ class MinuteRangeTest extends AbstractTimePeriodTest {
 
     test("getMinutes") {
         val hr = HourRange()
-        val minutes = hr.getMinutes
+        val minutes = hr.minutes
 
         minutes.size should equal(MinutesPerHour)
 
