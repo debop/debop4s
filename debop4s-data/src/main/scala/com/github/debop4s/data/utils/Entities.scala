@@ -85,7 +85,7 @@ object Entities {
         assert(parent != null)
         assert(child != null)
 
-        val ord = Math.max(0, Math.min(order, parent.children.size - 1))
+        val ord = math.max(0, math.min(order, parent.children.size - 1))
         parent.addChild(child)
         setNodeOrder(child, ord)
     }

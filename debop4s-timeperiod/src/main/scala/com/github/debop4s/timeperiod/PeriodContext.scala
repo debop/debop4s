@@ -26,15 +26,9 @@ object PeriodContext {
             Local.put(TIME_CALEMDAR_KEY, calendar)
         }
 
-        def getTimeCalendar: ITimeCalendar = calendar
-
-        def setTimeCalendar(cal: ITimeCalendar) = {
-            calendar = cal
-        }
-
         def locale = calendar.getLocale
 
-        def firstDayOfWeek = calendar.getFirstDayOfWeek
+        def firstDayOfWeek = calendar.firstDayOfWeek
     }
 
 }

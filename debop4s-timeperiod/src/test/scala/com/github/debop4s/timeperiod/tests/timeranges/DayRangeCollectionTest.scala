@@ -41,7 +41,7 @@ class DayRangeCollectionTest extends AbstractTimePeriodTest {
         assert(days.endMonthOfYear == end.getMonthOfYear)
         assert(days.endDayOfMonth == end.getDayOfMonth)
 
-        val dayList = days.getDays
+        val dayList = days.days
         assert(dayList.size == dayCount)
 
         (0 until dayCount).foreach { i =>
@@ -63,7 +63,7 @@ class DayRangeCollectionTest extends AbstractTimePeriodTest {
             assert(days.end == end)
             assert(days.dayCount == dayCount)
 
-            val items = days.getHours
+            val items = days.hours
             assert(items.size == dayCount * HoursPerDay)
             for (i <- 0 until items.size) {
                 assert(items(i).start == start + i.hour)

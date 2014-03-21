@@ -74,13 +74,13 @@ trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializabl
     def reset()
 
     /** 다른 TimePeriod 와의 관계를 나타냅니다. */
-    def getRelation(other: ITimePeriod): PeriodRelation
+    def relation(other: ITimePeriod): PeriodRelation
 
     /** 두 기간이 겹치는 (교집합) 기간을 반환합니다. */
-    def getIntersection(other: ITimePeriod): ITimePeriod
+    def intersection(other: ITimePeriod): ITimePeriod
 
     /** 두 기간의 합집합 기간을 반환합니다. */
-    def getUnion(other: ITimePeriod): ITimePeriod
+    def union(other: ITimePeriod): ITimePeriod
 
 }
 
@@ -193,11 +193,11 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
         log.trace(s"기간을 리셋했습니다. start=[$start], end=[$end]")
     }
 
-    def getRelation(other: ITimePeriod): PeriodRelation = Times.getRelation(this, other)
+    def relation(other: ITimePeriod): PeriodRelation = Times.relation(this, other)
 
-    def getIntersection(other: ITimePeriod): ITimePeriod = Times.getIntersectionRange(this, other)
+    def intersection(other: ITimePeriod): ITimePeriod = Times.intersectRange(this, other)
 
-    def getUnion(other: ITimePeriod): ITimePeriod = Times.getUnionBlock(this, other)
+    def union(other: ITimePeriod): ITimePeriod = Times.unionBlock(this, other)
 
     protected def assertMutable() {
         assert(!isReadonly, "일기전용 인스턴스입니다.")

@@ -20,11 +20,11 @@ import scala.collection.JavaConversions._
 class TimesTest extends AbstractTimePeriodTest {
 
     test("getYearOf") {
-        getYearOf(asDate(2000, 1, 1)) should equal(2000)
-        getYearOf(asDate(2000, 4, 1)) should equal(2000)
-        getYearOf(2000, 12) should equal(2000)
+        yearOf(asDate(2000, 1, 1)) should equal(2000)
+        yearOf(asDate(2000, 4, 1)) should equal(2000)
+        yearOf(2000, 12) should equal(2000)
 
-        getYearOf(testNow) should equal(testNow.getYear)
+        yearOf(testNow) should equal(testNow.getYear)
     }
 
     test("next halfyear") {
@@ -67,13 +67,13 @@ class TimesTest extends AbstractTimePeriodTest {
     }
 
     test("halfyear of month") {
-        FirstHalfyearMonths.par.foreach(m => getHalfyearOfMonth(m) should equal(Halfyear.First))
-        SecondHalfyearMonths.par.foreach(m => getHalfyearOfMonth(m) should equal(Halfyear.Second))
+        FirstHalfyearMonths.par.foreach(m => halfyearOfMonth(m) should equal(Halfyear.First))
+        SecondHalfyearMonths.par.foreach(m => halfyearOfMonth(m) should equal(Halfyear.Second))
     }
 
     test("months of halfyear") {
-        getMonthsOfHalfyear(Halfyear.First) should equal(FirstHalfyearMonths)
-        getMonthsOfHalfyear(Halfyear.Second) should equal(SecondHalfyearMonths)
+        monthsOfHalfyear(Halfyear.First) should equal(FirstHalfyearMonths)
+        monthsOfHalfyear(Halfyear.Second) should equal(SecondHalfyearMonths)
     }
 
     test("next quarter") {
@@ -113,17 +113,17 @@ class TimesTest extends AbstractTimePeriodTest {
     }
 
     test("quarter of month") {
-        FirstQuarterMonths.foreach(m => getQuarterOfMonth(m) should equal(Quarter.First))
-        SecondQuarterMonths.foreach(m => getQuarterOfMonth(m) should equal(Quarter.Second))
-        ThirdQuarterMonths.foreach(m => getQuarterOfMonth(m) should equal(Quarter.Third))
-        FourthQuarterMonths.foreach(m => getQuarterOfMonth(m) should equal(Quarter.Fourth))
+        FirstQuarterMonths.foreach(m => quarterOfMonth(m) should equal(Quarter.First))
+        SecondQuarterMonths.foreach(m => quarterOfMonth(m) should equal(Quarter.Second))
+        ThirdQuarterMonths.foreach(m => quarterOfMonth(m) should equal(Quarter.Third))
+        FourthQuarterMonths.foreach(m => quarterOfMonth(m) should equal(Quarter.Fourth))
     }
 
     test("months of quarter") {
-        getMonthsOfQuarter(Quarter.First) should equal(FirstQuarterMonths)
-        getMonthsOfQuarter(Quarter.Second) should equal(SecondQuarterMonths)
-        getMonthsOfQuarter(Quarter.Third) should equal(ThirdQuarterMonths)
-        getMonthsOfQuarter(Quarter.Fourth) should equal(FourthQuarterMonths)
+        monthsOfQuarter(Quarter.First) should equal(FirstQuarterMonths)
+        monthsOfQuarter(Quarter.Second) should equal(SecondQuarterMonths)
+        monthsOfQuarter(Quarter.Third) should equal(ThirdQuarterMonths)
+        monthsOfQuarter(Quarter.Fourth) should equal(FourthQuarterMonths)
     }
 
     test("next month") {
@@ -164,14 +164,14 @@ class TimesTest extends AbstractTimePeriodTest {
             p =>
                 val moment = p.start
                 val expected = YearWeek(moment.getWeekyear, moment.getWeekOfWeekyear)
-                val actual = getWeekOfYear(moment)
+                val actual = weekOfYear(moment)
                 actual should equal(expected)
         }
     }
 
     test("week of month") {
-        assert(Times.getWeekOfMonth(Times.asDate(2014, 3, 1)) == 1)
-        assert(Times.getWeekOfMonth(Times.asDate(2014, 3, 3)) == 2)
+        assert(Times.weekOfMonth(Times.asDate(2014, 3, 1)) == 1)
+        assert(Times.weekOfMonth(Times.asDate(2014, 3, 3)) == 2)
     }
 
     test("dayStart") {
@@ -252,10 +252,10 @@ class TimesTest extends AbstractTimePeriodTest {
         val prevWeek = testDate.minusDays(DaysPerWeek + 1)
         val nextWeek = testDate.plusDays(DaysPerWeek + 1)
 
-        val yw = getWeekOfYear(testDate)
-        val startOfWeek = getStartOfYearWeek(yw.weekyear, yw.weekOfWeekyear)
+        val yw = weekOfYear(testDate)
+        val startOfWeek = startOfYearWeek(yw.weekyear, yw.weekOfWeekyear)
 
-        val yw2 = getWeekOfYear(startOfWeek)
+        val yw2 = weekOfYear(startOfWeek)
 
         isSameWeek(testDate, startOfWeek) should equal(true)
         isSameWeek(testDate, testDate) should equal(true)
@@ -361,21 +361,20 @@ class TimesTest extends AbstractTimePeriodTest {
     test("foreach weeks") {
         var count = 0
         val weeks = Times.foreachWeeks(period)
-        weeks.foreach {
-            p =>
-                log.trace(s"week($count) = [${p.start}] ~ [${p.end}], year week = ${Times.getWeekOfYear(p.start)}")
-                count += 1
+        weeks.foreach { p =>
+            log.trace(s"week($count) = [${p.start}] ~ [${p.end}], year week = ${Times.weekOfYear(p.start)}")
+            count += 1
         }
 
-        weeks(0).start should equal(period.start)
+        weeks.head.start should equal(period.start)
         weeks.last.end should equal(period.end)
     }
 
     test("foreach days") {
-        val days = Times.foreachDays(period)
+        val days = Times.foreachDays(period).toSeq
         val count = days.size
 
-        days(0).start should equal(period.start)
+        days.head.start should equal(period.start)
         days.last.end should equal(period.end)
 
         log.trace(s"last-1 = ${days(days.size - 2)}")
@@ -383,17 +382,17 @@ class TimesTest extends AbstractTimePeriodTest {
     }
 
     test("foreach hours") {
-        val hours = Times.foreachHours(period)
+        val hours = Times.foreachHours(period).toSeq
 
-        hours(0).start should equal(period.start)
+        hours.head.start should equal(period.start)
         hours.last.end should equal(period.end)
         hours.last.start.getMillis should be > hours(hours.size - 2).end.getMillis
     }
 
     test("foreach minutes") {
-        val minutes = Times.foreachMinutes(period)
+        val minutes = Times.foreachMinutes(period).toSeq
 
-        minutes(0).start should equal(period.start)
+        minutes.head.start should equal(period.start)
         minutes.last.end should equal(period.end)
         minutes.last.start.getMillis should be > minutes(minutes.size - 2).end.getMillis
     }
@@ -401,25 +400,23 @@ class TimesTest extends AbstractTimePeriodTest {
     test("foreach periods") {
         val notTesting = Array(PeriodUnit.All, PeriodUnit.Second, PeriodUnit.Millisecond)
 
-        PeriodUnit.values.foreach {
-            unit =>
-                if (!notTesting.contains(unit)) {
-                    Times.foreachPeriods(period, unit).par.size should be > 0
-                }
+        PeriodUnit.values.foreach { unit =>
+            if (!notTesting.contains(unit)) {
+                Times.foreachPeriods(period, unit).par.size should be > 0
+            }
         }
     }
     test("foreach periods as parallels") {
         val notTesting = Array(PeriodUnit.All, PeriodUnit.Second, PeriodUnit.Millisecond)
 
-        PeriodUnit.values.foreach {
-            unit =>
-                if (!notTesting.contains(unit)) {
-                    val count = new AtomicInteger(0)
-                    val periods = Times.foreachPeriods(period, unit)
-                    periods.par.foreach(x => count.incrementAndGet())
+        PeriodUnit.values.foreach { unit =>
+            if (!notTesting.contains(unit)) {
+                val count = new AtomicInteger(0)
+                val periods = Times.foreachPeriods(period, unit)
+                periods.par.foreach(x => count.incrementAndGet())
 
-                    periods.size should equal(count.get())
-                }
+                periods.size should equal(count.get())
+            }
         }
     }
 
@@ -532,28 +529,28 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     val duration = new Duration(startTime, endTime)
 
     test("TimeBlock by Duration") {
-        val block = Times.getTimeBlock(startTime, duration)
+        val block = Times.timeblock(startTime, duration)
         block.start should equal(startTime)
         block.end should equal(endTime)
         block.duration should equal(duration)
     }
 
     test("TimeBlock by start and end") {
-        val block = Times.getTimeBlock(startTime, endTime)
+        val block = Times.timeBlock(startTime, endTime)
         block.start should equal(startTime)
         block.end should equal(endTime)
         block.duration should equal(duration)
     }
 
     test("TimeRange by Duration") {
-        val range = Times.getTimeRange(startTime, duration)
+        val range = Times.timeRange(startTime, duration)
         range.start should equal(startTime)
         range.end should equal(endTime)
         range.duration should equal(duration)
     }
 
     test("TimeRange by start and end") {
-        val range = Times.getTimeRange(startTime, endTime)
+        val range = Times.timeRange(startTime, endTime)
         range.start should equal(startTime)
         range.end should equal(endTime)
         range.duration should equal(duration)
@@ -565,7 +562,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
         .foreach {
             unit =>
                 val moment = startTime
-                val period = Times.getPeriodOf(moment, unit)
+                val period = Times.periodOf(moment, unit)
                 period.hasInside(moment) should equal(true)
                 period.hasInside(endTime) should equal(false)
 
@@ -579,7 +576,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
         .foreach {
             unit =>
                 val moment = startTime
-                val period = Times.getPeriodOf(moment, unit, EmptyOffsetTimeCalendar)
+                val period = Times.periodOf(moment, unit, EmptyOffsetTimeCalendar)
                 period.hasInside(moment) should equal(true)
                 period.hasInside(endTime) should equal(false)
 
@@ -595,7 +592,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
 
                 for (count <- 1 to 5) {
                     val moment = startTime
-                    val period = Times.getPeriodsOf(moment, unit, count, EmptyOffsetTimeCalendar)
+                    val period = Times.periodsOf(moment, unit, count, EmptyOffsetTimeCalendar)
 
                     period.hasInside(moment) should equal(true)
                     period.hasInside(endTime) should equal(false)
@@ -606,7 +603,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getYearRange") {
-        val yr = getYearRange(startTime, EmptyOffsetTimeCalendar)
+        val yr = yearRange(startTime, EmptyOffsetTimeCalendar)
         val start = startTimeOfYear(startTime)
 
         yr.start should equal(start)
@@ -618,7 +615,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getYearRanges") {
         (1 until PeriodCount).par.foreach {
             i =>
-                val yrs = getYearRanges(startTime, i, EmptyOffsetTimeCalendar)
+                val yrs = yearRanges(startTime, i, EmptyOffsetTimeCalendar)
                 val start = startTimeOfYear(startTime)
 
                 yrs.start should equal(start)
@@ -629,7 +626,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getHalfyearRange") {
-        val hy = getHalfyearRange(startTime, EmptyOffsetTimeCalendar)
+        val hy = halfyearRange(startTime, EmptyOffsetTimeCalendar)
         val start = startTimeOfHalfyear(startTime)
 
         hy.start should equal(start)
@@ -639,7 +636,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getHalfyearRanges") {
         (1 until PeriodCount).par.foreach {
             i =>
-                val hys = getHalfyearRanges(startTime, i, EmptyOffsetTimeCalendar)
+                val hys = halfyearRanges(startTime, i, EmptyOffsetTimeCalendar)
                 val start = startTimeOfHalfyear(startTime)
 
                 hys.start should equal(start)
@@ -649,7 +646,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getQuarterRange") {
-        val qr = getQuarterRange(startTime, EmptyOffsetTimeCalendar)
+        val qr = quarterRange(startTime, EmptyOffsetTimeCalendar)
         val start = startTimeOfQuarter(startTime)
 
         qr.start should equal(start)
@@ -659,7 +656,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getQuarterRanges") {
         (1 until PeriodCount).par.foreach {
             q =>
-                val qrs = getQuarterRanges(startTime, q, EmptyOffsetTimeCalendar)
+                val qrs = quarterRanges(startTime, q, EmptyOffsetTimeCalendar)
                 val start = startTimeOfQuarter(startTime)
 
                 qrs.start should equal(start)
@@ -669,7 +666,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getMonthRange") {
-        val mr = getMonthRange(startTime, EmptyOffsetTimeCalendar)
+        val mr = monthRange(startTime, EmptyOffsetTimeCalendar)
         val start = startTimeOfMonth(startTime)
 
         mr.start should equal(start)
@@ -679,7 +676,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getMonthRanges") {
         (1 until PeriodCount).par.foreach {
             m =>
-                val qrs = Times.getMonthRanges(startTime, m, EmptyOffsetTimeCalendar)
+                val qrs = Times.monthRanges(startTime, m, EmptyOffsetTimeCalendar)
                 val start = Times.startTimeOfMonth(startTime)
 
                 qrs.start should equal(start)
@@ -689,7 +686,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getWeekRange") {
-        val wr = getWeekRange(startTime, EmptyOffsetTimeCalendar)
+        val wr = weekRange(startTime, EmptyOffsetTimeCalendar)
         val start = startTimeOfWeek(startTime)
 
         wr.start should equal(start)
@@ -699,7 +696,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getWeekRanges") {
         (1 until PeriodCount).par.foreach {
             w =>
-                val qrs = Times.getWeekRanges(startTime, w, EmptyOffsetTimeCalendar)
+                val qrs = Times.weekRanges(startTime, w, EmptyOffsetTimeCalendar)
                 val start = Times.startTimeOfWeek(startTime)
 
                 qrs.start should equal(start)
@@ -709,7 +706,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getDayRange") {
-        val wr = getDayRange(startTime, EmptyOffsetTimeCalendar)
+        val wr = dayRange(startTime, EmptyOffsetTimeCalendar)
         val start = startTimeOfDay(startTime)
 
         wr.start should equal(start)
@@ -719,7 +716,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getDayRanges") {
         (1 until PeriodCount).par.foreach {
             d =>
-                val qrs = Times.getDayRanges(startTime, d, EmptyOffsetTimeCalendar)
+                val qrs = Times.dayRanges(startTime, d, EmptyOffsetTimeCalendar)
                 val start = Times.startTimeOfDay(startTime)
 
                 qrs.start should equal(start)
@@ -729,7 +726,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getHourRange") {
-        val wr = getHourRange(startTime, EmptyOffsetTimeCalendar)
+        val wr = hourRange(startTime, EmptyOffsetTimeCalendar)
         val start = startTimeOfHour(startTime)
 
         wr.start should equal(start)
@@ -739,7 +736,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getHourRanges") {
         (1 until PeriodCount).par.foreach {
             h =>
-                val qrs = Times.getHourRanges(startTime, h, EmptyOffsetTimeCalendar)
+                val qrs = Times.hourRanges(startTime, h, EmptyOffsetTimeCalendar)
                 val start = Times.startTimeOfHour(startTime)
 
                 qrs.start should equal(start)
@@ -749,7 +746,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     }
 
     test("getMinuteRange") {
-        val wr = getMinuteRange(startTime, EmptyOffsetTimeCalendar)
+        val wr = minuteRange(startTime, EmptyOffsetTimeCalendar)
         val start = startTimeOfMinute(startTime)
 
         wr.start should equal(start)
@@ -759,7 +756,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("getMinuteRanges") {
         (1 until PeriodCount).par.foreach {
             m =>
-                val qrs = Times.getMinuteRanges(startTime, m, EmptyOffsetTimeCalendar)
+                val qrs = Times.minuteRanges(startTime, m, EmptyOffsetTimeCalendar)
                 val start = Times.startTimeOfMinute(startTime)
 
                 qrs.start should equal(start)
@@ -885,7 +882,7 @@ class TimesPeriodTest extends AbstractTimePeriodTest {
     test("trim to day") {
         Times.trimToDay(testDate) should equal(asDate(testDate.getYear, testDate.getMonthOfYear, 1))
 
-        val days = Times.getDaysInMonth(testDate.getYear, testDate.getMonthOfYear)
+        val days = Times.daysInMonth(testDate.getYear, testDate.getMonthOfYear)
 
         (0 until days).par.foreach {
             day =>

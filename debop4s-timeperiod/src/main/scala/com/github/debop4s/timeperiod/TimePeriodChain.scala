@@ -7,7 +7,7 @@ import scala.annotation.varargs
 
 
 /**
- * com.github.debop4s.timeperiod.TimePeriodChain
+ * TimePeriodChain
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 31. 오후 3:43

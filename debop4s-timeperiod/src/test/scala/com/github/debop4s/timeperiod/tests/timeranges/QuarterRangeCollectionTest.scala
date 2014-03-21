@@ -14,7 +14,7 @@ class QuarterRangeCollectionTest extends AbstractTimePeriodTest {
 
     test("year test") {
         val moment = asDate(2009, 2, 15)
-        val year = getYearOf(moment.getYear, moment.getMonthOfYear)
+        val year = yearOf(moment.getYear, moment.getMonthOfYear)
         val qr = QuarterRangeCollection(moment, 3)
 
         qr.startYear should equal(year)

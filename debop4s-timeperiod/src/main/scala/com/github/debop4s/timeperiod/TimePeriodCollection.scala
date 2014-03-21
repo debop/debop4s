@@ -68,7 +68,7 @@ trait ITimePeriodCollection extends ITimePeriodContainer {
         filteringRelation += relation
         filteringRelation ++= relations
 
-        periods.filter(x => filteringRelation.contains(Times.getRelation(x, target)))
+        periods.filter(x => filteringRelation.contains(Times.relation(x, target)))
     }
 }
 

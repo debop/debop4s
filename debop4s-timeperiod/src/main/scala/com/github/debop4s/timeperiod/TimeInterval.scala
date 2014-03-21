@@ -221,15 +221,15 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
         endEdge = IntervalEdge.Closed
     }
 
-    override def getIntersection(other: ITimePeriod): ITimeInterval = {
+    override def intersection(other: ITimePeriod): ITimeInterval = {
         assert(other != null)
-        val range: ITimePeriod = super.getIntersection(other)
+        val range: ITimePeriod = super.intersection(other)
         new TimeInterval(range.start, range.end)
     }
 
-    override def getUnion(other: ITimePeriod): ITimeInterval = {
+    override def union(other: ITimePeriod): ITimeInterval = {
         assert(other != null)
-        val union: ITimePeriod = Times.getUnionRange(this, other)
+        val union: ITimePeriod = Times.unionRange(this, other)
         new TimeInterval(union.start, union.end)
     }
 }

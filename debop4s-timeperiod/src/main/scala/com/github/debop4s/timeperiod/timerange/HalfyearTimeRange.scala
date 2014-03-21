@@ -14,14 +14,14 @@ import scala.collection.mutable.ArrayBuffer
 object HalfyearTimeRange {
     def apply(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar): HalfyearTimeRange = {
         new HalfyearTimeRange(moment.getYear,
-            Times.getHalfyearOfMonth(moment.getMonthOfYear),
+            Times.halfyearOfMonth(moment.getMonthOfYear),
             halfyearCount,
             calendar)
     }
 
     def apply(moment: DateTime, halfyearCount: Int): HalfyearTimeRange = {
         new HalfyearTimeRange(moment.getYear,
-            Times.getHalfyearOfMonth(moment.getMonthOfYear),
+            Times.halfyearOfMonth(moment.getMonthOfYear),
             halfyearCount,
             DefaultTimeCalendar)
     }
@@ -42,7 +42,7 @@ class HalfyearTimeRange(val year: Int,
         _calendar) {
 
     val startHalfyear: Halfyear = halfyear
-    val endHalfyear: Halfyear = Times.getHalfyearOfMonth(endMonthOfYear)
+    val endHalfyear: Halfyear = Times.halfyearOfMonth(endMonthOfYear)
 
     def isMultipleCalendarYears: Boolean = startYear != endYear
 

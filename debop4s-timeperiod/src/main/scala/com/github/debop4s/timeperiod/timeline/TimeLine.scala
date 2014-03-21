@@ -117,7 +117,7 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
         periods
         .filter(!_.isMoment)
         .foreach { mp =>
-            val intersection = limits.getIntersection(mp)
+            val intersection = limits.intersection(mp)
             if (intersection != null && !intersection.isMoment) {
                 if (mapper != null) {
                     intersection.setup(mapPeriodStart(intersection.start), mapPeriodEnd(intersection.end))

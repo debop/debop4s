@@ -77,8 +77,8 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
                                 if (canVisitHour) {
                                     val hoursToVisit =
-                                        if (isForward) day.getHours
-                                        else day.getHours.sortWith(_.end > _.end)
+                                        if (isForward) day.hours
+                                        else day.hours.sortWith(_.end > _.end)
 
                                     hoursToVisit.foreach { hour =>
                                         val canVisitMinute = hour.overlapsWith(period) && onVisitHour(hour, context)

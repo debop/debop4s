@@ -48,7 +48,7 @@ class DayRangeTest extends AbstractTimePeriodTest {
 
     test("dayOfWeek") {
         val dayRange = DayRange(now)
-        dayRange.dayOfWeek should equal(DefaultTimeCalendar.getDayOfWeek(now))
+        dayRange.dayOfWeek should equal(DefaultTimeCalendar.dayOfWeek(now))
     }
 
     test("addDays") {
@@ -66,7 +66,7 @@ class DayRangeTest extends AbstractTimePeriodTest {
 
     test("get hours") {
         val dayRange = DayRange()
-        val hours = dayRange.getHours
+        val hours = dayRange.hours
 
         var index = 0
         hours.foreach { h =>

@@ -40,7 +40,7 @@ object QuarterRangeCollection {
         apply(moment, quarterCount, DefaultTimeCalendar)
 
     def apply(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar): QuarterRangeCollection =
-        new QuarterRangeCollection(moment.getYear, Times.getQuarterOfMonth(moment.getMonthOfYear), quarterCount, calendar)
+        new QuarterRangeCollection(moment.getYear, Times.quarterOfMonth(moment.getMonthOfYear), quarterCount, calendar)
 
 
 }

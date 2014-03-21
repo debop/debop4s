@@ -23,18 +23,18 @@ class DurationsTest extends AbstractTimePeriodTest {
         Durations.year(currentYear + 1) should equal(new Duration(Times.startTimeOfYear(currentYear + 1), Times.startTimeOfYear(currentYear + 2)))
         Durations.year(currentYear - 1) should equal(new Duration(Times.startTimeOfYear(currentYear - 1), Times.startTimeOfYear(currentYear)))
 
-        Durations.year(currentYear) should equal(Durations.days(Times.getDaysOfYear(currentYear)))
-        Durations.year(currentYear + 1) should equal(Durations.days(Times.getDaysOfYear(currentYear + 1)))
-        Durations.year(currentYear - 1) should equal(Durations.days(Times.getDaysOfYear(currentYear - 1)))
+        Durations.year(currentYear) should equal(Durations.days(Times.daysOfYear(currentYear)))
+        Durations.year(currentYear + 1) should equal(Durations.days(Times.daysOfYear(currentYear + 1)))
+        Durations.year(currentYear - 1) should equal(Durations.days(Times.daysOfYear(currentYear - 1)))
     }
 
     test("halfyear duration") {
         Halfyear.values.par.foreach { hy =>
-            val months = Times.getMonthsOfHalfyear(hy)
+            val months = Times.monthsOfHalfyear(hy)
             var duration = Durations.Zero
 
             months.foreach { m =>
-                val daysInMonth = Times.getDaysInMonth(currentYear, m)
+                val daysInMonth = Times.daysInMonth(currentYear, m)
                 duration = duration + (daysInMonth * MillisPerDay)
             }
             Durations.halfyear(currentYear, hy) should equal(duration)
@@ -43,11 +43,11 @@ class DurationsTest extends AbstractTimePeriodTest {
 
     test("quarter duration") {
         Quarter.values.par.foreach { q =>
-            val months = Times.getMonthsOfQuarter(q)
+            val months = Times.monthsOfQuarter(q)
             var duration = Durations.Zero
 
             months.foreach { m =>
-                val daysInMonth = Times.getDaysInMonth(currentYear, m)
+                val daysInMonth = Times.daysInMonth(currentYear, m)
                 duration = duration + (daysInMonth * MillisPerDay)
             }
             Durations.quarter(currentYear, q) should equal(duration)
@@ -56,7 +56,7 @@ class DurationsTest extends AbstractTimePeriodTest {
 
     test("month duration") {
         (1 to MonthsPerYear).par.foreach { m =>
-            Durations.month(currentYear, m) should equal(Duration.millis(Times.getDaysInMonth(currentYear, m) * MillisPerDay))
+            Durations.month(currentYear, m) should equal(Duration.millis(Times.daysInMonth(currentYear, m) * MillisPerDay))
         }
     }
 

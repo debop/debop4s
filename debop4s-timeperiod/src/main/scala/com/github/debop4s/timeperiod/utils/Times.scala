@@ -14,7 +14,7 @@ import org.joda.time.{Duration, DateTimeZone, DateTime}
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.parallel.ParSeq
+import scala.collection.parallel.ParIterable
 
 /**
  * com.github.debop4s.timeperiod.tools.Times
@@ -109,16 +109,16 @@ object Times {
     def toTimePeriodCollection[T <: ITimePeriod](sequence: Iterable[T]): TimePeriodCollection =
         TimePeriodCollection(sequence)
 
-    def getYearOf(moment: DateTime): Int = getYearOf(moment.getYear, moment.getMonthOfYear)
+    def yearOf(moment: DateTime): Int = yearOf(moment.getYear, moment.getMonthOfYear)
 
-    def getYearOf(moment: DateTime, calendar: ITimeCalendar): Int =
-        getYearOf(calendar.getYear(moment), calendar.getMonthOfYear(moment))
+    def yearOf(moment: DateTime, calendar: ITimeCalendar): Int =
+        yearOf(calendar.year(moment), calendar.monthOfYear(moment))
 
-    def getYearOf(year: Int, monthOfYear: Int) =
+    def yearOf(year: Int, monthOfYear: Int) =
         if (monthOfYear >= 1) year
         else year - 1
 
-    def getDaysOfYear(year: Int): Int = startTimeOfYear(year + 1).minusMillis(1).getDayOfYear
+    def daysOfYear(year: Int): Int = startTimeOfYear(year + 1).minusMillis(1).getDayOfYear
 
     def nextHalfyear(startYear: Int, startHalfyear: Halfyear): YearHalfyear =
         addHalfyear(startYear, startHalfyear, 1)
@@ -130,7 +130,7 @@ object Times {
         if (delta == 0)
             return YearHalfyear(startYear, startHalfyear)
 
-        val offsetYear = Math.abs(delta) / HalfyearsPerYear + 1
+        val offsetYear = math.abs(delta) / HalfyearsPerYear + 1
         val startHalfyearCount = (startYear + offsetYear) * HalfyearsPerYear + startHalfyear.id - 1
         val targetHalfyearCount = startHalfyearCount + delta
 
@@ -143,12 +143,12 @@ object Times {
         result
     }
 
-    def getHalfyearOfMonth(monthOfYear: Int): Halfyear = {
+    def halfyearOfMonth(monthOfYear: Int): Halfyear = {
         if (monthOfYear <= MonthsPerHalfyear) Halfyear.First
         else Halfyear.Second
     }
 
-    def getMonthsOfHalfyear(halfyear: Halfyear): Array[Int] =
+    def monthsOfHalfyear(halfyear: Halfyear): Array[Int] =
         if (halfyear == Halfyear.First) FirstHalfyearMonths
         else SecondHalfyearMonths
 
@@ -160,7 +160,7 @@ object Times {
         if (delta == 0)
             return YearQuarter(year, quarter)
 
-        val offsetYear = Math.abs(delta) / QuartersPerYear + 1
+        val offsetYear = math.abs(delta) / QuartersPerYear + 1
         val startQuarters = (year + offsetYear) * QuartersPerYear + quarter.id - 1
         val targetQuarters = startQuarters + delta
         val y = targetQuarters / QuartersPerYear - offsetYear
@@ -169,10 +169,10 @@ object Times {
         YearQuarter(y, Quarter(q))
     }
 
-    def getQuarterOfMonth(monthOfYear: Int): Quarter =
+    def quarterOfMonth(monthOfYear: Int): Quarter =
         Quarter((monthOfYear - 1) / MonthsPerQuarter + 1)
 
-    def getMonthsOfQuarter(quarter: Quarter) = quarter match {
+    def monthsOfQuarter(quarter: Quarter): Array[Int] = quarter match {
         case Quarter.First => FirstQuarterMonths
         case Quarter.Second => SecondQuarterMonths
         case Quarter.Third => ThirdQuarterMonths
@@ -188,7 +188,7 @@ object Times {
         if (count == 0)
             return YearMonth(year, monthOfYear)
 
-        val offset = Math.abs(count) / MonthsPerYear + 1
+        val offset = math.abs(count) / MonthsPerYear + 1
         val startMonths = (year + offset) * MonthsPerYear + monthOfYear - 1
         val endMonths = startMonths + count
         val y = endMonths / MonthsPerYear - offset
@@ -197,11 +197,11 @@ object Times {
         YearMonth(y, m)
     }
 
-    def getDaysInMonth(year: Int, month: Int): Int =
+    def daysInMonth(year: Int, month: Int): Int =
         asDate(year, month).plusMonths(1).minusDays(1).getDayOfMonth
 
     @inline
-    def getStartOfWeek(moment: DateTime): DateTime = {
+    def startOfWeek(moment: DateTime): DateTime = {
         val day = asDate(moment)
         val dow = day.getDayOfWeek
         day - (dow - 1).day
@@ -210,7 +210,7 @@ object Times {
     /**
     * 해당 시각의 월-주차를 계산합니다.
     */
-    def getWeekOfMonth(moment: DateTime): Int = {
+    def weekOfMonth(moment: DateTime): Int = {
         // moment.getWeekOfWeekyear - startTimeOfMonth(moment).getWeekOfWeekyear + 1
         val calendar = Calendar.getInstance()
         calendar.setTimeInMillis(moment.getMillis)
@@ -219,17 +219,19 @@ object Times {
         calendar.get(Calendar.WEEK_OF_MONTH)
     }
 
-    def getWeekOfYear(moment: DateTime): YearWeek =
-        getWeekOfYear(moment, DefaultTimeCalendar)
+    def weekOfYear(moment: DateTime): YearWeek =
+        weekOfYear(moment, DefaultTimeCalendar)
 
-    def getWeekOfYear(moment: DateTime, calendar: ITimeCalendar): YearWeek =
+    def weekOfYear(moment: DateTime, calendar: ITimeCalendar): YearWeek =
         YearWeek(moment.getWeekyear, moment.getWeekOfWeekyear)
 
-    def getWeeksOfYear(year: Int): Int =
-        getWeeksOfYear(year, DefaultTimeCalendar)
+    /** 해당 년도에 주차 수 */
+    def weeksOfYear(year: Int): Int =
+        weeksOfYear(year, DefaultTimeCalendar)
 
+    /** 해당 년도의 주차 수 */
     @inline
-    def getWeeksOfYear(year: Int, calendar: ITimeCalendar): Int = {
+    def weeksOfYear(year: Int, calendar: ITimeCalendar): Int = {
         var lastDay = asDate(year, 12, 31)
         while (lastDay.getWeekyear > year) {
             lastDay = lastDay.minusDays(1)
@@ -237,7 +239,7 @@ object Times {
         lastDay.getWeekOfWeekyear
     }
 
-    def getStartOfYearWeek(weekyear: Int, weekOfWeekYear: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DateTime =
+    def startOfYearWeek(weekyear: Int, weekOfWeekYear: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DateTime =
         new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(weekOfWeekYear)
 
     def dayStart(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
@@ -250,7 +252,7 @@ object Times {
     def addDayOfWeek(day: DayOfWeek, days: Int): DayOfWeek = {
         if (days == 0) return day
 
-        val weeks = Math.abs(days) / DaysPerWeek + 1
+        val weeks = math.abs(days) / DaysPerWeek + 1
         val offset = weeks * DaysPerWeek + day.id - 1 + days
         DayOfWeek((offset % DaysPerWeek) + 1)
     }
@@ -279,11 +281,11 @@ object Times {
 
     def isSameHalfyear(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) &&
-        getHalfyearOfMonth(left.getMonthOfYear) == getHalfyearOfMonth(right.getMonthOfYear)
+        halfyearOfMonth(left.getMonthOfYear) == halfyearOfMonth(right.getMonthOfYear)
 
     def isSameQuarter(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) &&
-        getQuarterOfMonth(left.getMonthOfYear) == getQuarterOfMonth(right.getMonthOfYear)
+        quarterOfMonth(left.getMonthOfYear) == quarterOfMonth(right.getMonthOfYear)
 
     def isSameMonth(left: DateTime, right: DateTime): Boolean =
         isSameYear(left, right) && left.getMonthOfYear == right.getMonthOfYear
@@ -311,23 +313,23 @@ object Times {
 
     def currentHalfyear: DateTime = {
         val n = now
-        val halfyear = getHalfyearOfMonth(n.getMonthOfYear)
-        val months = getMonthsOfHalfyear(halfyear)
+        val halfyear = halfyearOfMonth(n.getMonthOfYear)
+        val months = monthsOfHalfyear(halfyear)
 
         asDate(n.getYear, months(0), 1)
     }
 
     def currentQuarter: DateTime = {
         val n = now
-        val q = getQuarterOfMonth(n.getMonthOfYear)
-        val months = getMonthsOfQuarter(q)
+        val q = quarterOfMonth(n.getMonthOfYear)
+        val months = monthsOfQuarter(q)
 
         asDate(n.getYear, months(0), 1)
     }
 
     def currentMonth: DateTime = trimToDay(now)
 
-    def currentWeek: DateTime = getStartOfWeek(now)
+    def currentWeek: DateTime = startOfWeek(now)
 
     def currentDay: DateTime = today
 
@@ -354,16 +356,16 @@ object Times {
         startTimeOfHalfyear(moment.getYear, moment.getMonthOfYear)
 
     def startTimeOfHalfyear(year: Int, monthOfYear: Int): DateTime =
-        startTimeOfHalfyear(year, getHalfyearOfMonth(monthOfYear))
+        startTimeOfHalfyear(year, halfyearOfMonth(monthOfYear))
 
     def startTimeOfHalfyear(year: Int, halfyear: Halfyear): DateTime =
-        asDate(year, getMonthsOfHalfyear(halfyear)(0), 1)
+        asDate(year, monthsOfHalfyear(halfyear)(0), 1)
 
     def endTimeOfHalfyear(moment: DateTime): DateTime =
         endTimeOfHalfyear(moment.getYear, moment.getMonthOfYear)
 
     def endTimeOfHalfyear(year: Int, monthOfYear: Int): DateTime =
-        endTimeOfHalfyear(year, getHalfyearOfMonth(monthOfYear))
+        endTimeOfHalfyear(year, halfyearOfMonth(monthOfYear))
 
     def endTimeOfHalfyear(year: Int, halfyear: Halfyear): DateTime =
         startTimeOfHalfyear(year, halfyear)
@@ -374,16 +376,16 @@ object Times {
         startTimeOfQuarter(moment.getYear, moment.getMonthOfYear)
 
     def startTimeOfQuarter(year: Int, monthOfYear: Int): DateTime =
-        startTimeOfQuarter(year, getQuarterOfMonth(monthOfYear))
+        startTimeOfQuarter(year, quarterOfMonth(monthOfYear))
 
     def startTimeOfQuarter(year: Int, quarter: Quarter): DateTime =
-        asDate(year, getMonthsOfQuarter(quarter)(0), 1)
+        asDate(year, monthsOfQuarter(quarter)(0), 1)
 
     def endTimeOfQuarter(moment: DateTime): DateTime =
         endTimeOfQuarter(moment.getYear, moment.getMonthOfYear)
 
     def endTimeOfQuarter(year: Int, monthOfYear: Int): DateTime =
-        endTimeOfQuarter(year, getQuarterOfMonth(monthOfYear))
+        endTimeOfQuarter(year, quarterOfMonth(monthOfYear))
 
     def endTimeOfQuarter(year: Int, quarter: Quarter): DateTime =
         startTimeOfQuarter(year, quarter)
@@ -417,7 +419,7 @@ object Times {
 
     def endTimeOfLastMonth(moment: DateTime): DateTime = endTimeOfMonth(moment.minusMonths(1))
 
-    def startTimeOfWeek(moment: DateTime): DateTime = getStartOfWeek(moment)
+    def startTimeOfWeek(moment: DateTime): DateTime = startOfWeek(moment)
 
     def startTimeOfWeek(weekyear: Int, weekOfWeekYear: Int): DateTime =
         startTimeOfWeek(new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(weekOfWeekYear))
@@ -514,12 +516,12 @@ object Times {
         setDate(moment, year, moment.getMonthOfYear, moment.getDayOfMonth)
 
     def setMonth(moment: DateTime, monthOfYear: Int): DateTime = {
-        val day = Math.min(moment.getDayOfMonth, getDaysInMonth(moment.getYear, monthOfYear))
+        val day = math.min(moment.getDayOfMonth, daysInMonth(moment.getYear, monthOfYear))
         setDate(moment, moment.getYear, monthOfYear, day)
     }
 
     def setDay(moment: DateTime, dayOfMonth: Int): DateTime = {
-        val day = Math.min(moment.getDayOfMonth, dayOfMonth)
+        val day = math.min(moment.getDayOfMonth, dayOfMonth)
         setDate(moment, moment.getYear, moment.getMonthOfYear, day)
     }
 
@@ -597,16 +599,16 @@ object Times {
             (start, duration)
     }
 
-    def getTimeBlock(start: DateTime, duration: Duration): TimeBlock =
+    def timeblock(start: DateTime, duration: Duration): TimeBlock =
         TimeBlock(start, duration, readonly = false)
 
-    def getTimeBlock(start: DateTime, end: DateTime): TimeBlock =
+    def timeBlock(start: DateTime, end: DateTime): TimeBlock =
         TimeBlock(start, end, readonly = false)
 
-    def getTimeRange(start: DateTime, duration: Duration): TimeRange =
+    def timeRange(start: DateTime, duration: Duration): TimeRange =
         TimeRange(start, duration, readonly = false)
 
-    def getTimeRange(start: DateTime, end: DateTime): TimeRange =
+    def timeRange(start: DateTime, end: DateTime): TimeRange =
         TimeRange(start, end, readonly = false)
 
     def relativeYearPeriod(start: DateTime, years: Int): TimeRange =
@@ -631,19 +633,19 @@ object Times {
         TimeRange(trimToMillis(start), trimToMillis(start).plusSeconds(seconds))
 
     @inline
-    def getPeriodOf(moment: DateTime, unit: PeriodUnit, calendar: ITimeCalendar = DefaultTimeCalendar): ITimePeriod = {
-        log.trace(s"일자[$moment]가 속한 기간 종류[$unit]의 기간을 구합니다.")
-
+    def periodOf(moment: DateTime,
+                 unit: PeriodUnit,
+                 calendar: ITimeCalendar = DefaultTimeCalendar): ITimePeriod = {
         unit match {
             case PeriodUnit.All => TimeRange.Anytime
-            case PeriodUnit.Year => getYearRange(moment, calendar)
-            case PeriodUnit.Halfyear => getHalfyearRange(moment, calendar)
-            case PeriodUnit.Quarter => getQuarterRange(moment, calendar)
-            case PeriodUnit.Month => getMonthRange(moment, calendar)
-            case PeriodUnit.Week => getWeekRange(moment, calendar)
-            case PeriodUnit.Day => getDayRange(moment, calendar)
-            case PeriodUnit.Hour => getHourRange(moment, calendar)
-            case PeriodUnit.Minute => getMinuteRange(moment, calendar)
+            case PeriodUnit.Year => yearRange(moment, calendar)
+            case PeriodUnit.Halfyear => halfyearRange(moment, calendar)
+            case PeriodUnit.Quarter => quarterRange(moment, calendar)
+            case PeriodUnit.Month => monthRange(moment, calendar)
+            case PeriodUnit.Week => weekRange(moment, calendar)
+            case PeriodUnit.Day => dayRange(moment, calendar)
+            case PeriodUnit.Hour => hourRange(moment, calendar)
+            case PeriodUnit.Minute => minuteRange(moment, calendar)
             case PeriodUnit.Second => TimeRange(trimToMillis(moment), Durations.Second)
 
             case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
@@ -651,21 +653,19 @@ object Times {
     }
 
     @inline
-    def getPeriodsOf(moment: DateTime,
-                     unit: PeriodUnit,
-                     periodCount: Int,
-                     calendar: ITimeCalendar = DefaultTimeCalendar): CalendarTimeRange = {
-        log.trace(s"일자[$moment]가 속한 기간 종류[$unit]의 기간을 구합니다.")
-
+    def periodsOf(moment: DateTime,
+                  unit: PeriodUnit,
+                  periodCount: Int,
+                  calendar: ITimeCalendar = DefaultTimeCalendar): CalendarTimeRange = {
         unit match {
-            case PeriodUnit.Year => getYearRanges(moment, periodCount, calendar)
-            case PeriodUnit.Halfyear => getHalfyearRanges(moment, periodCount, calendar)
-            case PeriodUnit.Quarter => getQuarterRanges(moment, periodCount, calendar)
-            case PeriodUnit.Month => getMonthRanges(moment, periodCount, calendar)
-            case PeriodUnit.Week => getWeekRanges(moment, periodCount, calendar)
-            case PeriodUnit.Day => getDayRanges(moment, periodCount, calendar)
-            case PeriodUnit.Hour => getHourRanges(moment, periodCount, calendar)
-            case PeriodUnit.Minute => getMinuteRanges(moment, periodCount, calendar)
+            case PeriodUnit.Year => yearRanges(moment, periodCount, calendar)
+            case PeriodUnit.Halfyear => halfyearRanges(moment, periodCount, calendar)
+            case PeriodUnit.Quarter => quarterRanges(moment, periodCount, calendar)
+            case PeriodUnit.Month => monthRanges(moment, periodCount, calendar)
+            case PeriodUnit.Week => weekRanges(moment, periodCount, calendar)
+            case PeriodUnit.Day => dayRanges(moment, periodCount, calendar)
+            case PeriodUnit.Hour => hourRanges(moment, periodCount, calendar)
+            case PeriodUnit.Minute => minuteRanges(moment, periodCount, calendar)
             case PeriodUnit.Second =>
                 CalendarTimeRange(trimToMillis(moment),
                     trimToMillis(moment).plusSeconds(periodCount),
@@ -676,52 +676,52 @@ object Times {
     }
 
 
-    def getYearRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): YearRange =
+    def yearRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar) =
         new YearRange(moment.getYear, calendar)
 
-    def getYearRanges(moment: DateTime, yearCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): YearRangeCollection =
+    def yearRanges(moment: DateTime, yearCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
         new YearRangeCollection(moment.getYear, yearCount, calendar)
 
-    def getHalfyearRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): HalfyearRange =
+    def halfyearRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): HalfyearRange =
         HalfyearRange(moment, calendar)
 
-    def getHalfyearRanges(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): HalfyearRangeCollection =
+    def halfyearRanges(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
         HalfyearRangeCollection(moment, halfyearCount, calendar)
 
-    def getQuarterRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): QuarterRange =
+    def quarterRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): QuarterRange =
         QuarterRange(moment, calendar)
 
-    def getQuarterRanges(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): QuarterRangeCollection =
+    def quarterRanges(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
         QuarterRangeCollection(moment, quarterCount, calendar)
 
-    def getMonthRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): MonthRange =
+    def monthRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): MonthRange =
         MonthRange(moment, calendar)
 
-    def getMonthRanges(moment: DateTime, monthCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): MonthRangeCollection =
+    def monthRanges(moment: DateTime, monthCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
         MonthRangeCollection(moment, monthCount, calendar)
 
-    def getWeekRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): WeekRange =
+    def weekRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): WeekRange =
         WeekRange(moment, calendar)
 
-    def getWeekRanges(moment: DateTime, weekCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): WeekRangeCollection =
+    def weekRanges(moment: DateTime, weekCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
         WeekRangeCollection(moment, weekCount, calendar)
 
-    def getDayRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): DayRange =
+    def dayRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): DayRange =
         DayRange(asDate(moment), calendar)
 
-    def getDayRanges(moment: DateTime, dayCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DayRangeCollection =
+    def dayRanges(moment: DateTime, dayCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
         DayRangeCollection(asDate(moment), dayCount, calendar)
 
-    def getHourRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): HourRange =
+    def hourRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar) =
         HourRange(moment, calendar)
 
-    def getHourRanges(moment: DateTime, hourCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): HourRangeCollection =
+    def hourRanges(moment: DateTime, hourCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
         HourRangeCollection(moment, hourCount, calendar)
 
-    def getMinuteRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar): MinuteRange =
+    def minuteRange(moment: DateTime, calendar: ITimeCalendar = DefaultTimeCalendar) =
         MinuteRange(moment, calendar)
 
-    def getMinuteRanges(moment: DateTime, minuteCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar): MinuteRangeCollection =
+    def minuteRanges(moment: DateTime, minuteCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
         MinuteRangeCollection(moment, minuteCount, calendar)
 
     @inline
@@ -747,7 +747,7 @@ object Times {
     def isNotAnyTime(period: ITimePeriod) = period != null && !period.isAnytime
 
     @inline
-    def getRelation(period: ITimePeriod, target: ITimePeriod): PeriodRelation = {
+    def relation(period: ITimePeriod, target: ITimePeriod): PeriodRelation = {
         require(period != null)
         require(target != null)
 
@@ -805,23 +805,22 @@ object Times {
         isIntersect
     }
 
-    lazy val NotOverlapedRelations =
-        Array(PeriodRelation.After,
-            PeriodRelation.StartTouching,
-            PeriodRelation.EndTouching,
-            PeriodRelation.Before)
+    lazy val NotOverlapedRelations = Array(PeriodRelation.After,
+        PeriodRelation.StartTouching,
+        PeriodRelation.EndTouching,
+        PeriodRelation.Before)
 
     @inline
     def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
-        val relation = getRelation(period, target)
-        val isOverlaps = !NotOverlapedRelations.contains(relation)
+        val r = relation(period, target)
+        val isOverlaps = !NotOverlapedRelations.contains(r)
 
         log.trace(s"isOverlaps=$isOverlaps, period=$period, target=$target")
         isOverlaps
     }
 
     @inline
-    def getIntersectionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
+    def intersectBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
         var intersection: TimeBlock = null
         if (intersectWith(period, target)) {
             val start = max(period.start, target.start)
@@ -835,7 +834,7 @@ object Times {
     }
 
     @inline
-    def getUnionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
+    def unionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
         val start = min(period.start, target.start)
         val end = max(period.end, target.end)
 
@@ -843,7 +842,7 @@ object Times {
     }
 
     @inline
-    def getIntersectionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
+    def intersectRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
         require(period != null)
         require(target != null)
 
@@ -860,7 +859,7 @@ object Times {
     }
 
     @inline
-    def getUnionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
+    def unionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
         val start = min(period.start, target.start)
         val end = max(period.end, target.end)
 
@@ -917,7 +916,7 @@ object Times {
     def isWeekend(dayOfWeek: DayOfWeek): Boolean = Weekends.contains(dayOfWeek)
 
 
-    def foreachPeriods(period: ITimePeriod, unit: PeriodUnit): Seq[ITimePeriod] = {
+    def foreachPeriods(period: ITimePeriod, unit: PeriodUnit): Iterable[ITimePeriod] = {
         unit match {
             case PeriodUnit.Year => foreachYears(period)
             case PeriodUnit.Halfyear => foreachHalfyears(period)
@@ -932,7 +931,7 @@ object Times {
     }
 
     @inline
-    def foreachYears(period: ITimePeriod): Seq[ITimePeriod] = {
+    def foreachYears(period: ITimePeriod): Iterable[ITimePeriod] = {
         require(period != null)
 
         val years = ArrayBuffer[ITimePeriod]()
@@ -951,7 +950,7 @@ object Times {
         val calendar = DefaultTimeCalendar
 
         while (current.getYear < endYear) {
-            years += getYearRange(current, calendar)
+            years += yearRange(current, calendar)
             current = current.plusYears(1)
         }
 
@@ -963,7 +962,7 @@ object Times {
     }
 
     @inline
-    def foreachHalfyears(period: ITimePeriod): Seq[ITimePeriod] = {
+    def foreachHalfyears(period: ITimePeriod): Iterable[ITimePeriod] = {
         require(period != null)
 
         val halfyears = ArrayBuffer[ITimePeriod]()
@@ -985,7 +984,7 @@ object Times {
         val calendar = DefaultTimeCalendar
 
         while (current.getYear * 10 + halfyearOf(current).id < endHashcode) {
-            halfyears += getHalfyearRange(current, calendar)
+            halfyears += halfyearRange(current, calendar)
             current = current.plusMonths(MonthsPerHalfyear)
         }
 
@@ -997,7 +996,7 @@ object Times {
     }
 
     @inline
-    def foreachQuarters(period: ITimePeriod): Seq[ITimePeriod] = {
+    def foreachQuarters(period: ITimePeriod): Iterable[ITimePeriod] = {
         require(period != null)
 
         val quarters = ArrayBuffer[ITimePeriod]()
@@ -1019,7 +1018,7 @@ object Times {
         val calendar = DefaultTimeCalendar
 
         while (current.getYear * 10 + quarterOf(current).id < endHashcode) {
-            quarters += getQuarterRange(current, calendar)
+            quarters += quarterRange(current, calendar)
             current = current.plusMonths(MonthsPerQuarter)
         }
 
@@ -1031,7 +1030,7 @@ object Times {
     }
 
     @inline
-    def foreachMonths(period: ITimePeriod): Seq[ITimePeriod] = {
+    def foreachMonths(period: ITimePeriod): Iterable[ITimePeriod] = {
         require(period != null)
 
         val months = ArrayBuffer[ITimePeriod]()
@@ -1053,7 +1052,7 @@ object Times {
 
         current = current.plusDays(1)
         while (current < monthEnd) {
-            months += getMonthRange(current, calendar)
+            months += monthRange(current, calendar)
             current = current.plusMonths(1)
         }
 
@@ -1065,7 +1064,7 @@ object Times {
     }
 
     @inline
-    def foreachWeeks(period: ITimePeriod): Seq[ITimePeriod] = {
+    def foreachWeeks(period: ITimePeriod): Iterable[ITimePeriod] = {
         require(period != null)
 
         val weeks = ArrayBuffer[ITimePeriod]()
@@ -1091,7 +1090,7 @@ object Times {
         val calendar = DefaultTimeCalendar
 
         while (current < period.end) {
-            weeks += getWeekRange(current, calendar)
+            weeks += weekRange(current, calendar)
             current = current.plusWeeks(1)
         }
 
@@ -1103,7 +1102,7 @@ object Times {
     }
 
     @inline
-    def foreachDays(period: ITimePeriod): Seq[ITimePeriod] = {
+    def foreachDays(period: ITimePeriod): Iterable[ITimePeriod] = {
         require(period != null)
 
         val days = new ArrayBuffer[ITimePeriod](MaxDaysPerMonth)
@@ -1122,7 +1121,7 @@ object Times {
         var current = period.start.withTimeAtStartOfDay().plusDays(1)
 
         while (current < endDay) {
-            days += getDayRange(current, DefaultTimeCalendar)
+            days += dayRange(current, DefaultTimeCalendar)
             current = current.plusDays(1)
         }
 
@@ -1133,7 +1132,7 @@ object Times {
     }
 
     @inline
-    def foreachHours(period: ITimePeriod): Seq[ITimePeriod] = {
+    def foreachHours(period: ITimePeriod): Iterable[ITimePeriod] = {
         require(period != null)
 
         val hours = new ArrayBuffer[ITimePeriod](HoursPerDay)
@@ -1154,7 +1153,7 @@ object Times {
         val maxHour = endHour.minusHours(1)
 
         while (current <= maxHour) {
-            hours += getHourRange(current, DefaultTimeCalendar)
+            hours += hourRange(current, DefaultTimeCalendar)
             current = current.plusHours(1)
         }
 
@@ -1165,7 +1164,7 @@ object Times {
     }
 
     @inline
-    def foreachMinutes(period: ITimePeriod): Seq[ITimePeriod] = {
+    def foreachMinutes(period: ITimePeriod): Iterable[ITimePeriod] = {
         require(period != null)
 
         val minutes = new ArrayBuffer[ITimePeriod](MinutesPerHour)
@@ -1186,7 +1185,7 @@ object Times {
         val maxMin = endMin - 1.minutes
 
         while (current <= maxMin) {
-            minutes += getMinuteRange(current, DefaultTimeCalendar)
+            minutes += minuteRange(current, DefaultTimeCalendar)
             current = current.plusMinutes(1)
         }
 
@@ -1201,18 +1200,18 @@ object Times {
         assert(period != null && period.hasPeriod, s"기간이 설정되지 않았습니다. period=$period")
     }
 
-    def runPeriods[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): Seq[T] = {
+    def runPeriods[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): Iterable[T] = {
         require(period != null)
         require(func != null)
 
         foreachPeriods(period, unit).map(p => func(p))
     }
 
-    def runPeriodsAsParallel[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): ParSeq[(ITimePeriod, T)] = {
+    def runPeriodsAsParallel[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): ParIterable[(ITimePeriod, T)] = {
         require(period != null)
         require(func != null)
 
-        foreachPeriods(period, unit).par.map(p => (p, func(p)))
+        foreachPeriods(period, unit).par.map(p => (p, func(p))).toIterable
     }
 
     def getOrDefaultTimeCalendar(calendar: ITimeCalendar) =

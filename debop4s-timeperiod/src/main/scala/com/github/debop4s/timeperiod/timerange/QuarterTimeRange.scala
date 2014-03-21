@@ -19,7 +19,7 @@ abstract class QuarterTimeRange(private val _year: Int,
         _calendar) {
 
     val startQuarter: Quarter = _quarter
-    val endQuarter: Quarter = Times.getQuarterOfMonth(end.getMonthOfYear)
+    val endQuarter: Quarter = Times.quarterOfMonth(end.getMonthOfYear)
 
     override def startMonthOfYear: Int = Times.startMonthOfQuarter(startQuarter)
 

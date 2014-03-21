@@ -21,14 +21,14 @@ class WeekRange(private[this] val _weekyear: Int,
     def lastDayOfWeek: DateTime = firstDayOfWeek.plusDays(6)
 
     def isMultipleCalendarYears: Boolean =
-        calendar.getYear(firstDayOfWeek) != calendar.getYear(lastDayOfWeek)
+        calendar.year(firstDayOfWeek) != calendar.year(lastDayOfWeek)
 
     def previousWeek: WeekRange = addWeeks(-1)
 
     def nextWeek: WeekRange = addWeeks(1)
 
     def addWeeks(weeks: Int): WeekRange = {
-        WeekRange(Times.getStartOfYearWeek(weekyear, weekOfWeekyear, calendar).plusWeeks(weeks), calendar)
+        WeekRange(Times.startOfYearWeek(weekyear, weekOfWeekyear, calendar).plusWeeks(weeks), calendar)
     }
 }
 

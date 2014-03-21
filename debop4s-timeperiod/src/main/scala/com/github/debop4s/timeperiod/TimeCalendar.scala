@@ -19,60 +19,61 @@ trait ITimeCalendar extends ITimePeriodMapper {
     def getLocale: Locale
 
     /** 시작 오프셋 (시작일자가 1월 1일이 아닌 경우) */
-
     def startOffset: Duration
 
-    def getStartOffset: Duration
-
-    def endOffset: Duration
+    // /** 시작 오프셋 (시작일자가 1월 1일이 아닌 경우) */
+    // def getStartOffset: Duration
 
     /** 종료 오프셋 */
-    def getEndOffset: Duration
+    def endOffset: Duration
+
+    // /** 종료 오프셋 */
+    // def getEndOffset: Duration
 
     /** 한 주의 시작 요일 (한국, 미국: Sunday, ISO-8601: Monday) */
-    def getFirstDayOfWeek: DayOfWeek = DayOfWeek.Monday
+    val firstDayOfWeek: DayOfWeek = DayOfWeek.Monday
 
     /** 지정된 일자의 년 */
-    def getYear(time: DateTime): Int = time.getYear
+    def year(time: DateTime): Int = time.getYear
 
     /** 지정된 일자의 월 */
-    def getMonthOfYear(time: DateTime): Int = time.getMonthOfYear
+    def monthOfYear(time: DateTime): Int = time.getMonthOfYear
 
     /** 지정된 시각의 시간 */
-    def getHourOfDay(time: DateTime): Int = time.getHourOfDay
+    def hourOfDay(time: DateTime): Int = time.getHourOfDay
 
     /** 지정된 시각의 분 */
-    def getMinuteOfHour(time: DateTime): Int = time.getMinuteOfHour
+    def minuteOfHour(time: DateTime): Int = time.getMinuteOfHour
 
     /** 지정된 날짜의 월 몇번째 일인지 */
-    def getDayOfMonth(time: DateTime): Int = time.getDayOfMonth
+    def dayOfMonth(time: DateTime): Int = time.getDayOfMonth
 
     /** 지정된 날짜의 요일 */
-    def getDayOfWeek(time: DateTime): DayOfWeek = DayOfWeek(time.getDayOfWeek)
+    def dayOfWeek(time: DateTime): DayOfWeek = DayOfWeek(time.getDayOfWeek)
 
     /** 지정된 년,월의 날짜수 */
-    def getDaysInMonth(year: Int, month: Int): Int = Times.getDaysInMonth(year, month)
+    def daysInMonth(year: Int, month: Int): Int = Times.daysInMonth(year, month)
 
     /** 지정된 일자의 주차(Week of Year)를 반환합니다. */
-    def getWeekOfYear(time: DateTime): Int = Times.getWeekOfYear(time).weekOfWeekyear
+    def weekOfYear(time: DateTime): Int = Times.weekOfYear(time).weekOfWeekyear
 
     /** 지정된 년, 주차에 해당하는 주의 첫번째 일자를 반환한다. (예: 2011년 3주차의 첫번째 일자는?) */
-    def getStartOfYearWeek(year: Int, weekOfYear: Int): DateTime = Times.getStartOfYearWeek(year, weekOfYear)
+    def startOfYearWeek(year: Int, weekOfYear: Int): DateTime = Times.startOfYearWeek(year, weekOfYear)
 
     def mapStart(moment: DateTime): DateTime =
-        if (moment > MinPeriodTime) moment.plus(getStartOffset)
+        if (moment > MinPeriodTime) moment.plus(startOffset)
         else moment
 
     def mapEnd(moment: DateTime): DateTime =
-        if (moment < MaxPeriodTime) moment.plus(getEndOffset)
+        if (moment < MaxPeriodTime) moment.plus(endOffset)
         else moment
 
     def unmapStart(moment: DateTime): DateTime =
-        if (moment.compareTo(MinPeriodTime) > 0) moment.minus(getStartOffset)
+        if (moment.compareTo(MinPeriodTime) > 0) moment.minus(startOffset)
         else moment
 
     def unmapEnd(moment: DateTime): DateTime =
-        if (moment.compareTo(MaxPeriodTime) < 0) moment.minus(getEndOffset)
+        if (moment.compareTo(MaxPeriodTime) < 0) moment.minus(endOffset)
         else moment
 }
 
@@ -92,17 +93,13 @@ class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCa
     val locale: Locale = Options.toOption(cfg.locale).getOrElse(Locale.getDefault)
     val _startOffset: Duration = Options.toOption(cfg.startOffset).getOrElse(DefaultStartOffset)
     val _endOffset: Duration = Options.toOption(cfg.endOffset).getOrElse(DefaultEndOffset)
-    val firstDayOfWeek: DayOfWeek = cfg.firstDayOfWeek
+    override val firstDayOfWeek: DayOfWeek = cfg.firstDayOfWeek
 
     def getLocale: Locale = locale
 
     def startOffset: Duration = _startOffset
 
     def endOffset: Duration = _endOffset
-
-    def getStartOffset: Duration = _startOffset
-
-    def getEndOffset: Duration = _endOffset
 
     override def hashCode(): Int =
         Hashs.compute(locale, startOffset, endOffset, firstDayOfWeek)

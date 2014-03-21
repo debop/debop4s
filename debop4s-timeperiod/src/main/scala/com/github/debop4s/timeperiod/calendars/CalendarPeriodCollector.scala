@@ -157,9 +157,9 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                             day.startDayOfMonth,
                             day.endDayOfMonth - day.startDayOfMonth,
                             month.calendar)
-                    val isMatching = days.getDays.forall(d => isMatchingDay(d, context))
+                    val isMatching = days.days.forall(d => isMatchingDay(d, context))
                     if (isMatching && checkLimits(days)) {
-                        periods.addAll(days.getDays)
+                        periods.addAll(days.days)
                     }
                 }
             }
@@ -175,7 +175,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
         }
 
         if (filter.collectingHours.size == 0) {
-            day.getHours
+            day.hours
             .filter(h => isMatchingHour(h, context) && checkLimits(h))
             .foreach(h => periods.add(h))
         } else if (isMatchingDay(day, context)) {

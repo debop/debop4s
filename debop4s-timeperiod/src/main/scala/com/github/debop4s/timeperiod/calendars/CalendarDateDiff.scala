@@ -8,6 +8,7 @@ import org.joda.time.{DateTime, Duration}
 import org.slf4j.LoggerFactory
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.annotation.varargs
 
 /**
  * com.github.debop4s.timeperiod.calendars.CalendarDateDiff
@@ -18,8 +19,9 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    assert(calendar.getStartOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
-    assert(calendar.getEndOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
+    require(calendar != null)
+    assert(calendar.startOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
+    assert(calendar.endOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
 
     private val collectorFilter = new CalendarPeriodCollectorFilter()
 
@@ -37,6 +39,7 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
         addWeekDays(Weekends: _*)
     }
 
+    @varargs
     def addWeekDays(dayOfWeeks: DayOfWeek*) {
         if (weekDays != null) {
             weekDays ++= dayOfWeeks
@@ -53,26 +56,24 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
         val filterIsEmpty = weekDays.size == 0 &&
                             workingHours.size == 0 &&
                             workingDayHours.size == 0
+
         if (filterIsEmpty) {
             return new DateDiff(fromTime, toTime, calendar).difference
         }
 
-        val differenceRange = new TimeRange(fromTime, toTime)
-        val limits = new TimeRange(Times.startTimeOfDay(differenceRange.start),
-            Times.startTimeOfDay(differenceRange.end.plusDays(1)))
+        val diffRange = new TimeRange(fromTime, toTime)
+        val limits = new TimeRange(Times.startTimeOfDay(diffRange.start),
+            Times.startTimeOfDay(diffRange.end.plusDays(1)))
         val collector = new CalendarPeriodCollector(collectorFilter,
             limits,
-            SeekDirection.Forward,
-            calendar)
+            SeekDirection.Forward, calendar)
 
         // Gap을 계산합니다.
-        val gapCalculator = new TimeGapCalculator[TimeRange](calendar)
-        val gaps: ITimePeriodCollection = gapCalculator.getGaps(collector.periods, differenceRange)
+        val gapCalc = new TimeGapCalculator[TimeRange](calendar)
+        val gaps: ITimePeriodCollection = gapCalc.getGaps(collector.periods, diffRange)
         var difference = Duration.ZERO
 
-        gaps.foreach { gap =>
-            difference = difference.plus(gap.duration)
-        }
+        gaps.foreach(gap => difference = difference.plus(gap.duration))
 
         log.trace(s"fromTime=[$fromTime] ~ toTime=[$toTime]의 Working Time을 구했습니다. difference=[$difference]")
 

@@ -45,7 +45,7 @@ class MonthRangeTest extends AbstractTimePeriodTest {
             day.end should equal(day.calendar.mapEnd(day.start + 1.day))
             index += 1
         }
-        index should equal(Times.getDaysInMonth(mr.year, mr.monthOfYear))
+        index should equal(Times.daysInMonth(mr.year, mr.monthOfYear))
     }
 
     test("add months") {

@@ -4,7 +4,7 @@ import com.github.debop4s.timeperiod.DayOfWeek.DayOfWeek
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.DayTimeRange
@@ -16,21 +16,21 @@ class DayTimeRange(private[this] val _start: DateTime,
                    private[this] var _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends CalendarTimeRange(Times.relativeDayPeriod(_start, dayCount), _calendar) {
 
-    def startDayOfWeek: DayOfWeek = calendar.getDayOfWeek(start)
+    def startDayOfWeek: DayOfWeek = calendar.dayOfWeek(start)
 
-    def endDayOfWeek: DayOfWeek = calendar.getDayOfWeek(end)
+    def endDayOfWeek: DayOfWeek = calendar.dayOfWeek(end)
 
     @inline
-    def getHours: Seq[HourRange] = {
+    def hours: Seq[HourRange] = {
         val day = startDayStart
-        val hours = new ArrayBuffer[HourRange](dayCount * HoursPerDay)
+        val results = ListBuffer[HourRange]()
 
         for (d <- 0 until dayCount) {
             for (h <- 0 until HoursPerDay) {
-                hours += new HourRange(day.plusHours(d * HoursPerDay + h), calendar)
+                results += new HourRange(day.plusHours(d * HoursPerDay + h), calendar)
             }
         }
-        hours
+        results
     }
 }
 

@@ -11,7 +11,7 @@ import com.github.debop4s.timeperiod.timerange.DayRange
 class DaySeekerContext(val startDay: DayRange,
                        private[this] val _dayCount: Int) extends ICalendarVisitorContext {
 
-    val dayCount = Math.abs(_dayCount)
+    val dayCount = math.abs(_dayCount)
 
     var remainingDays = dayCount
     var foundDay: DayRange = null

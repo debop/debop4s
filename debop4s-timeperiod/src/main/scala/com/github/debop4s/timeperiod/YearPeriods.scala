@@ -5,6 +5,11 @@ import com.github.debop4s.timeperiod.Quarter.Quarter
 import com.github.debop4s.timeperiod.utils.Times
 
 /**
+* 월 주차를 표현합니다.
+*/
+case class MonthWeek(month: Int, weekOfMonth: Int)
+
+/**
  * 주차를 표현합니다.
  */
 case class YearWeek(weekyear: Int, weekOfWeekyear: Int) {
@@ -36,3 +41,5 @@ case class YearHalfyear(year: Int, halfyear: Halfyear = Halfyear.First) {
     lazy val start = Times.startTimeOfHalfyear(year, halfyear)
     lazy val end = Times.endTimeOfHalfyear(year, halfyear)
 }
+
+

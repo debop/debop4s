@@ -7,7 +7,7 @@ import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
 import scala.annotation.varargs
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
 
 
 /**
@@ -17,7 +17,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod {
 
-    def periods: mutable.ArrayBuffer[ITimePeriod]
+    def periods: mutable.ListBuffer[ITimePeriod]
 
     override def +=:(elem: ITimePeriod): this.type = {
         elem +=: periods
@@ -84,9 +84,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
         periods.insertAll(n, elems)
     }
 
-
     override def iterator = periods.iterator
-
 
     def insertAll(n: Int, elems: Iterable[ITimePeriod]) = {
         periods.insert(n, elems.toSeq: _*)
@@ -101,8 +99,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
             case period: ITimePeriod if periods.contains(x) =>
                 periods -= period
                 true
-            case _ =>
-                false
+            case _ => false
         }
     }
 
@@ -114,8 +111,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     def retainAll(elems: Iterable[_]): Boolean = {
         periods.clear()
         elems.foreach {
-            case elem: ITimePeriod =>
-                periods += elem
+            case elem: ITimePeriod => periods += elem
             case _ =>
         }
         true
@@ -138,7 +134,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     override def lastIndexOf[T >: ITimePeriod](o: T): Int = periods.lastIndexOf(o)
 
     def sortByStart(sortDir: OrderDirection) {
-        var sorted: ArrayBuffer[ITimePeriod] = null
+        var sorted: ListBuffer[ITimePeriod] = null
         if (sortDir == OrderDirection.ASC) {
             sorted = periods.sortWith((x, y) => x.start.compareTo(y.start) < 0)
         } else {
@@ -149,7 +145,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     }
 
     def sortByEnd(sortDir: OrderDirection) {
-        var sorted: ArrayBuffer[ITimePeriod] = null
+        var sorted: ListBuffer[ITimePeriod] = null
         if (sortDir == OrderDirection.ASC) {
             sorted = periods.sortWith((x, y) => x.end.compareTo(y.end) < 0)
         } else {
@@ -160,7 +156,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     }
 
     def sortByDuration(sortDir: OrderDirection) {
-        var sorted: ArrayBuffer[ITimePeriod] = null
+        var sorted: ListBuffer[ITimePeriod] = null
         if (sortDir == OrderDirection.ASC) {
             sorted = periods.sortWith((x, y) => x.duration.compareTo(y.duration) < 0)
         } else {
@@ -186,7 +182,7 @@ class TimePeriodContainer extends ITimePeriodContainer {
 
     implicit val dateTimeOrdering = new DateTimeOrdering()
 
-    val _periods = ArrayBuffer[ITimePeriod]()
+    val _periods = ListBuffer[ITimePeriod]()
 
     def periods = _periods
 
@@ -256,11 +252,11 @@ class TimePeriodContainer extends ITimePeriodContainer {
 
     def reset() = periods.clear()
 
-    def getRelation(other: ITimePeriod) = Times.getRelation(this, other)
+    def relation(other: ITimePeriod) = Times.relation(this, other)
 
-    def getIntersection(other: ITimePeriod) = Times.getIntersectionRange(this, other)
+    def intersection(other: ITimePeriod) = Times.intersectRange(this, other)
 
-    def getUnion(other: ITimePeriod) = Times.getUnionRange(this, other)
+    def union(other: ITimePeriod) = Times.unionRange(this, other)
 
 }
 

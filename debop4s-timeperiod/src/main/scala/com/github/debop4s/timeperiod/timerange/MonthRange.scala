@@ -15,7 +15,7 @@ class MonthRange(private[this] val _year: Int,
                  private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends MonthTimeRange(_year, _monthOfYear, 1, _calendar) {
 
-    val daysInMonth = Times.getDaysInMonth(_year, _monthOfYear)
+    val daysInMonth = Times.daysInMonth(_year, _monthOfYear)
 
     def year: Int = startYear
 

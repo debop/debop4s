@@ -21,9 +21,11 @@ class MonthRangeInYear(val startMonthOfYear: Int, val endMonthOfYear: Int)
     def hasInside(monthOfYear: Int) =
         startMonthOfYear <= monthOfYear && monthOfYear <= endMonthOfYear
 
-    def compare(that: MonthRangeInYear) = hashCode() - that.hashCode()
+    def compare(that: MonthRangeInYear) =
+        hashCode() - that.hashCode()
 
-    override def hashCode(): Int = startMonthOfYear * 100 + endMonthOfYear
+    override def hashCode(): Int =
+        startMonthOfYear * 100 + endMonthOfYear
 
     override protected def buildStringHelper: ToStringHelper =
         super.buildStringHelper

@@ -4,7 +4,8 @@ import com.github.debop4s.timeperiod.Halfyear.Halfyear
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.immutable.IndexedSeq
+import scala.collection.SeqView
 
 /**
  * com.github.debop4s.timeperiod.timerange.HalfyearRangeCollection
@@ -34,15 +35,18 @@ class HalfyearRangeCollection(private val _year: Int,
     extends HalfyearTimeRange(_year, _halfyear, _halfyearCount, _calendar) {
 
     @inline
-    def getHalfyears: Seq[HalfyearRange] = {
-        val halfyears = new ArrayBuffer[HalfyearRange](halfyearCount)
+    def halfyears: IndexedSeq[HalfyearRange] = {
+        for {
+            x <- 0 until halfyearCount
+            v = Times.addHalfyear(startYear, startHalfyear, x)
+        } yield new HalfyearRange(v.year, v.halfyear, calendar)
+    }
 
-        for (x <- 0 until halfyearCount) {
-            val yhy = Times.addHalfyear(startYear, startHalfyear, x)
-            halfyears += new HalfyearRange(yhy.year, yhy.halfyear, calendar)
+    def halfyearsView: SeqView[HalfyearRange, Seq[_]] = {
+        (0 until halfyearCount).view.map { x =>
+            val v = Times.addHalfyear(startYear, startHalfyear, x)
+            HalfyearRange(v.year, v.halfyear, calendar)
         }
-
-        halfyears
     }
 
 }

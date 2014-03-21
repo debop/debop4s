@@ -4,7 +4,7 @@ import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.calendars.DateDiff
 import com.github.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import com.github.debop4s.timeperiod.utils.{Durations, Times}
-import org.joda.time.{Duration, DateTime}
+import org.joda.time.{DateTimeConstants, Duration, DateTime}
 
 
 /**
@@ -49,9 +49,9 @@ class DateDiffTest extends AbstractTimePeriodTest {
     }
 
     test("years difference") {
-        val years = Array(1, 3, 15, 60, 100)
+        val years = Array(1, 3, 15, 30, 60, 120)
 
-        years.par.foreach { year =>
+        years.foreach { year =>
             val date1 = Times.now
             val date2 = date1 + year.year
             val date3 = date1 - year.year
@@ -71,12 +71,12 @@ class DateDiffTest extends AbstractTimePeriodTest {
             dateDiff12.quarters should equal(year * QuartersPerYear)
             dateDiff12.months should equal(year * MonthsPerYear)
 
-            val date12Days = Durations.create(date1, date2).getStandardDays
+            val date12DayMillis = Durations.create(date1, date2).getMillis
 
-            dateDiff12.days should equal(date12Days)
-            dateDiff12.hours should equal(date12Days * HoursPerDay)
-            dateDiff12.minutes should equal(date12Days * HoursPerDay * MinutesPerHour)
-            dateDiff12.seconds should equal(date12Days * HoursPerDay * MinutesPerHour * SecondsPerMinute)
+            dateDiff12.days should equal(date12DayMillis / DateTimeConstants.MILLIS_PER_DAY)
+            dateDiff12.hours should equal(date12DayMillis / DateTimeConstants.MILLIS_PER_HOUR)
+            dateDiff12.minutes should equal(date12DayMillis / DateTimeConstants.MILLIS_PER_MINUTE)
+            dateDiff12.seconds should equal(date12DayMillis / DateTimeConstants.MILLIS_PER_SECOND)
 
             val dateDiff13 = DateDiff(date1, date3)
 
@@ -91,12 +91,12 @@ class DateDiffTest extends AbstractTimePeriodTest {
             dateDiff13.quarters should equal(-year * QuartersPerYear)
             dateDiff13.months should equal(-year * MonthsPerYear)
 
-            val date13Days = Durations.create(date1, date3).getStandardDays
+            val date13DayMillis = Durations.create(date1, date3).getMillis
 
-            dateDiff13.days should equal(date13Days)
-            dateDiff13.hours should equal(date13Days * HoursPerDay)
-            dateDiff13.minutes should equal(date13Days * HoursPerDay * MinutesPerHour)
-            dateDiff13.seconds should equal(date13Days * HoursPerDay * MinutesPerHour * SecondsPerMinute)
+            dateDiff13.days should equal(date13DayMillis / DateTimeConstants.MILLIS_PER_DAY)
+            dateDiff13.hours should equal(date13DayMillis / DateTimeConstants.MILLIS_PER_HOUR)
+            dateDiff13.minutes should equal(date13DayMillis / DateTimeConstants.MILLIS_PER_MINUTE)
+            dateDiff13.seconds should equal(date13DayMillis / DateTimeConstants.MILLIS_PER_SECOND)
 
         }
     }

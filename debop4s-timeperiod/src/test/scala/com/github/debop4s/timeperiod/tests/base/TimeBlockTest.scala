@@ -34,7 +34,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
     test("default constructor") {
         val block = TimeBlock()
         assert(block != TimeBlock.Anytime)
-        assert(Times.getRelation(block, TimeBlock.Anytime) == PeriodRelation.ExactMatch)
+        assert(Times.relation(block, TimeBlock.Anytime) == PeriodRelation.ExactMatch)
         assert(block.isAnytime)
         assert(!block.isReadonly)
         assert(!block.hasPeriod)
@@ -350,35 +350,35 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         val block = TimeBlock(start, end)
 
         // before
-        assert(block.getIntersection(TimeBlock(start.minusHours(2), start.minusHours(1))) == null)
-        assert(block.getIntersection(TimeBlock(start.minusMillis(1), start)) == TimeBlock(start))
-        assert(block.getIntersection(TimeBlock(start.minusHours(1), start.plusMillis(1))) == TimeBlock(start, start
-                                                                                                              .plusMillis(1)))
+        assert(block.intersection(TimeBlock(start.minusHours(2), start.minusHours(1))) == null)
+        assert(block.intersection(TimeBlock(start.minusMillis(1), start)) == TimeBlock(start))
+        assert(block.intersection(TimeBlock(start.minusHours(1), start.plusMillis(1))) == TimeBlock(start, start
+                                                                                                           .plusMillis(1)))
 
         // after
-        assert(block.getIntersection(TimeBlock(end.plusHours(1), end.plusHours(2))) == null)
-        assert(block.getIntersection(TimeBlock(end, end.plusMillis(1))) == TimeBlock(end))
-        assert(block.getIntersection(TimeBlock(end.minusMillis(1), end.plusMillis(1))) == TimeBlock(end.minusMillis(1), end))
+        assert(block.intersection(TimeBlock(end.plusHours(1), end.plusHours(2))) == null)
+        assert(block.intersection(TimeBlock(end, end.plusMillis(1))) == TimeBlock(end))
+        assert(block.intersection(TimeBlock(end.minusMillis(1), end.plusMillis(1))) == TimeBlock(end.minusMillis(1), end))
 
         // intersect
-        assert(block.getIntersection(block) == block)
-        assert(block.getIntersection(TimeBlock(start.minusMillis(1), end.plusMillis(1))) == block)
-        assert(block.getIntersection(TimeBlock(start.plusMillis(1), end.minusMillis(1))) == TimeBlock(start.plusMillis(1), end
-                                                                                                                           .minusMillis(1)))
+        assert(block.intersection(block) == block)
+        assert(block.intersection(TimeBlock(start.minusMillis(1), end.plusMillis(1))) == block)
+        assert(block.intersection(TimeBlock(start.plusMillis(1), end.minusMillis(1))) == TimeBlock(start.plusMillis(1), end
+                                                                                                                        .minusMillis(1)))
     }
 
     test("relation") {
-        assert(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
-        assert(testData.reference.getRelation(testData.startTouching) == PeriodRelation.StartTouching)
-        assert(testData.reference.getRelation(testData.startInside) == PeriodRelation.StartInside)
-        assert(testData.reference.getRelation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
-        assert(testData.reference.getRelation(testData.enclosing) == PeriodRelation.Enclosing)
-        assert(testData.reference.getRelation(testData.exactMatch) == PeriodRelation.ExactMatch)
-        assert(testData.reference.getRelation(testData.inside) == PeriodRelation.Inside)
-        assert(testData.reference.getRelation(testData.insideEndTouching) == PeriodRelation.InsideEndTouching)
-        assert(testData.reference.getRelation(testData.endInside) == PeriodRelation.EndInside)
-        assert(testData.reference.getRelation(testData.endTouching) == PeriodRelation.EndTouching)
-        assert(testData.reference.getRelation(testData.after) == PeriodRelation.After)
+        assert(testData.reference.relation(testData.before) == PeriodRelation.Before)
+        assert(testData.reference.relation(testData.startTouching) == PeriodRelation.StartTouching)
+        assert(testData.reference.relation(testData.startInside) == PeriodRelation.StartInside)
+        assert(testData.reference.relation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
+        assert(testData.reference.relation(testData.enclosing) == PeriodRelation.Enclosing)
+        assert(testData.reference.relation(testData.exactMatch) == PeriodRelation.ExactMatch)
+        assert(testData.reference.relation(testData.inside) == PeriodRelation.Inside)
+        assert(testData.reference.relation(testData.insideEndTouching) == PeriodRelation.InsideEndTouching)
+        assert(testData.reference.relation(testData.endInside) == PeriodRelation.EndInside)
+        assert(testData.reference.relation(testData.endTouching) == PeriodRelation.EndTouching)
+        assert(testData.reference.relation(testData.after) == PeriodRelation.After)
 
         // reference
         assert(testData.reference.start == start)
@@ -392,7 +392,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(!testData.reference.hasInside(testData.after.start))
         assert(!testData.reference.hasInside(testData.after.end))
-        assert(testData.reference.getRelation(testData.after) == PeriodRelation.After)
+        assert(testData.reference.relation(testData.after) == PeriodRelation.After)
 
         // start touching
         assert(testData.startTouching.isReadonly)
@@ -401,7 +401,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(!testData.reference.hasInside(testData.startTouching.start))
         assert(testData.reference.hasInside(testData.startTouching.end))
-        assert(testData.reference.getRelation(testData.startTouching) == PeriodRelation.StartTouching)
+        assert(testData.reference.relation(testData.startTouching) == PeriodRelation.StartTouching)
 
         // start inside
         assert(testData.startInside.isReadonly)
@@ -410,7 +410,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(!testData.reference.hasInside(testData.startInside.start))
         assert(testData.reference.hasInside(testData.startInside.end))
-        assert(testData.reference.getRelation(testData.startInside) == PeriodRelation.StartInside)
+        assert(testData.reference.relation(testData.startInside) == PeriodRelation.StartInside)
 
         // inside start touching
         assert(testData.insideStartTouching.isReadonly)
@@ -419,7 +419,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(testData.reference.hasInside(testData.insideStartTouching.start))
         assert(!testData.reference.hasInside(testData.insideStartTouching.end))
-        assert(testData.reference.getRelation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
+        assert(testData.reference.relation(testData.insideStartTouching) == PeriodRelation.InsideStartTouching)
 
         // enclosing start touch
         assert(testData.enclosingStartTouching.isReadonly)
@@ -428,7 +428,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(testData.reference.hasInside(testData.enclosingStartTouching.start))
         assert(testData.reference.hasInside(testData.enclosingStartTouching.end))
-        assert(testData.reference.getRelation(testData.enclosingStartTouching) == PeriodRelation.EnclosingStartTouching)
+        assert(testData.reference.relation(testData.enclosingStartTouching) == PeriodRelation.EnclosingStartTouching)
 
         // enclosing
         assert(testData.enclosing.isReadonly)
@@ -437,7 +437,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(testData.reference.hasInside(testData.enclosing.start))
         assert(testData.reference.hasInside(testData.enclosing.end))
-        assert(testData.reference.getRelation(testData.enclosing) == PeriodRelation.Enclosing)
+        assert(testData.reference.relation(testData.enclosing) == PeriodRelation.Enclosing)
 
         // enclosing end touching
         assert(testData.enclosingEndTouching.isReadonly)
@@ -446,7 +446,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(testData.reference.hasInside(testData.enclosingEndTouching.start))
         assert(testData.reference.hasInside(testData.enclosingEndTouching.end))
-        assert(testData.reference.getRelation(testData.enclosingEndTouching) == PeriodRelation.EnclosingEndTouching)
+        assert(testData.reference.relation(testData.enclosingEndTouching) == PeriodRelation.EnclosingEndTouching)
 
         // exact match
         assert(testData.exactMatch.isReadonly)
@@ -455,7 +455,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(testData.reference.hasInside(testData.exactMatch.start))
         assert(testData.reference.hasInside(testData.exactMatch.end))
-        assert(testData.reference.getRelation(testData.exactMatch) == PeriodRelation.ExactMatch)
+        assert(testData.reference.relation(testData.exactMatch) == PeriodRelation.ExactMatch)
 
         // inside
         assert(testData.inside.isReadonly)
@@ -464,7 +464,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(!testData.reference.hasInside(testData.inside.start))
         assert(!testData.reference.hasInside(testData.inside.end))
-        assert(testData.reference.getRelation(testData.inside) == PeriodRelation.Inside)
+        assert(testData.reference.relation(testData.inside) == PeriodRelation.Inside)
 
         // inside end touching
         assert(testData.insideEndTouching.isReadonly)
@@ -473,7 +473,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(!testData.reference.hasInside(testData.insideEndTouching.start))
         assert(testData.reference.hasInside(testData.insideEndTouching.end))
-        assert(testData.reference.getRelation(testData.insideEndTouching) == PeriodRelation.InsideEndTouching)
+        assert(testData.reference.relation(testData.insideEndTouching) == PeriodRelation.InsideEndTouching)
 
         // end inside
         assert(testData.endInside.isReadonly)
@@ -482,7 +482,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
         assert(testData.endInside.end > end)
         assert(testData.reference.hasInside(testData.endInside.start))
         assert(!testData.reference.hasInside(testData.endInside.end))
-        assert(testData.reference.getRelation(testData.endInside) == PeriodRelation.EndInside)
+        assert(testData.reference.relation(testData.endInside) == PeriodRelation.EndInside)
 
         // end touching
         assert(testData.endTouching.isReadonly)
@@ -491,7 +491,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(testData.reference.hasInside(testData.endTouching.start))
         assert(!testData.reference.hasInside(testData.endTouching.end))
-        assert(testData.reference.getRelation(testData.endTouching) == PeriodRelation.EndTouching)
+        assert(testData.reference.relation(testData.endTouching) == PeriodRelation.EndTouching)
 
         // before
         assert(testData.before.isReadonly)
@@ -500,7 +500,7 @@ class TimeBlockTest extends AbstractTimePeriodTest {
 
         assert(!testData.reference.hasInside(testData.before.start))
         assert(!testData.reference.hasInside(testData.before.end))
-        assert(testData.reference.getRelation(testData.before) == PeriodRelation.Before)
+        assert(testData.reference.relation(testData.before) == PeriodRelation.Before)
     }
 
     test("reset") {

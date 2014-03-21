@@ -18,7 +18,7 @@ class WeeksTest extends AbstractTimePeriodTest {
 
     test("year and week") {
         testTimes.foreach { m =>
-            val yw = Weeks.getYearAndWeek(m)
+            val yw = Weeks.yearAndWeek(m)
             yw.weekyear should equal(m.getWeekyear)
             yw.weekOfWeekyear should equal(m.getWeekOfWeekyear)
         }
@@ -29,8 +29,8 @@ class WeeksTest extends AbstractTimePeriodTest {
             val startDay = Times.startTimeOfYear(year)
             val endDay = Times.endTimeOfYear(year - 1)
 
-            val startYW = Weeks.getYearAndWeek(startDay)
-            val endYW = Weeks.getYearAndWeek(endDay)
+            val startYW = Weeks.yearAndWeek(startDay)
+            val endYW = Weeks.yearAndWeek(endDay)
 
             if (startDay.getDayOfWeek == FirstDayOfWeek.id)
                 endYW should not equal startYW
@@ -41,7 +41,7 @@ class WeeksTest extends AbstractTimePeriodTest {
 
     test("start week range of year") {
         (2000 to 2100).par.foreach(year => {
-            val startWR = Weeks.getStartWeekRangeOfYear(year)
+            val startWR = Weeks.startWeekRangeOfYear(year)
             log.trace(s"year=$year, startWeek=${startWR.startDayStart}")
 
             new Duration(asDate(year - 1, 12, 28), startWR.startDayStart).getStandardDays should be > 0L
@@ -51,7 +51,7 @@ class WeeksTest extends AbstractTimePeriodTest {
 
     test("endYearAndWeek") {
         (1980 to 2200).par.foreach { year =>
-            val yw = Weeks.getEndYearAndWeek(year)
+            val yw = Weeks.endYearAndWeek(year)
             yw.weekyear should equal(year)
             yw.weekOfWeekyear should be >= 52
         }
@@ -59,8 +59,8 @@ class WeeksTest extends AbstractTimePeriodTest {
 
     test("end week range of year") {
         (2000 to 2100).par.foreach { year =>
-            val startWR = Weeks.getStartWeekRangeOfYear(year)
-            val endWR = Weeks.getEndWeekRangeOfYear(year - 1)
+            val startWR = Weeks.startWeekRangeOfYear(year)
+            val endWR = Weeks.endWeekRangeOfYear(year - 1)
             log.trace(s"year=$year, startWR=${startWR.startDayStart}, endWR=${endWR.startDayStart}")
 
             new Duration(asDate(year - 1, 12, 28), startWR.startDayStart).getStandardDays should be > 0L
@@ -76,15 +76,15 @@ class WeeksTest extends AbstractTimePeriodTest {
             val endDay = Times.endTimeOfYear(year - 1)
             val startDay = Times.startTimeOfYear(year)
 
-            val endDayYearWeek = Weeks.getYearAndWeek(endDay)
+            val endDayYearWeek = Weeks.yearAndWeek(endDay)
             endDayYearWeek.weekyear should be >= year - 1
 
-            val startDayYearWeek = Weeks.getYearAndWeek(startDay)
+            val startDayYearWeek = Weeks.yearAndWeek(startDay)
             startDayYearWeek.weekyear should be <= year
 
             // 해당일자가 속한 주차의 날짜들을 구한다. 년말/년초 구간은 꼭 7일이 아닐 수 있다.
-            val endDayWeekRange = Weeks.getWeekRange(endDayYearWeek)
-            val startDayWeekRange = Weeks.getWeekRange(startDayYearWeek)
+            val endDayWeekRange = Weeks.weekRange(endDayYearWeek)
+            val startDayWeekRange = Weeks.weekRange(startDayYearWeek)
 
             log.trace(s"start day weeks=$startDayWeekRange")
 
@@ -101,7 +101,7 @@ class WeeksTest extends AbstractTimePeriodTest {
             val maxAddWeeks = 40
 
             var prevResult: YearWeek = null
-            val maxWeek = Weeks.getEndYearAndWeek(weekyear)
+            val maxWeek = Weeks.endYearAndWeek(weekyear)
 
             for (week <- 1 until maxWeek.weekOfWeekyear by step) {
                 for (addWeeks <- -maxAddWeeks until maxAddWeeks by step) {

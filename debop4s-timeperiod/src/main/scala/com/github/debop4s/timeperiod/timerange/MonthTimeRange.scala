@@ -23,7 +23,7 @@ class MonthTimeRange(private[this] val _year: Int,
 
         for (m <- 0 until monthCount) {
             val month = startMonth + m.month
-            val daysOfMonth = Times.getDaysInMonth(month.getYear, month.getMonthOfYear)
+            val daysOfMonth = Times.daysInMonth(month.getYear, month.getMonthOfYear)
 
             for (d <- 0 until daysOfMonth) {
                 days += DayRange(month + d.day, calendar)

@@ -4,6 +4,7 @@ import com.github.debop4s.core.utils.{ToStringHelper, Hashs}
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
+import java.util.Objects
 
 /**
  * com.github.debop4s.timeperiod.calendars.DateDiff
@@ -20,10 +21,10 @@ class DateDiff(val start: DateTime,
     lazy val quarters = calcQuarters()
     lazy val months = calcMonths()
     lazy val weeks = calcWeeks()
-    lazy val days = Math.round(roundEx(difference.getStandardDays)).toLong
-    lazy val hours = Math.round(roundEx(difference.getStandardHours)).toLong
-    lazy val minutes = Math.round(roundEx(difference.getStandardMinutes)).toLong
-    lazy val seconds = Math.round(roundEx(difference.getStandardSeconds)).toLong
+    lazy val days = difference.getStandardDays
+    lazy val hours = difference.getStandardHours
+    lazy val minutes = difference.getStandardMinutes
+    lazy val seconds = difference.getStandardSeconds
 
     lazy val elapsedYears = years
     lazy val elapsedQuarters = quarters
@@ -58,22 +59,23 @@ class DateDiff(val start: DateTime,
 
     def isEmpty = difference.isEqual(Duration.ZERO)
 
-    def startYear = calendar.getYear(start)
+    def startYear = calendar.year(start)
 
-    def endYear = calendar.getYear(end)
+    def endYear = calendar.year(end)
 
-    def startMonthOfYear = calendar.getMonthOfYear(start)
+    def startMonthOfYear = calendar.monthOfYear(start)
 
-    def endMonthOfYear = calendar.getMonthOfYear(end)
+    def endMonthOfYear = calendar.monthOfYear(end)
 
     @inline
     private def calcYears(): Long = {
-        // if (Objects.equals(start, end)) 0
-        if (start == end)
-            return 0
+        if (Objects.equals(start, end)) return 0
+        //        if (start == end)
+        //            return 0
 
-        val compareDay = Math.min(end.getDayOfMonth, calendar.getDaysInMonth(startYear, endMonthOfYear))
+        val compareDay = math.min(end.getDayOfMonth, calendar.daysInMonth(startYear, endMonthOfYear))
         var compareDate = Times.asDate(startYear, endMonthOfYear, compareDay).plusMillis(end.getMillisOfDay)
+
         if (end > start) {
             if (compareDate < start) {
                 compareDate = compareDate + 1.year
@@ -81,7 +83,7 @@ class DateDiff(val start: DateTime,
         } else if (compareDate > start) {
             compareDate = compareDate - 1.year
         }
-        endYear - calendar.getYear(compareDate)
+        endYear - calendar.year(compareDate)
     }
 
     @inline
@@ -90,11 +92,11 @@ class DateDiff(val start: DateTime,
         if (start == end)
             return 0
 
-        val y1 = Times.getYearOf(startYear, startMonthOfYear)
-        val q1 = Times.getQuarterOfMonth(startMonthOfYear)
+        val y1 = Times.yearOf(startYear, startMonthOfYear)
+        val q1 = Times.quarterOfMonth(startMonthOfYear)
 
-        val y2 = Times.getYearOf(endYear, endMonthOfYear)
-        val q2 = Times.getQuarterOfMonth(endMonthOfYear)
+        val y2 = Times.yearOf(endYear, endMonthOfYear)
+        val q2 = Times.quarterOfMonth(endMonthOfYear)
 
         (y2 * QuartersPerYear + q2.id) - (y1 * QuartersPerYear + q1.id)
     }
@@ -105,7 +107,7 @@ class DateDiff(val start: DateTime,
         if (start == end)
             return 0
 
-        val compareDay = Math.min(end.getDayOfMonth, calendar.getDaysInMonth(startYear, startMonthOfYear))
+        val compareDay = math.min(end.getDayOfMonth, calendar.daysInMonth(startYear, startMonthOfYear))
         var compareDate = Times.asDate(startYear, startMonthOfYear, compareDay).plusMillis(end.getMillisOfDay)
 
         if (end > start) {
@@ -116,7 +118,7 @@ class DateDiff(val start: DateTime,
         }
 
         (endYear * MonthsPerYear + endMonthOfYear) -
-        (calendar.getYear(compareDate) * MonthsPerYear + calendar.getMonthOfYear(compareDate))
+        (calendar.year(compareDate) * MonthsPerYear + calendar.monthOfYear(compareDate))
     }
 
     @inline
@@ -125,21 +127,22 @@ class DateDiff(val start: DateTime,
         if (start == end)
             return 0
 
-        val w1 = Times.getStartOfWeek(start)
-        val w2 = Times.getStartOfWeek(end)
+        val w1 = Times.startOfWeek(start)
+        val w2 = Times.startOfWeek(end)
 
         if (w1 == w2) 0
         else (new Duration(w1, w2).getStandardDays / DaysPerWeek).toLong
     }
 
     @inline
-    private def roundEx(n: Double): Double =
-        if (n >= 0.0) Math.round(n)
-        else -Math.round(-n)
+    private def roundEx(n: Double): Double = {
+        math.round(n)
+        //        if (n >= 0.0) math.round(n)
+        //        else -math.round(-n)
+    }
 
     override def hashCode(): Int =
-        Hashs.compute(start, end, difference, calendar)
-
+        Hashs.compute(start, end, calendar)
 
     override def toString: String =
         ToStringHelper(this)

@@ -109,14 +109,14 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
         TimeBlock(end + startOffset, duration, readonly)
     }
 
-    override def getIntersection(other: ITimePeriod): TimeBlock = {
+    override def intersection(other: ITimePeriod): TimeBlock = {
         require(other != null)
-        Times.getIntersectionBlock(this, other)
+        Times.intersectBlock(this, other)
     }
 
-    override def getUnion(other: ITimePeriod): TimeBlock = {
+    override def union(other: ITimePeriod): TimeBlock = {
         require(other != null)
-        Times.getUnionBlock(this, other)
+        Times.unionBlock(this, other)
     }
 
     protected def assertValidDuration(v: Duration) {

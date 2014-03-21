@@ -3,7 +3,7 @@ package com.github.debop4s.timeperiod.timerange
 import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
 
 /**
  * com.github.debop4s.timeperiod.timerange.DayRangeCollection
@@ -16,13 +16,20 @@ class DayRangeCollection(private[this] val _moment: DateTime,
     extends DayTimeRange(Times.asDate(_moment), _dayCount, _calendar) {
 
     @inline
-    def getDays: Seq[DayRange] = {
-        val days = new ArrayBuffer[DayRange](dayCount)
+    def days: Seq[DayRange] = {
         val startDay = Times.asDate(start)
-        (0 until dayCount).foreach { d =>
-            days += new DayRange(startDay.plusDays(d), calendar)
+
+        for (d <- 0 until dayCount) yield DayRange(startDay.plusDays(d), calendar)
+    }
+
+    @inline
+    def daysView = {
+        val dayList = ListBuffer[DayRange]()
+        val startDay = Times.asDate(start)
+
+        (0 until dayCount).view.map { d =>
+            DayRange(startDay.plusDays(d), calendar)
         }
-        days
     }
 }
 

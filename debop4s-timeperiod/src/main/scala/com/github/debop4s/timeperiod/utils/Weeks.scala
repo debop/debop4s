@@ -20,19 +20,19 @@ object Weeks {
 
     def firstDayOfWeek(locale: Locale): DayOfWeek = FirstDayOfWeek
 
-    def getYearAndWeek(moment: DateTime, baseMonth: Int = 1): YearWeek =
+    def yearAndWeek(moment: DateTime, baseMonth: Int = 1): YearWeek =
         YearWeek(moment.getWeekyear, moment.getWeekOfWeekyear)
 
-    def getEndYearAndWeek(year: Int) = {
+    def endYearAndWeek(year: Int): YearWeek = {
         val m = Times.asDate(year, 12, 28)
         YearWeek(m.getWeekyear, m.getWeekOfWeekyear)
     }
 
-    def getWeekRange(v: YearWeek) = new WeekRange(v.weekyear, v.weekOfWeekyear)
+    def weekRange(v: YearWeek) = new WeekRange(v.weekyear, v.weekOfWeekyear)
 
-    def getStartWeekRangeOfYear(year: Int) = getWeekRange(new YearWeek(year, 1))
+    def startWeekRangeOfYear(year: Int) = weekRange(new YearWeek(year, 1))
 
-    def getEndWeekRangeOfYear(year: Int) = getWeekRange(getEndYearAndWeek(year))
+    def endWeekRangeOfYear(year: Int) = weekRange(endYearAndWeek(year))
 
     def addWeekOfYears(weekyear: Int, weekOfYear: Int, weeks: Int): YearWeek = {
         addWeekOfYears(YearWeek(weekyear, weekOfYear), weeks)
@@ -50,13 +50,13 @@ object Weeks {
     private def plusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
         var newWeeks = weeks + yw.weekOfWeekyear
 
-        if (newWeeks < getEndYearAndWeek(yw.weekyear).weekOfWeekyear) {
+        if (newWeeks < endYearAndWeek(yw.weekyear).weekOfWeekyear) {
             return YearWeek(yw.weekyear, newWeeks)
         }
 
         var weekyear = yw.weekyear
         while (newWeeks >= 0) {
-            val endWeek = getEndYearAndWeek(weekyear)
+            val endWeek = endYearAndWeek(weekyear)
             if (newWeeks <= endWeek.weekOfWeekyear) {
                 return YearWeek(weekyear, math.max(newWeeks, 1))
             }
@@ -71,7 +71,7 @@ object Weeks {
         var week = weeks + yw.weekOfWeekyear
 
         if (week == 0) {
-            return YearWeek(yw.weekyear - 1, getEndYearAndWeek(yw.weekyear - 1).weekOfWeekyear)
+            return YearWeek(yw.weekyear - 1, endYearAndWeek(yw.weekyear - 1).weekOfWeekyear)
         } else if (week > 0) {
             return YearWeek(yw.weekyear, week)
         }
@@ -79,7 +79,7 @@ object Weeks {
         var weekyear = yw.weekyear
         while (week <= 0) {
             weekyear -= 1
-            val endWeek = getEndYearAndWeek(weekyear)
+            val endWeek = endYearAndWeek(weekyear)
             week += endWeek.weekOfWeekyear
 
             if (week > 0) {
@@ -92,10 +92,10 @@ object Weeks {
     /**
      * 해당 일자의 월 주차 (week of month)
      */
-    def getMonthAndWeekOfMonth(moment: DateTime): (Int, Int) = {
+    def monthWeek(moment: DateTime): MonthWeek = {
         val result = moment.getWeekOfWeekyear - Times.startTimeOfMonth(moment).getWeekOfWeekyear + 1
 
-        if (result > 0) (moment.getMonthOfYear, result)
-        else (moment.plusMonths(1).getMonthOfYear, result)
+        if (result > 0) MonthWeek(moment.getMonthOfYear, result)
+        else MonthWeek(moment.plusMonths(1).getMonthOfYear, result)
     }
 }

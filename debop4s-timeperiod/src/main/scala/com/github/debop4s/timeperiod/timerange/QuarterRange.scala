@@ -42,5 +42,5 @@ object QuarterRange {
     def apply(moment: DateTime): QuarterRange = apply(moment, DefaultTimeCalendar)
 
     def apply(moment: DateTime, calendar: ITimeCalendar): QuarterRange =
-        new QuarterRange(moment.getYear, Times.getQuarterOfMonth(moment.getMonthOfYear), calendar)
+        new QuarterRange(moment.getYear, Times.quarterOfMonth(moment.getMonthOfYear), calendar)
 }
