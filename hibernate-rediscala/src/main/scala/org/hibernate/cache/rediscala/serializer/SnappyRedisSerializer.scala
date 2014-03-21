@@ -22,3 +22,14 @@ private[rediscala] class SnappyRedisSerializer[T](val innerSerializer: RedisSeri
         innerSerializer.deserialize(Snappy.uncompress(bytes)).asInstanceOf[T]
     }
 }
+
+private[rediscala] object SnappyRedisSerializer {
+
+    def apply[T](): SnappyRedisSerializer[T] = {
+        new SnappyRedisSerializer[T](new BinaryRedisSerializer[T]())
+    }
+
+    def apply[T](inner: RedisSerializer[T]): SnappyRedisSerializer[T] = {
+        new SnappyRedisSerializer[T](inner)
+    }
+}

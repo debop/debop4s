@@ -9,6 +9,7 @@ import scala.util.{Failure, Success, Try}
  * Fast-Serialization 라이브러리를 이용한 Serializer 입니다.
  * Created by debop on 2014. 3. 18.
  */
+@deprecated(message = "Tomcat 등에서 Float 수형에 대한 변환이 제대로 안되는 버그가 있다.", since = "0.3.0")
 class FstSerializer extends Serializer {
 
     private lazy val log = LoggerFactory.getLogger(getClass)

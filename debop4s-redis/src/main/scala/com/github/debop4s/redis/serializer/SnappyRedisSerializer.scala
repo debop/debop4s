@@ -26,7 +26,7 @@ class SnappyRedisSerializer[T](val inner: RedisSerializer[T]) extends RedisSeria
 object SnappyRedisSerializer {
 
     def apply[T](): SnappyRedisSerializer[T] = {
-        apply(new FstRedisSerializer[T]())
+        apply(new BinaryRedisSerializer[T]())
     }
 
     def apply[T](inner: RedisSerializer[T]): SnappyRedisSerializer[T] = {

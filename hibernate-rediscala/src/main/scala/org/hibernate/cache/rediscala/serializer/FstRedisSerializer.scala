@@ -11,6 +11,7 @@ import scala.util.{Failure, Success, Try}
  * FstRedisSerializer
  * Created by debop on 2014. 3. 18.
  */
+@deprecated(message = "Tomcat 등에서 Float 수형에 대한 변환이 제대로 안되는 버그가 있다.", since = "0.3.0")
 class FstRedisSerializer[T] extends RedisSerializer[T] {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
