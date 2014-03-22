@@ -18,19 +18,27 @@ abstract class AbstractCompressedUserType extends UserType {
 
     def compressor: Compressor
 
-    override def sqlTypes(): Array[Int] = Array(BinaryType.INSTANCE.sqlType())
+    override def sqlTypes(): Array[Int] =
+        Array(BinaryType.INSTANCE.sqlType())
 
-    override def equals(x: Any, y: Any): Boolean = (x == y) || (x != null && (x == y))
+    override def equals(x: Any, y: Any): Boolean =
+        (x == y) || (x != null && (x == y))
 
-    override def hashCode(x: Any): Int = if (x != null) x.hashCode() else 0
+    override def hashCode(x: Any): Int =
+        if (x != null) x.hashCode()
+        else 0
 
-    override def deepCopy(value: Any): AnyRef = value.asInstanceOf[AnyRef]
+    override def deepCopy(value: Any): AnyRef =
+        value.asInstanceOf[AnyRef]
 
-    override def disassemble(value: Any): Serializable = deepCopy(value).asInstanceOf[Serializable]
+    override def disassemble(value: Any): Serializable =
+        deepCopy(value).asInstanceOf[Serializable]
 
-    override def assemble(cached: Serializable, owner: Any): AnyRef = deepCopy(cached)
+    override def assemble(cached: Serializable, owner: Any): AnyRef =
+        deepCopy(cached)
 
-    override def replace(original: Any, target: Any, owner: Any): AnyRef = deepCopy(original)
+    override def replace(original: Any, target: Any, owner: Any): AnyRef =
+        deepCopy(original)
 
     override def isMutable: Boolean = true
 }
@@ -51,12 +59,18 @@ abstract class AbstractCompressedBinaryUserType extends AbstractCompressedUserTy
 
     override def returnedClass(): Class[_] = classOf[Array[Byte]]
 
-    override def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any): AnyRef = {
+    override def nullSafeGet(rs: ResultSet,
+                             names: Array[String],
+                             session: SessionImplementor,
+                             owner: Any): AnyRef = {
         val compressedBytes = BinaryType.INSTANCE.nullSafeGet(rs, names(0), session)
         decompress(compressedBytes)
     }
 
-    override def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) {
+    override def nullSafeSet(st: PreparedStatement,
+                             value: Any,
+                             index: Int,
+                             session: SessionImplementor) {
         if (value == null) {
             BinaryType.INSTANCE.nullSafeSet(st, null, index, session)
         } else {

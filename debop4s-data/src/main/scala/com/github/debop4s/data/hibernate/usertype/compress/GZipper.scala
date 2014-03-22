@@ -22,9 +22,7 @@ private[data] trait GZipper {
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 6:23
  */
-class GZipBinaryUserType extends AbstractCompressedBinaryUserType with GZipper {
-
-}
+class GZipBinaryUserType extends AbstractCompressedBinaryUserType with GZipper {}
 
 /**
  * GZip 알고리즘을 이용하여 문자열을 압축하여 저장합니다.
@@ -32,6 +30,4 @@ class GZipBinaryUserType extends AbstractCompressedBinaryUserType with GZipper {
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 6:25
  */
-class GZipStringUserType extends AbstractCompressedStringUserType with GZipper {
-
-}
+class GZipStringUserType extends AbstractCompressedStringUserType with GZipper {}

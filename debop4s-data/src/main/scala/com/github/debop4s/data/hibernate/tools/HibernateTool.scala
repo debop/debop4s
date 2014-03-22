@@ -67,7 +67,6 @@ object HibernateTool {
         val listener = new UpdatedTimestampListener()
     }
 
-
     def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
 
     def copyCriteria(src: Criteria) = Serializers.copyObject(src)

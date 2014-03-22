@@ -21,9 +21,7 @@ private[data] trait Deflator {
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 6:26
  */
-class DeflateBinaryUserType extends AbstractCompressedBinaryUserType with Deflator {
-
-}
+class DeflateBinaryUserType extends AbstractCompressedBinaryUserType with Deflator {}
 
 /**
  * Deflator 를 이용하여 문자열를 압축하여 저장합니다.
@@ -31,6 +29,4 @@ class DeflateBinaryUserType extends AbstractCompressedBinaryUserType with Deflat
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 6:27
  */
-class DeflateStringUserType extends AbstractCompressedStringUserType with Deflator {
-
-}
+class DeflateStringUserType extends AbstractCompressedStringUserType with Deflator {}

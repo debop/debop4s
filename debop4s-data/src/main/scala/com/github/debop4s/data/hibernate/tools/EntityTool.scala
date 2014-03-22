@@ -21,7 +21,7 @@ object EntityTool {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    lazy val json = JacksonSerializer()
+    private lazy val json = JacksonSerializer()
 
     def asString(entity: ValueObject): String =
         if (entity == null) Strings.NULL_STR else entity.toString
@@ -47,6 +47,10 @@ object EntityTool {
     def mapEntityAllAsync[T <: AnyRef : ClassTag](sources: Iterable[_]) =
         Mappers.mapAllAsync[T](sources)
 
+    //
+    // HINT: Hibernate Session은 Multi thread 에서는 예외가 발생합니다.
+    // HINT: 모든 엔티티에 대해 Hibernate#initialize 를 수행해주시고, 사용하세요.
+    //
     def mapEntityAsParallel[T <: AnyRef : ClassTag](sources: Iterable[_]) =
         Mappers.mapAllAsParallel[T](sources)
 
@@ -147,7 +151,7 @@ object EntityTool {
     * Tree 상에서 현재 노드의 모든 자손 노드를 구합니다.
     */
     def descendents[T <: HibernateTreeEntity[T]](node: T): Seq[T] = {
-        Graphs.depthFirstScan[T](node, (x => x.children.toIterable))
+        Graphs.depthFirstScan[T](node, x => x.children)
     }
 
     /**

@@ -19,16 +19,18 @@ abstract class AbstractEncryptedStringUserType extends UserType {
     protected def encryptor: SymmetricEncryptor
 
     private def encrypt(plainText: String): String = {
-        if (Strings.isEmpty(plainText)) null
-        else {
+        if (Strings.isEmpty(plainText)) {
+            null
+        } else {
             val bytes = encryptor.encrypt(Strings.getUtf8Bytes(plainText))
             Strings.getStringFromBytes(bytes)
         }
     }
 
     private def decrypt(cipherText: String): String = {
-        if (Strings.isEmpty(cipherText)) null
-        else {
+        if (Strings.isEmpty(cipherText)) {
+            null
+        } else {
             val bytes = encryptor.decrypt(Strings.getBytesFromString(cipherText))
             Strings.getUtf8String(bytes)
         }
@@ -42,7 +44,10 @@ abstract class AbstractEncryptedStringUserType extends UserType {
 
     override def hashCode(x: Any): Int = if (x != null) x.hashCode() else 0
 
-    override def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any): AnyRef = {
+    override def nullSafeGet(rs: ResultSet,
+                             names: Array[String],
+                             session: SessionImplementor,
+                             owner: Any): AnyRef = {
         val str = StringType.INSTANCE.nullSafeGet(rs, names(0), session)
         decrypt(str)
     }
@@ -56,15 +61,19 @@ abstract class AbstractEncryptedStringUserType extends UserType {
         }
     }
 
-    override def deepCopy(value: Any): AnyRef = value.asInstanceOf[AnyRef]
+    override def deepCopy(value: Any): AnyRef =
+        value.asInstanceOf[AnyRef]
 
     override def isMutable: Boolean = true
 
-    override def disassemble(value: Any): Serializable = deepCopy(value).asInstanceOf[Serializable]
+    override def disassemble(value: Any): Serializable =
+        deepCopy(value).asInstanceOf[Serializable]
 
-    override def assemble(cached: Serializable, owner: Any): AnyRef = deepCopy(cached)
+    override def assemble(cached: Serializable, owner: Any): AnyRef =
+        deepCopy(cached)
 
-    override def replace(original: Any, target: Any, owner: Any): AnyRef = deepCopy(original)
+    override def replace(original: Any, target: Any, owner: Any): AnyRef =
+        deepCopy(original)
 }
 
 /**

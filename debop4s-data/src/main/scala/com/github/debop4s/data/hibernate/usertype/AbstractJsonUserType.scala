@@ -33,7 +33,7 @@ abstract class AbstractJsonUserType extends UserType {
                 jsonSerializer.deserializeFromText(jto.jsonText, clazz).asInstanceOf[AnyRef]
             } catch {
                 case e: Throwable =>
-                    log.warn("JsonTextObject의 json text 를 deserialize 하는데 실패했습니다.", e)
+                    log.error("JsonTextObject의 json text 를 deserialize 하는데 실패했습니다.", e)
                     null
             }
         }
@@ -45,14 +45,16 @@ abstract class AbstractJsonUserType extends UserType {
 
     override def hashCode(x: Any): Int = if (x != null) x.hashCode() else 0
 
-    override def equals(x: Any, y: Any): Boolean = (x == y) || (x != null && (x == y))
+    override def equals(x: Any, y: Any): Boolean =
+        (x == y) || (x != null && (x == y))
 
     override def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any): AnyRef = {
         val className = StandardBasicTypes.STRING.nullSafeGet(rs, names(0), session)
         val jsonText = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session)
 
         if (className != null && jsonText != null) {
-            deserialize(new JsonTextObject(className, jsonText))
+            val jto = new JsonTextObject(className, jsonText)
+            if (jto != null) deserialize(jto) else null
         } else {
             null
         }
@@ -70,13 +72,17 @@ abstract class AbstractJsonUserType extends UserType {
         }
     }
 
-    override def deepCopy(value: Any): AnyRef = value.asInstanceOf[AnyRef]
+    override def deepCopy(value: Any): AnyRef =
+        value.asInstanceOf[AnyRef]
 
-    override def replace(original: Any, target: Any, owner: Any): AnyRef = deepCopy(original)
+    override def replace(original: Any, target: Any, owner: Any): AnyRef =
+        deepCopy(original)
 
-    override def assemble(cached: Serializable, owner: Any): AnyRef = deepCopy(cached)
+    override def assemble(cached: Serializable, owner: Any): AnyRef =
+        deepCopy(cached)
 
-    override def disassemble(value: Any): Serializable = deepCopy(value).asInstanceOf[Serializable]
+    override def disassemble(value: Any): Serializable =
+        deepCopy(value).asInstanceOf[Serializable]
 
     override def isMutable: Boolean = true
 }

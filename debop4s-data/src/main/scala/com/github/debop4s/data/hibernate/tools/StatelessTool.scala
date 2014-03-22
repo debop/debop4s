@@ -1,7 +1,8 @@
 package com.github.debop4s.data.hibernate.tools
 
-import org.hibernate.{Session, HibernateException, SessionFactory, StatelessSession}
+import org.hibernate._
 import org.slf4j.LoggerFactory
+import scala.Some
 import scala.annotation.varargs
 
 /**
@@ -18,22 +19,22 @@ object StatelessTool {
         session.getSessionFactory.openStatelessSession()
 
     def executeTransactional(sessionFactory: SessionFactory)(action: StatelessSession => Unit) {
-        log.debug(s"StatelessSession을 이용하여 transaction 작업을 수행합니다...")
-
-        val stateless = sessionFactory.openStatelessSession()
-        val tx = stateless.beginTransaction()
+        var stateless = None: Option[StatelessSession]
+        var tx = None: Option[Transaction]
 
         try {
-            action(stateless)
-            tx.commit()
+            stateless = Some(sessionFactory.openStatelessSession())
+            tx = Some(stateless.get.beginTransaction())
+            action(stateless.get)
+            tx.get.commit()
         } catch {
             case e: Throwable =>
                 log.error(s"StatelessSession을 이용한 작업에 실패했습니다. rollback합니다.", e)
-                if (tx != null) tx.rollback()
+                if (tx.isDefined) tx.get.rollback()
                 throw new HibernateException(e)
         } finally {
-            if (stateless != null)
-                stateless.close()
+            if (stateless.isDefined)
+                stateless.get.close()
         }
     }
 
@@ -43,37 +44,39 @@ object StatelessTool {
     }
 
     def executeAllTransactional(sessionFactory: SessionFactory, actions: Iterable[StatelessSession => Unit]) {
-        log.debug(s"StatelessSession을 이용하여 transaction 작업을 수행합니다...")
-
-        val stateless = sessionFactory.openStatelessSession()
-        val tx = stateless.beginTransaction()
+        var stateless = None: Option[StatelessSession]
+        var tx = None: Option[Transaction]
 
         try {
-            actions.foreach(action => action(stateless))
-            tx.commit()
+            stateless = Some(sessionFactory.openStatelessSession())
+            tx = Some(stateless.get.beginTransaction())
+
+            actions.foreach(action => action(stateless.get))
+            tx.get.commit()
         } catch {
             case e: Throwable =>
                 log.error(s"StatelessSession을 이용한 작업에 실패했습니다. rollback합니다.", e)
-                if (tx != null) tx.rollback()
+                if (tx.isDefined) tx.get.rollback()
                 throw new HibernateException(e)
         } finally {
-            if (stateless != null)
-                stateless.close()
+            if (stateless.isDefined)
+                stateless.get.close()
         }
     }
 
     def execute(sessionFactory: SessionFactory, action: StatelessSession => Unit) {
-        val stateless = sessionFactory.openStatelessSession()
+        var stateless = None: Option[StatelessSession]
 
         try {
-            action(stateless)
+            stateless = Some(sessionFactory.openStatelessSession())
+            action(stateless.get)
         } catch {
             case e: Throwable =>
                 log.error(s"StatelessSession을 이용한 작업에 실패했습니다.", e)
                 throw new HibernateException(e)
         } finally {
-            if (stateless != null)
-                stateless.close()
+            if (stateless.isDefined)
+                stateless.get.close()
         }
     }
 
@@ -83,19 +86,18 @@ object StatelessTool {
     }
 
     def executeAll(sessionFactory: SessionFactory, actions: Iterable[StatelessSession => Unit]) {
-        log.debug(s"StatelessSession을 이용하여 작업을 수행합니다...")
-
-        val stateless = sessionFactory.openStatelessSession()
+        var stateless = None: Option[StatelessSession]
 
         try {
-            actions.foreach(action => action(stateless))
+            stateless = Some(sessionFactory.openStatelessSession())
+            actions.foreach(action => action(stateless.get))
         } catch {
             case e: Throwable =>
                 log.error(s"StatelessSession을 이용한 작업에 실패했습니다.", e)
                 throw new HibernateException(e)
         } finally {
-            if (stateless != null)
-                stateless.close()
+            if (stateless.isDefined)
+                stateless.get.close()
         }
     }
 }

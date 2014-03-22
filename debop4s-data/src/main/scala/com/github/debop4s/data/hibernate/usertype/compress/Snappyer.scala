@@ -19,9 +19,7 @@ private[data] trait Snappyer {
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 6:23
  */
-class SnappyBinaryUserType extends AbstractCompressedBinaryUserType with Snappyer {
-
-}
+class SnappyBinaryUserType extends AbstractCompressedBinaryUserType with Snappyer {}
 
 /**
  * Snappy 알고리즘을 이용하여 문자열을 압축하여 저장합니다.
@@ -29,6 +27,4 @@ class SnappyBinaryUserType extends AbstractCompressedBinaryUserType with Snappye
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 24. 오후 6:25
  */
-class SnappyStringUserType extends AbstractCompressedStringUserType with Snappyer {
-
-}
+class SnappyStringUserType extends AbstractCompressedStringUserType with Snappyer {}

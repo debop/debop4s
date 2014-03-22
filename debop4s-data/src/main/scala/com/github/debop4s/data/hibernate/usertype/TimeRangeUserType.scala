@@ -1,6 +1,5 @@
 package com.github.debop4s.data.hibernate.usertype
 
-import com.github.debop4s.core.utils.Options
 import com.github.debop4s.timeperiod.{TimeRange, ITimePeriod}
 import java.io.Serializable
 import java.sql.{PreparedStatement, ResultSet}
@@ -56,8 +55,8 @@ class TimeRangeUserType extends CompositeUserType {
         val end = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(1), session)
 
         TimeRange(
-            Options.toOption(start).map(new DateTime(_)).getOrElse(null),
-            Options.toOption(end).map(new DateTime(_)).getOrElse(null)
+            if (start != null) new DateTime(start) else null,
+            if (end != null) new DateTime(end) else null
         )
     }
 
@@ -67,8 +66,8 @@ class TimeRangeUserType extends CompositeUserType {
             StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session)
             StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index + 1, session)
         } else {
-            val start = Options.toOption(period.start).map(_.toDate).getOrElse(null)
-            val end = Options.toOption(period.end).map(_.toDate).getOrElse(null)
+            val start = if (period.start != null) period.start.toDate else null
+            val end = if (period.end != null) period.end.toDate else null
             StandardBasicTypes.TIMESTAMP.nullSafeSet(st, start, index, session)
             StandardBasicTypes.TIMESTAMP.nullSafeSet(st, end, index + 1, session)
         }

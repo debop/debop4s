@@ -1,11 +1,13 @@
 package com.github.debop4s.data.jdbc
 
+import com.github.debop4s.data.{DRIVER_CLASS_HSQL, DRIVER_CLASS_H2}
 import com.jolbox.bonecp.BoneCPDataSource
 import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
 import java.util.Properties
 import javax.sql.DataSource
 import org.slf4j.LoggerFactory
 import scala.collection.immutable.HashMap
+
 
 /**
  * [[javax.sql.DataSource]] 를 생성, 제공하는 Object 입니다.
@@ -16,10 +18,6 @@ import scala.collection.immutable.HashMap
 object DataSources {
 
     lazy val log = LoggerFactory.getLogger(getClass)
-
-    final val HSQL_DRIVER_CLASS_NAME: String = "org.hsql.jdbcDriver"
-    final val H2_DRIVER_CLASS_NAME: String = "org.h2.Driver"
-
     lazy val processCount = Runtime.getRuntime.availableProcessors()
 
     /**
@@ -75,7 +73,7 @@ object DataSources {
         config.addDataSourceProperty("user", username)
         config.addDataSourceProperty("password", passwd)
 
-        for((name,value) <- props) {
+        for ((name, value) <- props) {
             config.addDataSourceProperty(name, value)
         }
 
@@ -113,11 +111,11 @@ object DataSources {
 
     /** 테스트에 사용하기 위해 메모리를 사용하는 HSql DB 에 대한 DataSource 를 반환합니다. */
     def getEmbeddedHSqlDataSource: DataSource = {
-        getDataSource(HSQL_DRIVER_CLASS_NAME, "jdbc:hsqldb:mem:test;MVCC=TRUE;", "sa", "")
+        getDataSource(DRIVER_CLASS_HSQL, "jdbc:hsqldb:mem:test;MVCC=TRUE;", "sa", "")
     }
 
     /** 테스트에 사용하기 위해 메모리를 사용하는 H2 DB 에 대한 DataSource 를 반환합니다. */
     def getEmbeddedH2DataSource: DataSource = {
-        getDataSource(H2_DRIVER_CLASS_NAME, "jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;", "sa", "")
+        getDataSource(DRIVER_CLASS_H2, "jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;", "sa", "")
     }
 }

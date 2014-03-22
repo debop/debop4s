@@ -29,12 +29,12 @@ object CriteriaTool {
         dc.add(Restrictions.in(propertyName, ids.toSeq))
 
 
-    def toOrders(sort: Sort): List[Order] = {
+    def toOrders(sort: Sort): Iterable[Order] = {
         sort.map(x => {
             if (x.getDirection == Sort.Direction.ASC)
                 Order.asc(x.getProperty)
             else
                 Order.desc(x.getProperty)
-        }).toList
+        })
     }
 }
