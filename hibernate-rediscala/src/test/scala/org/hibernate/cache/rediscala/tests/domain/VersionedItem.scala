@@ -13,7 +13,7 @@ class VersionedItem extends Serializable {
     @Id
     @GeneratedValue
     @BeanProperty
-    var id: Long = _
+    var id: java.lang.Long = _
 
     @Version
     @BeanProperty

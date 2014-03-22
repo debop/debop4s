@@ -1,6 +1,7 @@
 package org.hibernate.cache.rediscala.serializer
 
 import org.xerial.snappy.Snappy
+import scala.reflect.ClassTag
 
 /**
  * Snappy 압축 알고리즘을 이용하여 압축을 수행합니다.
@@ -25,11 +26,12 @@ private[rediscala] class SnappyRedisSerializer[T](val innerSerializer: RedisSeri
 
 private[rediscala] object SnappyRedisSerializer {
 
-    def apply[T](): SnappyRedisSerializer[T] = {
+    def apply[T: ClassTag](): SnappyRedisSerializer[T] = {
+        // new SnappyRedisSerializer[T](new KryoRedisSerializer[T]())
         new SnappyRedisSerializer[T](new BinaryRedisSerializer[T]())
     }
 
-    def apply[T](inner: RedisSerializer[T]): SnappyRedisSerializer[T] = {
+    def apply[T: ClassTag](inner: RedisSerializer[T]): SnappyRedisSerializer[T] = {
         new SnappyRedisSerializer[T](inner)
     }
 }

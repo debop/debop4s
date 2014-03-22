@@ -51,7 +51,7 @@ class HibernateCacheTest extends JUnitSuite {
         val regionName = HibernateRedisUtil.getRegionName(sessionFactory, classOf[Item])
         val statistics = getSecondLevelCacheStatistics(classOf[Item])
         log.info(s"SecondLevel Cache region=$regionName, " +
-                 s"elementInMemory=${statistics.getElementCountInMemory }, hitCount=${statistics.getHitCount }")
+                 s"elementInMemory=${statistics.getElementCountInMemory}, hitCount=${statistics.getHitCount}")
     }
 
     @Test
@@ -187,7 +187,7 @@ class HibernateCacheTest extends JUnitSuite {
         val session = sessionFactory.openSession()
 
         val person = new Person()
-        person.age = Some(47)
+        person.age = 47
         person.lastName = "Bae"
         person.firstName = "Sunghyouk"
 

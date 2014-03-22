@@ -1,7 +1,7 @@
 package org.hibernate.cache.rediscala.tests.serializer
 
 import java.util.Date
-import org.hibernate.cache.rediscala.serializer.{SnappyRedisSerializer, FstRedisSerializer, BinaryRedisSerializer}
+import org.hibernate.cache.rediscala.serializer.{ChillRedisSerializer, SnappyRedisSerializer, FstRedisSerializer, BinaryRedisSerializer}
 import org.hibernate.cache.rediscala.tests.domain.{Event, Person}
 import org.scalameter.{Gen, PerformanceTest}
 
@@ -15,8 +15,11 @@ object SerializerBenchmark extends PerformanceTest.Quickbenchmark {
     val serializers = Gen.enumeration("serializers")(
         new BinaryRedisSerializer[AnyRef](),
         new FstRedisSerializer[AnyRef](),
+        new ChillRedisSerializer[AnyRef](),
         new SnappyRedisSerializer[AnyRef](new BinaryRedisSerializer[AnyRef]()),
-        new SnappyRedisSerializer[AnyRef](new FstRedisSerializer[AnyRef]()))
+        new SnappyRedisSerializer[AnyRef](new FstRedisSerializer[AnyRef]()),
+        new SnappyRedisSerializer[AnyRef](new ChillRedisSerializer[AnyRef]())
+    )
 
 
     var smallPerson = new Person()

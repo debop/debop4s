@@ -14,9 +14,9 @@ class Person extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    var id: java.lang.Long = _
 
-    var age: Option[Int] = None
+    var age: Integer = _
     var firstName: String = _
     var lastName: String = _
 
@@ -39,8 +39,10 @@ class Person extends Serializable {
     var tailsmans: util.List[String] = new util.ArrayList[String]()
 
     override def equals(obj: Any): Boolean = {
-        if ((obj != null) && obj.isInstanceOf[Person]) hashCode == obj.hashCode
-        else false
+        obj match {
+            case x: Person => hashCode == x.hashCode
+            case _ => false
+        }
     }
 
     override def hashCode: Int = Objects.hash(firstName, lastName)

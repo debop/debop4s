@@ -31,14 +31,14 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
             user.name = "USER_" + i
             user.empNo = "EMPNO_" + i
             user.address = "ADDR_" + i
-            company.users += user
+            company.users.add(user)
         }
     }
 
 
     test("comparessable serialize") {
         val compressors = Array[Compressor](new GZipCompressor(), new DeflateCompressor(), new SnappyCompressor())
-        val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer())
+        val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer(), new ChillSerializer())
 
         compressors.foreach { compressor =>
             serializers.foreach { serializer =>
@@ -57,7 +57,7 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
     test("encryptable serialize") {
         val encryptors = Array[SymmetricEncryptor](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
-        val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer())
+        val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer(), new ChillSerializer())
 
         encryptors.foreach { encryptor =>
             serializers.foreach { serializer =>

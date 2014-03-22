@@ -13,7 +13,7 @@ class Event extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    var id: java.lang.Long = _
 
     var title: String = _
 
@@ -26,7 +26,7 @@ class Event extends Serializable {
     @ManyToOne
     @JoinColumn(name = "organizerId")
     @BeanProperty
-    var organizer: Person = null
+    var organizer: Person = _
 
     def addParticipant(person: Person) {
         participants.add(person)

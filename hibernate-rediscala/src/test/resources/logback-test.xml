@@ -10,8 +10,8 @@
         </encoder>
     </appender>
 
-    <logger name="com.github.debop4s.redis" level="TRACE"/>
-    <logger name="org.hibernate.cache.redis" level="TRACE"/>
+    <logger name="com.github.debop4s.rediscala" level="TRACE"/>
+    <logger name="org.hibernate.cache.rediscala" level="TRACE"/>
 
     <logger name="org.hibernate.SQL" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
