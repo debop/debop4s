@@ -296,6 +296,13 @@
                 <version>1.1.0.1</version>
             </dependency>
 
+            <!-- GridGain -->
+            <dependency>
+                <groupId>org.gridgain</groupId>
+                <artifactId>gridgain-datagrid</artifactId>
+                <version>6.0.1</version>
+            </dependency>
+
             <!-- Fast Serialization -->
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
@@ -894,6 +901,11 @@
             <url>https://github.com/etaty/rediscala-mvn/raw/master/releases</url>
         </repository>
 
+        <repository>
+            <id>gridgain</id>
+            <name>gridgain</name>
+            <url>http://www.gridgainsystems.com:8085/nexus/content/repositories/external/</url>
+        </repository>
     </repositories>
 
     <build>

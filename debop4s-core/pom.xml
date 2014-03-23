@@ -88,6 +88,12 @@
             <artifactId>chill-java</artifactId>
         </dependency>
 
+        <!-- GridGain -->
+        <dependency>
+            <groupId>org.gridgain</groupId>
+            <artifactId>gridgain-datagrid</artifactId>
+        </dependency>
+
         <!-- Fast Serialization -->
         <dependency>
             <groupId>de.ruedigermoeller</groupId>

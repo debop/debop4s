@@ -13,10 +13,17 @@
     <artifactId>debop4s-experiments</artifactId>
 
     <properties>
-        <adbcj.version>0.7.1-SNAPSHOT</adbcj.version>
+
     </properties>
 
     <dependencies>
+
+        <!-- GridGain -->
+        <dependency>
+            <groupId>org.gridgain</groupId>
+            <artifactId>gridgain-datagrid</artifactId>
+            <version>6.0.1</version>
+        </dependency>
 
         <!-- Twitter/Chill -->
         <dependency>
@@ -147,11 +154,5 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>Gamlor-repo</id>
-            <name>Gamlor Repository</name>
-            <url>https://raw.github.com/gamlerhart/gamlor-mvn/master/snapshots</url>
-        </repository>
-    </repositories>
+
 </project>

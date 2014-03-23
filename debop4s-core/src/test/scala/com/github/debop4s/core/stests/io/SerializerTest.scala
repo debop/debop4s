@@ -17,6 +17,8 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
+    val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer(), new ChillSerializer(), new GridGainSerializer())
+
     var company: Company = _
 
     before {
@@ -38,7 +40,6 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
     test("comparessable serialize") {
         val compressors = Array[Compressor](new GZipCompressor(), new DeflateCompressor(), new SnappyCompressor())
-        val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer(), new ChillSerializer())
 
         compressors.foreach { compressor =>
             serializers.foreach { serializer =>
@@ -57,7 +58,6 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
     test("encryptable serialize") {
         val encryptors = Array[SymmetricEncryptor](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
-        val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer(), new ChillSerializer())
 
         encryptors.foreach { encryptor =>
             serializers.foreach { serializer =>

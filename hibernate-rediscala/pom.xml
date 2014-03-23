@@ -54,6 +54,12 @@
             <artifactId>snappy-java</artifactId>
         </dependency>
 
+        <!-- GridGain -->
+        <dependency>
+            <groupId>org.gridgain</groupId>
+            <artifactId>gridgain-datagrid</artifactId>
+        </dependency>
+
         <!-- Scala Pickling -->
         <dependency>
             <groupId>org.scala-lang</groupId>
