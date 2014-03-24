@@ -27,7 +27,7 @@ private[rediscala] class SnappyRedisSerializer[T](val innerSerializer: RedisSeri
 private[rediscala] object SnappyRedisSerializer {
 
     def apply[T: ClassTag](): SnappyRedisSerializer[T] = {
-        // new SnappyRedisSerializer[T](new KryoRedisSerializer[T]())
+        // new SnappyRedisSerializer[T](new ChillRedisSerializer[T]())
         new SnappyRedisSerializer[T](new BinaryRedisSerializer[T]())
     }
 

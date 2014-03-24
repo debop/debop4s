@@ -14,11 +14,11 @@ object SerializerBenchmark extends PerformanceTest.Quickbenchmark {
     val sizes = Gen.range("size")(1000, 10000, 1000)
     val serializers = Gen.enumeration("serializers")(
         new BinaryRedisSerializer[AnyRef](),
-        new FstRedisSerializer[AnyRef](),
+        // new FstRedisSerializer[AnyRef](),
         new ChillRedisSerializer[AnyRef](),
         new GridGainRedisSerializer[AnyRef](),
         new SnappyRedisSerializer[AnyRef](new BinaryRedisSerializer[AnyRef]()),
-        new SnappyRedisSerializer[AnyRef](new FstRedisSerializer[AnyRef]()),
+        // new SnappyRedisSerializer[AnyRef](new FstRedisSerializer[AnyRef]()),
         new SnappyRedisSerializer[AnyRef](new ChillRedisSerializer[AnyRef]()),
         new SnappyRedisSerializer[AnyRef](new GridGainRedisSerializer[AnyRef]())
     )

@@ -1,7 +1,7 @@
 package org.hibernate.cache.rediscala.client
 
 import akka.util.ByteString
-import org.hibernate.cache.rediscala.serializer.SnappyRedisSerializer
+import org.hibernate.cache.rediscala.serializer.{GridGainRedisSerializer, SnappyRedisSerializer}
 import org.slf4j.LoggerFactory
 import redis.RedisClient
 import redis.api.Limit
@@ -28,7 +28,7 @@ class HibernateRedisCache(val redis: RedisClient) {
 
     // Cache Value 를 Fast-Serialization 을 이용하면 속도가 5배 정도 빨라지고, Snappy를 이용하여 압축을 수행하면 15배 정도 빨라진다.
     //private val valueSerializer = new SnappyRedisSerializer[Any](new BinaryRedisSerializer[Any]())
-    private val valueSerializer = SnappyRedisSerializer[Any]()
+    private val valueSerializer = SnappyRedisSerializer[Any](new GridGainRedisSerializer[Any]())
 
     def ping: Future[String] = redis.ping()
 

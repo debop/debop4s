@@ -20,6 +20,9 @@ class Person extends Serializable {
     var firstName: String = _
     var lastName: String = _
 
+    var height: java.lang.Float = 180.8f
+    var weight: java.lang.Float = 77.7f
+
     @ManyToMany(mappedBy = "participants")
     var events: util.List[Event] = new util.ArrayList[Event]()
 
@@ -45,7 +48,7 @@ class Person extends Serializable {
         }
     }
 
-    override def hashCode: Int = Objects.hash(firstName, lastName)
+    override def hashCode: Int = Objects.hash(firstName, lastName, height, weight)
 
     override def toString: String = firstName + " " + lastName
 

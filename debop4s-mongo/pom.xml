@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>mongo</name>
     <artifactId>debop4s-mongo</artifactId>
 
     <dependencies>

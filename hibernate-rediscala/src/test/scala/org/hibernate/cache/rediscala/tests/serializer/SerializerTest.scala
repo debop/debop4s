@@ -86,49 +86,49 @@ class SerializerTest extends FunSuite with BeforeAndAfter {
         }
     }
 
-    test("FST Serializer benchmark") {
-        stopwatch("warn-up", 1) {
-            val bytes = fst.serialize(smallPerson)
-            val loaded = fst.deserialize(bytes)
+    //    test("FST Serializer benchmark") {
+    //        stopwatch("warn-up", 1) {
+    //            val bytes = fst.serialize(smallPerson)
+    //            val loaded = fst.deserialize(bytes)
+    //
+    //            val bytes2 = fst.serialize(largePerson)
+    //            val loaded2 = fst.deserialize(bytes2)
+    //        }
+    //
+    //        stopwatch("FST-small", SMALL_LOOP) {
+    //            val bytes = fst.serialize(smallPerson)
+    //            val loaded = fst.deserialize(bytes)
+    //            assert(smallPerson == loaded)
+    //        }
+    //
+    //        stopwatch("FST-long", LARGE_LOOP) {
+    //            val bytes = fst.serialize(largePerson)
+    //            val loaded = fst.deserialize(bytes)
+    //            assert(largePerson == loaded)
+    //        }
+    //    }
 
-            val bytes2 = fst.serialize(largePerson)
-            val loaded2 = fst.deserialize(bytes2)
-        }
-
-        stopwatch("FST-small", SMALL_LOOP) {
-            val bytes = fst.serialize(smallPerson)
-            val loaded = fst.deserialize(bytes)
-            assert(smallPerson == loaded)
-        }
-
-        stopwatch("FST-long", LARGE_LOOP) {
-            val bytes = fst.serialize(largePerson)
-            val loaded = fst.deserialize(bytes)
-            assert(largePerson == loaded)
-        }
-    }
-
-    test("FST-Snappy Serializer benchmark") {
-        stopwatch("warn-up", 1) {
-            val bytes = fst_snappy.serialize(smallPerson)
-            val loaded = fst_snappy.deserialize(bytes)
-
-            val bytes2 = fst_snappy.serialize(largePerson)
-            val loaded2 = fst_snappy.deserialize(bytes2)
-        }
-
-        stopwatch("FST-Snappy-small", SMALL_LOOP) {
-            val bytes = fst_snappy.serialize(smallPerson)
-            val loaded = fst_snappy.deserialize(bytes)
-            assert(smallPerson == loaded)
-        }
-
-        stopwatch("FST-Snappy-long", LARGE_LOOP) {
-            val bytes = fst_snappy.serialize(largePerson)
-            val loaded = fst_snappy.deserialize(bytes)
-            assert(largePerson == loaded)
-        }
-    }
+    //    test("FST-Snappy Serializer benchmark") {
+    //        stopwatch("warn-up", 1) {
+    //            val bytes = fst_snappy.serialize(smallPerson)
+    //            val loaded = fst_snappy.deserialize(bytes)
+    //
+    //            val bytes2 = fst_snappy.serialize(largePerson)
+    //            val loaded2 = fst_snappy.deserialize(bytes2)
+    //        }
+    //
+    //        stopwatch("FST-Snappy-small", SMALL_LOOP) {
+    //            val bytes = fst_snappy.serialize(smallPerson)
+    //            val loaded = fst_snappy.deserialize(bytes)
+    //            assert(smallPerson == loaded)
+    //        }
+    //
+    //        stopwatch("FST-Snappy-long", LARGE_LOOP) {
+    //            val bytes = fst_snappy.serialize(largePerson)
+    //            val loaded = fst_snappy.deserialize(bytes)
+    //            assert(largePerson == loaded)
+    //        }
+    //    }
 
     test("Chill Serializer benchmark") {
         stopwatch("warn-up", 1) {

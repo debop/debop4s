@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>autocomplete</name>
     <artifactId>debop4s-autocomplete</artifactId>
 
 
