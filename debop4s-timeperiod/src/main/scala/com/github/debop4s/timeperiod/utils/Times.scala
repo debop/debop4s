@@ -13,7 +13,7 @@ import java.util.Calendar
 import org.joda.time.{Duration, DateTimeZone, DateTime}
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 import scala.collection.parallel
 
 /**
@@ -931,10 +931,10 @@ object Times {
     }
 
     @inline
-    def foreachYears(period: ITimePeriod): ListBuffer[ITimePeriod] = {
+    def foreachYears(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
         require(period != null)
 
-        val years = ListBuffer[ITimePeriod]()
+        val years = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
             return years
 
@@ -962,10 +962,10 @@ object Times {
     }
 
     @inline
-    def foreachHalfyears(period: ITimePeriod): ListBuffer[ITimePeriod] = {
+    def foreachHalfyears(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
         require(period != null)
 
-        val halfyears = ListBuffer[ITimePeriod]()
+        val halfyears = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
             return halfyears
 
@@ -996,10 +996,10 @@ object Times {
     }
 
     @inline
-    def foreachQuarters(period: ITimePeriod): ListBuffer[ITimePeriod] = {
+    def foreachQuarters(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
         require(period != null)
 
-        val quarters = ListBuffer[ITimePeriod]()
+        val quarters = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
             return quarters
 
@@ -1030,10 +1030,10 @@ object Times {
     }
 
     @inline
-    def foreachMonths(period: ITimePeriod): ListBuffer[ITimePeriod] = {
+    def foreachMonths(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
         require(period != null)
 
-        val months = ListBuffer[ITimePeriod]()
+        val months = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
             return months
 
@@ -1064,10 +1064,10 @@ object Times {
     }
 
     @inline
-    def foreachWeeks(period: ITimePeriod): ListBuffer[ITimePeriod] = {
+    def foreachWeeks(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
         require(period != null)
 
-        val weeks = ListBuffer[ITimePeriod]()
+        val weeks = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
             return weeks
 
@@ -1102,10 +1102,10 @@ object Times {
     }
 
     @inline
-    def foreachDays(period: ITimePeriod): ListBuffer[ITimePeriod] = {
+    def foreachDays(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
         require(period != null)
 
-        val days = ListBuffer[ITimePeriod]()
+        val days = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
             return days
 
@@ -1132,10 +1132,10 @@ object Times {
     }
 
     @inline
-    def foreachHours(period: ITimePeriod): ListBuffer[ITimePeriod] = {
+    def foreachHours(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
         require(period != null)
 
-        val hours = ListBuffer[ITimePeriod]()
+        val hours = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
             return hours
 
@@ -1164,10 +1164,10 @@ object Times {
     }
 
     @inline
-    def foreachMinutes(period: ITimePeriod): ListBuffer[ITimePeriod] = {
+    def foreachMinutes(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
         require(period != null)
 
-        val minutes = ListBuffer[ITimePeriod]()
+        val minutes = ArrayBuffer[ITimePeriod]()
         if (period.isAnytime)
             return minutes
 

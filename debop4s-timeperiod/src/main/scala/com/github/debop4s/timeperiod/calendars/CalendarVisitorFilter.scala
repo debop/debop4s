@@ -5,7 +5,7 @@ import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.{TimePeriodCollection, ITimePeriodCollection}
 import scala.annotation.varargs
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.calendars.CalendarVisitorFilter
@@ -17,26 +17,26 @@ import scala.collection.mutable.ListBuffer
 class CalendarVisitorFilter extends ICalendarVisitorFilter {
 
     lazy val _excludePeriods = TimePeriodCollection()
-    lazy val _years = ListBuffer[Int]()
-    lazy val _monthOfYears = ListBuffer[Int]()
-    lazy val _dayOfMonths = ListBuffer[Int]()
-    lazy val _hourOfDays = ListBuffer[Int]()
-    lazy val _minuteOfHours = ListBuffer[Int]()
+    lazy val _years = ArrayBuffer[Int]()
+    lazy val _monthOfYears = ArrayBuffer[Int]()
+    lazy val _dayOfMonths = ArrayBuffer[Int]()
+    lazy val _hourOfDays = ArrayBuffer[Int]()
+    lazy val _minuteOfHours = ArrayBuffer[Int]()
     lazy val _weekDays = mutable.HashSet[DayOfWeek]()
 
     def excludePeriods: ITimePeriodCollection = _excludePeriods
 
-    def years: ListBuffer[Int] = _years
+    def years: ArrayBuffer[Int] = _years
 
-    def monthOfYears: ListBuffer[Int] = _monthOfYears
+    def monthOfYears: ArrayBuffer[Int] = _monthOfYears
 
-    def dayOfMonths: ListBuffer[Int] = _dayOfMonths
+    def dayOfMonths: ArrayBuffer[Int] = _dayOfMonths
 
     def weekDays: mutable.HashSet[DayOfWeek] = _weekDays
 
-    def hourOfDays: ListBuffer[Int] = _hourOfDays
+    def hourOfDays: ArrayBuffer[Int] = _hourOfDays
 
-    def minuteOfHours: ListBuffer[Int] = _minuteOfHours
+    def minuteOfHours: ArrayBuffer[Int] = _minuteOfHours
 
     def addWorkingWeekdays() {
         addWeekdays(Weekdays: _*)

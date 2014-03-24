@@ -8,7 +8,7 @@ import org.joda.time.{DateTime, Duration}
 import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.timeperiod.calendars.CalendarDateDiff
@@ -27,9 +27,9 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
 
     def weekDays: mutable.Set[DayOfWeek.DayOfWeek] = collectorFilter.weekDays
 
-    def workingHours: ListBuffer[HourRangeInDay] = collectorFilter.collectingHours
+    def workingHours: ArrayBuffer[HourRangeInDay] = collectorFilter.collectingHours
 
-    def workingDayHours: ListBuffer[DayHourRange] = collectorFilter.collectingDayHours
+    def workingDayHours: ArrayBuffer[DayHourRange] = collectorFilter.collectingDayHours
 
     def addWokringDays() {
         addWeekDays(Weekdays: _*)

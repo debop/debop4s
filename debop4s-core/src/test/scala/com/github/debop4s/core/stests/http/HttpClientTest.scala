@@ -20,7 +20,7 @@ import org.junit.{Ignore, Test}
 import org.scalatest.junit.JUnitSuite
 import org.slf4j.LoggerFactory
 import scala.Predef.String
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * com.github.debop4s.core.tests.http.HttpClientTest
@@ -70,7 +70,7 @@ class HttpClientTest extends JUnitSuite {
         val httpClient = new HttpClient()
 
         val uri: URI = new URIBuilder(URI_STRING).build
-        val nvps = new ListBuffer[NameValuePair]()
+        val nvps = new ArrayBuffer[NameValuePair]()
         nvps += new BasicNameValuePair("q", "배성혁")
 
         val responseStr = httpClient.post(uri, nvps.toList)

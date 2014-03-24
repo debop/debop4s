@@ -9,7 +9,7 @@ import java.nio.file.{Path, StandardOpenOption, Files, Paths}
 import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
 import org.slf4j.LoggerFactory
 import scala.collection.JavaConversions._
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * FileChannelTest
@@ -80,13 +80,13 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
 
     def readAllLines(bytes: Array[Byte], charset: Charset): Seq[String] = {
         if (bytes == null || bytes.length == 0)
-            ListBuffer()
+            ArrayBuffer[String]()
 
         val is = new ByteArrayInputStream(bytes)
         val in = new InputStreamReader(is, charset)
         val br = new BufferedReader(in)
 
-        val lines = ListBuffer[String]()
+        val lines = ArrayBuffer[String]()
         while (true) {
             val line = br.readLine
             if (line == null)
