@@ -80,11 +80,11 @@
             <artifactId>hibernate-ehcache</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-infinispan</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.hibernate</groupId>-->
+        <!--<artifactId>hibernate-infinispan</artifactId>-->
+        <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
         <!-- Hibernate-Validator -->
         <dependency>

@@ -57,7 +57,7 @@
         <!-- GridGain -->
         <dependency>
             <groupId>org.gridgain</groupId>
-            <artifactId>gridgain-datagrid</artifactId>
+            <artifactId>gridgain-core</artifactId>
         </dependency>
 
         <!-- Scala Pickling -->

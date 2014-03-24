@@ -13,7 +13,7 @@
     <artifactId>debop4s-experiments</artifactId>
 
     <properties>
-
+        <infinispan.version>6.0.1.Final</infinispan.version>
     </properties>
 
     <dependencies>
@@ -21,8 +21,7 @@
         <!-- GridGain -->
         <dependency>
             <groupId>org.gridgain</groupId>
-            <artifactId>gridgain-datagrid</artifactId>
-            <version>6.0.1</version>
+            <artifactId>gridgain-core</artifactId>
         </dependency>
 
         <!-- Twitter/Chill -->
@@ -100,20 +99,31 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
+            <version>${infinispan.version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-commons</artifactId>
+            <version>${infinispan.version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-spring</artifactId>
+            <version>${infinispan.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-query-dsl</artifactId>
+            <version>${infinispan.version}</version>
         </dependency>
 
+
         <!-- "Java Concurrency in Practice" book annotations -->
+        <!-- Hint: 이게 없으면 Infinispan 에서 compile 에러가 납니다. -->
         <dependency>
             <groupId>net.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
+            <version>1.0</version>
         </dependency>
 
 
