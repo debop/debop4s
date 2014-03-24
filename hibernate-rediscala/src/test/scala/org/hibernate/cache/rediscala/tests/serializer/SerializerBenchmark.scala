@@ -12,13 +12,15 @@ import org.scalameter.{Gen, PerformanceTest}
 object SerializerBenchmark extends PerformanceTest.Quickbenchmark {
 
     val sizes = Gen.range("size")(1000, 10000, 1000)
+
+    // BUG: FstRedisSerializer 는 Float 수형에 버그가 있다.
     val serializers = Gen.enumeration("serializers")(
         new BinaryRedisSerializer[AnyRef](),
-        // new FstRedisSerializer[AnyRef](),
+        new FstRedisSerializer[AnyRef](),
         new ChillRedisSerializer[AnyRef](),
         new GridGainRedisSerializer[AnyRef](),
         new SnappyRedisSerializer[AnyRef](new BinaryRedisSerializer[AnyRef]()),
-        // new SnappyRedisSerializer[AnyRef](new FstRedisSerializer[AnyRef]()),
+        new SnappyRedisSerializer[AnyRef](new FstRedisSerializer[AnyRef]()),
         new SnappyRedisSerializer[AnyRef](new ChillRedisSerializer[AnyRef]()),
         new SnappyRedisSerializer[AnyRef](new GridGainRedisSerializer[AnyRef]())
     )
@@ -48,6 +50,8 @@ object SerializerBenchmark extends PerformanceTest.Quickbenchmark {
                 case (person, serializer) =>
                     val bytes = serializer.serialize(person)
                     val converted = serializer.deserialize(bytes)
+                    assert(converted != null)
+                    assert(converted == person)
             }
         }
     }

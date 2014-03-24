@@ -11,8 +11,8 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
  */
 class SerializerTest extends FunSuite with BeforeAndAfter {
 
-    val SMALL_LOOP = 1000
-    val LARGE_LOOP = 1000
+    val SMALL_LOOP = 10000
+    val LARGE_LOOP = 10000
 
     var smallPerson: Person = null
     var largePerson: Person = null
@@ -86,49 +86,49 @@ class SerializerTest extends FunSuite with BeforeAndAfter {
         }
     }
 
-    //    test("FST Serializer benchmark") {
-    //        stopwatch("warn-up", 1) {
-    //            val bytes = fst.serialize(smallPerson)
-    //            val loaded = fst.deserialize(bytes)
-    //
-    //            val bytes2 = fst.serialize(largePerson)
-    //            val loaded2 = fst.deserialize(bytes2)
-    //        }
-    //
-    //        stopwatch("FST-small", SMALL_LOOP) {
-    //            val bytes = fst.serialize(smallPerson)
-    //            val loaded = fst.deserialize(bytes)
-    //            assert(smallPerson == loaded)
-    //        }
-    //
-    //        stopwatch("FST-long", LARGE_LOOP) {
-    //            val bytes = fst.serialize(largePerson)
-    //            val loaded = fst.deserialize(bytes)
-    //            assert(largePerson == loaded)
-    //        }
-    //    }
+    test("FST Serializer benchmark") {
+        stopwatch("warn-up", 1) {
+            val bytes = fst.serialize(smallPerson)
+            val loaded = fst.deserialize(bytes)
 
-    //    test("FST-Snappy Serializer benchmark") {
-    //        stopwatch("warn-up", 1) {
-    //            val bytes = fst_snappy.serialize(smallPerson)
-    //            val loaded = fst_snappy.deserialize(bytes)
-    //
-    //            val bytes2 = fst_snappy.serialize(largePerson)
-    //            val loaded2 = fst_snappy.deserialize(bytes2)
-    //        }
-    //
-    //        stopwatch("FST-Snappy-small", SMALL_LOOP) {
-    //            val bytes = fst_snappy.serialize(smallPerson)
-    //            val loaded = fst_snappy.deserialize(bytes)
-    //            assert(smallPerson == loaded)
-    //        }
-    //
-    //        stopwatch("FST-Snappy-long", LARGE_LOOP) {
-    //            val bytes = fst_snappy.serialize(largePerson)
-    //            val loaded = fst_snappy.deserialize(bytes)
-    //            assert(largePerson == loaded)
-    //        }
-    //    }
+            val bytes2 = fst.serialize(largePerson)
+            val loaded2 = fst.deserialize(bytes2)
+        }
+
+        stopwatch("FST-small", SMALL_LOOP) {
+            val bytes = fst.serialize(smallPerson)
+            val loaded = fst.deserialize(bytes)
+            assert(loaded == smallPerson)
+        }
+
+        stopwatch("FST-long", LARGE_LOOP) {
+            val bytes = fst.serialize(largePerson)
+            val loaded = fst.deserialize(bytes)
+            assert(largePerson == loaded)
+        }
+    }
+
+    test("FST-Snappy Serializer benchmark") {
+        stopwatch("warn-up", 1) {
+            val bytes = fst_snappy.serialize(smallPerson)
+            val loaded = fst_snappy.deserialize(bytes)
+
+            val bytes2 = fst_snappy.serialize(largePerson)
+            val loaded2 = fst_snappy.deserialize(bytes2)
+        }
+
+        stopwatch("FST-Snappy-small", SMALL_LOOP) {
+            val bytes = fst_snappy.serialize(smallPerson)
+            val loaded = fst_snappy.deserialize(bytes)
+            assert(smallPerson == loaded)
+        }
+
+        stopwatch("FST-Snappy-long", LARGE_LOOP) {
+            val bytes = fst_snappy.serialize(largePerson)
+            val loaded = fst_snappy.deserialize(bytes)
+            assert(largePerson == loaded)
+        }
+    }
 
     test("Chill Serializer benchmark") {
         stopwatch("warn-up", 1) {
@@ -220,7 +220,7 @@ class SerializerTest extends FunSuite with BeforeAndAfter {
 
 
     private def stopwatch(title: String, count: Int)(block: => Unit) {
-        val start = System.nanoTime()
+        val start = System.currentTimeMillis()
 
         //        for (x <- 0 until count) {
         //            block
@@ -228,8 +228,8 @@ class SerializerTest extends FunSuite with BeforeAndAfter {
 
         (0 until count).par.foreach(_ => block)
 
-        val elapsed = System.nanoTime() - start
-        println(s"$title : ${elapsed / 1000}")
+        val elapsed = System.currentTimeMillis() - start
+        println(s"$title : $elapsed")
     }
 
 }

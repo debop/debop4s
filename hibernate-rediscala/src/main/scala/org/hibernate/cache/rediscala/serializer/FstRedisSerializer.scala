@@ -15,7 +15,6 @@ class FstRedisSerializer[T] extends RedisSerializer[T] {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    private val conf = FSTConfiguration.createDefaultConfiguration()
 
     override def serialize(graph: T): Array[Byte] = {
         if (graph == null || graph == None)
@@ -25,7 +24,7 @@ class FstRedisSerializer[T] extends RedisSerializer[T] {
 
         try {
             bos = Some(new io.ByteArrayOutputStream())
-            Try(conf.getObjectOutput(bos.get)) match {
+            Try(FstRedisSerializer.conf.getObjectOutput(bos.get)) match {
 
                 case Success(oos) =>
                     oos.writeObject(graph, Seq[Class[_]](): _*)
@@ -49,10 +48,11 @@ class FstRedisSerializer[T] extends RedisSerializer[T] {
 
         try {
             bis = Some(new ByteArrayInputStream(bytes))
-            Try(conf.getObjectInput(bis.get)) match {
+            Try(FstRedisSerializer.conf.getObjectInput(bis.get)) match {
 
                 case Success(ois) =>
-                    ois.readObject.asInstanceOf[T]
+                    val instance = ois.readObject.asInstanceOf[T]
+                    instance
 
                 case Failure(e) =>
                     log.error(s"Fail to deserialize data.", e)
@@ -62,4 +62,8 @@ class FstRedisSerializer[T] extends RedisSerializer[T] {
             if (bis.isDefined) bis.get.close()
         }
     }
+}
+
+object FstRedisSerializer {
+    lazy val conf = FSTConfiguration.createDefaultConfiguration()
 }

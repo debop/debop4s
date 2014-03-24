@@ -20,8 +20,9 @@ class Person extends Serializable {
     var firstName: String = _
     var lastName: String = _
 
-    var height: java.lang.Float = 180.8f
-    var weight: java.lang.Float = 77.7f
+    // FST 에서 Float 수형이 제대로 안된다.
+    var height: java.lang.Double = 180.8
+    var weight: java.lang.Double = 77.7
 
     @ManyToMany(mappedBy = "participants")
     var events: util.List[Event] = new util.ArrayList[Event]()
@@ -49,7 +50,5 @@ class Person extends Serializable {
     }
 
     override def hashCode: Int = Objects.hash(firstName, lastName, height, weight)
-
-    override def toString: String = firstName + " " + lastName
 
 }
