@@ -13,7 +13,6 @@ object SerializerBenchmark extends PerformanceTest.Quickbenchmark {
 
     val sizes = Gen.range("size")(1000, 10000, 1000)
 
-    // BUG: FstRedisSerializer 는 Float 수형에 버그가 있다.
     val serializers = Gen.enumeration("serializers")(
         new BinaryRedisSerializer[AnyRef](),
         new FstRedisSerializer[AnyRef](),
