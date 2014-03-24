@@ -17,11 +17,16 @@
 
     <dependencies>
 
-        <!-- GridGain -->
+        <!-- GridGain Commercial -->
         <dependency>
             <groupId>org.gridgain</groupId>
-            <artifactId>gridgain-core</artifactId>
+            <artifactId>gridgain-datagrid</artifactId>
         </dependency>
+        <!-- GridGain -->
+        <!--<dependency>-->
+        <!--<groupId>org.gridgain</groupId>-->
+        <!--<artifactId>gridgain-core</artifactId>-->
+        <!--</dependency>-->
 
         <!-- Twitter/Chill -->
         <dependency>

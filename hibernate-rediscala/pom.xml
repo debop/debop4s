@@ -52,11 +52,16 @@
             <artifactId>snappy-java</artifactId>
         </dependency>
 
-        <!-- GridGain -->
+        <!-- GridGain Commercial -->
         <dependency>
             <groupId>org.gridgain</groupId>
-            <artifactId>gridgain-core</artifactId>
+            <artifactId>gridgain-datagrid</artifactId>
         </dependency>
+        <!-- GridGain -->
+        <!--<dependency>-->
+        <!--<groupId>org.gridgain</groupId>-->
+        <!--<artifactId>gridgain-core</artifactId>-->
+        <!--</dependency>-->
 
         <!-- Scala Pickling -->
         <dependency>
