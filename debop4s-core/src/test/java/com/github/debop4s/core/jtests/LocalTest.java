@@ -46,7 +46,7 @@ public class LocalTest extends JUnitSuite {
         final String key = "Local.Value.Key.Java";
         final String value = UUID.randomUUID().toString();
         Local.put(key, value);
-        assertThat(Local.get(key)).isEqualTo(value);
+        assertThat(Local.get(key).getOrElse(null)).isEqualTo(value);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class LocalTest extends JUnitSuite {
 
         Thread.sleep(5);
 
-        User storedUser = Local.get(key, User.class);
+        User storedUser = Local.get(key).getOrElse(null);
 
         assertThat(storedUser).isNotNull();
         assertThat(storedUser).isEqualTo(user);
@@ -72,11 +72,11 @@ public class LocalTest extends JUnitSuite {
             public User call() throws Exception {
                 return new User("user", "P" + Thread.currentThread().getId(), 1);
             }
-        });
+        }).getOrElse(null);
 
         Thread.sleep(5);
 
-        User storedUser = Local.get(key, User.class);
+        User storedUser = Local.get(key).getOrElse(null);
         assertThat(storedUser).isNotNull();
         assertThat(storedUser).isEqualTo(user);
         assertThat(storedUser.name).isEqualTo(user.name);

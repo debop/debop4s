@@ -22,9 +22,10 @@ object Local {
 
     private def getStorage: mutable.LinkedHashMap[Any, Any] = threadLocal.get()
 
-    def get(key: Any): Any = getStorage.getOrElse(key, null)
-
-    def get[T](key: Any, clazz: Class[T]): T = get(key).asInstanceOf[T]
+    def get[T](key: Any): Option[T] = getStorage.get(key) match {
+        case Some(x) => Some(x.asInstanceOf[T])
+        case _ => None
+    }
 
     def put(key: Any, value: Any) {
         assert(key != null)
@@ -37,20 +38,20 @@ object Local {
         getStorage.clear()
     }
 
-    def getOrCreate[T](key: Any, factory: => T): T = {
+    def getOrCreate[T](key: Any, factory: => T): Option[T] = {
         if (!getStorage.contains(key)) {
             assert(factory != null)
             val result: T = factory
             put(key, result)
         }
-        get(key).asInstanceOf[T]
+        get[T](key)
     }
 
-    def getOrCreate[T](key: Any, factory: Callable[T]): T = synchronized {
+    def getOrCreate[T](key: Any, factory: Callable[T]): Option[T] = synchronized {
         if (!getStorage.contains(key)) {
             assert(factory != null)
             put(key, factory.call())
         }
-        get(key).asInstanceOf[T]
+        get[T](key)
     }
 }

@@ -2,7 +2,6 @@ package com.github.debop4s.core.stests
 
 import com.github.debop4s.core.Local
 import java.util.UUID
-import org.scalatest._
 import org.slf4j.LoggerFactory
 
 /**
@@ -10,9 +9,9 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 7:11
  */
-class LocalTest extends FunSuite with Matchers with BeforeAndAfter {
+class LocalTest extends AbstractCoreTest {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    override lazy val log = LoggerFactory.getLogger(getClass)
 
     before {
         Local.clear()
@@ -22,7 +21,10 @@ class LocalTest extends FunSuite with Matchers with BeforeAndAfter {
         val key = "Local.Value.Key"
         val value = UUID.randomUUID().toString
         Local.put(key, value)
-        assert(value == Local.get(key))
+
+        val stored = Local.get(key).getOrElse(null).asInstanceOf[String]
+        assert(stored != null)
+        assert(stored == value)
     }
 
     test("put/get reference type") {
@@ -31,7 +33,7 @@ class LocalTest extends FunSuite with Matchers with BeforeAndAfter {
         Local.put(key, user)
         Thread.sleep(5)
 
-        val storedUser = Local.get(key).asInstanceOf[User]
+        val storedUser = Local.get[User](key).getOrElse(null)
         assert(storedUser != null)
         assert(storedUser == user)
         assert(user.name == storedUser.name)
@@ -43,10 +45,11 @@ class LocalTest extends FunSuite with Matchers with BeforeAndAfter {
         val key = "Local.GetOrCreate.Key"
         val user = Local.getOrCreate(key, {
             new User("user", "P" + Thread.currentThread().getId, 2)
-        })
+        }).getOrElse(null)
+
         Thread.sleep(5)
 
-        val storedUser = Local.get(key).asInstanceOf[User]
+        val storedUser = Local.get[User](key).getOrElse(null)
         storedUser should not be null
         storedUser should be(user)
         storedUser.name should equal(user.name)

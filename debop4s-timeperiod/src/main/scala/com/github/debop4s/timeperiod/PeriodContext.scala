@@ -14,12 +14,8 @@ object PeriodContext {
     object Current {
 
         def calendar: ITimeCalendar = {
-            var calendar = Local.get(TIME_CALEMDAR_KEY).asInstanceOf[ITimeCalendar]
-            if (calendar == null) {
-                calendar = DefaultTimeCalendar
-                Local.put(TIME_CALEMDAR_KEY, calendar)
-            }
-            calendar
+            val calendar = Local.getOrCreate(TIME_CALEMDAR_KEY, {DefaultTimeCalendar})
+            calendar.getOrElse(DefaultTimeCalendar)
         }
 
         def calendar_=(calendar: ITimeCalendar) {
