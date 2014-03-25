@@ -17,7 +17,7 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer(), new ChillSerializer(), new GridGainSerializer())
+    val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer())
 
     var company: Company = _
 

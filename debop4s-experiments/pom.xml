@@ -13,28 +13,87 @@
 
     <properties>
         <infinispan.version>6.0.1.Final</infinispan.version>
+        <chill.version>0.3.6</chill.version>
     </properties>
 
     <dependencies>
-
-        <!-- GridGain -->
-        <dependency>
-            <groupId>org.gridgain</groupId>
-            <artifactId>gridgain-core</artifactId>
-        </dependency>
 
         <!-- Twitter/Chill -->
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>chill_${scala.main.version}</artifactId>
+            <version>${chill.version}</version>
         </dependency>
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>chill-bijection_${scala.main.version}</artifactId>
+            <version>${chill.version}</version>
         </dependency>
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>chill-java</artifactId>
+            <version>${chill.version}</version>
+        </dependency>
+
+        <!--
+            GridGain : https://github/gridgain/gridgain 에서 tag 6.0.2을 다운받고,
+            버전 수정하고, assembly plugin 제거 빌드해야 합니다.
+        -->
+        <dependency>
+            <groupId>org.gridgain</groupId>
+            <artifactId>gridgain-core</artifactId>
+            <version>6.0.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.gridgain</groupId>
+                    <artifactId>gridgain-commons-deps</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.gridgain</groupId>
+                    <artifactId>gridgain-hadoop2-deps</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.gridgain</groupId>
+                    <artifactId>gridgain-spring-deps</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.gridgain</groupId>
+                    <artifactId>gridgain-aspectj-deps</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.gridgain</groupId>
+                    <artifactId>gridgain-jetty-deps</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.gridgain</groupId>
+                    <artifactId>gridgain-hibernate-deps</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <!-- jboss 에서 jboss.logging 을 사용해서 문제가 된다 -->
+                <exclusion>
+                    <groupId>jboss</groupId>
+                    <artifactId>jboss-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jboss</groupId>
+                    <artifactId>jboss-jmx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jboss</groupId>
+                    <artifactId>jboss-system</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jboss-logging</artifactId>
+                    <groupId>org.jboss.logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Scala Pickling -->

@@ -52,34 +52,7 @@
             <artifactId>snappy-java</artifactId>
         </dependency>
 
-        <!-- GridGain -->
-        <dependency>
-            <groupId>org.gridgain</groupId>
-            <artifactId>gridgain-core</artifactId>
-        </dependency>
-
-        <!-- Scala Pickling -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-pickling_${scala.main.version}</artifactId>
-        </dependency>
-
-        <!-- Twitter/Chill -->
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>chill_${scala.main.version}</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>chill-bijection_${scala.main.version}</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>chill-java</artifactId>
-        </dependency>
-
         <!-- Fast Serialization -->
-        <!-- FST has problem in Tomcat : can't deserialize Float type -->
         <dependency>
             <groupId>de.ruedigermoeller</groupId>
             <artifactId>fst</artifactId>

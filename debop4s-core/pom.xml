@@ -73,26 +73,6 @@
             <artifactId>snappy-java</artifactId>
         </dependency>
 
-        <!-- Twitter/Chill -->
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>chill_${scala.main.version}</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>chill-bijection_${scala.main.version}</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>chill-java</artifactId>
-        </dependency>
-
-        <!-- GridGain -->
-        <dependency>
-            <groupId>org.gridgain</groupId>
-            <artifactId>gridgain-core</artifactId>
-        </dependency>
-
         <!-- Fast Serialization -->
         <dependency>
             <groupId>de.ruedigermoeller</groupId>

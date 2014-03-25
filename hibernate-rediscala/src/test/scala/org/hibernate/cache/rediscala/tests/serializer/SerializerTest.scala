@@ -21,10 +21,6 @@ class SerializerTest extends FunSuite with BeforeAndAfter {
     val snappy = new SnappyRedisSerializer[AnyRef](new BinaryRedisSerializer[AnyRef]())
     val fst = new FstRedisSerializer[AnyRef]()
     val fst_snappy = new SnappyRedisSerializer[AnyRef](new FstRedisSerializer[AnyRef]())
-    val chill = new ChillRedisSerializer[Person]()
-    val chill_snappy = new SnappyRedisSerializer[Person](new ChillRedisSerializer[Person]())
-    val gridgain = new GridGainRedisSerializer[Person]()
-    val gridgain_snappy = new SnappyRedisSerializer[Person](new GridGainRedisSerializer[Person]())
 
     before {
         smallPerson = new Person()
@@ -129,95 +125,6 @@ class SerializerTest extends FunSuite with BeforeAndAfter {
             assert(largePerson == loaded)
         }
     }
-
-    test("Chill Serializer benchmark") {
-        stopwatch("warn-up", 1) {
-            val bytes = chill.serialize(smallPerson)
-            val loaded = chill.deserialize(bytes)
-
-            val bytes2 = chill.serialize(largePerson)
-            val loaded2 = chill.deserialize(bytes2)
-        }
-
-        stopwatch("Chill-small", SMALL_LOOP) {
-            val bytes = chill.serialize(smallPerson)
-            val loaded = chill.deserialize(bytes)
-            assert(smallPerson == loaded)
-        }
-
-        stopwatch("Chill-long", LARGE_LOOP) {
-            val bytes = chill.serialize(largePerson)
-            val loaded = chill.deserialize(bytes)
-            assert(largePerson == loaded)
-        }
-    }
-
-    test("Chill-Snappy Serializer benchmark") {
-        stopwatch("warn-up", 1) {
-            val bytes = chill_snappy.serialize(smallPerson)
-            val loaded = chill_snappy.deserialize(bytes)
-
-            val bytes2 = chill_snappy.serialize(largePerson)
-            val loaded2 = chill_snappy.deserialize(bytes2)
-        }
-
-        stopwatch("Chill-Snappy-small", SMALL_LOOP) {
-            val bytes = chill_snappy.serialize(smallPerson)
-            val loaded = chill_snappy.deserialize(bytes)
-            assert(smallPerson == loaded)
-        }
-
-        stopwatch("Chill-Snappy-long", LARGE_LOOP) {
-            val bytes = chill_snappy.serialize(largePerson)
-            val loaded = chill_snappy.deserialize(bytes)
-            assert(largePerson == loaded)
-        }
-    }
-
-    test("GridGain Serializer benchmark") {
-        stopwatch("warn-up", 1) {
-            val bytes = gridgain.serialize(smallPerson)
-            val loaded = gridgain.deserialize(bytes)
-
-            val bytes2 = gridgain.serialize(largePerson)
-            val loaded2 = gridgain.deserialize(bytes2)
-        }
-
-        stopwatch("GridGain-small", SMALL_LOOP) {
-            val bytes = gridgain.serialize(smallPerson)
-            val loaded = gridgain.deserialize(bytes)
-            assert(smallPerson == loaded)
-        }
-
-        stopwatch("GridGain-long", LARGE_LOOP) {
-            val bytes = gridgain.serialize(largePerson)
-            val loaded = gridgain.deserialize(bytes)
-            assert(largePerson == loaded)
-        }
-    }
-
-    test("GridGain-Snappy Serializer benchmark") {
-        stopwatch("warn-up", 1) {
-            val bytes = gridgain_snappy.serialize(smallPerson)
-            val loaded = gridgain_snappy.deserialize(bytes)
-
-            val bytes2 = gridgain_snappy.serialize(largePerson)
-            val loaded2 = gridgain_snappy.deserialize(bytes2)
-        }
-
-        stopwatch("GridGain-Snappy-small", SMALL_LOOP) {
-            val bytes = gridgain_snappy.serialize(smallPerson)
-            val loaded = gridgain_snappy.deserialize(bytes)
-            assert(smallPerson == loaded)
-        }
-
-        stopwatch("GridGain-Snappy-long", LARGE_LOOP) {
-            val bytes = gridgain_snappy.serialize(largePerson)
-            val loaded = gridgain_snappy.deserialize(bytes)
-            assert(largePerson == loaded)
-        }
-    }
-
 
     private def stopwatch(title: String, count: Int)(block: => Unit) {
         val start = System.currentTimeMillis()
