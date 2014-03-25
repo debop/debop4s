@@ -1,6 +1,7 @@
 package com.github.debop4s.core.io
 
-import com.github.debop4s.core.utils.Arrays
+import com.github.debop4s.core.utils._
+import com.github.debop4s.core.utils.With._
 import java.io._
 
 /**
@@ -21,19 +22,12 @@ class BinarySerializer extends Serializer {
         if (graph == null)
             return Array.emptyByteArray
 
-        var bos = None: Option[ByteArrayOutputStream]
-        var oos = None: Option[ObjectOutputStream]
-        try {
-            bos = Some(new ByteArrayOutputStream())
-            oos = Some(new ObjectOutputStream(bos.get))
-
-            oos.get.writeObject(graph)
-            oos.get.flush()
-
-            bos.get.toByteArray
-        } finally {
-            if (oos.isDefined) oos.get.close()
-            if (bos.isDefined) bos.get.close()
+        val bos = new ByteArrayOutputStream()
+        val oos = new ObjectOutputStream(bos)
+        using(oos) { stream =>
+            stream.writeObject(graph)
+            stream.flush()
+            bos.toByteArray
         }
     }
 
@@ -47,15 +41,12 @@ class BinarySerializer extends Serializer {
         if (Arrays.isEmpty(bytes))
             return null.asInstanceOf[T]
 
-        var bis = None: Option[ByteArrayInputStream]
-
-        try {
-            bis = Some(new ByteArrayInputStream(bytes))
-            val ois = new ObjectInputStream(bis.get)
-
-            ois.readObject().asInstanceOf[T]
-        } finally {
-            if (bis.isDefined) bis.get.close()
+        val bis = new ByteArrayInputStream(bytes)
+        using(bis) { stream =>
+            val ois = new ObjectInputStream(stream)
+            using(ois) { input =>
+                input.readObject().asInstanceOf[T]
+            }
         }
     }
 }

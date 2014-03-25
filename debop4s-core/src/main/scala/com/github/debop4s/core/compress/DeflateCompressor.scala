@@ -2,6 +2,7 @@ package com.github.debop4s.core.compress
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.util.zip.{InflaterInputStream, DeflaterOutputStream}
+import com.github.debop4s.core.utils.With
 
 /**
  * DeflateCompressor
@@ -11,43 +12,30 @@ import java.util.zip.{InflaterInputStream, DeflaterOutputStream}
 class DeflateCompressor extends Compressor {
 
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
-        val bos = new ByteArrayOutputStream()
-
-        try {
-            val deflater = new DeflaterOutputStream(bos)
-            deflater.write(plainBytes)
-            deflater.close()
-
+        With.using(new ByteArrayOutputStream()) { bos =>
+            With.using(new DeflaterOutputStream(bos)) { deflater =>
+                deflater.write(plainBytes)
+            }
             bos.toByteArray
-        } finally {
-            bos.close()
         }
     }
 
     override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
 
-        val bos = new ByteArrayOutputStream()
-        var bis = None: Option[ByteArrayInputStream]
-        var inflater = None: Option[InflaterInputStream]
+        With.using(new ByteArrayOutputStream()) { bos =>
+            With.using(new ByteArrayInputStream(compressedBytes)) { bis =>
+                With.using(new InflaterInputStream(bis)) { inflater =>
+                    val buff = new Array[Byte](BUFFER_SIZE)
+                    var n = 0
 
-        try {
-            bis = Some(new ByteArrayInputStream(compressedBytes))
-            inflater = Some(new InflaterInputStream(bis.get))
+                    do {
+                        n = inflater.read(buff, 0, BUFFER_SIZE)
+                        if (n > 0) bos.write(buff, 0, n)
+                    } while (n > 0)
 
-            val buff = new Array[Byte](BUFFER_SIZE)
-            var n = 0
-
-            do {
-                n = inflater.get.read(buff, 0, BUFFER_SIZE)
-                if (n > 0) bos.write(buff, 0, n)
-            } while (n > 0)
-
-            bos.toByteArray
-        }
-        finally {
-            if (inflater.isDefined) inflater.get.close()
-            if (bis.isDefined) bis.get.close()
-            bos.close()
+                    bos.toByteArray
+                }
+            }
         }
     }
 }
