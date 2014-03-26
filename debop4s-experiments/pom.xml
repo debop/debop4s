@@ -14,9 +14,77 @@
     <properties>
         <infinispan.version>6.0.1.Final</infinispan.version>
         <chill.version>0.3.6</chill.version>
+        <scalikejdbc.version>[1.7, )</scalikejdbc.version>
+        <activate.framework.version>[1.4.4, )</activate.framework.version>
     </properties>
 
     <dependencies>
+
+        <!-- activate framework -->
+        <dependency>
+            <groupId>net.fwbrasil</groupId>
+            <artifactId>activate-core_${scala.main.version}</artifactId>
+            <version>${activate.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.fwbrasil</groupId>
+            <artifactId>activate-jdbc_${scala.main.version}</artifactId>
+            <version>${activate.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.fwbrasil</groupId>
+            <artifactId>activate-jdbc-async_${scala.main.version}</artifactId>
+            <version>${activate.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.fwbrasil</groupId>
+            <artifactId>activate-mongo_${scala.main.version}</artifactId>
+            <version>${activate.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.fwbrasil</groupId>
+            <artifactId>activate-mongo-async_${scala.main.version}</artifactId>
+            <version>${activate.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.fwbrasil</groupId>
+            <artifactId>activate-cassandra-async_${scala.main.version}</artifactId>
+            <version>${activate.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.fwbrasil</groupId>
+            <artifactId>activate-graph_${scala.main.version}</artifactId>
+            <version>${activate.framework.version}</version>
+        </dependency>
+
+
+        <!-- ScalikeJDBC : http://scalikejdbc.org -->
+        <dependency>
+            <groupId>org.scalikejdbc</groupId>
+            <artifactId>scalikejdbc_${scala.main.version}</artifactId>
+            <version>${scalikejdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalikejdbc</groupId>
+            <artifactId>scalikejdbc-config_${scala.main.version}</artifactId>
+            <version>${scalikejdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalikejdbc</groupId>
+            <artifactId>scalikejdbc-interpolation_${scala.main.version}</artifactId>
+            <version>${scalikejdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalikejdbc</groupId>
+            <artifactId>scalikejdbc-mapper-generator-core_${scala.main.version}</artifactId>
+            <version>${scalikejdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalikejdbc</groupId>
+            <artifactId>scalikejdbc-test_${scala.main.version}</artifactId>
+            <version>${scalikejdbc.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Twitter/Chill -->
         <dependency>
@@ -191,6 +259,12 @@
             <artifactId>bonecp</artifactId>
         </dependency>
 
+        <!-- HikariCP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
         <!-- https://github.com/scalikejdbc/scalikejdbc-async -->
         <dependency>
             <groupId>org.scalikejdbc</groupId>
@@ -203,7 +277,7 @@
         -->
         <dependency>
             <groupId>com.github.mauricio</groupId>
-            <artifactId>mysql-async_2.10</artifactId>
+            <artifactId>mysql-async_${scala.main.version}</artifactId>
             <version>0.2.12</version>
         </dependency>
         <!--
@@ -220,6 +294,21 @@
             <artifactId>netty-all</artifactId>
             <version>4.0.17.Final</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>[1.3, )</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>[5.1, )</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 
