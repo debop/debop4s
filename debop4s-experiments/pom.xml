@@ -20,6 +20,13 @@
 
     <dependencies>
 
+        <!-- Scala Async -->
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-async_2.10</artifactId>
+            <version>[0.9.0-M4, )</version>
+        </dependency>
+
         <!-- activate framework -->
         <dependency>
             <groupId>net.fwbrasil</groupId>
