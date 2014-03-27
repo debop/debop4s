@@ -14,8 +14,8 @@
     <properties>
         <infinispan.version>6.0.1.Final</infinispan.version>
         <chill.version>0.3.6</chill.version>
-        <scalikejdbc.version>[1.7, )</scalikejdbc.version>
-        <activate.framework.version>[1.4.4, )</activate.framework.version>
+        <scalikejdbc.version>1.7.4</scalikejdbc.version>
+        <activate.framework.version>1.5-M4</activate.framework.version>
     </properties>
 
     <dependencies>
@@ -305,14 +305,12 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>[1.3, )</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>[5.1, )</version>
             <scope>test</scope>
         </dependency>
 
