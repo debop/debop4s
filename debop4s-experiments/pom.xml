@@ -114,6 +114,7 @@
             GridGain : https://github/gridgain/gridgain 에서 tag 6.0.2을 다운받고,
             버전 수정하고, assembly plugin 제거 빌드해야 합니다.
         -->
+        <!--
         <dependency>
             <groupId>org.gridgain</groupId>
             <artifactId>gridgain-core</artifactId>
@@ -151,7 +152,7 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
-                <!-- jboss 에서 jboss.logging 을 사용해서 문제가 된다 -->
+
                 <exclusion>
                     <groupId>jboss</groupId>
                     <artifactId>jboss-common</artifactId>
@@ -170,6 +171,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        -->
 
         <!-- Scala Pickling -->
         <dependency>
