@@ -376,21 +376,21 @@
             <dependency>
                 <groupId>org.modelmapper</groupId>
                 <artifactId>modelmapper</artifactId>
-                <version>[0.6, )</version>
+                <version>0.6.3</version>
             </dependency>
 
             <!-- 암호화 -->
             <dependency>
                 <groupId>org.jasypt</groupId>
                 <artifactId>jasypt</artifactId>
-                <version>[1.9, )</version>
+                <version>1.9.2</version>
             </dependency>
 
             <!-- joda-time -->
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>[2.3, )</version>
+                <version>2.3</version>
             </dependency>
             <dependency>
                 <groupId>org.joda</groupId>
