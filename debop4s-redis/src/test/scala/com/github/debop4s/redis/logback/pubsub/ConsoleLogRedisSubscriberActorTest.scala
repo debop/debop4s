@@ -34,7 +34,7 @@ class ConsoleLogRedisSubscriberActorTest extends AbstractRedisTest {
     test("logging message subscribe") {
 
         Parallels.runAction(10) {
-            (0 until 100).foreach(i => log.debug(s"로그를 씁니다. - $i"))
+            (0 until 100).foreach(i => log.trace(s"로그를 씁니다. - $i"))
         }
         Thread.sleep(1000)
     }

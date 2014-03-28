@@ -14,7 +14,7 @@ class RedisAppenderTest extends AbstractRedisTest {
 
     test("logging message") {
         Parallels.runAction(10) {
-            (0 until 100).foreach(x => log.debug(s"appender test [$x]"))
+            (0 until 100).foreach(x => log.trace(s"appender test [$x]"))
         }
     }
 
