@@ -33,7 +33,7 @@ class GlobalizationTest extends FunSuite with Matchers {
     test("load localized messages") {
         require(messageSource != null, "messageSource should not be null")
 
-        val intro = messageSource.getMessage("intro", null, Locale.getDefault)
+        val intro = messageSource.getMessage("intro", null, Locale.KOREA)
         intro shouldEqual "안녕하세요."
         log.debug(s"intro=[$intro]")
 
@@ -47,7 +47,7 @@ class GlobalizationTest extends FunSuite with Matchers {
     }
 
     test("load resource bundle") {
-        val bundle = ResourceBundle.getBundle("messages")
+        val bundle = ResourceBundle.getBundle("messages", Locale.KOREA)
         val deftext = bundle.getString("intro")
         assert(deftext === "안녕하세요.")
 
