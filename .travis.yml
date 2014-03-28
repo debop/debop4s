@@ -1,5 +1,5 @@
 language: scala
-script: mvn clean install -DskipTests=true
+script: mvn clean install
 
 scala:
   - "2.10.4"

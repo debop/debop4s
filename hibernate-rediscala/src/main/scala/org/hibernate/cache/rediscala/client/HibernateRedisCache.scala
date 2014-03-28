@@ -12,7 +12,7 @@ import scala.annotation.varargs
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
-import scala.util.Try
+import scala.util.{Success, Try}
 
 
 /**
@@ -105,6 +105,15 @@ class HibernateRedisCache(val redis: RedisClient) {
         }
     }
 
+    /**
+    * 캐시 항목을 저장합니다.
+    * @param region 영역
+    * @param key cache key
+    * @param value cache value
+    * @param expiry expiry
+    * @param unit time unit
+    * @return if saved return true, else false
+    */
     @inline
     def set(region: String, key: String, value: Any, expiry: Long = 0, unit: TimeUnit = TimeUnit.SECONDS): Future[Boolean] = {
         val p = Promise[Boolean]()
@@ -116,7 +125,7 @@ class HibernateRedisCache(val redis: RedisClient) {
         f onComplete { (v: Try[ByteString]) =>
             val set = redis.hset(region, key, v.get)
             set onComplete { (ret: Try[Boolean]) =>
-                p complete ret
+                p tryComplete ret
                 if (ret.isSuccess) {
                     val expireInSeconds = unit.toSeconds(expiry)
                     if (expireInSeconds > 0) {
@@ -129,8 +138,12 @@ class HibernateRedisCache(val redis: RedisClient) {
         p.future
     }
 
+    /**
+     * 지정한 영역의 캐시 항목 중 expire 된 것들을 모두 삭제한다.
+     * @param region region name
+     */
     @inline
-    def expire(region: String): Future[Any] = future {
+    def expire(region: String): Future[Unit] = future {
         val regionExpire = regionExpireKey(region)
         val score = System.currentTimeMillis()
 
@@ -145,10 +158,15 @@ class HibernateRedisCache(val redis: RedisClient) {
         }
     }
 
+    /**
+     * 캐시 항목을 삭제합니다.
+     * @param region region name
+     * @param key cache key to delete
+     */
     def delete(region: String, key: String): Future[Long] = {
-        val deleted = redis.hdel(region, key)
-        redis.zrem(regionExpireKey(region), key)
-        deleted
+        redis.hdel(region, key) andThen {
+            case Success(x) => redis.zrem(regionExpireKey(region), key)
+        }
     }
 
     @varargs
@@ -166,26 +184,37 @@ class HibernateRedisCache(val redis: RedisClient) {
         }
     }
 
-    def multiDelete(region: String, keys: Iterable[String]) {
+    def multiDelete(region: String, keys: Iterable[String]): Future[Boolean] = {
         multiDelete(region, keys.toSeq: _*)
     }
 
-    def deleteRegion(region: String) = future {
-        redis.del(region)
-        redis.del(regionExpireKey(region))
+    /**
+     * 지정한 영역을 삭제합니다.
+     * @param region region name
+     */
+    def deleteRegion(region: String): Future[Long] = {
+        redis.del(region) andThen {
+            case Success(x) => redis.del(regionExpireKey(region))
+        }
     }
 
-    def flushDb() = future {
+    def flushDb(): Future[Boolean] = {
         log.info(s"Redis DB 전체를 flush 합니다...")
         redis.flushdb()
     }
 
+    /**
+     * 지정한 block 을 transaction 을 이용하여 수행합니다.
+     */
     def withTransaction(block: TransactionBuilder => Unit): Future[MultiBulk] = {
         val tx = redis.transaction()
         block(tx)
         tx.exec()
     }
 
+    /**
+     * 캐시 영역별로 expiration 정보를 가지도록 하는 redis key 값입니다.
+     */
     private def regionExpireKey(region: String) = region + ":expire"
 }
 
@@ -194,7 +223,7 @@ class HibernateRedisCache(val redis: RedisClient) {
  */
 object HibernateRedisCache {
 
-    implicit val akkaSystem = akka.actor.ActorSystem()
+    implicit val akkaSystem = akka.actor.ActorSystem("hibernate-rediscala")
 
     // Cache expiration 기본 값 (0 이면 expire 하지 않는다)
     val DEFAULT_EXPIRY_IN_SECONDS = 0
