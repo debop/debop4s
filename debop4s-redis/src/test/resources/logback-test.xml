@@ -27,13 +27,12 @@
     </appender>
 
     <logger name="com.github.debop4s.redis" level="TRACE"/>
-    <logger name="org.hibernate.cache.redis" level="TRACE"/>
 
     <logger name="org.hibernate.SQL" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
 
-    <root level="DEBUG">
-        <appender-ref ref="console"/>
+    <root level="INFO">
+    <appender-ref ref="console"/>
         <!--<appender-ref ref="redis"/>-->
         <!--<appender-ref ref="redis-publisher"/>-->
     </root>
