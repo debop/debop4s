@@ -47,7 +47,7 @@ class DateAdd {
             else
                 calculateEnd(start, offset, SeekDirection.Forward, seekBoundary)
 
-        log.debug(s"Add. start=[$start] + offset[$offset]의 결과 end=[$end], remaining=[$remaining]")
+        log.trace(s"Add. start=[$start] + offset[$offset]의 결과 end=[$end], remaining=[$remaining]")
         end
     }
 
@@ -72,7 +72,7 @@ class DateAdd {
             else
                 calculateEnd(start, offset, SeekDirection.Backward, seekBoundary)
 
-        log.debug(s"Subtract. start=[$start] + offset[$offset]의 결과 end=[$end], remaining=[$remaining]")
+        log.trace(s"Subtract. start=[$start] + offset[$offset]의 결과 end=[$end], remaining=[$remaining]")
         end
     }
 

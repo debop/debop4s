@@ -18,7 +18,7 @@ import scala.concurrent.duration._
  */
 class FileUtilsTest extends AssertionsForJUnit {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val TEST_TEXT: String = "동해물과 백두산이 마르고 닳도록, 하느님이 보우하사 우리나라 만세!!! Hello World. 안녕 세계여\n"
 
@@ -69,7 +69,7 @@ class FileUtilsTest extends AssertionsForJUnit {
             FileUtils.write(path, lines, Charsets.UTF_8, StandardOpenOption.WRITE)
 
             val readLines = FileUtils.readAllLines(path)
-            log.debug(s"readLines=${readLines.size}, lines=${lines.size}")
+            log.trace(s"readLines=${readLines.size}, lines=${lines.size}")
             assert(readLines.size == lines.size)
         }
         finally {

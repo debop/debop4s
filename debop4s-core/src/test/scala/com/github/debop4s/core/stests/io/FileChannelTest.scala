@@ -19,7 +19,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val TEST_TEXT = "동해물과 백두산이 마르고 닳도록, 하느님이 보우하사 우리나라 만세!!! Hello World. 안녕 세계여 \n"
 
@@ -27,7 +27,7 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
         val path = Paths.get("channel.txt")
         val writer = Files.newBufferedWriter(path, Charsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
         try {
-            (0 until 100).foreach(_ => writer.write(TEST_TEXT))
+            (0 until 100).foreach { x => writer.write(TEST_TEXT)}
             writer.flush()
         } finally {
             writer.close()
@@ -45,11 +45,11 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
             val buffer: ByteBuffer = ByteBuffer.wrap(Strings.replicate(TEST_TEXT, 100).getBytes(Charsets.UTF_8))
             val result = fc.write(buffer, 0)
             while (!result.isDone) {
-                System.out.println("Do something else while writing...")
+                log.trace("Do something else while writing...")
                 Thread.sleep(1)
             }
-            System.out.println("Write done: " + result.isDone)
-            System.out.println("Bytes write: " + result.get)
+            log.trace("Write done: " + result.isDone)
+            log.trace("Bytes write: " + result.get)
         }
         finally {
             assert(fc != null)
@@ -62,11 +62,12 @@ class FileChannelTest extends FunSuite with Matchers with BeforeAndAfter {
             val buffer: ByteBuffer = ByteBuffer.allocate(fc.size.asInstanceOf[Int])
             val result = fc.read(buffer, 0)
             while (!result.isDone) {
-                System.out.println("Do something else while reading...")
+                log.trace("Do something else while reading...")
                 Thread.sleep(1)
             }
-            System.out.println("Read done: " + result.isDone)
-            System.out.println("Bytes read: " + result.get)
+            log.trace("Read done: " + result.isDone)
+            log.trace("Bytes read: " + result.get)
+
             buffer.flip
             val bytes: Array[Byte] = buffer.array
             val lines = readAllLines(bytes, Charsets.UTF_8)

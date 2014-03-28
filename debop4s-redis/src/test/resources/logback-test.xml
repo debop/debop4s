@@ -30,6 +30,7 @@
 
     <logger name="org.hibernate.SQL" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
+    <logger name="com.zaxxer.hikari.HikariDataSource" level="ERROR"/>
 
     <root level="INFO">
     <appender-ref ref="console"/>
