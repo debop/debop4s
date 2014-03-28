@@ -20,22 +20,22 @@ class JasyptTest extends AbstractCoreTest {
 
     test("load algorithms") {
         Security.getProviders.foreach { provider =>
-            log.debug(s"provider=${provider.getName }")
+            log.trace(s"provider=${provider.getName}")
             provider.getServices.foreach { service =>
-                log.debug(s"    Algorithm=${service.getAlgorithm }")
+                log.trace(s"    Algorithm=${service.getAlgorithm}")
             }
         }
     }
 
     test("load algorithm of message digest") {
         Security.getAlgorithms("MessageDigest").foreach { algorithm =>
-            log.debug(s"MessageDigest algorithm=$algorithm")
+            log.trace(s"MessageDigest algorithm=$algorithm")
         }
     }
 
     test("load ciphers") {
         Security.getAlgorithms("Cipher").foreach { algorithm =>
-            log.debug(s"Symmetric algorithm=$algorithm")
+            log.trace(s"Symmetric algorithm=$algorithm")
         }
     }
 
@@ -79,7 +79,7 @@ class JasyptTest extends AbstractCoreTest {
     test("basic test encryptor") {
         Security.getAlgorithms("Cipher").foreach { algorithm =>
 
-            log.debug(s"Algorithm=$algorithm")
+            log.trace(s"Algorithm=$algorithm")
 
             val encryptor = new BasicTextEncryptor()
             encryptor.setPassword("debop")
@@ -95,7 +95,7 @@ class JasyptTest extends AbstractCoreTest {
 
     test("standard PBE String encryptor") {
         PBEAlgorithms.foreach { algorithm =>
-            log.debug(s"StandardPBEStringEncryptor algorith=$algorithm")
+            log.trace(s"StandardPBEStringEncryptor algorith=$algorithm")
             try {
                 val encryptor = new StandardPBEStringEncryptor()
                 encryptor.setAlgorithm(algorithm)
@@ -113,7 +113,7 @@ class JasyptTest extends AbstractCoreTest {
 
     test("standard PBE Byte encryptor") {
         PBEAlgorithms.foreach { algorithm =>
-            log.debug(s"StandardPBEByteEncryptor algorith=$algorithm")
+            log.trace(s"StandardPBEByteEncryptor algorith=$algorithm")
             try {
                 val encryptor = new StandardPBEByteEncryptor()
                 encryptor.setAlgorithm(algorithm)

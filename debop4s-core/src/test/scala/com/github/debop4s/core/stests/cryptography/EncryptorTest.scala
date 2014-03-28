@@ -32,7 +32,7 @@ class EncryptorTest extends AbstractCoreTest {
         val byteEncryptors = ctx.getBeansOfType(classOf[SymmetricEncryptor]).values()
 
         byteEncryptors.par.foreach { encryptor =>
-            log.debug(s"encryptor=$encryptor")
+            log.trace(s"encryptor=$encryptor")
 
             encryptor.setPassword("debop")
 
