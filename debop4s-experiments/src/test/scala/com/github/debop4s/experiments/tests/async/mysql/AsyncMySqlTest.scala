@@ -4,13 +4,15 @@ import com.github.debop4s.experiments.tests.AbstractExperimentTest
 import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.mysql.MySQLConnection
 import com.github.mauricio.async.db.util.ExecutorServiceUtils.CachedExecutionContext
+import org.scalatest.Ignore
 import scala.concurrent._
 import scala.concurrent.duration._
 
 /**
- * BasicExample
+ * Async JDBC Driver Test
  * Created by debop on 2014. 3. 2.
  */
+@Ignore
 class AsyncMySqlTest extends AbstractExperimentTest {
 
     test("basic example") {
