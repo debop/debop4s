@@ -23,7 +23,6 @@ class DataSourcesTest extends FunSuite with Matchers {
         conn.isClosed should equal(true)
     }
 
-    @org.scalatest.Ignore
     test("HikariCP create multiple datasources by promgramatic") {
         val url = "jdbc:mysql://localhost:3306/test"
         val props = HashMap("characterEncoding" -> "UTF-8", "useUnicode" -> "true")
