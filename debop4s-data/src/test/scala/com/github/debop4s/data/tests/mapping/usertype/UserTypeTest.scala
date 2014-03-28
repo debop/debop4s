@@ -47,7 +47,7 @@ class UserTypeTest extends AbstractJpaTest {
         assert(loaded.start == entity.start)
         assert(loaded.end == entity.end)
 
-        // NOTE: MySQL 은 milliseconds 를 저장하지 않고, H2 는 Milliseconds 까지 저장합니다.
+        // NOTE: MySQL은 milliseconds 를 저장하지 않고, H2 는 Milliseconds 까지 저장합니다.
         assert(Times.trimToMillis(loaded.startTZ) == Times.trimToMillis(entity.startTZ))
         assert(Times.trimToMillis(loaded.endTZ) == Times.trimToMillis(entity.endTZ))
 

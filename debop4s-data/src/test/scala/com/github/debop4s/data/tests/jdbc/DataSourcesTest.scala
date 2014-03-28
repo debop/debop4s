@@ -3,13 +3,14 @@ package com.github.debop4s.data.tests.jdbc
 import com.github.debop4s.data._
 import com.github.debop4s.data.jdbc.DataSources
 import java.util.Properties
-import org.scalatest.{Matchers, FunSuite}
+import org.scalatest.{Ignore, Matchers, FunSuite}
 import scala.collection.immutable.HashMap
 
 /**
  * DataSourcesTest
  * Created by debop on 2014. 3. 4.
  */
+@Ignore
 class DataSourcesTest extends FunSuite with Matchers {
 
     test("HikariCP create datasource by promgramatic") {
@@ -22,6 +23,7 @@ class DataSourcesTest extends FunSuite with Matchers {
         conn.isClosed should equal(true)
     }
 
+    @org.scalatest.Ignore
     test("HikariCP create multiple datasources by promgramatic") {
         val url = "jdbc:mysql://localhost:3306/test"
         val props = HashMap("characterEncoding" -> "UTF-8", "useUnicode" -> "true")
@@ -41,10 +43,27 @@ class DataSourcesTest extends FunSuite with Matchers {
         }
     }
 
-    test("HikariCP create datasource from properties file") {
+    test("HikariCP create datasource from properties file with MySQL") {
 
         val props = new Properties()
-        props.load(getClass.getClassLoader.getResourceAsStream("hikari.properties"))
+        props.load(getClass.getClassLoader.getResourceAsStream("hikari-mysql.properties"))
+        val ds = DataSources.getHirakiDataSource(props)
+
+        ds should not be null
+
+        (0 until 100).par.foreach { x =>
+            val conn = ds.getConnection
+            val ps = conn.prepareStatement("SELECT 1")
+            ps.execute() should equal(true)
+            Thread.sleep(10)
+            conn.close()
+        }
+    }
+
+    test("HikariCP create datasource from properties file with H2") {
+
+        val props = new Properties()
+        props.load(getClass.getClassLoader.getResourceAsStream("hikari-h2.properties"))
         val ds = DataSources.getHirakiDataSource(props)
 
         ds should not be null

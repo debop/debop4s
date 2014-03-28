@@ -1,6 +1,5 @@
 package com.github.debop4s.core.parallels
 
-import com.github.debop4s.core._
 import java.util.concurrent.TimeUnit
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -13,7 +12,7 @@ import scala.concurrent.duration._
  */
 object Promises {
 
-    // implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
+    implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
     def exec[@specialized(Int, Long) V](block: => V): Future[V] = future {
         require(block != null)
@@ -43,5 +42,16 @@ object Promises {
     def awaitAll(awaitables: Iterable[Awaitable[_]],
                  atMost: Duration = FiniteDuration(15, TimeUnit.MINUTES)): Iterable[Any] = {
         awaitables.map(awaitable => Await.result(awaitable, atMost))
+    }
+
+    def resultAll[A](in: Future[A]*): Future[Seq[A]] = {
+
+        val p = Promise[Seq[A]]()
+
+        in.foreach(_.onFailure { case e => p tryFailure e})
+
+        Future.sequence(in).foreach(p.trySuccess)
+
+        p.future
     }
 }
