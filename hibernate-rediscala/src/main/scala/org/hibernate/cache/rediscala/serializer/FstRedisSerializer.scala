@@ -48,11 +48,10 @@ class FstRedisSerializer[T] extends RedisSerializer[T] {
 
         try {
             bis = Some(new ByteArrayInputStream(bytes))
-            Try(FstRedisSerializer.conf.getObjectInput(bis.get)) match {
 
+            Try(FstRedisSerializer.conf.getObjectInput(bis.get)) match {
                 case Success(ois) =>
-                    val instance = ois.readObject.asInstanceOf[T]
-                    instance
+                    ois.readObject.asInstanceOf[T]
 
                 case Failure(e) =>
                     log.error(s"Fail to deserialize data.", e)
@@ -64,6 +63,8 @@ class FstRedisSerializer[T] extends RedisSerializer[T] {
     }
 }
 
-object FstRedisSerializer {
+private[rediscala] object FstRedisSerializer {
     lazy val conf = FSTConfiguration.createDefaultConfiguration()
+
+    def apply[T](): FstRedisSerializer[T] = new FstRedisSerializer[T]()
 }

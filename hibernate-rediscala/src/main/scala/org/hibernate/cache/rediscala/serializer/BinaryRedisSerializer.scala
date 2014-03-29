@@ -49,3 +49,8 @@ private[rediscala] class BinaryRedisSerializer[T] extends RedisSerializer[T] {
         }
     }
 }
+
+private[rediscala] object BinaryRedisSerializer {
+
+    def apply[T](): BinaryRedisSerializer[T] = new BinaryRedisSerializer[T]()
+}

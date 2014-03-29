@@ -13,6 +13,19 @@
 
     <dependencies>
 
+        <!-- ScalaUtils -->
+        <dependency>
+            <groupId>org.scalautils</groupId>
+            <artifactId>scalautils_${scala.main.version}</artifactId>
+        </dependency>
+
+        <!-- Scala ARM -->
+        <dependency>
+            <groupId>com.jsuereth</groupId>
+            <artifactId>scala-arm_${scala.main.version}</artifactId>
+        </dependency>
+
+
         <!-- Apache Commons -->
         <dependency>
             <groupId>commons-codec</groupId>

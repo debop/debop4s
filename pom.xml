@@ -59,19 +59,6 @@
             <artifactId>scala-actors</artifactId>
         </dependency>
 
-        <!-- Scala ARM -->
-        <dependency>
-            <groupId>com.jsuereth</groupId>
-            <artifactId>scala-arm_${scala.main.version}</artifactId>
-        </dependency>
-
-        <!-- RxScala -->
-        <dependency>
-            <groupId>com.netflix.rxjava</groupId>
-            <artifactId>rxjava-scala</artifactId>
-        </dependency>
-
-
         <!-- ScalaTest -->
         <dependency>
             <groupId>org.scalatest</groupId>
@@ -154,6 +141,12 @@
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-actors</artifactId>
                 <version>${scala.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.scalautils</groupId>
+                <artifactId>scalautils_${scala.main.version}</artifactId>
+                <version>2.1.2</version>
             </dependency>
 
             <!-- Scala ARM -->
