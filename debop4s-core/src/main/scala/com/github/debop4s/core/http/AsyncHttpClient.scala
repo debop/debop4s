@@ -1,6 +1,6 @@
 package com.github.debop4s.core.http
 
-import com.github.debop4s.core.parallels.Parallels
+import com.github.debop4s.core.utils.With
 import java.lang.String
 import java.net.URI
 import java.security.KeyStore
@@ -27,26 +27,25 @@ class AsyncHttpClient {
 
     private lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
 
+    val DEFAULT_TIMEOUT = 90
 
     def execute(request: HttpUriRequest): Try[HttpResponse] = Try {
-        val client = HttpAsyncClients.createDefault()
-        try {
+        assert(request != null)
+
+        With.using(HttpAsyncClients.createDefault()) { client =>
             client.start()
             val future = client.execute(request, null)
-            future.get(15, TimeUnit.SECONDS)
-        } finally {
-            client.close()
+            future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
         }
     }
 
     def executeSSL(request: HttpUriRequest): Try[HttpResponse] = Try {
-        val client = createHttpAsyncClient(request.getURI)
-        try {
+        assert(request != null)
+
+        With.using(createHttpAsyncClient(request.getURI)) { client =>
             client.start()
             val future = client.execute(request, null)
-            future.get(15, TimeUnit.SECONDS)
-        } finally {
-            client.close()
+            future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
         }
     }
 
@@ -55,78 +54,93 @@ class AsyncHttpClient {
     def getSSL(httpget: HttpGet): Try[HttpResponse] = executeSSL(httpget)
 
     @varargs
-    def getAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(httpgets)(request => get(request))
+    def getAsParallel(httpgets: HttpGet*): Seq[Try[HttpResponse]] = {
+        httpgets.par.map(execute).seq
+    }
 
     @varargs
-    def getSSLAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(httpgets)(request => getSSL(request))
+    def getSSLAsParallel(httpgets: HttpGet*): Seq[Try[HttpResponse]] = {
+        httpgets.par.map(executeSSL).seq
+    }
 
     def post(httppost: HttpPost): Try[HttpResponse] = execute(httppost)
 
     def postSSL(httppost: HttpPost): Try[HttpResponse] = executeSSL(httppost)
 
     @varargs
-    def postAsParallel(httpposts: HttpPost*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(httpposts)(request => execute(request))
+    def postAsParallel(httpposts: HttpPost*): Seq[Try[HttpResponse]] = {
+        httpposts.par.map(execute).seq
+    }
 
     @varargs
-    def postSSLAsParallel(httpposts: HttpPost*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(httpposts)(request => executeSSL(request))
+    def postSSLAsParallel(httpposts: HttpPost*): Seq[Try[HttpResponse]] = {
+        httpposts.par.map(executeSSL).seq
+    }
 
     def delete(httpdelete: HttpDelete): Try[HttpResponse] = execute(httpdelete)
 
     def deleteSSL(httpdelete: HttpDelete): Try[HttpResponse] = executeSSL(httpdelete)
 
     @varargs
-    def deleteAsParallel(httpdeletes: HttpDelete*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(httpdeletes)(request => execute(request))
+    def deleteAsParallel(httpdeletes: HttpDelete*): Seq[Try[HttpResponse]] = {
+        httpdeletes.par.map(execute).seq
+    }
 
     @varargs
-    def deleteSSLAsParallel(httpdeletes: HttpDelete*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(httpdeletes)(request => executeSSL(request))
+    def deleteSSLAsParallel(httpdeletes: HttpDelete*): Seq[Try[HttpResponse]] = {
+        httpdeletes.par.map(executeSSL).seq
+    }
 
     def put(httpput: HttpPut): Try[HttpResponse] = execute(httpput)
 
     def putSSL(httpput: HttpPut): Try[HttpResponse] = executeSSL(httpput)
 
     @varargs
-    def putAsParallel(httpputs: HttpPut*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(httpputs)(request => execute(request))
+    def putAsParallel(httpputs: HttpPut*): Seq[Try[HttpResponse]] = {
+        httpputs.par.map(execute).seq
+    }
 
     @varargs
-    def putSSLAsParallel(httpputs: HttpPut*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(httpputs)(request => executeSSL(request))
+    def putSSLAsParallel(httpputs: HttpPut*): Seq[Try[HttpResponse]] = {
+        httpputs.par.map(executeSSL).seq
+    }
 
     def patch(patch: HttpPatch): Try[HttpResponse] = execute(patch)
 
     def patchSSL(patch: HttpPatch): Try[HttpResponse] = executeSSL(patch)
 
     @varargs
-    def patchAsParallel(patchs: HttpPatch*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(patchs)(request => execute(request))
+    def patchAsParallel(patches: HttpPatch*): Seq[Try[HttpResponse]] = {
+        patches.par.map(execute).seq
+    }
 
-    def patchSSLAsParallel(patchs: HttpPatch*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(patchs)(request => executeSSL(request))
+    def patchSSLAsParallel(patches: HttpPatch*): Seq[Try[HttpResponse]] = {
+        patches.par.map(executeSSL).seq
+    }
 
     def head(head: HttpHead): Try[HttpResponse] = execute(head)
 
     def headSSL(head: HttpHead): Try[HttpResponse] = executeSSL(head)
 
     @varargs
-    def headAsParallel(heads: HttpHead*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(heads)(request => execute(request))
+    def headAsParallel(heads: HttpHead*): Seq[Try[HttpResponse]] = {
+        heads.par.map(execute).seq
+    }
 
     @varargs
-    def headSSLAsParallel(heads: HttpHead*): Iterable[Try[HttpResponse]] =
-        Parallels.callEach(heads)(request => executeSSL(request))
+    def headSSLAsParallel(heads: HttpHead*): Seq[Try[HttpResponse]] = {
+        heads.par.map(executeSSL).seq
+    }
 
-    private def createConnectionIOReactor(): ConnectingIOReactor =
+    private def createConnectionIOReactor(): ConnectingIOReactor = {
         new DefaultConnectingIOReactor()
+    }
 
     private def shutdownConnectionManager(connectionManager: PoolingNHttpClientConnectionManager) {
         if (connectionManager != null) {
-            connectionManager.shutdown()
+            Try {
+                connectionManager.shutdown()
+            }
         }
     }
 

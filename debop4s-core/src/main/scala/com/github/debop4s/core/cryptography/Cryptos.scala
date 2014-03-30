@@ -13,6 +13,10 @@ object Cryptos {
     private lazy val log = LoggerFactory.getLogger(getClass)
 
     val RANDOM_NUMBER_GENERATION = "SHA1PRNG"
+
+    /**
+     * 난수 발생기
+     */
     lazy val random: SecureRandom = SecureRandom.getInstance(RANDOM_NUMBER_GENERATION)
 
     /**

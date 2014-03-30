@@ -1,7 +1,7 @@
 package com.github.debop4s.core.http
 
 import com.github.debop4s.core.json.JacksonSerializer
-import com.github.debop4s.core.utils.Charsets
+import com.github.debop4s.core.utils.{With, Charsets}
 import java.net.URI
 import java.nio.charset.Charset
 import org.apache.http._
@@ -54,17 +54,16 @@ class HttpClient extends AutoCloseable {
     @varargs
     @inline
     def get(uri: URI, cs: Charset, headers: Header*): Try[String] = Try {
-        val client = createHttpClient()
-        val httpget = new HttpGet(uri)
+        assert(uri != null)
 
-        try {
+        With.using(createHttpClient()) { client =>
+            val httpget = new HttpGet(uri)
+
             if (headers != null)
                 headers.foreach(httpget.addHeader)
 
             val response = client.execute(httpget)
             EntityUtils.toString(response.getEntity, cs)
-        } finally {
-            client.close()
         }
     }
 
@@ -84,10 +83,10 @@ class HttpClient extends AutoCloseable {
     @inline
     def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): Try[String] = Try {
         assert(uri != null)
-        val client = createHttpClient()
-        val httppost = new HttpPost(uri)
 
-        try {
+        With.using(createHttpClient()) { client =>
+            val httppost = new HttpPost(uri)
+
             if (nvps != null)
                 httppost.setEntity(new UrlEncodedFormEntity(nvps, cs))
 
@@ -96,8 +95,6 @@ class HttpClient extends AutoCloseable {
 
             val response = client.execute(httppost)
             EntityUtils.toString(response.getEntity, cs)
-        } finally {
-            client.close()
         }
     }
 
@@ -110,10 +107,10 @@ class HttpClient extends AutoCloseable {
     @inline
     def postJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): Try[String] = Try {
         assert(uri != null)
-        val client = createHttpClient()
-        val httppost = new HttpPost(uri)
 
-        try {
+        With.using(createHttpClient()) { client =>
+            val httppost = new HttpPost(uri)
+
             if (entity != null) {
                 val text = serializer.serializeToText(entity)
                 httppost.setEntity(new StringEntity(text, cs))
@@ -124,8 +121,6 @@ class HttpClient extends AutoCloseable {
 
             val response = client.execute(httppost)
             EntityUtils.toString(response.getEntity, cs)
-        } finally {
-            client.close()
         }
     }
 
@@ -133,7 +128,8 @@ class HttpClient extends AutoCloseable {
         try {
             connectionManager.shutdown()
         } catch {
-            case ignored: Throwable => log.debug("Fail to shutdown connectionManager", ignored)
+            case ignored: Throwable =>
+                log.debug("Fail to shutdown connectionManager", ignored)
         }
     }
 }

@@ -26,13 +26,13 @@ class ScalaJacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
 
 object ScalaJacksonSerializer {
 
-    def apply(): ScalaJacksonSerializer = new ScalaJacksonSerializer(createObjectMapper())
+    def apply(): ScalaJacksonSerializer = new ScalaJacksonSerializer(defaultObjectMapper)
 
     def apply(mapper: ObjectMapper): ScalaJacksonSerializer = {
         new ScalaJacksonSerializer(mapper)
     }
 
-    def createObjectMapper(): ObjectMapper = {
+    lazy val defaultObjectMapper: ObjectMapper = {
         val mapper = new ObjectMapper()
 
         // NOTE: JodaModule 은 joda-time의 형식을 Timestamp 형식으로 변환하기 위해 필요합니다.

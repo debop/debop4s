@@ -9,7 +9,6 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.message.BasicHeader
 import org.apache.http.{HttpStatus, Header}
 import org.slf4j.LoggerFactory
-import scala.collection.mutable.ArrayBuffer
 import scala.util.{Success, Failure}
 
 /**
@@ -23,6 +22,9 @@ class GcmSender(val serverApiKey: String) {
     lazy val log = LoggerFactory.getLogger(getClass)
     lazy val serializer = new JacksonSerializer()
 
+    /**
+     * GCM 에 푸시 메시지를 전송합니다. 실패시 retry 횟수만큼 재시도 합니다.
+     */
     @inline
     def send(msg: GcmMessage, retry: Int = 3) {
         require(msg != null)
@@ -52,7 +54,7 @@ class GcmSender(val serverApiKey: String) {
     private def buildMessage(msg: GcmMessage) = serializer.serializeToText(msg)
 
     private def buildHttpHeader(apiKey: String): Seq[Header] = {
-        ArrayBuffer[Header](
+        Seq[Header](
             new BasicHeader("Authorization", "key=" + apiKey),
             new BasicHeader("Content-Type", "application/json")
         )
@@ -70,6 +72,7 @@ class GcmSender(val serverApiKey: String) {
 
 object GcmSender {
 
+    /** GCM 서버 URL */
     lazy val GCM_SERVER_URL: String = "https://android.googleapis.com/gcm/send"
 
     lazy val GCM_SERVER_URI = new URI(GCM_SERVER_URL)

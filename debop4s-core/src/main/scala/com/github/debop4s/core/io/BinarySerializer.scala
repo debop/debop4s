@@ -1,7 +1,7 @@
 package com.github.debop4s.core.io
 
-import com.github.debop4s.core.utils._
 import com.github.debop4s.core.utils.With._
+import com.github.debop4s.core.utils._
 import java.io._
 
 /**
@@ -23,10 +23,10 @@ class BinarySerializer extends Serializer {
             return Array.emptyByteArray
 
         val bos = new ByteArrayOutputStream()
-        val oos = new ObjectOutputStream(bos)
-        using(oos) { stream =>
-            stream.writeObject(graph)
-            stream.flush()
+
+        using(new ObjectOutputStream(bos)) { oos =>
+            oos.writeObject(graph)
+            oos.flush()
             bos.toByteArray
         }
     }
@@ -41,9 +41,8 @@ class BinarySerializer extends Serializer {
         if (Arrays.isEmpty(bytes))
             return null.asInstanceOf[T]
 
-        val bis = new ByteArrayInputStream(bytes)
-        using(bis) { stream =>
-            val ois = new ObjectInputStream(stream)
+        using(new ByteArrayInputStream(bytes)) { bis =>
+            val ois = new ObjectInputStream(bis)
             using(ois) { input =>
                 input.readObject().asInstanceOf[T]
             }

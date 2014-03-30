@@ -1,5 +1,6 @@
 package com.github.debop4s.core.io
 
+import com.github.debop4s.core.utils.With
 import de.ruedigermoeller.serialization.FSTConfiguration
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import org.slf4j.LoggerFactory
@@ -25,23 +26,18 @@ class FstSerializer extends Serializer {
         if (graph == null || graph == None)
             return Array.emptyByteArray
 
-        var bos = None: Option[ByteArrayOutputStream]
-
-        try {
-            bos = Some(new ByteArrayOutputStream())
-            Try(conf.getObjectOutput(bos.get)) match {
+        With.using(new ByteArrayOutputStream()) { bos =>
+            Try(conf.getObjectOutput(bos)) match {
 
                 case Success(oos) =>
                     oos.writeObject(graph, Seq[Class[_]](): _*)
                     oos.flush()
-                    bos.get.toByteArray
+                    bos.toByteArray
 
                 case Failure(e) =>
                     log.error(s"Fail to serialize graph. $graph", e)
                     Array.emptyByteArray
             }
-        } finally {
-            if (bos.isDefined) bos.get.close()
         }
     }
 
@@ -55,11 +51,8 @@ class FstSerializer extends Serializer {
         if (bytes == null || bytes.length == 0)
             return null.asInstanceOf[T]
 
-        var bis = None: Option[ByteArrayInputStream]
-
-        try {
-            bis = Some(new ByteArrayInputStream(bytes))
-            Try(conf.getObjectInput(bis.get)) match {
+        With.using(new ByteArrayInputStream(bytes)) { bis =>
+            Try(conf.getObjectInput(bis)) match {
 
                 case Success(ois) =>
                     ois.readObject.asInstanceOf[T]
@@ -68,8 +61,6 @@ class FstSerializer extends Serializer {
                     log.error(s"Fail to deserialize data.", e)
                     null.asInstanceOf[T]
             }
-        } finally {
-            if (bis.isDefined) bis.get.close()
         }
     }
 }

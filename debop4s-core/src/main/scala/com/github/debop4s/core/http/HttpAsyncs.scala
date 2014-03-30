@@ -75,17 +75,20 @@ object HttpAsyncs {
     //        client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
 
     @varargs
-    def getAsParallel(cs: Charset, uris: URI*): Iterable[String] =
+    def getAsParallel(cs: Charset, uris: URI*): Iterable[String] = {
         client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
         .map(r => getContent(r, cs))
+    }
 
     @varargs
-    def getAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] =
+    def getAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] = {
         client.getAsParallel(httpgets: _*)
+    }
 
     @varargs
-    def buildHttpPost(uri: URI, nvps: List[NameValuePair], headers: Header*): HttpPost =
+    def buildHttpPost(uri: URI, nvps: List[NameValuePair], headers: Header*): HttpPost = {
         buildHttpPost(uri, nvps, Charsets.UTF_8, headers: _*)
+    }
 
     @varargs
     def buildHttpPost(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): HttpPost = {
@@ -97,16 +100,19 @@ object HttpAsyncs {
     }
 
     @varargs
-    def post(uri: URI, nvps: List[NameValuePair], headers: Header*): Try[HttpResponse] =
+    def post(uri: URI, nvps: List[NameValuePair], headers: Header*): Try[HttpResponse] = {
         post(uri, nvps, Charsets.UTF_8, headers: _*)
+    }
 
     @varargs
-    def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): Try[HttpResponse] =
+    def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): Try[HttpResponse] = {
         client.post(buildHttpPost(uri, nvps, cs, headers: _*))
+    }
 
     @varargs
-    def postAsParallel(posts: HttpPost*): Iterable[Try[HttpResponse]] =
+    def postAsParallel(posts: HttpPost*): Iterable[Try[HttpResponse]] = {
         client.postAsParallel(posts: _*)
+    }
 
     @varargs
     def buildHttpPostByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpPost = {

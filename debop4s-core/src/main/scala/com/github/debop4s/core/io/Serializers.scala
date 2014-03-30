@@ -18,7 +18,7 @@ object Serializers {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    lazy val serializer = new BinarySerializer()
+    lazy val serializer = new FstSerializer()
 
     def serializeAsString[T](serializer: Serializer, graph: T): String = {
         if (graph == null)

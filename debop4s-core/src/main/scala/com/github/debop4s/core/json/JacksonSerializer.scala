@@ -19,7 +19,7 @@ class JacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
     private lazy val log = LoggerFactory.getLogger(getClass)
 
     def this() {
-        this(JacksonSerializer.createObjectMapper())
+        this(JacksonSerializer.defaultObjectMapper)
     }
 
     override def serialize(graph: Any): Array[Byte] =
@@ -37,14 +37,14 @@ class JacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
 
 object JacksonSerializer {
 
-    def apply(): JacksonSerializer = new JacksonSerializer(createObjectMapper())
+    def apply(): JacksonSerializer = new JacksonSerializer(defaultObjectMapper)
 
     def apply(mapper: ObjectMapper): JacksonSerializer = {
         assert(mapper != null)
         new JacksonSerializer(mapper)
     }
 
-    def createObjectMapper(): ObjectMapper = {
+    lazy val defaultObjectMapper = {
         val mapper = new ObjectMapper()
 
         // NOTE: JodaModule 은 joda-time의 형식을 Timestamp 형식으로 변환하기 위해 필요합니다.
