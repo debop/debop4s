@@ -1,6 +1,6 @@
 package com.github.debop4s.core.http
 
-import com.github.debop4s.core.utils.With
+import com.github.debop4s.core.utils.Closer._
 import java.lang.String
 import java.net.URI
 import java.security.KeyStore
@@ -32,7 +32,7 @@ class AsyncHttpClient {
     def execute(request: HttpUriRequest): Try[HttpResponse] = Try {
         assert(request != null)
 
-        With.using(HttpAsyncClients.createDefault()) { client =>
+        using(HttpAsyncClients.createDefault()) { client =>
             client.start()
             val future = client.execute(request, null)
             future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
@@ -42,7 +42,7 @@ class AsyncHttpClient {
     def executeSSL(request: HttpUriRequest): Try[HttpResponse] = Try {
         assert(request != null)
 
-        With.using(createHttpAsyncClient(request.getURI)) { client =>
+        using(createHttpAsyncClient(request.getURI)) { client =>
             client.start()
             val future = client.execute(request, null)
             future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS)

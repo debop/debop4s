@@ -2,7 +2,7 @@ language: scala
 script: mvn clean install
 
 scala:
-  - "2.10.4"
+  - 2.10.4
 jdk:
   - oraclejdk7
 services:

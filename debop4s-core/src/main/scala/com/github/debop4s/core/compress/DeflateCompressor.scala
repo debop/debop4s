@@ -1,8 +1,8 @@
 package com.github.debop4s.core.compress
 
+import com.github.debop4s.core.utils.Closer._
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.util.zip.{InflaterInputStream, DeflaterOutputStream}
-import com.github.debop4s.core.utils.With
 
 /**
  * DeflateCompressor
@@ -12,8 +12,8 @@ import com.github.debop4s.core.utils.With
 class DeflateCompressor extends Compressor {
 
     override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
-        With.using(new ByteArrayOutputStream()) { bos =>
-            With.using(new DeflaterOutputStream(bos)) { deflater =>
+        using(new ByteArrayOutputStream()) { bos =>
+            using(new DeflaterOutputStream(bos)) { deflater =>
                 deflater.write(plainBytes)
             }
             bos.toByteArray
@@ -22,9 +22,9 @@ class DeflateCompressor extends Compressor {
 
     override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
 
-        With.using(new ByteArrayOutputStream()) { bos =>
-            With.using(new ByteArrayInputStream(compressedBytes)) { bis =>
-                With.using(new InflaterInputStream(bis)) { inflater =>
+        using(new ByteArrayOutputStream()) { bos =>
+            using(new ByteArrayInputStream(compressedBytes)) { bis =>
+                using(new InflaterInputStream(bis)) { inflater =>
                     val buff = new Array[Byte](BUFFER_SIZE)
                     var n = 0
 

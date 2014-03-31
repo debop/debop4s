@@ -1,6 +1,6 @@
 package com.github.debop4s.core.io
 
-import com.github.debop4s.core.utils.With._
+import com.github.debop4s.core.utils.Closer._
 import com.github.debop4s.core.utils._
 import java.io._
 

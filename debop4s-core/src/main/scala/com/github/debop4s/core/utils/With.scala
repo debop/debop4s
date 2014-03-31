@@ -13,17 +13,6 @@ object With {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 
-    /**
-     * C# 의 using 과 유사하게 close 메소드를 가진 인스턴스에 작업 후 close 를 호출 하도록 합니다.
-     */
-    def using[A <: {def close() : Unit}, B](resource: A)(f: A => B): B = {
-        try {
-            f(resource)
-        } finally {
-            resource.close()
-        }
-    }
-
     def stopwatch(action: => Unit) {
         val sw = new ClosableStopwatch()
         try {

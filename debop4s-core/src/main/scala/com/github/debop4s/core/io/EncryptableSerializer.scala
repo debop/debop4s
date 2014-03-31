@@ -4,9 +4,9 @@ import com.github.debop4s.core.cryptography.{RC2Encryptor, SymmetricEncryptor}
 import org.slf4j.LoggerFactory
 
 /**
- * com.github.debop4s.core.io.EncryptableSerializer
+ * 암호화를 통해 직력화를 수행합니다.
  * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 10. 오후 10:45
+ * @since  0.1
  */
 class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncryptor = new RC2Encryptor())
     extends SerializerDecorator(serializer) {

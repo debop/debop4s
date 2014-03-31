@@ -1,7 +1,8 @@
 package com.github.debop4s.core.http
 
 import com.github.debop4s.core.json.JacksonSerializer
-import com.github.debop4s.core.utils.{With, Charsets}
+import com.github.debop4s.core.utils.Charsets
+import com.github.debop4s.core.utils.Closer._
 import java.net.URI
 import java.nio.charset.Charset
 import org.apache.http._
@@ -56,7 +57,7 @@ class HttpClient extends AutoCloseable {
     def get(uri: URI, cs: Charset, headers: Header*): Try[String] = Try {
         assert(uri != null)
 
-        With.using(createHttpClient()) { client =>
+        using(createHttpClient()) { client =>
             val httpget = new HttpGet(uri)
 
             if (headers != null)
@@ -84,7 +85,7 @@ class HttpClient extends AutoCloseable {
     def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): Try[String] = Try {
         assert(uri != null)
 
-        With.using(createHttpClient()) { client =>
+        using(createHttpClient()) { client =>
             val httppost = new HttpPost(uri)
 
             if (nvps != null)
@@ -108,7 +109,7 @@ class HttpClient extends AutoCloseable {
     def postJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): Try[String] = Try {
         assert(uri != null)
 
-        With.using(createHttpClient()) { client =>
+        using(createHttpClient()) { client =>
             val httppost = new HttpPost(uri)
 
             if (entity != null) {
