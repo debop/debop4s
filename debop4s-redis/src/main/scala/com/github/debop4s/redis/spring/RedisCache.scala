@@ -40,7 +40,7 @@ class RedisCache(val name: String,
     /**
     * 캐시 항목을 조회합니다.
     */
-    override def get(key: Any): ValueWrapper = {
+    def get(key: Any): ValueWrapper = {
         log.trace(s"캐시 조회. key=$key")
 
         Promises.await(redis.get(computeKey(key)))
@@ -52,7 +52,7 @@ class RedisCache(val name: String,
     * 캐시 항목을 조회합니다.
     * Spring 4.0 이상에서 지원합니다.
     */
-    override def get[T](key: Any, clazz: Class[T]): T = {
+    def get[T](key: Any, clazz: Class[T]): T = {
         log.trace(s"캐시 조회. key=$key, clazz=$clazz")
 
         waitForLock(redis)

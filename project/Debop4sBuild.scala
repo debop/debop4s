@@ -155,7 +155,7 @@ object Debop4sBuild extends Build {
             javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.7", "-target", "1.7"),
             javaOptions ++= Seq("-ea", "-server", "-Xms512M", "-Xmx2G", "-XX:MaxPermSize=256M", "-XX:+CMSClassUnloadingEnabled"),
             scalacOptions ++= Seq("-encoding", "UTF-8", "-target:jvm-1.7"),
-            compileOrder := CompileOrder.Mixed,
+            compileOrder := CompileOrder.JavaThenScala,
             fork in run := true,
             parallelExecution in Test := false,
             publishMavenStyle := true,
@@ -255,7 +255,8 @@ object Debop4sBuild extends Build {
                 hibernateEntityManager, hibernateTest, hibernateValidator,
                 queryDslJpa, queryDslScala,
                 boneCP, hikariCP
-            ) ++ databaseDrivers
+            ) ++ databaseDrivers,
+            testOptions in Test += Tests.Argument(TestFrameworks.JUnit, "-v")
         )
     )
 }

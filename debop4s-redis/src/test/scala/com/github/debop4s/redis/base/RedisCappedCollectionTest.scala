@@ -12,7 +12,7 @@ class RedisCappedCollectionTest extends AbstractRedisTest {
     test("크기가 제한된 List") {
 
         val name = "col-10"
-        redis.del(name)
+        Asyncs.ready(redis.del(name))
 
         val coll = RedisCappedCollection[Int](name, 10)
 
