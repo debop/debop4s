@@ -153,7 +153,7 @@ object Debop4sBuild extends Build {
             version := "0.3.0-SNAPSHOT",
             scalaVersion := "2.10.4",
             javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.7", "-target", "1.7"),
-            javaOptions ++= Seq("-ea", "-server", "-Xms512M", "-Xmx2G", "-XX:MaxPermSize=256M", "-XX:+CMSClassUnloadingEnabled"),
+            javaOptions ++= Seq("-ea", "-server", "-Xms512M", "-Xmx4G", "-XX:MaxPermSize=512M", "-XX:+UseConcMarkSweepGC", "-XX:+CMSClassUnloadingEnabled", "-XX:-UseGCOverheadLimit"),
             scalacOptions ++= Seq("-encoding", "UTF-8", "-target:jvm-1.7"),
             compileOrder := CompileOrder.JavaThenScala,
             fork in run := true,
