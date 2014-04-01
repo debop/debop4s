@@ -381,21 +381,21 @@ class TimesTest extends AbstractTimePeriodTest {
         log.trace(s"last = ${days.last}")
     }
 
-    //    test("foreach hours") {
-    //        val hours = Times.foreachHours(period).toSeq
-    //
-    //        hours.head.start should equal(period.start)
-    //        hours.last.end should equal(period.end)
-    //        hours.last.start.getMillis should be > hours(hours.size - 2).end.getMillis
-    //    }
-    //
-    //    test("foreach minutes") {
-    //        val minutes = Times.foreachMinutes(period).toSeq
-    //
-    //        minutes.head.start should equal(period.start)
-    //        minutes.last.end should equal(period.end)
-    //        minutes.last.start.getMillis should be > minutes(minutes.size - 2).end.getMillis
-    //    }
+    test("foreach hours") {
+        val hours = Times.foreachHours(period).toSeq
+
+        hours.head.start should equal(period.start)
+        hours.last.end should equal(period.end)
+        hours.last.start.getMillis should be > hours(hours.size - 2).end.getMillis
+    }
+
+    test("foreach minutes") {
+        val minutes = Times.foreachMinutes(period).toSeq
+
+        minutes.head.start should equal(period.start)
+        minutes.last.end should equal(period.end)
+        minutes.last.start.getMillis should be > minutes(minutes.size - 2).end.getMillis
+    }
 
     test("hours stream") {
         val hours = Times.hoursStream(period)

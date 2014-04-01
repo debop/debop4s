@@ -9,7 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 11. 오후 10:50
  */
-// @RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringJUnit4ClassRunner])
 abstract class AbstractDataTest extends JUnitSuite {
 
 }

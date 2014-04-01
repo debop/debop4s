@@ -109,7 +109,7 @@ object Debop4sBuild extends Build {
     val activateMongoAsync = "net.fwbrasil" %% "activate-mongo-async" % activateFrameworkVersion
 
     // MongoDB
-    val reactiveMongo = "org.reactiveMongo" %% "reactivemongo" % "0.10.0"
+    val reactiveMongo = "org.reactivemongo" %% "reactivemongo" % "0.10.0"
     val mongoDriver = "org.mongodb" % "mongo-java-driver" % "2.11.4"
 
     // Redis
@@ -157,6 +157,7 @@ object Debop4sBuild extends Build {
             scalacOptions ++= Seq("-encoding", "UTF-8", "-target:jvm-1.7"),
             compileOrder := CompileOrder.JavaThenScala,
             fork in run := true,
+            fork in Test := true,
             parallelExecution in Test := false,
             publishMavenStyle := true,
             resolvers ++= customResolvers,
