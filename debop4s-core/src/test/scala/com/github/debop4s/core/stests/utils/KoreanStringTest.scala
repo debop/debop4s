@@ -1,14 +1,14 @@
-package com.github.debop4s.autocomplete.tests.utils
+package com.github.debop4s.core.stests.utils
 
-import com.github.debop4s.autocomplete.tests.AbstractAutoCompleteTest
-import com.github.debop4s.autocomplete.utils.KoreanString
-import scala.collection.mutable.ArrayBuffer
+import com.github.debop4s.core.stests.AbstractCoreTest
+import com.github.debop4s.core.utils.KoreanString
+
 
 /**
  * KoreanStringTest
  * Created by debop on 2014. 3. 14.
  */
-class KoreanStringTest extends AbstractAutoCompleteTest {
+class KoreanStringTest extends AbstractCoreTest {
 
     test("자소 추출하기") {
         println(KoreanString.getJasoLetter("동해물과 백두산이 Hello World"))

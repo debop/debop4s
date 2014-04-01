@@ -5,7 +5,6 @@ import org.hibernate.cache.rediscala.tests.domain.Item
 import org.hibernate.cache.rediscala.tests.jpa.repository.{EventRepository, ItemRepository}
 import org.junit.runner.RunWith
 import org.junit.{Test, Before}
-import org.scalatest.junit.JUnitSuite
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -24,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 @ContextConfiguration(classes = Array(classOf[JpaRedisConfiguration]),
     loader = classOf[AnnotationConfigContextLoader])
 @Transactional
-class JpaCacheTest extends JUnitSuite {
+class JpaCacheTest {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
 

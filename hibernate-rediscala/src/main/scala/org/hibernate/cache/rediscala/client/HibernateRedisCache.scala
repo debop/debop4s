@@ -1,16 +1,17 @@
 package org.hibernate.cache.rediscala.client
 
 import akka.util.ByteString
+import java.util.concurrent.TimeUnit
 import org.hibernate.cache.rediscala.serializer.{FstRedisSerializer, SnappyRedisSerializer}
 import org.slf4j.LoggerFactory
 import redis.RedisClient
 import redis.api.Limit
 import redis.commands.TransactionBuilder
 import redis.protocol.MultiBulk
-import scala.actors.threadpool.TimeUnit
 import scala.annotation.varargs
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
+import scala.concurrent.duration.TimeUnit
 import scala.concurrent.duration._
 import scala.util.{Success, Try}
 

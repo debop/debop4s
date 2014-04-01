@@ -10,7 +10,7 @@ import com.github.debop4s.redis.AbstractRedisTest
 class RedisHelperTest extends AbstractRedisTest {
 
     test("increment and get") {
-        redis.set("inc", 0)
+        Asyncs.ready(redis.set("inc", 0))
 
         val helper = RedisHelper()
         assert(Asyncs.result(helper.increseAndGet("inc")) == 1)
@@ -22,7 +22,7 @@ class RedisHelperTest extends AbstractRedisTest {
 
     test("decrement and get") {
 
-        redis.set("dec", 100)
+        Asyncs.ready(redis.set("dec", 100))
 
         val helper = RedisHelper()
 

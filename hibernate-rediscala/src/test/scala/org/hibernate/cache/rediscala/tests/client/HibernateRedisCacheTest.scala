@@ -1,10 +1,9 @@
 package org.hibernate.cache.rediscala.tests.client
 
-import org.fest.assertions.Assertions._
+import java.util.concurrent.TimeUnit
 import org.hibernate.cache.rediscala.Promises
 import org.hibernate.cache.rediscala.client.HibernateRedisCache
 import org.hibernate.cache.rediscala.tests.AbstractHibernateRedisTest
-import scala.actors.threadpool.TimeUnit
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -22,7 +21,7 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
 
     test("connection") {
         client.ping.map { r =>
-            assertThat(r).isEqualTo("pong")
+            assert(r == "pong")
         }
     }
 

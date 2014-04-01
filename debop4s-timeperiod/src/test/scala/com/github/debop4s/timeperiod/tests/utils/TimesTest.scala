@@ -5,9 +5,9 @@ import com.github.debop4s.timeperiod._
 import com.github.debop4s.timeperiod.tests.AbstractTimePeriodTest
 import com.github.debop4s.timeperiod.utils.Times._
 import com.github.debop4s.timeperiod.utils.{Durations, Times}
+import java.util.concurrent.atomic.AtomicInteger
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTimeZone, Duration, DateTime}
-import scala.actors.threadpool.AtomicInteger
 import scala.collection.JavaConversions._
 
 /**

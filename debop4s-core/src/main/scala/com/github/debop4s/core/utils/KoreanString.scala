@@ -1,4 +1,4 @@
-package com.github.debop4s.autocomplete.utils
+package com.github.debop4s.core.utils
 
 import scala.collection.mutable.ArrayBuffer
 

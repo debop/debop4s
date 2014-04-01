@@ -1,5 +1,5 @@
 language: scala
-script: mvn clean install
+script: sbt compile
 
 scala:
   - 2.10.4
@@ -8,7 +8,8 @@ jdk:
 services:
   - redis
 env:
-  - MAVEN_OPTS="-ea -server -Xmx8192m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
+  - SBT_OPTS="-ea -server -Xmx8192m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
+
 # whitelist
 branches:
   only:
