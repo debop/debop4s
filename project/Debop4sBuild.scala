@@ -139,7 +139,7 @@ object Debop4sBuild extends Build {
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("releases"),
         Resolver.typesafeRepo("releases"),
-        "rediscala" at "https://github.com/etaty/rediscala-mvn/raw/master/releases/",
+        "rediscala" at "https://github.com/etaty/rediscala-mvn/tree/master/releases/",
         "jboss" at "http://repository.jboss.org/nexus/content/groups/public",
         "spray" at "http://repo.spray.io",
         "fwbrasil.net" at "http://fwbrasil.net/maven/",
