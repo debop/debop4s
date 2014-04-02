@@ -35,7 +35,7 @@ trait JsonSerializer {
      * @return 역직렬화 한 객체
      */
     @inline
-    def deserialize[T](data: Array[Byte], clazz: Class[T]): T =
+    def deserialize[T: Manifest](data: Array[Byte], clazz: Class[T]): T =
         deserializeFromText(Strings.getUtf8String(data), clazz)
 
     /**
@@ -45,6 +45,6 @@ trait JsonSerializer {
      * @return 역직렬화 한 객체
      */
     @inline
-    def deserializeFromText[T](text: String, clazz: Class[T]): T
+    def deserializeFromText[T: Manifest](text: String, clazz: Class[T]): T
 
 }

@@ -27,7 +27,10 @@ object Debop4sBuild extends Build {
 
     // scala utils
     val scalaUtils = "org.scalautils" %% "scalautils" % "2.1.2"
-    val scalaArm = "org.jsuereth" %% "scala-arm" % "1.3"
+    val scalaArm = "com.jsuereth" %% "scala-arm" % "1.3"
+    val scalaAsync = "org.scala-lang.modules" %% "scala-async" % "0.9.0-M4"
+    val scalaPickling = "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
+    val scalaUtilSet = Seq(scalaUtils, scalaArm, scalaAsync, scalaPickling)
 
     // apache commons
     val commonsCodec = "commons-codec" % "commons-codec" % "1.8"
@@ -58,6 +61,11 @@ object Debop4sBuild extends Build {
     val jacksons = Seq(jackson, jacksonAnnotations, jacksonDatabind, jacksonJoda, jacksonScala)
 
     val sprayJson = "io.spray" %% "spray-json" % "1.2.5"
+
+    // json4s
+    val json4sValue = "3.2.8"
+    val json4sNative = "org.json4s" %% "json4s-native" % json4sValue
+    val json4sSet = Seq(json4sNative)
 
     // asm
     val cglib = "cglib" % "cglib" % "3.1"
@@ -139,7 +147,7 @@ object Debop4sBuild extends Build {
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("releases"),
         Resolver.typesafeRepo("releases"),
-        "rediscala" at "https://github.com/etaty/rediscala-mvn/tree/master/releases/",
+        "rediscala" at "https://github.com/etaty/rediscala-mvn/raw/master/releases/",
         "jboss" at "http://repository.jboss.org/nexus/content/groups/public",
         "spray" at "http://repo.spray.io",
         "fwbrasil.net" at "http://fwbrasil.net/maven/",
@@ -193,7 +201,7 @@ object Debop4sBuild extends Build {
                 httpclient, httpfluent, httpasyncclient, asynchttpclient,
                 ow2Asm,
                 springTest, springScala % "test"
-            ) ++ jacksons
+            ) ++ scalaUtilSet ++ jacksons ++ json4sSet
         )
     )
 

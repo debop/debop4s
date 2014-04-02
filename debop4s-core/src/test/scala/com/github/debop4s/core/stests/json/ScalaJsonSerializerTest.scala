@@ -1,6 +1,6 @@
 package com.github.debop4s.core.stests.json
 
-import com.github.debop4s.core.json.{JacksonSerializer, JsonSerializer, ScalaJacksonSerializer}
+import com.github.debop4s.core.json.{Json4sSerializer, JsonSerializer, ScalaJacksonSerializer}
 import com.github.debop4s.core.stests.AbstractCoreTest
 import com.github.debop4s.core.stests.model.User
 
@@ -10,21 +10,23 @@ import com.github.debop4s.core.stests.model.User
  */
 class ScalaJsonSerializerTest extends AbstractCoreTest {
 
-    // NOTE: Gson 은 scala 를 지원하지 않는다.
-    val serializers = Array[JsonSerializer](ScalaJacksonSerializer(), JacksonSerializer())
+    val serializers = Array[JsonSerializer](
+        ScalaJacksonSerializer(),
+        Json4sSerializer()
+    )
 
     val user = User(10)
 
     test("scala jsonserialize / deserialize") {
-        serializers.foreach {
-            serializer =>
+        serializers.foreach { serializer =>
+            println(s"JsonSerializer=${serializer.getClass}")
 
-                println(s"JsonSerializer=${serializer.getClass }")
+            val text = serializer.serializeToText(user)
+            val deserializedUser = serializer.deserializeFromText(text, classOf[User])
 
-                val bytes = serializer.serialize(user)
-                val deserializedUser = serializer.deserialize(bytes, classOf[User])
+            log.debug(s"text=$text")
 
-                deserializedUser should equal(user)
+            deserializedUser should equal(user)
         }
     }
 }
