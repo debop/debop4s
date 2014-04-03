@@ -22,14 +22,14 @@ object Debop4sBuild extends Build {
     val annotations = "com.intellij" % "annotations" % "12.0"
 
     // akka
-    val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion
-    val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
+    val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion exclude("scala-lang", "scala-compiler")
+    val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test" exclude("scala-lang", "scala-compiler")
 
     // scala utils
-    val scalaUtils = "org.scalautils" %% "scalautils" % "2.1.2"
-    val scalaArm = "com.jsuereth" %% "scala-arm" % "1.3"
-    val scalaAsync = "org.scala-lang.modules" %% "scala-async" % "0.9.0-M4"
-    val scalaPickling = "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
+    val scalaUtils = "org.scalautils" %% "scalautils" % "2.1.2" exclude("scala-lang", "scala-compiler")
+    val scalaArm = "com.jsuereth" %% "scala-arm" % "1.3" exclude("scala-lang", "scala-compiler")
+    val scalaAsync = "org.scala-lang.modules" %% "scala-async" % "0.9.0-M4" exclude("scala-lang", "scala-compiler")
+    val scalaPickling = "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT" exclude("scala-lang", "scala-compiler")
     val scalaUtilSet = Seq(scalaUtils, scalaArm, scalaAsync, scalaPickling)
 
     // apache commons
@@ -81,8 +81,15 @@ object Debop4sBuild extends Build {
     // spring framework
     val springContext = "org.springframework" % "spring-context" % springFrameworkVersion
     val springContextSupport = "org.springframework" % "spring-context-support" % springFrameworkVersion
-    val springOrm = "org.springframework" % "spring-orm" % springFrameworkVersion
     val springTest = "org.springframework" % "spring-test" % springFrameworkVersion % "test"
+    val springContextSeq = Seq(springContext, springContextSupport, springTest)
+
+    val springAop = "org.springframework" % "spring-aop" % springFrameworkVersion
+    val springExpression = "org.springframework" % "spring-expression" % springFrameworkVersion
+    val springJdbc = "org.springframework" % "spring-jdbc" % springFrameworkVersion
+    val springOrm = "org.springframework" % "spring-orm" % springFrameworkVersion
+    val springTx = "org.springframework" % "spring-tx" % springFrameworkVersion
+    val springOrmSeq = Seq(springOrm, springTx, springJdbc)
 
     // spring mvc
     val springWeb = "org.springframework" % "spring-web" % springFrameworkVersion
@@ -94,7 +101,7 @@ object Debop4sBuild extends Build {
     val springDataMongo = "org.springframework.data" % "spring-data-mongodb" % "1.4.1.RELEASE"
 
     // spring scala
-    val springScala = "org.springframework.scala" % "spring-scala" % "1.0.0.M2"
+    val springScala = "org.springframework.scala" % "spring-scala" % "1.0.0.M2" exclude("scala-lang", "scala-compiler")
 
     // hibernate
     val hibernateCore = "org.hibernate" % "hibernate-core" % hibernateVersion
@@ -199,12 +206,12 @@ object Debop4sBuild extends Build {
         base = file("debop4s-core"),
         settings = commonSettings ++ Seq(
             libraryDependencies ++= Seq(
-                commonsCodec, commonsIO, commonsPool2, mail, springContext, guava,
+                commonsCodec, commonsIO, commonsPool2, mail, guava,
                 snappy, fst, jasypt, modelmapper,
                 httpclient, httpfluent, httpasyncclient, asynchttpclient,
                 ow2Asm,
-                springTest, springScala % "test"
-            ) ++ scalaUtilSet ++ jacksons ++ json4sSet
+                springScala % "test"
+            ) ++ scalaUtilSet ++ jacksons ++ json4sSet ++ springContextSeq
         )
     )
 
@@ -225,10 +232,10 @@ object Debop4sBuild extends Build {
                 hibernateEntityManager, hibernateTest,
                 boneCP % "test",
                 hikariCP % "test",
+                springContext % "test",
                 springOrm % "test",
-                springDataJpa % "test",
-                hsqldb, h2, mysql
-            )
+                springDataJpa % "test"
+            ) ++ databaseDrivers
         )
     )
 
@@ -267,7 +274,7 @@ object Debop4sBuild extends Build {
                 hibernateEntityManager, hibernateTest, hibernateValidator,
                 queryDslJpa, queryDslScala,
                 boneCP, hikariCP
-            ) ++ databaseDrivers,
+            ) ++ databaseDrivers ++ springOrmSeq,
             testOptions in Test += Tests.Argument(TestFrameworks.JUnit, "-v")
         )
     )
