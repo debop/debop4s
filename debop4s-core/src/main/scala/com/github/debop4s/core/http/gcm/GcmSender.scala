@@ -1,7 +1,7 @@
 package com.github.debop4s.core.http.gcm
 
 import com.github.debop4s.core.http.AsyncHttpClient
-import com.github.debop4s.core.json.ScalaJacksonSerializer
+import com.github.debop4s.core.json.JacksonSerializer
 import com.github.debop4s.core.utils.{Tasks, Charsets}
 import java.net.URI
 import org.apache.http.client.methods.HttpPost
@@ -20,7 +20,7 @@ import scala.util.{Success, Failure}
 class GcmSender(val serverApiKey: String) {
 
     lazy val log = LoggerFactory.getLogger(getClass)
-    lazy val serializer = ScalaJacksonSerializer()
+    lazy val serializer = JacksonSerializer()
 
     /**
      * GCM 에 푸시 메시지를 전송합니다. 실패시 retry 횟수만큼 재시도 합니다.

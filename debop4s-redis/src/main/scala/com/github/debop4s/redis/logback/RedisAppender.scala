@@ -2,7 +2,7 @@ package com.github.debop4s.redis.logback
 
 import ch.qos.logback.classic.spi.{ThrowableProxyUtil, LoggingEvent}
 import ch.qos.logback.core.{CoreConstants, UnsynchronizedAppenderBase}
-import com.github.debop4s.core.json.ScalaJacksonSerializer
+import com.github.debop4s.core.json.JacksonSerializer
 import com.github.debop4s.core.logback.LogDocument
 import com.github.debop4s.core.utils.Options
 import com.github.debop4s.redis.RedisConsts
@@ -20,7 +20,7 @@ class RedisAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
 
     implicit val akkaSystem = akka.actor.ActorSystem()
 
-    private lazy val serializer = ScalaJacksonSerializer()
+    private lazy val serializer = JacksonSerializer()
     @volatile protected var redis: RedisClient = null
 
     var host = "localhost"

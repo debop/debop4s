@@ -1,7 +1,6 @@
 package com.github.debop4s.core.json
 
 import com.github.debop4s.core.utils.Strings
-import scala.reflect.ClassTag
 
 /**
  * JSON Serializer 의 기본 클래스
@@ -36,7 +35,7 @@ trait JsonSerializer {
      * @return 역직렬화 한 객체
      */
     @inline
-    def deserialize[T: ClassTag](data: Array[Byte]): T =
+    def deserialize[T: Manifest](data: Array[Byte]): T =
         deserializeFromText[T](Strings.getUtf8String(data))
 
     /**
@@ -47,6 +46,6 @@ trait JsonSerializer {
      * @return 역직렬화 한 객체
      */
     @inline
-    def deserializeFromText[T: ClassTag](text: String): T
+    def deserializeFromText[T: Manifest](text: String): T
 
 }

@@ -24,7 +24,7 @@ class JsonTextObject(@BeanProperty val className: String,
 
 object JsonTextObject {
 
-    lazy val serializer = ScalaJacksonSerializer()
+    lazy val serializer = JacksonSerializer()
 
     val Empty = apply()
 

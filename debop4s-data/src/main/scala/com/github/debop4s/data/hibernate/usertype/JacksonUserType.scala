@@ -1,6 +1,6 @@
 package com.github.debop4s.data.hibernate.usertype
 
-import com.github.debop4s.core.json.{JsonSerializer, JacksonSerializer}
+import com.github.debop4s.core.json.{JacksonSerializer, JsonSerializer}
 
 /**
  * [[JacksonSerializer]] 를 이용하여 객체를 Json 문자열로 저장합니다.

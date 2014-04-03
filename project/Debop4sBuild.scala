@@ -52,17 +52,13 @@ object Debop4sBuild extends Build {
     val fst = "de.ruedigermoeller" % "fst" % "1.53"
 
     // json
-    val jacksonVersion = "2.3.1"
+    val jacksonVersion = "2.3.2"
     val jackson = "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion
     val jacksonAnnotations = "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion
     val jacksonDatabind = "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion
     val jacksonJoda = "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % jacksonVersion
     val jacksonScala = "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
-    val jacksons = Seq(jackson, jacksonAnnotations, jacksonDatabind, jacksonJoda, jacksonScala)
-
-    val sprayJson = "io.spray" %% "spray-json" % "1.2.5"
-
-    val liftJson = "net.liftweb" %% "lift-json" % "2.5.1"
+    val jacksonSeq = Seq(jackson, jacksonAnnotations, jacksonDatabind, jacksonJoda, jacksonScala)
 
     // asm
     val cglib = "cglib" % "cglib" % "3.1"
@@ -204,12 +200,11 @@ object Debop4sBuild extends Build {
         settings = commonSettings ++ Seq(
             libraryDependencies ++= Seq(
                 commonsCodec, commonsIO, commonsPool2, mail, guava,
-                liftJson,
                 snappy, fst, jasypt, modelmapper,
                 httpclient, httpfluent, httpasyncclient, asynchttpclient,
                 ow2Asm,
                 springScala % "test"
-            ) ++ scalaUtilSet ++ jacksons ++ springContextSeq
+            ) ++ scalaUtilSet ++ jacksonSeq ++ springContextSeq
         )
     )
 
