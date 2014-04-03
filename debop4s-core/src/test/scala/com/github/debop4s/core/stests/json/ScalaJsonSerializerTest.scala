@@ -1,6 +1,6 @@
 package com.github.debop4s.core.stests.json
 
-import com.github.debop4s.core.json.{Json4sSerializer, JsonSerializer, ScalaJacksonSerializer}
+import com.github.debop4s.core.json.{JsonSerializer, ScalaJacksonSerializer}
 import com.github.debop4s.core.stests.AbstractCoreTest
 import com.github.debop4s.core.stests.model.User
 
@@ -11,8 +11,7 @@ import com.github.debop4s.core.stests.model.User
 class ScalaJsonSerializerTest extends AbstractCoreTest {
 
     val serializers = Array[JsonSerializer](
-        ScalaJacksonSerializer(),
-        Json4sSerializer()
+        ScalaJacksonSerializer()
     )
 
     val user = User(10)
