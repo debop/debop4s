@@ -62,12 +62,7 @@ object Debop4sBuild extends Build {
 
     val sprayJson = "io.spray" %% "spray-json" % "1.2.5"
 
-    // json4s
-    val json4sValue = "3.2.8"
-    val json4sNative = "org.json4s" %% "json4s-native" % json4sValue
-    val json4sExt = "org.json4s" %% "json4s-ext" % json4sValue
-    val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sValue
-    val json4sSet = Seq(json4sNative, json4sExt, json4sJackson)
+    val liftJson = "net.liftweb" %% "lift-json" % "2.5.1"
 
     // asm
     val cglib = "cglib" % "cglib" % "3.1"
@@ -209,11 +204,12 @@ object Debop4sBuild extends Build {
         settings = commonSettings ++ Seq(
             libraryDependencies ++= Seq(
                 commonsCodec, commonsIO, commonsPool2, mail, guava,
+                liftJson,
                 snappy, fst, jasypt, modelmapper,
                 httpclient, httpfluent, httpasyncclient, asynchttpclient,
                 ow2Asm,
                 springScala % "test"
-            ) ++ scalaUtilSet ++ jacksons ++ json4sSet ++ springContextSeq
+            ) ++ scalaUtilSet ++ jacksons ++ springContextSeq
         )
     )
 

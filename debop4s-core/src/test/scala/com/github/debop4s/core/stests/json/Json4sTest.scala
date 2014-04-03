@@ -3,9 +3,9 @@ package com.github.debop4s.core.stests.json
 import com.github.debop4s.core.stests.AbstractCoreTest
 import com.github.debop4s.core.stests.model.User
 import org.joda.time.DateTime
+import org.json4s.NoTypeHints
 import org.json4s.ext._
 import org.json4s.jackson.Serialization.{read, write => swrite}
-import org.json4s.{jackson, NoTypeHints}
 
 /**
  * Json4sTest
@@ -13,9 +13,18 @@ import org.json4s.{jackson, NoTypeHints}
  */
 class Json4sTest extends AbstractCoreTest {
 
-    implicit val formats = jackson.Serialization.formats(NoTypeHints) ++ JodaTimeSerializers.all
+    implicit val formats = NoTypeHints ++ JodaTimeSerializers.all //+ FieldSerializer()
 
     val user = User(10)
+
+    test("scala jsonserialize / deserialize") {
+        val text = swrite(user)
+        val des = read[User](text)
+
+        log.debug(s"text=$text")
+
+        des shouldEqual user
+    }
 
     case class Project(name: String, startDate: DateTime, lang: Option[Language], teams: List[Team])
     case class Language(name: String, version: Double)
@@ -41,7 +50,6 @@ class Json4sTest extends AbstractCoreTest {
         val ser = swrite(project)
         val des = read[Project](ser)
 
-        des.hashCode() shouldEqual project.hashCode()
         des.toString shouldEqual project.toString
 
     }
