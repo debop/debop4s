@@ -146,6 +146,7 @@ object Debop4sBuild extends Build {
     val customResolvers = Seq(
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("releases"),
+        Resolver.sonatypeRepo("snapshots"),
         Resolver.typesafeRepo("releases"),
         "springSource" at "http://repo.springsource.org/release",
         "springSourceMileston" at "http://repo.springsource.org/milestone",
