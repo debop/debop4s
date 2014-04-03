@@ -1,6 +1,6 @@
 package com.github.debop4s.data.hibernate.usertype
 
-import com.github.debop4s.core.json.{JsonTextObject, JsonSerializer}
+import com.github.debop4s.core.json.{JacksonSerializer, JsonTextObject}
 import java.io.Serializable
 import java.sql.{PreparedStatement, ResultSet}
 import org.hibernate.`type`.StandardBasicTypes
@@ -18,11 +18,11 @@ abstract class AbstractJsonUserType extends UserType {
 
     protected lazy val log = LoggerFactory.getLogger(getClass)
 
-    def jsonSerializer: JsonSerializer
+    val serializer = JacksonSerializer()
 
     private def serialize[T <: AnyRef](value: T): JsonTextObject = {
         if (value == null) JsonTextObject.Empty
-        else JsonTextObject(value.getClass.getName, jsonSerializer.serializeToText(value))
+        else JsonTextObject(value.getClass.getName, serializer.serializeToText(value))
     }
 
     private def deserialize(jto: JsonTextObject): AnyRef = {
@@ -30,7 +30,7 @@ abstract class AbstractJsonUserType extends UserType {
         else {
             try {
                 val clazz = Class.forName(jto.className)
-                jsonSerializer.deserializeFromText(jto.jsonText, clazz).asInstanceOf[AnyRef]
+                serializer.deserializeFromText(jto.jsonText, clazz).asInstanceOf[AnyRef]
             } catch {
                 case e: Throwable =>
                     log.error("JsonTextObject의 json text 를 deserialize 하는데 실패했습니다.", e)

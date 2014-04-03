@@ -25,6 +25,12 @@ class JacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
 
     override def deserializeFromText[T: Manifest](text: String): T =
         mapper.readValue(text, JacksonSerializer.typeReference[T])
+
+    def deserialize[T](data: Array[Byte], clazz: Class[T]): T =
+        mapper.readValue(data, clazz)
+
+    def deserializeFromText[T](text: String, clazz: Class[T]): T =
+        mapper.readValue(text, clazz)
 }
 
 object JacksonSerializer {
