@@ -147,12 +147,14 @@ object Debop4sBuild extends Build {
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("releases"),
         Resolver.typesafeRepo("releases"),
-        "rediscala" at "https://github.com/etaty/rediscala-mvn/raw/master/releases/",
+        "springSource" at "http://repo.springsource.org/release",
+        "springSourceMileston" at "http://repo.springsource.org/milestone",
         "jboss" at "http://repository.jboss.org/nexus/content/groups/public",
         "spray" at "http://repo.spray.io",
         "fwbrasil.net" at "http://fwbrasil.net/maven/",
-        "springSource" at "http://repo.springsource.org/release",
-        "springSourceMileston" at "http://repo.springsource.org/milestone"
+        // travis can't access 'https'
+        // "rediscala" at "https://github.com/etaty/rediscala-mvn/tree/master/releases",
+        "rediscala" at "http://pk11-scratch.googlecode.com/svn/trunk/"
     )
 
     def commonSettings =
