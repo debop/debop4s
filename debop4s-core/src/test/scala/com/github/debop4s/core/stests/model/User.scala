@@ -3,8 +3,8 @@ package com.github.debop4s.core.stests.model
 import com.github.debop4s.core.AbstractValueObject
 import com.github.debop4s.core.utils.{Arrays, ToStringHelper, Hashs}
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 
 case class Address(street: String, phone: String, properties: mutable.Buffer[String] = ArrayBuffer[String]())
@@ -41,12 +41,13 @@ class User extends AbstractValueObject with Ordered[User] {
         super.buildStringHelper
         .add("firstName", firstName)
         .add("lastName", lastName)
+        .add("addressStr", addressStr)
 }
 
 
 object User {
 
-    def apply(favoriteMovieSize: Int): User = {
+    def apply(favoriteMovieSize: Int = 0): User = {
         val user = new User()
         user.firstName = "성혁"
         user.lastName = "배"

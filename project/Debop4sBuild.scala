@@ -22,14 +22,14 @@ object Debop4sBuild extends Build {
     val annotations = "com.intellij" % "annotations" % "12.0"
 
     // akka
-    val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion exclude("scala-lang", "scala-compiler")
-    val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test" exclude("scala-lang", "scala-compiler")
+    val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion
+    val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
 
     // scala utils
-    val scalaUtils = "org.scalautils" %% "scalautils" % "2.1.2" exclude("scala-lang", "scala-compiler")
-    val scalaArm = "com.jsuereth" %% "scala-arm" % "1.3" exclude("scala-lang", "scala-compiler")
-    val scalaAsync = "org.scala-lang.modules" %% "scala-async" % "0.9.0-M4" exclude("scala-lang", "scala-compiler")
-    val scalaPickling = "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT" exclude("scala-lang", "scala-compiler")
+    val scalaUtils = "org.scalautils" %% "scalautils" % "2.1.2"
+    val scalaArm = "com.jsuereth" %% "scala-arm" % "1.3"
+    val scalaAsync = "org.scala-lang.modules" %% "scala-async" % "0.9.0-M4"
+    val scalaPickling = "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
     val scalaUtilSet = Seq(scalaUtils, scalaArm, scalaAsync, scalaPickling)
 
     // apache commons
@@ -65,7 +65,9 @@ object Debop4sBuild extends Build {
     // json4s
     val json4sValue = "3.2.8"
     val json4sNative = "org.json4s" %% "json4s-native" % json4sValue
-    val json4sSet = Seq(json4sNative)
+    val json4sExt = "org.json4s" %% "json4s-ext" % json4sValue
+    val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sValue
+    val json4sSet = Seq(json4sNative, json4sExt, json4sJackson)
 
     // asm
     val cglib = "cglib" % "cglib" % "3.1"
@@ -101,7 +103,7 @@ object Debop4sBuild extends Build {
     val springDataMongo = "org.springframework.data" % "spring-data-mongodb" % "1.4.1.RELEASE"
 
     // spring scala
-    val springScala = "org.springframework.scala" % "spring-scala" % "1.0.0.M2" exclude("scala-lang", "scala-compiler")
+    val springScala = "org.springframework.scala" % "spring-scala" % "1.0.0.M2"
 
     // hibernate
     val hibernateCore = "org.hibernate" % "hibernate-core" % hibernateVersion

@@ -1,6 +1,6 @@
 package com.github.debop4s.core.http
 
-import com.github.debop4s.core.json.JacksonSerializer
+import com.github.debop4s.core.json.ScalaJacksonSerializer
 import com.github.debop4s.core.utils.Charsets
 import com.github.debop4s.core.utils.Closer._
 import java.net.URI
@@ -29,7 +29,7 @@ class HttpClient extends AutoCloseable {
 
     private lazy val connectionManager = new PoolingHttpClientConnectionManager()
 
-    val serializer = JacksonSerializer()
+    val serializer = ScalaJacksonSerializer()
 
     var proxy: HttpHost = _
 

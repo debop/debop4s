@@ -1,6 +1,7 @@
 package com.github.debop4s.core.json
 
 import com.github.debop4s.core.utils.Strings
+import scala.reflect.ClassTag
 
 /**
  * JSON Serializer 의 기본 클래스
@@ -17,7 +18,7 @@ trait JsonSerializer {
      * @return JSON으로 직렬화한 바이트 배열, 객체가 Null이면 null 반환
      */
     @inline
-    def serialize(graph: Any): Array[Byte] = Strings.getUtf8Bytes(serializeToText(graph))
+    def serialize[T](graph: T): Array[Byte] = Strings.getUtf8Bytes(serializeToText(graph))
 
     /**
      * JSON 포맷으로 직렬화하여 Json Text 형식의 문자열로 반환합니다.
@@ -26,7 +27,7 @@ trait JsonSerializer {
      * @return JSON으로 직렬화한 문자열, 객체가 Null이면 null 반환
      */
     @inline
-    def serializeToText(graph: Any): String
+    def serializeToText[T](graph: T): String
 
     /**
      * Json 형식의 데이터을 역직렬화하여, 객체로 빌드합니다.
@@ -35,16 +36,17 @@ trait JsonSerializer {
      * @return 역직렬화 한 객체
      */
     @inline
-    def deserialize[T: Manifest](data: Array[Byte], clazz: Class[T]): T =
-        deserializeFromText(Strings.getUtf8String(data), clazz)
+    def deserialize[T: ClassTag](data: Array[Byte]): T =
+        deserializeFromText[T](Strings.getUtf8String(data))
 
     /**
+    *
      * Json Text 형식의 문자열을 역직렬화하여, 객체로 빌드합니다.
      *
      * @param text    JSON으로 직렬화한 문자열
      * @return 역직렬화 한 객체
      */
     @inline
-    def deserializeFromText[T: Manifest](text: String, clazz: Class[T]): T
+    def deserializeFromText[T: ClassTag](text: String): T
 
 }

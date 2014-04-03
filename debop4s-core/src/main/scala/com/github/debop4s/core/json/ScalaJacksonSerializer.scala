@@ -3,6 +3,8 @@ package com.github.debop4s.core.json
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import scala.reflect.ClassTag
+import scala.reflect.classTag
 
 
 /**
@@ -11,17 +13,17 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
  */
 class ScalaJacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
 
-    override def serialize(graph: Any): Array[Byte] =
+    override def serialize[T](graph: T): Array[Byte] =
         mapper.writeValueAsBytes(graph)
 
-    override def serializeToText(graph: Any): String =
+    override def serializeToText[T](graph: T): String =
         mapper.writeValueAsString(graph)
 
-    override def deserialize[T: Manifest](data: Array[Byte], clazz: Class[T]): T =
-        mapper.readValue[T](data, clazz)
+    override def deserialize[T: ClassTag](data: Array[Byte]): T =
+        mapper.readValue(data, classTag[T].runtimeClass).asInstanceOf[T]
 
-    override def deserializeFromText[T: Manifest](text: String, clazz: Class[T]): T =
-        mapper.readValue[T](text, clazz)
+    override def deserializeFromText[T: ClassTag](text: String): T =
+        mapper.readValue(text, classTag[T].runtimeClass).asInstanceOf[T]
 }
 
 object ScalaJacksonSerializer {

@@ -1,6 +1,6 @@
 package com.github.debop4s.core.http
 
-import com.github.debop4s.core.json.JacksonSerializer
+import com.github.debop4s.core.json.ScalaJacksonSerializer
 import com.github.debop4s.core.utils.{Strings, Charsets}
 import java.net.URI
 import java.nio.charset.Charset
@@ -28,7 +28,7 @@ object HttpAsyncs {
     private lazy val log = LoggerFactory.getLogger(getClass)
 
     lazy val client = new AsyncHttpClient()
-    lazy val serializer = JacksonSerializer()
+    lazy val serializer = ScalaJacksonSerializer()
 
     def execute(request: HttpUriRequest): Try[HttpResponse] = {
         client.execute(request)
