@@ -1,6 +1,7 @@
 package com.github.debop4s
 
 import scala.concurrent.ExecutionContext
+import com.github.debop4s.core.utils.Strings
 
 /**
  * com.github.debop4s.core.package
@@ -34,4 +35,9 @@ package object core {
     val ShouldBeInRangeDouble = "%s[%f]이 범위 [%f, %f) 를 벗어났습니다."
 
 
+    implicit class StringExtensions(s: String) {
+        def words = s split " "
+
+        def isWhitespace: Boolean = Strings.isWhitespace(s)
+    }
 }

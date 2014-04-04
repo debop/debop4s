@@ -1,5 +1,6 @@
 package com.github.debop4s.core.stests
 
+import com.github.debop4s.core._
 import com.github.debop4s.core.Local
 import java.util.UUID
 import org.slf4j.LoggerFactory
@@ -22,6 +23,7 @@ class LocalTest extends AbstractCoreTest {
         val value = UUID.randomUUID().toString
         Local.put(key, value)
 
+        if (key.isWhitespace) fail("key is whitespace")
         val stored = Local.get(key).getOrElse(null).asInstanceOf[String]
         assert(stored != null)
         assert(stored == value)

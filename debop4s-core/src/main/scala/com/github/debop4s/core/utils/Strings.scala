@@ -50,9 +50,10 @@ object Strings {
     def isEmpty(cs: String): Boolean = isEmpty(cs, doTrim = true)
 
     @inline
-    def isEmpty(cs: String, doTrim: Boolean = false): Boolean = {
+    def isEmpty(cs: String, doTrim: Boolean = true): Boolean = {
         if (cs == null)
             return true
+
         if (doTrim) cs.trim.length == 0
         else cs.length == 0
     }

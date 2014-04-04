@@ -22,9 +22,11 @@ object Local {
 
     private def getStorage: mutable.LinkedHashMap[Any, Any] = threadLocal.get()
 
-    def get[T](key: Any): Option[T] = getStorage.get(key) match {
-        case Some(x) => Some(x.asInstanceOf[T])
-        case _ => None
+    def get[T](key: Any): Option[T] = {
+        getStorage.get(key) match {
+            case Some(x) => Some(x.asInstanceOf[T])
+            case _ => None
+        }
     }
 
     def put(key: Any, value: Any) {
