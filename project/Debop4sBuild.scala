@@ -16,8 +16,8 @@ object Debop4sBuild extends Build {
     val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.1.1"
     val javasist = "org.javasist" % "javassist" % "3.18.1-GA"
     val commonLogging = "commons-logging" % "commons-logging" % "1.1.3"
-    val jodaTime = "joda-time" % "joda-time" % "2.3+"
-    val jodaConvert = "org.joda" % "joda-convert" % "1.6+"
+    val jodaTime = "joda-time" % "joda-time" % "2.3"
+    val jodaConvert = "org.joda" % "joda-convert" % "1.6"
     val guava = "com.google.guava" % "guava" % "16.0"
     val annotations = "com.intellij" % "annotations" % "12.0"
 
