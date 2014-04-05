@@ -52,9 +52,11 @@ abstract class AbstractJpaMySqlHikariConfiguration extends AbstractJpaMySqlConfi
     def defaultProperties = {
         HashMap(
             "cachePrepStmts" -> "true",
-            "prepStmtCacheSize" -> "250",
+            "prepStmtCacheSize" -> "500",
             "prepStmtCacheSqlLimit" -> "2048",
-            "useServerPrepStmts" -> "true"
+            "useServerPrepStmts" -> "true",
+            "characterEncoding" -> "UTF-8",
+            "useUnicode" -> "true"
         )
     }
 }

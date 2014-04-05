@@ -142,7 +142,6 @@ object Debop4sBuild extends Build {
 
     val testUnits = Seq(junit, festAssert, scalaTest, scalaMeter)
 
-
     val customResolvers = Seq(
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("releases"),
@@ -151,6 +150,7 @@ object Debop4sBuild extends Build {
         "springSource" at "http://repo.springsource.org/release",
         "springSourceMileston" at "http://repo.springsource.org/milestone",
         "jboss" at "http://repository.jboss.org/nexus/content/groups/public",
+        "debop" % "http://dl.bintray.com/debop/maven/",
         "spray" at "http://repo.spray.io",
         "fwbrasil.net" at "http://fwbrasil.net/maven/",
         // travis can't access 'https'

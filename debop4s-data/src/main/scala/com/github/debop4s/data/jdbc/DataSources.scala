@@ -79,6 +79,8 @@ object DataSources {
             }
         }
 
+        config.setInitializationFailFast(true)
+
         config.setAcquireIncrement(processCount)
         config.setMaximumPoolSize(processCount * 100)
         config.setConnectionTestQuery("SELECT 1")
