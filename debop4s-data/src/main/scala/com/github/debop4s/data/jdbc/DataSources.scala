@@ -73,8 +73,10 @@ object DataSources {
         config.addDataSourceProperty("user", username)
         config.addDataSourceProperty("password", passwd)
 
-        for ((name, value) <- props) {
-            config.addDataSourceProperty(name, value)
+        if (props != null) {
+            for ((name, value) <- props) {
+                config.addDataSourceProperty(name, value)
+            }
         }
 
         config.setAcquireIncrement(processCount)

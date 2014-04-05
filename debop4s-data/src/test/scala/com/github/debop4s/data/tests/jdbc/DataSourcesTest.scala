@@ -3,14 +3,13 @@ package com.github.debop4s.data.tests.jdbc
 import com.github.debop4s.data._
 import com.github.debop4s.data.jdbc.DataSources
 import java.util.Properties
-import org.scalatest.{Ignore, Matchers, FunSuite}
+import org.scalatest.{Matchers, FunSuite}
 import scala.collection.immutable.HashMap
 
 /**
  * DataSourcesTest
  * Created by debop on 2014. 3. 4.
  */
-@Ignore
 class DataSourcesTest extends FunSuite with Matchers {
 
     test("HikariCP create datasource by promgramatic") {
@@ -23,10 +22,16 @@ class DataSourcesTest extends FunSuite with Matchers {
         conn.isClosed should equal(true)
     }
 
-    test("HikariCP create multiple datasources by promgramatic") {
+    test("HikariCP create multiple datasources by promgramatic for MySQL") {
         val url = "jdbc:mysql://localhost:3306/test"
-        val props = HashMap("characterEncoding" -> "UTF-8", "useUnicode" -> "true")
-
+        val props = HashMap(
+            "characterEncoding" -> "UTF-8",
+            "useUnicode" -> "true",
+            "cachePrepStmts" -> "true",
+            "prepStmtCacheSize" -> "250",
+            "prepStmtCacheSqlLimit" -> "2048",
+            "useServerPrepStmts" -> "true"
+        )
         val ds = DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL, url, props = props)
 
         ds should not be null

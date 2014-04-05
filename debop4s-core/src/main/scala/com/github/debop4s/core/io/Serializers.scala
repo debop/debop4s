@@ -5,6 +5,7 @@ import com.github.debop4s.core.utils.{Streams, Strings}
 import java.io.{InputStream, ByteArrayOutputStream, OutputStream}
 import java.util.Objects
 import org.slf4j.LoggerFactory
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**

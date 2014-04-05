@@ -6,6 +6,7 @@ import java.util.Properties
 import javax.sql.DataSource
 import org.hibernate.cfg.AvailableSettings
 import org.springframework.context.annotation.Bean
+import scala.collection.immutable.HashMap
 
 /**
  * AbstractMySqlJpaConfiguration
@@ -40,9 +41,20 @@ abstract class AbstractJpaMySqlHikariConfiguration extends AbstractJpaMySqlConfi
 
     @Bean
     override def dataSource: DataSource = {
+
         DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL,
             "jdbc:mysql://localhost/" + getDatabaseName,
             "root",
-            "root")
+            "root",
+            defaultProperties)
+    }
+
+    def defaultProperties = {
+        HashMap(
+            "cachePrepStmts" -> "true",
+            "prepStmtCacheSize" -> "250",
+            "prepStmtCacheSqlLimit" -> "2048",
+            "useServerPrepStmts" -> "true"
+        )
     }
 }

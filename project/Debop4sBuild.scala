@@ -28,7 +28,7 @@ object Debop4sBuild extends Build {
     // scala utils
     val scalaUtils = "org.scalautils" %% "scalautils" % "2.1.2"
     val scalaArm = "com.jsuereth" %% "scala-arm" % "1.3"
-    val scalaAsync = "org.scala-lang.modules" %% "scala-async" % "0.9.0-M4"
+    val scalaAsync = "org.scala-lang.modules" %% "scala-async" % "0.9.0"
     val scalaPickling = "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
     val scalaUtilSet = Seq(scalaUtils, scalaArm, scalaAsync, scalaPickling)
 

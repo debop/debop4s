@@ -46,9 +46,9 @@ class StringsTest extends AbstractCoreTest {
         implicit val separator = ","
 
         val strs = Array("a", "bc", "def")
-        assert(Strings.join(strs) == "a,bc,def")
-        assert(Strings.join(strs)("") == "abcdef")
-        assert(Strings.join(strs)("|") == "a|bc|def")
+        assert(Strings.join(strs: _*) == "a,bc,def")
+        assert(Strings.join(strs: _*)("") == "abcdef")
+        assert(Strings.join(strs: _*)("|") == "a|bc|def")
     }
 
     test("String split") {

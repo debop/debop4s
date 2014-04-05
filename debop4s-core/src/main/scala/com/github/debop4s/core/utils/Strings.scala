@@ -338,21 +338,23 @@ object Strings {
                        other: CharSequence,
                        ooffset: Int,
                        len: Int): Boolean = {
-        if (cs.isInstanceOf[String] && other.isInstanceOf[String]) {
-            cs.asInstanceOf[String].regionMatches(ignoreCase, toffset, other.asInstanceOf[String], ooffset, len)
-        } else {
-            // todo String#regionMatches, String#indexOf 를 참고해서 구현해야 한다.
-            cs.toString.regionMatches(ignoreCase, toffset, other.toString, ooffset, len)
+        cs match {
+            case s: String if other.isInstanceOf[String] =>
+                s.regionMatches(ignoreCase, toffset, other.asInstanceOf[String], ooffset, len)
+            case _ =>
+                // todo String#regionMatches, String#indexOf 를 참고해서 구현해야 한다.
+                cs.toString.regionMatches(ignoreCase, toffset, other.toString, ooffset, len)
         }
     }
 
 
     @inline
-    def join(items: java.lang.Iterable[_])(implicit separator: String = COMMA_STR): String =
+    def join(items: java.lang.Iterable[_])(implicit separator: String): String =
         items.mkString(separator)
 
     @inline
-    def join(items: Array[_])(implicit separator: String): String = items.mkString(separator)
+    @varargs
+    def join(items: Any*)(implicit separator: String): String = items.mkString(separator)
 
     @inline
     def quotedStr(str: String): String =

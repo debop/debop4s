@@ -1,7 +1,7 @@
 package com.github.debop4s.core.parallels
 
-import com.github.debop4s.core._
 import java.util.concurrent.{TimeUnit, Callable}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration.{FiniteDuration, Duration}
 
