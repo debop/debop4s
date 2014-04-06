@@ -168,7 +168,7 @@ object Debop4sBuild extends Build {
 
   def commonSettings =
     Defaults.defaultSettings ++ Seq(
-      organization := "debop4s",
+      organization := "com.github.debop4s",
       version := "0.3.0-SNAPSHOT",
       scalaVersion := "2.10.4",
       javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.7", "-target", "1.7"),

@@ -133,17 +133,17 @@ package object timeperiod {
 
   // TODO: 이게 필요한지 검토해 보자.
   //
-  val TDateTime = com.github.debop4s.timeperiod.StaticDateTime
-  val TDateTimeFormat = com.github.debop4s.timeperiod.StaticDateTimeFormat
-  val TISODateTimeFormat = com.github.debop4s.timeperiod.StaticISODateTimeFormat
-  val TDateTimeZone = com.github.debop4s.timeperiod.StaticDateTimeZone
-  val TDuration = com.github.debop4s.timeperiod.StaticDuration
-  val TInterval = com.github.debop4s.timeperiod.StaticInterval
-  val TLocalDate = com.github.debop4s.timeperiod.StaticLocalDate
-  val TLocalDateTime = com.github.debop4s.timeperiod.StaticLocalDateTime
-  val TLocalTime = com.github.debop4s.timeperiod.StaticLocalTime
-  val TPeriod = com.github.debop4s.timeperiod.StaticPeriod
-  val TPartial = com.github.debop4s.timeperiod.StaticPartial
+  val TDateTime = debop4s.timeperiod.StaticDateTime
+  val TDateTimeFormat = debop4s.timeperiod.StaticDateTimeFormat
+  val TISODateTimeFormat = debop4s.timeperiod.StaticISODateTimeFormat
+  val TDateTimeZone = debop4s.timeperiod.StaticDateTimeZone
+  val TDuration = debop4s.timeperiod.StaticDuration
+  val TInterval = debop4s.timeperiod.StaticInterval
+  val TLocalDate = debop4s.timeperiod.StaticLocalDate
+  val TLocalDateTime = debop4s.timeperiod.StaticLocalDateTime
+  val TLocalTime = debop4s.timeperiod.StaticLocalTime
+  val TPeriod = debop4s.timeperiod.StaticPeriod
+  val TPartial = debop4s.timeperiod.StaticPartial
 
 
   /** 1년의 개월 수 (12) */

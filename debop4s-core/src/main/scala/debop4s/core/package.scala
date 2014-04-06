@@ -11,8 +11,8 @@ import concurrent.duration._
  */
 package object core {
 
-  val TimeConversions = com.github.debop4s.conversions.time
-  val StorageConversions = com.github.debop4s.conversions.storage
+  val TimeConversions = debop4s.conversions.time
+  val StorageConversions = debop4s.conversions.storage
 
   // implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
