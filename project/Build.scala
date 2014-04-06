@@ -21,7 +21,7 @@ object Debop4sBuild extends Build {
   val jodaConvert = "org.joda" % "joda-convert" % "1.6"
   val guava = "com.google.guava" % "guava" % "16.0"
   val objenesis = "org.objenesis" % "objenesis" % "2.1"
-  val findbugs = "com.google.code.findbugs" % "jsr305" % "1.3.9"
+  val findbugs = "com.google.code.findbugs" % "jsr305" % "2.0.3"
 
   // akka
   val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion
@@ -221,7 +221,7 @@ object Debop4sBuild extends Build {
     base = file("debop4s-timeperiod"),
     dependencies = Seq(debop4sCore),
     settings = commonSettings
-  ).dependsOn(debop4sCore)
+  )
 
   lazy val hibernateRediscala = Project(
     id = "hibernate-rediscala",
@@ -252,12 +252,12 @@ object Debop4sBuild extends Build {
         springDataJpa % "test"
       )
     )
-  ).dependsOn(debop4sCore, hibernateRediscala)
+  )
 
   lazy val debop4sMongo = Project(
     id = "debop4s-mongo",
     base = file("debop4s-mongo"),
-    dependencies = Seq(debop4sCore, debop4sTimeperiod),
+    dependencies = Seq(debop4sCore),
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         springDataMongo, queryDslMongo, reactiveMongo
@@ -268,7 +268,7 @@ object Debop4sBuild extends Build {
   lazy val debop4sData = Project(
     id = "debop4s-data",
     base = file("debop4s-data"),
-    dependencies = Seq(debop4sCore, debop4sTimeperiod, debop4sRedis, hibernateRediscala),
+    dependencies = Seq(debop4sCore, debop4sTimeperiod, hibernateRediscala),
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         springDataJpa, springScala,
@@ -283,13 +283,25 @@ object Debop4sBuild extends Build {
   lazy val debop4sDataJpa = Project(
     id = "debop4s-data-jpa",
     base = file("debop4s-data-jpa"),
-    dependencies = Seq(debop4sCore, debop4sTimeperiod, debop4sRedis, hibernateRediscala, debop4sData),
+    dependencies = Seq(debop4sCore, debop4sTimeperiod, hibernateRediscala, debop4sData),
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         springDataJpa, springScala,
         hibernateEntityManager, hibernateTest, hibernateValidator,
         queryDslJpa, queryDslScala
       ) ++ databaseDrivers ++ springOrmSeq,
+      testOptions in Test += Tests.Argument(TestFrameworks.JUnit, "-v")
+    )
+  )
+
+  lazy val debop4sDataSqueryl = Project(
+    id = "debop4s-data-squeryl",
+    base = file("debop4s-data-squeryl"),
+    dependencies = Seq(debop4sCore, debop4sData),
+    settings = commonSettings ++ Seq(
+      libraryDependencies ++= Seq(
+        boneCP, hikariCP
+      ) ++ databaseDrivers,
       testOptions in Test += Tests.Argument(TestFrameworks.JUnit, "-v")
     )
   )
