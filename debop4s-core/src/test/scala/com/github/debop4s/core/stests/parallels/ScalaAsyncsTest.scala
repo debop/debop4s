@@ -2,9 +2,9 @@ package com.github.debop4s.core.stests.parallels
 
 import com.github.debop4s.core._
 import com.github.debop4s.core.stests.AbstractCoreTest
-import concurrent.ExecutionContext.Implicits.global
-import concurrent._
 import scala.async.Async._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 /**
  * ScalaAsyncsTest

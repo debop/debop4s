@@ -1,7 +1,7 @@
 package com.github.debop4s.core.jtests;
 
 import com.github.debop4s.core.AbstractValueObject;
-import com.github.debop4s.core.Local;
+import com.github.debop4s.core.LocalMap;
 import com.github.debop4s.core.testing.Testing;
 import com.github.debop4s.core.utils.Hashs;
 import com.github.debop4s.core.utils.ToStringHelper;
@@ -16,13 +16,13 @@ import java.util.concurrent.Callable;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class LocalTest extends JUnitSuite {
+public class LocalMapTest extends JUnitSuite {
 
-    private static final Logger log = LoggerFactory.getLogger(LocalTest.class);
+    private static final Logger log = LoggerFactory.getLogger(LocalMapTest.class);
 
     @Before
     public void before() {
-        Local.clear();
+        LocalMap.clear();
     }
 
     @Test
@@ -45,19 +45,19 @@ public class LocalTest extends JUnitSuite {
     public void saveAndLoadValueType() {
         final String key = "Local.Value.Key.Java";
         final String value = UUID.randomUUID().toString();
-        Local.put(key, value);
-        assertThat(Local.get(key).getOrElse(null)).isEqualTo(value);
+        LocalMap.put(key, value);
+        assertThat(LocalMap.get(key).getOrElse(null)).isEqualTo(value);
     }
 
     @Test
     public void saveAndLoadReferenceType() throws Exception {
         final String key = "Local.Reference.Key.Java";
         final User user = new User("user", "P" + Thread.currentThread().getId(), 1);
-        Local.put(key, user);
+        LocalMap.put(key, user);
 
         Thread.sleep(5);
 
-        User storedUser = Local.get(key).getOrElse(null);
+        User storedUser = LocalMap.get(key).getOrElse(null);
 
         assertThat(storedUser).isNotNull();
         assertThat(storedUser).isEqualTo(user);
@@ -67,7 +67,7 @@ public class LocalTest extends JUnitSuite {
     @Test
     public void getOrCreate() throws Exception {
         String key = "Local.GetOrCreate.Key.Java";
-        User user = Local.getOrCreate(key, new Callable<User>() {
+        User user = LocalMap.getOrCreate(key, new Callable<User>() {
             @Override
             public User call() throws Exception {
                 return new User("user", "P" + Thread.currentThread().getId(), 1);
@@ -76,7 +76,7 @@ public class LocalTest extends JUnitSuite {
 
         Thread.sleep(5);
 
-        User storedUser = Local.get(key).getOrElse(null);
+        User storedUser = LocalMap.get(key).getOrElse(null);
         assertThat(storedUser).isNotNull();
         assertThat(storedUser).isEqualTo(user);
         assertThat(storedUser.name).isEqualTo(user.name);
