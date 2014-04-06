@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.github.debop4s.mongo" level="TRACE"/>
+    <logger name="debop4s.mongo" level="TRACE"/>
 
     <root level="DEBUG">
         <appender-ref ref="console"/>

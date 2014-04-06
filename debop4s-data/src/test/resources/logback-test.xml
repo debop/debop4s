@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.github.debop4s.data" level="DEBUG"/>
+    <logger name="debop4s.data" level="DEBUG"/>
 
     <logger name="org.hibernate.SQL" level="INFO"/>
     <logger name="com.zaxxer.hikari.HikariDataSource" level="ERROR"/>

@@ -11,7 +11,7 @@
     </appender>
 
     <!-- redis appender -->
-    <appender name="redis" class="com.github.debop4s.redis.logback.RedisAppender">
+    <appender name="redis" class="debop4s.redis.logback.RedisAppender">
         <serverName>localhost</serverName>
         <host>localhost</host>
         <port>6379</port>
@@ -19,21 +19,21 @@
     </appender>
 
     <!--redis appender -->
-    <appender name="redis-publisher" class="com.github.debop4s.redis.logback.pubsub.RedisLogPublisher">
+    <appender name="redis-publisher" class="debop4s.redis.logback.pubsub.RedisLogPublisher">
         <serverName>localhost</serverName>
         <host>127.0.0.1</host>
         <port>6379</port>
         <channel>channel:logback:logs</channel>
     </appender>
 
-    <logger name="com.github.debop4s.redis" level="TRACE"/>
+    <logger name="debop4s.redis" level="TRACE"/>
 
     <logger name="org.hibernate.SQL" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="com.zaxxer.hikari.HikariDataSource" level="ERROR"/>
 
     <root level="INFO">
-    <appender-ref ref="console"/>
+        <appender-ref ref="console"/>
         <!--<appender-ref ref="redis"/>-->
         <!--<appender-ref ref="redis-publisher"/>-->
     </root>
