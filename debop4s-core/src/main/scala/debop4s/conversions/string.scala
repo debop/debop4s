@@ -10,9 +10,7 @@ object string {
 
   final class RichString(wrapped: String) {
     def quoteC: String = Strings.quoteC(wrapped)
-
     def unquoteC: String = Strings.unquoteC(wrapped)
-
     def fromHexString: Array[Byte] = Strings.fromHexString(wrapped)
   }
 
@@ -21,6 +19,5 @@ object string {
   }
 
   implicit def richString(s: String) = new RichString(s)
-
   implicit def richByteArray(bytes: Array[Byte]) = new RichByteArray(bytes)
 }
