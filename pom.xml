@@ -227,7 +227,7 @@
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
                 <artifactId>fst</artifactId>
-                <version>1.53</version>
+                <version>1.54</version>
             </dependency>
 
             <!-- Jackson JSON Serializer -->

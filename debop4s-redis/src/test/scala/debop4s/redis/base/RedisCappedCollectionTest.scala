@@ -21,7 +21,7 @@ class RedisCappedCollectionTest extends AbstractRedisTest {
     }
     val list = Asyncs.result(coll.getRange(0, 100))
     println(list)
-    assert(list.sameElements(Array.range(90, 100).reverse))
+    assert(list === Array.range(90, 100).reverse)
 
     redis.del(name)
   }
