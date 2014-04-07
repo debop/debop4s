@@ -74,43 +74,39 @@ abstract class AbstractRedisZSet {
 
   @varargs
   def rankAll(key: String, members: String*): Seq[Future[MemberRank]] = {
-    members.map {
-      m =>
-        redis.zrank(key, m).map {
-          r =>
-            MemberRank(m, r.getOrElse(0L))
-        }
+    members.map { m =>
+      redis.zrank(key, m).map { r =>
+        MemberRank(m, r.getOrElse(0L))
+      }
     }
   }
 
   @varargs
   def revRankAll(key: String, members: String*): Seq[Future[MemberRank]] = {
-    members.map {
-      m =>
-        redis.zrevrank(key, m).map {
-          r =>
-            MemberRank(m, r.getOrElse(0L))
-        }
+    members.map { m =>
+      redis.zrevrank(key, m).map { r =>
+        MemberRank(m, r.getOrElse(0L))
+      }
     }
   }
 
   @varargs
   def rankAllWithScores(key: String, members: String*): Seq[MemberRankScore] = {
-    rankAll(key, members: _*).map {
-      fmr =>
-        val mr = Asyncs.result(fmr)
-        val fs = redis.zscore(key, mr.member)
-        MemberRankScore(mr.member, mr.rank, Asyncs.result(fs).getOrElse(0D))
+    rankAll(key, members: _*)
+    .map { fmr =>
+      val mr = Asyncs.result(fmr)
+      val fs = redis.zscore(key, mr.member)
+      MemberRankScore(mr.member, mr.rank, Asyncs.result(fs).getOrElse(0D))
     }
   }
 
   @varargs
   def revRankAllWithScores(key: String, members: String*): Seq[MemberRankScore] = {
-    revRankAll(key, members: _*).map {
-      fmr =>
-        val mr = Asyncs.result(fmr)
-        val fs = redis.zscore(key, mr.member)
-        MemberRankScore(mr.member, mr.rank, Asyncs.result(fs).getOrElse(0D))
+    revRankAll(key, members: _*)
+    .map { fmr =>
+      val mr = Asyncs.result(fmr)
+      val fs = redis.zscore(key, mr.member)
+      MemberRankScore(mr.member, mr.rank, Asyncs.result(fs).getOrElse(0D))
     }
   }
 
@@ -118,71 +114,73 @@ abstract class AbstractRedisZSet {
   def rankAllInGroup(key: String, members: String*): Seq[MemberRank] = {
     var rank = 0L
 
-    rankAll(key, members: _*).map {
-      fmr =>
-        val mr = Asyncs.result(fmr)
-        val elem = MemberRank(mr.member, rank)
-        rank += 1
-        elem
+    rankAll(key, members: _*)
+    .map { fmr =>
+      val mr = Asyncs.result(fmr)
+      val elem = MemberRank(mr.member, rank)
+      rank += 1
+      elem
     }.toSeq
-      .sortBy(_.rank)
+    .sortBy(_.rank)
   }
 
   @varargs
   def revRankInGroup(key: String, members: String*): Seq[MemberRank] = {
     var rank = 0L
 
-    revRankAll(key, members: _*).map {
-      fmr =>
-        val mr = Asyncs.result(fmr)
-        val elem = MemberRank(mr.member, rank)
-        rank += 1
-        elem
+    revRankAll(key, members: _*)
+    .map { fmr =>
+      val mr = Asyncs.result(fmr)
+      val elem = MemberRank(mr.member, rank)
+      rank += 1
+      elem
     }.toSeq
-      .sortBy(_.rank)
+    .sortBy(_.rank)
   }
 
   @varargs
   def rankAllInGroupWithScores(key: String, members: String*): Seq[MemberRankScore] = {
     var rank = 0L
 
-    rankAllWithScores(key, members: _*).map {
-      mrs =>
-        val elem = MemberRankScore(mrs.member, rank, mrs.score)
-        rank += 1
-        elem
+    rankAllWithScores(key, members: _*)
+    .map { mrs =>
+      val elem = MemberRankScore(mrs.member, rank, mrs.score)
+      rank += 1
+      elem
     }.toSeq
-      .sortBy(_.rank)
+    .sortBy(_.rank)
   }
 
   @varargs
   def revRankInGroupWithScores(key: String, members: String*): Seq[MemberRankScore] = {
     var rank = 0L
 
-    rankAllWithScores(key, members: _*).map {
-      mrs =>
-        val elem = MemberRankScore(mrs.member, rank, mrs.score)
-        rank += 1
-        elem
+    rankAllWithScores(key, members: _*)
+    .map { mrs =>
+      val elem = MemberRankScore(mrs.member, rank, mrs.score)
+      rank += 1
+      elem
     }.toSeq
-      .sortBy(_.rank)
+    .sortBy(_.rank)
   }
 
   def rangeWithScores(key: String, start: Long, end: Long): Future[Seq[MemberScore]] = {
-    redis.zrangeWithscores(key, start, end).map {
-      r =>
-        r.map(x => MemberScore(x._1.toString(), x._2))
-          .toSeq
-          .sortBy(_.score)
+    redis.zrangeWithscores(key, start, end)
+    .map { r =>
+      r.map { case (member, score) =>
+        MemberScore(member.toString(), score)
+      }.toSeq
+      .sortBy(_.score)
     }
   }
 
   def revRangeWithScores(key: String, start: Long, end: Long): Future[Seq[MemberScore]] = {
-    redis.zrevrangeWithscores(key, start, end).map {
-      r =>
-        r.map(x => MemberScore(x._1.toString(), x._2))
-          .toSeq
-          .sortBy(_.score)
+    redis.zrevrangeWithscores(key, start, end)
+    .map { r =>
+      r.map { case (member, score) =>
+        MemberScore(member.toString(), score)
+      }.toSeq
+      .sortBy(_.score)
     }
   }
 }

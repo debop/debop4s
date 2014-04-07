@@ -26,7 +26,7 @@ class TrieMapTest extends AbstractCoreTest {
 
     // compre squre root
     while (results.nonEmpty) {
-      for ((num, e) <- results) {
+      results.foreach { case (num, e) =>
         val nsqrt = 0.5 * (e.sqrt + e.num / e.sqrt)
         if (math.abs(nsqrt - e.sqrt) < 0.01) {
           results.remove(num)

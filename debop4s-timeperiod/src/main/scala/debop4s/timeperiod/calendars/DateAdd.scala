@@ -96,13 +96,12 @@ class DateAdd {
       availablePeriods.addAll(searchPeriods)
     } else {
       val gapCalculator = new TimeGapCalculator[TimeRange]()
-      searchPeriods.foreach {
-        p =>
-          if (excludePeriods.hasOverlapPeriods(p)) {
-            gapCalculator.gaps(excludePeriods, p).foreach(gap => availablePeriods.add(gap))
-          } else {
-            availablePeriods.add(p)
-          }
+      searchPeriods.foreach { p =>
+        if (excludePeriods.hasOverlapPeriods(p)) {
+          gapCalculator.gaps(excludePeriods, p).foreach(gap => availablePeriods.add(gap))
+        } else {
+          availablePeriods.add(p)
+        }
       }
     }
 
@@ -190,20 +189,19 @@ object DateAdd {
     var difference = MaxDuration
 
     periods
-      .filter(period => period.end >= start)
-      .foreach {
-      period =>
-        if (period.hasInside(start)) {
-          nearest = period
-          moment = start
-          return (nearest, moment)
-        }
-        val periodToMoment = new Duration(start, period.start)
-        if (periodToMoment < difference) {
-          difference = periodToMoment
-          nearest = period
-          moment = period.start
-        }
+    .filter(period => period.end >= start)
+    .foreach { period =>
+      if (period.hasInside(start)) {
+        nearest = period
+        moment = start
+        return (nearest, moment)
+      }
+      val periodToMoment = new Duration(start, period.start)
+      if (periodToMoment < difference) {
+        difference = periodToMoment
+        nearest = period
+        moment = period.start
+      }
     }
     (nearest, moment)
   }
@@ -214,23 +212,22 @@ object DateAdd {
     var difference = MaxDuration
 
     periods
-      .filter(p => p.start <= start)
-      .foreach {
-      period =>
-        if (period.hasInside(start)) {
-          // start가 기간에 속한다면...
-          nearest = period
-          moment = start
-          return (nearest, moment)
-        }
+    .filter(p => p.start <= start)
+    .foreach { period =>
+      if (period.hasInside(start)) {
+        // start가 기간에 속한다면...
+        nearest = period
+        moment = start
+        return (nearest, moment)
+      }
 
-        // 근처 값이 아니라면 포기
-        val periodToMoment = new Duration(start, period.end)
-        if (periodToMoment < difference) {
-          difference = periodToMoment
-          nearest = period
-          moment = period.end
-        }
+      // 근처 값이 아니라면 포기
+      val periodToMoment = new Duration(start, period.end)
+      if (periodToMoment < difference) {
+        difference = periodToMoment
+        nearest = period
+        moment = period.end
+      }
     }
     (nearest, moment)
   }

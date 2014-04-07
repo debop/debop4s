@@ -1,13 +1,12 @@
 package debop4s.core.jtests;
 
 import debop4s.core.AbstractValueObject;
-import debop4s.core.LocalMap;
+import debop4s.core.Local;
 import debop4s.core.testing.Testing;
 import debop4s.core.utils.Hashs;
 import debop4s.core.utils.ToStringHelper;
 import org.junit.Before;
 import org.junit.Test;
-import org.scalatest.junit.JUnitSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +15,12 @@ import java.util.concurrent.Callable;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class LocalMapTest extends JUnitSuite {
+public class LocalTest {
 
-    private static final Logger log = LoggerFactory.getLogger(LocalMapTest.class);
+    private static final Logger log = LoggerFactory.getLogger(LocalTest.class);
 
     @Before
-    public void before() {
-        LocalMap.clear();
-    }
+    public void before() { Local.clearAll(); }
 
     @Test
     public void multiThread() throws Exception {
@@ -45,19 +42,19 @@ public class LocalMapTest extends JUnitSuite {
     public void saveAndLoadValueType() {
         final String key = "Local.Value.Key.Java";
         final String value = UUID.randomUUID().toString();
-        LocalMap.put(key, value);
-        assertThat(LocalMap.get(key).getOrElse(null)).isEqualTo(value);
+        Local.put(key, value);
+        assertThat(Local.get(key).getOrElse(null)).isEqualTo(value);
     }
 
     @Test
     public void saveAndLoadReferenceType() throws Exception {
         final String key = "Local.Reference.Key.Java";
         final User user = new User("user", "P" + Thread.currentThread().getId(), 1);
-        LocalMap.put(key, user);
+        Local.put(key, user);
 
         Thread.sleep(5);
 
-        User storedUser = LocalMap.get(key).getOrElse(null);
+        User storedUser = Local.get(key).getOrElse(null);
 
         assertThat(storedUser).isNotNull();
         assertThat(storedUser).isEqualTo(user);
@@ -67,7 +64,7 @@ public class LocalMapTest extends JUnitSuite {
     @Test
     public void getOrCreate() throws Exception {
         String key = "Local.GetOrCreate.Key.Java";
-        User user = LocalMap.getOrCreate(key, new Callable<User>() {
+        User user = Local.getOrCreate(key, new Callable<User>() {
             @Override
             public User call() throws Exception {
                 return new User("user", "P" + Thread.currentThread().getId(), 1);
@@ -76,7 +73,7 @@ public class LocalMapTest extends JUnitSuite {
 
         Thread.sleep(5);
 
-        User storedUser = LocalMap.get(key).getOrElse(null);
+        User storedUser = Local.get(key).getOrElse(null);
         assertThat(storedUser).isNotNull();
         assertThat(storedUser).isEqualTo(user);
         assertThat(storedUser.name).isEqualTo(user.name);
@@ -101,9 +98,9 @@ public class LocalMapTest extends JUnitSuite {
         @Override
         public ToStringHelper buildStringHelper() {
             return super.buildStringHelper()
-                    .add("name", name)
-                    .add("password", password)
-                    .add("age", age);
+                        .add("name", name)
+                        .add("password", password)
+                        .add("age", age);
         }
 
         private static final long serialVersionUID = 2697543433170138506L;

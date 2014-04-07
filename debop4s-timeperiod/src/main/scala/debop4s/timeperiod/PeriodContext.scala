@@ -1,6 +1,6 @@
 package debop4s.timeperiod
 
-import debop4s.core.LocalMap
+import debop4s.core.Local
 
 /**
  * debop4s.timeperiod.Periodcontext
@@ -14,14 +14,14 @@ object PeriodContext {
   object Current {
 
     def calendar: ITimeCalendar = {
-      val calendar = LocalMap.getOrCreate(TIME_CALEMDAR_KEY, {
+      val calendar = Local.getOrCreate(TIME_CALEMDAR_KEY, {
         DefaultTimeCalendar
       })
       calendar.getOrElse(DefaultTimeCalendar)
     }
 
     def calendar_=(calendar: ITimeCalendar) {
-      LocalMap.put(TIME_CALEMDAR_KEY, calendar)
+      Local.put(TIME_CALEMDAR_KEY, calendar)
     }
 
     def locale = calendar.getLocale

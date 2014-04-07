@@ -263,7 +263,7 @@ object Time extends TimeLikeOps[Time] {
 
   def withTimeFunction[A](timeFunction: => Time)(body: TimeControl => A): A = {
     @volatile var tf = () => timeFunction
-    val save = LocalMap.get[A]("Time.withTimeFunction")
+    val save = Local.save()
     try {
       val timeControl = new TimeControl {
         def set(time: Time) {
@@ -278,7 +278,7 @@ object Time extends TimeLikeOps[Time] {
       Time.localGetTime() = () => tf()
       body(timeControl)
     } finally {
-      LocalMap.put("Time.withTimeFunction", save)
+      Local.restore(save)
     }
   }
 
