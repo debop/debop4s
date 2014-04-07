@@ -78,7 +78,6 @@ object Debop4sBuild extends Build {
   // jasypt
   val jasypt = "org.jasypt" % "jasypt" % "1.9.2"
 
-
   // spring framework
   val springContext = "org.springframework" % "spring-context" % springFrameworkVersion
   val springContextSupport = "org.springframework" % "spring-context-support" % springFrameworkVersion
@@ -147,11 +146,13 @@ object Debop4sBuild extends Build {
   val festAssert = "org.easytesting" % "fest-assert" % "1.4" % "test"
   val scalaTest = "org.scalatest" %% "scalatest" % "2.1.2" % "test"
   val scalaMeter = "com.github.axel22" %% "scalameter" % "0.4" % "test"
+  val mockito = "org.mockito" % "mockito-all" % "1.9.0" % "test"
 
-  val testUnits = Seq(junit, festAssert, scalaTest, scalaMeter)
+  val testUnits = Seq(junit, festAssert, scalaTest, scalaMeter, mockito)
 
   val customResolvers = Seq(
     Resolver.mavenLocal,
+    Resolver.typesafeIvyRepo("release"),
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots"),
     Resolver.typesafeRepo("releases"),
@@ -305,4 +306,9 @@ object Debop4sBuild extends Build {
       testOptions in Test += Tests.Argument(TestFrameworks.JUnit, "-v")
     )
   )
+
+  ivyConfiguration <<= (externalResolvers, ivyPaths, offline, checksums, appConfiguration, target, streams) map { (rs, paths, off, check, app, t, s) =>
+    val resCacheDir = t / "resolution-cache"
+    new InlineIvyConfiguration(paths, rs, Nil, Nil, off, None, check, Some(resCacheDir), s.log)
+  }
 }
