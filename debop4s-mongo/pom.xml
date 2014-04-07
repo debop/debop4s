@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>debop4s-parent</artifactId>
+        <groupId>com.github.debop4s</groupId>
+        <version>0.3.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>mongo</name>
+    <artifactId>debop4s-mongo</artifactId>
+
+    <dependencies>
+        <!-- debop4s -->
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-timeperiod</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <!-- Spring Data Mongo -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb-cross-store</artifactId>
+        </dependency>
+
+        <!-- Mongo Client -->
+        <dependency>
+            <groupId>org.reactivemongo</groupId>
+            <artifactId>reactivemongo_${scala.main.version}</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-mongodb</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>

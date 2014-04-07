@@ -1,6 +1,6 @@
 package debop4s.core.utils
 
-import org.jetbrains.annotations.Nullable
+import javax.annotation.Nullable
 
 /**
  * Closer

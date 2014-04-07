@@ -1,6 +1,4 @@
-import sbt.Keys._
-import sbt._
-
+/*
 object Debop4sBuild extends Build {
 
   val debop4sVersion = "0.3.0-SNAPSHOT"
@@ -312,3 +310,4 @@ object Debop4sBuild extends Build {
     new InlineIvyConfiguration(paths, rs, Nil, Nil, off, None, check, Some(resCacheDir), s.log)
   }
 }
+*/

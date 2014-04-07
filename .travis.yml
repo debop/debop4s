@@ -1,6 +1,6 @@
 language: scala
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION test
+  - mvn ++$TRAVIS_SCALA_VERSION clean package
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
@@ -8,15 +8,15 @@ before_script:
 
 scala:
   - 2.10.4
+
 jdk:
   - oraclejdk7
 services:
   - redis
   - mongodb
-  - mysql
 
 env:
-  - SBT_OPTS="-ea -server -Xmx2G -XX:PermSize=256M -XX:MaxPermSize=512M -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
+  - MAVEN_OPTS="-ea -server -Xmx2G -XX:PermSize=256M -XX:MaxPermSize=512M -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
 
 # whitelist
 branches:
