@@ -61,6 +61,9 @@ trait Buff {outer =>
         case other: Buff => Buff.equals(this, other)
         case _ => false
     }
+    override def toString: String = {
+        toArray.mkString(",")
+    }
 }
 
 
@@ -95,14 +98,11 @@ object Buff {
             if (end <= start || start > length) Buff.Empty
             else ByteArray(bytes, this.start + start, (this.start + end) min this.end)
         }
-        override def toString: String = s"ByteArray($length)"
+        override def toString: String = s"ByteArray(${ super.toString })"
         override def equals(other: Any): Boolean = other match {
-            case other: ByteArray =>
-                if (other.start == 0 && other.end == other.bytes.length && start == 0 && end == bytes.length) {
-                    util.Arrays.equals(bytes, other.bytes)
-                } else {
-                    false
-                }
+            case other: ByteArray
+                if other.start == 0 && other.end == other.bytes.length && start == 0 && end == bytes.length =>
+                util.Arrays.equals(bytes, other.bytes)
             case x => super.equals(x)
         }
     }

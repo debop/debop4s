@@ -16,30 +16,34 @@ class InputStreamReader(inputStream: InputStream, maxBufferSize: Int)
     @volatile private[this] var discarded = false
     private val lock = new ReentrantReadWriteLock()
 
-    def read(n: Int): Future[Buff] = future {
+    def read(n: Int): Future[Buff] = {
         if (discarded)
             return Future.failed(new Reader.ReaderDiscarded())
 
         if (n == 0)
             return Future.successful(Buff.Empty)
 
-        lock.readLock().lock()
-        try {
-            if (discarded)
-                throw new Reader.ReaderDiscarded()
+        future {
+            lock.readLock().lock()
+            try {
+                if (discarded)
+                    throw new Reader.ReaderDiscarded()
 
-            val size = n min maxBufferSize
-            val buffer = new Array[Byte](size)
-            val c = inputStream.read(buffer, 0, size)
-            if (c == -1) Buff.Eof
-            else Buff.ByteArray(buffer, 0, c)
+                val size = n min maxBufferSize
+                val buffer = new Array[Byte](size)
+                val c = inputStream.read(buffer, 0, size)
 
-        } catch {
-            case exc: InterruptedException =>
-                discarded = true
-                throw exc
-        } finally {
-            lock.readLock().unlock()
+                if (c == -1) Buff.Eof
+                else if (c == 0) Buff.Empty
+                else Buff.ByteArray(buffer, 0, c)
+
+            } catch {
+                case exc: InterruptedException =>
+                    discarded = true
+                    throw exc
+            } finally {
+                lock.readLock().unlock()
+            }
         }
     }
 

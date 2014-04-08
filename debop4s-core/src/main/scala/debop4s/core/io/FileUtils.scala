@@ -1,5 +1,6 @@
 package debop4s.core.io
 
+import debop4s.core.utils.{Streams, Closer}
 import java.io._
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousFileChannel
@@ -57,11 +58,80 @@ object FileUtils {
         Files.createFile(path, attrs: _*)
     }
 
+    /**
+      * 임시 디렉토리를 생성합니다.
+      * @param deleteAtExit 프로세스 중단 시 임시 디렉토리를 삭제할 것인가 여부
+      */
+    def createTempDirectory(deleteAtExit: Boolean = true): File = {
+        val file = File.createTempFile("temp", "dir")
+        file.delete()
+        file.mkdir()
+
+        if (deleteAtExit) {
+            Runtime.getRuntime.addShutdownHook(new Thread {
+                override def run() {
+                    Files.delete(file.toPath)
+                }
+            })
+        }
+        file
+    }
+
+    /**
+     * Create a temporary file from the given (resource) path. The
+     * tempfile is deleted on JVM exit.
+     *
+     * Note, due to the usage of `File.deleteOnExit()` callers should
+     * be careful using this as it can leak memory.
+     * See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4513817 for
+     * example.
+     *
+     * @param path the resource-relative path to make a temp file from
+     * @return the temp File object
+     */
+    def createTempFile(path: Path): File = createTempFile(getClass, path)
+
+    /**
+    * Create a temporary file from the given (resource) path. The
+    * tempfile is deleted on JVM exit.
+    *
+    * Note, due to the usage of `File.deleteOnExit()` callers should
+    * be careful using this as it can leak memory.
+    * See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4513817 for
+    * example.
+    *
+    * @param klass the `Class` to use for getting the resource.
+    * @param path the resource-relative path to make a temp file from
+    * @return the temp File object
+    */
+    def createTempFile(clazz: Class[_], path: Path): File = {
+        clazz.getResourceAsStream(path.toString) match {
+            case null =>
+                throw new FileNotFoundException(path.toString)
+            case stream =>
+                val tempPath = Files.createTempFile(path, "temp", "file", Seq[FileAttribute[_]](): _*)
+                val file = tempPath.toFile
+                file.deleteOnExit()
+                Closer.using(new BufferedOutputStream(new FileOutputStream(file), 1 << 20)) { fos =>
+                    Streams.copy(stream, fos)
+                    fos.flush()
+                }
+                stream.close()
+                file
+        }
+    }
+
+    /**
+    * 파일/디렉토리를 복사합니다.
+    */
     @varargs
     def copy(src: Path, target: Path, options: CopyOption*) {
         Files.copy(src, target, options: _*)
     }
 
+    /**
+    * 비동기 방식으로 파일/디렉토리를 복사합니다.
+    */
     @varargs
     def copyAsync(src: Path, target: Path, options: CopyOption*) = future {
         copy(src, target, options: _*)
@@ -77,16 +147,26 @@ object FileUtils {
         move(src, dest, options: _*)
     }
 
+    /**
+     * 지정한 경로의 파일을 삭제합니다.
+     */
     def delete(path: Path) {
         log.debug(s"delete file. path=$path")
         Files.delete(path)
     }
 
+    /**
+     * 지정한 경로의 파일이 존재한다면 삭제합니다.
+     */
     def deleteIfExists(path: Path) {
-        if (exists(path))
-            delete(path)
+        Files.deleteIfExists(path)
     }
 
+    /**
+     * 지정한 경로의 디렉토리를 삭제합니다.
+     * @param dir 삭제할 디렉토리
+     * @param deep 하위 디렉토리도 삭제할 것인가 여부
+     */
     @inline
     def deleteDirectory(dir: Path, deep: Boolean = true) {
         if (!deep) {
@@ -123,23 +203,20 @@ object FileUtils {
     def readAllBytesAsync(path: Path): concurrent.Future[Array[Byte]] =
         readAllBytesAsync(path, StandardOpenOption.READ)
 
+    /**
+     * 지정한 경로의 파일 정보를 비동기 방식으로 모두 읽어드립니다.
+     */
     @varargs
     @inline
     def readAllBytesAsync(path: Path, openOptions: OpenOption*): Future[Array[Byte]] = future {
         assert(path != null)
 
-        var fileChannel = None: Option[AsynchronousFileChannel]
-
-        try {
-            fileChannel = Some(AsynchronousFileChannel.open(path, openOptions: _*))
-            val buffer = ByteBuffer.allocate(fileChannel.get.size().toInt)
-            val result = fileChannel.get.read(buffer, 0)
+        Closer.using(AsynchronousFileChannel.open(path, openOptions: _*)) { fileChannel =>
+            val buffer = ByteBuffer.allocate(fileChannel.size().toInt)
+            val result = fileChannel.read(buffer, 0)
             result.get()
             buffer.flip()
             buffer.array()
-        } finally {
-            if (fileChannel.isDefined)
-                fileChannel.get.close()
         }
     }
 
@@ -155,9 +232,8 @@ object FileUtils {
     @inline
     def readAllLines(is: InputStream, cs: Charset): Try[Seq[String]] = Try {
         val lines = ArrayBuffer[String]()
-        val br = Try(new BufferedReader(new java.io.InputStreamReader(is, cs)))
 
-        br match {
+        Try(new BufferedReader(new java.io.InputStreamReader(is, cs))) match {
             case Success(reader) =>
                 var line = reader.readLine()
                 while (line != null) {
@@ -178,19 +254,13 @@ object FileUtils {
         // scala 고유의 Option, Try 기능을 활용합니다.
         Try(new ByteArrayInputStream(input)) match {
             case Success(is) =>
-                val results = readAllLines(is, cs)
-                is.close()
-                results
+                Closer.using(is) { stream =>
+                    readAllLines(stream, cs)
+                }
             case Failure(e) =>
                 log.error("Fail to read bytes.", e)
                 throw new RuntimeException("Fail to read bytes.", e)
         }
-        //        val is = new ByteArrayInputStream(input)
-        //        try {
-        //            readAllLines(is, cs)
-        //        } finally {
-        //            is.close()
-        //        }
     }
 
     @varargs
@@ -233,42 +303,31 @@ object FileUtils {
         Files.write(path, lines.toSeq, cs, options: _*)
     }
 
-    def writeAsync(path: Path, input: Array[Byte]): Future[Try[Int]] = {
+    def writeAsync(path: Path, input: Array[Byte]): Future[Int] = {
         writeAsync(path, input, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
     @inline
-    def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Try[Int]] = future {
-        Try {
-            val fileChannel = Try(AsynchronousFileChannel.open(path, options: _*))
-            fileChannel match {
-                case Success(channel) =>
-                    try {
-                        val future = channel.write(ByteBuffer.wrap(input), 0)
-                        future.get(15, TimeUnit.MINUTES)
-                    } finally {
-                        channel.close()
-                    }
-                case Failure(e) =>
-                    throw new RuntimeException("Fail to write to file.", e)
-            }
+    def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Int] = future {
+
+        Try(AsynchronousFileChannel.open(path, options: _*)) match {
+            case Success(channel) =>
+                Closer.using(channel) { fc =>
+                    val future = fc.write(ByteBuffer.wrap(input), 0)
+                    future.get(15, TimeUnit.MINUTES)
+                }
+            case Failure(e) =>
+                throw new RuntimeException("Fail to write to file.", e)
         }
-        //        val fileChannel = AsynchronousFileChannel.open(path, options: _*)
-        //        try {
-        //            val future = fileChannel.write(ByteBuffer.wrap(input), 0)
-        //            future.get(15, TimeUnit.MINUTES)
-        //        } finally {
-        //            fileChannel.close()
-        //        }
     }
 
-    def writeAsync(path: Path, lines: Iterable[String], cs: Charset = UTF8): Future[Try[Int]] = {
+    def writeAsync(path: Path, lines: Iterable[String], cs: Charset = UTF8): Future[Int] = {
         writeAsync(path, lines, cs, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     @varargs
-    def writeAsync(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Future[Try[Int]] = {
+    def writeAsync(path: Path, lines: Iterable[String], cs: Charset, options: OpenOption*): Future[Int] = {
         val allText = lines.mkString(System.lineSeparator())
         writeAsync(path, cs.encode(allText).array(), options: _*)
     }
