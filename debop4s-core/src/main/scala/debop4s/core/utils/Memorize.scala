@@ -2,7 +2,7 @@ package debop4s.core.utils
 
 import java.util.concurrent.{CountDownLatch => JCountDownLatch}
 import scala.annotation.tailrec
-import scala.util.{Failure, Try}
+import scala.util.{Success, Failure, Try}
 
 /**
  * Memorize
@@ -81,6 +81,7 @@ object Memorize {
                 // Compute the value outside of the synchronized block.
                 val b = Try { f(a) }
                 b match {
+                    case Success(_) =>
                     case Failure(t) =>
                         // If there was an exception running the
                         // computation, then we need to make sure we do not

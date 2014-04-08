@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.debop4s</groupId>
         <artifactId>debop4s-parent</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,6 +18,17 @@
             <artifactId>debop4s-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
+        <!-- joda-time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
