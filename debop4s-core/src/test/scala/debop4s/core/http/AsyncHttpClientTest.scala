@@ -1,6 +1,5 @@
 package debop4s.core.http
 
-import debop4s.core.http.HttpAsyncs
 import java.net.URI
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit

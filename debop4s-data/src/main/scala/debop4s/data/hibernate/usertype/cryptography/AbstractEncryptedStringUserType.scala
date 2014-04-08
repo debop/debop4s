@@ -16,64 +16,64 @@ import org.hibernate.usertype.UserType
  */
 abstract class AbstractEncryptedStringUserType extends UserType {
 
-  protected def encryptor: SymmetricEncryptor
+    protected def encryptor: SymmetricEncryptor
 
-  private def encrypt(plainText: String): String = {
-    if (Strings.isEmpty(plainText)) {
-      null
-    } else {
-      val bytes = encryptor.encrypt(Strings.getUtf8Bytes(plainText))
-      Strings.getStringFromBytes(bytes)
+    private def encrypt(plainText: String): String = {
+        if (Strings.isEmpty(plainText)) {
+            null
+        } else {
+            val bytes = encryptor.encrypt(Strings.getUtf8Bytes(plainText))
+            Strings.getStringFromBytes(bytes)
+        }
     }
-  }
 
-  private def decrypt(cipherText: String): String = {
-    if (Strings.isEmpty(cipherText)) {
-      null
-    } else {
-      val bytes = encryptor.decrypt(Strings.getBytesFromString(cipherText))
-      Strings.getUtf8String(bytes)
+    private def decrypt(cipherText: String): String = {
+        if (Strings.isEmpty(cipherText)) {
+            null
+        } else {
+            val bytes = encryptor.decrypt(Strings.getBytesFromString(cipherText))
+            Strings.getUtf8String(bytes)
+        }
     }
-  }
 
-  override def sqlTypes(): Array[Int] = Array(StringType.INSTANCE.sqlType())
+    override def sqlTypes(): Array[Int] = Array(StringType.INSTANCE.sqlType())
 
-  override def returnedClass(): Class[_] = classOf[String]
+    override def returnedClass(): Class[_] = classOf[String]
 
-  override def equals(x: Any, y: Any): Boolean = (x == y) || (x != null && (x == y))
+    override def equals(x: Any, y: Any): Boolean = (x == y) || (x != null && (x == y))
 
-  override def hashCode(x: Any): Int = if (x != null) x.hashCode() else 0
+    override def hashCode(x: Any): Int = if (x != null) x.hashCode() else 0
 
-  override def nullSafeGet(rs: ResultSet,
-                           names: Array[String],
-                           session: SessionImplementor,
-                           owner: Any): AnyRef = {
-    val str = StringType.INSTANCE.nullSafeGet(rs, names(0), session)
-    decrypt(str)
-  }
-
-  override def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) {
-    if (value == null) {
-      StringType.INSTANCE.nullSafeSet(st, null, index, session)
-    } else {
-      val str = encrypt(value.toString)
-      StringType.INSTANCE.nullSafeSet(st, value, index, session)
+    override def nullSafeGet(rs: ResultSet,
+                             names: Array[String],
+                             session: SessionImplementor,
+                             owner: Any): AnyRef = {
+        val str = StringType.INSTANCE.nullSafeGet(rs, names(0), session)
+        decrypt(str)
     }
-  }
 
-  override def deepCopy(value: Any): AnyRef =
-    value.asInstanceOf[AnyRef]
+    override def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) {
+        if (value == null) {
+            StringType.INSTANCE.nullSafeSet(st, null, index, session)
+        } else {
+            val str = encrypt(value.toString)
+            StringType.INSTANCE.nullSafeSet(st, value, index, session)
+        }
+    }
 
-  override def isMutable: Boolean = true
+    override def deepCopy(value: Any): AnyRef =
+        value.asInstanceOf[AnyRef]
 
-  override def disassemble(value: Any): Serializable =
-    deepCopy(value).asInstanceOf[Serializable]
+    override def isMutable: Boolean = true
 
-  override def assemble(cached: Serializable, owner: Any): AnyRef =
-    deepCopy(cached)
+    override def disassemble(value: Any): Serializable =
+        deepCopy(value).asInstanceOf[Serializable]
 
-  override def replace(original: Any, target: Any, owner: Any): AnyRef =
-    deepCopy(original)
+    override def assemble(cached: Serializable, owner: Any): AnyRef =
+        deepCopy(cached)
+
+    override def replace(original: Any, target: Any, owner: Any): AnyRef =
+        deepCopy(original)
 }
 
 /**
@@ -81,9 +81,9 @@ abstract class AbstractEncryptedStringUserType extends UserType {
  */
 class DESStringUserType extends AbstractEncryptedStringUserType {
 
-  private lazy val _encryptor = new DESEncryptor()
+    private lazy val _encryptor = new DESEncryptor()
 
-  override protected def encryptor: SymmetricEncryptor = _encryptor
+    override protected def encryptor: SymmetricEncryptor = _encryptor
 }
 
 /**
@@ -91,9 +91,9 @@ class DESStringUserType extends AbstractEncryptedStringUserType {
  */
 class RC2StringUserType extends AbstractEncryptedStringUserType {
 
-  private lazy val _encryptor = new RC2Encryptor()
+    private lazy val _encryptor = new RC2Encryptor()
 
-  override protected def encryptor: SymmetricEncryptor = _encryptor
+    override protected def encryptor: SymmetricEncryptor = _encryptor
 }
 
 /**
@@ -101,7 +101,7 @@ class RC2StringUserType extends AbstractEncryptedStringUserType {
  */
 class TripleDESStringUserType extends AbstractEncryptedStringUserType {
 
-  private lazy val _encryptor = new TripleDESEncryptor()
+    private lazy val _encryptor = new TripleDESEncryptor()
 
-  override protected def encryptor: SymmetricEncryptor = _encryptor
+    override protected def encryptor: SymmetricEncryptor = _encryptor
 }

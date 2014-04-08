@@ -8,9 +8,9 @@ package debop4s.core
  */
 object SortDirection extends Enumeration {
 
-  type SortDirection = Value
+    type SortDirection = Value
 
-  val ASC = Value(1, "ASC")
+    val ASC = Value(1, "ASC")
 
-  val DESC = Value(-1, "DESC")
+    val DESC = Value(-1, "DESC")
 }

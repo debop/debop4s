@@ -1,6 +1,5 @@
 package debop4s.timeperiod.utils
 
-import debop4s.core.NotSupportedException
 import debop4s.core._
 import debop4s.timeperiod.DayOfWeek.DayOfWeek
 import debop4s.timeperiod.Halfyear.Halfyear

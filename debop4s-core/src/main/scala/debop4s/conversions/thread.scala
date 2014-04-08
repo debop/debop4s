@@ -8,11 +8,11 @@ import java.util.concurrent.Callable
  */
 object thread {
 
-  implicit def makeRunnable(f: => Unit): Runnable = new Runnable() {
-    def run() = f
-  }
+    implicit def makeRunnable(f: => Unit): Runnable = new Runnable() {
+        def run() = f
+    }
 
-  implicit def makeCallabke[T](f: => T): Callable[T] = new Callable[T]() {
-    def call() = f
-  }
+    implicit def makeCallabke[T](f: => T): Callable[T] = new Callable[T]() {
+        def call() = f
+    }
 }

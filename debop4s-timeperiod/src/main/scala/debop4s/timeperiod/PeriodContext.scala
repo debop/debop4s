@@ -9,24 +9,24 @@ import debop4s.core.Local
  */
 object PeriodContext {
 
-  lazy val TIME_CALEMDAR_KEY = this.getClass.getName + ".Current"
+    lazy val TIME_CALEMDAR_KEY = this.getClass.getName + ".Current"
 
-  object Current {
+    object Current {
 
-    def calendar: ITimeCalendar = {
-      val calendar = Local.getOrCreate(TIME_CALEMDAR_KEY, {
-        DefaultTimeCalendar
-      })
-      calendar.getOrElse(DefaultTimeCalendar)
+        def calendar: ITimeCalendar = {
+            val calendar = Local.getOrCreate(TIME_CALEMDAR_KEY, {
+                DefaultTimeCalendar
+            })
+            calendar.getOrElse(DefaultTimeCalendar)
+        }
+
+        def calendar_=(calendar: ITimeCalendar) {
+            Local.put(TIME_CALEMDAR_KEY, calendar)
+        }
+
+        def locale = calendar.getLocale
+
+        def firstDayOfWeek = calendar.firstDayOfWeek
     }
-
-    def calendar_=(calendar: ITimeCalendar) {
-      Local.put(TIME_CALEMDAR_KEY, calendar)
-    }
-
-    def locale = calendar.getLocale
-
-    def firstDayOfWeek = calendar.firstDayOfWeek
-  }
 
 }

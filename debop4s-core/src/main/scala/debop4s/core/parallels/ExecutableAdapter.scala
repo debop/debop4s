@@ -10,38 +10,38 @@ import org.slf4j.LoggerFactory
  */
 class ExecutableAdapter(val executable: Executable) extends Runnable {
 
-  require(executable != null)
+    require(executable != null)
 
-  lazy val log = LoggerFactory.getLogger(classOf[ExecutableAdapter])
+    lazy val log = LoggerFactory.getLogger(classOf[ExecutableAdapter])
 
-  private var error: Throwable = _
-  private var done: Boolean = false
+    private var error: Throwable = _
+    private var done: Boolean = false
 
-  def isDone = done
+    def isDone = done
 
-  def throwAnyErrors() {
-    error match {
-      case e: RuntimeException => throw e
-      case err: scala.Error => throw err
-      case _ => throw new ExceptionWrapper(error)
+    def throwAnyErrors() {
+        error match {
+            case e: RuntimeException => throw e
+            case err: scala.Error => throw err
+            case _ => throw new ExceptionWrapper(error)
+        }
     }
-  }
 
-  def run() {
-    log.trace("starting to execute Executable instance.")
-    error = null
-    done = false
+    def run() {
+        log.trace("starting to execute Executable instance.")
+        error = null
+        done = false
 
-    try {
-      executable.execute()
-      log.trace("finish to execute Executable instance.")
-    } catch {
-      case t: Throwable => error = t
-    } finally {
-      done = true
+        try {
+            executable.execute()
+            log.trace("finish to execute Executable instance.")
+        } catch {
+            case t: Throwable => error = t
+        } finally {
+            done = true
+        }
     }
-  }
 
-  case class ExceptionWrapper(cause: Throwable) extends RuntimeException {}
+    case class ExceptionWrapper(cause: Throwable) extends RuntimeException {}
 
 }

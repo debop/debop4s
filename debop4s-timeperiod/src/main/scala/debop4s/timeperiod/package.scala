@@ -2,7 +2,6 @@ package debop4s
 
 import debop4s.timeperiod.DayOfWeek.DayOfWeek
 import org.joda.time._
-import org.joda.time.base.AbstractDateTime
 
 /**
  * Time Period 관련 상수 및 Implicit 정의

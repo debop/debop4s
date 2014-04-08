@@ -21,104 +21,104 @@ import scala.annotation.varargs
  */
 object HibernateTool {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
-  def buildSessionfactory(cfg: Configuration): SessionFactory = {
-    require(cfg != null)
-    log.info("SessionFactory를 빌드합니다...")
+    def buildSessionfactory(cfg: Configuration): SessionFactory = {
+        require(cfg != null)
+        log.info("SessionFactory를 빌드합니다...")
 
-    val registryBuilder = new StandardServiceRegistryBuilder().applySettings(cfg.getProperties)
-    val sessionFactory = cfg.buildSessionFactory(registryBuilder.build())
+        val registryBuilder = new StandardServiceRegistryBuilder().applySettings(cfg.getProperties)
+        val sessionFactory = cfg.buildSessionFactory(registryBuilder.build())
 
-    log.info("SessionFactory를 빌드했습니다.")
-    sessionFactory
-  }
-
-  @varargs
-  def registEventListener[T](sessionFactory: SessionFactory,
-                             listener: T,
-                             eventTypes: EventType[T]*) {
-    val registry = sessionFactory.asInstanceOf[SessionFactoryImpl]
-      .getServiceRegistry
-      .getService(classOf[EventListenerRegistry])
-
-    eventTypes.foreach {
-      et =>
-        registry
-          .getEventListenerGroup(et)
-          .appendListener(listener)
+        log.info("SessionFactory를 빌드했습니다.")
+        sessionFactory
     }
-  }
 
-  def registEventListener[T](sessionFactory: SessionFactory,
-                             listener: T,
-                             eventTypes: Iterable[EventType[T]]) {
-    val registry = sessionFactory.asInstanceOf[SessionFactoryImpl]
-      .getServiceRegistry
-      .getService(classOf[EventListenerRegistry])
+    @varargs
+    def registEventListener[T](sessionFactory: SessionFactory,
+                               listener: T,
+                               eventTypes: EventType[T]*) {
+        val registry = sessionFactory.asInstanceOf[SessionFactoryImpl]
+                       .getServiceRegistry
+                       .getService(classOf[EventListenerRegistry])
 
-    eventTypes.foreach {
-      et =>
-        registry
-          .getEventListenerGroup(et)
-          .appendListener(listener)
+        eventTypes.foreach {
+            et =>
+                registry
+                .getEventListenerGroup(et)
+                .appendListener(listener)
+        }
     }
-  }
 
-  def registUpdateTimestampEventListener(sessionFactory: SessionFactory) {
-    val listener = new UpdatedTimestampListener()
-  }
+    def registEventListener[T](sessionFactory: SessionFactory,
+                               listener: T,
+                               eventTypes: Iterable[EventType[T]]) {
+        val registry = sessionFactory.asInstanceOf[SessionFactoryImpl]
+                       .getServiceRegistry
+                       .getService(classOf[EventListenerRegistry])
 
-  def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
+        eventTypes.foreach {
+            et =>
+                registry
+                .getEventListenerGroup(et)
+                .appendListener(listener)
+        }
+    }
 
-  def copyCriteria(src: Criteria) = Serializers.copyObject(src)
+    def registUpdateTimestampEventListener(sessionFactory: SessionFactory) {
+        val listener = new UpdatedTimestampListener()
+    }
 
-  def getExecutableCriteria(session: Session, dc: DetachedCriteria, orders: Order*): Criteria =
-    addOrders(dc, orders: _*).getExecutableCriteria(session)
+    def copyDetachedCriteria(src: DetachedCriteria) = Serializers.copyObject(src)
 
-  def addOrders(dc: DetachedCriteria, orders: Order*): DetachedCriteria = {
-    assert(dc != null)
-    if (orders != null)
-      orders.foreach(o => dc.addOrder(o))
-    dc
-  }
+    def copyCriteria(src: Criteria) = Serializers.copyObject(src)
 
-  def addOrders(criteria: Criteria, orders: Order*): Criteria = {
-    assert(criteria != null)
-    if (orders != null)
-      orders.foreach(o => criteria.addOrder(o))
-    criteria
-  }
+    def getExecutableCriteria(session: Session, dc: DetachedCriteria, orders: Order*): Criteria =
+        addOrders(dc, orders: _*).getExecutableCriteria(session)
 
-  def setParameters(query: Query, parameters: HibernateParameter*): Query = {
-    assert(query != null)
-    if (parameters != null)
-      parameters.foreach(p => query.setParameter(p.name, p.value))
-    query
-  }
+    def addOrders(dc: DetachedCriteria, orders: Order*): DetachedCriteria = {
+        assert(dc != null)
+        if (orders != null)
+            orders.foreach(o => dc.addOrder(o))
+        dc
+    }
 
-  def setPaging(criteria: Criteria, pageable: Pageable): Criteria =
-    setPaging(criteria, pageable.getPageNumber * pageable.getPageSize, pageable.getPageSize)
+    def addOrders(criteria: Criteria, orders: Order*): Criteria = {
+        assert(criteria != null)
+        if (orders != null)
+            orders.foreach(o => criteria.addOrder(o))
+        criteria
+    }
 
-  def setPaging(criteria: Criteria, firstResult: Int, maxResults: Int): Criteria = {
-    if (firstResult >= 0)
-      criteria.setFirstResult(firstResult)
-    if (maxResults > 0)
-      criteria.setMaxResults(maxResults)
+    def setParameters(query: Query, parameters: HibernateParameter*): Query = {
+        assert(query != null)
+        if (parameters != null)
+            parameters.foreach(p => query.setParameter(p.name, p.value))
+        query
+    }
 
-    criteria
-  }
+    def setPaging(criteria: Criteria, pageable: Pageable): Criteria =
+        setPaging(criteria, pageable.getPageNumber * pageable.getPageSize, pageable.getPageSize)
 
-  def setPaging(query: Query, pageable: Pageable): Query =
-    setPaging(query, pageable.getPageNumber * pageable.getPageSize, pageable.getPageSize)
+    def setPaging(criteria: Criteria, firstResult: Int, maxResults: Int): Criteria = {
+        if (firstResult >= 0)
+            criteria.setFirstResult(firstResult)
+        if (maxResults > 0)
+            criteria.setMaxResults(maxResults)
 
-  def setPaging(query: Query, firstResult: Int, maxResults: Int): Query = {
-    if (firstResult >= 0)
-      query.setFirstResult(firstResult)
-    if (maxResults > 0)
-      query.setMaxResults(maxResults)
+        criteria
+    }
 
-    query
-  }
+    def setPaging(query: Query, pageable: Pageable): Query =
+        setPaging(query, pageable.getPageNumber * pageable.getPageSize, pageable.getPageSize)
+
+    def setPaging(query: Query, firstResult: Int, maxResults: Int): Query = {
+        if (firstResult >= 0)
+            query.setFirstResult(firstResult)
+        if (maxResults > 0)
+            query.setMaxResults(maxResults)
+
+        query
+    }
 
 }

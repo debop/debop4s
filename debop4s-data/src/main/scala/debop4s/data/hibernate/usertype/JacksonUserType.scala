@@ -10,6 +10,6 @@ import debop4s.core.json.JacksonSerializer
  */
 class JacksonUserType extends AbstractJsonUserType {
 
-  override val serializer = JacksonSerializer()
+    override val serializer = JacksonSerializer()
 
 }

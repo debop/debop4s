@@ -138,10 +138,10 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
         // 비동기 기다리는 거 손 쉽게 하려고...
         Thread.sleep(10)
 
-        client.keysInRegion(REGION) map { keys => assert(keys.size == count)}
+        client.keysInRegion(REGION) map { keys => assert(keys.size == count) }
 
         client.deleteRegion(REGION)
 
-        client.keysInRegion(REGION) map { keys => assert(keys.size == 0)}
+        client.keysInRegion(REGION) map { keys => assert(keys.size == 0) }
     }
 }

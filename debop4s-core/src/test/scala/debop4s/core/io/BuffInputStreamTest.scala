@@ -1,6 +1,5 @@
 package debop4s.core.io
 
-import debop4s.core.io.Buff
 import debop4s.core.AbstractCoreTest
 import java.io.IOException
 import org.junit.runner.RunWith

@@ -14,16 +14,16 @@ import org.springframework.context.annotation.Bean
  */
 abstract class AbstractHibernatePostgreSqlConfiguration extends AbstractHibernateConfiguration {
 
-  @Bean
-  override def dataSource: DataSource =
-    buildDataSource(DRIVER_CLASS_POSTGRESQL,
-      "jdbc:postgresql://localhost/" + getDatabaseName,
-      "root",
-      "root")
+    @Bean
+    override def dataSource: DataSource =
+        buildDataSource(DRIVER_CLASS_POSTGRESQL,
+            "jdbc:postgresql://localhost/" + getDatabaseName,
+            "root",
+            "root")
 
-  override def hibernateProperties: Properties = {
-    val props = super.hibernateProperties
-    props.put(AvailableSettings.DIALECT, DIALECT_POSTGRESQL)
-    props
-  }
+    override def hibernateProperties: Properties = {
+        val props = super.hibernateProperties
+        props.put(AvailableSettings.DIALECT, DIALECT_POSTGRESQL)
+        props
+    }
 }
