@@ -1,13 +1,18 @@
 package debop4s.core.stests.io
 
-import debop4s.core.stests.AbstractCoreTest
 import debop4s.core.io.Buff
+import debop4s.core.stests.AbstractCoreTest
+import org.mockito.Matchers._
+import org.mockito.Mockito._
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
+import org.scalatest.mock.MockitoSugar
 
 /**
  * BufferTest
  * @author Sunghyouk Bae
  */
-class BuffTest extends AbstractCoreTest {
+class BuffTest extends AbstractCoreTest with MockitoSugar {
 
   test("Buff.ByteArray.slice") {
     val arr = Array.range(0, 16).map(_.toByte)
@@ -73,5 +78,15 @@ class BuffTest extends AbstractCoreTest {
     assert(Buff.Utf8.unapply(buff) === Some(str))
   }
 
+  test("Buff.Utf8.unapply with a non-Buff.ByteArray") {
+    val buff = mock[Buff]
+    when(buff.length).thenReturn(12)
+    when(buff.write(any[Array[Byte]], any[Int])) thenAnswer new Answer[Unit]() {
+      def answer(invocation: InvocationOnMock) = {}
+    }
+
+    Buff.Utf8.unapply(buff)
+    verify(buff).write(any[Array[Byte]], any[Int])
+  }
 
 }
