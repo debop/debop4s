@@ -4,6 +4,7 @@ import java.util.Properties
 import java.util.concurrent.atomic.AtomicInteger
 import org.hibernate.cache.CacheException
 import org.hibernate.cfg.Settings
+import org.slf4j.LoggerFactory
 
 /**
  * SingletonRedisRegionFactory
@@ -12,6 +13,8 @@ import org.hibernate.cfg.Settings
  * @since 2014. 2. 21. 오후 3:54
  */
 class SingletonRedisRegionFactory(private[this] val _props: Properties) extends AbstractRedisRegionFactory(_props) {
+
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     val referenceCount = new AtomicInteger()
 

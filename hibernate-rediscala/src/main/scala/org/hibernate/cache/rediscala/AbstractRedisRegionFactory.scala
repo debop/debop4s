@@ -18,11 +18,11 @@ import scala.collection.mutable
  */
 abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionFactory {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     protected var settings: Settings = null
     protected val accessStrategyFactory = RedisAccessStrategyFactory()
-    protected val regionNames = new mutable.HashSet[String] with mutable.SynchronizedSet[String]
+    protected val regionNames = new mutable.LinkedHashSet[String] with mutable.SynchronizedSet[String]
 
     protected var cache: HibernateRedisCache = null
     protected var expirationThread: Thread = null
@@ -95,8 +95,10 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
                 while (true) {
                     try {
                         Thread.sleep(1000)
-                        if (cache != null) {
-                            regionNames.par.foreach(region => cache.expire(region))
+                        if (cache != null && regionNames.size > 0) {
+                            regionNames.par.foreach { region =>
+                                cache.expire(region)
+                            }
                         }
                     } catch {
                         case ignored: InterruptedException =>

@@ -14,11 +14,15 @@ class Person extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    var id: java.lang.Long = _
 
-    var age: Option[Int] = None
+    var age: Integer = _
     var firstName: String = _
     var lastName: String = _
+
+    // FST 에서 Float 수형이 제대로 안된다.
+    var height: java.lang.Double = 180.8
+    var weight: java.lang.Double = 77.7
 
     @ManyToMany(mappedBy = "participants")
     var events: util.List[Event] = new util.ArrayList[Event]()
@@ -39,12 +43,12 @@ class Person extends Serializable {
     var tailsmans: util.List[String] = new util.ArrayList[String]()
 
     override def equals(obj: Any): Boolean = {
-        if ((obj != null) && obj.isInstanceOf[PhoneNumber]) hashCode == obj.hashCode
-        else false
+        obj match {
+            case x: Person => hashCode == x.hashCode
+            case _ => false
+        }
     }
 
-    override def hashCode: Int = Objects.hash(firstName, lastName)
-
-    override def toString: String = firstName + " " + lastName
+    override def hashCode: Int = Objects.hash(firstName, lastName, height, weight)
 
 }

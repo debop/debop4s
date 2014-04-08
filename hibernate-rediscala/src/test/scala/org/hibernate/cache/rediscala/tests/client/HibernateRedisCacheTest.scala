@@ -1,10 +1,9 @@
 package org.hibernate.cache.rediscala.tests.client
 
-import org.fest.assertions.Assertions._
+import java.util.concurrent.TimeUnit
 import org.hibernate.cache.rediscala.Promises
 import org.hibernate.cache.rediscala.client.HibernateRedisCache
 import org.hibernate.cache.rediscala.tests.AbstractHibernateRedisTest
-import scala.actors.threadpool.TimeUnit
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -18,12 +17,11 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
 
     val client = HibernateRedisCache()
 
-    val REGION = client.DEFAULT_REGION_NAME
+    val REGION = HibernateRedisCache.DEFAULT_REGION_NAME
 
     test("connection") {
-        client.ping.map {
-            r =>
-                assertThat(r).isEqualTo("pong")
+        client.ping.map { r =>
+            assert(r == "pong")
         }
     }
 
@@ -125,6 +123,7 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
     }
 
     test("keys in region") {
+
         Promises.await(client.flushDb())
 
         val count = 100
@@ -136,14 +135,13 @@ class HibernateRedisCacheTest extends AbstractHibernateRedisTest {
             keys += key
         }
 
-        client.keysInRegion(REGION) map { keys =>
-            keys.size should equal(count)
-        }
+        // 비동기 기다리는 거 손 쉽게 하려고...
+        Thread.sleep(10)
+
+        client.keysInRegion(REGION) map { keys => assert(keys.size == count)}
 
         client.deleteRegion(REGION)
 
-        client.keysInRegion(REGION) map { keys =>
-            keys.size should equal(0)
-        }
+        client.keysInRegion(REGION) map { keys => assert(keys.size == 0)}
     }
 }

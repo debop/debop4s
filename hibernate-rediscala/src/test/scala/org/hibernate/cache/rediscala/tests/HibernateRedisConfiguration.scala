@@ -30,7 +30,7 @@ class HibernateRedisConfiguration {
 
         props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create")
         props.setProperty(AvailableSettings.FORMAT_SQL, "true")
-        props.setProperty(AvailableSettings.SHOW_SQL, "true")
+        props.setProperty(AvailableSettings.SHOW_SQL, "false")
         props.setProperty(AvailableSettings.POOL_SIZE, "100")
 
         // Secondary Cache

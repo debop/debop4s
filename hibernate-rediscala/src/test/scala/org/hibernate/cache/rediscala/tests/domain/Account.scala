@@ -18,7 +18,7 @@ class Account extends Serializable {
 
     @Id
     @GeneratedValue
-    var id: Long = _
+    var id: java.lang.Long = _
 
     @ManyToOne
     @JoinColumn(name = "personId")

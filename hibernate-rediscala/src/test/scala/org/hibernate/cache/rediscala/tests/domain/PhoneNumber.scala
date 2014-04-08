@@ -6,7 +6,7 @@ import scala.beans.BeanProperty
 class PhoneNumber extends Serializable {
 
     @BeanProperty
-    var personId: Long = 0
+    var personId: java.lang.Long = 0
 
     @BeanProperty
     var numberType: String = "home"
