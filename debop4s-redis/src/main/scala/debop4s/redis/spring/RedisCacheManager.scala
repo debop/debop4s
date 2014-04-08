@@ -2,6 +2,8 @@ package debop4s.redis.spring
 
 import java.util
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.DisposableBean
+import org.springframework.cache.{Cache, CacheManager}
 import redis.RedisClient
 import scala.collection.JavaConversions._
 import scala.collection.mutable

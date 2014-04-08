@@ -2,9 +2,9 @@ package debop4s.core.time
 
 import org.joda.time.format.{ISODateTimeFormat => fmt, DateTimeFormatter}
 
-object StaticISODateTimeFormat extends StaticISODateTimeFormat
+object JodaISODateTimeFormat extends JodaISODateTimeFormat
 
-trait StaticISODateTimeFormat {
+trait JodaISODateTimeFormat {
 
     def date: DateTimeFormatter = fmt.date
 

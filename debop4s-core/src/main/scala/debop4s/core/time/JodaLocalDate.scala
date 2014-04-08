@@ -4,9 +4,10 @@ import debop4s.core._
 import java.util.{Calendar, Date}
 import org.joda.time.LocalDate
 
-object StaticLocalDate extends StaticLocalDate
+object JodaLocalDate extends JodaLocalDate
 
-trait StaticLocalDate {
+trait JodaLocalDate {
+
     type Property = LocalDate.Property
 
     def fromCalendarFields(calendar: Calendar) = LocalDate.fromCalendarFields(calendar)

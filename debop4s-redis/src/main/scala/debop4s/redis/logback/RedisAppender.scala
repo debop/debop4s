@@ -6,6 +6,7 @@ import debop4s.core.json.JacksonSerializer
 import debop4s.core.logback.LogDocument
 import debop4s.core.utils.Options
 import debop4s.redis.RedisConsts
+import org.joda.time.DateTime
 import redis.RedisClient
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._

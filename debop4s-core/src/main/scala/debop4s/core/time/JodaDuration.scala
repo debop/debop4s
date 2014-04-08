@@ -8,15 +8,17 @@ import org.joda.time.Duration
  * @since  2014. 1. 6. 오후 9:49
  */
 
-object StaticDuration extends StaticDuration {
+object JodaDuration extends JodaDuration {
+
     def apply(v: Long) = new Duration(v)
 
-    def empty = Duration.ZERO
+    lazy val empty = Duration.ZERO
 
-    def zero = empty
+    lazy val zero = empty
 }
 
-trait StaticDuration {
+trait JodaDuration {
+
     def standardDays(days: Long) = Duration.standardDays(days)
 
     def standardHours(hours: Long) = Duration.standardHours(hours)

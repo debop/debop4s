@@ -4,9 +4,9 @@ import debop4s.core._
 import java.util.{Calendar, Date}
 import org.joda.time.{Chronology, LocalTime}
 
-object StaticLocalTime extends StaticLocalTime
+object JodaLocalTime extends JodaLocalTime
 
-trait StaticLocalTime {
+trait JodaLocalTime {
     type Property = LocalTime.Property
 
     final val MIDNIGHT = LocalTime.MIDNIGHT

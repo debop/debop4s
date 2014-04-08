@@ -2,6 +2,7 @@ package debop4s.redis.base
 
 import akka.util.ByteString
 import debop4s.redis.serializer.BinaryRedisSerializer
+import org.springframework.beans.factory.annotation.Autowired
 import redis.{RedisClient, ByteStringFormatter}
 
 /**

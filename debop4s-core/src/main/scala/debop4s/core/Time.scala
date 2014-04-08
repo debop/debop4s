@@ -163,7 +163,7 @@ private[core] object TimeBox {
  * the current time to verify timeouts and other time-dependent
  * behavior, without calling `sleep`.
  *
- * If you import the [[debop4s.conversions.time]] implicits you
+ * If you import the [[debop4s.core.conversions.time]] implicits you
  * can write human-readable values such as `1.minute` or
  * `250.millis`.
  */

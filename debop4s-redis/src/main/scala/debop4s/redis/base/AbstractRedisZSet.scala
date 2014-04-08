@@ -1,6 +1,7 @@
 package debop4s.redis.base
 
 import debop4s.core.parallels.Asyncs
+import org.springframework.beans.factory.annotation.Autowired
 import redis.RedisClient
 import scala.annotation.varargs
 import scala.concurrent.ExecutionContext.Implicits.global

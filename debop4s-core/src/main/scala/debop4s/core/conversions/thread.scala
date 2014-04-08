@@ -1,4 +1,4 @@
-package debop4s.conversions
+package debop4s.core.conversions
 
 import java.util.concurrent.Callable
 

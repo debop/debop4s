@@ -1,6 +1,6 @@
 package debop4s.core.time
 
-import org.joda.time.{Duration, DateTime, ReadablePeriod, Period}
+import org.joda.time._
 
 /**
  * com.github.time.RichPeriod
@@ -9,29 +9,29 @@ import org.joda.time.{Duration, DateTime, ReadablePeriod, Period}
  */
 class RichPeriod(val self: Period) extends AnyVal {
 
-    def millis: Int = self.getMillis
+    def millis = self.getMillis
 
-    def seconds: Int = self.getSeconds
+    def seconds = self.getSeconds
 
-    def minutes: Int = self.getMinutes
+    def minutes = self.getMinutes
 
-    def hours: Int = self.getHours
+    def hours = self.getHours
 
-    def days: Int = self.getDays
+    def days = self.getDays
 
-    def weeks: Int = self.getWeeks
+    def weeks = self.getWeeks
 
-    def months: Int = self.getMonths
+    def months = self.getMonths
 
-    def years: Int = self.getYears
+    def years = self.getYears
 
     def -(period: ReadablePeriod): Period = self.minus(period)
 
     def +(period: ReadablePeriod): Period = self.plus(period)
 
-    def ago: DateTime = StaticDateTime.now.minus(self)
+    def ago: DateTime = JodaDateTime.now.minus(self)
 
-    def later: DateTime = StaticDateTime.now.plus(self)
+    def later: DateTime = JodaDateTime.now.plus(self)
 
     def from(moment: DateTime): DateTime = moment.plus(self)
 

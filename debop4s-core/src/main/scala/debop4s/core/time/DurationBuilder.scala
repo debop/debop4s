@@ -11,8 +11,8 @@ sealed private[core] class DurationBuilder(val underlying: Period) {
     def -(that: DurationBuilder): DurationBuilder = DurationBuilder(this.underlying.minus(that.underlying))
     def +(that: DurationBuilder): DurationBuilder = DurationBuilder(this.underlying.plus(that.underlying))
 
-    def ago: DateTime = StaticDateTime.now.minus(underlying)
-    def later: DateTime = StaticDateTime.now.plus(underlying)
+    def ago: DateTime = JodaDateTime.now.minus(underlying)
+    def later: DateTime = JodaDateTime.now.plus(underlying)
     def from(moment: DateTime): DateTime = moment.plus(underlying)
     def before(moment: DateTime): DateTime = moment.minus(underlying)
 

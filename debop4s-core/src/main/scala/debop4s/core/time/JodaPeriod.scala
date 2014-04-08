@@ -3,13 +3,14 @@ package debop4s.core.time
 import org.joda.time.{ReadablePartial, Period}
 
 
-object StaticPeriod extends StaticPeriod {
+object JodaPeriod extends JodaPeriod {
     def empty = new Period()
 
     def ∅ = empty
 }
 
-trait StaticPeriod {
+trait JodaPeriod {
+
     def days(days: Int) = Period.days(days)
 
     def fieldDifference(start: ReadablePartial, end: ReadablePartial) = Period.fieldDifference(start, end)

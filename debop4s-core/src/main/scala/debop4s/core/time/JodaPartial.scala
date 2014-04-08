@@ -2,8 +2,8 @@ package debop4s.core.time
 
 import org.joda.time.Partial
 
-object StaticPartial extends StaticPartial
+object JodaPartial extends JodaPartial
 
-trait StaticPartial {
+trait JodaPartial {
     type Property = Partial.Property
 }

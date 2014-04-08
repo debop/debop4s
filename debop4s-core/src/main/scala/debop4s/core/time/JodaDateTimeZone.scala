@@ -10,9 +10,10 @@ import org.joda.time.tz.{Provider, NameProvider}
  * @since  2014. 1. 6. 오후 9:44
  */
 
-object StaticDateTimeZone extends StaticDateTimeZone
+object JodaDateTimeZone extends JodaDateTimeZone
 
-trait StaticDateTimeZone {
+trait JodaDateTimeZone {
+
     lazy val UTC = DateTimeZone.UTC
 
     def forID(id: String): DateTimeZone = DateTimeZone.forID(id)

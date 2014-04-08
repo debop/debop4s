@@ -8,9 +8,9 @@ import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 6. 오후 9:37
  */
-object StaticDateTimeFormat extends StaticDateTimeFormat
+object JodaDateTimeFormat extends JodaDateTimeFormat
 
-trait StaticDateTimeFormat {
+trait JodaDateTimeFormat {
 
     //    @deprecated(message = "use StaticISODateTimeFormat")
     //    val jsonFormat: DateTimeFormatter = forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")

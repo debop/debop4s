@@ -3,6 +3,9 @@ package debop4s.redis.spring
 import debop4s.core.io.BinarySerializer
 import debop4s.core.parallels.Promises
 import org.slf4j.LoggerFactory
+import org.springframework.cache.Cache
+import org.springframework.cache.Cache.ValueWrapper
+import org.springframework.cache.support.SimpleValueWrapper
 import redis.RedisClient
 import redis.commands.TransactionBuilder
 import redis.protocol.MultiBulk
