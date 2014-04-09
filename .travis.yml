@@ -1,6 +1,6 @@
 language: scala
 script:
-  - mvn clean package
+  - mvn clean package -DskipTests=true
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root

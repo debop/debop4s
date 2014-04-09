@@ -56,6 +56,9 @@ object Asyncs {
     def ready[T](awaitable: Awaitable[T]): Awaitable[T] = {
         Await.ready(awaitable, defaultDuration)
     }
+    def ready[T](awaitable: Awaitable[T], atMost: Duration): Awaitable[T] = {
+        Await.ready(awaitable, atMost)
+    }
 
     def readyAll[T](tasks: Iterable[_ <: Future[T]]) {
         while (!tasks.forall {
@@ -69,6 +72,10 @@ object Asyncs {
 
     def result[T](awaitable: Awaitable[T]): T = {
         Await.result(awaitable, defaultDuration)
+    }
+
+    def result[T](awaitable: Awaitable[T], atMost: Duration): T = {
+        Await.result(awaitable, atMost)
     }
 
     def resultAll[T](tasks: Iterable[_ <: Future[T]]): Iterable[T] = {

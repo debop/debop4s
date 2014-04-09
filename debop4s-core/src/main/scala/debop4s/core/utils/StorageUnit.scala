@@ -1,6 +1,5 @@
 package debop4s.core.utils
 
-import debop4s.core.ValueObject
 import scala.annotation.switch
 
 
@@ -33,7 +32,7 @@ class StorageUnit(val bytes: Long) extends Ordered[StorageUnit] {
     @inline
     override def equals(obj: Any): Boolean = {
         (obj: @switch) match {
-            case vo: ValueObject => hashCode() == obj.hashCode()
+            case other: StorageUnit => bytes == other.bytes
             case _ => false
         }
     }

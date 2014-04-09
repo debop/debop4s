@@ -13,7 +13,7 @@ object storage {
         def bytes = new StorageUnit(wrapped)
         def kilobyte = kilobytes
         def kilobytes = new StorageUnit(wrapped * 1024)
-        def magabyte = megabytes
+        def megabyte = megabytes
         def megabytes = new StorageUnit(wrapped * 1024 * 1024)
         def gigabyte = gigabytes
         def gigabytes = new StorageUnit(wrapped * 1024 * 1024 * 1024)

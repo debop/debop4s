@@ -5,7 +5,7 @@ import org.apache.commons.pool2.impl.{GenericObjectPoolConfig, GenericObjectPool
 import org.slf4j.LoggerFactory
 
 /**
- * AbstractObjectPool
+ * Apache common pool2 를 wrapping 한 pool 입니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 11. 오후 4:35

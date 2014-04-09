@@ -123,6 +123,9 @@ object NetUtil {
                 isIpInBlock(ip, ipBlock)
         }
     }
+    def isIpInBlocks(ip: String, ipBlocks: Iterable[(Int, Int)]): Boolean = {
+        isIpInBlocks(ipToInt(ip), ipBlocks)
+    }
 
     def isInetAddressInBlocks(inetAddress: InetAddress, ipBlocks: Iterable[(Int, Int)]): Boolean =
         isIpInBlocks(inetAddressToInt(inetAddress), ipBlocks)

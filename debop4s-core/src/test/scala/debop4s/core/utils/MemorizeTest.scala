@@ -3,10 +3,11 @@ package debop4s.core.utils
 import debop4s.core.AbstractCoreTest
 import debop4s.core.parallels.Asyncs
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.{CountDownLatch => JavaCountDownLatch}
+import java.util.concurrent.{CountDownLatch => JavaCountDownLatch, TimeUnit}
 import org.mockito.Mockito._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
+import scala.util.{Success, Failure}
 
 /**
  * MemorizeTest
@@ -53,7 +54,7 @@ class MemorizeTest extends AbstractCoreTest {
         }
 
         val concurencyLevel = 5
-        val computations = (0 until 5).map { _ => future { memorizer(5) } }.seq
+        val computations = (0 until concurencyLevel).map { _ => future { memorizer(concurencyLevel) } }.seq
 
         startUpLatch.countDown()
         val results = Asyncs.result(Future.sequence(computations))
@@ -64,6 +65,43 @@ class MemorizeTest extends AbstractCoreTest {
         }
 
         assert(callCount.get() === 1)
+    }
+
+    test("handles exceptios during computations") {
+
+        val startUpLatch = new JavaCountDownLatch(1)
+        val callCount = new AtomicInteger(0)
+
+        val memo = Memorize { i: Int =>
+        // wait for all caller has been started
+            startUpLatch.await(200, TimeUnit.MILLISECONDS)
+
+            val n = callCount.incrementAndGet()
+
+            if (n == 1) throw new RuntimeException()
+            else i + 1
+        }
+
+        val concurencyLevel = 5
+        val computations = (0 until concurencyLevel).map { _ =>
+            future {
+                memo(concurencyLevel)
+            }
+        }.seq
+
+        computations foreach { f =>
+            f onComplete {
+                case Success(i) => println(i)
+                case Failure(e) =>
+                    assert(e.isInstanceOf[RuntimeException])
+            }
+        }
+
+        startUpLatch.countDown()
+
+        Thread.sleep(200)
+
+        assert(callCount.get() == 2)
     }
 
 }
