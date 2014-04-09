@@ -26,13 +26,13 @@
         <akka.version>2.2.3</akka.version>
         <spray.version>1.2.0</spray.version>
 
-        <jackson.version>2.3.0</jackson.version>
+        <jackson.version>2.3.2</jackson.version>
 
         <springframework.version>4.0.3.RELEASE</springframework.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
         <querydsl.version>3.3.2</querydsl.version>
 
-        <hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
+        <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -443,6 +443,11 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-envers</artifactId>
                 <version>${hibernate.version}</version>
             </dependency>
 
