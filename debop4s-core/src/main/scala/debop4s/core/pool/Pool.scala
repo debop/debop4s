@@ -98,7 +98,7 @@ private class HealthyQueue[A](makeItem: () => Future[A],
             if (isHealthy(item)) {
                 Future(item)
             } else {
-                log.debug(s"not healthy item! $item")
+                // log.debug(s"not healthy item! $item")
                 val newItem = makeItem()
                 synchronized {
                     this += newItem

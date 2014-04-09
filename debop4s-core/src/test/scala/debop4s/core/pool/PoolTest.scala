@@ -29,13 +29,7 @@ class PoolTest extends AbstractCoreTest {
     }
 
     test("reserve and release") {
-        val count = new AtomicInteger(0)
-        val pool = new FactoryPool[Int](4) {
-            def makeItem(): Future[Int] = future {
-                count.incrementAndGet()
-            }
-            def isHealthy(i: Int) = i % 2 == 0
-        }
+        val pool = createPool(4)
 
         Asyncs.result(pool.reserve()) shouldEqual 2
         Asyncs.result(pool.reserve()) shouldEqual 4
@@ -57,13 +51,7 @@ class PoolTest extends AbstractCoreTest {
     }
 
     test("reserve and dispose") {
-        val count = new AtomicInteger(0)
-        val pool = new FactoryPool[Int](4) {
-            def makeItem(): Future[Int] = future {
-                count.incrementAndGet()
-            }
-            def isHealthy(i: Int) = i % 2 == 0
-        }
+        val pool = createPool(4)
 
         Asyncs.result(pool.reserve()) shouldEqual 2
         Asyncs.result(pool.reserve()) shouldEqual 4
@@ -73,6 +61,26 @@ class PoolTest extends AbstractCoreTest {
             Asyncs.result(pool.reserve(), 1 millis)
         }
         pool.dispose(2)
-        Asyncs.result(pool.reserve(), 1.millis) shouldEqual 10
+        Asyncs.result(pool.reserve(), 20.millis) shouldEqual 10
+    }
+
+    test("reserve serial") {
+        val pool = createPool(10)
+
+        (0 until 10) foreach { _ =>
+            println(Asyncs.result(pool.reserve()))
+        }
+    }
+
+    private def createPool(size: Int) = {
+        val count = new AtomicInteger(0)
+
+        new FactoryPool[Int](size) {
+            def makeItem(): Future[Int] = {
+                Thread.sleep(10)
+                Future(count.incrementAndGet())
+            }
+            def isHealthy(i: Int) = i % 2 == 0
+        }
     }
 }
