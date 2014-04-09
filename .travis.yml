@@ -1,6 +1,6 @@
 language: scala
 script:
-  - mvn ++$TRAVIS_SCALA_VERSION clean package
+  - mvn clean package
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
@@ -11,6 +11,7 @@ scala:
 
 jdk:
   - oraclejdk7
+
 services:
   - redis
   - mongodb

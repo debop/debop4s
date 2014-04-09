@@ -99,3 +99,9 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
         rmCount
     }
 }
+
+object RingBuffer {
+
+    def apply[A: ClassTag](maxSize: Int): RingBuffer[A] =
+        new RingBuffer(1 max maxSize)
+}
