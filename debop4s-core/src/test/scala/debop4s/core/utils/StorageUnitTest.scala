@@ -27,6 +27,27 @@ class StorageUnitTest extends AbstractCoreTest {
 
     test("문자열로 표시된 저장단위 파싱하기") {
         assert(StorageUnit.parse("142.bytes") === 142.bytes)
+        assert(StorageUnit.parse("78.kilobytes") === 78.kilobytes)
+        assert(StorageUnit.parse("1.megabytes") === 1.megabytes)
+        assert(StorageUnit.parse("878.gigabytes") === 878.gigabytes)
+        assert(StorageUnit.parse("3.terabytes") === 3.terabytes)
+        assert(StorageUnit.parse("-3.terabytes") === -3.terabytes)
+    }
+
+    test("잘못된 저장단위") {
+        intercept[NumberFormatException] { StorageUnit.parse("100.bottles") }
+        intercept[NumberFormatException] { StorageUnit.parse("100 bytes") }
+    }
+
+    test("음수 취급") {
+        assert(-123.bytes.inBytes === -123)
+        assert(-2.kilobytes.toHuman === "-2.0 KiB")
+    }
+
+    test("same hashCode") {
+        val i = 4.megabytes
+        val j = 4.megabytes
+        assert(i.hashCode() == j.hashCode())
     }
 
 }
