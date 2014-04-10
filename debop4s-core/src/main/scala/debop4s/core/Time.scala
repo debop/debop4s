@@ -1,5 +1,6 @@
 package debop4s.core
 
+import debop4s.core.utils.{LongOverflowException, LongOverflowArith}
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 import java.util.{TimeZone, Date, Locale}
@@ -88,7 +89,7 @@ trait TimeLike[This <: TimeLike[This]] extends Ordered[This] {self: This =>
 
     def inMinutes: Int = Duration.fromNanos(inNanoseconds).toMinutes.toInt
 
-    def inHorus: Int = Duration.fromNanos(inNanoseconds).toHours.toInt
+    def inHours: Int = Duration.fromNanos(inNanoseconds).toHours.toInt
 
     def inDays: Int = Duration.fromNanos(inNanoseconds).toDays.toInt
 
@@ -102,7 +103,14 @@ trait TimeLike[This <: TimeLike[This]] extends Ordered[This] {self: This =>
         case Duration.Inf => Inf
         case Duration.MinusInf => MinusInf
         case Duration.Undefined => Undefined
-        case x => fromNanoseconds(inNanoseconds + x.toNanos)
+        case _ =>
+            val ns = delta.toNanos
+            try {
+                fromNanoseconds(LongOverflowArith.add(inNanoseconds, ns))
+            } catch {
+                case _: LongOverflowException if ns < 0 => MinusInf
+                case _: LongOverflowException => Inf
+            }
     }
 
     def -(delta: Duration): This = this.+(-delta)
@@ -111,6 +119,7 @@ trait TimeLike[This <: TimeLike[This]] extends Ordered[This] {self: This =>
 
     def diff(that: This): Duration
 
+    // BUG: x 가 Inf, MinusInf, Undefined 일 수 있으므로 이걸 대응해야 합니다.
     def floor(x: Duration): This = (this, x.toNanos) match {
         case (Nanoseconds(0), 0) => Undefined
         case (Nanoseconds(num), 0) => if (num < 0) MinusInf else Inf
@@ -132,7 +141,7 @@ trait TimeLike[This <: TimeLike[This]] extends Ordered[This] {self: This =>
     }
 
     def moreOrLessEquals(other: This, maxDelta: Duration) = {
-        (other ne Undefined) && ((this == other) || ((this diff other) lteq maxDelta))
+        (other ne Undefined) && ((this == other) || ((this diff other).abs lteq maxDelta))
     }
 
 }
@@ -239,8 +248,10 @@ object Time extends TimeLikeOps[Time] {
 
     def now: Time = {
         localGetTime() match {
-            case None => Time.fromMilliseconds(System.currentTimeMillis())
-            case Some(f) => f()
+            case None =>
+                Time.fromMilliseconds(System.currentTimeMillis())
+            case Some(f) =>
+                f()
         }
     }
 
@@ -356,10 +367,15 @@ sealed class Time private[core](protected val nanos: Long)
 
     def diff(that: Time) = that match {
         case Undefined => Duration.Undefined
-        case Inf => Duration.Inf
-        case MinusInf => Duration.MinusInf
+        case Inf => Duration.MinusInf
+        case MinusInf => Duration.Inf
         case other =>
-            Duration.fromNanos(inNanoseconds - other.nanos)
+            try {
+                Duration.fromNanos(LongOverflowArith.sub(this.inNanoseconds, other.inNanoseconds))
+            } catch {
+                case _: LongOverflowException if other.inNanoseconds < 0 => Duration.Inf
+                case _: LongOverflowException => Duration.MinusInf
+            }
     }
 
     def since(that: Time) = this - that

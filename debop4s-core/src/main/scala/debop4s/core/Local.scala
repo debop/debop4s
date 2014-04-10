@@ -35,7 +35,6 @@ object Local {
     }
 
     def put(key: Any, value: Any) {
-        assert(key != null)
         getStorage.update(key, value)
     }
 
@@ -68,17 +67,17 @@ object Local {
 final class Local[T] {
     private[this] val key = UUID.randomUUID()
 
-    def apply() = Local.get[T](key)
+    def apply(): Option[T] = Local.get[T](key)
 
-    def set(optValue: Option[T]) {
-        Local.put(key, optValue)
+    def set(value: T) {
+        Local.put(key, value)
     }
 
     def update(value: T) {
-        set(Some(value))
+        set(value)
     }
 
     def clear() {
-        set(None)
+        Local.getStorage.remove(key)
     }
 }

@@ -20,7 +20,7 @@ class LocalTest extends AbstractCoreTest {
         Local.put(key, value)
 
         if (key.isWhitespace) fail("key is whitespace")
-        val stored = Local.get(key).getOrElse(null).asInstanceOf[String]
+        val stored = Local.get[String](key).getOrElse(null)
         assert(stored != null)
         assert(stored == value)
     }
@@ -32,7 +32,7 @@ class LocalTest extends AbstractCoreTest {
         Thread.sleep(5)
 
         val storedUser = Local.get[User](key).getOrElse(null)
-        assert(storedUser != null)
+        // assert(storedUser != null)
         assert(storedUser === user)
         assert(user.name === storedUser.name)
         assert(user.password === storedUser.password)

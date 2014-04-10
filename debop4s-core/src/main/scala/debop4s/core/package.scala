@@ -80,6 +80,22 @@ package object core {
         }
     }
 
+    implicit class DurationExtensions(self: Duration) {
+
+        def abs = self match {
+            case Duration.Inf => Duration.Inf
+            case Duration.MinusInf => Duration.Inf
+            case Duration.Undefined => Duration.Undefined
+            case _ => if (self < Duration.fromNanos(0)) -self else self
+        }
+
+        def fromNow = Time.now + self
+        def ago = Time.now - self
+        def afterEpoch = Time.epoch + self
+
+        def diff(that: Duration) = self - that
+    }
+
     implicit def forcePeriod(builder: DurationBuilder) = builder.underlying
 
     implicit def forceDuration(builder: DurationBuilder) = builder.underlying.toStandardDuration

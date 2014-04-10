@@ -32,7 +32,7 @@ object time {
         def day = days
     }
 
-    private val ZeroRichWholeNumber = new RichWholeNumber(0) {
+    private val ZeroRichWholeNumber = new RichWholeNumber(0L) {
         override def nanoseconds = Duration.Zero
         override def microseconds = Duration.Zero
         override def milliseconds = Duration.Zero
@@ -45,15 +45,14 @@ object time {
     implicit def intToTimeableNumber(i: Int): RichWholeNumber = {
         i match {
             case 0 => ZeroRichWholeNumber
-            case _ => new RichWholeNumber(i)
+            case _ => new RichWholeNumber(i.toLong)
         }
     }
 
     implicit def longToTimeableNumber(l: Long): RichWholeNumber = {
         l match {
-            case 0 => ZeroRichWholeNumber
+            case 0L => ZeroRichWholeNumber
             case _ => new RichWholeNumber(l)
         }
     }
-
 }
