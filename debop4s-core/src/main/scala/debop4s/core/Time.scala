@@ -62,7 +62,7 @@ trait TimeLikeOps[This <: TimeLike[This]] {
     def fromMicroseconds(micros: Long): This = {
         if (micros > 9223372036854775L) Inf
         else if (micros < -9223372036854775L) MinusInf
-        else fromNanoseconds(1000L * micros)
+        else fromNanoseconds(TimeUnit.MICROSECONDS.toNanos(micros))
     }
 }
 
@@ -120,10 +120,10 @@ trait TimeLike[This <: TimeLike[This]] extends Ordered[This] {self: This =>
     def diff(that: This): Duration
 
     // BUG: x 가 Inf, MinusInf, Undefined 일 수 있으므로 이걸 대응해야 합니다.
-    def floor(x: Duration): This = (this, x.toNanos) match {
-        case (Nanoseconds(0), 0) => Undefined
-        case (Nanoseconds(num), 0) => if (num < 0) MinusInf else Inf
-        case (Nanoseconds(num), denom) => fromNanoseconds((num / denom) * denom)
+    def floor(x: Duration): This = (this, x.inNanos) match {
+        case (Nanoseconds(0), Some(0)) => Undefined
+        case (Nanoseconds(num), Some(0)) => if (num < 0) MinusInf else Inf
+        case (Nanoseconds(num), Some(denom)) => fromNanoseconds((num / denom) * denom)
         case (`self`, _) => self
         case (_, _) => Undefined
     }

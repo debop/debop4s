@@ -94,6 +94,11 @@ package object core {
         def afterEpoch = Time.epoch + self
 
         def diff(that: Duration) = self - that
+
+        def inNanos: Option[Long] = {
+            if (self.isFinite()) Some(self.toNanos)
+            else None
+        }
     }
 
     implicit def forcePeriod(builder: DurationBuilder) = builder.underlying

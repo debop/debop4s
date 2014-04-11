@@ -2,6 +2,7 @@ package debop4s.core
 
 import debop4s.core.conversions.time._
 import debop4s.core.io.Serializers
+import debop4s.core.utils.TimeUtil
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 
@@ -284,7 +285,7 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
     test("floor itself") {
         for (s <- Seq[Long](Long.MinValue, -1, 1, Long.MaxValue)) {
             val t = fromNanoseconds(s)
-            t floor Duration.fromNanos(t.inNanoseconds) shouldEqual t
+            t floor TimeUtil.toDuration(t.inNanoseconds) shouldEqual t
         }
     }
 
@@ -297,7 +298,7 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
     }
 
     test("from overflow millis") {
-        val millis = TimeUnit.MILLISECONDS.toMillis(Long.MaxValue)
+        val millis = TimeUnit.NANOSECONDS.toMillis(Long.MaxValue)
         fromMilliseconds(millis) match {
             case Nanoseconds(ns) => assert(ns == millis * 1e6)
         }
@@ -305,11 +306,11 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
     }
 
     test("from - underflow millis") {
-        val millis = TimeUnit.MILLISECONDS.toMillis(Long.MinValue)
+        val millis = TimeUnit.NANOSECONDS.toMillis(Long.MinValue)
         fromMilliseconds(millis) match {
             case Nanoseconds(ns) => assert(ns == millis * 1e6)
         }
-        fromMilliseconds(millis - 1) shouldEqual Inf
+        fromMilliseconds(millis - 1) shouldEqual MinusInf
     }
 }
 
@@ -338,7 +339,8 @@ class TimeTest extends {val ops = Time } with TimeLikeTest[Time] {
             Thread.sleep(50)
             Time.now shouldEqual t0
         }
-        (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
+        println(s"Time.now.inMillis=${ Time.now.inMillis }, currentTimeMillis=${ System.currentTimeMillis() }")
+        (Time.now.inMillis - System.currentTimeMillis).abs should be < 20L
     }
 
     test("withTimeAt nested") {
