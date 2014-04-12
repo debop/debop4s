@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory
  */
 abstract class AbstractTimePeriodTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val log = LoggerFactory.getLogger(getClass)
 
-    val testDate = new DateTime(2000, 10, 2, 13, 45, 53, 673)
-    val testDiffDate = new DateTime(2002, 9, 3, 7, 14, 22, 234)
-    val testNow = Times.now
+  val testDate = new DateTime(2000, 10, 2, 13, 45, 53, 673)
+  val testDiffDate = new DateTime(2002, 9, 3, 7, 14, 22, 234)
+  val testNow = Times.now
 
 }

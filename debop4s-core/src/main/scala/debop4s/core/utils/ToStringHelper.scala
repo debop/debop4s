@@ -10,38 +10,38 @@ import scala.collection.mutable
  */
 class ToStringHelper(val className: String) {
 
-    val map = new mutable.LinkedHashMap[String, Any]()
+  val map = new mutable.LinkedHashMap[String, Any]()
 
-    def add(name: String, value: Any): ToStringHelper = {
-        map.put(name, value)
-        this
+  def add(name: String, value: Any): ToStringHelper = {
+    map.put(name, value)
+    this
+  }
+
+  override def toString: String = {
+    val builder = new StringBuilder(32)
+
+    builder.append(className)
+    builder.append("{")
+    var sep = ""
+    var first = true
+    for ((n, v) <- map) {
+      builder.append(sep)
+      builder.append(n).append("=").append(v)
+      if (first) {
+        first = false
+        sep = ","
+      }
     }
+    builder.append("}")
+    builder.toString()
+  }
 
-    override def toString: String = {
-        val builder = new StringBuilder(32)
-
-        builder.append(className)
-        builder.append("{")
-        var sep = ""
-        var first = true
-        for ((n, v) <- map) {
-            builder.append(sep)
-            builder.append(n).append("=").append(v)
-            if (first) {
-                first = false
-                sep = ","
-            }
-        }
-        builder.append("}")
-        builder.toString()
-    }
-
-    @inline
-    private def addMap(name: String, value: Any) {
-        map.put(name, value)
-    }
+  @inline
+  private def addMap(name: String, value: Any) {
+    map.put(name, value)
+  }
 }
 
 object ToStringHelper {
-    def apply(self: Any) = new ToStringHelper(self.getClass.getSimpleName)
+  def apply(self: Any) = new ToStringHelper(self.getClass.getSimpleName)
 }

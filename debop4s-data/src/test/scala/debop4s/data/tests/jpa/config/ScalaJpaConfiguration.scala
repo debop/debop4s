@@ -19,12 +19,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @ComponentScan(basePackages = Array("debop4s.data.jpa"))
 class ScalaJpaConfiguration extends AbstractJpaMySqlHikariConfiguration {
 
-    override def getMappedPackageNames: Array[String] =
-        Array(classOf[ScalaJpaEntity].getPackage.getName)
+  override def getMappedPackageNames: Array[String] =
+    Array(classOf[ScalaJpaEntity].getPackage.getName)
 
-    override def jpaProperties: Properties = {
-        val props = super.jpaProperties
-        props.put(AvailableSettings.HBM2DDL_AUTO, "create")
-        props
-    }
+  override def jpaProperties: Properties = {
+    val props = super.jpaProperties
+    props.put(AvailableSettings.HBM2DDL_AUTO, "create")
+    props
+  }
 }

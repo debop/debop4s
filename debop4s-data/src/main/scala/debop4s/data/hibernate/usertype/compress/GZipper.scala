@@ -10,9 +10,9 @@ import debop4s.core.compress.{Compressor, GZipCompressor}
  */
 private[data] trait GZipper {
 
-    private lazy val _compressor = new GZipCompressor()
+  private lazy val _compressor = new GZipCompressor()
 
-    def compressor: Compressor = _compressor
+  def compressor: Compressor = _compressor
 
 }
 

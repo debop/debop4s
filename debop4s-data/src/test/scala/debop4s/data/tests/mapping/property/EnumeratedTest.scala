@@ -18,24 +18,24 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class EnumeratedTest extends AbstractJpaTest {
 
-    @Autowired val dao: JpaDao = null
+  @Autowired val dao: JpaDao = null
 
-    @Test
-    def enumeratedProperty() {
-        val entity = new EnumeratedEntity()
-        entity.intValue = OrdinalEnum.Second
-        entity.stringValue = StringEnum.Integer
+  @Test
+  def enumeratedProperty() {
+    val entity = new EnumeratedEntity()
+    entity.intValue = OrdinalEnum.Second
+    entity.stringValue = StringEnum.Integer
 
-        dao.persist(entity)
-        dao.flush()
-        dao.clear()
+    dao.persist(entity)
+    dao.flush()
+    dao.clear()
 
-        val loaded = dao.findOne(classOf[EnumeratedEntity], entity.id)
-        assert(loaded == entity)
+    val loaded = dao.findOne(classOf[EnumeratedEntity], entity.id)
+    assert(loaded == entity)
 
-        dao.delete(loaded)
-        assert(dao.findOne(classOf[EnumeratedEntity], entity.id) == null)
-    }
+    dao.delete(loaded)
+    assert(dao.findOne(classOf[EnumeratedEntity], entity.id) == null)
+  }
 
 }
 
@@ -44,43 +44,43 @@ class EnumeratedTest extends AbstractJpaTest {
 @DynamicUpdate
 class EnumeratedEntity extends LongEntity {
 
-    // NOTE: Scala 에서는 java의 enum 수형이 없기 때문에, 이렇게 Integer나 String으로 변환하는 작업을 해야 합니다.
-    // @Enumerated(EnumType.ORDINAL)
-    private var _intValue: Integer = _
+  // NOTE: Scala 에서는 java의 enum 수형이 없기 때문에, 이렇게 Integer나 String으로 변환하는 작업을 해야 합니다.
+  // @Enumerated(EnumType.ORDINAL)
+  private var _intValue: Integer = _
 
-    def intValue: OrdinalEnum = OrdinalEnum(_intValue)
+  def intValue: OrdinalEnum = OrdinalEnum(_intValue)
 
-    def intValue_=(x: OrdinalEnum) = {
-        _intValue = x.id
-    }
+  def intValue_=(x: OrdinalEnum) = {
+    _intValue = x.id
+  }
 
-    // NOTE: Scala 에서는 java의 enum 수형이 없기 때문에, 이렇게 Integer나 String으로 변환하는 작업을 해야 합니다.
-    // @Enumerated(EnumType.STRING)
-    private var _stringValue: String = _
+  // NOTE: Scala 에서는 java의 enum 수형이 없기 때문에, 이렇게 Integer나 String으로 변환하는 작업을 해야 합니다.
+  // @Enumerated(EnumType.STRING)
+  private var _stringValue: String = _
 
-    def stringValue: StringEnum = StringEnum.withName(_stringValue)
+  def stringValue: StringEnum = StringEnum.withName(_stringValue)
 
-    def stringValue_=(x: StringEnum) = {
-        _stringValue = x.toString
-    }
+  def stringValue_=(x: StringEnum) = {
+    _stringValue = x.toString
+  }
 
-    @inline
-    override def hashCode(): Int = Hashs.compute(intValue, stringValue)
+  @inline
+  override def hashCode(): Int = Hashs.compute(intValue, stringValue)
 }
 
 // Java의 enum 을 scala 로 표현한다.
 object OrdinalEnum extends Enumeration {
-    type OrdinalEnum = Value
+  type OrdinalEnum = Value
 
-    val First = Value("First")
-    val Second = Value("Second")
-    val Third = Value("Third")
+  val First = Value("First")
+  val Second = Value("Second")
+  val Third = Value("Third")
 }
 
 object StringEnum extends Enumeration {
-    type StringEnum = Value
+  type StringEnum = Value
 
-    val String = Value("String")
-    val Integer = Value("Integer")
-    val Decimal = Value("Decimal")
+  val String = Value("String")
+  val Integer = Value("Integer")
+  val Decimal = Value("Decimal")
 }

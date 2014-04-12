@@ -17,49 +17,49 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
  */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[RedisCacheConfiguration]),
-    loader = classOf[AnnotationConfigContextLoader])
+  loader = classOf[AnnotationConfigContextLoader])
 class RedisCacheTest extends AbstractRedisTest {
 
-    @Autowired private val cacheManager: RedisCacheManager = null
-    @Autowired private val userRepository: UserRepository = null
+  @Autowired private val cacheManager: RedisCacheManager = null
+  @Autowired private val userRepository: UserRepository = null
 
-    // Spring Autowired 를 수행합니다.
-    new TestContextManager(this.getClass).prepareTestInstance(this)
+  // Spring Autowired 를 수행합니다.
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
-    test("get cache") {
-        cacheManager should not equal null
-        val springCache = cacheManager.getCache("user")
-        springCache should not equal null
-    }
+  test("get cache") {
+    cacheManager should not equal null
+    val springCache = cacheManager.getCache("user")
+    springCache should not equal null
+  }
 
-    test("spring cache get") {
+  test("spring cache get") {
 
-        val user1 = userRepository.getUser("debop", 100)
-        val user2 = userRepository.getUser("debop", 200)
+    val user1 = userRepository.getUser("debop", 100)
+    val user2 = userRepository.getUser("debop", 200)
 
-        user1 should not equal null
-        user1.favoriteMovies should not equal null
-        user1.favoriteMovies.size should be > 0
-        user1 should equal(user2)
-        user1.favoriteMovies.size should equal(user2.favoriteMovies.size)
-    }
+    user1 should not equal null
+    user1.favoriteMovies should not equal null
+    user1.favoriteMovies.size should be > 0
+    user1 should equal(user2)
+    user1.favoriteMovies.size should equal(user2.favoriteMovies.size)
+  }
 
-    test("spring cache evict") {
+  test("spring cache evict") {
 
-        val userId = UUID.randomUUID().toString
+    val userId = UUID.randomUUID().toString
 
-        val user1: User = userRepository.getUser(userId, 100)
-        val user2: User = userRepository.getUser(userId, 200)
+    val user1: User = userRepository.getUser(userId, 100)
+    val user2: User = userRepository.getUser(userId, 200)
 
-        userRepository.updateUser(user1)
+    userRepository.updateUser(user1)
 
-        val user3 = userRepository.getUser(userId, 200)
+    val user3 = userRepository.getUser(userId, 200)
 
-        user1 should equal(user2)
-        user1.favoriteMovies.size should equal(user2.favoriteMovies.size)
+    user1 should equal(user2)
+    user1.favoriteMovies.size should equal(user2.favoriteMovies.size)
 
-        user3.favoriteMovies.size should not equal user1.favoriteMovies.size
+    user3.favoriteMovies.size should not equal user1.favoriteMovies.size
 
-    }
+  }
 
 }

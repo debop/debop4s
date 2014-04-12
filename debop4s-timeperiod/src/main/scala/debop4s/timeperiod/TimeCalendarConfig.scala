@@ -16,27 +16,27 @@ class TimeCalendarConfig(val locale: Locale = Locale.getDefault,
                          val startOffset: Duration = DefaultStartOffset,
                          val endOffset: Duration = DefaultEndOffset) extends ValueObject {
 
-    val firstDayOfWeek: DayOfWeek = DayOfWeek.Monday
+  val firstDayOfWeek: DayOfWeek = DayOfWeek.Monday
 
-    override def hashCode(): Int =
-        Hashs.compute(locale, startOffset, endOffset)
+  override def hashCode(): Int =
+    Hashs.compute(locale, startOffset, endOffset)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-        .add("locale", locale)
-        .add("startOffset", startOffset)
-        .add("endOffset", endOffset)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("locale", locale)
+    .add("startOffset", startOffset)
+    .add("endOffset", endOffset)
 }
 
 object TimeCalendarConfig {
 
-    def apply(): TimeCalendarConfig = {
-        new TimeCalendarConfig()
-    }
+  def apply(): TimeCalendarConfig = {
+    new TimeCalendarConfig()
+  }
 
-    def apply(locale: Locale = Locale.getDefault,
-              startOffset: Duration = DefaultStartOffset,
-              endOffset: Duration = DefaultEndOffset): TimeCalendarConfig = {
-        new TimeCalendarConfig(locale, startOffset, endOffset)
-    }
+  def apply(locale: Locale = Locale.getDefault,
+            startOffset: Duration = DefaultStartOffset,
+            endOffset: Duration = DefaultEndOffset): TimeCalendarConfig = {
+    new TimeCalendarConfig(locale, startOffset, endOffset)
+  }
 }

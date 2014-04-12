@@ -10,22 +10,22 @@ import org.slf4j.LoggerFactory
  */
 class TimeGapCalculator[T <: ITimePeriod](val mapper: ITimeCalendar = null) {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    def gaps(excludePeriods: ITimePeriodContainer, limits: ITimePeriod = null): ITimePeriodCollection = {
-        require(excludePeriods != null)
+  def gaps(excludePeriods: ITimePeriodContainer, limits: ITimePeriod = null): ITimePeriodCollection = {
+    require(excludePeriods != null)
 
-        val timeLine = new TimeLine[T](excludePeriods, limits, mapper)
-        timeLine.calculateGaps
-    }
+    val timeLine = new TimeLine[T](excludePeriods, limits, mapper)
+    timeLine.calculateGaps
+  }
 }
 
 object TimeGapCalculator {
 
-    def apply[T <: ITimePeriod](): TimeGapCalculator[T] = new TimeGapCalculator[T]()
+  def apply[T <: ITimePeriod](): TimeGapCalculator[T] = new TimeGapCalculator[T]()
 
-    def apply[T <: ITimePeriod](mapper: ITimeCalendar): TimeGapCalculator[T] = {
-        new TimeGapCalculator[T](mapper)
-    }
+  def apply[T <: ITimePeriod](mapper: ITimeCalendar): TimeGapCalculator[T] = {
+    new TimeGapCalculator[T](mapper)
+  }
 }
 

@@ -11,13 +11,13 @@ import org.joda.time.{Chronology, DateTimeZone}
  */
 class RichAbstractDateTime(val self: AbstractDateTime) extends AnyVal with Ordered[AbstractDateTime] {
 
-    def chronology: Chronology = self.getChronology
+  def chronology: Chronology = self.getChronology
 
-    def calendar(locale: Locale): Calendar = self.toCalendar(locale)
+  def calendar(locale: Locale): Calendar = self.toCalendar(locale)
 
-    def gregorianCalendar: Calendar = self.toGregorianCalendar
+  def gregorianCalendar: Calendar = self.toGregorianCalendar
 
-    def zone: DateTimeZone = self.getZone
+  def zone: DateTimeZone = self.getZone
 
-    def compare(that: AbstractDateTime): Int = self.compareTo(that)
+  def compare(that: AbstractDateTime): Int = self.compareTo(that)
 }

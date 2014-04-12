@@ -12,6 +12,6 @@ import org.springframework.data.jpa.repository._
  */
 trait ItemRepository extends JpaRepository[Item, java.lang.Long] {
 
-    @QueryHints(value = Array(new QueryHint(name = "org.hibernate.cacheable", value = "true")))
-    def findByName(name: String): java.util.List[Item]
+  @QueryHints(value = Array(new QueryHint(name = "org.hibernate.cacheable", value = "true")))
+  def findByName(name: String): java.util.List[Item]
 }

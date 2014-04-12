@@ -10,9 +10,9 @@ import debop4s.core.compress.{Compressor, DeflateCompressor}
  */
 private[data] trait Deflator {
 
-    private lazy val _compressor = new DeflateCompressor()
+  private lazy val _compressor = new DeflateCompressor()
 
-    def compressor: Compressor = _compressor
+  def compressor: Compressor = _compressor
 }
 
 /**

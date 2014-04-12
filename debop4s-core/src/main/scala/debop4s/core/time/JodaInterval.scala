@@ -7,9 +7,9 @@ object JodaInterval extends JodaInterval
 
 trait JodaInterval {
 
-    def thisSecond: Interval = JodaDateTime.now.secondOfMinute.interval
+  def thisSecond: Interval = JodaDateTime.now.secondOfMinute.interval
 
-    def thisMinute = JodaDateTime.now.minuteOfHour.interval
+  def thisMinute = JodaDateTime.now.minuteOfHour.interval
 
-    def thisHour = JodaDateTime.now.hourOfDay.interval
+  def thisHour = JodaDateTime.now.hourOfDay.interval
 }

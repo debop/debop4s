@@ -12,27 +12,27 @@ import scala.util.parsing.combinator._
  */
 object Credentials {
 
-    object parser extends RegexParsers {
-        override val whiteSpace = "(?:\\s+|#.*\\n)+".r
-        val token = "[\\w-_]+".r
+  object parser extends RegexParsers {
+    override val whiteSpace = "(?:\\s+|#.*\\n)+".r
+    val token = "[\\w-_]+".r
 
-        def auth = (token <~ ":") ~ "[^\\n]+".r ^^ { case k ~ v => (k, v) }
-        def content: Parser[Map[String, String]] = rep(auth) ^^ { auths => Map(auths: _*) }
+    def auth = (token <~ ":") ~ "[^\\n]+".r ^^ { case k ~ v => (k, v) }
+    def content: Parser[Map[String, String]] = rep(auth) ^^ { auths => Map(auths: _*) }
 
-        def apply(in: String): Map[String, String] = {
-            parseAll(content, in) match {
-                case Success(result, _) => result
-                case x: Failure => throw new IOException(x.toString())
-                case x: Error => throw new IOException(x.toString())
-            }
-        }
+    def apply(in: String): Map[String, String] = {
+      parseAll(content, in) match {
+        case Success(result, _) => result
+        case x: Failure => throw new IOException(x.toString())
+        case x: Error => throw new IOException(x.toString())
+      }
     }
+  }
 
-    def apply(file: File): Map[String, String] = parser(Source.fromFile(file).mkString)
-    def apply(data: String): Map[String, String] = parser(data)
-    def byName(name: String): Map[String, String] = {
-        apply(new File(System.getenv().asScala.getOrElse("KEY_FOLDER", "/etc/keys")))
-    }
+  def apply(file: File): Map[String, String] = parser(Source.fromFile(file).mkString)
+  def apply(data: String): Map[String, String] = parser(data)
+  def byName(name: String): Map[String, String] = {
+    apply(new File(System.getenv().asScala.getOrElse("KEY_FOLDER", "/etc/keys")))
+  }
 }
 
 
@@ -40,8 +40,8 @@ object Credentials {
  * Java interface to Credentials
  */
 class Credentials {
-    def read(data: String): util.Map[String, String] = Credentials(data).asJava
-    def read(file: File): util.Map[String, String] = Credentials(file).asJava
-    def byName(name: String): util.Map[String, String] = Credentials.byName(name).asJava
+  def read(data: String): util.Map[String, String] = Credentials(data).asJava
+  def read(file: File): util.Map[String, String] = Credentials(file).asJava
+  def byName(name: String): util.Map[String, String] = Credentials.byName(name).asJava
 
 }

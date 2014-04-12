@@ -10,27 +10,27 @@ import org.slf4j.LoggerFactory
  * @since 2013. 12. 10. 오후 5:48
  */
 class CompressableSerializer(private val _serializer: Serializer, val compressor: Compressor)
-    extends SerializerDecorator(_serializer) {
+  extends SerializerDecorator(_serializer) {
 
-    private lazy val log = LoggerFactory.getLogger(classOf[CompressableSerializer])
+  private lazy val log = LoggerFactory.getLogger(classOf[CompressableSerializer])
 
-    def this(serializer: Serializer) {
-        this(serializer, new GZipCompressor())
-    }
+  def this(serializer: Serializer) {
+    this(serializer, new GZipCompressor())
+  }
 
-    /**
-     * 객체를 직렬화 합니다.
-     * @param graph 직렬화할 객체
-     * @return 직렬화된 정보를 가진 바이트 배열
-     */
-    override def serialize[T](graph: T): Array[Byte] =
-        compressor.compress(super.serialize(graph))
+  /**
+   * 객체를 직렬화 합니다.
+   * @param graph 직렬화할 객체
+   * @return 직렬화된 정보를 가진 바이트 배열
+   */
+  override def serialize[T](graph: T): Array[Byte] =
+    compressor.compress(super.serialize(graph))
 
-    /**
-     * 직렬화된 바이트 배열을 역직렬화하여 객체로 변환합니다.
-     * @param bytes 직렬화된 바이트 배열
-     * @return 역직렬화된 객체 정보
-     */
-    override def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T =
-        super.deserialize(compressor.decompress(bytes), clazz)
+  /**
+   * 직렬화된 바이트 배열을 역직렬화하여 객체로 변환합니다.
+   * @param bytes 직렬화된 바이트 배열
+   * @return 역직렬화된 객체 정보
+   */
+  override def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T =
+    super.deserialize(compressor.decompress(bytes), clazz)
 }

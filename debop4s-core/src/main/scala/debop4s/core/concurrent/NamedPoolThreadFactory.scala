@@ -16,29 +16,29 @@ import java.util.concurrent.atomic.AtomicInteger
  * "writer" and new threads will be named "writer-1", "writer-2", etc.
  */
 class NamedPoolThreadFactory(val name: String, val makeDaemons: Boolean) extends ThreadFactory {
-    def this(name: String) = this(name, false)
+  def this(name: String) = this(name, false)
 
-    val group = new ThreadGroup(Thread.currentThread().getThreadGroup, name)
-    val threadNumber = new AtomicInteger(1)
+  val group = new ThreadGroup(Thread.currentThread().getThreadGroup, name)
+  val threadNumber = new AtomicInteger(1)
 
-    def newThread(r: Runnable) = {
-        val thread = new Thread(group, r, name + "-" + threadNumber.getAndIncrement)
-        thread.setDaemon(makeDaemons)
-        if (thread.getPriority != Thread.NORM_PRIORITY) {
-            thread.setPriority(Thread.NORM_PRIORITY)
-        }
-        thread
+  def newThread(r: Runnable) = {
+    val thread = new Thread(group, r, name + "-" + threadNumber.getAndIncrement)
+    thread.setDaemon(makeDaemons)
+    if (thread.getPriority != Thread.NORM_PRIORITY) {
+      thread.setPriority(Thread.NORM_PRIORITY)
     }
+    thread
+  }
 }
 
 object NamedPoolThreadFactory {
 
-    def apply(): NamedPoolThreadFactory = new NamedPoolThreadFactory("thread", true)
+  def apply(): NamedPoolThreadFactory = new NamedPoolThreadFactory("thread", true)
 
-    def apply(name: String): NamedPoolThreadFactory =
-        new NamedPoolThreadFactory(name, true)
+  def apply(name: String): NamedPoolThreadFactory =
+    new NamedPoolThreadFactory(name, true)
 
-    def apply(name: String, makeDaemons: Boolean): NamedPoolThreadFactory =
-        new NamedPoolThreadFactory(name, makeDaemons)
+  def apply(name: String, makeDaemons: Boolean): NamedPoolThreadFactory =
+    new NamedPoolThreadFactory(name, makeDaemons)
 
 }

@@ -22,59 +22,59 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
                                    val settings: Settings,
                                    val metadata: CacheDataDescription,
                                    private[this] val _props: Properties)
-    extends RedisDataRegion(_accessStrategyFactory, _cache, _regionName, _props)
-    with TransactionalDataRegion {
+  extends RedisDataRegion(_accessStrategyFactory, _cache, _regionName, _props)
+  with TransactionalDataRegion {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    override def getCacheDataDescription: CacheDataDescription = metadata
+  override def getCacheDataDescription: CacheDataDescription = metadata
 
-    override def isTransactionAware: Boolean = false
+  override def isTransactionAware: Boolean = false
 
-    def get(key: Any): Any = {
-        val task = cache.get(regionName, key.toString, expireInSeconds)
+  def get(key: Any): Any = {
+    val task = cache.get(regionName, key.toString, expireInSeconds)
 
-        task onComplete {
-            case Success(x) => return x
-            case Failure(e) => return null
-        }
-        Promises.await(task)
+    task onComplete {
+      case Success(x) => return x
+      case Failure(e) => return null
     }
+    Promises.await(task)
+  }
 
-    def put(key: Any, value: Any) {
-        val task = cache.set(regionName, key.toString, value, expireInSeconds)
+  def put(key: Any, value: Any) {
+    val task = cache.set(regionName, key.toString, value, expireInSeconds)
 
-        task onComplete {
-            case Success(x) => log.trace(s"set cache item. region=$regionName, key=$key, value=$value")
-            case Failure(e) => log.warn(s"can't set cache item. key=$key", e)
-        }
-        Promises.await(task)
+    task onComplete {
+      case Success(x) => log.trace(s"set cache item. region=$regionName, key=$key, value=$value")
+      case Failure(e) => log.warn(s"can't set cache item. key=$key", e)
     }
+    Promises.await(task)
+  }
 
-    def remove(key: Any) {
-        val task = cache.delete(regionName, key.toString)
-        task onComplete {
-            case Success(x) => log.trace(s"remove cache. key=$key")
-            case Failure(e) => log.warn(s"Fail to delete key. region=$regionName, key=$key", e)
-        }
-        Promises.await(task)
+  def remove(key: Any) {
+    val task = cache.delete(regionName, key.toString)
+    task onComplete {
+      case Success(x) => log.trace(s"remove cache. key=$key")
+      case Failure(e) => log.warn(s"Fail to delete key. region=$regionName, key=$key", e)
     }
+    Promises.await(task)
+  }
 
-    def clear() {
-        val task = cache.deleteRegion(regionName)
+  def clear() {
+    val task = cache.deleteRegion(regionName)
 
-        task onComplete {
-            case Success(x) => log.trace(s"clear region. region=$regionName")
-            case Failure(e) => log.warn(s"Fail to delete region [$regionName]", e)
-        }
-        Promises.await(task)
+    task onComplete {
+      case Success(x) => log.trace(s"clear region. region=$regionName")
+      case Failure(e) => log.warn(s"Fail to delete region [$regionName]", e)
     }
+    Promises.await(task)
+  }
 
-    def evict(key: String) {
-        remove(key)
-    }
+  def evict(key: String) {
+    remove(key)
+  }
 
-    def evictAll() {
-        clear()
-    }
+  def evictAll() {
+    clear()
+  }
 }

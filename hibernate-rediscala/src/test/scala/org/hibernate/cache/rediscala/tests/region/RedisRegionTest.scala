@@ -12,17 +12,17 @@ import org.hibernate.cfg.{AvailableSettings, Configuration}
  */
 class RedisRegionTest extends AbstractRedisRegionTest {
 
-    override protected def configCache(cfg: Configuration) {
-        cfg.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[RedisRegionFactory].getName)
-        cfg.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
-    }
+  override protected def configCache(cfg: Configuration) {
+    cfg.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[RedisRegionFactory].getName)
+    cfg.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
+  }
 
-    override protected def getMapFromCacheEntry(entry: Any): util.Map[Any, Any] = {
-        //        val isReadWriteStrategy = entry.getClass.getName.equals(classOf[AbstractReadWriteRedisAccessStrategy].getName + "#Item")
-        //
-        //        if (isReadWriteStrategy)
-        //            ItemValueExtractor.getValue(entry)
-        //        else
-        entry.asInstanceOf[util.Map[Any, Any]]
-    }
+  override protected def getMapFromCacheEntry(entry: Any): util.Map[Any, Any] = {
+    //        val isReadWriteStrategy = entry.getClass.getName.equals(classOf[AbstractReadWriteRedisAccessStrategy].getName + "#Item")
+    //
+    //        if (isReadWriteStrategy)
+    //            ItemValueExtractor.getValue(entry)
+    //        else
+    entry.asInstanceOf[util.Map[Any, Any]]
+  }
 }

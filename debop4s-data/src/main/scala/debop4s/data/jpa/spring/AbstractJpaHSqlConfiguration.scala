@@ -14,26 +14,26 @@ import org.hibernate.cfg.AvailableSettings
  */
 abstract class AbstractJpaHSqlConfiguration extends AbstractJpaConfiguration {
 
-    override def dataSource: DataSource = {
-        buildDataSource(DRIVER_CLASS_HSQL,
-            s"jdbc:hsqldb:mem:$getDatabaseName;MVCC=TRUE;",
-            "sa",
-            "")
-    }
+  override def dataSource: DataSource = {
+    buildDataSource(DRIVER_CLASS_HSQL,
+      s"jdbc:hsqldb:mem:$getDatabaseName;MVCC=TRUE;",
+      "sa",
+      "")
+  }
 
-    override def jpaProperties: Properties = {
-        val props: Properties = super.jpaProperties
-        props.put(AvailableSettings.DIALECT, DIALECT_HSQL)
-        props
-    }
+  override def jpaProperties: Properties = {
+    val props: Properties = super.jpaProperties
+    props.put(AvailableSettings.DIALECT, DIALECT_HSQL)
+    props
+  }
 }
 
 abstract class AbstractJpaHSqlHikariConfiguration extends AbstractJpaHSqlConfiguration {
 
-    override def dataSource: DataSource = {
-        DataSources.getHikariDataSource(DATASOURCE_CLASS_HSQL,
-            s"jdbc:hsqldb:mem:$getDatabaseName;MVCC=TRUE;",
-            "sa",
-            "")
-    }
+  override def dataSource: DataSource = {
+    DataSources.getHikariDataSource(DATASOURCE_CLASS_HSQL,
+      s"jdbc:hsqldb:mem:$getDatabaseName;MVCC=TRUE;",
+      "sa",
+      "")
+  }
 }

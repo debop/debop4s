@@ -12,13 +12,13 @@ import org.hibernate.cfg.Settings
  */
 class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: RedisCollectionRegion,
                                                    private[this] val _settings: Settings)
-    extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-    with CollectionRegionAccessStrategy {
+  extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
+  with CollectionRegionAccessStrategy {
 
-    def getRegion = region
+  def getRegion = region
 
-    override def get(key: Any, txTimestamp: Long): AnyRef =
-        super.get(key, txTimestamp)
+  override def get(key: Any, txTimestamp: Long): AnyRef =
+    super.get(key, txTimestamp)
 }
 
 /**
@@ -29,37 +29,37 @@ class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: Re
  */
 class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisEntityRegion,
                                                private[this] val _settings: Settings)
-    extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-    with EntityRegionAccessStrategy {
+  extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
+  with EntityRegionAccessStrategy {
 
-    def getRegion = region
+  def getRegion = region
 
-    override def insert(key: Any, value: Any, version: Any): Boolean = {
-        region.put(key, value)
-        true
-    }
+  override def insert(key: Any, value: Any, version: Any): Boolean = {
+    region.put(key, value)
+    true
+  }
 
-    override def afterInsert(key: Any, value: Any, version: Any): Boolean = {
-        region.put(key, value)
-        true
-    }
+  override def afterInsert(key: Any, value: Any, version: Any): Boolean = {
+    region.put(key, value)
+    true
+  }
 
-    override def update(key: Any,
-                        value: Any,
-                        currentVersion: Any,
-                        previousVersion: Any): Boolean = {
-        region.put(key, value)
-        true
-    }
+  override def update(key: Any,
+                      value: Any,
+                      currentVersion: Any,
+                      previousVersion: Any): Boolean = {
+    region.put(key, value)
+    true
+  }
 
-    override def afterUpdate(key: Any,
-                             value: Any,
-                             currentVersion: Any,
-                             previousVersion: Any,
-                             lock: SoftLock): Boolean = {
-        region.put(key, value)
-        true
-    }
+  override def afterUpdate(key: Any,
+                           value: Any,
+                           currentVersion: Any,
+                           previousVersion: Any,
+                           lock: SoftLock): Boolean = {
+    region.put(key, value)
+    true
+  }
 }
 
 /**
@@ -70,29 +70,29 @@ class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisE
  */
 class ReadWriteRedisNaturalIdRegionAccessStrategy(private[this] val _region: RedisNaturalIdRegion,
                                                   private[this] val _settings: Settings)
-    extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
-    with NaturalIdRegionAccessStrategy {
+  extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
+  with NaturalIdRegionAccessStrategy {
 
-    def getRegion = region
+  def getRegion = region
 
-    override def insert(key: Any, value: Any): Boolean = {
-        region.put(key, value)
-        true
-    }
+  override def insert(key: Any, value: Any): Boolean = {
+    region.put(key, value)
+    true
+  }
 
-    override def afterInsert(key: Any, value: Any): Boolean = {
-        region.put(key, value)
-        true
-    }
+  override def afterInsert(key: Any, value: Any): Boolean = {
+    region.put(key, value)
+    true
+  }
 
-    override def update(key: Any, value: Any): Boolean = {
-        region.put(key, value)
-        true
-    }
+  override def update(key: Any, value: Any): Boolean = {
+    region.put(key, value)
+    true
+  }
 
-    override def afterUpdate(key: Any, value: Any, lock: SoftLock): Boolean = {
-        region.put(key, value)
-        true
-    }
+  override def afterUpdate(key: Any, value: Any, lock: SoftLock): Boolean = {
+    region.put(key, value)
+    true
+  }
 }
 

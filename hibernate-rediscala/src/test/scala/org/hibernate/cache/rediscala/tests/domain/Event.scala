@@ -11,33 +11,33 @@ import scala.beans.BeanProperty
 @Access(AccessType.FIELD)
 class Event extends Serializable {
 
-    @Id
-    @GeneratedValue
-    var id: java.lang.Long = _
+  @Id
+  @GeneratedValue
+  var id: java.lang.Long = _
 
-    var title: String = _
+  var title: String = _
 
-    @Temporal(TemporalType.TIMESTAMP)
-    var date: Date = _
+  @Temporal(TemporalType.TIMESTAMP)
+  var date: Date = _
 
-    @ManyToMany(cascade = Array(CascadeType.ALL))
-    var participants: util.Set[Person] = new util.HashSet[Person]()
+  @ManyToMany(cascade = Array(CascadeType.ALL))
+  var participants: util.Set[Person] = new util.HashSet[Person]()
 
-    @ManyToOne
-    @JoinColumn(name = "organizerId")
-    @BeanProperty
-    var organizer: Person = _
+  @ManyToOne
+  @JoinColumn(name = "organizerId")
+  @BeanProperty
+  var organizer: Person = _
 
-    def addParticipant(person: Person) {
-        participants.add(person)
-        person.events.add(this)
-    }
+  def addParticipant(person: Person) {
+    participants.add(person)
+    person.events.add(this)
+  }
 
-    def removeParticipants(person: Person) {
-        participants.remove(person)
-        person.events.remove(this)
-    }
+  def removeParticipants(person: Person) {
+    participants.remove(person)
+    person.events.remove(this)
+  }
 
-    override def toString: String = title + ": " + date
+  override def toString: String = title + ": " + date
 
 }

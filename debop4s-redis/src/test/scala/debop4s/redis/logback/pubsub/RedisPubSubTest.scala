@@ -14,31 +14,31 @@ import scala.concurrent.duration._
  */
 class RedisPubSubTest extends AbstractRedisTest {
 
-    test("pub/sub test") {
-        akkaSystem.scheduler.schedule(10 millis, 50 millis) {
-            redis.publish("time", System.currentTimeMillis())
-        }
-        akkaSystem.scheduler.schedule(10 millis, 100 millis) {
-            redis.publish("pattern.match", "pattern value")
-        }
-
-        val channels = Seq("time")
-        val patterns = Seq("pattern.*")
-
-        akkaSystem.actorOf(Props(classOf[SubscribeActor], channels, patterns).withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
-
-        Thread.sleep(1000)
+  test("pub/sub test") {
+    akkaSystem.scheduler.schedule(10 millis, 50 millis) {
+      redis.publish("time", System.currentTimeMillis())
     }
+    akkaSystem.scheduler.schedule(10 millis, 100 millis) {
+      redis.publish("pattern.match", "pattern value")
+    }
+
+    val channels = Seq("time")
+    val patterns = Seq("pattern.*")
+
+    akkaSystem.actorOf(Props(classOf[SubscribeActor], channels, patterns).withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
+
+    Thread.sleep(1000)
+  }
 }
 
 class SubscribeActor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
-    extends RedisSubscriberActor(new InetSocketAddress("localhost", 6379), channels, patterns) {
+  extends RedisSubscriberActor(new InetSocketAddress("localhost", 6379), channels, patterns) {
 
-    override def onMessage(m: Message) {
-        println(s"message received: $m")
-    }
+  override def onMessage(m: Message) {
+    println(s"message received: $m")
+  }
 
-    override def onPMessage(pm: PMessage) {
-        println(s"pattern message received: $pm")
-    }
+  override def onPMessage(pm: PMessage) {
+    println(s"pattern message received: $pm")
+  }
 }

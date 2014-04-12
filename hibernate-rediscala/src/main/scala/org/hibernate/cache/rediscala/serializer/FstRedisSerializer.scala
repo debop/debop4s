@@ -13,58 +13,58 @@ import scala.util.{Failure, Success, Try}
  */
 class FstRedisSerializer[T] extends RedisSerializer[T] {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
 
-    override def serialize(graph: T): Array[Byte] = {
-        if (graph == null || graph == None)
-            return EMPTY_BYTES
+  override def serialize(graph: T): Array[Byte] = {
+    if (graph == null || graph == None)
+      return EMPTY_BYTES
 
-        var bos = None: Option[ByteArrayOutputStream]
+    var bos = None: Option[ByteArrayOutputStream]
 
-        try {
-            bos = Some(new io.ByteArrayOutputStream())
-            Try(FstRedisSerializer.conf.getObjectOutput(bos.get)) match {
+    try {
+      bos = Some(new io.ByteArrayOutputStream())
+      Try(FstRedisSerializer.conf.getObjectOutput(bos.get)) match {
 
-                case Success(oos) =>
-                    oos.writeObject(graph, Seq[Class[_]](): _*)
-                    oos.flush()
-                    bos.get.toByteArray
+        case Success(oos) =>
+          oos.writeObject(graph, Seq[Class[_]](): _*)
+          oos.flush()
+          bos.get.toByteArray
 
-                case Failure(e) =>
-                    log.error(s"Fail to serialize graph. $graph", e)
-                    EMPTY_BYTES
-            }
-        } finally {
-            if (bos.isDefined) bos.get.close()
-        }
+        case Failure(e) =>
+          log.error(s"Fail to serialize graph. $graph", e)
+          EMPTY_BYTES
+      }
+    } finally {
+      if (bos.isDefined) bos.get.close()
     }
+  }
 
-    override def deserialize(bytes: Array[Byte]): T = {
-        if (bytes == null || bytes.length == 0)
-            return null.asInstanceOf[T]
+  override def deserialize(bytes: Array[Byte]): T = {
+    if (bytes == null || bytes.length == 0)
+      return null.asInstanceOf[T]
 
-        var bis = None: Option[ByteArrayInputStream]
+    var bis = None: Option[ByteArrayInputStream]
 
-        try {
-            bis = Some(new ByteArrayInputStream(bytes))
+    try {
+      bis = Some(new ByteArrayInputStream(bytes))
 
-            Try(FstRedisSerializer.conf.getObjectInput(bis.get)) match {
-                case Success(ois) =>
-                    ois.readObject.asInstanceOf[T]
+      Try(FstRedisSerializer.conf.getObjectInput(bis.get)) match {
+        case Success(ois) =>
+          ois.readObject.asInstanceOf[T]
 
-                case Failure(e) =>
-                    log.error(s"Fail to deserialize data.", e)
-                    null.asInstanceOf[T]
-            }
-        } finally {
-            if (bis.isDefined) bis.get.close()
-        }
+        case Failure(e) =>
+          log.error(s"Fail to deserialize data.", e)
+          null.asInstanceOf[T]
+      }
+    } finally {
+      if (bis.isDefined) bis.get.close()
     }
+  }
 }
 
 private[rediscala] object FstRedisSerializer {
-    lazy val conf = FSTConfiguration.createDefaultConfiguration()
+  lazy val conf = FSTConfiguration.createDefaultConfiguration()
 
-    def apply[T](): FstRedisSerializer[T] = new FstRedisSerializer[T]()
+  def apply[T](): FstRedisSerializer[T] = new FstRedisSerializer[T]()
 }

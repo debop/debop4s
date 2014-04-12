@@ -21,168 +21,168 @@ import org.springframework.transaction.annotation.Transactional
  */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[JpaRedisConfiguration]),
-    loader = classOf[AnnotationConfigContextLoader])
+  loader = classOf[AnnotationConfigContextLoader])
 @Transactional
 class JpaCacheTest {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    @PersistenceContext val em: EntityManager = null
-    @Autowired val repository: JpaAccountRepository = null
-    @Autowired val itemRepository: ItemRepository = null
-    @Autowired val eventRepository: EventRepository = null
+  @PersistenceContext val em: EntityManager = null
+  @Autowired val repository: JpaAccountRepository = null
+  @Autowired val itemRepository: ItemRepository = null
+  @Autowired val eventRepository: EventRepository = null
 
-    // Spring Autowired 를 수행합니다.
-    new TestContextManager(this.getClass).prepareTestInstance(this)
+  // Spring Autowired 를 수행합니다.
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
-    @Before
-    def before() {
-        repository.deleteAll()
-        repository.flush()
-    }
+  @Before
+  def before() {
+    repository.deleteAll()
+    repository.flush()
+  }
 
-    @Test
-    def configurationTest() {
-        assert(em != null)
-        assert(repository != null)
-        assert(eventRepository != null)
-    }
+  @Test
+  def configurationTest() {
+    assert(em != null)
+    assert(repository != null)
+    assert(eventRepository != null)
+  }
 
-    @Test
-    def loadEventByTitle() {
-        val events = eventRepository.findByTitle("abc")
-        assert(events != null)
-    }
+  @Test
+  def loadEventByTitle() {
+    val events = eventRepository.findByTitle("abc")
+    assert(events != null)
+  }
 
-    @Test
-    def emptySecondLevelCacheEntry() {
-        em.getEntityManagerFactory.getCache.evict(classOf[Item])
-    }
+  @Test
+  def emptySecondLevelCacheEntry() {
+    em.getEntityManagerFactory.getCache.evict(classOf[Item])
+  }
 
-    @Test
-    def queryCacheInvalidation() {
-        val item = new Item()
-        item.name = "Widget"
-        item.description = "A realy top-quality, full-featured widget."
-        em.persist(item)
-        em.flush()
-        em.clear()
+  @Test
+  def queryCacheInvalidation() {
+    val item = new Item()
+    item.name = "Widget"
+    item.description = "A realy top-quality, full-featured widget."
+    em.persist(item)
+    em.flush()
+    em.clear()
 
-        val loaded = em.find(classOf[Item], item.id)
-        assert(loaded != null)
-        assert(loaded.id == item.id)
+    val loaded = em.find(classOf[Item], item.id)
+    assert(loaded != null)
+    assert(loaded.id == item.id)
 
-        em.clear()
+    em.clear()
 
-        val loaded2 = em.find(classOf[Item], item.id)
-        assert(loaded2 != null)
-    }
+    val loaded2 = em.find(classOf[Item], item.id)
+    assert(loaded2 != null)
+  }
 
-    @Test
-    def simpleEntityCaching() {
-        em.getEntityManagerFactory.getCache.evict(classOf[Item])
+  @Test
+  def simpleEntityCaching() {
+    em.getEntityManagerFactory.getCache.evict(classOf[Item])
 
-        log.debug("Item 저장 - #1")
+    log.debug("Item 저장 - #1")
 
-        val item = new Item()
-        item.name = "레디스"
-        item.description = "레디스 캐시 항목"
-        em.persist(item)
-        em.flush()
-        em.clear()
+    val item = new Item()
+    item.name = "레디스"
+    item.description = "레디스 캐시 항목"
+    em.persist(item)
+    em.flush()
+    em.clear()
 
-        log.debug("Item 조회 - #1")
-        val loaded = em.find(classOf[Item], item.id)
-        assert(loaded != null)
-        assert(loaded.id == item.id)
+    log.debug("Item 조회 - #1")
+    val loaded = em.find(classOf[Item], item.id)
+    assert(loaded != null)
+    assert(loaded.id == item.id)
 
-        log.debug("Item Update - #1")
-        loaded.description = "Update description..."
-        em.persist(loaded)
-        em.flush()
-        em.clear()
+    log.debug("Item Update - #1")
+    loaded.description = "Update description..."
+    em.persist(loaded)
+    em.flush()
+    em.clear()
 
-        log.debug("Item 조회 - #2")
-        val loaded2 = em.find(classOf[Item], item.id)
-        assert(loaded2 != null)
-        assert(loaded2.id == item.id)
-        assert(loaded2.description != item.description)
-        em.clear()
-    }
+    log.debug("Item 조회 - #2")
+    val loaded2 = em.find(classOf[Item], item.id)
+    assert(loaded2 != null)
+    assert(loaded2.id == item.id)
+    assert(loaded2.description != item.description)
+    em.clear()
+  }
 
-    @Test
-    def hqlLoad() {
-        em.getEntityManagerFactory.getCache.evict(classOf[Item])
+  @Test
+  def hqlLoad() {
+    em.getEntityManagerFactory.getCache.evict(classOf[Item])
 
-        log.debug("Item 저장 - #1")
+    log.debug("Item 저장 - #1")
 
-        val item = new Item()
-        item.name = "레디스"
-        item.description = "레디스 캐시 항목"
-        em.persist(item)
-        em.flush()
-        em.clear()
+    val item = new Item()
+    item.name = "레디스"
+    item.description = "레디스 캐시 항목"
+    em.persist(item)
+    em.flush()
+    em.clear()
 
-        log.debug("Item 조회 - #1")
-        val query = em.createQuery("select e from Item e where e.id=:id")
-                    .setParameter("id", item.id)
-                    .setHint("org.hibernate.cacheable", true)
-        val loaded = query.getSingleResult.asInstanceOf[Item]
-        assert(loaded != null)
-        assert(loaded.id == item.id)
-        em.clear()
+    log.debug("Item 조회 - #1")
+    val query = em.createQuery("select e from Item e where e.id=:id")
+                .setParameter("id", item.id)
+                .setHint("org.hibernate.cacheable", true)
+    val loaded = query.getSingleResult.asInstanceOf[Item]
+    assert(loaded != null)
+    assert(loaded.id == item.id)
+    em.clear()
 
-        log.debug("Item 조회 - #2")
-        val query2 = em.createQuery("select e from Item e where e.id=:id")
-                     .setParameter("id", item.id)
-                     .setHint("org.hibernate.cacheable", true)
-        val loaded2 = query2.getSingleResult.asInstanceOf[Item]
-        assert(loaded2 != null)
-        assert(loaded2.id == item.id)
-        em.clear()
+    log.debug("Item 조회 - #2")
+    val query2 = em.createQuery("select e from Item e where e.id=:id")
+                 .setParameter("id", item.id)
+                 .setHint("org.hibernate.cacheable", true)
+    val loaded2 = query2.getSingleResult.asInstanceOf[Item]
+    assert(loaded2 != null)
+    assert(loaded2.id == item.id)
+    em.clear()
 
 
-        log.debug("Item 조회 - #3")
-        val loaded3 = em.find(classOf[Item], item.id)
-        assert(loaded3 != null)
-        assert(loaded3.id == item.id)
-        em.clear()
+    log.debug("Item 조회 - #3")
+    val loaded3 = em.find(classOf[Item], item.id)
+    assert(loaded3 != null)
+    assert(loaded3.id == item.id)
+    em.clear()
 
-        log.debug("Item 조회 - #4")
-        val query4 = em.createQuery("select e from Item e where e.id=:id")
-                     .setParameter("id", item.id)
-                     .setHint("org.hibernate.cacheable", true)
-        val loaded4 = query4.getSingleResult.asInstanceOf[Item]
-        assert(loaded4 != null)
-        assert(loaded4.id == item.id)
-        em.clear()
-    }
+    log.debug("Item 조회 - #4")
+    val query4 = em.createQuery("select e from Item e where e.id=:id")
+                 .setParameter("id", item.id)
+                 .setHint("org.hibernate.cacheable", true)
+    val loaded4 = query4.getSingleResult.asInstanceOf[Item]
+    assert(loaded4 != null)
+    assert(loaded4.id == item.id)
+    em.clear()
+  }
 
-    @Test
-    def springRepository() {
+  @Test
+  def springRepository() {
 
-        em.getEntityManagerFactory.getCache.evict(classOf[Item])
+    em.getEntityManagerFactory.getCache.evict(classOf[Item])
 
-        log.debug("Item 저장 - #1")
+    log.debug("Item 저장 - #1")
 
-        val item = new Item()
-        item.name = "redis"
-        item.description = "redis cache item"
-        em.persist(item)
-        em.flush()
-        em.clear()
+    val item = new Item()
+    item.name = "redis"
+    item.description = "redis cache item"
+    em.persist(item)
+    em.flush()
+    em.clear()
 
-        log.debug("Item 조회 - #1")
+    log.debug("Item 조회 - #1")
 
-        val items = itemRepository.findByName("redis")
-        assert(items != null)
-        assert(items.size == 1)
+    val items = itemRepository.findByName("redis")
+    assert(items != null)
+    assert(items.size == 1)
 
-        log.debug("Item 조회 - #2")
+    log.debug("Item 조회 - #2")
 
-        val items2 = itemRepository.findByName("redis")
-        assert(items2 != null)
-        assert(items2.size == 1)
-    }
+    val items2 = itemRepository.findByName("redis")
+    assert(items2 != null)
+    assert(items2.size == 1)
+  }
 
 }

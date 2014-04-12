@@ -14,36 +14,36 @@ import org.slf4j.LoggerFactory
  */
 class PersistentObjectInterceptor extends EmptyInterceptor {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    override
-    def onLoad(entity: Any,
-               id: Serializable,
-               state: Array[AnyRef],
-               propertyNames: Array[String],
-               types: Array[Type]): Boolean = {
-        entity match {
-            case p: PersistentObject => p.onLoad()
-            case _ =>
-        }
-        false
+  override
+  def onLoad(entity: Any,
+             id: Serializable,
+             state: Array[AnyRef],
+             propertyNames: Array[String],
+             types: Array[Type]): Boolean = {
+    entity match {
+      case p: PersistentObject => p.onLoad()
+      case _ =>
     }
+    false
+  }
 
-    override
-    def onSave(entity: Any,
-               id: Serializable,
-               state: Array[AnyRef],
-               propertyNames: Array[String],
-               types: Array[Type]): Boolean = {
-        entity match {
-            case p: PersistentObject => p.onPersist()
-            case _ =>
-        }
-        false
+  override
+  def onSave(entity: Any,
+             id: Serializable,
+             state: Array[AnyRef],
+             propertyNames: Array[String],
+             types: Array[Type]): Boolean = {
+    entity match {
+      case p: PersistentObject => p.onPersist()
+      case _ =>
     }
+    false
+  }
 
-    private def isPersisted(entity: AnyRef): Boolean = entity match {
-        case p: PersistentObject => true
-        case _ => false
-    }
+  private def isPersisted(entity: AnyRef): Boolean = entity match {
+    case p: PersistentObject => true
+    case _ => false
+  }
 }

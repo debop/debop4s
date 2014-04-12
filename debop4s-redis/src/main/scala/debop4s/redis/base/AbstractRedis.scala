@@ -11,18 +11,18 @@ import redis.{RedisClient, ByteStringFormatter}
  */
 abstract class AbstractRedis[T] {
 
-    @Autowired val redis: RedisClient = null
+  @Autowired val redis: RedisClient = null
 
-    lazy val valueSerializer = new BinaryRedisSerializer[T]()
-    implicit val byteStringFormatter = new ByteStringFormatter[T] {
+  lazy val valueSerializer = new BinaryRedisSerializer[T]()
+  implicit val byteStringFormatter = new ByteStringFormatter[T] {
 
-        override def serialize(data: T): ByteString = {
-            ByteString(valueSerializer.serialize(data))
-        }
-
-        override def deserialize(bs: ByteString): T = {
-            valueSerializer.deserialize(bs.toArray)
-        }
+    override def serialize(data: T): ByteString = {
+      ByteString(valueSerializer.serialize(data))
     }
+
+    override def deserialize(bs: ByteString): T = {
+      valueSerializer.deserialize(bs.toArray)
+    }
+  }
 
 }

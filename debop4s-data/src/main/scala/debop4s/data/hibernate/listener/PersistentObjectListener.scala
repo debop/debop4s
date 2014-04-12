@@ -12,19 +12,19 @@ import org.hibernate.persister.entity.EntityPersister
  */
 class PersistentObjectListener extends PostLoadEventListener with PostInsertEventListener {
 
-    override def onPostLoad(event: PostLoadEvent) {
-        event.getEntity match {
-            case x: PersistentObject => x.onLoad()
-            case _ =>
-        }
+  override def onPostLoad(event: PostLoadEvent) {
+    event.getEntity match {
+      case x: PersistentObject => x.onLoad()
+      case _ =>
     }
+  }
 
-    override def requiresPostCommitHanding(persister: EntityPersister): Boolean = false
+  override def requiresPostCommitHanding(persister: EntityPersister): Boolean = false
 
-    override def onPostInsert(event: PostInsertEvent) {
-        event.getEntity match {
-            case x: PersistentObject => x.onPersist()
-            case _ =>
-        }
+  override def onPostInsert(event: PostInsertEvent) {
+    event.getEntity match {
+      case x: PersistentObject => x.onPersist()
+      case _ =>
     }
+  }
 }

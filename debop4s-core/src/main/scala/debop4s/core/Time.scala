@@ -120,7 +120,9 @@ trait TimeLike[This <: TimeLike[This]] extends Ordered[This] {self: This =>
 
   def diff(that: This): Duration
 
-  // BUG: x 가 Inf, MinusInf, Undefined 일 수 있으므로 이걸 대응해야 합니다.
+  /**
+  * `x` 값을 내림합니다.
+  */
   def floor(x: Duration): This = (this, x.inNanos) match {
     case (Nanoseconds(0), Some(0)) => Undefined
     case (Nanoseconds(num), Some(0)) => if (num < 0) MinusInf else Inf
@@ -275,10 +277,15 @@ object Time extends TimeLikeOps[Time] {
 
   def at(datetime: String) = defaultFormat.parse(datetime)
 
+  /**
+  * 기존의 `Time.now`를 사용하지 않고, 임시로 `timeFunction`이 반환한 `Time`값을 사용하여 `body`를 실행합니다.
+  */
   def withTimeFunction[A](timeFunction: => Time)(body: TimeControl => A): A = {
+    require(timeFunction != null)
+    require(body != null)
+
     @volatile var tf = () => timeFunction
     val save = Local.save()
-    log.debug(s"get local snaptop=$save")
     try {
       val timeControl = new TimeControl {
         def set(time: Time) {
@@ -297,8 +304,13 @@ object Time extends TimeLikeOps[Time] {
     }
   }
 
+  /**
+  * 기존의 `Time.now`를 사용하지 않고, 임시로 `time` 값을 사용하여 `body`를 실행합니다.
+  */
   def withTimeAt[A](time: Time)(body: TimeControl => A): A = withTimeFunction(time)(body)
-
+  /**
+  * `Time.now` 값을 사용하여 `body`를 실행합니다.
+  */
   def withCurrentTimeFrozen[A](body: TimeControl => A): A = withTimeAt(Time.now)(body)
 
   def fromRss(rss: String) = rssFormat.parse(rss)

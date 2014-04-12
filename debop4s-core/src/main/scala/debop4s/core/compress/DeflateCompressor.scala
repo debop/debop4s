@@ -11,40 +11,40 @@ import java.util.zip.{InflaterInputStream, DeflaterOutputStream}
  */
 class DeflateCompressor extends Compressor {
 
-    override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
-        using(new ByteArrayOutputStream()) {
-            bos =>
-                using(new DeflaterOutputStream(bos)) {
-                    deflater =>
-                        deflater.write(plainBytes)
-                }
+  override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
+    using(new ByteArrayOutputStream()) {
+      bos =>
+        using(new DeflaterOutputStream(bos)) {
+          deflater =>
+            deflater.write(plainBytes)
+        }
+        bos.toByteArray
+    }
+  }
+
+  override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
+
+    using(new ByteArrayOutputStream()) {
+      bos =>
+        using(new ByteArrayInputStream(compressedBytes)) {
+          bis =>
+            using(new InflaterInputStream(bis)) {
+              inflater =>
+                val buff = new Array[Byte](BUFFER_SIZE)
+                var n = 0
+
+                do {
+                  n = inflater.read(buff, 0, BUFFER_SIZE)
+                  if (n > 0) bos.write(buff, 0, n)
+                } while (n > 0)
+
                 bos.toByteArray
+            }
         }
     }
-
-    override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
-
-        using(new ByteArrayOutputStream()) {
-            bos =>
-                using(new ByteArrayInputStream(compressedBytes)) {
-                    bis =>
-                        using(new InflaterInputStream(bis)) {
-                            inflater =>
-                                val buff = new Array[Byte](BUFFER_SIZE)
-                                var n = 0
-
-                                do {
-                                    n = inflater.read(buff, 0, BUFFER_SIZE)
-                                    if (n > 0) bos.write(buff, 0, n)
-                                } while (n > 0)
-
-                                bos.toByteArray
-                        }
-                }
-        }
-    }
+  }
 }
 
 object DeflateCompressor {
-    def apply(): DeflateCompressor = new DeflateCompressor()
+  def apply(): DeflateCompressor = new DeflateCompressor()
 }

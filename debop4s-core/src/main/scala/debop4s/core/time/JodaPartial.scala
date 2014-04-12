@@ -5,5 +5,5 @@ import org.joda.time.Partial
 object JodaPartial extends JodaPartial
 
 trait JodaPartial {
-    type Property = Partial.Property
+  type Property = Partial.Property
 }

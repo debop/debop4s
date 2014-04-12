@@ -8,9 +8,9 @@ package debop4s.core.io
  */
 class BinarySerializerTest extends AbstractSerializerTest {
 
-    val _serializer = new BinarySerializer
+  val _serializer = new BinarySerializer
 
-    override def serializer: Serializer =
-        _serializer
+  override def serializer: Serializer =
+    _serializer
 
 }

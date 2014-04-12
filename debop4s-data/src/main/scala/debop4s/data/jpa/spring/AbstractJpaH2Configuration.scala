@@ -12,18 +12,18 @@ import org.hibernate.cfg.AvailableSettings
  */
 abstract class AbstractJpaH2Configuration extends AbstractJpaConfiguration {
 
-    override def dataSource: DataSource = {
-        buildDataSource(DRIVER_CLASS_H2,
-            s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
-            "sa",
-            "")
-    }
+  override def dataSource: DataSource = {
+    buildDataSource(DRIVER_CLASS_H2,
+      s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
+      "sa",
+      "")
+  }
 
-    override def jpaProperties: Properties = {
-        val props: Properties = super.jpaProperties
-        props.put(AvailableSettings.DIALECT, DIALECT_H2)
-        props
-    }
+  override def jpaProperties: Properties = {
+    val props: Properties = super.jpaProperties
+    props.put(AvailableSettings.DIALECT, DIALECT_H2)
+    props
+  }
 }
 
 /**
@@ -31,10 +31,10 @@ abstract class AbstractJpaH2Configuration extends AbstractJpaConfiguration {
  */
 abstract class AbstractJpaH2HikariConfiguration extends AbstractJpaH2Configuration {
 
-    override def dataSource: DataSource = {
-        DataSources.getHikariDataSource(DATASOURCE_CLASS_H2,
-            s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
-            "sa",
-            "")
-    }
+  override def dataSource: DataSource = {
+    DataSources.getHikariDataSource(DATASOURCE_CLASS_H2,
+      s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
+      "sa",
+      "")
+  }
 }

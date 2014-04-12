@@ -8,15 +8,15 @@ import org.xerial.snappy.Snappy
  */
 class SnappyCompressor extends Compressor {
 
-    override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
-        Snappy.compress(plainBytes)
-    }
+  override protected def doCompress(plainBytes: Array[Byte]): Array[Byte] = {
+    Snappy.compress(plainBytes)
+  }
 
-    override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
-        Snappy.uncompress(compressedBytes)
-    }
+  override protected def doDecompress(compressedBytes: Array[Byte]): Array[Byte] = {
+    Snappy.uncompress(compressedBytes)
+  }
 }
 
 object SnappyCompressor {
-    def apply(): SnappyCompressor = new SnappyCompressor()
+  def apply(): SnappyCompressor = new SnappyCompressor()
 }

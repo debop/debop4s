@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory
  */
 class FstSerializerTest extends AbstractSerializerTest {
 
-    override lazy val log = LoggerFactory.getLogger(getClass)
+  override lazy val log = LoggerFactory.getLogger(getClass)
 
-    val _serializer = new FstSerializer()
+  val _serializer = new FstSerializer()
 
-    override def serializer: Serializer = _serializer
+  override def serializer: Serializer = _serializer
 }

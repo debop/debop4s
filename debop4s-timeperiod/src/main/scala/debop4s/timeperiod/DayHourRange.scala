@@ -12,20 +12,20 @@ import debop4s.timeperiod.DayOfWeek.DayOfWeek
 class DayHourRange(val dayOfWeek: DayOfWeek,
                    private[this] val _startHourOfDay: Int,
                    private[this] val _endHourOfDay: Int)
-    extends HourRangeInDay(Timepart(_startHourOfDay), Timepart(_endHourOfDay)) {
+  extends HourRangeInDay(Timepart(_startHourOfDay), Timepart(_endHourOfDay)) {
 
-    override def hashCode() = Hashs.compute(dayOfWeek, start, end)
+  override def hashCode() = Hashs.compute(dayOfWeek, start, end)
 
-    override protected def buildStringHelper =
-        super.buildStringHelper
-        .add("dayOfWeek", dayOfWeek)
+  override protected def buildStringHelper =
+    super.buildStringHelper
+    .add("dayOfWeek", dayOfWeek)
 }
 
 object DayHourRange {
 
-    def apply(dayOfWeek: DayOfWeek, startHourOfDay: Int = 0, endHourOfDay: Int = 23): DayHourRange = {
-        val startHour = math.max(0, math.min(startHourOfDay, endHourOfDay))
-        val endHour = math.min(23, math.max(startHourOfDay, endHourOfDay))
-        new DayHourRange(dayOfWeek, startHour, endHour)
-    }
+  def apply(dayOfWeek: DayOfWeek, startHourOfDay: Int = 0, endHourOfDay: Int = 23): DayHourRange = {
+    val startHour = math.max(0, math.min(startHourOfDay, endHourOfDay))
+    val endHour = math.min(23, math.max(startHourOfDay, endHourOfDay))
+    new DayHourRange(dayOfWeek, startHour, endHour)
+  }
 }

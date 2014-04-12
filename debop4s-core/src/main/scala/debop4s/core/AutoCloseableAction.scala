@@ -10,26 +10,26 @@ import org.slf4j.LoggerFactory
  */
 class AutoCloseableAction(val actionWhenClosing: Runnable) extends AutoCloseable {
 
-    def this() {
-        this(null)
+  def this() {
+    this(null)
+  }
+
+  lazy val log = LoggerFactory.getLogger(getClass)
+
+  private var closed = false
+
+  def isClosed = closed
+
+  def close() {
+    if (!closed) {
+      try {
+        if (actionWhenClosing != null)
+          actionWhenClosing.run()
+      } catch {
+        case e: Throwable => log.warn("AutoClosable의 close 작업 시 예외가 발생했습니다.", e)
+      } finally {
+        closed = true
+      }
     }
-
-    lazy val log = LoggerFactory.getLogger(getClass)
-
-    private var closed = false
-
-    def isClosed = closed
-
-    def close() {
-        if (!closed) {
-            try {
-                if (actionWhenClosing != null)
-                    actionWhenClosing.run()
-            } catch {
-                case e: Throwable => log.warn("AutoClosable의 close 작업 시 예외가 발생했습니다.", e)
-            } finally {
-                closed = true
-            }
-        }
-    }
+  }
 }
