@@ -12,45 +12,47 @@ import scala.concurrent.duration._
  */
 object Promises {
 
-    implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
+  implicit val executor = ExecutionContext.fromExecutor(scala.concurrent.ExecutionContext.Implicits.global)
 
-    def exec[@specialized(Int, Long) V](block: => V): Future[V] = future {
-        require(block != null)
-        block
+  def exec[@specialized(Int, Long) V](block: => V): Future[V] =
+    Future {
+      require(block != null)
+      block
     }
 
-    def exec[@specialized(Int, Long) T, V](input: T)(func: T => V): Future[V] = future {
-        require(func != null)
-        func(input)
+  def exec[@specialized(Int, Long) T, V](input: T)(func: T => V): Future[V] =
+    Future {
+      require(func != null)
+      func(input)
     }
 
-    /**
-     * Future 값을 가져옵니다. 최대 5초 동안 기다립니다.
-     */
-    def await[@specialized(Int, Long) T](awaitable: Awaitable[T]): T =
-        Await.result(awaitable, 15 seconds)
+  /**
+   * Future 값을 가져옵니다. 최대 5초 동안 기다립니다.
+   */
+  def await[@specialized(Int, Long) T](awaitable: Awaitable[T]): T =
+    Await.result(awaitable, 15 seconds)
 
-    /**
-     * 주어진 timeout 을 가다리다가 작업이 완료되면 값을 반환합니다.
-     */
-    def await[@specialized(Int, Long) T](awaitable: Awaitable[T], timeoutMillis: Long): T =
-        Await.result(awaitable, timeoutMillis millis)
+  /**
+   * 주어진 timeout 을 가다리다가 작업이 완료되면 값을 반환합니다.
+   */
+  def await[@specialized(Int, Long) T](awaitable: Awaitable[T], timeoutMillis: Long): T =
+    Await.result(awaitable, timeoutMillis millis)
 
-    def await[@specialized(Int, Long) T](awaitable: Awaitable[T], atMost: Duration): T =
-        Await.result(awaitable, atMost)
+  def await[@specialized(Int, Long) T](awaitable: Awaitable[T], atMost: Duration): T =
+    Await.result(awaitable, atMost)
 
-    def awaitAll(awaitables: Iterable[Awaitable[_]],
-                 atMost: Duration = FiniteDuration(15, TimeUnit.MINUTES)): Iterable[Any] = {
-        awaitables.map(awaitable => Await.result(awaitable, atMost))
+  def awaitAll(awaitables: Iterable[Awaitable[_]],
+               atMost: Duration = FiniteDuration(15, TimeUnit.MINUTES)): Iterable[Any] = {
+    awaitables.map(awaitable => Await.result(awaitable, atMost))
+  }
+
+  def resultAll[A](in: Future[A]*): Future[Seq[A]] = {
+    val p = Promise[Seq[A]]()
+
+    in.foreach {
+      _ onFailure { case e => p tryFailure e }
     }
-
-    def resultAll[A](in: Future[A]*): Future[Seq[A]] = {
-
-        val p = Promise[Seq[A]]()
-        in.foreach(_.onFailure {
-            case e => p tryFailure e
-        })
-        Future.sequence(in).foreach(p.trySuccess)
-        p.future
-    }
+    Future.sequence(in).foreach(p.trySuccess)
+    p.future
+  }
 }

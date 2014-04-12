@@ -11,24 +11,18 @@ import scala.concurrent._
  */
 class ScalaAsyncsTest extends AbstractCoreTest {
 
-    test("scala-async async/await example") {
-        val future1 = future {
-            42
-        }
-        val future2 = future {
-            84
-        }
+  test("scala-async async/await example") {
+    val future1 = Future { 42 }
+    val future2 = future { 84 }
 
-        async {
-            println("computing...")
-            val answer = await(future1)
-            println(s"found the answer: $answer")
-        }
-
-        val sum = async {
-            await(future1) + await(future2)
-        }
-        assert(sum.result() == (42 + 84))
+    async {
+      println("computing...")
+      val answer = await(future1)
+      println(s"found the answer: $answer")
     }
+
+    val sum = async { await(future1) + await(future2) }
+    assert(sum.result() == (42 + 84))
+  }
 
 }

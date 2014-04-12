@@ -14,53 +14,53 @@ import scala.concurrent._
  */
 object Compressors {
 
-    def compressString(compressor: Compressor,
-                       plainText: String,
+  def compressString(compressor: Compressor,
+                     plainText: String,
+                     stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): String = {
+    if (Strings.isEmpty(plainText))
+      Strings.EMPTY_STR
+
+    val bytes = compressor.compress(Strings.getUtf8Bytes(plainText))
+    Strings.getStringFromBytes(bytes, stringFormat)
+  }
+
+  def compressStringAsync(compressor: Compressor,
+                          plainText: String,
+                          stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal) = Future {
+    compressString(compressor, plainText, stringFormat)
+  }
+
+  def decompressString(compressor: Compressor,
+                       compressedText: String,
                        stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): String = {
-        if (Strings.isEmpty(plainText))
-            Strings.EMPTY_STR
+    if (Strings.isEmpty(compressedText))
+      Strings.EMPTY_STR
 
-        val bytes = compressor.compress(Strings.getUtf8Bytes(plainText))
-        Strings.getStringFromBytes(bytes, stringFormat)
-    }
+    val bytes = compressor.decompress(Strings.getBytesFromString(compressedText, stringFormat))
+    Strings.getUtf8String(bytes)
+  }
 
-    def compressStringAsync(compressor: Compressor,
-                            plainText: String,
-                            stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): Future[String] = future {
-        compressString(compressor, plainText, stringFormat)
-    }
+  def decomperssStringAsync(compressor: Compressor,
+                            compressedText: String,
+                            stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal) = Future {
+    decompressString(compressor, compressedText, stringFormat)
+  }
 
-    def decompressString(compressor: Compressor,
-                         compressedText: String,
-                         stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): String = {
-        if (Strings.isEmpty(compressedText))
-            Strings.EMPTY_STR
+  def compressStream(compressor: Compressor, inputStream: InputStream): OutputStream = {
+    val bytes = compressor.compress(Streams.toByteArray(inputStream))
+    Streams.toOutputStream(bytes)
+  }
 
-        val bytes = compressor.decompress(Strings.getBytesFromString(compressedText, stringFormat))
-        Strings.getUtf8String(bytes)
-    }
+  def compressStreamAsync(compressor: Compressor, inputStream: InputStream): Future[OutputStream] = Future {
+    compressStream(compressor, inputStream)
+  }
 
-    def decomperssStringAsync(compressor: Compressor,
-                              compressedText: String,
-                              stringFormat: BinaryStringFormat = BinaryStringFormat.HexDecimal): Future[String] = future {
-        decompressString(compressor, compressedText, stringFormat)
-    }
+  def decompressStream(compressor: Compressor, inputStream: InputStream): OutputStream = {
+    val bytes = compressor.decompress(Streams.toByteArray(inputStream))
+    Streams.toOutputStream(bytes)
+  }
 
-    def compressStream(compressor: Compressor, inputStream: InputStream): OutputStream = {
-        val bytes = compressor.compress(Streams.toByteArray(inputStream))
-        Streams.toOutputStream(bytes)
-    }
-
-    def compressStreamAsync(compressor: Compressor, inputStream: InputStream): Future[OutputStream] = future {
-        compressStream(compressor, inputStream)
-    }
-
-    def decompressStream(compressor: Compressor, inputStream: InputStream): OutputStream = {
-        val bytes = compressor.decompress(Streams.toByteArray(inputStream))
-        Streams.toOutputStream(bytes)
-    }
-
-    def decompressStreamAsync(compressor: Compressor, inputStream: InputStream): Future[OutputStream] = future {
-        decompressStream(compressor, inputStream)
-    }
+  def decompressStreamAsync(compressor: Compressor, inputStream: InputStream): Future[OutputStream] = Future {
+    decompressStream(compressor, inputStream)
+  }
 }

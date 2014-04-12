@@ -3,7 +3,6 @@ package debop4s.core.utils
 import org.modelmapper.ModelMapper
 import org.modelmapper.config.Configuration.AccessLevel
 import org.modelmapper.convention.MatchingStrategies
-import org.slf4j.LoggerFactory
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
@@ -20,40 +19,38 @@ import scala.reflect._
  */
 object Mappers {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  lazy val mapper = new ModelMapper()
 
-    lazy val mapper = new ModelMapper()
+  mapper.getConfiguration
+  .setFieldMatchingEnabled(true)
+  .setMatchingStrategy(MatchingStrategies.STANDARD)
+  .setFieldAccessLevel(AccessLevel.PRIVATE)
 
-    mapper.getConfiguration
-    .setFieldMatchingEnabled(true)
-    .setMatchingStrategy(MatchingStrategies.STANDARD)
-    .setFieldAccessLevel(AccessLevel.PRIVATE)
+  def map[T <: AnyRef](src: Any, dest: T) {
+    mapper.map(src, dest)
+  }
 
-    def map[T <: AnyRef](src: Any, dest: T) {
-        mapper.map(src, dest)
-    }
+  def map[T: ClassTag](src: Any) = mapper.map[T](src, classTag[T].runtimeClass)
 
-    def map[T: ClassTag](src: Any) = mapper.map[T](src, classTag[T].runtimeClass)
+  def mapAll[T: ClassTag](srcs: Iterable[_]): Seq[T] = {
+    val targetClass = classTag[T].runtimeClass
+    srcs.toSeq.map(src => mapper.map(src, targetClass).asInstanceOf[T])
+  }
 
-    def mapAll[T: ClassTag](srcs: Iterable[_]): Seq[T] = {
-        val targetClass = classTag[T].runtimeClass
-        srcs.toSeq.map(src => mapper.map(src, targetClass).asInstanceOf[T])
-    }
+  def mapAsync[T <: AnyRef](src: Any, dest: T): Future[Unit] = Future {
+    map[T](src, dest)
+  }
 
-    def mapAsync[T <: AnyRef](src: Any, dest: T): Future[Unit] = future {
-        map[T](src, dest)
-    }
+  def mapAsync[T: ClassTag](src: Any): Future[T] = Future {
+    map[T](src)
+  }
 
-    def mapAsync[T: ClassTag](src: Any): Future[T] = future {
-        map[T](src)
-    }
+  def mapAllAsync[T: ClassTag](srcs: Iterable[_]): Future[Seq[T]] = Future {
+    mapAll(srcs)
+  }
 
-    def mapAllAsync[T: ClassTag](srcs: Iterable[_]): Future[Seq[T]] = future {
-        mapAll(srcs)
-    }
-
-    def mapAllAsParallel[T: ClassTag](srcs: Iterable[_]): IndexedSeq[T] = {
-        val targetClass = classTag[T].runtimeClass
-        srcs.par.map(src => mapper.map[T](src, targetClass).asInstanceOf[T]).toIndexedSeq
-    }
+  def mapAllAsParallel[T: ClassTag](srcs: Iterable[_]): IndexedSeq[T] = {
+    val targetClass = classTag[T].runtimeClass
+    srcs.par.map(src => mapper.map[T](src, targetClass).asInstanceOf[T]).toIndexedSeq
+  }
 }
