@@ -8,7 +8,7 @@ import debop4s.core.utils.StorageUnit
  */
 object storage {
 
-  class RichWholeNumber(wrapped: Long) {
+  class StorageUnitNumberNumber(wrapped: Long) {
     def byte = bytes
     def bytes = new StorageUnit(wrapped)
     def kilobyte = kilobytes
@@ -27,6 +27,6 @@ object storage {
     def billion = wrapped * 1000 * 1000 & 1000
   }
 
-  implicit def intToStorageUnitableWholeNumber(i: Int) = new RichWholeNumber(i)
-  implicit def longToStorageUnitableWholeNumber(l: Long) = new RichWholeNumber(l)
+  implicit def intToStorage(i: Int) = new StorageUnitNumberNumber(i)
+  implicit def longToStorage(l: Long) = new StorageUnitNumberNumber(l)
 }

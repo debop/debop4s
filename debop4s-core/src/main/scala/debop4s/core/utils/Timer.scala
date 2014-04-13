@@ -2,8 +2,8 @@ package debop4s.core.utils
 
 import debop4s.core._
 import debop4s.core.concurrent.NamedPoolThreadFactory
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.{ForkJoinPool, TimeUnit}
 import scala.Some
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -19,9 +19,31 @@ trait TimerTask extends Closable {
 }
 
 trait Timer {
+
+  /**
+    * 특정 시각에 `block` 을 실행시킵니다.
+    * @param when  시작 시각
+    * @param block  실행할 메소드 블럭
+    * @return `TimerTask` instance
+    */
   def schedule(when: Time)(block: => Unit): TimerTask
+
+  /**
+    * 정기적으로 `block` 을 실행시킵니다.
+    * @param when  시작 시각
+    * @param period 반복 주기
+    * @param block  실행할 메소드 블럭
+    * @return `TimerTask` instance
+    */
   def schedule(when: Time, period: Duration)(block: => Unit): TimerTask
 
+  /**
+  * 정기적으로 `block` 을 실행시킵니다.
+  * @param wait  초기 지연 시각
+  * @param period 반복 주기
+  * @param block  실행할 메소드 블럭
+  * @return `TimerTask` instance
+  */
   def schedule(period: Duration)(block: => Unit): TimerTask = {
     schedule(period.fromNow, period)(block)
   }
@@ -60,6 +82,10 @@ object Timer {
   val Nil: Timer = new NullTimer()
 }
 
+object NullTimerTask extends TimerTask {
+  def cancel() {}
+}
+
 /**
 * NullTimer 는 모든 Task 에 대해 즉시 호출하고 끝냅니다.
 */
@@ -75,8 +101,10 @@ class NullTimer extends Timer {
   override def stop() = {}
 }
 
-object NullTimerTask extends TimerTask {
-  def cancel() {}
+object ThreadStoppingTimer {
+  implicit val executor = new ForkJoinPool(2)
+  def apply(underlying: Timer)(implicit executor: java.util.concurrent.ExecutorService): ThreadStoppingTimer =
+    new ThreadStoppingTimer(underlying, executor)
 }
 
 class ThreadStoppingTimer(underlying: Timer, executor: java.util.concurrent.ExecutorService) extends Timer {
@@ -87,13 +115,18 @@ class ThreadStoppingTimer(underlying: Timer, executor: java.util.concurrent.Exec
     underlying.schedule(when, period)(block)
   }
   override def stop(): Unit = {
-
     executor.submit(Threads.makeRunnable { underlying.stop() })
   }
 }
 
 trait ReferenceCountedTimer extends Timer {
   def acquire()
+}
+
+object ReferenceCountingTimer {
+
+  def apply(factory: () => Timer): ReferenceCountingTimer =
+    new ReferenceCountingTimer(factory)
 }
 
 class ReferenceCountingTimer(factory: () => Timer) extends ReferenceCountedTimer {
@@ -124,6 +157,14 @@ class ReferenceCountingTimer(factory: () => Timer) extends ReferenceCountedTimer
   }
 }
 
+
+object JavaTimer {
+  def apply(isDaemon: Boolean = false): JavaTimer = new JavaTimer(isDaemon)
+}
+
+/**
+* [[java.util.Timer]] 를 사용하는 Timer 입니다.
+*/
 class JavaTimer(isDaemon: Boolean) extends Timer {
 
   def this() = this(false)
@@ -135,6 +176,7 @@ class JavaTimer(isDaemon: Boolean) extends Timer {
     underlying.schedule(task, when.toDate)
     toTimerTask(task)
   }
+
   override def schedule(when: Time, period: Duration)(block: => Unit): TimerTask = {
     val task = toJavaTimerTask(block)
     underlying.schedule(task, when.toDate, period.toMillis)
@@ -143,9 +185,9 @@ class JavaTimer(isDaemon: Boolean) extends Timer {
 
   override def stop() = underlying.cancel()
 
-
   def logError(t: Throwable) {
     System.err.println(s"WARNING: JavaTimer 에서 작업 실행 시 예외가 발생했습니다. $t")
+    t.printStackTrace(System.err)
   }
   private def toJavaTimerTask(block: => Unit) = new java.util.TimerTask {
     def run() {
@@ -161,6 +203,13 @@ class JavaTimer(isDaemon: Boolean) extends Timer {
   }
   private[this] def toTimerTask(task: java.util.TimerTask) = new TimerTask {
     def cancel() { task.cancel() }
+  }
+}
+
+object ScheduledThreadPoolTimer {
+
+  def apply(poolSize: Int = 2, name: String = "timer", makeDaemons: Boolean = false): ScheduledThreadPoolTimer = {
+    new ScheduledThreadPoolTimer(poolSize, name, makeDaemons)
   }
 }
 
@@ -186,6 +235,12 @@ class ScheduledThreadPoolTimer(poolSize: Int,
     }
   }
 
+  /**
+  * 특정 시각에 `block` 을 실행시킵니다.
+  * @param when  시작 시각
+  * @param block  실행할 메소드 블럭
+  * @return `TimerTask` instance
+  */
   override def schedule(when: Time)(block: => Unit): TimerTask = {
     val runnable = Threads.makeRunnable { block }
     val javaFuture = underlying.schedule(runnable, when.sinceNow.toMillis, TimeUnit.MILLISECONDS)
@@ -196,9 +251,23 @@ class ScheduledThreadPoolTimer(poolSize: Int,
       }
     }
   }
+  /**
+  * 정기적으로 `block` 을 실행시킵니다.
+  * @param when  시작 시각
+  * @param period 반복 주기
+  * @param block  실행할 메소드 블럭
+  * @return `TimerTask` instance
+  */
   override def schedule(when: Time, period: Duration)(block: => Unit): TimerTask = {
     schedule(when.sinceNow, period)(block)
   }
+  /**
+    * 정기적으로 `block` 을 실행시킵니다.
+    * @param wait  초기 지연 시각
+    * @param period 반복 주기
+    * @param block  실행할 메소드 블럭
+    * @return `TimerTask` instance
+    */
   def schedule(wait: Duration, period: Duration)(block: => Unit): TimerTask = {
     val runnable = Threads.makeRunnable { block }
     val javaFuture = underlying.scheduleAtFixedRate(runnable, wait.toMillis, period.toMillis, TimeUnit.MILLISECONDS)
@@ -210,6 +279,11 @@ class ScheduledThreadPoolTimer(poolSize: Int,
     }
   }
   override def stop(): Unit = underlying.shutdown()
+}
+
+
+object MockTimer {
+  def apply(): MockTimer = new MockTimer()
 }
 
 /**

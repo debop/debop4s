@@ -33,12 +33,7 @@ class NamedPoolThreadFactory(val name: String, val makeDaemons: Boolean) extends
 
 object NamedPoolThreadFactory {
 
-  def apply(): NamedPoolThreadFactory = new NamedPoolThreadFactory("thread", true)
-
-  def apply(name: String): NamedPoolThreadFactory =
-    new NamedPoolThreadFactory(name, true)
-
-  def apply(name: String, makeDaemons: Boolean): NamedPoolThreadFactory =
+  def apply(name: String = "thread", makeDaemons: Boolean = true): NamedPoolThreadFactory =
     new NamedPoolThreadFactory(name, makeDaemons)
 
 }

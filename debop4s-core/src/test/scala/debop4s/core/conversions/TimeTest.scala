@@ -14,14 +14,14 @@ class TimeTest extends FunSuite {
   import debop4s.core.conversions.time._
 
   test("converts Duration.Zero") {
-    assert(0.seconds === Duration.Zero)
-    assert(0.milliseconds === Duration.Zero)
-    assert(0.seconds === 0.seconds)
+    assert(0.toSeconds === Duration.Zero)
+    assert(0.toMillis === Duration.Zero)
+    assert(0.toSeconds === 0.toSeconds)
   }
 
   test("converts nonzero durations") {
-    assert(1.seconds === Duration(1, TimeUnit.SECONDS))
-    assert(123.milliseconds === Duration(123, TimeUnit.MILLISECONDS))
+    assert(1.toSeconds === Duration(1, TimeUnit.SECONDS))
+    assert(123.toMillis === Duration(123, TimeUnit.MILLISECONDS))
   }
 
 }

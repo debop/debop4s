@@ -4,6 +4,7 @@ import java.lang.ref.{PhantomReference, ReferenceQueue, Reference}
 import java.util
 import java.util.concurrent.atomic.AtomicReference
 import org.slf4j.LoggerFactory
+import scala.annotation.varargs
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -30,6 +31,7 @@ object Closable {
    * Concurrent composition: creates a new closable which, when
    * closed, closes all of the underlying resources simultaneously.
    */
+  @varargs
   def all(closables: Closable*) = new Closable {
     def close(deadline: Time): Future[Unit] = Future {
       closables.map(_.close(deadline))
@@ -41,6 +43,7 @@ object Closable {
    * closed, closes all of the underlying ones in sequence: that is,
    * resource ''n+1'' is not closed until resource ''n'' is.
    */
+  @varargs
   def sequence(closables: Closable*) = new Closable {
     private final def closeSeq(deadline: Time, closable: Seq[Closable]): Future[Unit] = {
       closables match {
