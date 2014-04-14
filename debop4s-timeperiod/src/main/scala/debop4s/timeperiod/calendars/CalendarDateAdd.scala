@@ -1,6 +1,7 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.core._
+import debop4s.core.NotSupportedException
+import debop4s.core.jodatime._
 import debop4s.timeperiod.DayOfWeek._
 import debop4s.timeperiod.SeekBoundaryMode._
 import debop4s.timeperiod.SeekDirection._
@@ -97,7 +98,7 @@ class CalendarDateAdd extends DateAdd {
         log.trace("기준시각으로부터 오프셋만큼 떨어진 시각을 구합니다. " +
                   s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
 
-        Guard.shouldBe(offset >= Duration.ZERO, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
+        require(offset >= Duration.ZERO, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
 
         var moment = start
         var end: DateTime = null

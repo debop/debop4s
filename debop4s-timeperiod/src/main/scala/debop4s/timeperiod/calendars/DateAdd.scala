@@ -1,6 +1,6 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.core._
+import debop4s.core.jodatime._
 import debop4s.timeperiod.SeekBoundaryMode._
 import debop4s.timeperiod.SeekDirection._
 import debop4s.timeperiod._

@@ -1,6 +1,6 @@
 package debop4s.timeperiod.tests.samples
 
-import debop4s.core._
+import debop4s.core.jodatime._
 import debop4s.timeperiod.{TimeRange, ITimeRange, ITimePeriod}
 import org.joda.time.{Duration, DateTime}
 import scala.collection.mutable.ArrayBuffer
@@ -30,7 +30,7 @@ class TimeRangePeriodRelationTestData extends Serializable {
 
     def this(start: DateTime, end: DateTime, duration: Duration) {
         this()
-        Guard.shouldBe(duration >= Duration.ZERO, "duration은 0이상의 기간을 가져야 합니다.")
+        assert(duration >= Duration.ZERO, "duration은 0이상의 기간을 가져야 합니다.")
         reference = TimeRange(start, end, readonly = true)
 
         val beforeEnd: DateTime = start - duration

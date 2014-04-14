@@ -1,6 +1,6 @@
 package debop4s.timeperiod.tests.base
 
-import debop4s.core._
+import debop4s.core.jodatime._
 import debop4s.timeperiod._
 import debop4s.timeperiod.tests.AbstractTimePeriodTest
 import debop4s.timeperiod.tests.samples.TimeRangePeriodRelationTestData

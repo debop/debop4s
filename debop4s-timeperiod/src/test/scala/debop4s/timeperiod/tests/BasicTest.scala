@@ -1,6 +1,6 @@
 package debop4s.timeperiod.tests
 
-import debop4s.core._
+import debop4s.core.jodatime._
 import org.joda.time._
 import org.scalatest._
 import org.slf4j.LoggerFactory
@@ -16,7 +16,7 @@ class BasicTest extends FunSuite with Matchers with BeforeAndAfter {
     lazy val log = LoggerFactory.getLogger(getClass)
 
     test("DateTime manipulation") {
-        val now = JodaDateTime.now
+        val now = JDateTime.now
         assert(now == now)
 
         assert((now plusHours 1) isAfter now)
@@ -37,13 +37,13 @@ class BasicTest extends FunSuite with Matchers with BeforeAndAfter {
     }
 
     test("basic test") {
-        assert(JodaDateTime.nextMonth < JodaDateTime.now + 2.months)
+        assert(JDateTime.nextMonth < JDateTime.now + 2.months)
 
-        val x: Interval = JodaDateTime.now to JodaDateTime.tomorrow
+        val x: Interval = JDateTime.now to JDateTime.tomorrow
 
         print(s"x=[$x]")
 
-        assert((JodaDateTime.now to JodaDateTime.nextSecond).millis == 1000)
+        assert((JDateTime.now to JDateTime.nextSecond).millis == 1000)
     }
 
 }

@@ -56,12 +56,12 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
         }
     }
     test("handle underflows") {
-        fromNanoseconds(Long.MinValue) - 1.toNanos shouldEqual MinusInf
-        fromMicroseconds(Long.MinValue) - 1.toNanos shouldEqual MinusInf
+        fromNanoseconds(Long.MinValue) - 1.nanoseconds shouldEqual MinusInf
+        fromMicroseconds(Long.MinValue) - 1.nanoseconds shouldEqual MinusInf
     }
     test("handle overflows") {
-        fromNanoseconds(Long.MaxValue) + 1.toNanos shouldEqual Inf
-        fromMicroseconds(Long.MaxValue) + 1.toNanos shouldEqual Inf
+        fromNanoseconds(Long.MaxValue) + 1.nanoseconds shouldEqual Inf
+        fromMicroseconds(Long.MaxValue) + 1.nanoseconds shouldEqual Inf
     }
 
     test("Nanoseconds extracts only finite values, in nanoseconds") {
@@ -87,8 +87,8 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
     }
 
     test("Inf - be impermeable to finite arithmetic") {
-        Inf - 0L.toSeconds shouldEqual Inf
-        Inf - 100L.toSeconds shouldEqual Inf
+        Inf - 0L.seconds shouldEqual Inf
+        Inf - 100L.seconds shouldEqual Inf
         Inf - Duration.fromNanos(Long.MaxValue) shouldEqual Inf
     }
 
@@ -132,8 +132,8 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
     }
 
     test("MinusInf - be impermeable to finite arithmetic") {
-        MinusInf - 0L.toSeconds shouldEqual MinusInf
-        MinusInf - 100L.toSeconds shouldEqual MinusInf
+        MinusInf - 0L.seconds shouldEqual MinusInf
+        MinusInf - 100L.seconds shouldEqual MinusInf
         MinusInf - Duration.fromNanos(Long.MaxValue) shouldEqual MinusInf
     }
 
@@ -176,8 +176,8 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
     }
 
     test("Undefined - be impermeable to any arithmetic") {
-        Undefined + 0L.toSeconds shouldEqual Undefined
-        Undefined + 100L.toSeconds shouldEqual Undefined
+        Undefined + 0L.seconds shouldEqual Undefined
+        Undefined + 100L.seconds shouldEqual Undefined
         Undefined + Duration.fromNanos(Long.MaxValue) shouldEqual Undefined
     }
 
@@ -257,15 +257,15 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
     }
 
     test("floor round down") {
-        fromSeconds(60).floor(1.toMinutes) shouldEqual fromSeconds(60)
-        fromSeconds(100).floor(1.toMinutes) shouldEqual fromSeconds(60)
-        fromSeconds(119).floor(1.toMinutes) shouldEqual fromSeconds(60)
-        fromSeconds(120).floor(1.toMinutes) shouldEqual fromSeconds(120)
+        fromSeconds(60).floor(1.minutes) shouldEqual fromSeconds(60)
+        fromSeconds(100).floor(1.minutes) shouldEqual fromSeconds(60)
+        fromSeconds(119).floor(1.minutes) shouldEqual fromSeconds(60)
+        fromSeconds(120).floor(1.minutes) shouldEqual fromSeconds(120)
     }
 
     test("floor maintain Inf and MinusInf") {
-        Inf.floor(1.toHours) shouldEqual Inf
-        MinusInf.floor(1.toHours) shouldEqual MinusInf
+        Inf.floor(1.hours) shouldEqual Inf
+        MinusInf.floor(1.hours) shouldEqual MinusInf
     }
 
     test("floor divide by zero") {
@@ -275,8 +275,8 @@ trait TimeLikeTest[T <: TimeLike[T]] extends AbstractCoreTest {
     }
 
     test("floor deal with undefineds") {
-        MinusInf floor 1L.toSeconds shouldEqual MinusInf
-        Undefined floor 0L.toSeconds shouldEqual Undefined
+        MinusInf floor 1L.seconds shouldEqual MinusInf
+        Undefined floor 0L.seconds shouldEqual Undefined
         Undefined floor Duration.Inf shouldEqual Undefined
         Undefined floor Duration.MinusInf shouldEqual Undefined
         Undefined floor Duration.Undefined shouldEqual Undefined
@@ -345,7 +345,7 @@ class TimeTest extends {val ops = Time } with TimeLikeTest[Time] {
 
     test("withTimeAt nested") {
         val t0 = new Time(123456789L)
-        val t1 = t0 + 10L.toMinutes
+        val t1 = t0 + 10L.minutes
         Time.withTimeAt(t0) { _ =>
             Time.now shouldEqual t0
             Time.withTimeAt(t1) { _ =>
@@ -388,7 +388,7 @@ class TimeTest extends {val ops = Time } with TimeLikeTest[Time] {
             Time.now shouldEqual t0
             Thread.sleep(50)
             Time.now shouldEqual t0
-            val delta = 100.toMillis
+            val delta = 100.milliseconds
             t += delta
             Time.now shouldEqual (t0 + delta)
         }
@@ -406,7 +406,7 @@ class TimeTest extends {val ops = Time } with TimeLikeTest[Time] {
 
     test("advance") {
         val t0 = new Time(123456789L)
-        val delta = 5L.toSeconds
+        val delta = 5L.seconds
 
         Time.withTimeAt(t0) { tc =>
             Time.now shouldEqual t0
@@ -417,70 +417,70 @@ class TimeTest extends {val ops = Time } with TimeLikeTest[Time] {
     }
 
     test("compare") {
-        10L.toSeconds.afterEpoch should be < 11L.toSeconds.afterEpoch
-        10L.toSeconds.afterEpoch shouldEqual 10L.toSeconds.afterEpoch
-        11L.toSeconds.afterEpoch should be > 10L.toSeconds.afterEpoch
+        10L.seconds.afterEpoch should be < 11L.seconds.afterEpoch
+        10L.seconds.afterEpoch shouldEqual 10L.seconds.afterEpoch
+        11L.seconds.afterEpoch should be > 10L.seconds.afterEpoch
         Time.fromMilliseconds(Long.MaxValue) should be > Time.now
     }
 
     test("+ delta") {
-        10L.toSeconds.afterEpoch + 5L.toSeconds shouldEqual 15L.toSeconds.afterEpoch
+        10L.seconds.afterEpoch + 5L.seconds shouldEqual 15L.seconds.afterEpoch
     }
 
     test("- delta") {
-        10L.toSeconds.afterEpoch - 5L.toSeconds shouldEqual 5L.toSeconds.afterEpoch
+        10L.seconds.afterEpoch - 5L.seconds shouldEqual 5L.seconds.afterEpoch
     }
 
     test("- time") {
-        10L.toSeconds.afterEpoch - 5L.toSeconds.afterEpoch shouldEqual 5L.toSeconds
+        10L.seconds.afterEpoch - 5L.seconds.afterEpoch shouldEqual 5L.seconds
     }
 
     test("max") {
-        10L.toSeconds.afterEpoch max 5L.toSeconds.afterEpoch shouldEqual 10L.toSeconds.afterEpoch
-        5L.toSeconds.afterEpoch max 10L.toSeconds.afterEpoch shouldEqual 10L.toSeconds.afterEpoch
+        10L.seconds.afterEpoch max 5L.seconds.afterEpoch shouldEqual 10L.seconds.afterEpoch
+        5L.seconds.afterEpoch max 10L.seconds.afterEpoch shouldEqual 10L.seconds.afterEpoch
     }
 
     test("min") {
-        10L.toSeconds.afterEpoch min 5L.toSeconds.afterEpoch shouldEqual 5L.toSeconds.afterEpoch
-        5L.toSeconds.afterEpoch min 10L.toSeconds.afterEpoch shouldEqual 5L.toSeconds.afterEpoch
+        10L.seconds.afterEpoch min 5L.seconds.afterEpoch shouldEqual 5L.seconds.afterEpoch
+        5L.seconds.afterEpoch min 10L.seconds.afterEpoch shouldEqual 5L.seconds.afterEpoch
     }
 
     test("moreOrLessEquals") {
         val now = Time.now
-        now.moreOrLessEquals(now + 1.toSeconds, 1.toSeconds) shouldEqual true
-        now.moreOrLessEquals(now - 1.toSeconds, 1.toSeconds) shouldEqual true
-        now.moreOrLessEquals(now + 2.toSeconds, 1.toSeconds) shouldEqual false
-        now.moreOrLessEquals(now - 2.toSeconds, 1.toSeconds) shouldEqual false
+        now.moreOrLessEquals(now + 1.seconds, 1.seconds) shouldEqual true
+        now.moreOrLessEquals(now - 1.seconds, 1.seconds) shouldEqual true
+        now.moreOrLessEquals(now + 2.seconds, 1.seconds) shouldEqual false
+        now.moreOrLessEquals(now - 2.seconds, 1.seconds) shouldEqual false
     }
 
     test("floor - like trim") {
         val format = new TimeFormat("yyyy-MM-dd HH:mm:ss.SSS")
         val t0 = format.parse("2010-12-24 11:04:07.567")
 
-        t0.floor(1.toMillis) shouldEqual t0
-        t0.floor(10.toMillis) shouldEqual format.parse("2010-12-24 11:04:07.560")
-        t0.floor(1.toSeconds) shouldEqual format.parse("2010-12-24 11:04:07.000")
-        t0.floor(5.toSeconds) shouldEqual format.parse("2010-12-24 11:04:05.000")
-        t0.floor(1.toMinutes) shouldEqual format.parse("2010-12-24 11:04:00.000")
-        t0.floor(1.toHours) shouldEqual format.parse("2010-12-24 11:00:00.000")
+        t0.floor(1.milliseconds) shouldEqual t0
+        t0.floor(10.milliseconds) shouldEqual format.parse("2010-12-24 11:04:07.560")
+        t0.floor(1.seconds) shouldEqual format.parse("2010-12-24 11:04:07.000")
+        t0.floor(5.seconds) shouldEqual format.parse("2010-12-24 11:04:05.000")
+        t0.floor(1.minutes) shouldEqual format.parse("2010-12-24 11:04:00.000")
+        t0.floor(1.hours) shouldEqual format.parse("2010-12-24 11:00:00.000")
     }
 
     test("since") {
         val t0 = Time.now
-        val t1 = t0 + 10L.toSeconds
-        t1.since(t0) shouldEqual 10L.toSeconds
-        t0.since(t1) shouldEqual (-10L).toSeconds
+        val t1 = t0 + 10L.seconds
+        t1.since(t0) shouldEqual 10L.seconds
+        t0.since(t1) shouldEqual (-10L).seconds
     }
 
     test("sinceEpoch") {
-        val t0 = Time.epoch + 100L.toHours
-        t0.sinceEpoch shouldEqual 100L.toHours
+        val t0 = Time.epoch + 100L.hours
+        t0.sinceEpoch shouldEqual 100L.hours
     }
 
     test("sinceNow") {
         Time.withCurrentTimeFrozen { _ =>
-            val t0 = Time.now + 100L.toHours
-            t0.sinceNow shouldEqual 100L.toHours
+            val t0 = Time.now + 100L.hours
+            t0.sinceNow shouldEqual 100L.hours
         }
     }
 
@@ -495,7 +495,7 @@ class TimeTest extends {val ops = Time } with TimeLikeTest[Time] {
         Time.fromMicroseconds(Long.MinValue + 1) shouldEqual Time.MinusInf
 
         val currentTimeMicro = System.currentTimeMillis() * 1000
-        Time.fromMicroseconds(currentTimeMicro).inNanoseconds shouldEqual currentTimeMicro.toMicros.toNanos
+        Time.fromMicroseconds(currentTimeMicro).inNanoseconds shouldEqual currentTimeMicro.microseconds.toNanos
     }
 
     test("fromMillis") {
@@ -514,20 +514,20 @@ class TimeTest extends {val ops = Time } with TimeLikeTest[Time] {
 
     test("util") {
         val t0 = Time.now
-        val t1 = t0 + 10L.toSeconds
-        t0.until(t1) shouldEqual 10L.toSeconds
-        t1.until(t0) shouldEqual (-10L).toSeconds
+        val t1 = t0 + 10L.seconds
+        t0.until(t1) shouldEqual 10L.seconds
+        t1.until(t0) shouldEqual (-10L).seconds
     }
 
     test("untilEpoch") {
-        val t0 = Time.epoch - 100L.toHours
-        t0.untilEpoch shouldEqual 100L.toHours
+        val t0 = Time.epoch - 100L.hours
+        t0.untilEpoch shouldEqual 100L.hours
     }
 
     test("untilNow") {
         Time.withCurrentTimeFrozen { _ =>
-            val t0 = Time.now - 100L.toHours
-            t0.untilNow shouldEqual 100L.toHours
+            val t0 = Time.now - 100L.hours
+            t0.untilNow shouldEqual 100L.hours
         }
     }
 }

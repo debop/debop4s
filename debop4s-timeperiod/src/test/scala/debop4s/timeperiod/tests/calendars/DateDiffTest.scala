@@ -1,6 +1,6 @@
 package debop4s.timeperiod.tests.calendars
 
-import debop4s.core._
+import debop4s.core.jodatime._
 import debop4s.timeperiod._
 import debop4s.timeperiod.calendars.DateDiff
 import debop4s.timeperiod.tests.AbstractTimePeriodTest

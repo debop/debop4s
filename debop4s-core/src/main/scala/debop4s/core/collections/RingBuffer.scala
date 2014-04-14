@@ -68,7 +68,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
     override def iterator = new Iterator[A] {
         var idx = 0
         def hasNext = idx != _count
-        def next = {
+        def next() = {
             val res = apply(idx)
             idx += 1
             res
@@ -101,7 +101,6 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
 }
 
 object RingBuffer {
-
     def apply[A: ClassTag](maxSize: Int): RingBuffer[A] =
         new RingBuffer(1 max maxSize)
 }

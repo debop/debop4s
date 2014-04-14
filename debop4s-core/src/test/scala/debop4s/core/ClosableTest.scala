@@ -19,7 +19,7 @@ class ClosableTest extends AbstractCoreTest {
                 time = Some(t)
                 Future {}
             }
-            val dur = 1.toMinutes
+            val dur = 1.minutes
             c.close(dur)
             assert(time === Some(Time.now + dur))
         }

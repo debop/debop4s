@@ -1,6 +1,6 @@
 package debop4s.timeperiod
 
-import debop4s.core._
+import debop4s.core.jodatime._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
 import scala.annotation.varargs
@@ -144,7 +144,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
             val remaining = new Duration(MinPeriodTime, moment)
             hasSpace = duration.compareTo(remaining) <= 0
         }
-        Guard.shouldBe(hasSpace, s"duration[$duration] is out of range.")
+        assert(hasSpace, s"duration[$duration] is out of range.")
     }
 
     protected def assertSpaceAfter(moment: DateTime, duration: Duration) {
@@ -153,7 +153,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
             val remaining = new Duration(moment, MaxPeriodTime)
             hasSpace = duration.compareTo(remaining) <= 0
         }
-        Guard.shouldBe(hasSpace, s"duration[$duration] is out of range.")
+        assert(hasSpace, s"duration[$duration] is out of range.")
     }
 }
 

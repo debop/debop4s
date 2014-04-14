@@ -104,8 +104,8 @@ trait Jvm {
      * but they are svelte.
      */
     def foreachGc(f: Gc => Unit) {
-        val period = 1.toSeconds
-        val logPeriod = 30.toMinutes
+        val period = 1.seconds
+        val logPeriod = 30.minutes
         val log = LoggerFactory.getLogger(getClass)
         @volatile var missedCollections = 0L
         @volatile var lastLog = Time.epoch
@@ -145,7 +145,7 @@ trait Jvm {
      * result is returned in reverse chronological order.
      */
     def monitorGcs(bufferFor: Duration): Time => Seq[Gc] = {
-        require(bufferFor > 0.toSeconds)
+        require(bufferFor > 0.seconds)
         @volatile var buffer = Nil: List[Gc]
 
         // We assume that timestamps from foreachGc are monotonic.

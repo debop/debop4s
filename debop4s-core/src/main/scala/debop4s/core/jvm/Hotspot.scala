@@ -71,7 +71,7 @@ class Hotspot extends Jvm {
     }
 
     private[this] def ticksToDuration(ticks: Long, freq: Long) =
-        (1000000 * ticks / freq).toMicros
+        (1000000 * ticks / freq).microseconds
 
     private[this] def getGc(which: Int, cs: Map[String, Counter]) = {
         def get(what: String) = cs.get(s"sun.gc.collector.$which.$what")

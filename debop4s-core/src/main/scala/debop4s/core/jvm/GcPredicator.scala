@@ -32,7 +32,7 @@ class GcPredicator(pool: Pool, period: Duration, timer: Timer, estimator: Estima
         else {
             val PoolState(_, capacity, used) = pool.state()
             val r = (capacity - used).inBytes
-            Time.now + ((1000 * r) / e).toMillis
+            Time.now + ((1000 * r) / e).milliseconds
         }
     }
 }

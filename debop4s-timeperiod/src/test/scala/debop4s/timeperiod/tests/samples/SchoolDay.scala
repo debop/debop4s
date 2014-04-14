@@ -1,6 +1,6 @@
 package debop4s.timeperiod.tests.samples
 
-import debop4s.core._
+import debop4s.core.jodatime._
 import debop4s.timeperiod.utils.Times
 import debop4s.timeperiod.{TimeBlock, TimePeriodChain}
 import org.joda.time.DateTime
