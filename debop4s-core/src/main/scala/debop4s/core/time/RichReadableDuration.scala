@@ -9,7 +9,7 @@ import org.joda.time.ReadableDuration
  */
 class RichReadableDuration(val self: ReadableDuration) extends AnyVal with Ordered[ReadableDuration] {
 
-  def millis: Long = self.getMillis
+    def millis: Long = self.getMillis
 
-  def compare(that: ReadableDuration): Int = self.compareTo(that)
+    def compare(that: ReadableDuration): Int = self.compareTo(that)
 }

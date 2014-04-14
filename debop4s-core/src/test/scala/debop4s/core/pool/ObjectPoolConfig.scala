@@ -11,5 +11,5 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig
  */
 class ObjectPoolConfig extends GenericObjectPoolConfig {
 
-  setMaxTotal(100)
+    setMaxTotal(100)
 }

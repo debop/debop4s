@@ -22,35 +22,35 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ScalaJpaTest extends AbstractDataTest {
 
-  @Autowired val emf: EntityManagerFactory = null
-  @PersistenceContext val em: EntityManager = null
-  @Autowired val dao: JpaDao = null
+    @Autowired val emf: EntityManagerFactory = null
+    @PersistenceContext val em: EntityManager = null
+    @Autowired val dao: JpaDao = null
 
-  // NOTE: TestContextManager#prepareTestInstance 를 실행시켜야 제대로 Dependency Injection이 됩니다.
-  new TestContextManager(getClass).prepareTestInstance(this)
+    // NOTE: TestContextManager#prepareTestInstance 를 실행시켜야 제대로 Dependency Injection이 됩니다.
+    new TestContextManager(getClass).prepareTestInstance(this)
 
-  @Test
-  def setupTest() {
-    assert(emf != null)
-    assert(em != null)
-    assert(dao != null)
-  }
+    @Test
+    def setupTest() {
+        assert(emf != null)
+        assert(em != null)
+        assert(dao != null)
+    }
 
-  @Test
-  def crud() {
-    val entity = new ScalaJpaEntity
-    entity.name = "Sunghyouk Bae"
+    @Test
+    def crud() {
+        val entity = new ScalaJpaEntity
+        entity.name = "Sunghyouk Bae"
 
-    dao.persist(entity)
-    dao.flush()
-    dao.clear()
+        dao.persist(entity)
+        dao.flush()
+        dao.clear()
 
-    val loaded = dao.findOne(classOf[ScalaJpaEntity], entity.id)
-    assert(loaded != null)
-    assert(loaded == entity)
-    assert(loaded.isPersisted)
-    assert(loaded.id > 0)
-    println(loaded.toString)
-  }
+        val loaded = dao.findOne(classOf[ScalaJpaEntity], entity.id)
+        assert(loaded != null)
+        assert(loaded == entity)
+        assert(loaded.isPersisted)
+        assert(loaded.id > 0)
+        println(loaded.toString)
+    }
 
 }

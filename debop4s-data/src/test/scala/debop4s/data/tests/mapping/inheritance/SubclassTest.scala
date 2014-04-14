@@ -17,41 +17,41 @@ import org.junit.Test
 @org.springframework.transaction.annotation.Transactional
 class SubclassTest extends AbstractJpaTest {
 
-  @PersistenceContext val em: EntityManager = null
+    @PersistenceContext val em: EntityManager = null
 
-  @Test
-  def subclass() {
-    val bankAccount = new SubclassBankAccount()
-    bankAccount.account = "account"
-    bankAccount.bankname = "bank name"
-    bankAccount.owner = "debop"
-    em.persist(bankAccount)
+    @Test
+    def subclass() {
+        val bankAccount = new SubclassBankAccount()
+        bankAccount.account = "account"
+        bankAccount.bankname = "bank name"
+        bankAccount.owner = "debop"
+        em.persist(bankAccount)
 
-    val creditCard = new SubclassCreditCard()
-    creditCard.number = "1111-1111-1111-1111"
-    creditCard.companyName = "카드사"
-    creditCard.expYear = 2020
-    creditCard.expMonth = 12
-    creditCard.owner = "debop"
-    em.persist(creditCard)
+        val creditCard = new SubclassCreditCard()
+        creditCard.number = "1111-1111-1111-1111"
+        creditCard.companyName = "카드사"
+        creditCard.expYear = 2020
+        creditCard.expMonth = 12
+        creditCard.owner = "debop"
+        em.persist(creditCard)
 
-    em.flush()
-    em.clear()
+        em.flush()
+        em.clear()
 
-    val bankAccount1 = em.find(classOf[SubclassBankAccount], bankAccount.id)
-    assert(bankAccount1 == bankAccount)
+        val bankAccount1 = em.find(classOf[SubclassBankAccount], bankAccount.id)
+        assert(bankAccount1 == bankAccount)
 
-    val creditCard1 = em.find(classOf[SubclassCreditCard], creditCard.id)
-    assert(creditCard1 == creditCard)
+        val creditCard1 = em.find(classOf[SubclassCreditCard], creditCard.id)
+        assert(creditCard1 == creditCard)
 
-    em.remove(bankAccount1)
-    em.remove(creditCard1)
-    em.flush()
-    em.clear()
+        em.remove(bankAccount1)
+        em.remove(creditCard1)
+        em.flush()
+        em.clear()
 
-    assert(em.find(classOf[SubclassBankAccount], bankAccount.id) == null)
-    assert(em.find(classOf[SubclassCreditCard], creditCard.id) == null)
-  }
+        assert(em.find(classOf[SubclassBankAccount], bankAccount.id) == null)
+        assert(em.find(classOf[SubclassCreditCard], creditCard.id) == null)
+    }
 
 }
 
@@ -64,11 +64,11 @@ class SubclassTest extends AbstractJpaTest {
 @hba.DynamicUpdate
 abstract class SubclassBillingBase extends LongEntity {
 
-  @Column(nullable = false)
-  @Index(name = "ix_subclass_billing_owner", columnList = "owner")
-  var owner: String = _
+    @Column(nullable = false)
+    @Index(name = "ix_subclass_billing_owner", columnList = "owner")
+    var owner: String = _
 
-  override def hashCode(): Int = Hashs.compute(owner)
+    override def hashCode(): Int = Hashs.compute(owner)
 }
 
 @Entity
@@ -76,11 +76,11 @@ abstract class SubclassBillingBase extends LongEntity {
 @hba.DynamicUpdate
 class SubclassBankAccount extends SubclassBillingBase {
 
-  var account: String = _
-  var bankname: String = _
-  var swift: String = _
+    var account: String = _
+    var bankname: String = _
+    var swift: String = _
 
-  override def hashCode(): Int = Hashs.compute(owner, account)
+    override def hashCode(): Int = Hashs.compute(owner, account)
 }
 
 @Entity
@@ -89,18 +89,18 @@ class SubclassBankAccount extends SubclassBillingBase {
 @hba.DynamicUpdate
 class SubclassCreditCard extends SubclassBillingBase {
 
-  var companyName: String = _
-  var number: String = _
-  var expMonth: Integer = _
-  var expYear: Integer = _
+    var companyName: String = _
+    var number: String = _
+    var expMonth: Integer = _
+    var expYear: Integer = _
 
-  @Temporal(TemporalType.DATE)
-  var startDate: Date = _
+    @Temporal(TemporalType.DATE)
+    var startDate: Date = _
 
-  @Temporal(TemporalType.DATE)
-  var endDate: Date = _
+    @Temporal(TemporalType.DATE)
+    var endDate: Date = _
 
-  var swift: String = _
+    var swift: String = _
 
-  override def hashCode(): Int = Hashs.compute(owner, number)
+    override def hashCode(): Int = Hashs.compute(owner, number)
 }

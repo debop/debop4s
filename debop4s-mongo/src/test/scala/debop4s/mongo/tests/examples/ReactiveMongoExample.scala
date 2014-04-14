@@ -15,58 +15,58 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 class ReactiveMongoExample extends AbstractMongoTest {
 
-  test("connect mongodb") {
-    val driver = MongoDriver()
-    val connection = driver.connection(List("localhost"))
+    test("connect mongodb") {
+        val driver = MongoDriver()
+        val connection = driver.connection(List("localhost"))
 
-    val db = connection.db("musicDB")
-    val collection = db[BSONCollection]("album")
+        val db = connection.db("musicDB")
+        val collection = db[BSONCollection]("album")
 
-    assert(db != null)
-    assert(collection != null)
-  }
-
-
-  test("simple query") {
-    val driver = MongoDriver()
-    val connection = driver.connection(List("localhost"))
-
-    val db = connection.db("musicDB")
-    val collection = db[BSONCollection]("album")
-
-
-    val query = BSONDocument("artist" -> "Dave Matthews Band")
-    val filter = BSONDocument("publishDate" -> 1, "_id" -> 1)
-
-    val future = collection
-                 .find(query, filter)
-                 .cursor[BSONDocument]
-                 .enumerate()
-                 .apply(Iteratee.foreach {
-      doc => println("found document: " + BSONDocument.pretty(doc))
-    })
-    Asyncs.ready(future)
-  }
-
-  test("find all document") {
-    val driver = MongoDriver()
-    val connection = driver.connection(List("localhost"))
-
-    val db = connection.db("musicDB")
-    val collection = db[BSONCollection]("album")
-
-    val query = BSONDocument()
-
-    val futureList = collection.find(query).cursor[BSONDocument].collect[List]()
-
-    val task = futureList.map {
-      list =>
-        list.foreach {
-          doc =>
-            println("found document: " + BSONDocument.pretty(doc))
-        }
+        assert(db != null)
+        assert(collection != null)
     }
-    Asyncs.ready(task)
-  }
+
+
+    test("simple query") {
+        val driver = MongoDriver()
+        val connection = driver.connection(List("localhost"))
+
+        val db = connection.db("musicDB")
+        val collection = db[BSONCollection]("album")
+
+
+        val query = BSONDocument("artist" -> "Dave Matthews Band")
+        val filter = BSONDocument("publishDate" -> 1, "_id" -> 1)
+
+        val future = collection
+                     .find(query, filter)
+                     .cursor[BSONDocument]
+                     .enumerate()
+                     .apply(Iteratee.foreach {
+            doc => println("found document: " + BSONDocument.pretty(doc))
+        })
+        Asyncs.ready(future)
+    }
+
+    test("find all document") {
+        val driver = MongoDriver()
+        val connection = driver.connection(List("localhost"))
+
+        val db = connection.db("musicDB")
+        val collection = db[BSONCollection]("album")
+
+        val query = BSONDocument()
+
+        val futureList = collection.find(query).cursor[BSONDocument].collect[List]()
+
+        val task = futureList.map {
+            list =>
+                list.foreach {
+                    doc =>
+                        println("found document: " + BSONDocument.pretty(doc))
+                }
+        }
+        Asyncs.ready(task)
+    }
 
 }

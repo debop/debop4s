@@ -10,8 +10,8 @@ import java.net.URI
  */
 class PoolObject(var name: String, var intValue: Int, var uriValue: URI) {
 
-  // 생성 시간 소요를 위해
-  Thread.sleep(100)
+    // 생성 시간 소요를 위해
+    Thread.sleep(100)
 
-  var isActive: Boolean = true
+    var isActive: Boolean = true
 }

@@ -13,20 +13,20 @@ import scala.beans.BeanProperty
 class HibernateParameter(@BeanProperty override val name: String,
                          @BeanProperty override val value: Any,
                          @BeanProperty val paramType: org.hibernate.`type`.Type = StandardBasicTypes.SERIALIZABLE)
-  extends AbstractNamedParameter(name, value) {
+    extends AbstractNamedParameter(name, value) {
 
-  override protected def buildStringHelper =
-    super.buildStringHelper
-    .add("paramType", paramType)
+    override protected def buildStringHelper =
+        super.buildStringHelper
+        .add("paramType", paramType)
 }
 
 object HibernateParameter {
 
-  def apply(name: String, value: Any): HibernateParameter = {
-    new HibernateParameter(name, value)
-  }
+    def apply(name: String, value: Any): HibernateParameter = {
+        new HibernateParameter(name, value)
+    }
 
-  def apply(name: String, value: Any, paramType: org.hibernate.`type`.Type): HibernateParameter = {
-    new HibernateParameter(name, value, paramType)
-  }
+    def apply(name: String, value: Any, paramType: org.hibernate.`type`.Type): HibernateParameter = {
+        new HibernateParameter(name, value, paramType)
+    }
 }

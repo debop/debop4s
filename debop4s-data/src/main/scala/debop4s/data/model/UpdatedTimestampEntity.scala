@@ -11,14 +11,14 @@ import org.joda.time.DateTime
  */
 trait UpdatedTimestampEntity {
 
-  @org.hibernate.annotations.Type(`type` = "debop4s.data.hibernate.usertype.JodaDateTimeUserType")
-  var updatedTimestamp: DateTime = _
+    @org.hibernate.annotations.Type(`type` = "debop4s.data.hibernate.usertype.JodaDateTimeUserType")
+    var updatedTimestamp: DateTime = _
 
-  def getUpdatedTimestamp: DateTime = updatedTimestamp
+    def getUpdatedTimestamp: DateTime = updatedTimestamp
 
-  @PrePersist
-  def updateUpdatedTimestamp() {
-    updatedTimestamp = DateTime.now()
-  }
+    @PrePersist
+    def updateUpdatedTimestamp() {
+        updatedTimestamp = DateTime.now()
+    }
 
 }

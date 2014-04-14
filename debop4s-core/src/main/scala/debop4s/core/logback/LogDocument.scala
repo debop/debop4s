@@ -11,25 +11,25 @@ import scala.collection.mutable
 @SerialVersionUID(1431014486199195378L)
 class LogDocument extends AbstractValueObject {
 
-  var serverName: String = null
+    var serverName: String = null
 
-  var applicationName: String = null
+    var applicationName: String = null
 
-  var logger: String = null
+    var logger: String = null
 
-  var levelInt: Int = 0
+    var levelInt: Int = 0
 
-  var levelStr: String = null
+    var levelStr: String = null
 
-  var threadName: String = null
+    var threadName: String = null
 
-  var message: String = null
+    var message: String = null
 
-  var timestamp: DateTime = null
+    var timestamp: DateTime = null
 
-  var marker: String = null
+    var marker: String = null
 
-  var exception: String = null
+    var exception: String = null
 
-  var stacktrace: mutable.Buffer[String] = null
+    var stacktrace: mutable.Buffer[String] = null
 }

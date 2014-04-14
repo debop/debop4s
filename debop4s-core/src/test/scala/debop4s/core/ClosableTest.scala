@@ -12,30 +12,30 @@ import scala.concurrent.Future
  */
 class ClosableTest extends AbstractCoreTest {
 
-  test("Closable.close(Duration)") {
-    Time.withCurrentTimeFrozen { _ =>
-      var time: Option[Time] = None
-      val c = Closable.make { t =>
-        time = Some(t)
-        Future {}
-      }
-      val dur = 1.toMinutes
-      c.close(dur)
-      assert(time === Some(Time.now + dur))
+    test("Closable.close(Duration)") {
+        Time.withCurrentTimeFrozen { _ =>
+            var time: Option[Time] = None
+            val c = Closable.make { t =>
+                time = Some(t)
+                Future {}
+            }
+            val dur = 1.toMinutes
+            c.close(dur)
+            assert(time === Some(Time.now + dur))
+        }
     }
-  }
 
-  test("Closable.closeOnCollect") {
-    @volatile var closed = false
-    Closable.closeOnCollect(
-      Closable.make { t =>
-        closed = true
-        Future()
-      },
-      new Object {}
-    )
-    System.gc()
-    eventually { assert(closed) }
-  }
+    test("Closable.closeOnCollect") {
+        @volatile var closed = false
+        Closable.closeOnCollect(
+            Closable.make { t =>
+                closed = true
+                Future()
+            },
+            new Object {}
+        )
+        System.gc()
+        eventually { assert(closed) }
+    }
 
 }

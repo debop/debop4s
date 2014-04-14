@@ -15,128 +15,128 @@ import scala.collection.JavaConverters._
  */
 class Hotspot extends Jvm {
 
-  private[this] val epoch = Time.fromMilliseconds(ManagementFactory.getRuntimeMXBean.getStartTime)
+    private[this] val epoch = Time.fromMilliseconds(ManagementFactory.getRuntimeMXBean.getStartTime)
 
-  private[this] type Counter = {
-    def getName: String
-    def getUnits: Object
-    def getValue: Object
-  }
-
-  private[this] type VMManagement = {
-    def getInternalCounters(pat: String): java.util.List[Counter]
-  }
-
-  private[this] val DiagnosticBean = ObjectName.getInstance("com.sun.management:type=HotSpotDiagnostic")
-
-  private[this] val jvm: VMManagement = {
-    val fld = try {
-      // jdk5/6 have jvm field in ManagementFactory class
-      Class.forName("sun.management.ManagementFactory").getDeclaredField("jvm")
-    } catch {
-      case _: NoSuchFieldException =>
-        // jdk7 moves jvm field to ManagementFactoryHelper class
-        Class.forName("sun.management.ManagementFactoryHelper").getDeclaredField("jvm")
-    }
-    fld.setAccessible(true)
-    fld.get(null).asInstanceOf[VMManagement]
-  }
-
-  private[this] def opt(name: String): Option[String] = {
-    try {
-      val o = ManagementFactory.getPlatformMBeanServer.invoke(
-        DiagnosticBean,
-        "getVMOption",
-        Array(name),
-        Array("java.lang.String")
-      )
-      Some(o.asInstanceOf[CompositeDataSupport].get("value").asInstanceOf[String])
-    } catch {
-      case _: IllegalArgumentException => None
-      case rbe: RuntimeMBeanException if rbe.getCause.isInstanceOf[IllegalArgumentException] => None
-    }
-  }
-
-  private[this] def long(c: Counter) = c.getValue.asInstanceOf[Long]
-  private[this] def counters(pat: String): Map[String, Counter] = {
-    val cs = jvm.getInternalCounters(pat).asScala
-    cs.map(c => c.getName -> c).toMap
-  }
-
-  private[this] def counter(name: String): Option[Counter] =
-    counters(name).get(name)
-
-  object opts extends Opts {
-    def compileThresh = opt("CompileThreshold") map (_.toInt)
-  }
-
-  private[this] def ticksToDuration(ticks: Long, freq: Long) =
-    (1000000 * ticks / freq).toMicros
-
-  private[this] def getGc(which: Int, cs: Map[String, Counter]) = {
-    def get(what: String) = cs.get(s"sun.gc.collector.$which.$what")
-
-    for {
-      invocations <- get("invocations") map long
-      lastEntryTicks <- get("lastEntryTicks") map long
-      name <- get("name") map (_.getValue.toString)
-      time <- get("time") map long
-      freq <- cs.get("sun.os.hrt.frequency") map long
-      duration = ticksToDuration(time, freq)
-      lastEntryTime = ticksToDuration(lastEntryTicks, freq)
-      kind = s"which.$name"
-    } yield {
-      Gc(invocations, kind, epoch + lastEntryTime, duration)
-    }
-  }
-
-  def snap: Snapshot = {
-    val cs = counters("")
-    val heap = for {
-      invocations <- cs.get("sun.gc.collector.0.invocations") map long
-      capacity <- cs.get("sun.gc.generation.0.space.0.capacity") map long
-      used <- cs.get("sun.gc.generation.0.space.0.used") map long
-    } yield {
-      val allocated = invocations * capacity + used
-      val tenuringThreshold = cs.get("sun.gc.policy.tenuringThreshold") map long
-
-      val ageHisto = for {
-        thresh <- tenuringThreshold.toSeq
-        i <- 1L to thresh
-        bucket <- cs.get(s"sun.gc.generation.0.agetable.bytes.$i%02d")
-      } yield long(bucket)
-
-      Heap(allocated, tenuringThreshold getOrElse -1, ageHisto)
+    private[this] type Counter = {
+        def getName: String
+        def getUnits: Object
+        def getValue: Object
     }
 
-    val timestamp = for {
-      freq <- cs.get("sun.os.hrt.frequency") map long
-      ticks <- cs.get("sun.os.hrt.ticks") map long
-    } yield epoch + ticksToDuration(ticks, freq)
-
-    Snapshot(
-      timestamp getOrElse Time.epoch,
-      heap getOrElse Heap(0, 0, Seq()),
-      getGc(0, cs).toSeq ++ getGc(1, cs).toSeq)
-  }
-
-  val edenPool: Pool = new Pool {
-    def state() = {
-      val cs = counters("")
-      val state = for {
-        invocations <- cs.get("sun.gc.collector.0.invocations") map long
-        capacity <- cs.get("sun.gc.generation.0.space.0.capacity") map long
-        used <- cs.get("sun.gc.generation.0.space.0.used") map long
-      } yield PoolState(invocations, capacity.bytes, used.bytes)
-
-      state getOrElse NilJvm.edenPool.state()
+    private[this] type VMManagement = {
+        def getInternalCounters(pat: String): java.util.List[Counter]
     }
-  }
 
-  def snapCounters: Map[String, String] =
-    counters("") mapValues (_.getValue.toString)
+    private[this] val DiagnosticBean = ObjectName.getInstance("com.sun.management:type=HotSpotDiagnostic")
 
-  def forceGc() = System.gc()
+    private[this] val jvm: VMManagement = {
+        val fld = try {
+            // jdk5/6 have jvm field in ManagementFactory class
+            Class.forName("sun.management.ManagementFactory").getDeclaredField("jvm")
+        } catch {
+            case _: NoSuchFieldException =>
+                // jdk7 moves jvm field to ManagementFactoryHelper class
+                Class.forName("sun.management.ManagementFactoryHelper").getDeclaredField("jvm")
+        }
+        fld.setAccessible(true)
+        fld.get(null).asInstanceOf[VMManagement]
+    }
+
+    private[this] def opt(name: String): Option[String] = {
+        try {
+            val o = ManagementFactory.getPlatformMBeanServer.invoke(
+                DiagnosticBean,
+                "getVMOption",
+                Array(name),
+                Array("java.lang.String")
+            )
+            Some(o.asInstanceOf[CompositeDataSupport].get("value").asInstanceOf[String])
+        } catch {
+            case _: IllegalArgumentException => None
+            case rbe: RuntimeMBeanException if rbe.getCause.isInstanceOf[IllegalArgumentException] => None
+        }
+    }
+
+    private[this] def long(c: Counter) = c.getValue.asInstanceOf[Long]
+    private[this] def counters(pat: String): Map[String, Counter] = {
+        val cs = jvm.getInternalCounters(pat).asScala
+        cs.map(c => c.getName -> c).toMap
+    }
+
+    private[this] def counter(name: String): Option[Counter] =
+        counters(name).get(name)
+
+    object opts extends Opts {
+        def compileThresh = opt("CompileThreshold") map (_.toInt)
+    }
+
+    private[this] def ticksToDuration(ticks: Long, freq: Long) =
+        (1000000 * ticks / freq).toMicros
+
+    private[this] def getGc(which: Int, cs: Map[String, Counter]) = {
+        def get(what: String) = cs.get(s"sun.gc.collector.$which.$what")
+
+        for {
+            invocations <- get("invocations") map long
+            lastEntryTicks <- get("lastEntryTicks") map long
+            name <- get("name") map (_.getValue.toString)
+            time <- get("time") map long
+            freq <- cs.get("sun.os.hrt.frequency") map long
+            duration = ticksToDuration(time, freq)
+            lastEntryTime = ticksToDuration(lastEntryTicks, freq)
+            kind = s"which.$name"
+        } yield {
+            Gc(invocations, kind, epoch + lastEntryTime, duration)
+        }
+    }
+
+    def snap: Snapshot = {
+        val cs = counters("")
+        val heap = for {
+            invocations <- cs.get("sun.gc.collector.0.invocations") map long
+            capacity <- cs.get("sun.gc.generation.0.space.0.capacity") map long
+            used <- cs.get("sun.gc.generation.0.space.0.used") map long
+        } yield {
+            val allocated = invocations * capacity + used
+            val tenuringThreshold = cs.get("sun.gc.policy.tenuringThreshold") map long
+
+            val ageHisto = for {
+                thresh <- tenuringThreshold.toSeq
+                i <- 1L to thresh
+                bucket <- cs.get(s"sun.gc.generation.0.agetable.bytes.$i%02d")
+            } yield long(bucket)
+
+            Heap(allocated, tenuringThreshold getOrElse -1, ageHisto)
+        }
+
+        val timestamp = for {
+            freq <- cs.get("sun.os.hrt.frequency") map long
+            ticks <- cs.get("sun.os.hrt.ticks") map long
+        } yield epoch + ticksToDuration(ticks, freq)
+
+        Snapshot(
+            timestamp getOrElse Time.epoch,
+            heap getOrElse Heap(0, 0, Seq()),
+            getGc(0, cs).toSeq ++ getGc(1, cs).toSeq)
+    }
+
+    val edenPool: Pool = new Pool {
+        def state() = {
+            val cs = counters("")
+            val state = for {
+                invocations <- cs.get("sun.gc.collector.0.invocations") map long
+                capacity <- cs.get("sun.gc.generation.0.space.0.capacity") map long
+                used <- cs.get("sun.gc.generation.0.space.0.used") map long
+            } yield PoolState(invocations, capacity.bytes, used.bytes)
+
+            state getOrElse NilJvm.edenPool.state()
+        }
+    }
+
+    def snapCounters: Map[String, String] =
+        counters("") mapValues (_.getValue.toString)
+
+    def forceGc() = System.gc()
 }
 
 

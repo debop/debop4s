@@ -13,83 +13,83 @@ import scala.collection.JavaConversions._
  */
 object Entities {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  def updateTreeNodePosition[T <: HibernateTreeEntity[T]](entity: T) {
-    assert(entity != null)
-    val np = entity.nodePosition
-    if (entity.getParent != null) {
-      np.lvl = entity.getParent.nodePosition.lvl + 1
-      if (!entity.getParent.children.contains(entity)) {
-        np.ord = entity.getParent.children.size
-      }
-    } else {
-      np.lvl = 0
-      np.ord = 0
+    def updateTreeNodePosition[T <: HibernateTreeEntity[T]](entity: T) {
+        assert(entity != null)
+        val np = entity.nodePosition
+        if (entity.getParent != null) {
+            np.lvl = entity.getParent.nodePosition.lvl + 1
+            if (!entity.getParent.children.contains(entity)) {
+                np.ord = entity.getParent.children.size
+            }
+        } else {
+            np.lvl = 0
+            np.ord = 0
+        }
     }
-  }
 
-  def getChildCount[T <: HibernateTreeEntity[T]](dao: HibernateDao, entity: T) = {
-    val dc = DetachedCriteria.forClass(entity.getClass)
-    dc.add(Restrictions.eq("parent", entity))
-    dao.count(dc)
-  }
-
-  def hasChildren[T <: HibernateTreeEntity[T]](dao: HibernateDao, entity: T): Boolean = {
-    val dc = DetachedCriteria.forClass(entity.getClass)
-    dc.add(Restrictions.eq("parent", entity))
-    dao.exists(dc)
-  }
-
-  def setNodeOrder[T <: HibernateTreeEntity[T]](node: T, order: Int) {
-    assert(node != null)
-    if (node.getParent != null) {
-      node.getParent.children.foreach {
-        child =>
-          if (child.nodePosition.ord >= order)
-            child.nodePosition.ord = child.nodePosition.ord + 1
-      }
+    def getChildCount[T <: HibernateTreeEntity[T]](dao: HibernateDao, entity: T) = {
+        val dc = DetachedCriteria.forClass(entity.getClass)
+        dc.add(Restrictions.eq("parent", entity))
+        dao.count(dc)
     }
-    node.nodePosition.ord = order
-  }
 
-  def setNodeOrder[T <: HibernateTreeEntity[T]](parent: T) {
-    assert(parent != null)
-
-    var order = 0
-    parent.children.toList
-    .sortWith(_.nodePosition.ord < _.nodePosition.ord)
-    .foreach {
-      n =>
-        n.nodePosition.ord = order
-        order += 1
+    def hasChildren[T <: HibernateTreeEntity[T]](dao: HibernateDao, entity: T): Boolean = {
+        val dc = DetachedCriteria.forClass(entity.getClass)
+        dc.add(Restrictions.eq("parent", entity))
+        dao.exists(dc)
     }
-  }
 
-  def changeParent[T <: HibernateTreeEntity[T]](node: T, oldParent: T, newParent: T) {
-    assert(node != null)
+    def setNodeOrder[T <: HibernateTreeEntity[T]](node: T, order: Int) {
+        assert(node != null)
+        if (node.getParent != null) {
+            node.getParent.children.foreach {
+                child =>
+                    if (child.nodePosition.ord >= order)
+                        child.nodePosition.ord = child.nodePosition.ord + 1
+            }
+        }
+        node.nodePosition.ord = order
+    }
 
-    if (oldParent != null)
-      oldParent.removeChild(node)
-    if (newParent != null)
-      newParent.addChild(node)
+    def setNodeOrder[T <: HibernateTreeEntity[T]](parent: T) {
+        assert(parent != null)
 
-    node.setParent(newParent)
-    updateTreeNodePosition(node)
-  }
+        var order = 0
+        parent.children.toList
+        .sortWith(_.nodePosition.ord < _.nodePosition.ord)
+        .foreach {
+            n =>
+                n.nodePosition.ord = order
+                order += 1
+        }
+    }
 
-  def setParent[T <: HibernateTreeEntity[T]](node: T, parent: T) {
-    assert(node != null)
-    changeParent(node, node.getParent, parent)
-  }
+    def changeParent[T <: HibernateTreeEntity[T]](node: T, oldParent: T, newParent: T) {
+        assert(node != null)
 
-  def insertChildNode[T <: HibernateTreeEntity[T]](parent: T, child: T, order: Int) {
-    assert(parent != null)
-    assert(child != null)
+        if (oldParent != null)
+            oldParent.removeChild(node)
+        if (newParent != null)
+            newParent.addChild(node)
 
-    val ord = math.max(0, math.min(order, parent.children.size - 1))
-    parent.addChild(child)
-    setNodeOrder(child, ord)
-  }
+        node.setParent(newParent)
+        updateTreeNodePosition(node)
+    }
+
+    def setParent[T <: HibernateTreeEntity[T]](node: T, parent: T) {
+        assert(node != null)
+        changeParent(node, node.getParent, parent)
+    }
+
+    def insertChildNode[T <: HibernateTreeEntity[T]](parent: T, child: T, order: Int) {
+        assert(parent != null)
+        assert(child != null)
+
+        val ord = math.max(0, math.min(order, parent.children.size - 1))
+        parent.addChild(child)
+        setNodeOrder(child, ord)
+    }
 
 }

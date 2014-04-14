@@ -11,65 +11,65 @@ case class Address(street: String, phone: String, properties: ArrayBuffer[String
 
 class User extends AbstractValueObject with Ordered[User] {
 
-  // NOTE: id 값은 Java의 getter 가 있어야만 합니다.
-  @BeanProperty var id: String = _
+    // NOTE: id 값은 Java의 getter 가 있어야만 합니다.
+    @BeanProperty var id: String = _
 
-  var firstName: String = _
-  var lastName: String = _
-  var addressStr: String = _
-  var city: String = _
-  var state: String = _
-  var zipcode: String = _
-  var email: String = _
-  var username: String = _
-  var password: String = _
+    var firstName: String = _
+    var lastName: String = _
+    var addressStr: String = _
+    var city: String = _
+    var state: String = _
+    var zipcode: String = _
+    var email: String = _
+    var username: String = _
+    var password: String = _
 
-  var age: Int = 0
-  var updateTime: DateTime = DateTime.now
+    var age: Int = 0
+    var updateTime: DateTime = DateTime.now
 
-  var byteArray: Array[Byte] = Arrays.getRandomBytes(1024)
+    var byteArray: Array[Byte] = Arrays.getRandomBytes(1024)
 
-  var homeAddress = Address(null, null)
-  var officeAddress = Address(null, null)
+    var homeAddress = Address(null, null)
+    var officeAddress = Address(null, null)
 
-  val favoriteMovies = ArrayBuffer[String]()
+    val favoriteMovies = ArrayBuffer[String]()
 
-  override def compare(that: User): Int = {
-    firstName.compareTo(that.firstName)
-  }
+    override def compare(that: User): Int = {
+        firstName.compareTo(that.firstName)
+    }
 
-  override def hashCode(): Int = Hashs.compute(firstName, lastName, age)
+    override def hashCode(): Int = Hashs.compute(firstName, lastName, age)
 
-  override protected def buildStringHelper: ToStringHelper =
-    super.buildStringHelper
-    .add("firstName", firstName)
-    .add("lastName", lastName)
+    override protected def buildStringHelper: ToStringHelper =
+        super.buildStringHelper
+        .add("firstName", firstName)
+        .add("lastName", lastName)
 }
 
 
 object User {
 
-  def apply(favoriteMovieSize: Int): User = {
-    val user = new User()
-    user.firstName = "성혁"
-    user.lastName = "배"
-    user.addressStr = "정릉1동 현대홈타운 107동 301호"
-    user.city = "서울"
-    user.state = "서울"
-    user.email = "sunghyouk.bae@gmail.com"
-    user.username = "debop"
-    // user.password = "1234"
-    user.homeAddress = new Address("정릉1동 현대홈타운 107동 301호", "555-5555")
-    user.homeAddress.properties ++= ArrayBuffer("home", "addr")
+    def apply(favoriteMovieSize: Int): User = {
+        val user = new User()
+        user.firstName = "성혁"
+        user.lastName = "배"
+        user.addressStr = "정릉1동 현대홈타운 107동 301호"
+        user.city = "서울"
+        user.state = "서울"
+        user.email = "sunghyouk.bae@gmail.com"
+        user.username = "debop"
+        // user.password = "1234"
+        user.homeAddress = new Address("정릉1동 현대홈타운 107동 301호", "555-5555")
+        user.homeAddress.properties ++= ArrayBuffer("home", "addr")
 
-    user.officeAddress = new Address("운니동 삼환빌딩 10F", "555-5555")
-    user.officeAddress.properties ++= ArrayBuffer("office", "addr")
+        user.officeAddress = new Address("운니동 삼환빌딩 10F", "555-5555")
+        user.officeAddress.properties ++= ArrayBuffer("office", "addr")
 
-    (0 until favoriteMovieSize).foreach {
-      x =>
-        user.favoriteMovies += "Favorite Movie number-" + x
+        (0 until favoriteMovieSize).foreach {
+            x =>
+                user.favoriteMovies += "Favorite Movie number-" + x
+        }
+
+        user
     }
-
-    user
-  }
 }

@@ -22,41 +22,41 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
 // @ContextConfiguration(classes = Array(classOf[GlobalizationConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class GlobalizationTest extends FunSuite with Matchers {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  @Autowired val applicationContext: ApplicationContext = null
-  @Autowired val messageSource: MessageSource = null
+    @Autowired val applicationContext: ApplicationContext = null
+    @Autowired val messageSource: MessageSource = null
 
-  // Spring Autowired 를 수행합니다.
-  new TestContextManager(this.getClass).prepareTestInstance(this)
+    // Spring Autowired 를 수행합니다.
+    new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  test("load localized messages") {
-    require(messageSource != null, "messageSource should not be null")
+    test("load localized messages") {
+        require(messageSource != null, "messageSource should not be null")
 
-    val intro = messageSource.getMessage("intro", null, Locale.KOREA)
-    intro shouldEqual "안녕하세요."
-    log.debug(s"intro=[$intro]")
+        val intro = messageSource.getMessage("intro", null, Locale.KOREA)
+        intro shouldEqual "안녕하세요."
+        log.debug(s"intro=[$intro]")
 
-    val english = messageSource.getMessage("intro", null, Locale.US)
-    assert(english === "Hello.")
-    log.debug(s"english=[$english]")
+        val english = messageSource.getMessage("intro", null, Locale.US)
+        assert(english === "Hello.")
+        log.debug(s"english=[$english]")
 
-    val korean = messageSource.getMessage("intro", null, Locale.KOREA)
-    assert(korean === "안녕하세요.")
-    log.debug(s"korean=[$korean]")
-  }
+        val korean = messageSource.getMessage("intro", null, Locale.KOREA)
+        assert(korean === "안녕하세요.")
+        log.debug(s"korean=[$korean]")
+    }
 
-  test("load resource bundle") {
-    val bundle = ResourceBundle.getBundle("messages", Locale.KOREA)
-    val deftext = bundle.getString("intro")
-    assert(deftext === "안녕하세요.")
+    test("load resource bundle") {
+        val bundle = ResourceBundle.getBundle("messages", Locale.KOREA)
+        val deftext = bundle.getString("intro")
+        assert(deftext === "안녕하세요.")
 
-    val bundleUS = ResourceBundle.getBundle("messages", Locale.US)
-    val english = bundleUS.getString("intro")
-    assert(english === "Hello.")
+        val bundleUS = ResourceBundle.getBundle("messages", Locale.US)
+        val english = bundleUS.getString("intro")
+        assert(english === "Hello.")
 
-    val bundleKr = ResourceBundle.getBundle("messages", Locale.KOREA)
-    val korean = bundleKr.getString("intro")
-    assert(korean === "안녕하세요.")
-  }
+        val bundleKr = ResourceBundle.getBundle("messages", Locale.KOREA)
+        val korean = bundleKr.getString("intro")
+        assert(korean === "안녕하세요.")
+    }
 }

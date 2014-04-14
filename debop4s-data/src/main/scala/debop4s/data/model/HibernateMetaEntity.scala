@@ -11,24 +11,24 @@ import scala.collection.mutable
  */
 trait HibernateMetaEntity[TId] extends HibernateEntity[TId] {
 
-  // 이 값을 override 해서 Mapping을 수행해야 합니다.
-  private val metaMap = mutable.LinkedHashMap[String, MetaValue]()
+    // 이 값을 override 해서 Mapping을 수행해야 합니다.
+    private val metaMap = mutable.LinkedHashMap[String, MetaValue]()
 
-  def metaValue(key: String) = metaMap.get(key)
+    def metaValue(key: String) = metaMap.get(key)
 
-  def metaKeys() = metaMap.keys
+    def metaKeys() = metaMap.keys
 
-  def addMeta(key: String, metaValue: MetaValue) {
-    metaMap.put(key, metaValue)
-  }
+    def addMeta(key: String, metaValue: MetaValue) {
+        metaMap.put(key, metaValue)
+    }
 
-  def addMeta(key: String, value: String) {
-    addMeta(key, MetaValue(value))
-  }
+    def addMeta(key: String, value: String) {
+        addMeta(key, MetaValue(value))
+    }
 
-  def removeMeta(key: String) {
-    metaMap.remove(key)
-  }
+    def removeMeta(key: String) {
+        metaMap.remove(key)
+    }
 }
 
 
@@ -41,8 +41,8 @@ class MetaValue(var value: String,
 
 object MetaValue {
 
-  def apply(value: String, label: String = null, description: String = null, exAttr: String = null): MetaValue = {
-    new MetaValue(value, label, description, exAttr)
-  }
+    def apply(value: String, label: String = null, description: String = null, exAttr: String = null): MetaValue = {
+        new MetaValue(value, label, description, exAttr)
+    }
 }
 

@@ -8,16 +8,16 @@ package org.hibernate.cache.rediscala.serializer
  */
 private[rediscala] trait RedisSerializer[T] {
 
-  val EMPTY_BYTES = Array[Byte]()
+    val EMPTY_BYTES = Array[Byte]()
 
-  /**
-   * 객체를 직렬화합니다.
-   */
-  def serialize(graph: T): Array[Byte]
+    /**
+     * 객체를 직렬화합니다.
+     */
+    def serialize(graph: T): Array[Byte]
 
-  /**
-   * 직렬화 정보를 역직렬화하여 객체로 변환합니다.
-   */
-  def deserialize(bytes: Array[Byte]): T
+    /**
+     * 직렬화 정보를 역직렬화하여 객체로 변환합니다.
+     */
+    def deserialize(bytes: Array[Byte]): T
 
 }

@@ -11,7 +11,7 @@ case class MemberRankScore(member: String,
 
 object MemberRankScore {
 
-  def apply(member: String): MemberRankScore = {
-    new MemberRankScore(member, 0, 0)
-  }
+    def apply(member: String): MemberRankScore = {
+        new MemberRankScore(member, 0, 0)
+    }
 }

@@ -12,46 +12,46 @@ import scala.concurrent._
  */
 class AsyncsTest extends AbstractCoreTest {
 
-  val callable = () => {
-    Thread.sleep(100)
-    1
-  }
-
-  test("new task") {
-    val task = Asyncs.run(callable())
-    task.isCompleted should equal(false)
-
-    Asyncs.result(task) should equal(1)
-    task.isCompleted should equal(true)
-    task.value.get.isSuccess should equal(true)
-    task.value.get.isFailure should equal(false)
-  }
-
-  test("start new task") {
-    val task = Asyncs.run(callable())
-
-    task.isCompleted should equal(false)
-    Asyncs.result(task) should equal(1)
-    task.isCompleted should equal(true)
-    task.value.get.isSuccess should equal(true)
-    task.value.get.isFailure should equal(false)
-  }
-
-  test("wait all") {
-    val count = 10
-    val tasks = new ArrayBuffer[Future[Int]]()
-
-    (0 until 10).foreach {
-      _ => tasks += Asyncs.run(callable())
+    val callable = () => {
+        Thread.sleep(100)
+        1
     }
 
-    Asyncs.readyAll(tasks)
+    test("new task") {
+        val task = Asyncs.run(callable())
+        task.isCompleted should equal(false)
 
-    tasks.foreach(task => {
-      task.value.get.get should equal(1)
-      task.isCompleted should equal(true)
-      task.value.get.isSuccess should equal(true)
-    })
-  }
+        Asyncs.result(task) should equal(1)
+        task.isCompleted should equal(true)
+        task.value.get.isSuccess should equal(true)
+        task.value.get.isFailure should equal(false)
+    }
+
+    test("start new task") {
+        val task = Asyncs.run(callable())
+
+        task.isCompleted should equal(false)
+        Asyncs.result(task) should equal(1)
+        task.isCompleted should equal(true)
+        task.value.get.isSuccess should equal(true)
+        task.value.get.isFailure should equal(false)
+    }
+
+    test("wait all") {
+        val count = 10
+        val tasks = new ArrayBuffer[Future[Int]]()
+
+        (0 until 10).foreach {
+            _ => tasks += Asyncs.run(callable())
+        }
+
+        Asyncs.readyAll(tasks)
+
+        tasks.foreach(task => {
+            task.value.get.get should equal(1)
+            task.isCompleted should equal(true)
+            task.value.get.isSuccess should equal(true)
+        })
+    }
 
 }

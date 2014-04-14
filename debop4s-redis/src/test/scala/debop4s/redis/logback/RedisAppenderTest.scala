@@ -10,16 +10,16 @@ import org.slf4j.LoggerFactory
  */
 class RedisAppenderTest extends AbstractRedisTest {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+    lazy val log = LoggerFactory.getLogger(getClass)
 
-  test("logging message") {
-    Parallels.runAction(10) {
-      (0 until 100).foreach(x => log.trace(s"appender test [$x]"))
+    test("logging message") {
+        Parallels.runAction(10) {
+            (0 until 100).foreach(x => log.trace(s"appender test [$x]"))
+        }
     }
-  }
 
-  test("clear logs") {
-    redis.del(RedisAppender.DEFAULT_KEY)
-    println("delete all logs")
-  }
+    test("clear logs") {
+        redis.del(RedisAppender.DEFAULT_KEY)
+        println("delete all logs")
+    }
 }

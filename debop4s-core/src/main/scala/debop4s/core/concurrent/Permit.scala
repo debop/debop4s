@@ -5,5 +5,5 @@ package debop4s.core.concurrent
  * Created by debop on 2014. 4. 6.
  */
 trait Permit {
-  def release()
+    def release()
 }

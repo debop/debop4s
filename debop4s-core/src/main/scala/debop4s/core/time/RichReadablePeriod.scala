@@ -9,6 +9,6 @@ import org.joda.time.{ReadablePeriod, PeriodType}
  */
 class RichReadablePeriod(val self: ReadablePeriod) extends AnyVal {
 
-  def periodType: PeriodType = self.getPeriodType
+    def periodType: PeriodType = self.getPeriodType
 
 }

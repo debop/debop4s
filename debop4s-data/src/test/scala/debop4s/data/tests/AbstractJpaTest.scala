@@ -13,11 +13,11 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
  * @since 2014. 2. 26. 오전 10:29
  */
 @ContextConfiguration(classes = Array(classOf[JpaMySqlConfiguration]),
-  loader = classOf[AnnotationConfigContextLoader])
+    loader = classOf[AnnotationConfigContextLoader])
 abstract class AbstractJpaTest extends AbstractDataTest {
 
-  @Autowired protected val emf: EntityManagerFactory = null
+    @Autowired protected val emf: EntityManagerFactory = null
 
-  new TestContextManager(this.getClass).prepareTestInstance(this)
+    new TestContextManager(this.getClass).prepareTestInstance(this)
 
 }

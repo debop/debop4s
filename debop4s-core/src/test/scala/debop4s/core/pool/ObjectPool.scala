@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory
  * @since 2013. 12. 11. 오후 4:40
  */
 class ObjectPool(cfg: GenericObjectPoolConfig, val props: Properties)
-  extends AbstractObjectPool[PoolObject](cfg, new ObjectFactory(props)) {
+    extends AbstractObjectPool[PoolObject](cfg, new ObjectFactory(props)) {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 }
 
 

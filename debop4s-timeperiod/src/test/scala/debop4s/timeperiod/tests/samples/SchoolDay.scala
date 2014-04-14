@@ -12,44 +12,44 @@ import org.joda.time.DateTime
  */
 class SchoolDay(private var _moment: DateTime) extends TimePeriodChain {
 
-  def this() {
-    this(Times.today + 8.hour)
-  }
+    def this() {
+        this(Times.today + 8.hour)
+    }
 
-  private var moment = _moment
-  val lesson1 = new Lesson(moment)
-  moment += lesson1.duration
+    private var moment = _moment
+    val lesson1 = new Lesson(moment)
+    moment += lesson1.duration
 
-  val break1 = new ShortBreak(moment)
-  moment += break1.duration
+    val break1 = new ShortBreak(moment)
+    moment += break1.duration
 
-  val lesson2 = new Lesson(moment)
-  moment += lesson2.duration
+    val lesson2 = new Lesson(moment)
+    moment += lesson2.duration
 
-  val break2 = new LargeBreak(moment)
-  moment += break2.duration
+    val break2 = new LargeBreak(moment)
+    moment += break2.duration
 
-  val lesson3 = new Lesson(moment)
-  moment += lesson3.duration
+    val lesson3 = new Lesson(moment)
+    moment += lesson3.duration
 
-  val break3 = new ShortBreak(moment)
-  moment += break3.duration
+    val break3 = new ShortBreak(moment)
+    moment += break3.duration
 
-  val lesson4 = new Lesson(moment)
-  moment += lesson4.duration
+    val lesson4 = new Lesson(moment)
+    moment += lesson4.duration
 
-  super.addAll(lesson1, break1, lesson2, break2, lesson3, break3, lesson4)
+    super.addAll(lesson1, break1, lesson2, break2, lesson3, break3, lesson4)
 }
 
 
 class Lesson(private val moment: DateTime) extends TimeBlock(moment, moment + LessonDuration, false) {
-  log.trace(s"Create Lesson. moment=$moment")
+    log.trace(s"Create Lesson. moment=$moment")
 }
 
 class LargeBreak(private val moment: DateTime) extends TimeBlock(moment, moment + LargeBreakDuration, false) {
-  log.trace(s"Create LargeBreak. moment=$moment")
+    log.trace(s"Create LargeBreak. moment=$moment")
 }
 
 class ShortBreak(private val moment: DateTime) extends TimeBlock(moment, moment + ShortBreakDuration, false) {
-  log.trace(s"Create ShortBreak. moment=$moment")
+    log.trace(s"Create ShortBreak. moment=$moment")
 }
