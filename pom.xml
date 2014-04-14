@@ -821,7 +821,7 @@
                         <arg>-target:jvm-${jdk.version}</arg>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
-                        <arg>-explaintypes</arg>
+                        <!--<arg>-explaintypes</arg>-->
                     </args>
                     <javacArgs>
                         <javacArg>-source</javacArg>

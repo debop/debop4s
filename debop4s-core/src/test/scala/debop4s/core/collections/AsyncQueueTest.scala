@@ -1,7 +1,6 @@
-package debop4s.core.collection
+package debop4s.core.collections
 
 import debop4s.core.AbstractCoreTest
-import debop4s.core.collections.AsyncQueue
 import scala.util.Try
 
 /**
