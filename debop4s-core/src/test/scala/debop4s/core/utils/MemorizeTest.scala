@@ -1,7 +1,7 @@
 package debop4s.core.utils
 
 import debop4s.core.AbstractCoreTest
-import debop4s.core.parallels.Asyncs
+import debop4s.core.concurrent.Asyncs
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.{CountDownLatch => JavaCountDownLatch, TimeUnit}
 import org.mockito.Mockito._

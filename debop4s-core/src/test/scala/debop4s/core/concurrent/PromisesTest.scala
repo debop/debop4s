@@ -1,4 +1,4 @@
-package debop4s.core.parallels
+package debop4s.core.concurrent
 
 import debop4s.core.AbstractCoreTest
 import scala.collection.mutable.ArrayBuffer

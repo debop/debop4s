@@ -1,6 +1,6 @@
 package debop4s.redis.base
 
-import debop4s.core.parallels.Asyncs
+import debop4s.core.concurrent.Asyncs
 import java.util.concurrent.TimeUnit
 import redis.RedisClient
 import scala.concurrent.ExecutionContext.Implicits.global

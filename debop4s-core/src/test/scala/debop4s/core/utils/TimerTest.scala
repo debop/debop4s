@@ -1,8 +1,7 @@
 package debop4s.core.utils
 
-import debop4s.core.concurrent.CountDownLatch
+import debop4s.core.concurrent.{Asyncs, CountDownLatch}
 import debop4s.core.conversions.time._
-import debop4s.core.parallels.Asyncs
 import debop4s.core.{Time, AbstractCoreTest}
 import java.util.concurrent.ExecutorService
 import org.mockito.ArgumentCaptor

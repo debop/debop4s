@@ -1,7 +1,6 @@
 package debop4s.core.concurrent
 
 import debop4s.core.AbstractCoreTest
-import debop4s.core.parallels.Asyncs
 import java.util.concurrent.{RejectedExecutionException, ConcurrentLinkedQueue}
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global

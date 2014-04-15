@@ -1,4 +1,4 @@
-package debop4s.core.parallels
+package debop4s.core.concurrent
 
 import debop4s.core._
 import scala.async.Async._

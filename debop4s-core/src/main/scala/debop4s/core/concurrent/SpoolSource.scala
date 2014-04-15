@@ -62,7 +62,7 @@ class SpoolSource[A] {
      */
     final def raise(e: Throwable) {
         updatingTailCall(emptyPromise) { currentPromise =>
-            currentPromise success Spool.empty[A]
+            currentPromise failure e
         }
     }
 

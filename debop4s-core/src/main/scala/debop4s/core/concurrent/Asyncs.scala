@@ -1,4 +1,4 @@
-package debop4s.core.parallels
+package debop4s.core.concurrent
 
 import java.util.concurrent.{TimeUnit, Callable}
 import scala.concurrent.ExecutionContext.Implicits.global

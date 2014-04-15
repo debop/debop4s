@@ -1,6 +1,6 @@
 package debop4s.core.io
 
-import debop4s.core.parallels.Promises
+import debop4s.core.concurrent.Promises
 import debop4s.core.utils.{Charsets, Strings}
 import java.nio.file.{StandardOpenOption, Paths, Path}
 import org.junit.Test

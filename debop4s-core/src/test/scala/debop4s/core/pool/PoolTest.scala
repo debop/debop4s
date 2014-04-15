@@ -1,7 +1,7 @@
 package debop4s.core.pool
 
 import debop4s.core.AbstractCoreTest
-import debop4s.core.parallels.Asyncs
+import debop4s.core.concurrent.Asyncs
 import java.util.concurrent.atomic.AtomicInteger
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global

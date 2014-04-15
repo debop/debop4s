@@ -1,7 +1,7 @@
 package debop4s.core.io
 
 import debop4s.core.AbstractCoreTest
-import debop4s.core.parallels.Asyncs
+import debop4s.core.concurrent.Asyncs
 import java.io.ByteArrayInputStream
 
 /**

@@ -1,6 +1,6 @@
 package debop4s.mongo.tests.examples
 
-import debop4s.core.parallels.Asyncs
+import debop4s.core.concurrent.Asyncs
 import debop4s.mongo.tests.AbstractMongoTest
 import play.api.libs.iteratee.Iteratee
 import reactivemongo.api._

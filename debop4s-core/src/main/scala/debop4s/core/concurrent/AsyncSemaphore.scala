@@ -92,7 +92,7 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
                 } catch {
                     case NonFatal(e) =>
                         Future.failed(e)
-                    case e =>
+                    case e: Throwable =>
                         permit.release()
                         throw e
                 }

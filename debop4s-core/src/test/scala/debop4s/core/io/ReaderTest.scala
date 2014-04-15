@@ -1,7 +1,7 @@
 package debop4s.core.io
 
 import debop4s.core.AbstractCoreTest
-import debop4s.core.parallels.Asyncs
+import debop4s.core.concurrent.Asyncs
 
 /**
  * ReaderTest
@@ -16,7 +16,6 @@ class ReaderTest extends AbstractCoreTest {
     def assertRead(r: Reader, start: Int, end: Int) {
         val n = end - start
         val f = r.read(n)
-        assert(f != null)
         val b = Asyncs.result(f)
         assert(toSeq(b) === Seq.range(start, end))
     }
@@ -24,7 +23,6 @@ class ReaderTest extends AbstractCoreTest {
     def assertWrite(w: Writer, start: Int, end: Int) {
         val buff = toBuff(start, end)
         val f = w.write(buff)
-        assert(f != null)
         assert(Asyncs.result(f) ===())
     }
 
@@ -36,15 +34,18 @@ class ReaderTest extends AbstractCoreTest {
     test("Reader.writable") {
         val rw = Reader.writable()
         val wf = rw.write(toBuff(0, 6))
-
+        assert(!wf.value.isDefined)
         assertRead(rw, 0, 3)
+        assert(!wf.value.isDefined)
         assertRead(rw, 3, 6)
+        assert(wf.value.isDefined)
     }
 
     test("Reader.readAll") {
         val rw = Reader.writable()
         val all = Reader.readAll(rw)
 
+        assert(!all.value.isDefined)
         assertWrite(rw, 0, 3)
         assertWrite(rw, 3, 6)
         assertWriteEof(rw)

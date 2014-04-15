@@ -1,11 +1,10 @@
 package debop4s.core.concurrent
 
-import debop4s.core.parallels.Asyncs
+import debop4s.core.conversions.time._
 import java.io.EOFException
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
-import scala.concurrent.duration.Duration
 
 /**
  * A spool is an asynchronous stream. It more or less mimics the scala
@@ -37,7 +36,7 @@ import scala.concurrent.duration.Duration
  */
 sealed trait Spool[+A] {
 
-    import Spool.{cons, empty}
+    import Spool._
 
     def isEmpty: Boolean
 
@@ -63,10 +62,10 @@ sealed trait Spool[+A] {
      */
     def foreachElem[B](f: Option[A] => B): Future[B] = {
         if (!isEmpty) {
-            // TODO : 이거 다시 봐야 합니다.
-            Future { f(Some(head)) } flatMap { _ =>
+            Future(f(Some(head))) flatMap { _ =>
                 tail onFailure {
                     case _: EOFException => return Future { f(None) }
+                    case cause: Throwable => Future.failed(cause)
                 }
                 tail flatMap { a => a.foreachElem(f) }
             }
@@ -101,9 +100,10 @@ sealed trait Spool[+A] {
       */
     def collect[B](f: PartialFunction[A, B]): Future[Spool[B]]
 
-    def map[B](f: PartialFunction[A, B]): Spool[B] = {
+    def map[B](f: A => B): Spool[B] = {
         val s = collect { case x => f(x) }
-        Await.result(s, Duration.Zero)
+        // Await.result(s, Duration.Zero)
+        Asyncs.result(s, 15.minutes)
     }
 
     def filter(predicate: A => Boolean): Future[Spool[A]] = collect {
@@ -112,12 +112,16 @@ sealed trait Spool[+A] {
 
     /** Concatenates two spools */
     def ++[B >: A](that: Spool[B]): Spool[B] = {
-        if (isEmpty) that else cons[B](head: B, tail map { _ ++ that })
+        if (isEmpty) that
+        else {
+            cons[B](head: B, tail map { _ ++ that })
+        }
     }
 
     /** Concatenates two spools */
-    def ++[B >: A](that: Future[Spool[B]]): Future[Spool[B]] = {
-        if (isEmpty) that else Future { cons(head: B, tail flatMap { _ ++ that }) }
+    def ++#[B >: A](that: Future[Spool[B]]): Future[Spool[B]] = {
+        if (isEmpty) that
+        else Future { cons[B](head: B, tail flatMap { _ ++# that }) }
     }
 
     /**
@@ -127,7 +131,7 @@ sealed trait Spool[+A] {
     def flatMap[B](f: A => Future[Spool[B]]): Future[Spool[B]] = {
         if (isEmpty) Future(empty[B])
         else f(head) flatMap {
-            _ ++ (tail flatMap { _ flatMap f })
+            _ ++# (tail flatMap { _ flatMap f })
         }
     }
 
@@ -152,7 +156,7 @@ object Spool {
             else _next
         }
         override def toString: String =
-            s"Cons($head, ${ if (tail.isCompleted) '*' else '?' })"
+            s"Cons($head, ${ if (tail.value.isDefined) '*' else '?' })"
     }
 
     private class LazyCons[A](val head: A, next: => Future[Spool[A]]) extends Spool[A] {
@@ -179,8 +183,8 @@ object Spool {
     * Cons a value & tail to a new {{Spool}}. To defer the tail of the Spool, use
     * the {{*::}} operator instead.
     */
-    def cons[A](value: A, next: Future[Spool[A]]): Spool[A] = Cons(value, next)
-    def cons[A](value: A, nextSpool: Spool[A]): Spool[A] = Cons(value, Future(nextSpool))
+    def cons[A](value: A, next: Future[Spool[A]]): Spool[A] = Cons[A](value, next)
+    def cons[A](value: A, nextSpool: Spool[A]): Spool[A] = Cons[A](value, Future(nextSpool))
 
     /** The empty spool. */
     def empty[A]: Spool[A] = Empty
@@ -214,6 +218,8 @@ object Spool {
     class Syntax1[A](tail: Spool[A]) {
         def **::(head: A) = cons(head, tail)
     }
+
+    implicit def syntax1[A](s: Spool[A]) = new Syntax1(s)
 
     object **:: {
         def unapply[A](s: Spool[A]): Option[(A, Spool[A])] = {
