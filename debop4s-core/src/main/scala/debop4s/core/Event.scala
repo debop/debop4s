@@ -125,7 +125,7 @@ trait Event[+T] {self =>
      * fashion.
      */
     def zip[U](other: Event[U]): Event[(T, U)] = new Event[(T, U)] {
-        override def register(s: Witness[(T, U)]) = {
+        override def register(s: Witness[(T, U)]): Closable = {
             val mu = new {}
             var state: Option[Either[Queue[T], Queue[U]]] = None
 
@@ -224,10 +224,10 @@ trait Event[+T] {self =>
     }
 
     /**
-   * Progressively build a collection of events using the passed-in
-   * builder. A value containing the current version of the collection
-   * is notified for each incoming event.
-   */
+     * Progressively build a collection of events using the passed-in builder.
+     * A value containing the current version of the collection
+     * is notified for each incoming event.
+     */
     def build[U >: T, That](implicit cbf: CanBuild[U, That]) = new Event[That] {
         override def register(s: Witness[That]): Closable = {
             val b = cbf()
