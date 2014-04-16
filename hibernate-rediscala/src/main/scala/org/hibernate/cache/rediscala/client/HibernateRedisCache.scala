@@ -30,8 +30,10 @@ class HibernateRedisCache(val redis: RedisClient) {
     //private val valueSerializer = new SnappyRedisSerializer[Any](new BinaryRedisSerializer[Any]())
     private val valueSerializer = SnappyRedisSerializer[Any](new FstRedisSerializer[Any]())
 
+    /** ping */
     def ping: Future[String] = redis.ping()
 
+    /** database size */
     def dbSize: Future[Long] = redis.dbsize()
 
     /**
@@ -79,8 +81,10 @@ class HibernateRedisCache(val redis: RedisClient) {
         redis.hkeys(region)
     }
 
+    /** get key size in region */
     def keySizeInRegion(region: String): Future[Long] = redis.hlen(region)
 
+    /** get all cache key in given region */
     def getAll(region: String): Future[Map[String, Any]] = {
         redis.hgetall(region).map { kvs =>
             kvs.map { case (key, value) =>
@@ -89,6 +93,10 @@ class HibernateRedisCache(val redis: RedisClient) {
         }
     }
 
+    /** get multiple cache items
+      *  @param region region name
+      *  @param keys cache keys
+      */
     @varargs
     def multiGet(region: String, keys: String*): Future[Seq[Any]] = {
         redis.hmget(region, keys: _*).map { results =>
@@ -98,6 +106,10 @@ class HibernateRedisCache(val redis: RedisClient) {
         }
     }
 
+    /** get multiple cache items
+      *  @param region region name
+      *  @param keys cache keys
+      */
     def multiGet(region: String, keys: Iterable[String]): Future[Seq[Any]] = {
         redis.hmget(region, keys.toSeq: _*).map { results =>
             results.map { x =>
@@ -159,7 +171,7 @@ class HibernateRedisCache(val redis: RedisClient) {
     }
 
     /**
-     * 캐시 항목을 삭제합니다.
+     * delete cache item.
      * @param region region name
      * @param key cache key to delete
      */
@@ -169,12 +181,17 @@ class HibernateRedisCache(val redis: RedisClient) {
         }
     }
 
+    /**
+     * delete cache items.
+     * @param region region name
+     * @param keys cache keys to delete
+     */
     @varargs
     def multiDelete(region: String, keys: String*): Future[Boolean] = {
         if (keys == null || keys.isEmpty)
             return Future { false }
 
-        future {
+        Future {
             val regionExpire = regionExpireKey(region)
             keys.foreach { key =>
                 redis.hdel(region, key)
@@ -183,13 +200,17 @@ class HibernateRedisCache(val redis: RedisClient) {
             true
         }
     }
-
+    /**
+     * delete cache items.
+     * @param region region name
+     * @param keys cache keys to delete
+     */
     def multiDelete(region: String, keys: Iterable[String]): Future[Boolean] = {
         multiDelete(region, keys.toSeq: _*)
     }
 
     /**
-     * 지정한 영역을 삭제합니다.
+     * delete region
      * @param region region name
      */
     def deleteRegion(region: String): Future[Long] = {
@@ -198,13 +219,15 @@ class HibernateRedisCache(val redis: RedisClient) {
         }
     }
 
+    /** Flush db */
     def flushDb(): Future[Boolean] = {
         log.info(s"Redis DB 전체를 flush 합니다...")
         redis.flushdb()
     }
 
     /**
-     * 지정한 block 을 transaction 을 이용하여 수행합니다.
+     * execute `block` with reids transaction
+     * @param block code block to execute
      */
     def withTransaction(block: TransactionBuilder => Unit): Future[MultiBulk] = {
         val tx = redis.transaction()

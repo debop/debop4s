@@ -8,7 +8,6 @@ import org.hibernate.cache.spi.{CacheDataDescription, TransactionalDataRegion}
 import org.hibernate.cfg.Settings
 import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
 
 /**
  * RedisTransactionalDataRegion
@@ -32,11 +31,12 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
     override def isTransactionAware: Boolean = false
 
     def get(key: Any): Any = {
-        val task = cache.get(regionName, key.toString, expireInSeconds)
 
-        task onComplete {
-            case Success(x) => return x
-            case Failure(e) => return null
+        val task = cache.get(regionName, key.toString, expireInSeconds)
+        task onFailure {
+            case e: Throwable =>
+                log.error(s"can't retrive cache item. key=$key", e)
+                return null
         }
         Promises.await(task)
     }
@@ -44,18 +44,17 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
     def put(key: Any, value: Any) {
         val task = cache.set(regionName, key.toString, value, expireInSeconds)
 
-        task onComplete {
-            case Success(x) => log.trace(s"set cache item. region=$regionName, key=$key, value=$value")
-            case Failure(e) => log.warn(s"can't set cache item. key=$key", e)
+        task onFailure {
+            case e: Throwable => log.warn(s"can't set cache item. key=$key", e)
         }
         Promises.await(task)
     }
 
     def remove(key: Any) {
         val task = cache.delete(regionName, key.toString)
-        task onComplete {
-            case Success(x) => log.trace(s"remove cache. key=$key")
-            case Failure(e) => log.warn(s"Fail to delete key. region=$regionName, key=$key", e)
+
+        task onFailure {
+            case e: Throwable => log.warn(s"Fail to delete key. region=$regionName, key=$key", e)
         }
         Promises.await(task)
     }
@@ -63,9 +62,8 @@ class RedisTransactionalDataRegion(private[this] val _accessStrategyFactory: Red
     def clear() {
         val task = cache.deleteRegion(regionName)
 
-        task onComplete {
-            case Success(x) => log.trace(s"clear region. region=$regionName")
-            case Failure(e) => log.warn(s"Fail to delete region [$regionName]", e)
+        task onFailure {
+            case e: Throwable => log.warn(s"Fail to delete region [$regionName]", e)
         }
         Promises.await(task)
     }

@@ -25,6 +25,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- scala async -->
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-async_${scala.main.version}</artifactId>
+        </dependency>
+
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
