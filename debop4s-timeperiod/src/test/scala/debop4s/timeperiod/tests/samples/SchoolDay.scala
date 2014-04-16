@@ -41,15 +41,8 @@ class SchoolDay(private var _moment: DateTime) extends TimePeriodChain {
     super.addAll(lesson1, break1, lesson2, break2, lesson3, break3, lesson4)
 }
 
+case class Lesson(private val moment: DateTime) extends TimeBlock(moment, moment + LessonDuration, false) {}
 
-class Lesson(private val moment: DateTime) extends TimeBlock(moment, moment + LessonDuration, false) {
-    log.trace(s"Create Lesson. moment=$moment")
-}
+case class LargeBreak(private val moment: DateTime) extends TimeBlock(moment, moment + LargeBreakDuration, false) {}
 
-class LargeBreak(private val moment: DateTime) extends TimeBlock(moment, moment + LargeBreakDuration, false) {
-    log.trace(s"Create LargeBreak. moment=$moment")
-}
-
-class ShortBreak(private val moment: DateTime) extends TimeBlock(moment, moment + ShortBreakDuration, false) {
-    log.trace(s"Create ShortBreak. moment=$moment")
-}
+case class ShortBreak(private val moment: DateTime) extends TimeBlock(moment, moment + ShortBreakDuration, false) {}

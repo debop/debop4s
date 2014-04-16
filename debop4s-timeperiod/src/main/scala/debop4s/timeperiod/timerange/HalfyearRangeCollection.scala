@@ -19,10 +19,9 @@ class HalfyearRangeCollection(private val _year: Int,
 
     @inline
     def halfyears: SeqView[HalfyearRange, Seq[_]] = {
-        (0 until halfyearCount).view.map {
-            x =>
-                val v = Times.addHalfyear(startYear, startHalfyear, x)
-                HalfyearRange(v.year, v.halfyear, calendar)
+        (0 until halfyearCount).view.map { x =>
+            val v = Times.addHalfyear(startYear, startHalfyear, x)
+            HalfyearRange(v.year, v.halfyear, calendar)
         }
     }
 }

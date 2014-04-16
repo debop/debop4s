@@ -17,9 +17,8 @@ class WeekRangeCollection(private[this] val year: Int,
 
     @inline
     def getWeeks = {
-        (0 until weekCount).view.map {
-            w =>
-                WeekRange(start.plusWeeks(w), calendar)
+        (0 until weekCount).view.map { w =>
+            WeekRange(start.plusWeeks(w), calendar)
         }
     }
 }

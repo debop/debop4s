@@ -3,6 +3,7 @@ package debop4s.timeperiod
 import debop4s.core.jodatime._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
+import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 
 
@@ -14,6 +15,8 @@ import scala.annotation.varargs
  */
 @SerialVersionUID(1838724440389574448L)
 trait ITimePeriodChain extends ITimePeriodContainer {
+
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     override def head: ITimePeriod =
         periods.headOption.getOrElse(null)
@@ -70,25 +73,24 @@ trait ITimePeriodChain extends ITimePeriodContainer {
 
         if (prevItem != null) {
             log.trace("선행 period에 기초하여 삽입한 period와 후행 period들의 시간을 조정합니다...")
-            item.setup(prevItem.end, prevItem.end.plus(itemDuration))
-            (index + 1 until size).foreach {
-                i =>
-                    val p = get(i)
-                    val startTime: DateTime = p.start + itemDuration
-                    p.setup(startTime, startTime + p.duration)
+            item.setup(prevItem.end, prevItem.end + itemDuration)
+
+            (index + 1 until size).foreach { i =>
+                val p = get(i)
+                val startTime: DateTime = p.start + itemDuration
+                p.setup(startTime, startTime + p.duration)
             }
         }
 
         if (nextItem != null) {
             log.trace("후행 period에 기초하여 삽입한 period와 선행 period들의 시간을 조정합니다...")
-            var nextStart: DateTime = nextItem.start.minus(itemDuration)
+            var nextStart = nextItem.start - itemDuration
             item.setup(nextStart, nextStart + itemDuration)
 
-            (0 until index - 1).foreach {
-                i =>
-                    val p = get(i)
-                    nextStart = p.start - itemDuration
-                    p.setup(nextStart, nextStart + p.duration)
+            (0 until index - 1).foreach { i =>
+                val p = get(i)
+                nextStart = p.start - itemDuration
+                p.setup(nextStart, nextStart + p.duration)
             }
         }
     }
@@ -97,7 +99,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
      * 지정한 요소를 제거하고, 후속 ITimePeriod 들의 기간을 재조정합니다. (앞으로 당깁니다)
      */
     override def remove(o: Any): Boolean = {
-        assert(o != null)
+        require(o != null)
         if (!o.isInstanceOf[ITimePeriod])
             return false
 
@@ -123,7 +125,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
             log.trace(s"요소[$item]를 제거하고, chain의 후속 periods 들의 기간을 조정합니다...")
 
             for (x <- index until size) {
-                val start = periods(x).start.minus(itemDuration)
+                val start = periods(x).start - itemDuration
                 val duration = periods(x).duration
                 periods(x).setup(start, start + duration)
             }
@@ -141,8 +143,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
     protected def assertSpaceBefore(moment: DateTime, duration: Duration) {
         var hasSpace = moment != MinPeriodTime
         if (hasSpace) {
-            val remaining = new Duration(MinPeriodTime, moment)
-            hasSpace = duration.compareTo(remaining) <= 0
+            hasSpace = duration <= new Duration(MinPeriodTime, moment)
         }
         assert(hasSpace, s"duration[$duration] is out of range.")
     }
@@ -150,8 +151,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
     protected def assertSpaceAfter(moment: DateTime, duration: Duration) {
         var hasSpace = moment != MaxPeriodTime
         if (hasSpace) {
-            val remaining = new Duration(moment, MaxPeriodTime)
-            hasSpace = duration.compareTo(remaining) <= 0
+            hasSpace = duration <= new Duration(moment, MaxPeriodTime)
         }
         assert(hasSpace, s"duration[$duration] is out of range.")
     }

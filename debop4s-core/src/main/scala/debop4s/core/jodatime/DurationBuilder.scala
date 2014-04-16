@@ -2,11 +2,11 @@ package debop4s.core.jodatime
 
 import org.joda.time._
 
-private[core] object DurationBuilder {
+object DurationBuilder {
     def apply(underlying: Period): DurationBuilder = new DurationBuilder(underlying)
 }
 
-sealed private[core] class DurationBuilder(val underlying: Period) {
+sealed class DurationBuilder(val underlying: Period) {
 
     def -(that: DurationBuilder): DurationBuilder = DurationBuilder(this.underlying.minus(that.underlying))
     def +(that: DurationBuilder): DurationBuilder = DurationBuilder(this.underlying.plus(that.underlying))

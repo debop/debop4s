@@ -5,8 +5,9 @@ import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
 /**
- * debop4s.timeperiod.timerange.WeekRange
- * @author 배성혁 sunghyouk.bae@gmail.com
+ * 특정 한 주(Week) 의 기간을 표현합니다.
+ *
+ * @author sunghyouk.bae@gmail.com
  * @since  2013. 12. 28. 오후 11:18
  */
 class WeekRange(private[this] val _weekyear: Int,
@@ -49,6 +50,10 @@ object WeekRange {
     def apply(moment: DateTime, calendar: ITimeCalendar): WeekRange =
         new WeekRange(moment.getWeekyear, moment.getWeekOfWeekyear, calendar)
 
-    def apply(yw: YearWeek): WeekRange = apply(yw.weekyear, yw.weekOfWeekyear)
+    def apply(yw: YearWeek): WeekRange =
+        apply(yw.weekyear, yw.weekOfWeekyear, DefaultTimeCalendar)
+
+    def apply(yw: YearWeek, calendar: ITimeCalendar): WeekRange =
+        apply(yw.weekyear, yw.weekOfWeekyear, calendar)
 
 }

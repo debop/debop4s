@@ -107,13 +107,13 @@ class HourRangeTest extends AbstractTimePeriodTest {
 
         minutes.size should equal(MinutesPerHour)
 
-        for (i <- 0 until MinutesPerHour) {
-            val minute = minutes(i)
-            minute.start should equal(hr.start + i.minute)
-            minute.unmappedStart should equal(hr.start + i.minute)
+        // for (i <- 0 until MinutesPerHour) {
+        hr.minutes.take(MinutesPerHour) foreach { mr =>
+            mr.start shouldEqual hr.start + mr.minuteOfHour.minute
+            mr.unmappedStart shouldEqual (hr.start + mr.minuteOfHour.minute)
 
-            minute.end should equal(minute.calendar.mapEnd(hr.start + (i + 1).minute))
-            minute.unmappedEnd should equal(hr.start + (i + 1).minute)
+            mr.end shouldEqual mr.calendar.mapEnd(hr.start + (mr.minuteOfHour + 1).minute)
+            mr.unmappedEnd shouldEqual hr.start + (mr.minuteOfHour + 1).minute
         }
     }
 

@@ -4,7 +4,6 @@ import debop4s.core.jodatime._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.SeqView
 
 /**
  * debop4s.timeperiod.timerange.MonthTimeRange
@@ -18,7 +17,7 @@ class MonthTimeRange(private[this] val _year: Int,
     extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
     @inline
-    def days: SeqView[DayRange, Seq[_]] = {
+    def days = {
         val startMonth = Times.startTimeOfMonth(start)
 
         for {

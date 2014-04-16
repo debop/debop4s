@@ -66,7 +66,8 @@ trait ITimePeriodCollection extends ITimePeriodContainer {
 
         val filteringRelation = ArrayBuffer[PeriodRelation]()
         filteringRelation += relation
-        filteringRelation ++= relations
+        if (relations != null && relations.size > 0)
+            filteringRelation ++= relations
 
         periods.filter(x => filteringRelation.contains(Times.relation(x, target)))
     }

@@ -29,7 +29,7 @@ class HourRange(private[this] val _moment: DateTime,
 
     def addHours(hours: Int): HourRange = {
         val startHour = Times.trimToHour(start, hourOfDay)
-        new HourRange(startHour.plusHours(hours), calendar)
+        HourRange(startHour.plusHours(hours), calendar)
     }
 }
 

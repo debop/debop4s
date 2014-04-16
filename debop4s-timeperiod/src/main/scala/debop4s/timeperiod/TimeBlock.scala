@@ -36,15 +36,13 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
                 private[this] val _readonly: Boolean = false)
     extends TimePeriod(_start, _end, _readonly) with ITimeBlock {
 
-    override lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     override def start_=(v: DateTime) {
         assertMutable()
         assert(v <= end, "시작시각이 완료시각보다 클 수 없습니다.")
         super.start_=(v)
     }
-
-
     override def end_=(v: DateTime) {
         assertMutable()
         assert(v >= start, "완료시각이 시작시각보다 작을 수 없습니다.")
@@ -53,9 +51,7 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
     }
 
     var _duration: Duration = new Duration(start, end)
-
     override def duration = _duration
-
     override def duration_=(v: Duration) {
         assertMutable()
         assertValidDuration(v)
@@ -131,16 +127,12 @@ object TimeBlock {
     val Anytime: TimeBlock = TimeBlock(readonly = true)
 
     def apply(): TimeBlock = new TimeBlock(MinPeriodTime, MaxPeriodTime, false)
-
     def apply(readonly: Boolean) = new TimeBlock(MinPeriodTime, MaxPeriodTime, readonly)
-
     def apply(start: DateTime, end: DateTime): TimeBlock = apply(start, end, readonly = false)
-
     def apply(start: DateTime, end: DateTime, readonly: Boolean): TimeBlock =
         new TimeBlock(start, end, readonly)
 
     def apply(moment: DateTime): TimeBlock = apply(moment, moment)
-
     def apply(moment: DateTime, readonly: Boolean): TimeBlock = apply(moment, moment, readonly)
 
     def apply(start: DateTime, duration: Duration): TimeBlock = {

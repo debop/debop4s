@@ -17,13 +17,17 @@ class HourTimeRange(private[this] val _moment: DateTime,
     val endHour: Int = start.plusHours(hourCount).getHourOfDay
 
     @inline
-    def minutes: Seq[MinuteRange] = {
-        for {
-            h <- 0 until hourCount
-            m <- 0 until MinutesPerHour
-        } yield {
-            MinuteRange(start.plusHours(h).plusMinutes(m), calendar)
+    def minutes = {
+        val count = hourCount * MinutesPerHour
+        (0 until count).view.map { m =>
+            MinuteRange(start.plusMinutes(m), calendar)
         }
+        //        for {
+        //            h <- 0 until hourCount
+        //            m <- 0 until MinutesPerHour
+        //        } yield {
+        //            MinuteRange(start.plusHours(h).plusMinutes(m), calendar)
+        //        }
     }
 }
 

@@ -1,10 +1,12 @@
 package debop4s.timeperiod
 
 import debop4s.core.NotSupportedException
+import debop4s.core.jodatime._
 import debop4s.core.utils.ToStringHelper
 import debop4s.timeperiod.OrderDirection.OrderDirection
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{Duration, DateTime}
+import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -104,14 +106,16 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     }
 
     def removeAll(elems: Iterable[_]): Boolean = {
-        elems.filter(_.isInstanceOf[ITimePeriod]).foreach(remove)
+        elems.foreach {
+            case elem: ITimePeriod if periods.contains(elem) => remove(elem)
+        }
         true
     }
 
     def retainAll(elems: Iterable[_]): Boolean = {
         periods.clear()
         elems.foreach {
-            case elem: ITimePeriod => periods += elem
+            case elem: ITimePeriod if !periods.contains(elem) => periods += elem
             case _ =>
         }
         true
@@ -136,9 +140,9 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     def sortByStart(sortDir: OrderDirection) {
         var sorted: ArrayBuffer[ITimePeriod] = null
         if (sortDir == OrderDirection.ASC) {
-            sorted = periods.sortWith((x, y) => x.start.compareTo(y.start) < 0)
+            sorted = periods.sortWith((x, y) => x.start < y.start)
         } else {
-            sorted = periods.sortWith((x, y) => x.start.compareTo(y.start) > 0)
+            sorted = periods.sortWith((x, y) => x.start > y.start)
         }
         periods.clear()
         periods ++= sorted
@@ -147,9 +151,9 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     def sortByEnd(sortDir: OrderDirection) {
         var sorted: ArrayBuffer[ITimePeriod] = null
         if (sortDir == OrderDirection.ASC) {
-            sorted = periods.sortWith((x, y) => x.end.compareTo(y.end) < 0)
+            sorted = periods.sortWith((x, y) => x.end < y.end)
         } else {
-            sorted = periods.sortWith((x, y) => x.end.compareTo(y.end) > 0)
+            sorted = periods.sortWith((x, y) => x.end > y.end)
         }
         periods.clear()
         periods ++= sorted
@@ -158,9 +162,9 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     def sortByDuration(sortDir: OrderDirection) {
         var sorted: ArrayBuffer[ITimePeriod] = null
         if (sortDir == OrderDirection.ASC) {
-            sorted = periods.sortWith((x, y) => x.duration.compareTo(y.duration) < 0)
+            sorted = periods.sortWith((x, y) => x.duration < y.duration)
         } else {
-            sorted = periods.sortWith((x, y) => x.duration.compareTo(y.duration) > 0)
+            sorted = periods.sortWith((x, y) => x.duration > y.duration)
         }
         periods.clear()
         periods ++= sorted
@@ -179,6 +183,8 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
 
 @SerialVersionUID(-7112720659283751048L)
 class TimePeriodContainer extends ITimePeriodContainer {
+
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     implicit val dateTimeOrdering = new DateTimeOrdering()
 

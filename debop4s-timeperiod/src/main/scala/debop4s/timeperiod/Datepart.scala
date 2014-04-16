@@ -10,9 +10,7 @@ import org.joda.time.DateTime
 class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
 
     def year = value.getYear
-
     def monthOfYear = value.getMonthOfYear
-
     def dayOfMonth = value.getDayOfMonth
 
     def toDateTime(time: Timepart): DateTime = {

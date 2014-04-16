@@ -11,7 +11,6 @@ import debop4s.core.utils.Hashs
 class HourRangeInDay(val start: Timepart,
                      val end: Timepart) extends ValueObject with Ordered[HourRangeInDay] {
 
-
     def compare(that: HourRangeInDay) = start.compare(that.start)
 
     override def hashCode() = Hashs.compute(start, end)

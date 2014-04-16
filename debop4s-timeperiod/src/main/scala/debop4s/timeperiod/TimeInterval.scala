@@ -92,15 +92,15 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
         _intervalEnabled = v
     }
 
-    def isStartOpen: Boolean = _startEdge eq IntervalEdge.Opened
+    def isStartOpen: Boolean = _startEdge == IntervalEdge.Opened
 
-    def isEndOpen: Boolean = _endEdge eq IntervalEdge.Opened
+    def isEndOpen: Boolean = _endEdge == IntervalEdge.Opened
 
     def isOpen: Boolean = isStartOpen && isEndOpen
 
-    def isStartClosed: Boolean = _startEdge eq IntervalEdge.Closed
+    def isStartClosed: Boolean = _startEdge == IntervalEdge.Closed
 
-    def isEndClosed: Boolean = _endEdge eq IntervalEdge.Closed
+    def isEndClosed: Boolean = _endEdge == IntervalEdge.Closed
 
     def isClosed: Boolean = isStartClosed && isEndClosed
 
@@ -223,15 +223,13 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
     }
 
     override def intersection(other: ITimePeriod): ITimeInterval = {
-        assert(other != null)
-        val range: ITimePeriod = super.intersection(other)
-        new TimeInterval(range.start, range.end)
+        require(other != null)
+        TimeInterval(super.intersection(other))
     }
 
     override def union(other: ITimePeriod): ITimeInterval = {
-        assert(other != null)
-        val union: ITimePeriod = Times.unionRange(this, other)
-        new TimeInterval(union.start, union.end)
+        require(other != null)
+        TimeInterval(Times.unionRange(this, other))
     }
 }
 
@@ -260,14 +258,19 @@ object TimeInterval {
               endEdge: IntervalEdge,
               intervalEnabled: Boolean,
               readonly: Boolean): TimeInterval = {
-        assert(period != null)
+        require(period != null)
+
         if (period.isAnytime) Anytime
-        else new TimeInterval(period.start,
-            period.end,
-            startEdge,
-            endEdge,
-            intervalEnabled,
-            readonly)
+        else {
+            new TimeInterval(
+                period.start,
+                period.end,
+                startEdge,
+                endEdge,
+                intervalEnabled,
+                readonly
+            )
+        }
     }
 }
 

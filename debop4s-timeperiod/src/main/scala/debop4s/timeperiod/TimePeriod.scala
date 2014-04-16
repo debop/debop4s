@@ -16,8 +16,6 @@ import scala.beans.BeanProperty
  */
 trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializable {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
-
     def compare(that: ITimePeriod): Int = if (that != null) start.compareTo(that.start) else 1
 
     /** 시작 시각 */
@@ -89,11 +87,13 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
                           private[this] val _end: DateTime = MaxPeriodTime,
                           var readonly: Boolean = false) extends ITimePeriod {
 
-    override lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     private var (startTime, endTime) =
-        Times.adjustPeriod(Options.toOption(_start).getOrElse(MinPeriodTime),
-            Options.toOption(_end).getOrElse(MaxPeriodTime))
+        Times.adjustPeriod(
+            Options.toOption(_start).getOrElse(MinPeriodTime),
+            Options.toOption(_end).getOrElse(MaxPeriodTime)
+        )
 
     @BeanProperty
     def start = startTime
@@ -139,10 +139,8 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
     def isAnytime = !hasStart && !hasEnd
 
     def setup(start: DateTime, end: DateTime) {
-        log.trace(s"기간을 새로 설정합니다. newStart=[$start], newEnd=[$end]")
-
-        val ns: DateTime = Options.toOption(start).getOrElse(MinPeriodTime)
-        val ne: DateTime = Options.toOption(end).getOrElse(MaxPeriodTime)
+        val ns = Options.toOption(start).getOrElse(MinPeriodTime)
+        val ne = Options.toOption(end).getOrElse(MaxPeriodTime)
 
         if (ns < ne) {
             this.startTime = ns
@@ -154,8 +152,6 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
     }
 
     override def copy(offset: Duration = Duration.ZERO): ITimePeriod = {
-        log.trace(s"기간[$this]에 offset[$offset]을 준 기간을 반환합니다...")
-
         if (offset.isZero)
             return TimeRange(this)
 
@@ -166,7 +162,6 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
 
     def move(offset: Duration = Duration.ZERO) {
         if (offset.isZero) return
-
         assertMutable()
 
         if (hasStart)

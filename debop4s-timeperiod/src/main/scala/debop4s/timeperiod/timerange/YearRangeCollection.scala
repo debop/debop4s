@@ -17,9 +17,8 @@ class YearRangeCollection(private[this] val _year: Int,
 
     @inline
     def years = {
-        (0 until yearCount).view.map {
-            y =>
-                YearRange(startYear + y, calendar)
+        (0 until yearCount).view.map { y =>
+            YearRange(startYear + y, calendar)
         }
     }
 }

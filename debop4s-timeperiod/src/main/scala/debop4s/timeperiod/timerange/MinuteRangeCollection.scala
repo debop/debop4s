@@ -16,13 +16,12 @@ class MinuteRangeCollection(private[this] val _moment: DateTime,
                             private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
     extends MinuteTimeRange(_moment, _minuteCount, _calendar) {
 
-
     @inline
     def minutes = {
         val startMin = Times.trimToSecond(start)
-        (0 until minuteCount).view.map {
-            m =>
-                MinuteRange(startMin + m.minute, calendar)
+
+        (0 until minuteCount).view.map { m =>
+            MinuteRange(startMin + m.minute, calendar)
         }
     }
 }

@@ -24,16 +24,14 @@ abstract class QuarterTimeRange(private val _year: Int,
 
     override def endMonthOfYear: Int = Times.endMonthOfQuarter(endQuarter)
 
-    def isMultipleCalendarYears: Boolean =
-        startYear != endYear
+    def isMultipleCalendarYears: Boolean = startYear != endYear
 
     @inline
     def months = {
         val monthCount = quarterCount * MonthsPerQuarter
 
-        (0 until monthCount).view.map {
-            m =>
-                MonthRange(start.plusMonths(m), calendar)
+        (0 until monthCount).view.map { m =>
+            MonthRange(start.plusMonths(m), calendar)
         }
     }
 }

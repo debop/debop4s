@@ -4,7 +4,7 @@ import debop4s.timeperiod.Halfyear.Halfyear
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.SeqView
 
 /**
  * debop4s.timeperiod.timerange.HalfyearTimeRange
@@ -38,8 +38,7 @@ class HalfyearTimeRange(val year: Int,
                         val halfyear: Halfyear,
                         val halfyearCount: Int,
                         private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends CalendarTimeRange(HalfyearTimeRange.getPeriodOf(year, halfyear, halfyearCount),
-        _calendar) {
+    extends CalendarTimeRange(HalfyearTimeRange.getPeriodOf(year, halfyear, halfyearCount), _calendar) {
 
     val startHalfyear: Halfyear = halfyear
     val endHalfyear: Halfyear = Times.halfyearOfMonth(endMonthOfYear)
@@ -47,27 +46,38 @@ class HalfyearTimeRange(val year: Int,
     def isMultipleCalendarYears: Boolean = startYear != endYear
 
     @inline
-    def getQuarters: Seq[QuarterRange] = {
+    def getQuarters: SeqView[QuarterRange, Seq[_]] = {
         val quarterCount = halfyearCount * QuartersPerHalfyear
         val startQuarter = Times.quarterOf(startMonthOfYear)
 
-        val quarters = new ArrayBuffer[QuarterRange](quarterCount)
-        for (q <- 0 until quarterCount) {
+        (0 until quarterCount).view.map { q =>
             val yq = Times.addQuarter(startYear, startQuarter, q)
-            quarters += new QuarterRange(yq.year, yq.quarter, calendar)
+            QuarterRange(yq.year, yq.quarter, calendar)
         }
-        quarters
+
+        //        val quarters = new ArrayBuffer[QuarterRange](quarterCount)
+        //        for (q <- 0 until quarterCount) {
+        //            val yq = Times.addQuarter(startYear, startQuarter, q)
+        //            quarters += new QuarterRange(yq.year, yq.quarter, calendar)
+        //        }
+        //        quarters
     }
 
     @inline
-    def getMonths: Seq[MonthRange] = {
+    def getMonths = {
         val monthCount = halfyearCount * MonthsPerHalfyear
-        val months = new ArrayBuffer[MonthRange](monthCount)
 
-        for (m <- 0 until monthCount) {
+        (0 until monthCount).view.map { m =>
             val ym = Times.addMonth(startYear, startMonthOfYear, m)
-            months += new MonthRange(ym.year, ym.monthOfYear, calendar)
+            MonthRange(ym.year, ym.monthOfYear, calendar)
         }
-        months
+
+        //        val months = new ArrayBuffer[MonthRange](monthCount)
+        //
+        //        for (m <- 0 until monthCount) {
+        //            val ym = Times.addMonth(startYear, startMonthOfYear, m)
+        //            months += new MonthRange(ym.year, ym.monthOfYear, calendar)
+        //        }
+        //        months
     }
 }

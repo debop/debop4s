@@ -1,6 +1,6 @@
 package debop4s.timeperiod
 
-import debop4s.core.AbstractValueObject
+import debop4s.core.ValueObject
 import debop4s.core.utils.Hashs
 
 /**
@@ -11,7 +11,7 @@ import debop4s.core.utils.Hashs
 @SerialVersionUID(1287074885972003104L)
 class DayRangeInMonth(val startDayOfMonth: Int,
                       val endDayOfMonth: Int)
-    extends AbstractValueObject with Ordering[DayRangeInMonth] {
+    extends ValueObject with Ordering[DayRangeInMonth] {
 
     def isSingleDay: Boolean = startDayOfMonth == endDayOfMonth
 

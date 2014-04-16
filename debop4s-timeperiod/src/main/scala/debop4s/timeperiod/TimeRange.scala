@@ -59,7 +59,6 @@ class TimeRange(private[this] val _start: DateTime = MinPeriodTime,
         assertMutable()
         assert(v >= start, "완료시각이 시작시각보다 작을 수 없습니다.")
         super.end_=(v)
-
     }
 
     override def duration_=(v: Duration) {
@@ -71,20 +70,22 @@ class TimeRange(private[this] val _start: DateTime = MinPeriodTime,
         if (offset == Duration.ZERO)
             TimeRange(this)
         else
-            TimeRange(if (hasStart) start.plus(offset) else start,
-                if (hasEnd) end.plus(offset) else end,
-                readonly)
+            TimeRange(
+                if (hasStart) start + offset else start,
+                if (hasEnd) end + offset else end,
+                readonly
+            )
     }
 
     def expandStartTo(moment: DateTime) {
         assertMutable()
-        if (start.compareTo(moment) > 0)
+        if (start > moment)
             start = moment
     }
 
     def expandEndTo(moment: DateTime) {
         assertMutable()
-        if (end.compareTo(moment) < 0)
+        if (end < moment)
             end = moment
     }
 
@@ -95,7 +96,7 @@ class TimeRange(private[this] val _start: DateTime = MinPeriodTime,
     }
 
     def expandTo(period: ITimePeriod) {
-        assert(period != null)
+        require(period != null)
         assertMutable()
 
         if (period.hasStart)
@@ -145,14 +146,17 @@ object TimeRange {
     def apply(readonly: Boolean): TimeRange =
         new TimeRange(MinPeriodTime, MaxPeriodTime, readonly)
 
-    def apply(moment: DateTime): TimeRange = apply(moment, moment, readonly = false)
+    def apply(moment: DateTime): TimeRange =
+        apply(moment, moment, readonly = false)
 
-    def apply(start: DateTime, end: DateTime): TimeRange = apply(start, end, readonly = false)
+    def apply(start: DateTime, end: DateTime): TimeRange =
+        apply(start, end, readonly = false)
 
     def apply(start: DateTime, end: DateTime, readonly: Boolean): TimeRange =
         new TimeRange(start, end, readonly)
 
-    def apply(start: DateTime, duration: Duration): TimeRange = apply(start, duration, readonly = false)
+    def apply(start: DateTime, duration: Duration): TimeRange =
+        apply(start, duration, readonly = false)
 
     def apply(start: DateTime, duration: Duration, readonly: Boolean): TimeRange =
         new TimeRange(start, start.plus(duration), readonly)
@@ -160,11 +164,10 @@ object TimeRange {
     def apply(period: ITimePeriod): TimeRange = apply(period, period.isReadonly)
 
     def apply(period: ITimePeriod, readonly: Boolean): TimeRange = {
-        assert(period != null)
-        if (period.isAnytime)
-            Anytime
-        else
-            apply(period.start, period.end, readonly)
+        require(period != null)
+
+        if (period.isAnytime) Anytime
+        else apply(period.start, period.end, readonly)
     }
 
     def apply(start: Option[DateTime], end: Option[DateTime]): TimeRange = {

@@ -28,9 +28,8 @@ class WeekTimeRange(private[this] val _moment: DateTime,
         val startDay = startDayStart
         val dayCount = weekCount * DaysPerWeek
 
-        (0 until dayCount).view.map {
-            d =>
-                DayRange(startDay.plusDays(d), calendar)
+        (0 until dayCount).view.map { d =>
+            DayRange(startDay.plusDays(d), calendar)
         }
     }
 }

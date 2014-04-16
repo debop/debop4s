@@ -67,8 +67,8 @@ class CalendarTimeRange(private val _period: ITimePeriod, val calendar: ITimeCal
 
     def endSecondEnd = Times.trimToMillis(end)
 
-    override def copy(offset: Duration): CalendarTimeRange = {
-        new CalendarTimeRange(super.copy(offset), calendar)
+    override def copy(offset: Duration) = {
+        CalendarTimeRange(copy(offset), calendar)
     }
 
     override def hashCode(): Int = Hashs.compute(super.hashCode(), calendar)
@@ -86,4 +86,10 @@ object CalendarTimeRange {
 
     def apply(start: DateTime, end: DateTime, calendar: ITimeCalendar): CalendarTimeRange =
         new CalendarTimeRange(TimeRange(start, end), calendar)
+
+    def apply(period: ITimePeriod): CalendarTimeRange =
+        apply(period, DefaultTimeCalendar)
+
+    def apply(period: ITimePeriod, calendar: ITimeCalendar): CalendarTimeRange =
+        new CalendarTimeRange(period, calendar)
 }

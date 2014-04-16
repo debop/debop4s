@@ -4,7 +4,6 @@ import debop4s.timeperiod.Quarter.Quarter
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
-import scala.collection.SeqView
 
 /**
  * debop4s.timeperiod.timerange.QuarterRangeCollection
@@ -19,10 +18,9 @@ class QuarterRangeCollection(private val _year: Int,
     extends QuarterTimeRange(_year, _quarter, _quarterCount, _calendar) {
 
     @inline
-    def quarters: SeqView[QuarterRange, Seq[_]] = {
-        (0 until quarterCount).view.map {
-            q =>
-                QuarterRange(start.plusMonths(q * MonthsPerQuarter), calendar)
+    def quarters = {
+        (0 until quarterCount).view.map { q =>
+            QuarterRange(start.plusMonths(q * MonthsPerQuarter), calendar)
         }
     }
 }

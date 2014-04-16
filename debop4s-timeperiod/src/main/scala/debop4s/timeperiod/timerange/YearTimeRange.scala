@@ -1,5 +1,6 @@
 package debop4s.timeperiod.timerange
 
+import debop4s.core.jodatime._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
@@ -40,10 +41,10 @@ class YearTimeRange(private[this] val _year: Int,
     def months = {
         for {
             y <- (0 until yearCount).view
-            baseTime = start.plusYears(y)
+            baseTime = start + y.years
             m <- (0 until MonthsPerYear).view
         } yield {
-            MonthRange(baseTime.plusMonths(m), calendar)
+            MonthRange(baseTime + m.months, calendar)
         }
     }
 }
