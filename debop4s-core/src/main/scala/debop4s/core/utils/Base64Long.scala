@@ -4,7 +4,7 @@ package debop4s.core.utils
  * `Long` 수형 값을 base 64 문자열로 인코딩을 수행합니다.
  * 캐시 키 값에 사용하면 좋습니다.
  */
-class Base64Long {
+object Base64Long {
     lazy val StandardBase64Alphabet: Int => Char = Array[Char](
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
         'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',

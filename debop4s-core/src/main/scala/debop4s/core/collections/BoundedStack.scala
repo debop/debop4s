@@ -2,6 +2,11 @@ package debop4s.core.collections
 
 import scala.reflect.ClassTag
 
+
+object BoundedStack {
+    def apply[A: ClassTag](maxSize: Option[Int] = None): BoundedStack[A] =
+        new BoundedStack[A](maxSize.getOrElse(16))
+}
 /**
  * 제한된 크기를 가지는 `stack` 입니다. 제한된 크기보다 더 많은 요소를 추가 시, 가장 아래에 있는 요소를 제거합니다.
  * Created by debop on 2014. 4. 13.
@@ -38,7 +43,7 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
         if (index == 0) this += elem
         else if (index > _count) throw new IndexOutOfBoundsException(index.toString)
         else if (index == _count) {
-            array((top + 1) % maxSize) = elem
+            array((top + index) % maxSize) = elem
             _count += 1
         } else {
             val swapped = this(index)

@@ -45,19 +45,19 @@ class StringsTest extends AbstractCoreTest {
         implicit val separator = ","
 
         val strs = Array("a", "bc", "def")
-        assert(Strings.join(strs: _*) == "a,bc,def")
-        assert(Strings.join(strs: _*)("") == "abcdef")
-        assert(Strings.join(strs: _*)("|") == "a|bc|def")
+        Strings.join(strs: _*) shouldEqual "a,bc,def"
+        Strings.join(strs: _*)("") shouldEqual "abcdef"
+        Strings.join(strs: _*)("|") shouldEqual "a|bc|def"
     }
 
     test("String split") {
 
         val str = "동해,물 || 백두,산 a BaB"
         val strArr = Strings.split(str, ",", "||", "A")
-        assert(strArr.sameElements(Array("동해", "물", "백두", "산", "B", "B")))
+        strArr shouldEqual Array("동해", "물", "백두", "산", "B", "B")
 
         val strArr2 = Strings.split(str, false, true, ",", "||", "A")
-        assert(strArr2.sameElements(Array("동해", "물", "백두", "산 a BaB")))
+        strArr2 shouldEqual Array("동해", "물", "백두", "산 a BaB")
     }
 
     test("Base64 converting") {
@@ -65,7 +65,7 @@ class StringsTest extends AbstractCoreTest {
 
         val base64String = Strings.encodeBase64String(text)
         val converted = Strings.decodeBase64String(base64String)
-        assert(converted == text)
+        converted shouldEqual text
     }
 
 }

@@ -2,9 +2,9 @@ package debop4s.core.concurrent
 
 import debop4s.core.Local
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.{Future => JFuture, RejectedExecutionException, Executors, ExecutorService}
+import java.util.concurrent.{Future => JFuture, CancellationException, RejectedExecutionException, Executors, ExecutorService}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Promise, Future}
+import scala.concurrent.{Future, Promise}
 import scala.util.Try
 
 /**
@@ -35,7 +35,11 @@ object FuturePool {
         new InterruptibleExecutorServiceFuturePool(executor)
 
     val immediatePool = new FuturePool {
-        def apply[T](f: => T) = Future { f }
+        def apply[T](f: => T): Future[T] = {
+            val p = Promise[T]()
+            p complete Try { f }
+            p.future
+        }
     }
 
     private lazy val defaultExecutor =
@@ -84,6 +88,7 @@ class ExecutorServiceFuturePool protected[this](val executor: ExecutorService,
     override def apply[T](f: => T): Future[T] = {
         val runOk = new AtomicBoolean(true)
         val p = Promise[T]()
+
         val task = new Runnable {
             val saved = Local.save()
             def run() {
@@ -95,10 +100,14 @@ class ExecutorServiceFuturePool protected[this](val executor: ExecutorService,
                 val current = Local.save()
                 Local.restore(saved)
 
-                try
-                    p complete Try { f }
-                finally
+                try {
+                    val result = f
+                    p success result
+                } catch {
+                    case t: Throwable => p failure t
+                } finally {
                     Local.restore(current)
+                }
             }
         }
 
@@ -110,6 +119,15 @@ class ExecutorServiceFuturePool protected[this](val executor: ExecutorService,
                 runOk.set(false)
                 p failure e
                 null
+        }
+
+        p.future onFailure {
+            case cause: InterruptedException =>
+                if (interruptible || runOk.compareAndSet(true, false)) {
+                    val exc = new CancellationException()
+                    exc.initCause(cause)
+                    javaFuture.cancel(true)
+                }
         }
 
         p.future

@@ -13,7 +13,7 @@ import scala.collection.mutable
  */
 object Local {
 
-    lazy val log = LoggerFactory.getLogger(getClass)
+    private lazy val log = LoggerFactory.getLogger(getClass)
 
     type Context = mutable.LinkedHashMap[Any, Any]
 
@@ -28,7 +28,6 @@ object Local {
     def save(): Context = threadLocal.get().clone()
 
     def restore(saved: Context): Unit = {
-        log.debug(s"restore saved=$saved}")
         threadLocal.set(saved)
     }
 
