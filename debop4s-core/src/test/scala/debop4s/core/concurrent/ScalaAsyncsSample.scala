@@ -9,7 +9,7 @@ import scala.concurrent._
  * ScalaAsyncsTest
  * Created by debop on 2014. 4. 4.
  */
-class ScalaAsyncsTest extends AbstractCoreTest {
+class ScalaAsyncsSample extends AbstractCoreTest {
 
     test("scala-async async/await example") {
         val future1 = Future { 42 }

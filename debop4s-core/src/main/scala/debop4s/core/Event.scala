@@ -306,5 +306,9 @@ object Witness {
         def notify(t: T) { f(t) }
     }
 
+    //    def apply[T](u: Updatable[T]): Witness[T] = new Witness[T] {
+    //        def notify(t: T) = { u() = t }
+    //    }
+
     val printer: Witness[Any] = Witness(println(_))
 }

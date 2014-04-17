@@ -569,7 +569,7 @@ object Strings {
         }
 
         if (offset < cs.length())
-            out.append(cs.subSequence(offset, cs.length() - 1))
+            out.append(cs.subSequence(offset, cs.length()))
 
         out.toString()
     }
@@ -581,18 +581,17 @@ object Strings {
      * 예를 들어 linefeed 를 `"\n"` 으로 표시해 준다.
      */
     def quoteC(cs: CharSequence): String = {
-        regexSub(cs, QUOTE_RE) {
-            m: MatchData =>
-                m.matched.charAt(0) match {
-                    case '\r' => "\\r"
-                    case '\n' => "\\n"
-                    case '\t' => "\\t"
-                    case '"' => "\\\""
-                    case '\\' => "\\\\"
-                    case c =>
-                        if (c <= 255) "\\x%02x" format c.asInstanceOf[Int]
-                        else "\\u%04x" format c.asInstanceOf[Int]
-                }
+        regexSub(cs, QUOTE_RE) { m: MatchData =>
+            m.matched.charAt(0) match {
+                case '\r' => "\\r"
+                case '\n' => "\\n"
+                case '\t' => "\\t"
+                case '"' => "\\\""
+                case '\\' => "\\\\"
+                case c =>
+                    if (c <= 255) "\\x%02x".format(c.asInstanceOf[Int])
+                    else "\\u%04x" format (c.asInstanceOf[Int])
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package debop4s.core
 
+import debop4s.core.concurrent.Asyncs
 import java.lang.ref.{PhantomReference, ReferenceQueue, Reference}
 import java.util
 import java.util.concurrent.atomic.AtomicReference
@@ -8,6 +9,7 @@ import scala.annotation.varargs
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.util.control.NonFatal
 
 /**
  * Closable is a mixin trait to describe a closable ``resource``.
@@ -33,8 +35,9 @@ object Closable {
      */
     @varargs
     def all(closables: Closable*) = new Closable {
-        def close(deadline: Time): Future[Unit] = Future {
-            closables.map(_.close(deadline))
+        def close(deadline: Time): Future[Unit] = {
+            Asyncs.readyAll(closables.map(_.close(deadline)))
+            Future.successful(Unit)
         }
     }
 
@@ -47,7 +50,7 @@ object Closable {
     def sequence(closables: Closable*) = new Closable {
         private final def closeSeq(deadline: Time, closable: Seq[Closable]): Future[Unit] = {
             closables match {
-                case Seq() => Future {}
+                case Seq() => Future.successful(Unit)
                 case Seq(head, tail@_*) => head.close(deadline) flatMap {
                     _ => closeSeq(deadline, tail)
                 }
@@ -59,7 +62,7 @@ object Closable {
 
     /** A Closable that does nothing immediately. */
     val nop: Closable = new Closable {
-        def close(deadline: Time) = Future {}
+        def close(deadline: Time) = Future.successful(Unit)
     }
 
     /** Make a new Closable whose close method invokes f. */
@@ -80,12 +83,17 @@ object Closable {
                 try {
                     val ref = refq.remove()
                     val closable = refs.synchronized(refs.remove(ref))
-                    if (closable != null)
+                    if (closable != null) {
+                        log.debug(s"close $closable")
                         closable.close()
+                    }
                     ref.clear()
                 } catch {
-                    case e: Throwable =>
+                    case NonFatal(e) =>
                         log.error("Closable collector threw exception", e)
+                    case fatal =>
+                        log.error("Closable collector threw exception", fatal)
+                        throw fatal
                 }
             }
         }

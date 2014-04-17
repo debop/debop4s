@@ -8,7 +8,7 @@ import debop4s.core.AbstractCoreTest
  */
 class StateMachineTest extends AbstractCoreTest {
 
-    private def createStateMachine() = {
+    private def createStateMachine() =
         new StateMachine {
             object Status1 extends State
             object Status2 extends State
@@ -17,12 +17,12 @@ class StateMachineTest extends AbstractCoreTest {
 
             def command1() {
                 transition("command1") {
-                    case Status1 => "ok"
+                    case Status1 =>
+                        "ok"
                         state = Status2
                 }
             }
         }
-    }
 
     test("allow transitions that are permitted") {
         val stateMachine = createStateMachine()
@@ -36,6 +36,4 @@ class StateMachineTest extends AbstractCoreTest {
             stateMachine.command1()
         }
     }
-
-
 }
