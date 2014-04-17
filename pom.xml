@@ -253,17 +253,6 @@
                 <artifactId>jackson-datatype-joda</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-hibernate4</artifactId>
-                <version>2.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-afterburner</artifactId>
-                <version>2.2.0</version>
-            </dependency>
-
             <!-- Jackson for Scala -->
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
@@ -275,6 +264,17 @@
                         <artifactId>jackson-annotations</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-hibernate4</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-afterburner</artifactId>
+                <version>2.2.0</version>
             </dependency>
 
 
@@ -570,7 +570,7 @@
                 <version>0.8.0.RELEASE</version>
             </dependency>
 
-            <!-- HikariCP -->
+            <!-- HikariCP : 1.3.4, 1.3.5는 Hibernate 에서 버그가 있습니다.-->
             <dependency>
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>

@@ -1,4 +1,4 @@
-package org.hibernate.cache.rediscala.tests
+package org.hibernate.cache.rediscala.tests.hibernate
 
 import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
 import java.util.Properties
@@ -12,7 +12,7 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
 import org.springframework.orm.hibernate4.{HibernateExceptionTranslator, HibernateTransactionManager, LocalSessionFactoryBean}
 
 /**
- * org.hibernate.cache.rediscala.tests.HibernateRedisConfiguration
+ * org.hibernate.cache.rediscala.tests.hibernate.HibernateRedisConfiguration
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오후 4:50

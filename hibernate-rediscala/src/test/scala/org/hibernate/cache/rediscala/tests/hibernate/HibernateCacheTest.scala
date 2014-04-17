@@ -2,7 +2,6 @@ package org.hibernate.cache.rediscala.tests.hibernate
 
 import org.hibernate.SessionFactory
 import org.hibernate.cache.rediscala.HibernateRedisUtil
-import org.hibernate.cache.rediscala.tests.HibernateRedisConfiguration
 import org.hibernate.cache.rediscala.tests.domain.{Person, Account, Item}
 import org.hibernate.stat.SecondLevelCacheStatistics
 import org.junit.runner.RunWith
