@@ -832,6 +832,7 @@
                     <jvmArgs>
                         <jvmArg>-Xms512M</jvmArg>
                         <jvmArg>-Xmx2G</jvmArg>
+                        <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
                     </jvmArgs>
                 </configuration>
                 <executions>
