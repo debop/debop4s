@@ -77,5 +77,4 @@ object KoreanString {
         }
         chosungs
     }
-
 }

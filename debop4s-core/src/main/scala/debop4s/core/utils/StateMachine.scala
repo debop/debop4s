@@ -30,5 +30,4 @@ trait StateMachine {
             throw new InvalidStateTransition(state.toString, command)
         }
     }
-
 }
