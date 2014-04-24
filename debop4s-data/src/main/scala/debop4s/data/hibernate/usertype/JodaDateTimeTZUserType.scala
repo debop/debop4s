@@ -2,7 +2,7 @@ package debop4s.data.hibernate.usertype
 
 import java.io.Serializable
 import java.sql.{ResultSet, PreparedStatement}
-import java.util.{Date, Objects}
+import java.util.Objects
 import org.hibernate.`type`.StandardBasicTypes
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
@@ -19,7 +19,7 @@ import org.joda.time.{DateTimeZone, DateTime}
  */
 class JodaDateTimeTZUserType extends UserType {
 
-    def sqlTypes() = Array(StandardBasicTypes.TIMESTAMP.sqlType(), StandardBasicTypes.STRING.sqlType())
+    def sqlTypes() = Array(StandardBasicTypes.LONG.sqlType(), StandardBasicTypes.STRING.sqlType())
 
     def returnedClass() = classOf[DateTime]
 
@@ -28,14 +28,14 @@ class JodaDateTimeTZUserType extends UserType {
     def hashCode(x: Any) = Objects.hashCode(x)
 
     def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
-        val timestamp = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Date]
+        val timestamp = StandardBasicTypes.LONG.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Long]
         val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
 
         var value: DateTime = null
         if (timezone == null) {
             value = new DateTime(timestamp)
         } else {
-            value = new DateTime(timestamp.getTime, DateTimeZone.forID(timezone))
+            value = new DateTime(timestamp, DateTimeZone.forID(timezone))
         }
         value
     }
@@ -43,10 +43,10 @@ class JodaDateTimeTZUserType extends UserType {
     def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
         val time = value.asInstanceOf[DateTime]
         if (time == null) {
-            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session)
+            StandardBasicTypes.LONG.nullSafeSet(st, null, index, session)
             StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, session)
         } else {
-            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, time.toDateTime(DateTimeZone.UTC).toDate, index, session)
+            StandardBasicTypes.LONG.nullSafeSet(st, time.toDateTime(DateTimeZone.UTC).getMillis, index, session)
             StandardBasicTypes.STRING.nullSafeSet(st, time.getZone.getID, index + 1, session)
         }
     }
