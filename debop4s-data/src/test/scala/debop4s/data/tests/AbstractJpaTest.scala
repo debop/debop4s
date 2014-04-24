@@ -18,6 +18,7 @@ abstract class AbstractJpaTest extends AbstractDataTest {
 
     @Autowired protected val emf: EntityManagerFactory = null
 
+    // NOTE: TestContextManager#prepareTestInstance 를 실행시켜야 제대로 Dependency Injection이 됩니다.
     new TestContextManager(this.getClass).prepareTestInstance(this)
 
 }
