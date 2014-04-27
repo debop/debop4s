@@ -1,6 +1,7 @@
 package debop4s.data.jpa.spring
 
 import debop4s.data.jdbc.DataSources
+import debop4s.data.jpa.repository.{JpaQueryDslDao, JpaDao}
 import java.util.Properties
 import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
@@ -95,4 +96,10 @@ abstract class AbstractJpaConfiguration {
     @Bean
     def exceptionTranslation: PersistenceExceptionTranslationPostProcessor =
         new PersistenceExceptionTranslationPostProcessor()
+
+    @Bean
+    def jpaDao: JpaDao = new JpaDao()
+
+    @Bean
+    def jpaQueryDslDao: JpaQueryDslDao = new JpaQueryDslDao()
 }

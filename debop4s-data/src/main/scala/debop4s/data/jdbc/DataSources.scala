@@ -81,11 +81,11 @@ object DataSources {
 
         config.setInitializationFailFast(true)
 
-        config.setAcquireIncrement(processCount)
-        config.setMaximumPoolSize(processCount * 100)
+        // config.setAcquireIncrement(processCount)
+        // config.setMaximumPoolSize(processCount * 3)
         config.setConnectionTestQuery("SELECT 1")
-        config.setRegisterMbeans(true)
-        config.setUseInstrumentation(false)
+        // config.setRegisterMbeans(true)
+        // config.setUseInstrumentation(false)
 
         new HikariDataSource(config)
     }

@@ -1,6 +1,6 @@
 package debop4s.data.tests
 
-import debop4s.data.tests.spring.JpaMySqlConfiguration
+import debop4s.data.tests.spring.JpaH2Configuration
 import javax.persistence.EntityManagerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.support.AnnotationConfigContextLoader
@@ -12,7 +12,7 @@ import org.springframework.test.context.{TestContextManager, ContextConfiguratio
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 26. 오전 10:29
  */
-@ContextConfiguration(classes = Array(classOf[JpaMySqlConfiguration]),
+@ContextConfiguration(classes = Array(classOf[JpaH2Configuration]),
     loader = classOf[AnnotationConfigContextLoader])
 abstract class AbstractJpaTest extends AbstractDataTest {
 

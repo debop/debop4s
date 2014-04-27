@@ -41,9 +41,8 @@ abstract class AbstractJpaMySqlHikariConfiguration extends AbstractJpaMySqlConfi
 
     @Bean
     override def dataSource: DataSource = {
-
         DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL,
-            "jdbc:mysql://localhost/" + getDatabaseName,
+            s"jdbc:mysql://localhost/$getDatabaseName",
             "root",
             "root",
             defaultProperties)
@@ -51,12 +50,12 @@ abstract class AbstractJpaMySqlHikariConfiguration extends AbstractJpaMySqlConfi
 
     def defaultProperties = {
         HashMap(
-            "cachePrepStmts" -> "true",
-            "prepStmtCacheSize" -> "500",
-            "prepStmtCacheSqlLimit" -> "2048",
-            "useServerPrepStmts" -> "true",
             "characterEncoding" -> "UTF-8",
-            "useUnicode" -> "true"
+            "useUnicode" -> "true",
+            "cachePrepStmts" -> "true",
+            "prepStmtCacheSize" -> "250",
+            "prepStmtCacheSqlLimit" -> "2048",
+            "useServerPrepStmts" -> "true"
         )
     }
 }

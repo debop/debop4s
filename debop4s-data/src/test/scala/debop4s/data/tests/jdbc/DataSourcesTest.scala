@@ -32,19 +32,18 @@ class DataSourcesTest extends FunSuite with Matchers {
             "prepStmtCacheSqlLimit" -> "2048",
             "useServerPrepStmts" -> "true"
         )
-        val ds = DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL, url, props = props)
+        val ds = DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL, url, "root", "root", props = props)
 
         ds should not be null
 
-        (0 until 100).par.foreach {
-            x =>
-                val conn = ds.getConnection
-                val ps = conn.prepareStatement("SELECT 1")
-                ps.execute() should equal(true)
+        (0 until 100).par.foreach { x =>
+            val conn = ds.getConnection
+            val ps = conn.prepareStatement("SELECT 1")
+            ps.execute() should equal(true)
 
-                Thread.sleep(10)
-                conn.close()
-                conn.isClosed should equal(true)
+            Thread.sleep(10)
+            conn.close()
+            conn.isClosed should equal(true)
         }
     }
 
@@ -56,13 +55,13 @@ class DataSourcesTest extends FunSuite with Matchers {
 
         ds should not be null
 
-        (0 until 100).par.foreach {
-            x =>
-                val conn = ds.getConnection
-                val ps = conn.prepareStatement("SELECT 1")
-                ps.execute() should equal(true)
-                Thread.sleep(10)
-                conn.close()
+        (0 until 100).par.foreach { x =>
+            val conn = ds.getConnection
+            val ps = conn.prepareStatement("SELECT 1")
+            ps.execute() should equal(true)
+            Thread.sleep(10)
+            conn.close()
+            conn.isClosed should equal(true)
         }
     }
 
@@ -74,13 +73,13 @@ class DataSourcesTest extends FunSuite with Matchers {
 
         ds should not be null
 
-        (0 until 100).par.foreach {
-            x =>
-                val conn = ds.getConnection
-                val ps = conn.prepareStatement("SELECT 1")
-                ps.execute() should equal(true)
-                Thread.sleep(10)
-                conn.close()
+        (0 until 100).par.foreach { x =>
+            val conn = ds.getConnection
+            val ps = conn.prepareStatement("SELECT 1")
+            ps.execute() should equal(true)
+            Thread.sleep(10)
+            conn.close()
+            conn.isClosed should equal(true)
         }
     }
 }
