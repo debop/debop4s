@@ -145,7 +145,6 @@ class FuturePoolTest extends AbstractCoreTest with Eventually {
         val f = nipool {
             a success()
             Asyncs.result(b.future)
-            1
             throw new RuntimeException("foo")
         }
 

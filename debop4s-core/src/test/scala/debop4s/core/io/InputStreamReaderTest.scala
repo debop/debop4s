@@ -44,7 +44,6 @@ class InputStreamReaderTest extends AbstractCoreTest {
         assert(Asyncs.result(f2) === toBuff(10, 20))
 
         val f3 = r.read(10)
-        a
         assert(Asyncs.result(f3) === toBuff(20, 25))
 
         val f4 = r.read(10)

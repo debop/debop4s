@@ -91,7 +91,7 @@ object Closable {
                 } catch {
                     case NonFatal(e) =>
                         log.error("Closable collector threw exception", e)
-                    case fatal =>
+                    case fatal: Throwable =>
                         log.error("Closable collector threw exception", fatal)
                         throw fatal
                 }

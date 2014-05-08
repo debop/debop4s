@@ -29,7 +29,11 @@
 
         <jackson.version>2.3.2</jackson.version>
 
-        <springframework.version>4.0.3.RELEASE</springframework.version>
+        <!--
+            Spring 4.x 가 JDK 8을 지원하기 위해 추가한 @Repeatable 에 대해 scalac 가 무시하지 못하는 버그가 있습니다.
+            현재로서는 scala 2.11 을 사용하던가 Spring 3.x, Hibernate 4.2.x 를 사용해야 합니다.
+        -->
+        <springframework.version>4.0.4.RELEASE</springframework.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
         <querydsl.version>3.3.2</querydsl.version>
 

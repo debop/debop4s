@@ -18,7 +18,7 @@ class StateMachineTest extends AbstractCoreTest {
             def command1() {
                 transition("command1") {
                     case Status1 =>
-                        "ok"
+                        // "ok"
                         state = Status2
                 }
             }
