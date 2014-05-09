@@ -22,12 +22,12 @@
 
     <properties>
         <jdk.version>1.7</jdk.version>
-        <scala.version>2.10.4</scala.version>
-        <scala.main.version>2.10</scala.main.version>
-        <akka.version>2.2.3</akka.version>
+        <scala.version>2.11.0</scala.version>
+        <scala.main.version>2.11</scala.main.version>
+        <akka.version>2.3.2</akka.version>
         <spray.version>1.2.0</spray.version>
 
-        <jackson.version>2.3.2</jackson.version>
+        <jackson.version>2.4.0-rc2</jackson.version>
 
         <!--
             Spring 4.x 가 JDK 8을 지원하기 위해 추가한 @Repeatable 에 대해 scalac 가 무시하지 못하는 버그가 있습니다.
@@ -82,12 +82,12 @@
             <dependency>
                 <groupId>org.scalautils</groupId>
                 <artifactId>scalautils_${scala.main.version}</artifactId>
-                <version>2.1.2</version>
+                <version>2.1.4</version>
             </dependency>
             <dependency>
                 <groupId>com.jsuereth</groupId>
                 <artifactId>scala-arm_${scala.main.version}</artifactId>
-                <version>1.3</version>
+                <version>1.4</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
@@ -261,7 +261,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-scala_${scala.main.version}</artifactId>
-                <version>${jackson.version}</version>
+                <version>2.4.0-rc1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
@@ -273,7 +273,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-hibernate4</artifactId>
-                <version>2.2.3</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
@@ -543,21 +543,16 @@
 
             <!-- Mongo Client -->
             <dependency>
-                <groupId>org.reactivemongo</groupId>
-                <artifactId>reactivemongo_${scala.main.version}</artifactId>
-                <version>0.10.0</version>
-            </dependency>
-            <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
-                <version>2.11.4</version>
+                <version>2.12.0</version>
             </dependency>
 
             <!-- Redis Client for Scala -->
             <dependency>
                 <groupId>com.etaty.rediscala</groupId>
                 <artifactId>rediscala_${scala.main.version}</artifactId>
-                <version>1.3</version>
+                <version>1.3.1</version>
             </dependency>
 
             <!-- Cassandra -->
@@ -578,7 +573,7 @@
             <dependency>
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
-                <version>1.3.7</version>
+                <version>1.3.3</version>
             </dependency>
 
             <!-- Database Drivers -->
@@ -646,13 +641,19 @@
             <dependency>
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest_${scala.main.version}</artifactId>
-                <version>2.0</version>
+                <version>2.1.4</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.scala-lang</groupId>
+                        <artifactId>scala-reflect</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.github.axel22</groupId>
                 <artifactId>scalameter_${scala.main.version}</artifactId>
-                <version>0.4</version>
+                <version>0.5-M2</version>
                 <scope>test</scope>
             </dependency>
 
@@ -780,7 +781,7 @@
         <repository>
             <id>rediscala</id>
             <name>RedisScala</name>
-            <url>https://github.com/etaty/rediscala-mvn/raw/master/releases</url>
+            <url>http://dl.bintray.com/etaty/maven</url>
         </repository>
         <repository>
             <id>spray</id>

@@ -37,8 +37,8 @@
 
         <!-- Mongo Client -->
         <dependency>
-            <groupId>org.reactivemongo</groupId>
-            <artifactId>reactivemongo_${scala.main.version}</artifactId>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
         </dependency>
 
         <dependency>

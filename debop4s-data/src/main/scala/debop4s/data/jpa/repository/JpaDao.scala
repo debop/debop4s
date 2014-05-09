@@ -32,8 +32,7 @@ class JpaDao {
 
     private def persistenceProvider: PersistenceProvider = PersistenceProvider.fromEntityManager(em)
 
-    private
-    def getEntityInformation[T](entityClass: Class[T]): JpaEntityInformation[T, _] =
+    private def getEntityInformation[T](entityClass: Class[T]): JpaEntityInformation[T, _] =
         JpaEntityInformationSupport.getMetadata[T](entityClass, em)
 
     private def getDeleteAllQueryString[T](entityClass: Class[T]) = {
@@ -51,7 +50,7 @@ class JpaDao {
 
         val entity = em.find(entityClass, id)
         if (entity == null) {
-            val msg = s"No ${ getEntityInformation(entityClass) } entity with id [$id] exists"
+            val msg = s"No [$entityClass] entity with id [$id] exists"
             throw new EmptyResultDataAccessException(msg, 1)
         }
         delete(entity)
