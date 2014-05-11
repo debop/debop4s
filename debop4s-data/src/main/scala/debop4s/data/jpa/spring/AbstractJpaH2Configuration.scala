@@ -14,9 +14,9 @@ abstract class AbstractJpaH2Configuration extends AbstractJpaConfiguration {
 
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_H2,
-            s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
-            "sa",
-            "")
+                           s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
+                           "sa",
+                           "")
     }
 
     override def jpaProperties: Properties = {
@@ -33,8 +33,8 @@ abstract class AbstractJpaH2HikariConfiguration extends AbstractJpaH2Configurati
 
     override def dataSource: DataSource = {
         DataSources.getHikariDataSource(DATASOURCE_CLASS_H2,
-            s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
-            "sa",
-            "")
+                                           s"jdbc:h2:mem:$getDatabaseName;DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;",
+                                           "sa",
+                                           "")
     }
 }

@@ -51,24 +51,14 @@ class HibernateRedisConfiguration {
     def dataSource = {
         val config = new HikariConfig()
 
-        config.setDriverClassName("org.h2.Driver")
-        config.setJdbcUrl("jdbc:h2:mem:test;MVCC=true")
-        config.setUsername("sa")
-        config.setPassword("")
+        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
+        config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
+        config.addDataSourceProperty("user", "sa")
+        config.addDataSourceProperty("password", "")
 
         config.setInitializationFailFast(true)
 
         new HikariDataSource(config)
-        //        val config = new HikariConfig()
-        //
-        //        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
-        //        config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
-        //        config.addDataSourceProperty("user", "sa")
-        //        config.addDataSourceProperty("password", "")
-        //
-        //        config.setInitializationFailFast(true)
-        //
-        //        new HikariDataSource(config)
     }
 
     @Bean

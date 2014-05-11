@@ -15,8 +15,7 @@ import org.springframework.transaction.annotation.{Propagation, Transactional}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 11. 오후 10:54
  */
-@ContextConfiguration(classes = Array(classOf[JpaH2Configuration]),
-    loader = classOf[AnnotationConfigContextLoader])
+@ContextConfiguration(classes = Array(classOf[JpaH2Configuration]), loader = classOf[AnnotationConfigContextLoader])
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 class MappingTest extends AbstractDataTest {
 

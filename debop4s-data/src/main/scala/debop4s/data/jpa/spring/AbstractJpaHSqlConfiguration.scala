@@ -16,9 +16,9 @@ abstract class AbstractJpaHSqlConfiguration extends AbstractJpaConfiguration {
 
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_HSQL,
-            s"jdbc:hsqldb:mem:$getDatabaseName;MVCC=TRUE;",
-            "sa",
-            "")
+                           s"jdbc:hsqldb:mem:$getDatabaseName;MVCC=TRUE;",
+                           "sa",
+                           "")
     }
 
     override def jpaProperties: Properties = {
@@ -32,8 +32,8 @@ abstract class AbstractJpaHSqlHikariConfiguration extends AbstractJpaHSqlConfigu
 
     override def dataSource: DataSource = {
         DataSources.getHikariDataSource(DATASOURCE_CLASS_HSQL,
-            s"jdbc:hsqldb:mem:$getDatabaseName;MVCC=TRUE;",
-            "sa",
-            "")
+                                           s"jdbc:hsqldb:mem:$getDatabaseName;MVCC=TRUE;",
+                                           "sa",
+                                           "")
     }
 }

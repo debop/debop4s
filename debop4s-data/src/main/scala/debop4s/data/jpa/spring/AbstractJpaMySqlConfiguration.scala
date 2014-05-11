@@ -19,9 +19,9 @@ abstract class AbstractJpaMySqlConfiguration extends AbstractJpaConfiguration {
     @Bean
     override def dataSource: DataSource = {
         buildDataSource(DRIVER_CLASS_MYSQL,
-            s"jdbc:mysql://localhost/$getDatabaseName",
-            "root",
-            "root")
+                           s"jdbc:mysql://localhost/$getDatabaseName",
+                           "root",
+                           "root")
     }
 
     override def jpaProperties: Properties = {
@@ -42,20 +42,20 @@ abstract class AbstractJpaMySqlHikariConfiguration extends AbstractJpaMySqlConfi
     @Bean
     override def dataSource: DataSource = {
         DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL,
-            s"jdbc:mysql://localhost/$getDatabaseName",
-            "root",
-            "root",
-            defaultProperties)
+                                           s"jdbc:mysql://localhost/$getDatabaseName",
+                                           "root",
+                                           "root",
+                                           defaultProperties)
     }
 
     def defaultProperties = {
         HashMap(
-            "characterEncoding" -> "UTF-8",
-            "useUnicode" -> "true",
-            "cachePrepStmts" -> "true",
-            "prepStmtCacheSize" -> "250",
-            "prepStmtCacheSqlLimit" -> "2048",
-            "useServerPrepStmts" -> "true"
-        )
+                   "characterEncoding" -> "UTF-8",
+                   "useUnicode" -> "true",
+                   "cachePrepStmts" -> "true",
+                   "prepStmtCacheSize" -> "250",
+                   "prepStmtCacheSqlLimit" -> "2048",
+                   "useServerPrepStmts" -> "true"
+               )
     }
 }
