@@ -64,14 +64,25 @@ class JpaRedisConfiguration {
     @Bean
     def dataSource: DataSource = {
         val config = new HikariConfig()
-        config.setMaximumPoolSize(200)
 
-        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
-        config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
-        config.addDataSourceProperty("user", "sa")
-        config.addDataSourceProperty("password", "")
+        config.setDriverClassName("org.h2.Driver")
+        config.setJdbcUrl("jdbc:h2:mem:test;MVCC=true")
+        config.setUsername("sa")
+        config.setPassword("")
+
+        config.setInitializationFailFast(true)
 
         new HikariDataSource(config)
+        //        val config = new HikariConfig()
+        //
+        //        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
+        //        config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
+        //        config.addDataSourceProperty("user", "sa")
+        //        config.addDataSourceProperty("password", "")
+        //
+        //        config.setInitializationFailFast(true)
+        //
+        //        new HikariDataSource(config)
     }
 
     protected def setupEntityManagerFactory(factoryBean: LocalContainerEntityManagerFactoryBean) {
