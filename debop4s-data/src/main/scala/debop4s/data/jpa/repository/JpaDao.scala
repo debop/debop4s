@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.query.QueryUtils
 import org.springframework.data.jpa.repository.support._
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import scala.collection.JavaConversions
 import scala.collection.JavaConversions._
 
 /**
@@ -63,14 +62,13 @@ class JpaDao {
     }
 
     @Transactional
-    def deleteInBatch[T](entityClass: Class[T], entities: Iterable[T]) {
+    def deleteInBatch[T](entityClass: Class[T], entities: java.lang.Iterable[T]) {
         require(entities != null)
 
         if (entities.iterator.hasNext) {
             val deleteQuery = QueryUtils.getQueryString(JpaUtils.DELETE_ALL_QUERY_STRING,
-                getEntityInformation(entityClass).getEntityName)
-            val javaIter = JavaConversions.asJavaIterable(entities)
-            QueryUtils.applyAndBind(deleteQuery, javaIter, em).executeUpdate()
+                                                           getEntityInformation(entityClass).getEntityName)
+            QueryUtils.applyAndBind(deleteQuery, entities, em).executeUpdate()
         }
     }
 

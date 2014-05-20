@@ -71,22 +71,21 @@ object JpaUtils {
             return query
 
 
-        parameters.foreach {
-            p =>
-                log.trace(s"파라미터 설정. $p")
+        parameters.foreach { p =>
+            log.trace(s"파라미터 설정. $p")
 
-                p.value match {
-                    case date: Date =>
-                        query.setParameter(p.name, date, TemporalType.TIMESTAMP)
+            p.value match {
+                case date: Date =>
+                    query.setParameter(p.name, date, TemporalType.TIMESTAMP)
 
-                    case calendar: Calendar =>
-                        query.setParameter(p.name, calendar, TemporalType.TIMESTAMP)
+                case calendar: Calendar =>
+                    query.setParameter(p.name, calendar, TemporalType.TIMESTAMP)
 
-                    case dateTime: DateTime =>
-                        query.setParameter(p.name, dateTime.toDate, TemporalType.TIMESTAMP)
+                case dateTime: DateTime =>
+                    query.setParameter(p.name, dateTime.toDate, TemporalType.TIMESTAMP)
 
-                    case _ => query.setParameter(p.name, p.value)
-                }
+                case _ => query.setParameter(p.name, p.value)
+            }
         }
         query
     }
