@@ -3,6 +3,7 @@ package debop4s.data.hibernate.repository
 import debop4s.core.utils.Arrays
 import debop4s.data.hibernate.HibernateParameter
 import debop4s.data.hibernate.tools.{HibernateTool, CriteriaTool}
+import java.util.{Map => JMap, Collection => JCollection}
 import org.hibernate._
 import org.hibernate.criterion._
 import org.hibernate.transform.Transformers
@@ -48,8 +49,8 @@ class HibernateDao {
         session.get(clazz, id, lockOptions).asInstanceOf[T]
 
     @varargs
-    def getIn[T](clazz: Class[T], ids: java.io.Serializable*): List[_] = {
-        val dc = CriteriaTool.addIn(DetachedCriteria.forClass(clazz), "id", ids: _*)
+    def getIn[T](clazz: Class[T], ids: JCollection[_]): List[_] = {
+        val dc = CriteriaTool.addIn(DetachedCriteria.forClass(clazz), "id", ids)
         find(dc)
     }
 

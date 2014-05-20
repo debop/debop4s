@@ -6,6 +6,8 @@ import java.util.{Map => JMap, Collection => JCollection}
 import org.hibernate.Criteria
 import org.hibernate.criterion._
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Sort
+import scala.collection.JavaConversions._
 
 /**
  * [[Criteria]] 빌드를 위한 Helper Object 입니다.
@@ -16,6 +18,15 @@ import org.slf4j.LoggerFactory
 object CriteriaTool {
 
     private lazy val log = LoggerFactory.getLogger(getClass)
+
+    def toOrders(sort: Sort): Seq[Order] = {
+        sort.map { (x: Sort.Order) =>
+            if (x.getDirection == Sort.Direction.ASC)
+                Order.asc(x.getProperty)
+            else
+                Order.desc(x.getProperty)
+        }.toSeq
+    }
 
     /**
      * 속성 값이 lo, hi 사이의 값인지를 검사하는 질의어
