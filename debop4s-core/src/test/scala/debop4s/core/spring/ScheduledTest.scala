@@ -3,7 +3,7 @@ package debop4s.core.spring
 import org.scalatest.{Matchers, FunSuite}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.scheduling.annotation.{Scheduled, EnableScheduling}
 import org.springframework.test.context.support.AnnotationConfigContextLoader
 import org.springframework.test.context.{TestContextManager, ContextConfiguration}
 
@@ -36,8 +36,7 @@ class ScheduledTest extends FunSuite with Matchers {
 
 class ScheduledJob {
 
-    // BUG: @Scheduled 가 @Repeatable을 사용하는데, scalac 가 JDK8 에 새로 정의된 @Repeatable을 무시하지 못한다.
-    // @Scheduled(fixedRate = 1000L)
+    @Scheduled(fixedRate = 1000L)
     def task() {
         println("스케쥴 작업입니다.")
     }

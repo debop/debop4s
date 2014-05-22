@@ -48,7 +48,6 @@ class HibernateDao {
     def get[T](clazz: Class[T], id: java.io.Serializable, lockOptions: LockOptions): T =
         session.get(clazz, id, lockOptions).asInstanceOf[T]
 
-    @varargs
     def getIn[T](clazz: Class[T], ids: JCollection[_]): List[_] = {
         val dc = CriteriaTool.addIn(DetachedCriteria.forClass(clazz), "id", ids)
         find(dc)
@@ -378,7 +377,7 @@ class HibernateDao {
     }
 
     def reportOne[P](projectClass: Class[P], projectionList: ProjectionList, criteria: Criteria): P =
-        buildProjectionCriteria(projectClass, criteria, projectionList, true)
+        buildProjectionCriteria(projectClass, criteria, projectionList, distinctResult = true)
         .uniqueResult()
         .asInstanceOf[P]
 

@@ -22,12 +22,12 @@
 
     <properties>
         <jdk.version>1.7</jdk.version>
-        <scala.version>2.11.0</scala.version>
+        <scala.version>2.11.1</scala.version>
         <scala.main.version>2.11</scala.main.version>
         <akka.version>2.3.2</akka.version>
         <spray.version>1.2.0</spray.version>
 
-        <jackson.version>2.4.0-rc2</jackson.version>
+        <jackson.version>2.4.0-rc3</jackson.version>
 
         <!--
             Spring 4.x 가 JDK 8을 지원하기 위해 추가한 @Repeatable 에 대해 scalac 가 무시하지 못하는 버그가 있습니다.
@@ -641,7 +641,7 @@
             <dependency>
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest_${scala.main.version}</artifactId>
-                <version>2.1.4</version>
+                <version>2.1.7</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
