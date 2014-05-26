@@ -22,8 +22,8 @@
 
     <properties>
         <jdk.version>1.7</jdk.version>
-        <scala.version>2.11.1</scala.version>
-        <scala.main.version>2.11</scala.main.version>
+        <scala.version>2.10.4</scala.version>
+        <scala.main.version>2.10</scala.main.version>
         <akka.version>2.3.2</akka.version>
         <spray.version>1.2.0</spray.version>
 

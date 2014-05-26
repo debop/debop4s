@@ -36,7 +36,7 @@ class ScheduledTest extends FunSuite with Matchers {
 
 class ScheduledJob {
 
-    @Scheduled(fixedRate = 1000L)
+    // @Scheduled(fixedRate = 1000L)
     def task() {
         println("스케쥴 작업입니다.")
     }
