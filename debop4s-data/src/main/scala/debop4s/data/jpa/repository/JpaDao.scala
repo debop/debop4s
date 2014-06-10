@@ -26,7 +26,7 @@ class JpaDao {
 
     @PersistenceContext val em: EntityManager = null
 
-    var lockProvider: LockMetadataProvider = null
+    // var lockProvider: LockMetadataProvider = null
     protected var countQueryPlaceholder = "*"
 
     private def persistenceProvider: PersistenceProvider = PersistenceProvider.fromEntityManager(em)
@@ -112,10 +112,11 @@ class JpaDao {
 
     def findOne[T](entityClass: Class[T], id: java.io.Serializable): T = {
         require(id != null)
-        val lockMode = if (lockProvider == null) null else lockProvider.getLockModeType
+        em.find(entityClass, id)
+        // val lockMode = if (lockProvider == null) null else lockProvider.getLockModeType
 
-        if (lockMode == null) em.find(entityClass, id)
-        else em.find(entityClass, id, lockMode)
+        //        if (lockMode == null) em.find(entityClass, id)
+        //        else em.find(entityClass, id, lockMode)
     }
 
     def findAll[T](entityClass: Class[T]): java.util.List[T] = {
