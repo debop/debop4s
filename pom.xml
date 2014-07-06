@@ -24,18 +24,18 @@
         <jdk.version>1.7</jdk.version>
         <scala.version>2.11.1</scala.version>
         <scala.main.version>2.11</scala.main.version>
-        <akka.version>2.3.3</akka.version>
+        <akka.version>2.3.4</akka.version>
         <spray.version>1.2.0</spray.version>
 
-        <jackson.version>2.4.0-rc3</jackson.version>
+        <jackson.version>2.4.0</jackson.version>
 
         <!--
             Spring 4.x 가 JDK 8을 지원하기 위해 추가한 @Repeatable 에 대해 scalac 가 무시하지 못하는 버그가 있습니다.
             현재로서는 scala 2.11 을 사용하던가 Spring 3.x, Hibernate 4.2.x 를 사용해야 합니다.
         -->
-        <springframework.version>4.0.4.RELEASE</springframework.version>
+        <springframework.version>4.0.5.RELEASE</springframework.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
-        <querydsl.version>3.3.2</querydsl.version>
+        <querydsl.version>3.3.4</querydsl.version>
 
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -130,6 +130,13 @@
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
                 <version>1.4.0</version>
+            </dependency>
+
+            <!-- Http Componrnt for Scala -->
+            <dependency>
+                <groupId>net.databinder.dispatch</groupId>
+                <artifactId>dispatch-core_2.11</artifactId>
+                <version>0.11.1</version>
             </dependency>
 
             <!-- Http Component -->
@@ -439,18 +446,13 @@
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
-                <version>1.6.0.RELEASE</version>
+                <version>1.6.1.RELEASE</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-mongodb</artifactId>
-                <version>1.4.2.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-mongodb-cross-store</artifactId>
-                <version>1.4.2.RELEASE</version>
+                <version>1.5.1.RELEASE</version>
             </dependency>
 
             <!-- Spring Boot -->
@@ -539,6 +541,18 @@
                 <groupId>com.mysema.querydsl</groupId>
                 <artifactId>querydsl-scala</artifactId>
                 <version>${querydsl.version}</version>
+            </dependency>
+
+            <!-- ScalikeJDBC -->
+            <dependency>
+                <groupId>org.scalikejdbc</groupId>
+                <artifactId>scalikejdbc_2.11</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalikejdbc</groupId>
+                <artifactId>scalikejdbc-async_2.10</artifactId>
+                <version>0.4.0</version>
             </dependency>
 
             <!-- Mongo Client -->

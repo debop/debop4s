@@ -147,6 +147,12 @@
             <artifactId>modelmapper</artifactId>
         </dependency>
 
+        <!-- Http Component for Scala -->
+        <dependency>
+            <groupId>net.databinder.dispatch</groupId>
+            <artifactId>dispatch-core_2.11</artifactId>
+        </dependency>
+
         <!-- Http Component -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -163,12 +169,6 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpasyncclient</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>httpcore</artifactId>
-                    <groupId>org.apache.httpcomponents</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.ning</groupId>
