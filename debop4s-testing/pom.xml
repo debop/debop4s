@@ -21,12 +21,12 @@
         <!-- ScalaTest -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scala.main.version}</artifactId>
+            <artifactId>scalatest_2.11</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.axel22</groupId>
-            <artifactId>scalameter_${scala.main.version}</artifactId>
+            <artifactId>scalameter_2.11</artifactId>
             <scope>compile</scope>
         </dependency>
     </dependencies>

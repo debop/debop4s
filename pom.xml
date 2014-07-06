@@ -29,7 +29,7 @@
         <akka.version>2.3.4</akka.version>
         <spray.version>1.2.0</spray.version>
 
-        <jackson.version>2.4.0</jackson.version>
+        <jackson.version>2.4.1</jackson.version>
 
         <!--
             Spring 4.x 가 JDK 8을 지원하기 위해 추가한 @Repeatable 에 대해 scalac 가 무시하지 못하는 버그가 있습니다.
@@ -39,7 +39,7 @@
         <hibernate.version>4.3.5.Final</hibernate.version>
         <querydsl.version>3.4.1</querydsl.version>
 
-        <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
+        <hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -70,12 +70,12 @@
             <!-- Akka -->
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-actor_${scala.main.version}</artifactId>
+                <artifactId>akka-actor_2.11</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-testkit_${scala.main.version}</artifactId>
+                <artifactId>akka-testkit_2.11</artifactId>
                 <version>${akka.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -83,17 +83,17 @@
             <!-- scala utils -->
             <dependency>
                 <groupId>org.scalautils</groupId>
-                <artifactId>scalautils_${scala.main.version}</artifactId>
+                <artifactId>scalautils_2.11</artifactId>
                 <version>2.1.4</version>
             </dependency>
             <dependency>
                 <groupId>com.jsuereth</groupId>
-                <artifactId>scala-arm_${scala.main.version}</artifactId>
+                <artifactId>scala-arm_2.11</artifactId>
                 <version>1.4</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
-                <artifactId>scala-async_${scala.main.version}</artifactId>
+                <artifactId>scala-async_2.11</artifactId>
                 <version>0.9.1</version>
             </dependency>
 
@@ -116,17 +116,17 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
-                <version>2.1</version>
+                <version>2.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.1</version>
+                <version>3.3.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.5</version>
+                <version>1.8.1</version>
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>
@@ -145,22 +145,22 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.3</version>
+                <version>4.3.4</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>fluent-hc</artifactId>
-                <version>4.3.1</version>
+                <version>4.3.4</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-nio</artifactId>
-                <version>4.3</version>
+                <version>4.3.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient</artifactId>
-                <version>4.0</version>
+                <version>4.0.1</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>httpcore</artifactId>
@@ -171,7 +171,7 @@
             <dependency>
                 <groupId>com.ning</groupId>
                 <artifactId>async-http-client</artifactId>
-                <version>1.7.20</version>
+                <version>1.8.12</version>
             </dependency>
 
             <!-- Mail -->
@@ -184,7 +184,7 @@
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.18.1-GA</version>
+                <version>3.18.2-GA</version>
             </dependency>
 
             <!-- annotations -->
@@ -213,7 +213,7 @@
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
-                <version>2.0.1</version>
+                <version>2.0.3</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -237,12 +237,12 @@
             <dependency>
                 <groupId>org.xerial.snappy</groupId>
                 <artifactId>snappy-java</artifactId>
-                <version>1.1.0.1</version>
+                <version>1.1.1</version>
             </dependency>
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
                 <artifactId>fst</artifactId>
-                <version>1.54</version>
+                <version>1.58</version>
             </dependency>
 
             <!-- Jackson JSON Serializer -->
@@ -269,7 +269,7 @@
             <!-- Jackson for Scala -->
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-scala_${scala.main.version}</artifactId>
+                <artifactId>jackson-module-scala_2.11</artifactId>
                 <version>2.4.0-rc1</version>
                 <exclusions>
                     <exclusion>
@@ -282,12 +282,12 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-hibernate4</artifactId>
-                <version>${jackson.version}</version>
+                <version>2.8.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-afterburner</artifactId>
-                <version>2.2.0</version>
+                <version>2.4.1</version>
             </dependency>
 
 
@@ -302,7 +302,7 @@
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-all</artifactId>
-                <version>4.2</version>
+                <version>5.0.3</version>
             </dependency>
 
             <!-- Model Mapper -->
@@ -335,28 +335,28 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.0.13</version>
+                <version>1.1.2</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-access</artifactId>
-                <version>1.0.13</version>
+                <version>1.1.2</version>
             </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.6</version>
+                <version>1.7.7</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
-                <version>1.7.6</version>
+                <version>1.7.7</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.6</version>
+                <version>1.7.7</version>
             </dependency>
 
             <!-- Commons Logging -->
@@ -573,13 +573,13 @@
             <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
-                <version>2.12.0</version>
+                <version>2.12.2</version>
             </dependency>
 
             <!-- Redis Client for Scala -->
             <dependency>
                 <groupId>com.etaty.rediscala</groupId>
-                <artifactId>rediscala_${scala.main.version}</artifactId>
+                <artifactId>rediscala_2.11</artifactId>
                 <version>1.3.1</version>
             </dependency>
 
@@ -661,7 +661,7 @@
             <!-- ScalaTest -->
             <dependency>
                 <groupId>org.scalatest</groupId>
-                <artifactId>scalatest_${scala.main.version}</artifactId>
+                <artifactId>scalatest_2.11</artifactId>
                 <version>2.1.7</version>
                 <scope>test</scope>
                 <exclusions>
@@ -673,7 +673,7 @@
             </dependency>
             <dependency>
                 <groupId>com.github.axel22</groupId>
-                <artifactId>scalameter_${scala.main.version}</artifactId>
+                <artifactId>scalameter_2.11</artifactId>
                 <version>0.5-M2</version>
                 <scope>test</scope>
             </dependency>
@@ -704,12 +704,12 @@
         <!-- ScalaTest -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scala.main.version}</artifactId>
+            <artifactId>scalatest_2.11</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.axel22</groupId>
-            <artifactId>scalameter_${scala.main.version}</artifactId>
+            <artifactId>scalameter_2.11</artifactId>
             <scope>test</scope>
         </dependency>
 

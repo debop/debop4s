@@ -18,15 +18,15 @@
         <!-- scala utils -->
         <dependency>
             <groupId>org.scalautils</groupId>
-            <artifactId>scalautils_${scala.main.version}</artifactId>
+            <artifactId>scalautils_2.11</artifactId>
         </dependency>
         <dependency>
             <groupId>com.jsuereth</groupId>
-            <artifactId>scala-arm_${scala.main.version}</artifactId>
+            <artifactId>scala-arm_2.11</artifactId>
         </dependency>
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
-            <artifactId>scala-async_${scala.main.version}</artifactId>
+            <artifactId>scala-async_2.11</artifactId>
         </dependency>
 
         <!-- Apache Commons -->
@@ -138,7 +138,7 @@
         <!-- Jackson for Scala -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-scala_${scala.main.version}</artifactId>
+            <artifactId>jackson-module-scala_2.11</artifactId>
         </dependency>
 
         <!-- Model Mapper -->

@@ -17,18 +17,18 @@
         <!-- Akka -->
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_${scala.main.version}</artifactId>
+            <artifactId>akka-actor_2.11</artifactId>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-testkit_${scala.main.version}</artifactId>
+            <artifactId>akka-testkit_2.11</artifactId>
             <scope>test</scope>
         </dependency>
 
         <!-- scala async -->
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
-            <artifactId>scala-async_${scala.main.version}</artifactId>
+            <artifactId>scala-async_2.11</artifactId>
         </dependency>
 
         <!-- Hibernate -->
@@ -50,7 +50,7 @@
         <!-- Redis Client for Scala -->
         <dependency>
             <groupId>com.etaty.rediscala</groupId>
-            <artifactId>rediscala_${scala.main.version}</artifactId>
+            <artifactId>rediscala_2.11</artifactId>
         </dependency>
 
         <dependency>
