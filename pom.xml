@@ -19,6 +19,7 @@
         <module>debop4s-data-jpa</module>
         <module>debop4s-testing</module>
         <module>debop4s-jdbc</module>
+        <module>debop4s-rediscala</module>
     </modules>
 
     <properties>
