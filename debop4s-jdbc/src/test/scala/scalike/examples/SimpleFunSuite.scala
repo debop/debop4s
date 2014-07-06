@@ -1,4 +1,4 @@
-package debop4s.data.tests.scalikejdbc
+package scalike.examples
 
 import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
@@ -43,10 +43,11 @@ class SimpleFunSuite extends FunSuite with Matchers with BeforeAndAfterAll {
 
     log.debug(s"load Alice, memberId=${memberId.get}")
 
-    val m = Member.syntax
-    val ids = withSQL {
-      select()
-    }
+    //    val m = Member.syntax
+    //    val ids = withSQL {
+    //      select()
+    //    }
+    //    ids.foreach { id => log.debug(s"id=$id")}
   }
 
   test("load all") {

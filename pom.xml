@@ -18,6 +18,7 @@
         <module>debop4s-data</module>
         <module>debop4s-data-jpa</module>
         <module>debop4s-testing</module>
+        <module>debop4s-jdbc</module>
     </modules>
 
     <properties>
@@ -223,12 +224,12 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>16.0.1</version>
+                <version>17.0</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava-testlib</artifactId>
-                <version>16.0</version>
+                <version>17.0</version>
                 <scope>test</scope>
             </dependency>
 
@@ -547,12 +548,24 @@
             <dependency>
                 <groupId>org.scalikejdbc</groupId>
                 <artifactId>scalikejdbc_2.11</artifactId>
-                <version>2.0.2</version>
+                <version>2.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalikejdbc</groupId>
+                <artifactId>scalikejdbc-config_2.11</artifactId>
+                <version>2.0.4</version>
             </dependency>
             <dependency>
                 <groupId>org.scalikejdbc</groupId>
                 <artifactId>scalikejdbc-async_2.10</artifactId>
                 <version>0.4.0</version>
+            </dependency>
+
+            <!-- ScalDI -->
+            <dependency>
+                <groupId>org.scaldi</groupId>
+                <artifactId>scaldi_2.11</artifactId>
+                <version>0.4</version>
             </dependency>
 
             <!-- Mongo Client -->

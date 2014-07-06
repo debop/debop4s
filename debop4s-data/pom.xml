@@ -114,17 +114,6 @@
             <artifactId>querydsl-scala</artifactId>
         </dependency>
 
-        <!-- ScalikeJDBC -->
-        <dependency>
-            <groupId>org.scalikejdbc</groupId>
-            <artifactId>scalikejdbc_2.11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.scalikejdbc</groupId>
-            <artifactId>scalikejdbc-async_2.10</artifactId>
-            <version>0.4.0</version>
-        </dependency>
-
         <!-- Bone CP -->
         <dependency>
             <groupId>com.jolbox</groupId>
