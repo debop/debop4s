@@ -46,12 +46,6 @@
             <artifactId>joda-convert</artifactId>
         </dependency>
 
-        <!-- Spring Scala -->
-        <dependency>
-            <groupId>org.springframework.scala</groupId>
-            <artifactId>spring-scala</artifactId>
-        </dependency>
-
         <!-- Spring JPA -->
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -74,13 +68,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Hibernate 2nd client -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-ehcache</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Hibernate-Validator -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -91,11 +78,6 @@
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-collections</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-codegen</artifactId>
-            <version>${querydsl.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mysema.querydsl</groupId>

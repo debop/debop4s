@@ -27,10 +27,6 @@
             <groupId>org.scalikejdbc</groupId>
             <artifactId>scalikejdbc-config_2.11</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.scalikejdbc</groupId>
-            <artifactId>scalikejdbc-async_2.10</artifactId>
-        </dependency>
 
         <!-- Hibernate -->
         <dependency>

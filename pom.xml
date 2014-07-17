@@ -25,26 +25,29 @@
     <properties>
         <jdk.version>1.7</jdk.version>
         <scala.version>2.11.1</scala.version>
-        <scala.main.version>2.11</scala.main.version>
         <akka.version>2.3.4</akka.version>
-        <spray.version>1.2.0</spray.version>
+        <scalatra.version>2.3.0</scalatra.version>
 
-        <jackson.version>2.4.1</jackson.version>
-
-        <!--
-            Spring 4.x 가 JDK 8을 지원하기 위해 추가한 @Repeatable 에 대해 scalac 가 무시하지 못하는 버그가 있습니다.
-            현재로서는 scala 2.11 을 사용하던가 Spring 3.x, Hibernate 4.2.x 를 사용해야 합니다.
-        -->
         <springframework.version>4.0.5.RELEASE</springframework.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
-        <querydsl.version>3.4.1</querydsl.version>
 
         <hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
+        <querydsl.version>3.4.1</querydsl.version>
+
+        <jackson.version>2.4.1</jackson.version>
+        <json4s.version>3.2.10</json4s.version>
+        <jodd.version>3.5.2</jodd.version>
+        <slf4j.version>1.7.7</slf4j.version>
+
+        <tomcat.version>8.0.8</tomcat.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencyManagement>
+
         <dependencies>
+
             <!-- Scala -->
             <dependency>
                 <groupId>org.scala-lang</groupId>
@@ -61,11 +64,6 @@
                 <artifactId>scala-reflect</artifactId>
                 <version>${scala.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-actors</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
 
             <!-- Akka -->
             <dependency>
@@ -80,33 +78,92 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- scala utils -->
+            <!-- Typesafe config -->
             <dependency>
-                <groupId>org.scalautils</groupId>
-                <artifactId>scalautils_2.11</artifactId>
-                <version>2.1.4</version>
+                <groupId>com.typesafe</groupId>
+                <artifactId>config</artifactId>
+                <version>1.2.1</version>
             </dependency>
-            <dependency>
-                <groupId>com.jsuereth</groupId>
-                <artifactId>scala-arm_2.11</artifactId>
-                <version>1.4</version>
-            </dependency>
+
+            <!-- Scala Async -->
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
                 <artifactId>scala-async_2.11</artifactId>
                 <version>0.9.1</version>
             </dependency>
 
+            <!-- ScalaBlitz -->
+            <dependency>
+                <groupId>com.github.scala-blitz</groupId>
+                <artifactId>scala-blitz_2.11</artifactId>
+                <version>1.1</version>
+            </dependency>
+
+            <!-- Scalactic -->
+            <dependency>
+                <groupId>org.scalactic</groupId>
+                <artifactId>scalactic_2.11</artifactId>
+                <version>2.2.0</version>
+            </dependency>
+
+            <!-- Scalatra -->
+            <dependency>
+                <groupId>org.scalatra</groupId>
+                <artifactId>scalatra_2.11</artifactId>
+                <version>${scalatra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatra</groupId>
+                <artifactId>scalatra-scalate_2.11</artifactId>
+                <version>${scalatra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatra</groupId>
+                <artifactId>scalatra-json_2.11</artifactId>
+                <version>${scalatra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatra</groupId>
+                <artifactId>scalatra-fileupload_2.11</artifactId>
+                <version>${scalatra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatra</groupId>
+                <artifactId>scalatra-jetty_2.11</artifactId>
+                <version>${scalatra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatra</groupId>
+                <artifactId>scalatra-commands_2.11</artifactId>
+                <version>${scalatra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatra</groupId>
+                <artifactId>scalatra-scalatest_2.11</artifactId>
+                <version>${scalatra.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Scalate Template Engine -->
+            <dependency>
+                <groupId>org.scalatra.scalate</groupId>
+                <artifactId>scalate-core_2.11</artifactId>
+                <version>1.7.0</version>
+            </dependency>
+
+            <!-- ScalDI -->
+            <dependency>
+                <groupId>org.scaldi</groupId>
+                <artifactId>scaldi_2.11</artifactId>
+                <version>0.4</version>
+            </dependency>
+
+
             <!-- Apache Commons -->
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.8</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
+                <version>1.9</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -115,8 +172,18 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.8.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
                 <version>2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -124,24 +191,31 @@
                 <version>3.3.2</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-compress</artifactId>
-                <version>1.8.1</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
                 <version>1.4.0</version>
             </dependency>
 
-            <!-- Http Componrnt for Scala -->
+            <!-- Javax Mail -->
             <dependency>
-                <groupId>net.databinder.dispatch</groupId>
-                <artifactId>dispatch-core_2.11</artifactId>
-                <version>0.11.1</version>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.7</version>
+            </dependency>
+
+            <!-- IntelliJ annotations -->
+            <dependency>
+                <groupId>com.intellij</groupId>
+                <artifactId>annotations</artifactId>
+                <version>12.0</version>
             </dependency>
 
             <!-- Http Component -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.3.2</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
@@ -161,12 +235,6 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient</artifactId>
                 <version>4.0.1</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>httpcore</artifactId>
-                        <groupId>org.apache.httpcomponents</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.ning</groupId>
@@ -174,24 +242,16 @@
                 <version>1.8.12</version>
             </dependency>
 
-            <!-- Mail -->
             <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-                <version>1.4</version>
+                <groupId>io.netty</groupId>
+                <artifactId>netty</artifactId>
+                <version>3.9.2.Final</version>
             </dependency>
 
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>3.18.2-GA</version>
-            </dependency>
-
-            <!-- annotations -->
-            <dependency>
-                <groupId>com.intellij</groupId>
-                <artifactId>annotations</artifactId>
-                <version>12.0</version>
             </dependency>
 
             <!-- JSR -->
@@ -215,11 +275,6 @@
                 <artifactId>jsr305</artifactId>
                 <version>2.0.3</version>
             </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
-            </dependency>
 
             <!-- Guava -->
             <dependency>
@@ -227,22 +282,33 @@
                 <artifactId>guava</artifactId>
                 <version>17.0</version>
             </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava-testlib</artifactId>
-                <version>17.0</version>
-                <scope>test</scope>
-            </dependency>
 
+            <!-- snappy-java -->
             <dependency>
                 <groupId>org.xerial.snappy</groupId>
                 <artifactId>snappy-java</artifactId>
                 <version>1.1.1</version>
             </dependency>
+
+            <!-- LZ4 -->
+            <dependency>
+                <groupId>net.jpountz.lz4</groupId>
+                <artifactId>lz4</artifactId>
+                <version>1.2.0</version>
+            </dependency>
+
+            <!-- Fast Serialization -->
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
                 <artifactId>fst</artifactId>
                 <version>1.58</version>
+            </dependency>
+
+            <!-- GSON -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.2.4</version>
             </dependency>
 
             <!-- Jackson JSON Serializer -->
@@ -266,6 +332,7 @@
                 <artifactId>jackson-datatype-joda</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
+
             <!-- Jackson for Scala -->
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
@@ -284,18 +351,42 @@
                 <version>${jackson.version}</version>
             </dependency>
 
+            <!-- Json4s -->
+            <dependency>
+                <groupId>org.json4s</groupId>
+                <artifactId>json4s-core_2.11</artifactId>
+                <version>3.2.10</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.scala-lang</groupId>
+                        <artifactId>scala-library</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.json4s</groupId>
+                <artifactId>json4s-jackson_2.11</artifactId>
+                <version>3.2.10</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.scala-lang</groupId>
+                        <artifactId>scala-library</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 
             <!-- ASM -->
             <!-- NOTE: Spring 3.x 에서는 org.ow2.asm 4.1 을 사용하면 안되고, 꼭 asm 3.x 버전을 사용하세요 -->
             <!-- NOTE: Spring 4.0 이상에서는 org.ow2.asm 4.2 이상을 사용해야 합니다. -->
             <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>3.1</version>
+                <groupId>asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>3.3.1</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-all</artifactId>
+                <artifactId>asm</artifactId>
                 <version>5.0.3</version>
             </dependency>
 
@@ -303,7 +394,14 @@
             <dependency>
                 <groupId>org.modelmapper</groupId>
                 <artifactId>modelmapper</artifactId>
-                <version>0.6.3</version>
+                <version>0.7.2</version>
+            </dependency>
+
+            <!-- Http Component for Scala -->
+            <dependency>
+                <groupId>net.databinder.dispatch</groupId>
+                <artifactId>dispatch-core_2.11</artifactId>
+                <version>0.11.1</version>
             </dependency>
 
             <!-- 암호화 -->
@@ -325,6 +423,45 @@
                 <version>1.6</version>
             </dependency>
 
+            <!-- java tuples  -->
+            <dependency>
+                <groupId>org.javatuples</groupId>
+                <artifactId>javatuples</artifactId>
+                <version>1.2</version>
+            </dependency>
+
+            <!-- Jodd -->
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-core</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-db</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-bean</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-props</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-jtx</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-servlet</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+
             <!-- Logging -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -332,25 +469,19 @@
                 <version>1.1.2</version>
             </dependency>
             <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-access</artifactId>
-                <version>1.1.2</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.7</version>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
-                <version>1.7.7</version>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.7</version>
+                <version>${slf4j.version}</version>
             </dependency>
 
             <!-- Commons Logging -->
@@ -360,10 +491,28 @@
                 <version>1.1.3</version>
             </dependency>
 
+            <!-- project lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.14.4</version>
+                <scope>provided</scope>
+            </dependency>
+
             <!-- Spring framework -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
                 <version>${springframework.version}</version>
             </dependency>
             <dependency>
@@ -388,17 +537,7 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
                 <artifactId>spring-aspects</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
                 <version>${springframework.version}</version>
             </dependency>
             <dependency>
@@ -419,13 +558,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- Spring Scala -->
-            <dependency>
-                <groupId>org.springframework.scala</groupId>
-                <artifactId>spring-scala</artifactId>
-                <version>1.0.0.M2</version>
-            </dependency>
-
             <!-- Spring MVC -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -436,6 +568,13 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
                 <version>${springframework.version}</version>
+            </dependency>
+
+            <!-- Spring Scala -->
+            <dependency>
+                <groupId>org.springframework.scala</groupId>
+                <artifactId>spring-scala_2.11</artifactId>
+                <version>1.0.0.RC1</version>
             </dependency>
 
             <!-- Spring Data -->
@@ -451,11 +590,23 @@
                 <version>1.5.1.RELEASE</version>
             </dependency>
 
-            <!-- Spring Boot -->
+            <!-- Spring Security -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>1.1.3.RELEASE</version>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-crypto</artifactId>
+                <version>3.2.4.RELEASE</version>
+            </dependency>
+
+            <!-- AspectJ -->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>1.8.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>1.8.1</version>
             </dependency>
 
             <!-- Hibernate -->
@@ -470,22 +621,14 @@
                 <version>${hibernate.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-envers</artifactId>
-                <version>${hibernate.version}</version>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>3.1.4.GA</version>
             </dependency>
 
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-testing</artifactId>
-                <version>${hibernate.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- Hibernate 2nd client -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-ehcache</artifactId>
                 <version>${hibernate.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -512,6 +655,29 @@
                 <groupId>com.mysema.querydsl</groupId>
                 <artifactId>querydsl-jpa</artifactId>
                 <version>${querydsl.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>jsr305</artifactId>
+                        <groupId>com.google.code.findbugs</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.mysema.querydsl</groupId>
+                <artifactId>querydsl-jpa-codegen</artifactId>
+                <version>${querydsl.version}</version>
+                <exclusions>
+                    <!-- hibernate 4.3.x 이상에서 jpa-2.1-model 를 사용한다 -->
+                    <exclusion>
+                        <groupId>org.hibernate.javax.persistence</groupId>
+                        <artifactId>hibernate-jpa-2.0-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.mysema.querydsl</groupId>
+                <artifactId>querydsl-scala</artifactId>
+                <version>${querydsl.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.mysema.querydsl</groupId>
@@ -523,23 +689,8 @@
                 <artifactId>querydsl-sql</artifactId>
                 <version>${querydsl.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.mysema.querydsl</groupId>
-                <artifactId>querydsl-codegen</artifactId>
-                <version>${querydsl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mysema.querydsl</groupId>
-                <artifactId>querydsl-jpa-codegen</artifactId>
-                <version>${querydsl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mysema.querydsl</groupId>
-                <artifactId>querydsl-scala</artifactId>
-                <version>${querydsl.version}</version>
-            </dependency>
 
-            <!-- ScalikeJDBC -->
+            <!-- scalikejdbc -->
             <dependency>
                 <groupId>org.scalikejdbc</groupId>
                 <artifactId>scalikejdbc_2.11</artifactId>
@@ -552,22 +703,24 @@
             </dependency>
             <dependency>
                 <groupId>org.scalikejdbc</groupId>
-                <artifactId>scalikejdbc-async_2.10</artifactId>
-                <version>0.4.0</version>
+                <artifactId>scalikejdbc-test_2.11</artifactId>
+                <version>2.0.4</version>
+                <scope>test</scope>
             </dependency>
 
-            <!-- ScalDI -->
-            <dependency>
-                <groupId>org.scaldi</groupId>
-                <artifactId>scaldi_2.11</artifactId>
-                <version>0.4</version>
-            </dependency>
 
-            <!-- Mongo Client -->
+            <!-- MongoDB -->
             <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
                 <version>2.12.2</version>
+            </dependency>
+
+            <!-- Redis java client-->
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>2.5.1</version>
             </dependency>
 
             <!-- Redis Client for Scala -->
@@ -577,6 +730,13 @@
                 <version>1.3.1</version>
             </dependency>
 
+            <!-- Tomcat Connection Pool -->
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jdbc</artifactId>
+                <version>8.0.9</version>
+            </dependency>
+
             <!-- Bone CP -->
             <dependency>
                 <groupId>com.jolbox</groupId>
@@ -584,7 +744,7 @@
                 <version>0.8.0.RELEASE</version>
             </dependency>
 
-            <!-- HikariCP : 1.3.4, 1.3.5는 Hibernate 에서 버그가 있습니다.-->
+            <!-- Hikari CP -->
             <dependency>
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
@@ -598,7 +758,6 @@
                 <version>2.3.2</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
@@ -616,8 +775,70 @@
             <dependency>
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>9.1-901.jdbc4</version>
+                <version>9.1-901-1.jdbc4</version>
                 <scope>test</scope>
+            </dependency>
+
+            <!-- Jetty -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-webapp</artifactId>
+                <version>9.2.1.v20140609</version>
+            </dependency>
+
+            <!-- Tomcat Embedded -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-logging-juli</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-jasper</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <!-- Servlet -->
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>7.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-web-api</artifactId>
+                <version>7.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+
+            <!-- Shiro -->
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-web</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+
+            <!-- Xml -->
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>2.0.2</version>
             </dependency>
 
             <!-- Test -->
@@ -634,9 +855,35 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>1.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.carrotsearch</groupId>
+                <artifactId>junit-benchmarks</artifactId>
+                <version>0.7.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.9.5</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>6.8.7</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Excel 작업 : http://www.nextree.co.kr/p5229/ -->
+            <dependency>
+                <groupId>net.sourceforge.jexcelapi</groupId>
+                <artifactId>jxl</artifactId>
+                <version>2.6.12</version>
                 <scope>test</scope>
             </dependency>
 
@@ -646,12 +893,6 @@
                 <artifactId>scalatest_2.11</artifactId>
                 <version>2.2.0</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.scala-lang</groupId>
-                        <artifactId>scala-reflect</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.github.axel22</groupId>
@@ -678,10 +919,6 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-reflect</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-actors</artifactId>
-        </dependency>
 
         <!-- ScalaTest -->
         <dependency>
@@ -700,10 +937,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-access</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -743,38 +976,9 @@
 
     <repositories>
         <repository>
-            <id>typesafe</id>
-            <name>Typesafe Repository</name>
-            <url>http://repo.typesafe.com/typesafe/releases</url>
-        </repository>
-        <repository>
-            <id>springsource-repo</id>
-            <name>SpringSource Repository</name>
-            <url>http://repo.springsource.org/release</url>
-        </repository>
-        <repository>
-            <id>spring-release-data</id>
-            <name>Spring RELEASE Repository</name>
-            <url>http://repo.springsource.org/libs-release</url>
-        </repository>
-        <!-- spring-scala 이 milestone 버전이기 때문에 -->
-        <repository>
-            <id>repository.springsource.milestone</id>
-            <name>SpringSource Milestone Repository</name>
-            <url>http://repo.springsource.org/milestone</url>
-        </repository>
-        <repository>
-            <id>jboss-public-repository-group</id>
-            <name>JBoss Public Maven Repository Group</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
+            <id>sonatype</id>
+            <name>Sonatype OSS</name>
+            <url>https://oss.sonatype.org/content/groups/public</url>
         </repository>
         <repository>
             <id>maven2-repository.dev.java.net</id>
@@ -782,14 +986,19 @@
             <url>http://download.java.net/maven/2/</url>
         </repository>
         <repository>
-            <id>rediscala</id>
-            <name>RedisScala</name>
-            <url>http://dl.bintray.com/etaty/maven</url>
+            <id>typesafe</id>
+            <name>Typesafe Repository</name>
+            <url>http://repo.typesafe.com/typesafe/releases/</url>
         </repository>
         <repository>
             <id>spray</id>
             <name>spray.io</name>
             <url>http://repo.spray.io</url>
+        </repository>
+        <repository>
+            <id>rediscala</id>
+            <name>RedisScala</name>
+            <url>http://dl.bintray.com/etaty/maven</url>
         </repository>
         <repository>
             <id>activate-framework</id>

@@ -15,15 +15,12 @@
 
     <dependencies>
 
-        <!-- scala utils -->
+        <!-- Scalactic -->
         <dependency>
-            <groupId>org.scalautils</groupId>
-            <artifactId>scalautils_2.11</artifactId>
+            <groupId>org.scalactic</groupId>
+            <artifactId>scalactic_2.11</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.jsuereth</groupId>
-            <artifactId>scala-arm_2.11</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
             <artifactId>scala-async_2.11</artifactId>
@@ -69,12 +66,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-        </dependency>
-
-        <!-- Spring Scala -->
-        <dependency>
-            <groupId>org.springframework.scala</groupId>
-            <artifactId>spring-scala</artifactId>
         </dependency>
 
         <!-- Guava -->
@@ -176,14 +167,9 @@
         </dependency>
 
         <!-- ASM -->
-        <!-- NOTE: org.ow2.asm 4.1 을 사용하면 안되고, 꼭 asm 3.x 버전을 사용하세요 -->
         <dependency>
             <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
+            <artifactId>asm</artifactId>
         </dependency>
 
     </dependencies>

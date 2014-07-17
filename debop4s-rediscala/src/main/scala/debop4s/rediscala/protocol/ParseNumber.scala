@@ -22,7 +22,7 @@ object ParseNumber {
     var negative = false
     var i = 0
     val len = byteString.length
-    var limit = -Integer.MAX_VALUE
+    var limit = -java.lang.Integer.MAX_VALUE
 
     if (len > 0) {
       val firstChar = byteString(0)
@@ -30,7 +30,7 @@ object ParseNumber {
         // Possible leading "+" or "-"
         if (firstChar == '-') {
           negative = true
-          limit = Integer.MIN_VALUE
+          limit = java.lang.Integer.MIN_VALUE
         } else if (firstChar != '+')
           throw new NumberFormatException(byteString.toString())
 
