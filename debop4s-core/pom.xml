@@ -14,6 +14,11 @@
     <name>core</name>
 
     <dependencies>
+        <!-- scala pickling -->
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-pickling_2.11</artifactId>
+        </dependency>
 
         <!-- Scalactic -->
         <dependency>
