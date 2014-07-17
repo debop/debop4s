@@ -31,6 +31,19 @@ class PicklingFunSuite extends AbstractCoreTest {
       case _ => fail("fail unpickle trait")
     }
   }
+
+  test("pickling any") {
+    val com = CompanyEntity(0, "구글", "google")
+    val pickled = com.pickle
+
+    pickled.unpickle[Any] match {
+      case x: CompanyEntity => x shouldEqual com
+      case _ => fail("fail unpickle trait")
+    }
+
+    val converted = pickled.unpickle[Any].asInstanceOf[CompanyEntity]
+    converted should not be null
+  }
 }
 
 

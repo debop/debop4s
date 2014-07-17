@@ -5,14 +5,20 @@ import debop4s.core.utils.Hashs
 trait Entity[T] {
   def id: T
   override def equals(obj: Any): Boolean = {
-    obj != null && (getClass == obj.getClass) && this.hashCode == obj.hashCode()
+    obj != null &&
+    getClass == obj.getClass &&
+    this.hashCode == obj.hashCode()
   }
 }
-case class PersonEntity(override val id: Long, name: String, kidsAges: Array[Int]) extends Entity[Long] {
+case class PersonEntity(override val id: Long,
+                        name: String,
+                        kidsAges: Array[Int]) extends Entity[Long] {
   override def hashCode(): Int = Hashs.compute(id, name)
 }
 
-case class CompanyEntity(override val id: Long, name: String, code: String) extends Entity[Long] {
+case class CompanyEntity(override val id: Long,
+                         name: String,
+                         code: String) extends Entity[Long] {
   override def hashCode(): Int = Hashs.compute(id, name)
 }
 
