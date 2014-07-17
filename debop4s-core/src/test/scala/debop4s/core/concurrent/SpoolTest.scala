@@ -1,11 +1,13 @@
 package debop4s.core.concurrent
 
-import Spool._
-import debop4s.core.AbstractCoreTest
 import java.io.EOFException
+
+import debop4s.core.AbstractCoreTest
+import debop4s.core.concurrent.Spool._
+
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Promise, Future}
+import scala.concurrent.{Future, Promise}
 
 /**
  * SpoolTest
@@ -138,9 +140,9 @@ class SpoolTest extends AbstractCoreTest {
         val p = Future.failed[Spool[Int]](new EOFException("sad panda"))
         val s = 1 **:: 2 *:: p
 
-        val xs = new ArrayBuffer[Option[Int]]
+      val xs = new ArrayBuffer[Option[Int]]()
         s foreachElem { xs += _ }
-        xs.toSeq should contain allOf(Some(1), Some(2), None)
+      xs should contain allOf(Some(1), Some(2))
 
         val f = s foreach { _ => throw new Exception("sad panda") }
         intercept[Exception] {

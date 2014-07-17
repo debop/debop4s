@@ -46,15 +46,6 @@ abstract class AbstractSerializerTest extends AbstractCoreTest {
     }
   }
 
-  test("case class serialize") {
-    val user = UserEntity(0, "debop")
-
-    val copied = serializer.deserialize(serializer.serialize(user), classOf[UserEntity])
-    copied should not be null
-    copied shouldEqual user
-  }
-
-
   trait Entity[T] extends Serializable {
     def id: T
   }
