@@ -1,8 +1,9 @@
 package debop4s.core.io.model
 
+import java.{math, util}
+
 import debop4s.core.ValueObject
-import debop4s.core.utils.{ToStringHelper, Hashs}
-import java.util
+import debop4s.core.utils.{Hashs, ToStringHelper}
 
 /**
  * debop4s.core.tests.io.model.Company
@@ -13,18 +14,21 @@ import java.util
 @SerialVersionUID(4442244029750273886L)
 class Company extends ValueObject {
 
-    var code: String = _
-    var name: String = _
-    var description: String = _
-    var amount: Long = 0
+  var code: String = _
+  var name: String = _
+  var description: String = _
+  var amount: Long = 0
 
-    val users = new util.ArrayList[User]()
+  var sales: java.math.BigDecimal = new math.BigDecimal(100)
+  var employeeCount: Integer = 2000
 
-    override def hashCode(): Int = Hashs.compute(code, name)
+  val users = new util.ArrayList[User]()
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-        .add("code", code)
-        .add("name", name)
-        .add("amount", amount)
+  override def hashCode(): Int = Hashs.compute(code, name)
+
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("code", code)
+    .add("name", name)
+    .add("amount", amount)
 }
