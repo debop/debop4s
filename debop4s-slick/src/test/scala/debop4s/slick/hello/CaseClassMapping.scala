@@ -1,0 +1,41 @@
+package debop4s.slick.hello
+
+import debop4s.slick.AbstractSlickFunSuite
+
+import scala.slick.driver.H2Driver.simple._
+
+
+class CaseClassMappingFunSuite extends AbstractSlickFunSuite {
+
+  test("case class mapping") {
+
+    val users = TableQuery[Users]
+
+    Database.forURL("jdbc:h2:mem:hello", driver = "org.h2.Driver").withSession { implicit session =>
+
+      // create the schema
+      users.ddl.create
+
+      // insert two User instances
+      users += User("Jone Doe")
+      users += User("Fred Smith")
+
+      // print the users (select * from USERS)
+      println(users.list)
+    }
+  }
+}
+
+case class User(name: String, id: Option[Int] = None)
+
+class Users(tag: Tag) extends Table[User](tag, "USERS") {
+
+  // auto increment the id primary key column
+  def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+
+  // The name can't be null
+  def name = column[String]("NAME", O.NotNull)
+
+  // the * projection (e.g. select * ...) auto-transform the tupled column values to / from a User
+  def * = (name, id.?) <>(User.tupled, User.unapply)
+}

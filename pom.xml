@@ -20,11 +20,12 @@
         <module>debop4s-testing</module>
         <module>debop4s-jdbc</module>
         <module>debop4s-rediscala</module>
+        <module>debop4s-slick</module>
     </modules>
 
     <properties>
         <jdk.version>1.7</jdk.version>
-        <scala.version>2.11.1</scala.version>
+        <scala.version>2.11.2</scala.version>
         <akka.version>2.3.4</akka.version>
         <scalatra.version>2.3.0</scalatra.version>
 
@@ -82,6 +83,13 @@
                 <artifactId>akka-testkit_2.11</artifactId>
                 <version>${akka.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <!-- Slick -->
+            <dependency>
+                <groupId>com.typesafe.slick</groupId>
+                <artifactId>slick_2.11</artifactId>
+                <version>2.1.0-M2</version>
             </dependency>
 
             <!-- Typesafe config -->
@@ -477,6 +485,11 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-nop</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
@@ -947,6 +960,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
