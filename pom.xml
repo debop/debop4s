@@ -21,6 +21,8 @@
         <module>debop4s-jdbc</module>
         <module>debop4s-rediscala</module>
         <module>debop4s-slick</module>
+        <module>debop4s-data-slick</module>
+        <module>debop4s-data-common</module>
     </modules>
 
     <properties>
