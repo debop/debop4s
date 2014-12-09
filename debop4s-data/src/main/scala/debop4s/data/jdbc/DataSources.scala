@@ -1,11 +1,13 @@
 package debop4s.data.jdbc
 
-import com.jolbox.bonecp.BoneCPDataSource
-import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
-import debop4s.data.{DRIVER_CLASS_HSQL, DRIVER_CLASS_H2}
 import java.util.Properties
 import javax.sql.DataSource
+
+import com.jolbox.bonecp.BoneCPDataSource
+import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
+import debop4s.data.{DRIVER_CLASS_H2, DRIVER_CLASS_HSQL}
 import org.slf4j.LoggerFactory
+
 import scala.collection.immutable.HashMap
 
 
@@ -78,6 +80,9 @@ object DataSources {
                 config.addDataSourceProperty(name, value)
             }
         }
+
+        config.setMinimumIdle(2)
+        config.setMaximumPoolSize(8 * sys.runtime.availableProcessors())
 
         config.setInitializationFailFast(true)
         config.setConnectionTestQuery("SELECT 1")
