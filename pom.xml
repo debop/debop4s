@@ -22,6 +22,9 @@
         <module>debop4s-testing</module>
         <module>debop4s-jdbc</module>
         <module>debop4s-rediscala</module>
+        <module>debop4s-slick</module>
+        <module>debop4s-data-slick</module>
+        <module>debop4s-data-common</module>
     </modules>
 
     <properties>
@@ -31,7 +34,7 @@
         <scalatra.version>2.3.0</scalatra.version>
 
         <springframework.version>4.1.5.RELEASE</springframework.version>
-        <hibernate.version>4.3.5.Final</hibernate.version>
+        <hibernate.version>4.3.7.Final</hibernate.version>
 
         <hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
         <querydsl.version>3.4.1</querydsl.version>
@@ -71,7 +74,6 @@
                 <artifactId>scala-pickling_2.11</artifactId>
                 <version>0.9.1</version>
             </dependency>
-
 
             <!-- Akka -->
             <dependency>
@@ -754,7 +756,7 @@
             <dependency>
                 <groupId>com.etaty.rediscala</groupId>
                 <artifactId>rediscala_2.11</artifactId>
-                <version>1.3.1</version>
+                <version>1.4.2</version>
             </dependency>
 
             <!-- Tomcat Connection Pool -->

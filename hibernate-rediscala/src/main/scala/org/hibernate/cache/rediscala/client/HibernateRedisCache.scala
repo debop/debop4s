@@ -1,13 +1,15 @@
 package org.hibernate.cache.rediscala.client
 
-import akka.util.ByteString
 import java.util.concurrent.TimeUnit
+
+import akka.util.ByteString
 import org.hibernate.cache.rediscala.serializer.{FstRedisSerializer, SnappyRedisSerializer}
 import org.slf4j.LoggerFactory
 import redis.RedisClient
 import redis.api.Limit
 import redis.commands.TransactionBuilder
 import redis.protocol.MultiBulk
+
 import scala.annotation.varargs
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
@@ -48,7 +50,7 @@ class HibernateRedisCache(val redis: RedisClient) {
      *
      * @param region           region name
      * @param key              client key
-     * @param timeoutInSeconds expiration timeout value
+     * @param expireInSeconds  expiration timeout value
      * @return return cached entity, if not exists return null.
      */
     @inline
@@ -101,7 +103,7 @@ class HibernateRedisCache(val redis: RedisClient) {
     def multiGet(region: String, keys: String*): Future[Seq[Any]] = {
         redis.hmget(region, keys: _*).map { results =>
             results.map { (x: Option[ByteString]) =>
-                x.map(v => valueSerializer.deserialize(v.toArray)).getOrElse(null)
+                x.map(v => valueSerializer.deserialize(v.toArray)).orNull
             }
         }
     }
@@ -113,8 +115,7 @@ class HibernateRedisCache(val redis: RedisClient) {
     def multiGet(region: String, keys: Iterable[String]): Future[Seq[Any]] = {
         redis.hmget(region, keys.toSeq: _*).map { results =>
             results.map { x =>
-                x.map(v => valueSerializer.deserialize(v.toArray))
-                .getOrElse(null)
+                x.map(v => valueSerializer.deserialize(v.toArray)).orNull
             }
         }
     }
