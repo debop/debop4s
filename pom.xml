@@ -17,19 +17,20 @@
         <module>debop4s-mongo</module>
         <module>debop4s-data</module>
         <module>debop4s-data-jpa</module>
+        <module>debop4s-data-mybatis</module>
+        <module>debop4s-slick</module>
         <module>debop4s-testing</module>
         <module>debop4s-jdbc</module>
         <module>debop4s-rediscala</module>
-        <module>debop4s-slick</module>
     </modules>
 
     <properties>
         <jdk.version>1.7</jdk.version>
-        <scala.version>2.11.2</scala.version>
+        <scala.version>2.11.6</scala.version>
         <akka.version>2.3.4</akka.version>
         <scalatra.version>2.3.0</scalatra.version>
 
-        <springframework.version>4.0.5.RELEASE</springframework.version>
+        <springframework.version>4.1.5.RELEASE</springframework.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
 
         <hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
@@ -68,7 +69,7 @@
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-pickling_2.11</artifactId>
-                <version>0.9.0-SNAPSHOT</version>
+                <version>0.9.1</version>
             </dependency>
 
 
@@ -707,6 +708,13 @@
                 <groupId>com.mysema.querydsl</groupId>
                 <artifactId>querydsl-sql</artifactId>
                 <version>${querydsl.version}</version>
+            </dependency>
+
+            <!-- MyBatis -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>3.2.8</version>
             </dependency>
 
             <!-- scalikejdbc -->
