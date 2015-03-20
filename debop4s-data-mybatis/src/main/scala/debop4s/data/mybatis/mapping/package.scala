@@ -10,7 +10,5 @@ package object mapping {
 
   type XSQL = scala.xml.Node
 
-  implicit def string_to_xsql(s: String): XSQL = <xsql>
-    {s}
-  </xsql>
+  implicit def string_to_xsql(s: String): XSQL = <xsql>{s}</xsql>
 }
