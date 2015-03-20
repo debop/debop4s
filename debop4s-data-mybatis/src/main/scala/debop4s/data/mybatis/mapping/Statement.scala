@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
  */
 trait Statement {
 
-  protected val log = LoggerFactory.getLogger(getClass)
+  protected val LOG = LoggerFactory.getLogger(getClass)
 
   /**
    * Fully qualified identifier of the statement.

@@ -58,8 +58,8 @@ object TypeHandlers {
   class OptionNStringTypeHandler extends OptionTypeHandler(new NStringTypeHandler())
   class OptionNClobTypeHandler extends OptionTypeHandler(new NClobTypeHandler())
   class OptionBigDecimalTypeHandler extends OptionTypeHandler(new BigDecimalTypeHandler())
-  class OptionDateOnlyTypeHandler extends OptionTypeHandler(new DateOnlyTypeHandler())
-  class OptionTimeOnlyTypeHandler extends OptionTypeHandler(new TimeOnlyTypeHandler())
-  class OptionDateTypeHandler extends OptionTypeHandler(new DateTypeHandler())
+  class OptionDateTypeHandler extends OptionTypeHandler(new DateOnlyTypeHandler())
+  class OptionTimeTypeHandler extends OptionTypeHandler(new TimeOnlyTypeHandler())
+  class OptionTimestampTypeHandler extends OptionTypeHandler(new DateTypeHandler())
 
 }

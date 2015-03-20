@@ -4,10 +4,34 @@ import org.apache.ibatis.session._
 
 import scala.util.control.NonFatal
 
-/**
- * SessionManager
- * @author sunghyouk.bae@gmail.com 15. 3. 19.
- */
+/** Session lifecycle manager.
+  * Manages the lifecycle of the Session
+  * == Usage ==
+  * - Rollback only
+  * {{{
+  *    sessionManager.readOnly { implicit session =>
+  *       // Your code ...
+  *       // Always rollback at the end automatically.
+  *    }
+  * }}}
+  * - Direct transaction
+  * {{{
+  *    sessionManager.transaction { implicit session =>
+  *       // Your code ...
+  *       // Always commit at the end if no exceptions are thrown, else rollback.
+  *    }
+  * }}}
+  * - External transaction
+  * {{{
+  *    sessionManager.managed { implicit session =>
+  *       // Your code ...
+  *       // Never commit or rollback automatically.
+  *       // The transaction can be managed externally or manually.
+  *    }
+  * }}}
+  *
+  * @version \$Revision$
+  */
 class SessionManager(factory: SqlSessionFactory) {
 
   type Callback[T] = (Session) => T
