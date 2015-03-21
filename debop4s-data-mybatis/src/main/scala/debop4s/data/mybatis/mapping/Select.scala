@@ -2,7 +2,7 @@ package debop4s.data.mybatis.mapping
 
 import java.util
 
-import debop4s.data.mybatis.session.{ResultContext, ResultHandlerDelegator, RowBounds, Session}
+import debop4s.data.mybatis.session.{ ResultContext, ResultHandlerDelegator, RowBounds, Session }
 
 import scala.reflect._
 
@@ -309,9 +309,10 @@ abstract class SelectMap[RK, RV: Manifest](mapKey: String) extends Select with S
   * @tparam RV map Value type
   * @param mapKey Property to be used as map key
   */
-abstract class SelectMapBy[P, RK, RV: Manifest](mapKey: String) extends Select with SQLFunction1[P, util.Map[RK, RV]] {
+abstract class SelectMapBy[P: Manifest, RK, RV: Manifest](mapKey: String) extends Select with SQLFunction1[P, util.Map[RK, RV]] {
 
   override def parameterTypeClass = manifest[P].runtimeClass
+
   override def resultTypeClass = manifest[RV].runtimeClass
 
   override def apply(p: P)(implicit s: Session): util.Map[RK, RV] = execute {
@@ -380,7 +381,7 @@ abstract class SelectMapPage[RK, RV: Manifest](mapKey: String) extends Select wi
   * @tparam RV map Value type
   * @param mapKey Property to be used as map key
   */
-abstract class SelectMapPageBy[P, RK, RV: Manifest](mapKey: String) extends Select with SQLFunction2[P, RowBounds, util.Map[RK, RV]] {
+abstract class SelectMapPageBy[P: Manifest, RK, RV: Manifest](mapKey: String) extends Select with SQLFunction2[P, RowBounds, util.Map[RK, RV]] {
 
   def parameterTypeClass = manifest[P].runtimeClass
   def resultTypeClass = manifest[RV].runtimeClass

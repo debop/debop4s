@@ -1,16 +1,20 @@
 package debop4s.data.mybatis.config
 
 import java.io.Reader
+import java.util
 import java.util.Properties
 
 import debop4s.data.mybatis.cache._
-import debop4s.data.mybatis.mapping.{Statement, T, TypeHandler}
-import debop4s.data.mybatis.session.SessionManager
+import debop4s.data.mybatis.mapping.{ JdbcType, Statement, T, TypeHandler }
+import debop4s.data.mybatis.session.{ ExecutorType, SessionManager }
 import org.apache.ibatis.builder.xml.XMLConfigBuilder
 import org.apache.ibatis.io.Resources
-import org.apache.ibatis.session.{Configuration => MBConfig, SqlSessionFactoryBuilder}
+import org.apache.ibatis.plugin.Interceptor
+import org.apache.ibatis.session.{ Configuration => MBConfig, SqlSessionFactoryBuilder }
 import org.slf4j.LoggerFactory
 
+import scala.annotation.varargs
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 /**
@@ -187,6 +191,8 @@ object Configuration {
 
     /** Build the configuration object */
     private[Configuration] def build(): Configuration = {
+      LOG.debug(s"Build MyBatis Configuration ...")
+
       val preConfig = new MBConfig()
       pre.sortBy(_.index).foreach(_.set(preConfig))
 
@@ -194,5 +200,134 @@ object Configuration {
       pos.sortBy(_.index).foreach(_.set(config))
       config
     }
+
+    def properties(props: (String, String)*) =
+      set(0, pre) {
+        _.getVariables.putAll(Map(props: _*).asJava)
+      }
+
+    def properties(props: Properties) =
+      set(1, pre) {
+        _.getVariables.putAll(props)
+      }
+
+    def properties(resource: String) =
+      set(2, pre) {
+        _.getVariables.putAll(Resources.getResourceAsProperties(resource))
+      }
+
+    def propertiesFromUrl(url: String) =
+      set(3, pre) {
+        _.getVariables.putAll(Resources.getUrlAsProperties(url))
+      }
+
+    def plugin(interceptor: Interceptor) =
+      set(4, pre) { _.addInterceptor(interceptor) }
+
+    def objectFactory(factory: ObjectFactory) =
+      set(5, pre) { _.setObjectFactory(factory) }
+
+    def objectWrapperFactory(owf: ObjectWrapperFactory) =
+      set(6, pre) { _.setObjectWrapperFactory(owf) }
+
+    def autoMappingBehavior(behavior: AutoMappingBehavior) =
+      set(8, pre) { _.setAutoMappingBehavior(behavior.unwrap) }
+
+    def cacheSupport(enabled: Boolean) =
+      set(9, pre) { _.setCacheEnabled(enabled) }
+
+    def lazyLoadingSupport(enabled: Boolean) =
+      set(10, pre) { _.setLazyLoadingEnabled(enabled) }
+
+    def aggressiveLazyLoading(enabled: Boolean) =
+      set(11, pre) { _.setAggressiveLazyLoading(enabled) }
+
+    def multipleResultSetsSupport(enabled: Boolean) =
+      set(12, pre) { _.setMultipleResultSetsEnabled(enabled) }
+
+    def useColumnLabel(enabled: Boolean) =
+      set(13, pre) { _.setUseColumnLabel(enabled) }
+
+    def useGeneratedKeys(enabled: Boolean) =
+      set(14, pre) { _.setUseGeneratedKeys(enabled) }
+
+    def defaultExecutorType(executorType: ExecutorType) =
+      set(15, pre) { _.setDefaultExecutorType(executorType.unwrap) }
+
+    def defaultStatementTimeout(timeout: Int = -1) =
+      set(16, pre) { _.setDefaultStatementTimeout(timeout) }
+
+    def mapUnderscoreToCamelCase(enabled: Boolean) =
+      set(17, pre) { _.setMapUnderscoreToCamelCase(enabled) }
+
+    def safeRowBoundsSupport(enabled: Boolean) =
+      set(18, pre) { _.setSafeRowBoundsEnabled(enabled) }
+
+    def localCacheScope(localCacheScope: LocalCacheScope) =
+      set(19, pre) { _.setLocalCacheScope(localCacheScope.unwrap) }
+
+    def jdbcTypeForNull(jdbcType: JdbcType) =
+      set(20, pre) { _.setJdbcTypeForNull(jdbcType.unwrap) }
+
+    def lazyLodTriggerMethods(names: util.Set[String]) =
+      set(21, pre) { _.setLazyLoadTriggerMethods(names) }
+
+    def environment(id: String, transactionFactory: TransactionFactory, dataSource: javax.sql.DataSource) =
+      set(24, pre) {
+        _.setEnvironment(new Environment(id, transactionFactory, dataSource).unwrap)
+      }
+
+    def databaseIdProvider(provider: DatabaseIdProvider) =
+      set(25, pre) { c =>
+        c.setDatabaseId(provider.getDatabaseId(c.getEnvironment.getDataSource))
+      }
+
+    def typeHandler(jdbcType: JdbcType, handler: (T[_], TypeHandler[_])) =
+      set(26, pre) {
+        _.getTypeHandlerRegistry.register(handler._1.raw, jdbcType.unwrap, handler._2)
+      }
+
+    def typeHandler(handler: (T[_], TypeHandler[_])) =
+      set(26, pre) {
+        _.getTypeHandlerRegistry.register(handler._1.raw, handler._2)
+      }
+
+    def typeHandler(handler: TypeHandler[_]) =
+      set(26, pre) {
+        _.getTypeHandlerRegistry.register(handler)
+      }
+
+    def namespace(name: String)(f: ConfigurationSpace => Unit) =
+      set(0, pos) { c =>
+        f(new ConfigurationSpace(c.configuration, name))
+      }
+
+    @varargs
+    def statements(s: Statement*) = set(1, pos) { _ ++= s }
+
+    def statements(s: java.lang.Iterable[Statement]) = set(1, pos) { _ ++= s.asScala.toList }
+
+    def mappers(mappers: {def bind: Seq[Statement]}*) =
+      set(1, pos) { c => mappers.foreach(m => c ++= m) }
+
+    def cacheRef(that: ConfigurationSpace) =
+      set(2, pos) { _.cacheRef(that) }
+
+    def cache(impl: T[_ <:Cache] = DefaultCache,
+               eviction: T[_ <: Cache] = Eviction.LRU,
+               flushInterval: Long = -1,
+               size:Int = -1,
+               readWrite:Boolean = true,
+               props:Properties = null): Unit = {
+      set(2, pos) {
+        _.cache(impl, eviction, flushInterval, size, readWrite, props)
+      }
+    }
+
+    // PENDING FOR mybatis 3.1.1+ ==================================================
+
+    // TODO (3.1.1) def proxyFactory(factory: ProxyFactory) = set( 7, pre) { _.setProxyFactory(factory) }
+    // TODO (3.1.1) def safeResultHandlerSupport(enabled : Boolean) = set(22, pre) { _.setSafeResultHandlerEnabled(enabled) }
+    // TODO (3.1.1) def defaultScriptingLanguage(driver : T[_]) = set(23, pre) { _.setDefaultScriptingLanguage(driver) }
   }
 }

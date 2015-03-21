@@ -20,24 +20,30 @@ package object config {
   type LanguageDriver = org.apache.ibatis.scripting.LanguageDriver
 
   sealed trait LocalCacheScope {
+
     val unwrap: org.apache.ibatis.session.LocalCacheScope
+
     case object SESSION extends LocalCacheScope {
       val unwrap = org.apache.ibatis.session.LocalCacheScope.SESSION
     }
+
     case object STATEMENT extends LocalCacheScope {
       val unwrap = org.apache.ibatis.session.LocalCacheScope.STATEMENT
     }
   }
 
   sealed trait AutoMappingBehavior {
+
     val unwrap: org.apache.ibatis.session.AutoMappingBehavior
 
     case object FULL extends AutoMappingBehavior {
       override val unwrap = org.apache.ibatis.session.AutoMappingBehavior.FULL
     }
+
     case object NONE extends AutoMappingBehavior {
       override val unwrap = org.apache.ibatis.session.AutoMappingBehavior.NONE
     }
+
     case object PARTIAL extends AutoMappingBehavior {
       override val unwrap = org.apache.ibatis.session.AutoMappingBehavior.PARTIAL
     }

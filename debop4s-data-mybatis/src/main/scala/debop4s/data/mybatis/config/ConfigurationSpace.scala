@@ -7,9 +7,9 @@ import debop4s.data.mybatis.cache._
 import debop4s.data.mybatis.mapping._
 import org.apache.ibatis.builder.MapperBuilderAssistant
 import org.apache.ibatis.cache.Cache
-import org.apache.ibatis.executor.keygen.{Jdbc3KeyGenerator, KeyGenerator => MBKeyGenerator, NoKeyGenerator, SelectKeyGenerator}
-import org.apache.ibatis.mapping.{Discriminator, ResultMapping => MBResultMapping, SqlCommandType, SqlSource}
-import org.apache.ibatis.session.{Configuration => MBConfig}
+import org.apache.ibatis.executor.keygen.{ Jdbc3KeyGenerator, KeyGenerator => MBKeyGenerator, NoKeyGenerator, SelectKeyGenerator }
+import org.apache.ibatis.mapping.{ Discriminator, ResultMapping => MBResultMapping, SqlCommandType, SqlSource }
+import org.apache.ibatis.session.{ Configuration => MBConfig }
 import org.slf4j.LoggerFactory
 
 
@@ -89,7 +89,7 @@ class ConfigurationSpace(configuration: MBConfig, val spaceName: String = "_DEFA
       }
 
       // Discriminator
-      var discriminator: Discriminator = _
+      var discriminator: Discriminator = null
       rm.discr match {
         case (column, javaType, jdbcType, typeHandler, cases) =>
           val discrimiatorMap = new util.HashMap[String, String]

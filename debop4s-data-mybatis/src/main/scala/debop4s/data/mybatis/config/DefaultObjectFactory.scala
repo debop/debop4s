@@ -4,6 +4,7 @@ import java.util
 import java.util.Properties
 
 import org.apache.ibatis.reflection.ReflectionException
+import org.slf4j.LoggerFactory
 
 import scala.collection.mutable
 import scala.util.control.NonFatal
@@ -14,14 +15,19 @@ import scala.util.control.NonFatal
  */
 class DefaultObjectFactory extends ObjectFactory {
 
+  private val LOG = LoggerFactory.getLogger(getClass)
+
   val cache = new mutable.HashMap[CacheKey, java.lang.reflect.Constructor[_]]
+
   override def create[T](clazz: Class[T]): T = create(clazz, null, null)
+
   override def create[T](clazz: Class[T],
                          constructorArgTypes: util.List[Class[_]],
                          constructorArgs: util.List[AnyRef]): T = {
     val classToCreate = resolveInterface(clazz)
     instanciateClass[T](classToCreate, constructorArgTypes, constructorArgs)
   }
+
   override def setProperties(properties: Properties): Unit = {}
 
   override def isCollection[T](clazz: Class[T]): Boolean = {
@@ -49,8 +55,8 @@ class DefaultObjectFactory extends ObjectFactory {
       case NonFatal(e) =>
         val types = if (argTypes == null) "" else argTypes.map(_.getSimpleName).reduceLeft(_ + "," + _)
         val values = if (argValues == null) "" else argValues.map(String.valueOf(_)).reduceLeft(_ + "," + _)
-        throw new ReflectionException(s"Error instanciating ${clazz.getSimpleName} with " +
-                                      s"invalid types ($types) or values($values)}. Cause: ${e.getMessage}", e)
+        throw new ReflectionException(s"Error instanciating ${ clazz.getSimpleName } with " +
+                                      s"invalid types ($types) or values($values)}. Cause: ${ e.getMessage }", e)
     }
   }
 
@@ -90,8 +96,8 @@ class DefaultObjectFactory extends ObjectFactory {
       } catch {
         case NonFatal(e) =>
           val types = if (args == null) "" else args.map(_.getSimpleName).reduceLeft(_ + "," + _)
-          throw new ReflectionException(s"Error instanciating ${clazz.getSimpleName} " +
-                                        s"with invalid types ($types). Cause: ${e.getMessage}", e)
+          throw new ReflectionException(s"Error instanciating ${ clazz.getSimpleName } " +
+                                        s"with invalid types ($types). Cause: ${ e.getMessage }", e)
       }
     })
   }
@@ -100,7 +106,7 @@ class DefaultObjectFactory extends ObjectFactory {
     val _hc: Int = {
       var code = clazz.hashCode()
       if (args != null) {
-        args.foreach { arg => code = code * 41 + arg.hashCode()}
+        args.foreach { arg => code = code * 41 + arg.hashCode() }
       }
       code
     }

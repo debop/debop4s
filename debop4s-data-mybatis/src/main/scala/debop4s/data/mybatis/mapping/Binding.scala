@@ -88,7 +88,7 @@ object Binding {
    * Utility class for simplified syntax support
    */
   case class Param(property: String) {
-    def ? = Binding ? property
+    def ? = Binding ? ( property )
   }
 
   /**

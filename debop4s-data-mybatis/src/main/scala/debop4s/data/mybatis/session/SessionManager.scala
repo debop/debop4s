@@ -34,8 +34,8 @@ import scala.util.control.NonFatal
   */
 class SessionManager(factory: SqlSessionFactory) {
 
-  type Callback[T] = (Session) => T
-  type CloseSessionHook = (SqlSession) => Unit
+  type Callback[T] = ( Session ) => T
+  type CloseSessionHook = ( SqlSession ) => Unit
 
   private var closeSession: CloseSessionHook = (s: SqlSession) => s.close()
 
@@ -73,17 +73,14 @@ class SessionManager(factory: SqlSessionFactory) {
     }
   }
 
-  def transaction[T](executorType: ExecutorType = ExecutorType.SIMPLE,
-                     level: TransactionIsolationLevel = TransactionIsolationLevel.UNDEFINED)
+  def transaction[T](executorType: ExecutorType, level: TransactionIsolationLevel)
                     (callback: Callback[T]): T =
     transaction(factory.openSession(executorType.unwrap, level.unwrap))(callback)
 
-  def transaction[T](executorType: ExecutorType = ExecutorType.SIMPLE)
-                    (callback: Callback[T]): T =
+  def transaction[T](executorType: ExecutorType)(callback: Callback[T]): T =
     transaction(factory.openSession(executorType.unwrap))(callback)
 
-  def transaction[T](executorType: ExecutorType = ExecutorType.SIMPLE, autoCommit: Boolean)
-                    (callback: Callback[T]): T =
+  def transaction[T](executorType: ExecutorType, autoCommit: Boolean)(callback: Callback[T]): T =
     transaction(factory.openSession(executorType.unwrap, autoCommit))(callback)
 
   def transaction[T](autoCommit: Boolean)(callback: Callback[T]): T =
