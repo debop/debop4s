@@ -82,6 +82,11 @@ trait SlickQueryExtensions {
       val ids = entities.flatMap(_.id).toSet
       filterByIdIn(ids.toSeq: _*).delete == ids.size
     }
+
+    def deleteAllById(ids: Id*)(implicit session: Session) = {
+      val idsets = ids.toSet
+      filterByIdIn(idsets.toSeq: _*).delete == idsets.size
+    }
   }
 
   abstract class VersionableTableExtensions[E <: SlickEntity[Id] with Versionable, Id: BaseColumnType]

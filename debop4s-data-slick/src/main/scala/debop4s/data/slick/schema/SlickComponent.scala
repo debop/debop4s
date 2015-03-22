@@ -1,6 +1,7 @@
 package debop4s.data.slick.schema
 
 import debop4s.data.slick.SlickContext
+import org.slf4j.LoggerFactory
 
 import scala.util.{ Failure, Success, Try }
 
@@ -10,6 +11,8 @@ import scala.util.{ Failure, Success, Try }
  */
 trait SlickComponent
   extends SlickQueryExtensions with SlickSchema with SlickProfile with SlickColumnMapper {
+
+  protected val LOG = LoggerFactory.getLogger(getClass)
 
   import driver.simple._
   import SlickContext._
@@ -62,7 +65,7 @@ trait SlickComponent
    * @tparam M 엔티티의 수형
    * @return 수행 결과
    */
-  implicit def withTransation[M](func: Session => M): M =
+  implicit def withTransaction[M](func: Session => M): M =
     masterDB.withTransaction { implicit session =>
       func(session)
     }

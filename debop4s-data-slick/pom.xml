@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>data-slick</name>
     <artifactId>debop4s-data-slick</artifactId>
 
     <dependencies>
@@ -33,6 +34,11 @@
         <dependency>
             <groupId>com.typesafe.slick</groupId>
             <artifactId>slick_2.11</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.slick</groupId>
+            <artifactId>slick-testkit_2.11</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Database Drivers -->
