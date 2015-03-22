@@ -1,5 +1,7 @@
 package debop4s.core.cryptography
 
+import debop4s.core.BinaryStringFormat
+import debop4s.core.utils.Strings
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -54,6 +56,19 @@ trait SymmetricEncryptor {
     }
 
     /**
+     * 문자열을 암호화 합니다.
+     * @param plainText  암호화할 문자열
+     * @return 암호화된 문자열
+     */
+    @inline
+    def encrypt(plainText: String): String = {
+        if (Strings.isEmpty(plainText)) Strings.EMPTY_STR
+
+        val cipher = encrypt(Strings.getUtf8Bytes(plainText))
+        Strings.getStringFromBytes(cipher, BinaryStringFormat.HexDecimal)
+    }
+
+    /**
      * 암호화된 데이터를 복원합니다.
      *
      * @param input 암호화된 정보
@@ -65,6 +80,19 @@ trait SymmetricEncryptor {
 
         log.trace(s"데이터를 복호화합니다. algorithm=[$algorithm]")
         byteEncryptor.decrypt(input)
+    }
+
+    /**
+     * 암호화된 문자열을 복원합나다.
+     * @param cipherText 암호화된 문자열
+     * @return 복원된 데이터
+     */
+    @inline
+    def decrypt(cipherText: String): String = {
+        if (Strings.isEmpty(cipherText)) Strings.EMPTY_STR
+
+        val plainBytes = Strings.getBytesFromString(cipherText, BinaryStringFormat.HexDecimal)
+        Strings.getUtf8String(decrypt(plainBytes))
     }
 }
 

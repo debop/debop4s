@@ -1,11 +1,19 @@
 package org.hibernate.cache.rediscala.serializer
 
-import de.ruedigermoeller.serialization.FSTConfiguration
 import java.io
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-import org.slf4j.LoggerFactory
-import scala.util.{Failure, Success, Try}
+import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
 
+import org.nustaq.serialization.FSTConfiguration
+import org.slf4j.LoggerFactory
+
+import scala.util.{ Failure, Success, Try }
+
+private[rediscala] object FstRedisSerializer {
+
+    lazy val conf = FSTConfiguration.createDefaultConfiguration()
+
+    def apply[T](): FstRedisSerializer[T] = new FstRedisSerializer[T]()
+}
 
 /**
  * FstRedisSerializer
@@ -63,8 +71,3 @@ class FstRedisSerializer[T] extends RedisSerializer[T] {
     }
 }
 
-private[rediscala] object FstRedisSerializer {
-    lazy val conf = FSTConfiguration.createDefaultConfiguration()
-
-    def apply[T](): FstRedisSerializer[T] = new FstRedisSerializer[T]()
-}

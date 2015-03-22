@@ -1,24 +1,28 @@
 package debop4s.core.io
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
 
-import de.ruedigermoeller.serialization.FSTConfiguration
 import debop4s.core.utils.Closer._
+import org.nustaq.serialization.FSTConfiguration
 import org.slf4j.LoggerFactory
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
+
+object FstSerializer {
+
+  def apply(conf: FSTConfiguration = FSTConfiguration.createDefaultConfiguration()) =
+    new FstSerializer(conf)
+}
 
 /**
  * Fast-Serialization 라이브러리를 이용한 Serializer 입니다.
- * Created by debop on 2014. 3. 18.
- * @author debop
  * @see [[http://ruedigermoeller.github.io/fast-serialization/]]
  */
-class FstSerializer extends Serializer {
+class FstSerializer(val conf: FSTConfiguration) extends Serializer {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private val log = LoggerFactory.getLogger(getClass)
 
-  private val conf = FSTConfiguration.createDefaultConfiguration()
+  def this() = this(FSTConfiguration.createDefaultConfiguration())
 
   /**
    * 객체를 직렬화 합니다.
@@ -31,6 +35,7 @@ class FstSerializer extends Serializer {
       return Array.emptyByteArray
 
     using(new ByteArrayOutputStream()) { bos =>
+
       Try(conf.getObjectOutput(bos)) match {
 
         case Success(oos) =>
@@ -51,12 +56,14 @@ class FstSerializer extends Serializer {
    * @return 역직렬화된 객체 정보
    */
   @inline
-  def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T = {
+  def deserialize[T](bytes: Array[Byte], clazz: Class[T] = classOf[Any]): T = {
     if (bytes == null || bytes.length == 0)
       return null.asInstanceOf[T]
 
     using(new ByteArrayInputStream(bytes)) { bis =>
+
       Try(conf.getObjectInput(bis)) match {
+
         case Success(ois) =>
           ois.readObject.asInstanceOf[T]
 

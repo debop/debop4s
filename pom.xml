@@ -16,13 +16,11 @@
         <module>hibernate-rediscala</module>
         <module>debop4s-redis</module>
         <module>debop4s-mongo</module>
-        <module>debop4s-data</module>
-        <module>debop4s-jdbc</module>
+        <module>debop4s-data-common</module>
         <module>debop4s-data-jpa</module>
         <module>debop4s-data-mybatis</module>
         <module>debop4s-data-slick</module>
-        <module>debop4s-data-common</module>
-        <module>debop4s-slick</module>
+        <module>debop4s-data</module>
         <module>debop4s-testing</module>
         <module>debop4s-rediscala</module>
 
@@ -331,7 +329,7 @@
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
                 <artifactId>fst</artifactId>
-                <version>1.58</version>
+                <version>2.24</version>
             </dependency>
 
             <!-- GSON -->
@@ -808,11 +806,20 @@
                 <version>5.1.31</version>
                 <scope>test</scope>
             </dependency>
+            <!--
+                Slick 사용 시에는 MariaDB에 대해서는 mariadb-java-client 를 써야합니다. mysql-connector-java 는 버그 있습니다.
+            -->
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>1.1.7</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
-                <groupId>postgresql</groupId>
+                <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>9.1-901-1.jdbc4</version>
+                <version>9.3-1102-jdbc41</version>
                 <scope>test</scope>
             </dependency>
 

@@ -1,8 +1,9 @@
 package debop4s.redis.serializer
 
-import de.ruedigermoeller.serialization.FSTConfiguration
 import java.io
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
+
+import org.nustaq.serialization.FSTConfiguration
 
 /**
  * FstRedisSerializer

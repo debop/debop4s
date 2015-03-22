@@ -13,11 +13,10 @@
 
     <dependencies>
 
-        <!-- Typesafe config -->
         <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-            <version>1.2.1</version>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-config</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- Hikari CP -->
@@ -26,10 +25,29 @@
             <artifactId>HikariCP</artifactId>
         </dependency>
 
+        <!-- Bone CP -->
+        <dependency>
+            <groupId>com.jolbox</groupId>
+            <artifactId>bonecp</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Tomcat Connection Pool -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Database Drivers -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
