@@ -2,6 +2,7 @@ package debop4s.data.slick.associations.schema
 
 import debop4s.data.slick.associations.model._
 import debop4s.data.slick.customtypes.EncryptedString
+import debop4s.data.slick.schema.SlickComponent
 import org.joda.time.DateTime
 
 /**

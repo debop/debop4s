@@ -1,6 +1,6 @@
 package debop4s.data.slick
 
-import debop4s.data.slick.associations.schema.SlickComponent
+import debop4s.data.slick.schema.SlickComponent
 
 /**
  * SlickComponentExample

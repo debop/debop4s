@@ -1,6 +1,6 @@
 package debop4s.data.slick.active
 
-import debop4s.data.slick.associations.schema.SlickComponent
+import debop4s.data.slick.schema.SlickComponent
 
 import scala.util.Try
 
@@ -24,7 +24,7 @@ trait QueryExtensions {
     def delete(implicit sess: Session): Boolean = {
       val beerIds: Seq[Int] = Beers.filter(_.supplierId === self.id.bind).map(_.id).list
       beerIds.foreach { id => Beers.deleteById(id) }
-      Suppliers.delete(self)
+      Suppliers.deleteEntity(self)
     }
   }
 
@@ -35,7 +35,7 @@ trait QueryExtensions {
   implicit class BeerExtensions(self: Beer) {
 
     def save(implicit sess: Session): Beer = Beers.save(self)
-    def delete(implicit sess: Session): Boolean = Beers.delete(self)
+    def delete(implicit sess: Session): Boolean = Beers.deleteEntity(self)
 
     def supplier(implicit sess: Session): Option[Supplier] = {
       Suppliers.findOptionById(self.supplierId)

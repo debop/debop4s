@@ -1,4 +1,4 @@
-package debop4s.data.slick.associations.model
+package debop4s.data.slick.model
 
 import java.util.UUID
 

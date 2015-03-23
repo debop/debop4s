@@ -1,6 +1,7 @@
 package debop4s.data.slick.associations.model
 
 import debop4s.data.slick.customtypes.EncryptedString
+import debop4s.data.slick.model.IntEntity
 import org.joda.time.DateTime
 
 case class Employee(var id: Option[Int] = None,
@@ -10,7 +11,7 @@ case class Employee(var id: Option[Int] = None,
                     hireDate: DateTime) extends IntEntity
 
 case class Site(var id: Option[Int] = None, name: String) extends IntEntity
-case class Device(var id: Option[Int] = None, price: Double, acquisition: DateTime, sideId: Int) extends IntEntity
+case class Device(var id: Option[Int] = None, price: Double, acquisition: DateTime, siteId: Int) extends IntEntity
 
 case class Order(var id: Option[Int] = None, no: String, date: DateTime) extends IntEntity
 case class OrderItem(var id: Option[Int] = None, name: String, price: Double = 0.0, orderId: Int) extends IntEntity

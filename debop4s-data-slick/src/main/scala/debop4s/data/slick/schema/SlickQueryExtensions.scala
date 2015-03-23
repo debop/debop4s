@@ -1,6 +1,6 @@
-package debop4s.data.slick.associations.schema
+package debop4s.data.slick.schema
 
-import debop4s.data.slick.associations.model.{SlickEntity, Versionable}
+import debop4s.data.slick.model.{SlickEntity, Versionable}
 
 /**
  * Slick Query 에 대한 확장 메소드를 제공하는 trait 입니다.
@@ -26,9 +26,16 @@ trait SlickQueryExtensions {
 
     def save(model: M)(implicit session: Session): M
     def saveAll(models: M*)(implicit session: Session): List[M]
-    def delete(model: M)(implicit session: Session): Boolean
+    def deleteEntity(model: M)(implicit session: Session): Boolean
   }
 
+
+  /**
+   * Id를 가지는 정보 (Entity) 를 위한 쿼리 확장 메소드를 제공합니다.
+   * @param query `IdTable[E]` 에 대한 쿼리 객체
+   * @tparam E  Entity 수형
+   * @tparam Id Entity Identifier 의 수형
+   */
   abstract class BaseIdTableExtensions[E, Id: BaseColumnType](query: TableQuery[_ <: Table[E] with TableWithId[Id]])
     extends BaseTableExtensions(query) {
 
@@ -43,7 +50,7 @@ trait SlickQueryExtensions {
     protected def autoInc = query returning query.map(_.id)
 
     def add(entity: E)(implicit session: Session): Id =
-      ( autoInc into { case (entity, id) => id } insert entity ).asInstanceOf[Id]
+      (autoInc into { case (e, id) => id } insert entity).asInstanceOf[Id]
 
     override def save(entity: E)(implicit session: Session): E = {
       extractId(entity) match {
@@ -55,7 +62,7 @@ trait SlickQueryExtensions {
     override def saveAll(entities: E*)(implicit session: Session): List[E] =
       entities.map(save).toList
 
-    override def delete(entity: E)(implicit session: Session): Boolean =
+    override def deleteEntity(entity: E)(implicit session: Session): Boolean =
       extractId(entity).exists(id => deleteById(id))
 
     def deleteById(id: Id)(implicit session: Session): Boolean =
@@ -68,6 +75,17 @@ trait SlickQueryExtensions {
 
     def byId(id: Id) = query.filter(_.id === id.bind)
 
+    /**
+     * 특정 컬럼명에 특정 값에 따른 동적 쿼리를 생성합니다.
+     * {{{
+     *   users.byParam("email", "sunghyouk.bae@gmail.com")
+     *        .sortDynamic("email.asc, registDate.desc")
+     *        .paging(0, 10)
+     * }}}
+     * @param column 컬럼 명
+     * @param value 조회하고자하는 컬럼의 값
+     * @return
+     */
     def byParam(column: String, value: Column[String]) =
       query.withFilter(table => table.column[String](column) == value)
   }
@@ -75,7 +93,7 @@ trait SlickQueryExtensions {
   abstract class IdTableExtensions[E <: SlickEntity[Id], Id: BaseColumnType](query: TableQuery[_ <: Table[E] with TableWithId[Id]])
     extends BaseIdTableExtensions(query) {
 
-    override def extractId(entity: E): Option[Id] = entity.id.asInstanceOf[Option[Id]]
+    override def extractId(entity: E): Option[Id] = entity.id
     override def withId(entity: E, id: Id): E = entity.withId(id).asInstanceOf[E]
 
     def deleteAll(entities: E*)(implicit session: Session): Boolean = {

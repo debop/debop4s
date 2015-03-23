@@ -1,4 +1,4 @@
-package debop4s.data.slick.associations.schema
+package debop4s.data.slick.schema
 
 import debop4s.data.slick.SlickContext
 

@@ -1,7 +1,7 @@
 package debop4s.data.slick.associations
 
 import debop4s.data.slick.AbstractSlickFunSuite
-import debop4s.data.slick.associations.model._
+import debop4s.data.slick.associations.model.{Address, Person, PersonTask, Task}
 import debop4s.data.slick.associations.schema.AssociationDatabase._
 import debop4s.data.slick.associations.schema.AssociationDatabase.driver.simple._
 

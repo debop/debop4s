@@ -1,5 +1,7 @@
 package debop4s.data.slick.associations.schema
 
+import debop4s.data.slick.schema.SlickComponent
+
 /**
  * AssociationDatabase
  * @author sunghyouk.bae@gmail.com at 15. 3. 23.

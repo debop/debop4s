@@ -13,8 +13,8 @@ object StandardDB {
 
   lazy val Databases = mutable.Map[DatabaseSetting, SlickDB]()
 
-  def getDB(dbSetting: DatabaseSetting): SlickDB = {
-    Databases.getOrElseUpdate(dbSetting, new SlickDB(dbSetting))
+  def getDB(dbSetting: DatabaseSetting): SlickDB = synchronized {
+    Databases.getOrElseUpdate(dbSetting, SlickDB(dbSetting))
   }
 
   def H2Mem: SlickDB =
