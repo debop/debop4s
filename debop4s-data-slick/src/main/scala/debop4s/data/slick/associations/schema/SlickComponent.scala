@@ -1,9 +1,9 @@
-package debop4s.data.slick.schema
+package debop4s.data.slick.associations.schema
 
 import debop4s.data.slick.SlickContext
 import org.slf4j.LoggerFactory
 
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 
 /**
  * Slick 사용 시

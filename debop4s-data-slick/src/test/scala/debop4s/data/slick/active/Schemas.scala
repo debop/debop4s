@@ -1,6 +1,6 @@
 package debop4s.data.slick.active
 
-import debop4s.data.slick.schema.SlickComponent
+import debop4s.data.slick.associations.schema.SlickComponent
 
 import scala.util.Try
 

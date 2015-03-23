@@ -1,6 +1,6 @@
-package debop4s.data.slick.schema
+package debop4s.data.slick.associations.schema
 
-import debop4s.data.slick.model.{ SlickEntity, Versionable }
+import debop4s.data.slick.associations.model.{SlickEntity, Versionable}
 
 /**
  * Slick Query 에 대한 확장 메소드를 제공하는 trait 입니다.

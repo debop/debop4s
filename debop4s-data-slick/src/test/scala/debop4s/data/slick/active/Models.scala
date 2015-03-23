@@ -1,6 +1,6 @@
 package debop4s.data.slick.active
 
-import debop4s.data.slick.model.{ SlickEntity, Versionable }
+import debop4s.data.slick.associations.model.{SlickEntity, Versionable}
 
 case class Beer(var id: Option[Int] = None,
                 name: String,

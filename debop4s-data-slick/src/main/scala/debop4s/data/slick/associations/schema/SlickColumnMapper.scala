@@ -1,4 +1,4 @@
-package debop4s.data.slick.schema
+package debop4s.data.slick.associations.schema
 
 import java.sql.Timestamp
 

@@ -1,4 +1,4 @@
-package debop4s.data.slick.schema
+package debop4s.data.slick.associations.schema
 
 /**
  * Dtabase Schema 작업을 수행하는 trait 입니다.

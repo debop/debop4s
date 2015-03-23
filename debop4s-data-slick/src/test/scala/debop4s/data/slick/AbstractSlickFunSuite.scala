@@ -24,6 +24,7 @@ abstract class AbstractSlickFunSuite
   }
 
   private def initialize(): Unit = {
+    // SlickContext.init("slick-h2", "slick")
     SlickContext.init("slick-mariadb-master-slaves", "slick")
   }
 
