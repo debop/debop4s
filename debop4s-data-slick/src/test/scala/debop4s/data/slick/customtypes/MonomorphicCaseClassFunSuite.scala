@@ -40,7 +40,7 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
       UserAddresses.list foreach println
 
       UserAddresses.filter(_.id === 1.bind).first.address.street shouldEqual "aaaa"
-      UserAddresses.filter(_.street === "bbbb".bind).map(_.zipcode) shouldEqual "22222"
+      UserAddresses.filter(_.street === "bbbb".bind).map(_.zipcode).first shouldEqual "22222"
       UserAddresses.filter(_.address.city === "seoul".bind).map(_.address.zipcode).first shouldEqual "11111"
     }
   }

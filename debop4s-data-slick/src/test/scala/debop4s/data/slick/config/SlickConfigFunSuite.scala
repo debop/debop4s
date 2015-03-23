@@ -2,7 +2,7 @@ package debop4s.data.slick.config
 
 import debop4s.config.ConfigUtils
 import debop4s.data.common.DataSources
-import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
+import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
 
 /**
  * Slick 관련 환경설정 테스트
@@ -69,23 +69,24 @@ class SlickConfigFunSuite extends AbstractSlickFunSuite {
   }
 
   test("SlickContext master, slaves") {
+
     val slickConfig = loadSlickConfig("slick-mariadb-master-slaves")
 
     slickConfig.masters.length should be > 0
     slickConfig.slaves.length should be > 0
 
     SlickContext.init(slickConfig)
-    Thread.sleep(10)
+    //      Thread.sleep(10)
+    //      SlickContext.isMySQL shouldEqual true
 
-    SlickContext.isMySQL shouldEqual true
-
-    (0 until 100).par.foreach { x =>
+    ( 0 until 100 ).par.foreach { x =>
       SlickContext.masterDB.withSession { implicit session =>
-        LOG.debug(s"Master index=${SlickContext.masterIndex.get()}")
+        LOG.debug(s"Master index=${ SlickContext.masterIndex.get() }")
         session should not be null
       }
+
       SlickContext.slaveDB.withSession { implicit session =>
-        LOG.debug(s"Slave index=${SlickContext.slaveIndex.get()}")
+        LOG.debug(s"Slave index=${ SlickContext.slaveIndex.get() }")
         session should not be null
       }
     }
