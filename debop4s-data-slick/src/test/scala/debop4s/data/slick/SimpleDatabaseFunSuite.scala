@@ -1,6 +1,6 @@
 package debop4s.data.slick
 
-import debop4s.data.slick.SlickComponentExample._
+import debop4s.data.slick.SimpleDatabase._
 
 import scala.util.Try
 
@@ -8,21 +8,23 @@ import scala.util.Try
  * SlickComponentFunSuite
  * @author sunghyouk.bae@gmail.com 15. 3. 22.
  */
-class SlickComponentFunSuite extends AbstractSlickFunSuite {
+class SimpleDatabaseFunSuite extends AbstractSlickFunSuite {
 
   import driver.simple._
 
-  class Codes(tag: Tag) extends Table[(Int, String, String)](tag, "implicits_codes") {
+  class CodeT(tag: Tag) extends Table[(Int, String, String)](tag, "implicits_codes") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name", O.NotNull, O.Length(254, varying = true))
     def value = column[String]("value", O.NotNull, O.Length(254, varying = true))
 
     def * = (id, name, value)
   }
-
-  object CodeRepository extends TableQuery(new Codes(_)) {
+  // 아래의 Codes 변수와 같은 기능을 수행한다.
+  object CodeRepository extends TableQuery(new CodeT(_)) {
     lazy val byName = this.findBy(_.name)
   }
+  lazy val Codes = TableQuery[CodeT]
+
 
   lazy val ranges = Range(0, 5000)
 

@@ -24,8 +24,8 @@ object SlickContext {
 
   lazy val LOG = LoggerFactory.getLogger(getClass)
 
-  private val masterIndex = new AtomicInteger(0)
-  private val slaveIndex = new AtomicInteger(0)
+  private[slick] val masterIndex = new AtomicInteger(0)
+  private[slick] val slaveIndex = new AtomicInteger(0)
 
   private var slickConfig: SlickConfig = null
 
@@ -59,9 +59,11 @@ object SlickContext {
   def masterDB: defaultSlickDB.driver.backend.DatabaseDef = {
     if (masterSettings.isEmpty) defaultDB
     else {
-      val index = masterIndex.getAndIncrement % masterSettings.length
-      masterIndex.compareAndSet(index + 1, ( index + 1 ) % masterSettings.length)
-      masterDBs(index)
+      synchronized {
+        val index = masterIndex.getAndIncrement
+        masterIndex.compareAndSet(masterSettings.length, 0)
+        masterDBs(index % masterSettings.length)
+      }
     }
   }
 
@@ -71,9 +73,11 @@ object SlickContext {
   def slaveDB: defaultSlickDB.driver.backend.DatabaseDef = {
     if (slaveSettings.isEmpty) defaultDB
     else {
-      val index = slaveIndex.getAndIncrement % masterSettings.length
-      slaveIndex.compareAndSet(index + 1, ( index + 1 ) % masterSettings.length)
-      slaveDBs(index)
+      synchronized {
+        val index = slaveIndex.getAndIncrement
+        slaveIndex.compareAndSet(slaveSettings.length, 0)
+        slaveDBs(index % slaveSettings.length)
+      }
     }
   }
 
