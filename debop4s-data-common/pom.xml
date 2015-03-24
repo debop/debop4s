@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>data-common</name>
     <artifactId>debop4s-data-common</artifactId>
 
     <dependencies>

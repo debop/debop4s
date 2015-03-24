@@ -61,7 +61,7 @@ class InvokerFunSuite extends AbstractSlickFunSuite {
     }
   }
 
-  test("lazy") {
+  test("lazy - iterator and toStream") {
     class T(tag: Tag) extends Table[Int](tag, "invoker_lazy_t") {
       def a = column[Int]("a")
       def * = a
