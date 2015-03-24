@@ -1,8 +1,8 @@
 package debop4s.data.slick.customtypes
 
 import debop4s.data.slick.AbstractSlickFunSuite
-import debop4s.data.slick.SimpleDatabase._
-import debop4s.data.slick.SimpleDatabase.driver.simple._
+import debop4s.data.slick.SlickExampleDatabase._
+import debop4s.data.slick.SlickExampleDatabase.driver.simple._
 
 import scala.util.Try
 

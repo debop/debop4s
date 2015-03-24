@@ -1,8 +1,8 @@
 package debop4s.data.slick.examples
 
 import debop4s.data.slick.AbstractSlickFunSuite
-import debop4s.data.slick.SimpleDatabase._
-import debop4s.data.slick.SimpleDatabase.driver.simple._
+import debop4s.data.slick.SlickExampleDatabase._
+import debop4s.data.slick.SlickExampleDatabase.driver.simple._
 
 import scala.util.Try
 
@@ -22,7 +22,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     withSession { implicit session =>
-      Try { ts.ddl.drop }
+      Try {ts.ddl.drop}
       ts.ddl.create
 
       ts ++= Seq((1, Some(1)), (1, Some(2)), (1, Some(3)), (2, Some(3)))
@@ -64,7 +64,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
 
     val ddl = ts.ddl ++ us.ddl
     withSession { implicit session =>
-      Try { ddl.drop }
+      Try {ddl.drop}
       ddl.create
       ts ++= tData
     }
@@ -161,7 +161,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       // group by x2.x3
       val q6 = (
                  for {
-                   (u, t) <- us leftJoin ts on ( _.id === _.a )
+                   (u, t) <- us leftJoin ts on (_.id === _.a)
                  } yield (u, t)
                  ).groupBy(_._1.id)
                .map { case (id, q) => (id, q.length, q.map(_._1).length, q.map(_._2).length) }
@@ -196,14 +196,14 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       val q8c =
         for {(key, group) <- us.map(_ => 5).groupBy(identity)}
           yield (key, group.map(x => x + x).sum)
-      q8c.run shouldEqual Seq((5, Some(( 5 + 5 ) * 4)))
+      q8c.run shouldEqual Seq((5, Some((5 + 5) * 4)))
 
 
       // select x2."a", x2."b" from "aggregate_t3" x2 group by x2."a", x2."b"
       val r9 = tData.toSet
       val q9 = ts.groupBy(identity).map(_._1)
       q9.run.toSet shouldEqual r9
-      println(s"r9=${ q9.run.toSet.mkString }")
+      println(s"r9=${q9.run.toSet.mkString}")
 
 
       // 기본적으로 max, min, avg, sum 이 컬럼과 같은 수형인데, asColumnOf 를 이용하여 다른 수형으로 casting 한다.
@@ -221,7 +221,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
         def * = (a, b) <>(Pair.tupled, Pair.unapply)
       }
       val t4s = TableQuery[T4]
-      Try { t4s.ddl.drop }
+      Try {t4s.ddl.drop}
       t4s.ddl.create
       t4s ++= Seq(
                    Pair(1, Some(1)), Pair(1, Some(2)),
@@ -247,5 +247,137 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       res11.size shouldEqual 2
 
     }
+  }
+
+  test("int length") {
+
+    class A(tag: Tag) extends Table[Int](tag, "aggregate_int_length_a") {
+      def id = column[Int]("id")
+      def * = id
+    }
+    lazy val as = TableQuery[A]
+
+    withSession { implicit session =>
+      Try {as.ddl.drop}
+      as.ddl.create
+      as += 1
+    }
+
+    val q1 = as.groupBy(_.id) map {
+      case (_, q) => (q.map(_.id).min.asColumnOf[Int], q.length)
+    }
+
+    withReadOnly { implicit session =>
+      q1.run shouldEqual Seq((1, 1))
+    }
+  }
+
+  test("group 3") {
+    case class Tab(col1: String, col2: String, col3: String, col4: Int)
+
+    class Tabs(tag: Tag) extends Table[Tab](tag, "aggregate_group_tab") {
+      def col1 = column[String]("col1")
+      def col2 = column[String]("col2")
+      def col3 = column[String]("col3")
+      def col4 = column[Int]("col4")
+      def * = (col1, col2, col3, col4) <>(Tab.tupled, Tab.unapply)
+    }
+    lazy val Tabs = TableQuery[Tabs]
+    withSession { implicit session =>
+      Try {Tabs.ddl.drop}
+      Tabs.ddl.create
+      Tabs ++= Seq(
+                    Tab("foo", "bar", "bat", 1),
+                    Tab("foo", "bar", "bat", 2),
+                    Tab("foo", "quux", "bat", 3),
+                    Tab("baz", "quux", "bat", 4)
+                  )
+
+      withReadOnly { implicit session =>
+        val q1 = Tabs.groupBy(t => (t.col1, t.col2, t.col3)).map {
+          case (grp, t) => (grp._1, grp._2, t.map(_.col4).sum.asColumnOf[Option[Double]])
+        }
+        q1.run.toSet shouldEqual Set(("baz", "quux", Some(4.0)),
+                                      ("foo", "quux", Some(3.0)),
+                                      ("foo", "bar", Some(3.0)))
+      }
+    }
+  }
+
+  test("multi map aggregates") {
+    class B(tag: Tag) extends Table[(Long, String, String)](tag, "aggregate_multimap_b") {
+      def id = column[Long]("id", O.PrimaryKey)
+      def b = column[String]("b")
+      def d = column[String]("d")
+      def * = (id, b, d)
+    }
+    lazy val bs = TableQuery[B]
+
+    class A(tag: Tag) extends Table[(Long, String, Long, Long)](tag, "aggregate_multimap_a") {
+      def id = column[Long]("id", O.PrimaryKey)
+      def a = column[String]("a")
+      def c = column[Long]("c")
+      def fkId = column[Long]("fkId")
+      def * = (id, a, c, fkId)
+    }
+    lazy val as = TableQuery[A]
+
+    val ddl = as.ddl ++ bs.ddl
+    withTransaction { implicit session =>
+      Try {ddl.drop}
+      ddl.create
+    }
+
+
+    withReadOnly { implicit session =>
+      // select min(a.a) from a group by a.id
+      val q1 = as.groupBy(_.id).map(_._2.map(identity).map(x => x.a).min)
+      q1.run.toList.isEmpty shouldEqual true
+
+      // select min(x2.x3), min(x2.x3), x2.x4, count(x5.x6)
+      // from (select x7."id" as x6, x7."a" as x8, x7."c" as x9, x7."fkId" as x10 from "aggregate_multimap_a" x7) x5
+      //   left outer join (select x11."id" as x4, x11."b" as x3, x11."d" as x12 from "aggregate_multimap_b" x11) x2 on x5.x6 = x2.x4
+      // group by x2.x4
+      val q2 =
+        (as leftJoin bs on (_.id === _.id))
+        .map { case (c, s) =>
+          (c, s, s.b)
+        }.groupBy { prop =>
+          val c = prop._1
+          val s = prop._2
+          val name = prop._3
+          s.id // bs.id
+        }.map { prop =>
+          val supId = prop._1
+          val c = prop._2.map(x => x._1)
+          val s = prop._2.map(x => x._2)
+          val name = prop._2.map(x => x._3)
+          (name.min, s.map(_.b).min, supId, c.length)
+        }
+      q2.run.isEmpty shouldEqual true
+
+      // select x2."a", x3."b", max(x2."c")
+      // from "aggregate_multimap_a" x2, "aggregate_multimap_b" x3
+      // where (x2."fkId" = x3."id") and (x3."d" = ?)
+      // group by x2."a", x3."b"
+      val q4 =
+        as.flatMap { t1 =>
+          bs.withFilter { t2 => t1.fkId === t2.id && t2.d === "".bind }.map(t2 => (t1, t2))
+        }.groupBy { prop =>
+          val t1 = prop._1
+          val t2 = prop._2
+          (t1.a, t2.b)
+        }.map { prop =>
+          val a = prop._1._1
+          val b = prop._1._2
+          val t1 = prop._2.map(_._1)
+          val t2 = prop._2.map(_._2)
+          val c3 = t1.map(_.c).max
+          (a, b, c3)
+        }
+
+      q4.run.isEmpty shouldEqual true
+    }
+
   }
 }

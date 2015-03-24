@@ -1,6 +1,9 @@
 package debop4s.data.slick
 
-import debop4s.data.slick.SimpleDatabase._
+// NOTE : SlickExampleDatabase._ 와 SlickExampleDatabase.driver.simple._ 을 꼭 import 해줘야 합니다.
+
+import debop4s.data.slick.SlickExampleDatabase._
+import debop4s.data.slick.SlickExampleDatabase.driver.simple._
 
 import scala.util.Try
 
@@ -8,9 +11,7 @@ import scala.util.Try
  * SlickComponentFunSuite
  * @author sunghyouk.bae@gmail.com 15. 3. 22.
  */
-class SimpleDatabaseFunSuite extends AbstractSlickFunSuite {
-
-  import driver.simple._
+class SlickExampleDatabaseFunSuite extends AbstractSlickFunSuite {
 
   class CodeT(tag: Tag) extends Table[(Int, String, String)](tag, "implicits_codes") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)

@@ -6,7 +6,6 @@ import debop4s.data.slick.schema.SlickComponent
  * SlickComponentExample
  * @author sunghyouk.bae@gmail.com 15. 3. 22.
  */
-object SimpleDatabase extends SlickComponent {
+object SlickExampleDatabase extends SlickComponent {
   this: SlickComponent =>
-
 }
