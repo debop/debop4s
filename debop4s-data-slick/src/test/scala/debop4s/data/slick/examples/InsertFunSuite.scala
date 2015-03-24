@@ -120,6 +120,7 @@ class InsertFunSuite extends AbstractSlickFunSuite {
       ts.filter(_.id > 100).length.run shouldEqual 0
 
       ifCap(jcap.forceInsert) {
+        // insert into "insert_forced_t" ("id","name")  values (?,?)
         ts.forceInsert(104, "A")
         ts.map(_.ins).forceInsertAll((105, "B"), (106, "C"))
         ts.filter(_.id > 100).length.run shouldEqual 3
