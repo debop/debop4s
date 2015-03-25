@@ -173,7 +173,90 @@ class MainFunSuite extends AbstractSlickFunSuite {
       println("Orders for Homer and Marge:")
       q4d.run.foreach { o => println("  " + o) }
 
+      // && 는 and 로 변환, || 는 or 로 변환
       val b1 = Orders.filter(o => o.shipped && o.shipped).map(o => o.shipped && o.shipped)
+      val b2 = Orders.filter(o => o.shipped && o.rebate).map(o => o.shipped && o.rebate)
+      val b3 = Orders.filter(o => o.rebate && o.shipped).map(o => o.rebate && o.shipped)
+      val b4 = Orders.filter(o => o.rebate && o.rebate).map(o => o.rebate && o.rebate)
+      val b5 = Orders.filter(o => !o.shipped).map(o => !o.shipped)
+      val b6 = Orders.filter(o => !o.rebate).map(o => !o.rebate)
+      val b7 = Orders.map(o => o.shipped === o.shipped)
+      val b8 = Orders.map(o => o.rebate === o.shipped)
+      val b9 = Orders.map(o => o.shipped === o.rebate)
+      val b10 = Orders.map(o => o.rebate === o.rebate)
+
+      println("b1: " + b1.selectStatement)
+      println("b2: " + b2.selectStatement)
+      println("b3: " + b3.selectStatement)
+      println("b4: " + b4.selectStatement)
+      println("b5: " + b5.selectStatement)
+      println("b6: " + b6.selectStatement)
+      println("b7: " + b7.selectStatement)
+      println("b8: " + b8.selectStatement)
+      println("b9: " + b9.selectStatement)
+      println("b10: " + b10.selectStatement)
+
+
+      // H2:
+      // select x2."id", x2."first", x2."last"
+      //   from "main_users" x2
+      //  where not (x2."id" in (select x3."userId" from "main_orders" x3))
+      val q5 = Users filterNot { _.id in Orders.map(_.userId) }
+      println(s"q5 = ${ q5.selectStatement }")
+      println("Order가 없는 사용자:")
+      q5.run foreach { u => println("  " + u) }
+      q5.run shouldEqual Seq((3, "Apu", Some("Nahasapeemapetilon")), (7, "Snowball", None))
+
+      println(s"q5 delete: ${ q5.deleteStatement }")
+      println("delete users...")
+      val deleted = q5.delete
+      println(s"Deleted $deleted users")
+      deleted shouldEqual 2
+
+      val q6 = Query(q5.length)
+      println(s"q6: ${ q6.selectStatement }")
+      println("Order가 없는 사용자:" + q6.first)
+      q6.first shouldEqual 0
+
+      // H2 :
+      // update "main_users" set "first" = ? where "main_users"."first" = ?
+      val q7 = Compiled { (s: Column[String]) => Users.filter(_.first === s).map(_.first) }
+      println("q7: " + q7("Homer").updateStatement)
+      val updated1 = q7("Homer").update("Homer Jay")
+      println(s"Updated $updated1 row(s)")
+      updated1 shouldEqual 1
+
+      val q7b = Compiled { Users.filter(_.first === "Homer Jay").map(_.first) }
+      println("q7b: " + q7b.updateStatement)
+      val updated1b = q7b.update("Homer")
+      println(s"Updated $updated1b row(s)")
+      updated1b shouldEqual 1
+
+      // H2: select x2.x3 from (select count(1) as x3 from (select x4."first" as x5 from "main_users" x4 where x4."first" = 'Marge') x6) x2
+      q7("Marge").map(_.length).run shouldEqual 1
+      q7("Marge").map(_.exists).run shouldEqual true
+      q7("Marge").delete
+      q7("Marge").map(_.length).run shouldEqual 0
+      q7("Marge").map(_.exists).run shouldEqual false
+
+
+      val q8 = for (u <- Users if u.last.isEmpty) yield (u.first, u.last)
+      println("q8: " + q8.updateStatement)
+      val updated2 = q8.update("n/a", Some("n/a"))
+      println(s"Updated $updated2 row(s)")
+      updated2 shouldEqual 1
+
+      // H2:
+      // select x2.x3 from (select count(1) as x3 from (select x4."id" as x5, x4."first" as x6, x4."last" as x7 from "main_users" x4) x8) x2
+      Users.list
+      val q9 = Users.length
+      q9.run shouldEqual 4
+
+      // H2:
+      // select x2."first", x2."last" from "main_users" x2 where false
+      val q10 = Users.filter(_.last inSetBind Seq()).map(u => (u.first, u.last))
+      q10.run shouldEqual Nil
+
     }
 
   }
