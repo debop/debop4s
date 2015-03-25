@@ -139,6 +139,41 @@ class MainFunSuite extends AbstractSlickFunSuite {
       println("Latest Order per User: ")
       q4.list foreach { x => println("\t" + x) }
       q4.list.toSet shouldEqual Set(("Homer", 2), ("Marge", 4), ("Carl", 6), ("Lenny", 8), ("Santa's Little Helper", 10))
+
+
+      // custom 함수
+      def maxOfPer[T <: Table[_], C[_]](c: Query[T, _, C])(m: T => Column[Int], p: T => Column[Int]) = {
+        c filter { o => m(o) === ( for (o2 <- c if p(o) === p(o2)) yield m(o2) ).max }
+      }
+      // H2:
+      // select x2."first", x3."orderId"
+      //   from "main_users" x2, "main_orders" x3
+      //  where (x3."orderId" = (select max(x4."orderId") from "main_orders" x4 where x3."userId" = x4."userId"))
+      //    and (x3."userId" = x2."id")
+      val q4b = for {
+        u <- Users
+        o <- maxOfPer(Orders)(_.orderId, _.userId) if o.userId === u.id
+      } yield (u.first, o.orderId)
+      println(s"q4b: ${ q4b.selectStatement }")
+      q4b.foreach(o => println("  " + o))
+      q4b.list.toSet shouldEqual Set(("Homer", 2), ("Marge", 4), ("Carl", 6), ("Lenny", 8), ("Santa's Little Helper", 10))
+
+
+      // H2:
+      // select x2.x3, x2.x4, x2.x5, x2.x6
+      //   from (select x7."first" as x3, 1 + x8."orderId" as x4, 1 as x5, x8."product" as x6
+      //           from "main_users" x7, "main_orders" x8
+      //          where (x7."first" in (?, ?))
+      //            and (x8."userId" = x7."id")) x2
+      val q4d = for {
+        u <- Users if u.first inSetBind Seq("Homer", "Marge")
+        o <- Orders if o.userId === u.id
+      } yield (u.first, (LiteralColumn(1) + o.orderId, 1), o.product)
+      println(s"q4d: ${ q4d.selectStatement }")
+      println("Orders for Homer and Marge:")
+      q4d.run.foreach { o => println("  " + o) }
+
+      val b1 = Orders.filter(o => o.shipped && o.shipped).map(o => o.shipped && o.shipped)
     }
 
   }
