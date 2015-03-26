@@ -51,14 +51,14 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
       users.filter(_.last inSet lastNames).length.run shouldEqual 1
 
       val updateQ = users.filter(_.id === 2.bind).map(_.forUpdate)
-      println("Update: " + updateQ.updateStatement)
+      LOG.debug("Update: " + updateQ.updateStatement)
       updateQ.update(User(None, "Marge", "Simpson"))
 
       Query(users.filter(_.id === 1.bind).exists).first shouldEqual true
       users.filter(_.id === 1.bind).exists.run shouldEqual true
 
       users.filter(_.id between(1, 2)) foreach println
-      println("ID 3 ->" + users.byID(3).run)
+      LOG.debug("ID 3 ->" + users.byID(3).run)
 
       users.filter(_.id between(1, 2)).list.toSet shouldEqual
       Set(User(Some(1), "Homer", "Simpson"), User(Some(2), "Marge", "Simpson"))

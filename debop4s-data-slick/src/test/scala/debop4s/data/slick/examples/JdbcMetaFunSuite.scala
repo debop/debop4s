@@ -35,63 +35,63 @@ class JdbcMetaFunSuite extends AbstractSlickFunSuite {
 
   test("meta") {
     val ddl = users.ddl ++ orders.ddl
-    println("DDL used to create tables: ")
+    LOG.debug("DDL used to create tables: ")
     for (s <- ddl.createStatements)
-      println("\t" + s)
+      LOG.debug("\t" + s)
 
     withSession { implicit session =>
       Try { ddl.drop }
       ddl.create
 
-      println("Type info from Database Meta Data: ")
-      MTypeInfo.getTypeInfo.foreach { typ => println("\t" + typ) }
+      LOG.debug("Type info from Database Meta Data: ")
+      MTypeInfo.getTypeInfo.foreach { typ => LOG.debug("\t" + typ) }
 
       Try {
-        println("Functions from Database Meta Data: ")
+        LOG.debug("Functions from Database Meta Data: ")
         MFunction.getFunctions(MQName.local("%")).foreach { f =>
-          println("\t" + f)
-          f.getFunctionColumns().foreach { c => println("\t\t" + c) }
+          LOG.debug("\t" + f)
+          f.getFunctionColumns().foreach { c => LOG.debug("\t\t" + c) }
         }
       }
 
-      println("UDTs from Database Meta Data:")
-      MUDT.getUDTs(MQName.local("%")).foreach { u => println("\t" + u) }
+      LOG.debug("UDTs from Database Meta Data:")
+      MUDT.getUDTs(MQName.local("%")).foreach { u => LOG.debug("\t" + u) }
 
-      println("Procedures from Database Meta Data:")
+      LOG.debug("Procedures from Database Meta Data:")
       MProcedure.getProcedures(MQName.local("%")).foreach { p =>
-        println("\t" + p)
+        LOG.debug("\t" + p)
         p.getProcedureColumns().foreach { c =>
-          println("\t\t" + c)
+          LOG.debug("\t\t" + c)
         }
       }
 
-      println("Association Schema from Database Meta Data:")
+      LOG.debug("Association Schema from Database Meta Data:")
       for (t <- MTable.getTables(None, None, None, None).list if Set("meta_users_xx", "meta_orders_xx") contains t.name.name) {
-        println("\t" + t)
+        LOG.debug("\t" + t)
         t.getColumns.foreach { c =>
-          println("\t\t" + c)
-          c.getColumnPrivileges foreach { p => println("\t\t\t" + p) }
+          LOG.debug("\t\t" + c)
+          c.getColumnPrivileges foreach { p => LOG.debug("\t\t\t" + p) }
         }
-        t.getVersionColumns foreach { v => println("\t\t\t" + v) }
-        t.getPrimaryKeys foreach { pk => println("\t\t\t" + pk) }
-        t.getImportedKeys foreach { ik => println("\t\t\tImported " + ik) }
-        t.getExportedKeys foreach { ek => println("\t\t\tExported ", ek) }
+        t.getVersionColumns foreach { v => LOG.debug("\t\t\t" + v) }
+        t.getPrimaryKeys foreach { pk => LOG.debug("\t\t\t" + pk) }
+        t.getImportedKeys foreach { ik => LOG.debug("\t\t\tImported " + ik) }
+        t.getExportedKeys foreach { ek => LOG.debug("\t\t\tExported ", ek) }
 
         Try {
-          t.getIndexInfo() foreach { ii => println("\t\t\t" + ii) }
+          t.getIndexInfo() foreach { ii => LOG.debug("\t\t\t" + ii) }
         }
-        t.getTablePrivileges foreach { p => println("\t\t\t" + p) }
+        t.getTablePrivileges foreach { p => LOG.debug("\t\t\t" + p) }
 
         t.getBestRowIdentifier(MBestRowIdentifierColumn.Scope.Session) foreach { c =>
-          println("\t\t\t Row identifier for session: " + c)
+          LOG.debug("\t\t\t Row identifier for session: " + c)
         }
       }
 
       print("Schema from Database Meta Data:")
-      MSchema.getSchemas foreach { s => println("\t" + s) }
+      MSchema.getSchemas foreach { s => LOG.debug("\t" + s) }
 
-      println("Client Info Properties from Database Meta Data:")
-      MClientInfoProperty.getClientInfoProperties foreach { c => println("\t" + c) }
+      LOG.debug("Client Info Properties from Database Meta Data:")
+      MClientInfoProperty.getClientInfoProperties foreach { c => LOG.debug("\t" + c) }
 
       MTable.getTables(None, None, None, None).list.map(_.name.name) should contain allOf("meta_users_xx", "meta_orders_xx")
     }

@@ -1,7 +1,7 @@
 package debop4s.data.slick.active
 
+import debop4s.data.slick.AbstractSlickFunSuite
 import debop4s.data.slick.active.ActiveDatabase._
-import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
 
 /**
  * ActiveFunSuite
@@ -10,7 +10,7 @@ import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
 class ActiveFunSuite extends AbstractSlickFunSuite {
 
   override protected def beforeAll(): Unit = {
-    SlickContext.init("slick-h2")
+    super.beforeAll()
 
     withSession { implicit session =>
       createSchema

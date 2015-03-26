@@ -2,6 +2,7 @@ package debop4s.data.slick.associations
 
 import debop4s.data.slick.AbstractSlickFunSuite
 import debop4s.data.slick.associations.model._
+import debop4s.data.slick.associations.schema.AssociationDatabase
 import debop4s.data.slick.associations.schema.AssociationDatabase._
 import debop4s.data.slick.associations.schema.AssociationDatabase.driver.simple._
 import org.joda.time.DateTime
@@ -45,19 +46,20 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
 
     val joinQuery = sitesById join devicesByPrice on sitesToDevices
 
-    println(s"Join=\n${joinQuery.selectStatement}")
+    LOG.debug(s"Join=\n${ joinQuery.selectStatement }")
 
     withReadOnly { implicit session =>
       joinQuery.run foreach println
     }
   }
 
-  implicit def siteAndDeviceJoinCondition = (s: SiteT, d: DeviceT) => s.id === d.siteId
+  implicit def siteAndDeviceJoinCondition: (AssociationDatabase.SiteT, AssociationDatabase.DeviceT) => Column[Boolean] =
+    (s: SiteT, d: DeviceT) => s.id === d.siteId
 
   test("inner join") {
     val query = Sites join Devices on siteAndDeviceJoinCondition
 
-    println(s"Joins=\n${query.selectStatement}")
+    LOG.debug(s"Joins=\n${ query.selectStatement }")
 
     withReadOnly { implicit session =>
       query.run foreach println
@@ -77,7 +79,7 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
 
   test("join query with query extensions ") {
     val hctDevices = Devices.withSites(Sites.filter(_.name === "HCT".bind)).map { case (d, s) => (d.id, d.price, s.name) }
-    println(s"HCT Devices=\n${hctDevices.selectStatement}")
+    LOG.debug(s"HCT Devices=\n${ hctDevices.selectStatement }")
 
     withReadOnly { implicit session =>
       hctDevices.list foreach println

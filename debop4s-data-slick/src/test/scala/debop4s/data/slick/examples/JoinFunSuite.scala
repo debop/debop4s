@@ -1,8 +1,8 @@
 package debop4s.data.slick.examples
 
-import debop4s.data.slick.AbstractSlickFunSuite
 import debop4s.data.slick.SlickExampleDatabase._
 import debop4s.data.slick.SlickExampleDatabase.driver.simple._
+import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
 
 import scala.util.Try
 
@@ -68,8 +68,8 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       } yield (p.id, c.id, c.name, p.title))
                .sortBy(_._1)
 
-      println("Implicit join")
-      q1.run.foreach { x => println(s"  $x") }
+      LOG.debug("Implicit join")
+      q1.run.foreach { x => LOG.debug(s"  $x") }
       q1.map(p => (p._1, p._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
       val q2 = (for {
@@ -77,8 +77,8 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       } yield (p.id, c.id, c.name, p.title))
                .sortBy(_._1)
 
-      println("Explicit join")
-      q2.run.foreach(x => println(s"  $x"))
+      LOG.debug("Explicit join")
+      q2.run.foreach(x => LOG.debug(s"  $x"))
       q2.map(p => (p._1, p._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
       val q3 = (for {
@@ -87,8 +87,8 @@ class JoinFunSuite extends AbstractSlickFunSuite {
                .sortBy(_._1.nullsFirst)
                .map(_._2)
 
-      println("Left outer join (nulls first)")
-      q3.run.foreach(x => println(s"  $x"))
+      LOG.debug("Left outer join (nulls first)")
+      q3.run.foreach(x => LOG.debug(s"  $x"))
       q3.map(p => (p._1, p._2)).run shouldEqual Seq((0, 4), (2, 1), (3, 2), (4, 3), (5, 2))
 
       val q3a = (for {
@@ -104,8 +104,8 @@ class JoinFunSuite extends AbstractSlickFunSuite {
                 .sortBy(_._1.nullsLast)
                 .map(_._2)
 
-      println("Left outer join (nulls last)")
-      q3b.run.foreach(x => println(s"  $x"))
+      LOG.debug("Left outer join (nulls last)")
+      q3b.run.foreach(x => LOG.debug(s"  $x"))
       q3b.map(p => (p._1, p._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2), (0, 4))
 
       val q4 = (for {
@@ -113,8 +113,8 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       } yield (p.id, c.id.?.getOrElse(0), c.name.?.getOrElse(""), p.title))
                .sortBy(_._1)
 
-      println("Right outer join")
-      q4.run.foreach(x => println(s"  $x"))
+      LOG.debug("Right outer join")
+      q4.run.foreach(x => LOG.debug(s"  $x"))
       q4.map(r => (r._1, r._2)).run shouldEqual Seq((1, 0), (2, 1), (3, 2), (4, 3), (5, 2))
 
       val q5 = (for {
@@ -122,8 +122,8 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       } yield (p.id.?.getOrElse(0), c.id.?.getOrElse(0), c.name.?.getOrElse(""), p.title.?.getOrElse("")))
                .sortBy(_._1)
 
-      println("Outer join")
-      q5.run.foreach(x => println(s"  $x"))
+      LOG.debug("Outer join")
+      q5.run.foreach(x => LOG.debug(s"  $x"))
       q5.map(r => (r._1, r._2)).run shouldEqual Seq((0, 4), (1, 0), (2, 1), (3, 2), (4, 3), (5, 2))
 
     }
@@ -143,7 +143,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       } yield (c.id, i)
 
       val r1 = q1.run
-      r1.foreach(x => println(s"  $x"))
+      r1.foreach(x => LOG.debug(s"  $x"))
       r1 shouldEqual Seq((1, 0), (2, 1), (3, 2), (4, 3))
 
       // FixMe: MariaDB 에서 Posts.sortBy(_.categoryId) 를 독립적으로 사용하면 되는데,
@@ -158,12 +158,14 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       // inner join (select x10.x11 as x5, rownum as x12
       //               from (select x13."categoryId" as x11 from "join_posts" x13 order by x13."categoryId") x10) x4
       //   on x2.x8 = x4.x12
-      val q2 = for {
-        (c, p) <- Categories.sortBy(_.id) zip Posts.sortBy(_.categoryId)
-      } yield (c.id, p.categoryId)
-      val r2 = q2.run
-      r2.foreach(x => println(s"  $x"))
-      r2 shouldEqual Seq((1, -1), (2, 1), (3, 2), (4, 2))
+      if (!SlickContext.isMySQL) {
+        val q2 = for {
+          (c, p) <- Categories.sortBy(_.id) zip Posts.sortBy(_.categoryId)
+        } yield (c.id, p.categoryId)
+        val r2 = q2.run
+        r2.foreach(x => LOG.debug(s"  $x"))
+        r2 shouldEqual Seq((1, -1), (2, 1), (3, 2), (4, 2))
+      }
       // }
 
       // H2:
@@ -175,7 +177,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
         (c, p) <- Categories zip Posts
       } yield (c.id, p.categoryId)
       val r3 = q3.run
-      r3.foreach(x => println(s"  $x"))
+      r3.foreach(x => LOG.debug(s"  $x"))
       r3 shouldEqual Seq((1, -1), (2, 1), (3, 2), (4, 3))
 
       // H2:
@@ -188,7 +190,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       } yield res
 
       val r4 = q4.run
-      r4 foreach { x => println(s"  $x") }
+      r4 foreach { x => LOG.debug(s"  $x") }
       r4 shouldEqual Seq((1, -1), (2, 1), (3, 2), (4, 3))
 
       // H2:
@@ -199,7 +201,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       } yield (c.id, i)
 
       val r5 = q1.run
-      r5.foreach(x => println(s"  $x"))
+      r5.foreach(x => LOG.debug(s"  $x"))
       r5 shouldEqual Seq((1, 0), (2, 1), (3, 2), (4, 3))
 
       val q6 = for {
@@ -207,7 +209,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       } yield (c.id, p.categoryId, i)
 
       val r6 = q6.run
-      r6 foreach { x => println(s"  $x") }
+      r6 foreach { x => LOG.debug(s"  $x") }
       r6 shouldEqual Seq((1, -1, 0), (2, 1, 1), (3, 2, 2), (4, 3, 3))
     }
   }

@@ -58,16 +58,16 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
 
   test("many-to-one join test") {
     withReadOnly { implicit session =>
-      println(s"Addresses:")
+      LOG.debug(s"Addresses:")
       Addresses.list foreach println
 
-      println(s"Persons:")
+      LOG.debug(s"Persons:")
       Persons.list foreach println
 
-      println("address and persons")
+      LOG.debug("address and persons")
       Addresses.list foreach { addr =>
-        println("\t" + addr)
-        Persons.findByAddress(addr.id.get) foreach { person => println("\t\t" + person) }
+        LOG.debug("\t" + addr)
+        Persons.findByAddress(addr.id.get) foreach { person => LOG.debug("\t\t" + person) }
       }
     }
   }

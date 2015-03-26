@@ -37,7 +37,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       ts.list.map { case (id, data) => (id, data.mkString) }.toSet shouldEqual Set((1, "123"), (2, "45"))
 
       if (implicitly[ColumnType[Array[Byte]]].hasLiteralForm) {
-        println("Array[Byte] 가 Literal 로 표현됨")
+        LOG.debug("Array[Byte] 가 Literal 로 표현됨")
         ts.filter(_.data === Array[Byte](4, 5)).map(_.data).run.map(_.mkString) shouldEqual "45"
       }
     }

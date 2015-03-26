@@ -41,13 +41,13 @@ class InsertFunSuite extends AbstractSlickFunSuite {
       // insert into dst2 select src1
       // 이런기능이 ORM 보다 좋은 거지요^^
       val q2 = for (s <- src1 if s.id <= 2) yield s
-      println(s"Insert 2: ${dst2.insertStatementFor(q2)}")
+      LOG.debug(s"Insert 2: ${ dst2.insertStatementFor(q2) }")
       dst2.insert(q2)
       dst2.list.toSet shouldEqual Set((1, "A"), (2, "B"))
 
       // insert into dst2 select dummy
       val q3 = (42, "X".bind)
-      println(s"Insert 3: ${dst2.insertStatementFor(q3)}")
+      LOG.debug(s"Insert 3: ${ dst2.insertStatementFor(q3) }")
       dst2.insertExpr(q3)
       dst2.list.toSet shouldEqual Set((1, "A"), (2, "B"), (42, "X"))
     }

@@ -2,7 +2,7 @@ package debop4s.data.slick.config
 
 import debop4s.config.ConfigUtils
 import debop4s.data.common.DataSources
-import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
+import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
 
 /**
  * Slick 관련 환경설정 테스트
@@ -18,7 +18,7 @@ class SlickConfigFunSuite extends AbstractSlickFunSuite {
     val slickConfig = loadSlickConfig(conf)
 
     val dbSetting = slickConfig.database.dbSetting
-    println(s"db setting=$dbSetting")
+    LOG.debug(s"db setting=$dbSetting")
 
     dbSetting should not be null
 
@@ -33,7 +33,7 @@ class SlickConfigFunSuite extends AbstractSlickFunSuite {
     val confs = Seq("slick-h2", "slick-mariadb", "slick-mysql")
 
     confs foreach { conf =>
-      println(s"conf=$conf")
+      LOG.debug(s"conf=$conf")
       testDatabaseSetting(conf)
     }
   }
@@ -42,7 +42,7 @@ class SlickConfigFunSuite extends AbstractSlickFunSuite {
     val slickConfig = loadSlickConfig(conf)
 
     val dbSetting = slickConfig.database.dbSetting
-    println(s"db setting=$dbSetting")
+    LOG.debug(s"db setting=$dbSetting")
 
     dbSetting should not be null
 
@@ -51,14 +51,14 @@ class SlickConfigFunSuite extends AbstractSlickFunSuite {
 
     slickConfig.masterSettings.length should be > 0
     slickConfig.masterSettings foreach { setting =>
-      println(s"Master Setting=$setting")
+      LOG.debug(s"Master Setting=$setting")
       val ds = DataSources.getDataSource(setting)
       ds should not be null
     }
 
     slickConfig.slaveSettings.length should be > 0
     slickConfig.slaveSettings foreach { setting =>
-      println(s"Slave Setting=$setting")
+      LOG.debug(s"Slave Setting=$setting")
       val ds = DataSources.getDataSource(setting)
       ds should not be null
     }

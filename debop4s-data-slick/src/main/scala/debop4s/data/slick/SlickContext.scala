@@ -10,7 +10,7 @@ import debop4s.data.slick.config.SlickConfig
 import debop4s.data.slick.databases.StandardDB
 import org.slf4j.LoggerFactory
 
-import scala.slick.driver.{H2Driver, HsqldbDriver, MySQLDriver, PostgresDriver}
+import scala.slick.driver._
 
 /**
  * Slick 사용 시 환경설정 정보를 이용하여 Database와 Driver를 사용할 수 있도록 합니다.
@@ -93,10 +93,11 @@ object SlickContext {
 
   def isInitialized: Boolean = this.slickConfig != null
 
-  def isMySQL: Boolean = driver == MySQLDriver
+  def isMySQL: Boolean = (driver == MySQLDriver) || isMariaDB
   def isMariaDB: Boolean = jdbcDriver == JdbcDrivers.DRIVER_CLASS_MARIADB
   def isH2: Boolean = driver == H2Driver
   def isHsqlDB: Boolean = driver == HsqldbDriver
   def isPostgres: Boolean = driver == PostgresDriver
-
+  def isSQLite: Boolean = driver == SQLiteDriver
+  def isOracle: Boolean = driver.profile.toString.contains("OracleDriver")
 }

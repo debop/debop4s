@@ -99,7 +99,7 @@ class SlickExampleDatabaseFunSuite extends AbstractSlickFunSuite {
     ranges.grouped(100).toSeq.par.foreach { is =>
       withReadOnly { implicit session =>
         val codes = CodeRepository.filter(_.id inSet is.toSet).run.toSet
-        codes.foreach(println)
+        codes.foreach(x => LOG.debug(x.toString))
       }
     }
   }
@@ -110,7 +110,7 @@ class SlickExampleDatabaseFunSuite extends AbstractSlickFunSuite {
     ranges.grouped(100).toSeq.par.foreach { is =>
       withDynReadOnly { implicit session =>
         val codes = CodeRepository.filter(_.id inSet is.toSet).run.toSet
-        codes.foreach(println)
+        codes.foreach(x => LOG.debug(x.toString))
       }
     }
   }

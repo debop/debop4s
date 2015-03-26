@@ -47,7 +47,7 @@ class OrderFunSuite extends AbstractSlickFunSuite {
       val q = orderItems.filter(_._1.no === "A-128".bind)
 
       q.length.run shouldEqual 2
-      println(s"Query=${q.selectStatement}")
+      LOG.debug(s"Query=${ q.selectStatement }")
 
       q.run foreach println
 
@@ -64,7 +64,7 @@ class OrderFunSuite extends AbstractSlickFunSuite {
       val groupByQuery = joinQuery.groupBy(_._1.id) // group by order.id
     val itemAvgQuery = groupByQuery.map { case (id, items) => (id, items.length, items.map(_._2.price).avg) }
 
-      println(s"GroupBy:\n${itemAvgQuery.selectStatement}")
+      LOG.debug(s"GroupBy:\n${ itemAvgQuery.selectStatement }")
 
       val itemAvgs = itemAvgQuery.list
       itemAvgs foreach println

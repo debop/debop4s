@@ -34,8 +34,8 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     val q2_1 = q2(1).shaped
 
     withReadOnly { implicit session =>
-      println(q2_0.run)
-      println(q2_1.run)
+      LOG.debug(q2_0.run.toString)
+      LOG.debug(q2_1.run.toString)
 
       q2_0.run shouldEqual(0, None, None, None)
       q2_1.run shouldEqual(3, Some(3), Some(6), Some(2))
@@ -106,7 +106,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
                  ).groupBy(_._1.id)
                .map { case (id, q) => (id, q.length, q.map(_._2.a).sum, q.map(_._2.b).sum) }
       val r2 = q2.run
-      println(s"r2=$r2")
+      LOG.debug(s"r2=$r2")
       r2 shouldEqual Seq((1, 3, Some(1 + 1 + 1), Some(1 + 2 + 3)),
                           (2, 3, Some(2 + 2 + 2), Some(1 + 2 + 5)),
                           (3, 2, Some(3 + 3), Some(1 + 9)))
@@ -122,7 +122,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
                  } yield (x, q.map(_._2).sum)
                  ).sortBy(_._1)
       val r3 = q3.run
-      println(s"r3=$r3")
+      LOG.debug(s"r3=$r3")
       r3 shouldEqual Seq((11, Some(1 + 2 + 3)), (12, Some(1 + 2 + 5)), (13, Some(1 + 9)))
 
       // select a, b, count(*) from t3
@@ -133,7 +133,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       } yield (x, q.length)
 
       val r4 = q4.sortBy(_._1).run
-      println(s"r4=$r4")
+      LOG.debug(s"r4=$r4")
       r4 shouldEqual Seq(
                           ((1, Some(1)), 1), ((1, Some(2)), 1), ((1, Some(3)), 1),
                           ((2, Some(1)), 1), ((2, Some(2)), 1), ((2, Some(5)), 1),
@@ -203,7 +203,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       val r9 = tData.toSet
       val q9 = ts.groupBy(identity).map(_._1)
       q9.run.toSet shouldEqual r9
-      println(s"r9=${q9.run.toSet.mkString}")
+      LOG.debug(s"r9=${ q9.run.toSet.mkString }")
 
 
       // 기본적으로 max, min, avg, sum 이 컬럼과 같은 수형인데, asColumnOf 를 이용하여 다른 수형으로 casting 한다.
