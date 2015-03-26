@@ -41,11 +41,43 @@ class ParallelFunSuite extends AbstractSlickFunSuite {
     super.afterAll()
   }
 
-  test("parallel insert with new session") {
+  test("parallel insert with individual session") {
+    Closer.using(new ClosableStopwatch()) { sw =>
+      ranges.par.foreach { i =>
+        withSession { implicit session =>
+          Codes.map(c => (c.name, c.value)).insert("name-" + i, "value-" + i)
+        }
+      }
+    }
+  }
+
+  test("parallel insert with individual transaction") {
     Closer.using(new ClosableStopwatch()) { sw =>
       ranges.par.foreach { i =>
         withTransaction { implicit session =>
           Codes.map(c => (c.name, c.value)).insert("name-" + i, "value-" + i)
+        }
+      }
+    }
+  }
+
+  test("parallel insert by grouped with individual transaction") {
+    Closer.using(new ClosableStopwatch()) { sw =>
+      ranges.grouped(100).toSeq.par.foreach { is =>
+        withTransaction { implicit session =>
+          is.foreach { i =>
+            Codes.map(c => (c.name, c.value)).insert("name-" + i, "value-" + i)
+          }
+        }
+      }
+    }
+  }
+
+  test("parallel insertAll by grouped with individual transaction") {
+    Closer.using(new ClosableStopwatch()) { sw =>
+      ranges.grouped(100).toSeq.par.foreach { is =>
+        withTransaction { implicit session =>
+          Codes.map(c => (c.name, c.value)) ++= is.map(i => ("name-" + i, "value-" + i)).toSet
         }
       }
     }
