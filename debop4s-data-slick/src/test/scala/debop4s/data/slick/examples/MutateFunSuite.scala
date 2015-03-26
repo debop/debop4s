@@ -7,7 +7,7 @@ import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
 import scala.util.Try
 
 /**
- * MutateFunSuite
+ * ResultSet fetch (scroll) 하면서, row 단위로 DB에 적업이 가능합니다.
  * @author sunghyouk.bae@gmail.com
  */
 class MutateFunSuite extends AbstractSlickFunSuite {
