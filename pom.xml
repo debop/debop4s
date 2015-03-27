@@ -18,7 +18,6 @@
         <module>debop4s-mongo</module>
         <module>debop4s-data-common</module>
         <module>debop4s-data-jpa</module>
-        <module>debop4s-data-mybatis</module>
         <module>debop4s-data-slick</module>
         <module>debop4s-data</module>
         <module>debop4s-testing</module>
