@@ -3,10 +3,10 @@ package debop4s.timeperiod.tests.timelines
 import debop4s.timeperiod.tests.AbstractTimePeriodTest
 import debop4s.timeperiod.tests.samples.SchoolDay
 import debop4s.timeperiod.timeline.TimeGapCalculator
-import debop4s.timeperiod.timerange.{CalendarTimeRange, DayRangeCollection, MonthRange}
+import debop4s.timeperiod.timerange.{ CalendarTimeRange, DayRangeCollection, MonthRange }
 import debop4s.timeperiod.utils.Times._
-import debop4s.timeperiod.utils.{Durations, Times}
-import debop4s.timeperiod.{TimeCalendar, TimeRange, TimePeriodCollection}
+import debop4s.timeperiod.utils.{ Durations, Times }
+import debop4s.timeperiod.{ TimeCalendar, TimePeriodCollection, TimeRange }
 import org.joda.time.DateTime
 
 /**
@@ -231,7 +231,7 @@ class TimeGapCalendarTest extends AbstractTimePeriodTest {
                 val calculator = TimeGapCalculator(calendar)
                 val gaps = calculator.gaps(excludePeriods, limits)
 
-                // gaps.foreach(gap => log.trace(s"$gap"))
+                // gaps.foreach(gap => LOG.trace(s"$gap"))
 
                 gaps.size should equal(4)
                 gaps(0).isSamePeriod(TimeRange(asDate(2011, 3, 4), Durations.days(1))) should equal(true)

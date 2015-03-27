@@ -1,12 +1,14 @@
 package debop4s.core.cryptography
 
-import debop4s.core.AbstractCoreTest
-import debop4s.core.utils.Strings
 import java.security.Security
-import org.jasypt.digest.{PooledStringDigester, StandardStringDigester}
-import org.jasypt.encryption.pbe.{StandardPBEByteEncryptor, StandardPBEStringEncryptor}
+
+import debop4s.core.AbstractCoreTest
+import org.jasypt.digest.{ PooledStringDigester, StandardStringDigester }
+import org.jasypt.encryption.pbe.{ StandardPBEByteEncryptor, StandardPBEStringEncryptor }
 import org.jasypt.util.text.BasicTextEncryptor
-import scala.collection.JavaConversions._
+
+import scala.collection.JavaConverters._
+import scala.util.control.NonFatal
 
 /**
  * debop4s.core.stests.cryptography.JasyptTest
@@ -19,42 +21,37 @@ class JasyptTest extends AbstractCoreTest {
     val DigesterAlgorithms = Array("MD5", "SHA", "SHA-256", "SHA-384", "SHA-512")
 
     test("load algorithms") {
-        Security.getProviders.foreach {
-            provider =>
-                log.trace(s"provider=${ provider.getName }")
-                provider.getServices.foreach {
-                    service =>
-                        log.trace(s"    Algorithm=${ service.getAlgorithm }")
-                }
+        Security.getProviders.foreach { provider =>
+            log.trace(s"provider=${ provider.getName }")
+            provider.getServices.asScala.foreach { service =>
+                log.trace(s"\tAlgorithm=${ service.getAlgorithm }")
+            }
         }
     }
 
     test("load algorithm of message digest") {
-        Security.getAlgorithms("MessageDigest").foreach {
-            algorithm =>
-                log.trace(s"MessageDigest algorithm=$algorithm")
+        Security.getAlgorithms("MessageDigest").asScala.foreach { algorithm =>
+            log.trace(s"MessageDigest algorithm=$algorithm")
         }
     }
 
     test("load ciphers") {
-        Security.getAlgorithms("Cipher").foreach {
-            algorithm =>
-                log.trace(s"Symmetric algorithm=$algorithm")
+        Security.getAlgorithms("Cipher").asScala.foreach { algorithm =>
+            log.trace(s"Symmetric algorithm=$algorithm")
         }
     }
 
     test("standard string digest") {
-        DigesterAlgorithms.foreach {
-            algorithm =>
-                val digester = new StandardStringDigester()
-                digester.setAlgorithm(algorithm)
-                digester.setIterations(10)
+        DigesterAlgorithms.foreach { algorithm =>
+            val digester = new StandardStringDigester()
+            digester.setAlgorithm(algorithm)
+            digester.setIterations(10)
 
-                val digest = digester.digest("password")
+            val digest = digester.digest("password")
 
-                digester.matches("Password", digest) should equal(false)
-                digester.matches("passworD", digest) should equal(false)
-                digester.matches("password", digest) should equal(true)
+            digester.matches("Password", digest) shouldEqual false
+            digester.matches("passworD", digest) shouldEqual false
+            digester.matches("password", digest) shouldEqual true
         }
     }
 
@@ -65,75 +62,69 @@ class JasyptTest extends AbstractCoreTest {
             digester.setAlgorithm(algorithm)
             digester.setIterations(10)
 
-            (0 until 10).par.foreach(x => {
-
+            ( 0 until 10 ).par.foreach { x =>
                 val digest = digester.digest("password")
 
-                digester.matches("Password", digest) should equal(false)
-                digester.matches("passworD", digest) should equal(false)
-                digester.matches("password", digest) should equal(true)
-            })
+                digester.matches("Password", digest) shouldEqual false
+                digester.matches("passworD", digest) shouldEqual false
+                digester.matches("password", digest) shouldEqual true
+            }
         })
     }
 
     val PLAIN_TEXT = "동해물과 백두산이 마르고 닳도록~ Hello World! 1234567890 ~!@#$%^&*()"
     val EncryptorAlgorithm = Array("AES", "AESWARP", "ARCFOUR", "BLOWFISH", "DES", "DESEDE",
-        "DESEDEWARP", "PBEWITHMD5ANDDES", "PBEWITHMD5ANDTRIPLEDES",
-        "PBEWITHSHA1ANDDESEDE", "PBEWITHSHA1ANDRC2_40", "RC2")
+                                      "DESEDEWARP", "PBEWITHMD5ANDDES", "PBEWITHMD5ANDTRIPLEDES",
+                                      "PBEWITHSHA1ANDDESEDE", "PBEWITHSHA1ANDRC2_40", "RC2")
 
     test("basic test encryptor") {
-        Security.getAlgorithms("Cipher").foreach {
-            algorithm =>
+        Security.getAlgorithms("Cipher").asScala.foreach { algorithm =>
+            log.trace(s"Algorithm=$algorithm")
 
-                log.trace(s"Algorithm=$algorithm")
+            val encryptor = new BasicTextEncryptor()
+            encryptor.setPassword("debop")
 
-                val encryptor = new BasicTextEncryptor()
-                encryptor.setPassword("debop")
+            val encrypted = encryptor.encrypt(PLAIN_TEXT)
+            val decrypted = encryptor.decrypt(encrypted)
 
-                val encrypted = encryptor.encrypt(PLAIN_TEXT)
-                val decrypted = encryptor.decrypt(encrypted)
-
-                decrypted should equal(PLAIN_TEXT)
+            decrypted shouldEqual PLAIN_TEXT
         }
     }
 
     val PBEAlgorithms = Array("PBEWITHSHA1ANDDESEDE", "PBEWITHMD5ANDDES", "PBEWITHSHA1ANDRC2_40")
 
     test("standard PBE String encryptor") {
-        PBEAlgorithms.foreach {
-            algorithm =>
-                log.trace(s"StandardPBEStringEncryptor algorith=$algorithm")
-                try {
-                    val encryptor = new StandardPBEStringEncryptor()
-                    encryptor.setAlgorithm(algorithm)
-                    encryptor.setPassword("debop")
+        PBEAlgorithms.foreach { algorithm =>
+            log.trace(s"StandardPBEStringEncryptor algorith=$algorithm")
+            try {
+                val encryptor = new StandardPBEStringEncryptor()
+                encryptor.setAlgorithm(algorithm)
+                encryptor.setPassword("debop")
 
-                    val encrypted = encryptor.encrypt(PLAIN_TEXT)
-                    val decrypted = encryptor.decrypt(encrypted)
+                val encrypted = encryptor.encrypt(PLAIN_TEXT)
+                val decrypted = encryptor.decrypt(encrypted)
 
-                    decrypted should equal(PLAIN_TEXT)
-                } catch {
-                    case e: Throwable => log.error(s"$algorithm 은 지원하지 않습니다.", e)
-                }
+                decrypted shouldEqual PLAIN_TEXT
+            } catch {
+                case NonFatal(e) => log.error(s"$algorithm 은 지원하지 않습니다.", e)
+            }
         }
     }
 
     test("standard PBE Byte encryptor") {
-        PBEAlgorithms.foreach {
-            algorithm =>
-                log.trace(s"StandardPBEByteEncryptor algorith=$algorithm")
-                try {
-                    val encryptor = new StandardPBEByteEncryptor()
-                    encryptor.setAlgorithm(algorithm)
-                    encryptor.setPassword("debop")
+        PBEAlgorithms.foreach { algorithm =>
+            log.trace(s"StandardPBEByteEncryptor algorith=$algorithm")
+            try {
+                val encryptor = new StandardPBEByteEncryptor()
+                encryptor.setAlgorithm(algorithm)
+                encryptor.setPassword("debop")
 
-                    val encrypted = encryptor.encrypt(Strings.getUtf8Bytes(PLAIN_TEXT))
-                    val decrypted = encryptor.decrypt(encrypted)
-
-                    Strings.getUtf8String(decrypted) should equal(PLAIN_TEXT)
-                } catch {
-                    case e: Throwable => log.error(s"$algorithm 은 지원하지 않습니다.", e)
-                }
+                val encrypted = encryptor.encrypt(PLAIN_TEXT.getBytes("UTF-8"))
+                val decrypted = encryptor.decrypt(encrypted)
+                new String(decrypted, "UTF-8") shouldEqual PLAIN_TEXT
+            } catch {
+                case NonFatal(e) => log.error(s"$algorithm 은 지원하지 않습니다.", e)
+            }
         }
     }
 }

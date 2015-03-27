@@ -155,7 +155,7 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
 
       // H2:
       // select x2."a"||cast(x2."b" as VARCHAR) from "relational_misc_t_cast" x2
-      val q2 = ts.map(t => t.a ++ t.b.asColumnOfType[String]("VARCHAR"))
+      val q2 = ts.map(t => t.a ++ t.b.asColumnOfType[String]("VARCHAR(255)"))
       q2.run.toSet shouldEqual Set("foo1", "bar2")
     }
   }

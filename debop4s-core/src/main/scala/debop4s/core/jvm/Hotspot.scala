@@ -1,11 +1,13 @@
 package debop4s.core.jvm
 
+import java.lang.management.ManagementFactory
+import javax.management.openmbean.CompositeDataSupport
+import javax.management.{ ObjectName, RuntimeMBeanException }
+
 import debop4s.core.Time
 import debop4s.core.conversions.storage._
 import debop4s.core.conversions.time._
-import java.lang.management.ManagementFactory
-import javax.management.openmbean.CompositeDataSupport
-import javax.management.{RuntimeMBeanException, ObjectName}
+
 import scala.collection.JavaConverters._
 
 
@@ -163,7 +165,7 @@ java.property.java.vm.specification.vendor = Sun Microsystems Inc.
 java.property.java.vm.specification.version = 1.0
 java.property.java.vm.vendor = Apple Inc.
 java.property.java.vm.version = 20.4-b02-402
-java.rt.vmArgs = -Xserver -Djava.net.preferIPv4Stack=true -Dsbt.log.noformat=true -Xmx2G -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:MaxTenuringThreshold=3 -Xbootclasspath/a:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/jline.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-compiler.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-dbc.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-library.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-swing.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scalap.jar -Dscala.usejavacp=true -Dscala.home=/Users/marius/t/src/.scala/scala-2.8.1.final -Denv.emacs=
+java.rt.vmArgs = -Xserver -Djava.net.preferIPv4Stack=true -Dsbt.LOG.noformat=true -Xmx2G -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:MaxTenuringThreshold=3 -Xbootclasspath/a:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/jline.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-compiler.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-dbc.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-library.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-swing.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scalap.jar -Dscala.usejavacp=true -Dscala.home=/Users/marius/t/src/.scala/scala-2.8.1.final -Denv.emacs=
 java.rt.vmFlags =
 java.threads.daemon = 3
 java.threads.live = 4

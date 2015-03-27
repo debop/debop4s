@@ -1,9 +1,9 @@
 package debop4s.core.io
 
-import debop4s.core.compress.{SnappyCompressor, Compressor, DeflateCompressor, GZipCompressor}
-import debop4s.core.cryptography.{TripleDESEncryptor, DESEncryptor, RC2Encryptor, SymmetricEncryptor}
-import debop4s.core.io.model.{User, Company}
-import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import debop4s.core.compress.{ Compressor, DeflateCompressor, GZipCompressor, SnappyCompressor }
+import debop4s.core.cryptography.{ DESEncryptor, RC2Encryptor, SymmetricEncryptorSupport, TripleDESEncryptor }
+import debop4s.core.io.model.{ Company, User }
+import org.scalatest.{ BeforeAndAfter, FunSuite, Matchers }
 import org.slf4j.LoggerFactory
 
 /**
@@ -58,7 +58,7 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
     }
 
     test("encryptable serialize") {
-        val encryptors = Array[SymmetricEncryptor](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
+        val encryptors = Array[SymmetricEncryptorSupport](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
 
         encryptors.foreach {
             encryptor =>

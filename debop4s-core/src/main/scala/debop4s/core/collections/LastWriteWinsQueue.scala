@@ -26,7 +26,7 @@ class LastWriteWinsQueue[A] extends java.util.Queue[A] {
 
     def remove(candidate: AnyRef) = {
         val contained = item.get()
-        val containsCandidate = contained.exists(_ == candidate)
+        val containsCandidate = contained.contains(candidate)
         if (containsCandidate) {
             item.compareAndSet(contained, None)
         }

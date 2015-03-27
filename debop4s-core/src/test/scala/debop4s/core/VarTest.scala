@@ -27,7 +27,7 @@
 //                super.observe(d, obs),
 //                Closable.make { deadline =>
 //                    observerCount -= 1
-//                    log.debug(s"close... observerCount=$observerCount")
+//                    LOG.debug(s"close... observerCount=$observerCount")
 //                    Future.successful(Unit)
 //                }
 //            )

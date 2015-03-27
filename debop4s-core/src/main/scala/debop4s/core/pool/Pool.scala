@@ -1,10 +1,11 @@
 package debop4s.core.pool
 
 import org.slf4j.LoggerFactory
+
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 /**
 * twitter/util 에 있는 pool 을 porting 했습니다.
@@ -98,7 +99,7 @@ private class HealthyQueue[A](makeItem: () => Future[A],
             if (isHealthy(item)) {
                 Future(item)
             } else {
-                // log.debug(s"not healthy item! $item")
+                // LOG.debug(s"not healthy item! $item")
                 val newItem = makeItem()
                 synchronized {
                     this += newItem

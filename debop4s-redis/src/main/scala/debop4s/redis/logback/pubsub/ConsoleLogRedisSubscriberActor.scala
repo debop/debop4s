@@ -1,15 +1,17 @@
 package debop4s.redis.logback.pubsub
 
+import java.net.InetSocketAddress
+
 import debop4s.core.json.JacksonSerializer
 import debop4s.core.logback.LogDocument
-import java.net.InetSocketAddress
 import redis.actors.RedisSubscriberActor
-import redis.api.pubsub.{Message, PMessage}
+import redis.api.pubsub.{ Message, PMessage }
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**
- * logback log message 를 Redis PubSub channel에서 받아와서 console에 쓰도록 하는 Subscriber 입니다.
+ * logback LOG message 를 Redis PubSub channel에서 받아와서 console에 쓰도록 하는 Subscriber 입니다.
  *
  *
  * Created by debop on 2014. 2. 22.

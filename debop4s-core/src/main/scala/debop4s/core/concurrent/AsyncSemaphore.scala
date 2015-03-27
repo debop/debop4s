@@ -54,7 +54,7 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
    *         would be exceeded.
    */
   def acquire(): Future[Permit] = synchronized {
-    // log.debug(s"acquire... availablePermits=$availablePermits")
+    // LOG.debug(s"acquire... availablePermits=$availablePermits")
     if (availablePermits > 0) {
       availablePermits -= 1
       Future.successful(new SemaphorePermit)

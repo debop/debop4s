@@ -1,9 +1,10 @@
 package debop4s.data.hibernate.usertype.cryptography
 
-import debop4s.core.cryptography.{TripleDESEncryptor, DESEncryptor, RC2Encryptor, SymmetricEncryptor}
-import debop4s.core.utils.Strings
 import java.io.Serializable
-import java.sql.{ResultSet, PreparedStatement}
+import java.sql.{ PreparedStatement, ResultSet }
+
+import debop4s.core.cryptography.{ DESEncryptor, RC2Encryptor, SymmetricEncryptorSupport, TripleDESEncryptor }
+import debop4s.core.utils.Strings
 import org.hibernate.`type`.StringType
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
@@ -16,7 +17,7 @@ import org.hibernate.usertype.UserType
  */
 abstract class AbstractEncryptedStringUserType extends UserType {
 
-    protected def encryptor: SymmetricEncryptor
+    protected def encryptor: SymmetricEncryptorSupport
 
     private def encrypt(plainText: String): String = {
         if (Strings.isEmpty(plainText)) {
@@ -83,7 +84,7 @@ class DESStringUserType extends AbstractEncryptedStringUserType {
 
     private lazy val _encryptor = new DESEncryptor()
 
-    override protected def encryptor: SymmetricEncryptor = _encryptor
+    override protected def encryptor: SymmetricEncryptorSupport = _encryptor
 }
 
 /**
@@ -93,7 +94,7 @@ class RC2StringUserType extends AbstractEncryptedStringUserType {
 
     private lazy val _encryptor = new RC2Encryptor()
 
-    override protected def encryptor: SymmetricEncryptor = _encryptor
+    override protected def encryptor: SymmetricEncryptorSupport = _encryptor
 }
 
 /**
@@ -103,5 +104,5 @@ class TripleDESStringUserType extends AbstractEncryptedStringUserType {
 
     private lazy val _encryptor = new TripleDESEncryptor()
 
-    override protected def encryptor: SymmetricEncryptor = _encryptor
+    override protected def encryptor: SymmetricEncryptorSupport = _encryptor
 }

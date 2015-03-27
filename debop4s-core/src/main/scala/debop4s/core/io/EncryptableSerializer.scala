@@ -1,6 +1,6 @@
 package debop4s.core.io
 
-import debop4s.core.cryptography.{RC2Encryptor, SymmetricEncryptor}
+import debop4s.core.cryptography.{ RC2Encryptor, SymmetricEncryptorSupport }
 import org.slf4j.LoggerFactory
 
 /**
@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  0.1
  */
-class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncryptor = new RC2Encryptor())
+class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncryptorSupport = new RC2Encryptor())
     extends SerializerDecorator(serializer) {
 
     private lazy val log = LoggerFactory.getLogger(classOf[EncryptableSerializer])

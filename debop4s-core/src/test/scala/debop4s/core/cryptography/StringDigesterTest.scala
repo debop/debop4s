@@ -1,13 +1,12 @@
 package debop4s.core.cryptography
 
 import debop4s.core.AbstractCoreTest
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.support.AnnotationConfigContextLoader
-import org.springframework.test.context.{TestContextManager, ContextConfiguration}
-import scala.collection.JavaConversions._
+import org.springframework.test.context.{ ContextConfiguration, TestContextManager }
+
+import scala.collection.JavaConverters._
 
 /**
  * debop4s.core.stests.cryptography.StringDigesterTest
@@ -15,8 +14,8 @@ import scala.collection.JavaConversions._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 25. 오전 10:27
  */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[CryptographyConfiguration]), loader = classOf[AnnotationConfigContextLoader])
+@ContextConfiguration(classes = Array(classOf[CryptographyConfiguration]),
+                         loader = classOf[AnnotationConfigContextLoader])
 class StringDigesterTest extends AbstractCoreTest {
 
     @Autowired val ctx: ApplicationContext = null
@@ -27,13 +26,25 @@ class StringDigesterTest extends AbstractCoreTest {
     val PLAIN_TEXT = "동해물과 백두산이 마르고 닳도록~ Hello World! 1234567890 ~!@#$%^&*()"
 
     test("string digest") {
-        val digesters = ctx.getBeansOfType(classOf[StringDigester]).values()
+        val digesters = ctx.getBeansOfType(classOf[StringDigesterSupport]).values()
 
-        digesters.foreach {
-            digester =>
-                log.debug(s"Digest message by $digester")
-                val digestedText = digester.digest(PLAIN_TEXT)
-                digester.matches(PLAIN_TEXT, digestedText) should equal(true)
+        digesters.asScala.foreach { digester =>
+            log.debug(s"Digest message by ${ digester.algorithm }")
+            val digestedText = digester.digest(PLAIN_TEXT)
+            digester.matches(PLAIN_TEXT, digestedText) shouldEqual true
         }
+    }
+
+    test("digest matches") {
+        val digester = new SHA512StringDigester()
+        val digest1 = digester.digest(PLAIN_TEXT)
+        digester.matches(PLAIN_TEXT, digest1) shouldEqual true
+    }
+
+    test("digest multiple") {
+        val digester = new SHA512StringDigester()
+        val digest1 = digester.digest(PLAIN_TEXT)
+        val digest2 = digester.digest(PLAIN_TEXT)
+        digest1 shouldEqual digest2
     }
 }

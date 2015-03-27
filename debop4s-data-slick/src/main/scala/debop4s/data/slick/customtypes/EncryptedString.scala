@@ -5,4 +5,11 @@ package debop4s.data.slick.customtypes
  *
  * @author sunghyouk.bae@gmail.com 15. 3. 22.
  */
-case class EncryptedString(text: String) extends AnyVal
+case class EncryptedString(text: String) {
+
+  override def equals(obj: scala.Any): Boolean = {
+    obj != null &&
+    obj.isInstanceOf[EncryptedString] &&
+    obj.asInstanceOf[EncryptedString].text.equals(text)
+  }
+}

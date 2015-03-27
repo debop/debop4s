@@ -142,7 +142,7 @@ class LoadAverage(interval: Double) extends Estimator[Double] {
 }
 
 /**
- * Take a GC log produced by:
+ * Take a GC LOG produced by:
  *
  * {{{
  * $ jstat -gc \$PID 250 ...

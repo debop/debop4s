@@ -1,6 +1,6 @@
 package debop4s.core.parallels
 
-import java.util.concurrent.{Callable, ThreadLocalRandom}
+import java.util.concurrent.{ Callable, ThreadLocalRandom }
 
 
 /**
@@ -11,7 +11,7 @@ import java.util.concurrent.{Callable, ThreadLocalRandom}
  */
 object Parallels {
 
-    // private lazy val log = LoggerFactory.getLogger(getClass)
+    // private lazy val LOG = LoggerFactory.getLogger(getClass)
 
     lazy val random = ThreadLocalRandom.current()
     lazy val processCount = Runtime.getRuntime.availableProcessors()
