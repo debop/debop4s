@@ -51,21 +51,27 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
 
       ts ++= Seq("foo", "bar", "foobar", "foo%")
 
+      // select x2."a" from "relational_misc_t_like" x2 where x2."a" like 'foo'
       val q1 = for (t1 <- ts if t1.a like "foo") yield t1.a
       q1.run shouldEqual Seq("foo")
 
+      // select x2."a" from "relational_misc_t_like" x2 where x2."a" like 'foo'
       ts.filter(_.a like "foo").run shouldEqual Seq("foo")
 
+      // select x2."a" from "relational_misc_t_like" x2 where x2."a" like 'foo%'
       val q2 = for (t1 <- ts if t1.a like "foo%") yield t1.a
       q2.run.toSet shouldEqual Set("foo", "foobar", "foo%")
 
+      // select x2."a" from "relational_misc_t_like" x2 where x2."a" like 'foo%'
       ts.filter(_.a like "foo%").run.toSet shouldEqual Set("foo", "foobar", "foo%")
 
       // '%' 가 특수문자이므로, escape 사용하여 '%' 가 들어간 문장을 검색합니다.
+      // select x2."a" from "relational_misc_t_like" x2 where x2."a" like 'foo^%' escape '^'
       ifCap(rcap.likeEscape) {
         val q3 = for (t <- ts if t.a.like("foo^%", '^')) yield t.a
         q3.run shouldEqual Seq("foo%")
 
+        // select x2."a" from "relational_misc_t_like" x2 where x2."a" like 'foo^%' escape '^'
         ts.filter(_.a.like("foo^%", '^')).run shouldEqual Seq("foo%")
       }
     }
@@ -111,8 +117,46 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
 
       ts ++= Seq(1, 2, 3, 4)
 
+      // H2
+      // select x2."a", (case when (x2."a" < 3) then 1 else 0 end) from "relational_misc_t_conditional" x2
       val q1 = ts.map(t => (t.a, Case.If(t.a < 3) Then 1 Else 0))
       q1.run.toSet shouldEqual Set((1, 1), (2, 1), (3, 0), (4, 0))
+
+      // H2
+      // select x2."a", (case when (x2."a" < 3) then 1 end) from "relational_misc_t_conditional" x2
+      val q2 = ts.map(t => (t.a, Case.If(t.a < 3) Then 1))
+      q2.run.toSet shouldEqual Set((1, Some(1)), (2, Some(1)), (3, None), (4, None))
+
+      // H2
+      // select x2."a", (case when (x2."a" < 3) then 1 when (x2."a" < 4) then 2 else 0 end) from "relational_misc_t_conditional" x2
+      val q3 = ts.map { t => (t.a, Case.If(t.a < 3) Then 1 If (t.a < 4) Then 2 Else 0) }
+      q3.run.toSet shouldEqual Set((1, 1), (2, 1), (3, 2), (4, 0))
+    }
+  }
+
+  test("cast") {
+    class T(tag: Tag) extends Table[(String, Int)](tag, "relational_misc_t_cast") {
+      def a = column[String]("a")
+      def b = column[Int]("b")
+      def * = (a, b)
+    }
+    val ts = TableQuery[T]
+
+    withSession { implicit session =>
+      Try { ts.ddl.drop }
+      ts.ddl.create
+
+      ts ++= Seq(("foo", 1), ("bar", 2))
+
+      // H2:
+      // select x2."a"||cast(x2."b" as CHAR) from "relational_misc_t_cast" x2
+      val q1 = ts.map(t => t.a ++ t.b.asColumnOfType[String]("CHAR"))
+      q1.run.toSet shouldEqual Set("foo1", "bar2")
+
+      // H2:
+      // select x2."a"||cast(x2."b" as VARCHAR) from "relational_misc_t_cast" x2
+      val q2 = ts.map(t => t.a ++ t.b.asColumnOfType[String]("VARCHAR"))
+      q2.run.toSet shouldEqual Set("foo1", "bar2")
     }
   }
 
