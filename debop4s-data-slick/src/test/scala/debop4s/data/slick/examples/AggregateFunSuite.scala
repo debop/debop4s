@@ -22,7 +22,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     withSession { implicit session =>
-      Try {ts.ddl.drop}
+      Try { ts.ddl.drop }
       ts.ddl.create
 
       ts ++= Seq((1, Some(1)), (1, Some(2)), (1, Some(3)), (2, Some(3)))
@@ -64,7 +64,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
 
     val ddl = ts.ddl ++ us.ddl
     withSession { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
       ts ++= tData
     }
@@ -161,7 +161,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       // group by x2.x3
       val q6 = (
                  for {
-                   (u, t) <- us leftJoin ts on (_.id === _.a)
+                   (u, t) <- us leftJoin ts on ( _.id === _.a )
                  } yield (u, t)
                  ).groupBy(_._1.id)
                .map { case (id, q) => (id, q.length, q.map(_._1).length, q.map(_._2).length) }
@@ -196,7 +196,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       val q8c =
         for {(key, group) <- us.map(_ => 5).groupBy(identity)}
           yield (key, group.map(x => x + x).sum)
-      q8c.run shouldEqual Seq((5, Some((5 + 5) * 4)))
+      q8c.run shouldEqual Seq((5, Some(( 5 + 5 ) * 4)))
 
 
       // select x2."a", x2."b" from "aggregate_t3" x2 group by x2."a", x2."b"
@@ -221,7 +221,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
         def * = (a, b) <>(Pair.tupled, Pair.unapply)
       }
       val t4s = TableQuery[T4]
-      Try {t4s.ddl.drop}
+      Try { t4s.ddl.drop }
       t4s.ddl.create
       t4s ++= Seq(
                    Pair(1, Some(1)), Pair(1, Some(2)),
@@ -258,7 +258,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     lazy val as = TableQuery[A]
 
     withSession { implicit session =>
-      Try {as.ddl.drop}
+      Try { as.ddl.drop }
       as.ddl.create
       as += 1
     }
@@ -284,7 +284,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     }
     lazy val Tabs = TableQuery[Tabs]
     withSession { implicit session =>
-      Try {Tabs.ddl.drop}
+      Try { Tabs.ddl.drop }
       Tabs.ddl.create
       Tabs ++= Seq(
                     Tab("foo", "bar", "bat", 1),
@@ -324,7 +324,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
 
     val ddl = as.ddl ++ bs.ddl
     withTransaction { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
     }
 
@@ -339,7 +339,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       //   left outer join (select x11."id" as x4, x11."b" as x3, x11."d" as x12 from "aggregate_multimap_b" x11) x2 on x5.x6 = x2.x4
       // group by x2.x4
       val q2 =
-        (as leftJoin bs on (_.id === _.id))
+        ( as leftJoin bs on ( _.id === _.id ) )
         .map { case (c, s) =>
           (c, s, s.b)
         }.groupBy { prop =>

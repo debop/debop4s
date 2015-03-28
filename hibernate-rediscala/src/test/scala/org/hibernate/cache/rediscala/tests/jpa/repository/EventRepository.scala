@@ -15,11 +15,11 @@ import org.springframework.data.repository.query.Param
  */
 trait EventRepository extends JpaRepository[Event, java.lang.Long] {
 
-    @Query("select evt from Event evt where evt.title = :title")
-    @QueryHints(value = Array(new QueryHint(name = "org.hibernate.cacheable", value = "true")))
-    def findByTitle(@Param("title") title: String): java.util.List[Event]
+  @Query("select evt from Event evt where evt.title = :title")
+  @QueryHints(value = Array(new QueryHint(name = "org.hibernate.cacheable", value = "true")))
+  def findByTitle(@Param("title") title: String): java.util.List[Event]
 
-    @QueryHints(value = Array(new QueryHint(name = "org.hibernate.cacheable", value = "true")))
-    def findByDate(date: Date): java.util.List[Event]
+  @QueryHints(value = Array(new QueryHint(name = "org.hibernate.cacheable", value = "true")))
+  def findByDate(date: Date): java.util.List[Event]
 
 }

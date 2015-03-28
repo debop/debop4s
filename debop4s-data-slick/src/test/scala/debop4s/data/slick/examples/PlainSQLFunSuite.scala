@@ -5,7 +5,7 @@ import debop4s.data.slick.SlickExampleDatabase._
 
 import scala.collection.mutable
 import scala.slick.jdbc.StaticQuery.interpolation
-import scala.slick.jdbc.{GetResult, StaticQuery => Q}
+import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import scala.util.Try
 
 /**
@@ -112,9 +112,9 @@ class PlainSQLFunSuite extends AbstractSlickFunSuite {
 
       sqlu"delete from plainsql_users".execute
 
-      val total = (for {
+      val total = ( for {
         (id, name) <- List((1, "szeiger"), (0, "admin"), (2, "guest"), (3, "foo"))
-      } yield sqlu"insert into plainsql_users values($id, $name)".first).sum
+      } yield sqlu"insert into plainsql_users values($id, $name)".first ).sum
 
       total shouldEqual 4
 

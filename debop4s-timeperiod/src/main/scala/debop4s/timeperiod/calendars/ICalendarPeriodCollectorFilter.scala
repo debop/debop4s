@@ -1,6 +1,6 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.timeperiod.{MonthRangeInYear, DayRangeInMonth}
+import debop4s.timeperiod.{ MonthRangeInYear, DayRangeInMonth }
 
 /**
  * debop4s.timeperiod.calendars.ICalendarPeriodCollectionFilter
@@ -10,8 +10,8 @@ import debop4s.timeperiod.{MonthRangeInYear, DayRangeInMonth}
  */
 trait ICalendarPeriodCollectorFilter extends ICalendarVisitorFilter {
 
-    def collectingMonths: Seq[MonthRangeInYear]
+  def collectingMonths: Seq[MonthRangeInYear]
 
-    def collectingDays: Seq[DayRangeInMonth]
+  def collectingDays: Seq[DayRangeInMonth]
 
 }

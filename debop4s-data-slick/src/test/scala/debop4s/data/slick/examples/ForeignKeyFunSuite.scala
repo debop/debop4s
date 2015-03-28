@@ -37,7 +37,7 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
 
     lazy val ddl = categories.ddl ++ posts.ddl
     withSession { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
 
       categories ++= Seq((1, "Scala"),
@@ -59,7 +59,7 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
                  for {
                    p <- posts
                    c <- p.categoryJoin
-                 } yield (p.id, c.id, c.name, p.title))
+                 } yield (p.id, c.id, c.name, p.title) )
                .sortBy(_._1)
 
       q1.map(r => (r._1, r._2)).run shouldEqual List((2, 1), (3, 2), (4, 3), (5, 2))
@@ -69,7 +69,7 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
                  for {
                    p <- posts
                    c <- p.categoryFK
-                 } yield (p.id, c.id, c.name, p.title))
+                 } yield (p.id, c.id, c.name, p.title) )
                .sortBy(_._1)
       q2.map(r => (r._1, r._2)).run shouldEqual List((2, 1), (3, 2), (4, 3), (5, 2))
     }
@@ -99,7 +99,7 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
     val ddl = as.ddl ++ bs.ddl
 
     withSession { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
 
       // 테이블 Schema 정보를 얻을 수 있다.
@@ -123,7 +123,7 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
       def id = column[Int]("id", O.PrimaryKey)
       def aRef = column[Int]("aRef")
       def * = (id, aRef)
-      def a = foreignKey(s"fk_${n}_a", aRef, as)(_.id)
+      def a = foreignKey(s"fk_${ n }_a", aRef, as)(_.id)
     }
 
     val bs = TableQuery(new Dep(_, "b2"))
@@ -131,7 +131,7 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
 
     val ddl = as.ddl ++ bs.ddl ++ cs.ddl
     withSession { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
 
       as ++= Seq((1, "a"), (2, "b"), (3, "c"))
@@ -196,7 +196,7 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
     lazy val ddl = as.ddl ++ bs.ddl ++ aToB.ddl
 
     withSession { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
 
       as ++= Seq(1 -> "a", 2 -> "b", 3 -> "c")

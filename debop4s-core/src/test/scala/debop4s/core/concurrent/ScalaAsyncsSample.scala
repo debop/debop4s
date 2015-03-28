@@ -13,8 +13,8 @@ import scala.concurrent._
 class ScalaAsyncsSample extends AbstractCoreTest {
 
   test("scala-async async/await example") {
-    val future1 = Future {42}
-    val future2 = Future {84}
+    val future1 = Future { 42 }
+    val future2 = Future { 84 }
 
     async {
       println("computing...")
@@ -22,8 +22,8 @@ class ScalaAsyncsSample extends AbstractCoreTest {
       println(s"found the answer: $answer")
     }
 
-    val sum = async {await(future1) + await(future2)}
-    assert(sum.result() == (42 + 84))
+    val sum = async { await(future1) + await(future2) }
+    assert(sum.result() == ( 42 + 84 ))
   }
 
 }

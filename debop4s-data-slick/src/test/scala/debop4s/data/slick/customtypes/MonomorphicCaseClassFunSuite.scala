@@ -30,7 +30,7 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
 
   test("case class mapping") {
     withSession { implicit session =>
-      Try {UserAddresses.ddl.drop}
+      Try { UserAddresses.ddl.drop }
       UserAddresses.ddl.create
 
       UserAddresses += UserAddress(None, "a", Address("aaaa", "seoul", "11111"))

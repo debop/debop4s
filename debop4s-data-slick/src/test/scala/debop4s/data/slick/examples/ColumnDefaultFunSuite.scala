@@ -23,7 +23,7 @@ class ColumnDefaultFunSuite extends AbstractSlickFunSuite {
 
   test("default column") {
     withSession { implicit session =>
-      Try {columnDefaults.ddl.drop}
+      Try { columnDefaults.ddl.drop }
       columnDefaults.ddl.create
 
       // insert into "column_default" ("id")  values (?)

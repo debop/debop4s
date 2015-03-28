@@ -3,8 +3,8 @@ package org.hibernate.cache.rediscala.regions
 import java.util.Properties
 import org.hibernate.cache.rediscala.client.HibernateRedisCache
 import org.hibernate.cache.rediscala.strategy.RedisAccessStrategyFactory
-import org.hibernate.cache.spi.access.{EntityRegionAccessStrategy, AccessType}
-import org.hibernate.cache.spi.{CacheDataDescription, EntityRegion}
+import org.hibernate.cache.spi.access.{ EntityRegionAccessStrategy, AccessType }
+import org.hibernate.cache.spi.{ CacheDataDescription, EntityRegion }
 import org.hibernate.cfg.Settings
 
 /**
@@ -19,16 +19,16 @@ class RedisEntityRegion(private[this] val _accessStrategyFactory: RedisAccessStr
                         private[this] val _settings: Settings,
                         private[this] val _metadata: CacheDataDescription,
                         private[this] val _props: Properties)
-    extends RedisTransactionalDataRegion(
-        _accessStrategyFactory,
-        _cache,
-        _regionName,
-        _settings,
-        _metadata,
-        _props
-    ) with EntityRegion {
+  extends RedisTransactionalDataRegion(
+                                        _accessStrategyFactory,
+                                        _cache,
+                                        _regionName,
+                                        _settings,
+                                        _metadata,
+                                        _props
+                                      ) with EntityRegion {
 
-    def buildAccessStrategy(accessType: AccessType): EntityRegionAccessStrategy =
-        accessStrategyFactory.createEntityRegionAccessStrategy(this, accessType)
+  def buildAccessStrategy(accessType: AccessType): EntityRegionAccessStrategy =
+    accessStrategyFactory.createEntityRegionAccessStrategy(this, accessType)
 
 }

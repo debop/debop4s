@@ -59,7 +59,7 @@ class RelationalScalarFunctionFunSuite extends AbstractSlickFunSuite {
 
       Functions.pi.toDegrees.run shouldEqual 180.0
 
-      (Functions.pi.toDegrees.toRadians - Functions.pi).abs.run should be <= 0.00001
+      ( Functions.pi.toDegrees.toRadians - Functions.pi ).abs.run should be <= 0.00001
 
       val s = "abcdefghijklmnopqrstuvwxyz"
       check(LiteralColumn(s).substring(3, 5), s.substring(3, 5))

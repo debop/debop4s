@@ -3,7 +3,7 @@ package debop4s.timeperiod.timerange
 import debop4s.core.utils.Hashs
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
-import org.joda.time.{DateTime, Duration}
+import org.joda.time.{ DateTime, Duration }
 
 /**
  * debop4s.timeperiod.timerange.CalendarTimeRange
@@ -13,83 +13,83 @@ import org.joda.time.{DateTime, Duration}
  */
 @SerialVersionUID(-422889827258277497L)
 class CalendarTimeRange(private val _period: ITimePeriod, val calendar: ITimeCalendar = DefaultTimeCalendar)
-    extends TimeRange(calendar.mapStart(_period.start), calendar.mapEnd(_period.end), true) {
+  extends TimeRange(calendar.mapStart(_period.start), calendar.mapEnd(_period.end), true) {
 
-    private val _mappedStart = calendar.mapStart(_period.start)
-    private val _mappedEnd = calendar.mapEnd(_period.end)
-    Times.assertValidPeriod(_mappedStart, _mappedEnd)
+  private val _mappedStart = calendar.mapStart(_period.start)
+  private val _mappedEnd = calendar.mapEnd(_period.end)
+  Times.assertValidPeriod(_mappedStart, _mappedEnd)
 
-    def startYear: Int = start.getYear
+  def startYear: Int = start.getYear
 
-    def startMonthOfYear: Int = start.getMonthOfYear
+  def startMonthOfYear: Int = start.getMonthOfYear
 
-    def startDayOfMonth: Int = start.getDayOfMonth
+  def startDayOfMonth: Int = start.getDayOfMonth
 
-    def startHourOfDay: Int = start.getHourOfDay
+  def startHourOfDay: Int = start.getHourOfDay
 
-    def startMinuteOfHour: Int = start.getMinuteOfHour
+  def startMinuteOfHour: Int = start.getMinuteOfHour
 
-    def endYear: Int = end.getYear
+  def endYear: Int = end.getYear
 
-    def endMonthOfYear: Int = end.getMonthOfYear
+  def endMonthOfYear: Int = end.getMonthOfYear
 
-    def endDayOfMonth: Int = end.getDayOfMonth
+  def endDayOfMonth: Int = end.getDayOfMonth
 
-    def endHourOfDay: Int = end.getHourOfDay
+  def endHourOfDay: Int = end.getHourOfDay
 
-    def endMinuteOfHour: Int = end.getMinuteOfHour
+  def endMinuteOfHour: Int = end.getMinuteOfHour
 
-    def mappedStart = calendar.mapStart(start)
+  def mappedStart = calendar.mapStart(start)
 
-    def mappedEnd = calendar.mapEnd(end)
+  def mappedEnd = calendar.mapEnd(end)
 
-    def unmappedStart = calendar.unmapStart(start)
+  def unmappedStart = calendar.unmapStart(start)
 
-    def unmappedEnd = calendar.unmapEnd(end)
+  def unmappedEnd = calendar.unmapEnd(end)
 
-    def startMonthStart = Times.trimToDay(start)
+  def startMonthStart = Times.trimToDay(start)
 
-    def endMonthStart = Times.trimToDay(end)
+  def endMonthStart = Times.trimToDay(end)
 
-    def startDayStart = Times.trimToHour(start)
+  def startDayStart = Times.trimToHour(start)
 
-    def endDayStart = Times.trimToHour(end)
+  def endDayStart = Times.trimToHour(end)
 
-    def startHourStart = Times.trimToMinute(start)
+  def startHourStart = Times.trimToMinute(start)
 
-    def endHourStart = Times.trimToMinute(end)
+  def endHourStart = Times.trimToMinute(end)
 
-    def startMinuteStart = Times.trimToSecond(start)
+  def startMinuteStart = Times.trimToSecond(start)
 
-    def endMinuteStart = Times.trimToSecond(end)
+  def endMinuteStart = Times.trimToSecond(end)
 
-    def startSecondStart = Times.trimToMillis(start)
+  def startSecondStart = Times.trimToMillis(start)
 
-    def endSecondEnd = Times.trimToMillis(end)
+  def endSecondEnd = Times.trimToMillis(end)
 
-    override def copy(offset: Duration) = {
-        CalendarTimeRange(copy(offset), calendar)
-    }
+  override def copy(offset: Duration) = {
+    CalendarTimeRange(copy(offset), calendar)
+  }
 
-    override def hashCode(): Int = Hashs.compute(super.hashCode(), calendar)
+  override def hashCode(): Int = Hashs.compute(super.hashCode(), calendar)
 
 }
 
 object CalendarTimeRange {
 
-    def apply(): CalendarTimeRange = apply(DefaultTimeCalendar)
+  def apply(): CalendarTimeRange = apply(DefaultTimeCalendar)
 
-    def apply(calendar: ITimeCalendar): CalendarTimeRange = apply(MinPeriodTime, MaxPeriodTime, calendar)
+  def apply(calendar: ITimeCalendar): CalendarTimeRange = apply(MinPeriodTime, MaxPeriodTime, calendar)
 
-    def apply(start: DateTime, end: DateTime): CalendarTimeRange =
-        apply(start, end, DefaultTimeCalendar)
+  def apply(start: DateTime, end: DateTime): CalendarTimeRange =
+    apply(start, end, DefaultTimeCalendar)
 
-    def apply(start: DateTime, end: DateTime, calendar: ITimeCalendar): CalendarTimeRange =
-        new CalendarTimeRange(TimeRange(start, end), calendar)
+  def apply(start: DateTime, end: DateTime, calendar: ITimeCalendar): CalendarTimeRange =
+    new CalendarTimeRange(TimeRange(start, end), calendar)
 
-    def apply(period: ITimePeriod): CalendarTimeRange =
-        apply(period, DefaultTimeCalendar)
+  def apply(period: ITimePeriod): CalendarTimeRange =
+    apply(period, DefaultTimeCalendar)
 
-    def apply(period: ITimePeriod, calendar: ITimeCalendar): CalendarTimeRange =
-        new CalendarTimeRange(period, calendar)
+  def apply(period: ITimePeriod, calendar: ITimeCalendar): CalendarTimeRange =
+    new CalendarTimeRange(period, calendar)
 }

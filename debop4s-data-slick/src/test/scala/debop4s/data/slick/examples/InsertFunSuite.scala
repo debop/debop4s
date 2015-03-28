@@ -28,7 +28,7 @@ class InsertFunSuite extends AbstractSlickFunSuite {
     val ddl = src1.ddl ++ dst1.ddl ++ dst2.ddl
 
     withSession { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
 
       src1.insert(1, "A")
@@ -64,11 +64,11 @@ class InsertFunSuite extends AbstractSlickFunSuite {
 
     def ins1 = as.map(a => (a.s1, a.s2)) returning as.map(_.id)
     def ins2 = as.map(a => (a.s1, a.s2)) returning as.map(a => (a.id, a.s1))
-    def ins3 = as.map(a => (a.s1, a.s2)) returning as.map(_.id) into ((v, i) => (i, v._1, v._2))
+    def ins3 = as.map(a => (a.s1, a.s2)) returning as.map(_.id) into ( (v, i) => (i, v._1, v._2) )
     def ins4 = as.map(a => (a.s1, a.s2)) returning as.map(identity)
 
     withSession { implicit session =>
-      Try {as.ddl.drop}
+      Try { as.ddl.drop }
       as.ddl.create
 
       ifCap(jcap.returnInsertKey) {
@@ -110,7 +110,7 @@ class InsertFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     withSession { implicit session =>
-      Try {ts.ddl.drop}
+      Try { ts.ddl.drop }
       ts.ddl.create
     }
 

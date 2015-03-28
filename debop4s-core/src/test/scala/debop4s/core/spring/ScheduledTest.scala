@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import org.scalatest.Matchers
 import org.scalatest.junit.JUnitSuite
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{ Bean, Configuration }
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner

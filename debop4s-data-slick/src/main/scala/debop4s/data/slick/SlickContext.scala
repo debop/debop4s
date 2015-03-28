@@ -93,7 +93,7 @@ object SlickContext {
 
   def isInitialized: Boolean = this.slickConfig != null
 
-  def isMySQL: Boolean = (driver == MySQLDriver) || isMariaDB
+  def isMySQL: Boolean = ( driver == MySQLDriver ) || isMariaDB
   def isMariaDB: Boolean = jdbcDriver == JdbcDrivers.DRIVER_CLASS_MARIADB
   def isH2: Boolean = driver == H2Driver
   def isHsqlDB: Boolean = driver == HsqldbDriver

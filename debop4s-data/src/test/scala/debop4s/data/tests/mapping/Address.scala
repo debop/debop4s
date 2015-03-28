@@ -1,6 +1,6 @@
 package debop4s.data.tests.mapping
 
-import javax.persistence.{AccessType, Access, Embeddable}
+import javax.persistence.{ AccessType, Access, Embeddable }
 
 
 @Embeddable
@@ -11,7 +11,7 @@ case class Address(street: String = null,
                    country: String = null,
                    zipcode: String = null) {
 
-    def this() {
-        this(null, null, null, null, null)
-    }
+  def this() {
+    this(null, null, null, null, null)
+  }
 }

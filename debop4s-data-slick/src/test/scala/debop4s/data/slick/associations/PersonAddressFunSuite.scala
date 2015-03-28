@@ -1,11 +1,11 @@
 package debop4s.data.slick.associations
 
 import debop4s.data.slick.AbstractSlickFunSuite
-import debop4s.data.slick.associations.model.{Address, Person, PersonTask, Task}
+import debop4s.data.slick.associations.model.{ Address, Person, PersonTask, Task }
 import debop4s.data.slick.associations.schema.AssociationDatabase._
 import debop4s.data.slick.associations.schema.AssociationDatabase.driver.simple._
 
-import scala.slick.jdbc.{StaticQuery => Q}
+import scala.slick.jdbc.{ StaticQuery => Q }
 import scala.util.Try
 
 /**
@@ -44,7 +44,7 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
 
     val ddl = Addresses.ddl ++ Persons.ddl ++ Tasks.ddl ++ PersonTasks.ddl
 
-    withSession { implicit session => Try {ddl.drop} }
+    withSession { implicit session => Try { ddl.drop } }
 
     withSession { implicit session =>
       ddl.create

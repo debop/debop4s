@@ -1,6 +1,6 @@
 package debop4s.data.tests.jpa.config
 
-import javax.persistence.{EntityManager, EntityManagerFactory, PersistenceContext}
+import javax.persistence.{ EntityManager, EntityManagerFactory, PersistenceContext }
 
 import debop4s.data.jpa.repository.JpaDao
 import debop4s.data.tests.AbstractDataTest

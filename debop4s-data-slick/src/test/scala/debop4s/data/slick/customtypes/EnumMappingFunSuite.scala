@@ -19,7 +19,7 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
     val ddl = Devices.ddl ++ Device2s.ddl
 
     withTransaction { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
     }
   }

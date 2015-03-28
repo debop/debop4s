@@ -1,8 +1,8 @@
 package debop4s.core.jodatime
 
 import java.util.Locale
-import org.joda.time.format.{DateTimePrinter, DateTimeParser, DateTimeFormatter}
-import org.joda.time.{DateTimeZone, DateTime, Chronology}
+import org.joda.time.format.{ DateTimePrinter, DateTimeParser, DateTimeFormatter }
+import org.joda.time.{ DateTimeZone, DateTime, Chronology }
 
 /**
  * com.github.time.RichDateTimeFormatter
@@ -11,24 +11,24 @@ import org.joda.time.{DateTimeZone, DateTime, Chronology}
  */
 class RichDateTimeFormatter(val self: DateTimeFormatter) extends AnyVal {
 
-    def chronology: Chronology = self.getChronology
+  def chronology: Chronology = self.getChronology
 
-    def locale: Locale = self.getLocale
+  def locale: Locale = self.getLocale
 
-    def parser: DateTimeParser = self.getParser
+  def parser: DateTimeParser = self.getParser
 
-    def pivotYear: Int = self.getPivotYear
+  def pivotYear: Int = self.getPivotYear
 
-    def printer: DateTimePrinter = self.getPrinter
+  def printer: DateTimePrinter = self.getPrinter
 
-    def zone: DateTimeZone = self.getZone
+  def zone: DateTimeZone = self.getZone
 
-    def parseOption(text: String): Option[DateTime] = try {
-        Some(self.parseDateTime(text))
-    } catch {
-        case _: UnsupportedOperationException => None
-        case _: IllegalArgumentException => None
-    }
+  def parseOption(text: String): Option[DateTime] = try {
+    Some(self.parseDateTime(text))
+  } catch {
+    case _: UnsupportedOperationException => None
+    case _: IllegalArgumentException => None
+  }
 
-    def defaultYear: Int = self.getDefaultYear
+  def defaultYear: Int = self.getDefaultYear
 }

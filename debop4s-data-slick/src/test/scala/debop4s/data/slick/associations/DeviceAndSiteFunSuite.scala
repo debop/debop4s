@@ -21,7 +21,7 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
     val ddl = Devices.ddl ++ Sites.ddl
 
     withTransaction { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
     }
 
     withTransaction { implicit session =>

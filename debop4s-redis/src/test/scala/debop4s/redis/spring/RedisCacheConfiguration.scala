@@ -1,7 +1,7 @@
 package debop4s.redis.spring
 
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
+import org.springframework.context.annotation.{ Bean, ComponentScan, Configuration }
 
 /**
  * debop4s.redis.spring.RedisCacheConfiguration
@@ -14,8 +14,8 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 @ComponentScan(basePackageClasses = Array(classOf[UserRepository]))
 class RedisCacheConfiguration {
 
-    @Bean
-    def redisCacheManager(): RedisCacheManager =
-        RedisCacheManager()
+  @Bean
+  def redisCacheManager(): RedisCacheManager =
+    RedisCacheManager()
 
 }

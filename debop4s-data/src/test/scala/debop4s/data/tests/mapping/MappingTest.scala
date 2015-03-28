@@ -1,6 +1,6 @@
 package debop4s.data.tests.mapping
 
-import javax.persistence.{EntityManager, PersistenceContext}
+import javax.persistence.{ EntityManager, PersistenceContext }
 
 import debop4s.data.tests.AbstractDataTest
 import debop4s.data.tests.jpa.config.ScalaJpaConfiguration
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.transaction.annotation.{Propagation, Transactional}
+import org.springframework.transaction.annotation.{ Propagation, Transactional }
 
 /**
  * debop4s.data.tests.mapping.MappingTest

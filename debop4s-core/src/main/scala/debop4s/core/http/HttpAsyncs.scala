@@ -1,18 +1,18 @@
 package debop4s.core.http
 
 import debop4s.core.json.JacksonSerializer
-import debop4s.core.utils.{Strings, Charsets}
+import debop4s.core.utils.{ Strings, Charsets }
 import java.net.URI
 import java.nio.charset.Charset
 import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.{HttpDelete, HttpPost, HttpGet, HttpUriRequest}
+import org.apache.http.client.methods.{ HttpDelete, HttpPost, HttpGet, HttpUriRequest }
 import org.apache.http.entity.StringEntity
 import org.apache.http.util.EntityUtils
-import org.apache.http.{NameValuePair, Header, HttpResponse}
+import org.apache.http.{ NameValuePair, Header, HttpResponse }
 import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 
 /**
@@ -25,149 +25,149 @@ import scala.util.{Failure, Success, Try}
  */
 object HttpAsyncs {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    lazy val client = new AsyncHttpClient()
-    lazy val serializer = JacksonSerializer()
+  lazy val client = new AsyncHttpClient()
+  lazy val serializer = JacksonSerializer()
 
-    def execute(request: HttpUriRequest): Try[HttpResponse] = {
-        client.execute(request)
+  def execute(request: HttpUriRequest): Try[HttpResponse] = {
+    client.execute(request)
+  }
+
+  def executeSSL(request: HttpUriRequest): Try[HttpResponse] = {
+    client.executeSSL(request)
+  }
+
+  def buildHttpGet(uriString: String, headers: Header*): HttpGet =
+    buildHttpGet(new URI(uriString), headers: _*)
+
+  def buildHttpGet(uri: URI, headers: Header*): HttpGet = {
+    val httpget = new HttpGet(uri)
+    headers.foreach(httpget.addHeader)
+    httpget
+  }
+
+  def get(uriString: String, headers: Header*): Try[HttpResponse] = {
+    client.get(buildHttpGet(uriString, headers: _*))
+  }
+
+  def get(uriString: String, cs: Charset, headers: Header*): Try[String] = Try {
+    getContent(get(uriString, headers: _*), cs)
+  }
+
+  def get(uri: URI, headers: Header*): Try[HttpResponse] =
+    client.get(buildHttpGet(uri, headers: _*))
+
+  def get(uri: URI, cs: Charset, headers: Header*): Try[String] = Try {
+    getContent(get(uri, headers: _*), cs)
+  }
+
+  def get(httpget: HttpGet): Try[HttpResponse] = client.get(httpget)
+
+  //    def getAsParallel(uriStrings: String*): List[HttpResponse] =
+  //        client.getAsParallel(uriStrings.map(x => buildHttpGet(x)).toSeq: _*)
+
+  //    def getAsParallel(cs: Charset, uriStrings: String*): List[String] =
+  //        client.getAsParallel(uriStrings.map(x => buildHttpGet(x)).toSeq: _*)
+  //            .map(r => getContent(r, cs))
+
+  //    def getAsParallel(uris: URI*): List[HttpResponse] =
+  //        client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
+
+  @varargs
+  def getAsParallel(cs: Charset, uris: URI*): Iterable[String] = {
+    client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
+    .map(r => getContent(r, cs))
+  }
+
+  @varargs
+  def getAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] = {
+    client.getAsParallel(httpgets: _*)
+  }
+
+  @varargs
+  def buildHttpPost(uri: URI, nvps: List[NameValuePair], headers: Header*): HttpPost = {
+    buildHttpPost(uri, nvps, Charsets.UTF_8, headers: _*)
+  }
+
+  @varargs
+  def buildHttpPost(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): HttpPost = {
+    val httppost = new HttpPost(uri)
+    if (nvps != null)
+      httppost.setEntity(new UrlEncodedFormEntity(nvps, cs))
+    headers.foreach(httppost.addHeader)
+    httppost
+  }
+
+  @varargs
+  def post(uri: URI, nvps: List[NameValuePair], headers: Header*): Try[HttpResponse] = {
+    post(uri, nvps, Charsets.UTF_8, headers: _*)
+  }
+
+  @varargs
+  def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): Try[HttpResponse] = {
+    client.post(buildHttpPost(uri, nvps, cs, headers: _*))
+  }
+
+  @varargs
+  def postAsParallel(posts: HttpPost*): Iterable[Try[HttpResponse]] = {
+    client.postAsParallel(posts: _*)
+  }
+
+  @varargs
+  def buildHttpPostByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpPost = {
+    val httppost = new HttpPost(uri)
+    if (entity != null) {
+      val text = serializer.serializeToText(entity)
+      httppost.setEntity(new StringEntity(text, cs))
+      httppost.addHeader("content-type", "application/json")
     }
+    headers.foreach(httppost.addHeader)
+    httppost
+  }
 
-    def executeSSL(request: HttpUriRequest): Try[HttpResponse] = {
-        client.executeSSL(request)
+  @varargs
+  def postByJson[T](uri: URI, entity: T, headers: Header*): Try[HttpResponse] =
+    postByJson(uri, entity, Charsets.UTF_8, headers: _*)
+
+  @varargs
+  def postByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): Try[HttpResponse] =
+    client.post(buildHttpPostByJson(uri, entity, cs, headers: _*))
+
+  @varargs
+  def buildHttpDelete(uriString: String, headers: Header*): HttpDelete =
+    buildHttpDelete(new URI(uriString), headers: _*)
+
+  @varargs
+  def buildHttpDelete(uri: URI, headers: Header*): HttpDelete = {
+    val httpdelete = new HttpDelete(uri)
+    headers.foreach(httpdelete.setHeader)
+    httpdelete
+  }
+
+  @varargs
+  def delete(uriString: String, headers: Header*): Try[HttpResponse] =
+    client.delete(buildHttpDelete(uriString))
+
+  @varargs
+  def delete(uri: URI, headers: Header*): Try[HttpResponse] =
+    client.delete(buildHttpDelete(uri))
+
+  def delete(delete: HttpDelete): Try[HttpResponse] =
+    client.delete(delete)
+
+  @varargs
+  def deleteAsParallel(deletes: HttpDelete*): Iterable[Try[HttpResponse]] =
+    client.deleteAsParallel(deletes: _*)
+
+  @inline
+  def getContent(response: Try[HttpResponse], cs: Charset = Charsets.UTF_8): String = {
+    response match {
+      case Success(r) =>
+        EntityUtils.toString(r.getEntity, cs)
+      case Failure(e) =>
+        log.error("HttpResponse로부터 Content를 추출하는데 실패했습니다.", e)
+        Strings.EMPTY_STR
     }
-
-    def buildHttpGet(uriString: String, headers: Header*): HttpGet =
-        buildHttpGet(new URI(uriString), headers: _*)
-
-    def buildHttpGet(uri: URI, headers: Header*): HttpGet = {
-        val httpget = new HttpGet(uri)
-        headers.foreach(httpget.addHeader)
-        httpget
-    }
-
-    def get(uriString: String, headers: Header*): Try[HttpResponse] = {
-        client.get(buildHttpGet(uriString, headers: _*))
-    }
-
-    def get(uriString: String, cs: Charset, headers: Header*): Try[String] = Try {
-        getContent(get(uriString, headers: _*), cs)
-    }
-
-    def get(uri: URI, headers: Header*): Try[HttpResponse] =
-        client.get(buildHttpGet(uri, headers: _*))
-
-    def get(uri: URI, cs: Charset, headers: Header*): Try[String] = Try {
-        getContent(get(uri, headers: _*), cs)
-    }
-
-    def get(httpget: HttpGet): Try[HttpResponse] = client.get(httpget)
-
-    //    def getAsParallel(uriStrings: String*): List[HttpResponse] =
-    //        client.getAsParallel(uriStrings.map(x => buildHttpGet(x)).toSeq: _*)
-
-    //    def getAsParallel(cs: Charset, uriStrings: String*): List[String] =
-    //        client.getAsParallel(uriStrings.map(x => buildHttpGet(x)).toSeq: _*)
-    //            .map(r => getContent(r, cs))
-
-    //    def getAsParallel(uris: URI*): List[HttpResponse] =
-    //        client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
-
-    @varargs
-    def getAsParallel(cs: Charset, uris: URI*): Iterable[String] = {
-        client.getAsParallel(uris.map(x => buildHttpGet(x)).toSeq: _*)
-        .map(r => getContent(r, cs))
-    }
-
-    @varargs
-    def getAsParallel(httpgets: HttpGet*): Iterable[Try[HttpResponse]] = {
-        client.getAsParallel(httpgets: _*)
-    }
-
-    @varargs
-    def buildHttpPost(uri: URI, nvps: List[NameValuePair], headers: Header*): HttpPost = {
-        buildHttpPost(uri, nvps, Charsets.UTF_8, headers: _*)
-    }
-
-    @varargs
-    def buildHttpPost(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): HttpPost = {
-        val httppost = new HttpPost(uri)
-        if (nvps != null)
-            httppost.setEntity(new UrlEncodedFormEntity(nvps, cs))
-        headers.foreach(httppost.addHeader)
-        httppost
-    }
-
-    @varargs
-    def post(uri: URI, nvps: List[NameValuePair], headers: Header*): Try[HttpResponse] = {
-        post(uri, nvps, Charsets.UTF_8, headers: _*)
-    }
-
-    @varargs
-    def post(uri: URI, nvps: List[NameValuePair], cs: Charset, headers: Header*): Try[HttpResponse] = {
-        client.post(buildHttpPost(uri, nvps, cs, headers: _*))
-    }
-
-    @varargs
-    def postAsParallel(posts: HttpPost*): Iterable[Try[HttpResponse]] = {
-        client.postAsParallel(posts: _*)
-    }
-
-    @varargs
-    def buildHttpPostByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpPost = {
-        val httppost = new HttpPost(uri)
-        if (entity != null) {
-            val text = serializer.serializeToText(entity)
-            httppost.setEntity(new StringEntity(text, cs))
-            httppost.addHeader("content-type", "application/json")
-        }
-        headers.foreach(httppost.addHeader)
-        httppost
-    }
-
-    @varargs
-    def postByJson[T](uri: URI, entity: T, headers: Header*): Try[HttpResponse] =
-        postByJson(uri, entity, Charsets.UTF_8, headers: _*)
-
-    @varargs
-    def postByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): Try[HttpResponse] =
-        client.post(buildHttpPostByJson(uri, entity, cs, headers: _*))
-
-    @varargs
-    def buildHttpDelete(uriString: String, headers: Header*): HttpDelete =
-        buildHttpDelete(new URI(uriString), headers: _*)
-
-    @varargs
-    def buildHttpDelete(uri: URI, headers: Header*): HttpDelete = {
-        val httpdelete = new HttpDelete(uri)
-        headers.foreach(httpdelete.setHeader)
-        httpdelete
-    }
-
-    @varargs
-    def delete(uriString: String, headers: Header*): Try[HttpResponse] =
-        client.delete(buildHttpDelete(uriString))
-
-    @varargs
-    def delete(uri: URI, headers: Header*): Try[HttpResponse] =
-        client.delete(buildHttpDelete(uri))
-
-    def delete(delete: HttpDelete): Try[HttpResponse] =
-        client.delete(delete)
-
-    @varargs
-    def deleteAsParallel(deletes: HttpDelete*): Iterable[Try[HttpResponse]] =
-        client.deleteAsParallel(deletes: _*)
-
-    @inline
-    def getContent(response: Try[HttpResponse], cs: Charset = Charsets.UTF_8): String = {
-        response match {
-            case Success(r) =>
-                EntityUtils.toString(r.getEntity, cs)
-            case Failure(e) =>
-                log.error("HttpResponse로부터 Content를 추출하는데 실패했습니다.", e)
-                Strings.EMPTY_STR
-        }
-    }
+  }
 }

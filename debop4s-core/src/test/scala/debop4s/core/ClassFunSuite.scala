@@ -1,6 +1,6 @@
 package debop4s.core
 
-import org.scalatest.{Matchers, FunSuite}
+import org.scalatest.{ Matchers, FunSuite }
 import org.slf4j.LoggerFactory
 
 /**
@@ -12,15 +12,15 @@ class ClassFunSuite extends FunSuite with Matchers {
   private lazy val log = LoggerFactory.getLogger(getClass)
 
   test("create instance") {
-    val dummy:Dummy = new Dummy {
+    val dummy: Dummy = new Dummy {
       id = 1
       name = "debop"
     }
-    println(s"Dummy class = ${dummy.getClass}")
+    println(s"Dummy class = ${ dummy.getClass }")
   }
 
   class Dummy {
-    var id:Int = _
-    var name:String = _
+    var id: Int = _
+    var name: String = _
   }
 }

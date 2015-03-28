@@ -10,7 +10,7 @@ import debop4s.timeperiod.tests.AbstractTimePeriodTest
  */
 class TimeLineTest extends AbstractTimePeriodTest {
 
-    test("constructor") {
+  test("constructor") {
 
-    }
+  }
 }

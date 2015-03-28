@@ -143,7 +143,7 @@ class RedisCache(val name: String,
       var finished = false
 
       do {
-        val futureKeys = redis.zrange(setName, offset * PAGE_SIZE, (offset + 1) * PAGE_SIZE - 1)
+        val futureKeys = redis.zrange(setName, offset * PAGE_SIZE, ( offset + 1 ) * PAGE_SIZE - 1)
         val keys = Promises.await(futureKeys).map(x => x.utf8String)
 
         finished = keys.size < PAGE_SIZE

@@ -6,22 +6,22 @@ package debop4s.redis.spring
  */
 trait RedisCachePrefix {
 
-    def prefix(cacheName: String): String
+  def prefix(cacheName: String): String
 }
 
 object RedisCachePrefix {
 
-    val DEFAULT_DELIMETER = ":"
+  val DEFAULT_DELIMETER = ":"
 
-    def apply(): RedisCachePrefix = new DefaultRedisCachePrefix()
+  def apply(): RedisCachePrefix = new DefaultRedisCachePrefix()
 
-    def apply(delimeter: Option[String]) = new DefaultRedisCachePrefix(delimeter)
+  def apply(delimeter: Option[String]) = new DefaultRedisCachePrefix(delimeter)
 }
 
 class DefaultRedisCachePrefix(val delimeter: Option[String] = Some(RedisCachePrefix.DEFAULT_DELIMETER))
-    extends RedisCachePrefix {
+  extends RedisCachePrefix {
 
-    override def prefix(cacheName: String): String = {
-        delimeter.map(d => cacheName.concat(d)).getOrElse(cacheName)
-    }
+  override def prefix(cacheName: String): String = {
+    delimeter.map(d => cacheName.concat(d)).getOrElse(cacheName)
+  }
 }

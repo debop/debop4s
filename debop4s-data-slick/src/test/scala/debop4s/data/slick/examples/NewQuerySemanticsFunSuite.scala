@@ -194,7 +194,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
 
   test("paging nested") {
     ifCap(rcap.pagingNested) {
-      val q1b_0 = coffees.sortBy(_.price).take(3) join suppliers on (_.supID === _.id)
+      val q1b_0 = coffees.sortBy(_.price).take(3) join suppliers on ( _.supID === _.id )
       val q1b = for {
         (c, s) <- q1b_0.sortBy(_._1.price).take(2).filter(_._1.name =!= "Colombian")
         (c2, s2) <- q1b_0
@@ -332,7 +332,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
   test("Explicit self-join with condition") {
     val q0 = coffees.sortBy(_.price).take(2)
     val q = for {
-      t <- q0 join q0 on (_.name === _.name)
+      t <- q0 join q0 on ( _.name === _.name )
     } yield (t._1, t._2)
 
     withSession { implicit session =>
@@ -449,7 +449,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     //         select x7."COF_NAME" as x3, x7."SUP_ID" as x4, 2 as x5
     //           from "NC_COFFEES" x7 where x7."PRICE" > 950) x2
     //  where not (x2.x3 = ?)
-    val q = q0 filter (_._1 =!= "Colombian".bind)
+    val q = q0 filter ( _._1 =!= "Colombian".bind )
 
     withSession { implicit session =>
       val r = q.run.toSet
@@ -470,7 +470,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     //   from (select x6."COF_NAME" as x3 from "NC_COFFEES" x6 where x6."PRICE" < 900) x2
     //   left outer join (select x7."COF_NAME" as x5 from "NC_COFFEES" x7 where x7."PRICE" < 800) x4 on x2.x3 = x4.x5
     val q = for {
-      (c1, c2) <- coffees.filter(_.price < 900) leftJoin coffees.filter(_.price < 800) on (_.name === _.name)
+      (c1, c2) <- coffees.filter(_.price < 900) leftJoin coffees.filter(_.price < 800) on ( _.name === _.name )
     } yield (c1.name, c2.name.?)
 
     withSession { implicit session =>
@@ -503,7 +503,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     //                   on x2.x4 = x13.x15
     val q0 = coffees.sortBy(_.sales)
     val q = for {
-      t <- q0.take(1) leftJoin q0.take(2) on (_.name === _.name) leftJoin q0.take(4) on (_._1.supID === _.supID)
+      t <- q0.take(1) leftJoin q0.take(2) on ( _.name === _.name ) leftJoin q0.take(4) on ( _._1.supID === _.supID )
     } yield (t._1, t._2)
 
     withSession { implicit session =>
@@ -531,8 +531,8 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
 
       val q4 = (
                  for {
-                   (u, o) <- users innerJoin orders on (_.id === _.userID)
-                 } yield (u.last, (u.first, o.orderID)))
+                   (u, o) <- users innerJoin orders on ( _.id === _.userID )
+                 } yield (u.last, (u.first, o.orderID)) )
                .sortBy(_._1)
                .map(_._2)
 
@@ -540,20 +540,20 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
 
       val q6a = (
                   for {
-                    o <- orders if o.orderID === (for {o2 <- orders if o.userID === o2.userID} yield o2.orderID).max
-                  } yield o.orderID)
+                    o <- orders if o.orderID === ( for {o2 <- orders if o.userID === o2.userID} yield o2.orderID ).max
+                  } yield o.orderID )
                 .sorted
 
       q6a.run
 
       val q6b = (
-                  for (o <- orders if o.orderID === (for (o2 <- orders if o.userID === o2.userID) yield o2.orderID).max)
-                    yield (o.orderID, o.userID))
+                  for (o <- orders if o.orderID === ( for (o2 <- orders if o.userID === o2.userID) yield o2.orderID ).max)
+                    yield (o.orderID, o.userID) )
                 .sortBy(_._1)
       q6b.run
 
       val q6c = (
-                  for (o <- orders if o.orderID === (for (o2 <- orders if o.userID === o2.userID) yield o2.orderID).max) yield o
+                  for (o <- orders if o.orderID === ( for (o2 <- orders if o.userID === o2.userID) yield o2.orderID ).max) yield o
                   )
                 .sortBy(_.orderID)
                 .map(o => (o.orderID, o.userID))
@@ -659,7 +659,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
       val r1 = q1.run
       r1.toSet shouldEqual Set((3, "a3"))
 
-      val q2a = as.sortBy(_.a) join as on (_.b === _.b)
+      val q2a = as.sortBy(_.a) join as on ( _.b === _.b )
 
       // H2:
       // select x2.x3, x4."a"

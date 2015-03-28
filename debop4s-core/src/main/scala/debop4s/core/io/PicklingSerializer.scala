@@ -9,10 +9,10 @@ import scala.pickling.binary._
  */
 class PicklingSerializer extends Serializer {
   /**
-     * 객체를 직렬화 합니다.
-     * @param graph 직렬화할 객체
-     * @return 직렬화된 정보를 가진 바이트 배열
-     */
+   * 객체를 직렬화 합니다.
+   * @param graph 직렬화할 객체
+   * @return 직렬화된 정보를 가진 바이트 배열
+   */
   override def serialize[T](graph: T): Array[Byte] = {
     if (graph == null) Array.emptyByteArray
     else graph.asInstanceOf[Any].pickle.value

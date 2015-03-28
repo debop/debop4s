@@ -1,6 +1,6 @@
 package debop4s.data.slick.examples
 
-import java.sql.{Date, Time, Timestamp}
+import java.sql.{ Date, Time, Timestamp }
 
 import debop4s.data.slick.AbstractSlickFunSuite
 import debop4s.data.slick.SlickExampleDatabase._

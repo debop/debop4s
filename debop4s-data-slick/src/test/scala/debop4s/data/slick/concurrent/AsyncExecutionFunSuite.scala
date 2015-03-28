@@ -24,18 +24,18 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
 
   before {
     withTransaction { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
     }
   }
   after {
     withTransaction { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
     }
   }
 
   test("Save and Load Employees by Async") {
-    val saveActions = (0 until EMP_COUNT) map { x =>
+    val saveActions = ( 0 until EMP_COUNT ) map { x =>
       LOG.trace(s"직원을 생성합니다. x=$x")
 
       val empNo = x.toString

@@ -1,6 +1,6 @@
 package debop4s.mongo.tests
 
-import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.scalatest.{ BeforeAndAfter, Matchers, FunSuite }
 
 /**
  * AbstractMongoTest

@@ -43,7 +43,7 @@ class CustomRecordTypesFunSuite extends AbstractSlickFunSuite {
 
   test("custom record type") {
     withSession { implicit session =>
-      Try {PairShapes.ddl.drop}
+      Try { PairShapes.ddl.drop }
 
       PairShapes.ddl.create
 

@@ -1,10 +1,10 @@
 package debop4s.core.concurrent
 
-import java.util.concurrent.{Callable, TimeUnit}
+import java.util.concurrent.{ Callable, TimeUnit }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.duration.{ Duration, FiniteDuration }
 
 /**
  * Scala 에서 비동기 작업을 수행합니다.
@@ -22,24 +22,24 @@ object Asyncs {
   lazy val defaultDuration: Duration = new FiniteDuration(15, TimeUnit.MINUTES)
 
   def run[V](callable: Callable[V]): concurrent.Future[V] =
-    Future {callable.call()}
+    Future { callable.call() }
 
   def run[V](block: => V): concurrent.Future[V] =
-    Future {block}
+    Future { block }
 
   def continueTask[T, V](prevTask: Future[T])(block: T => V): Future[V] = {
     prevTask.map(v => block(v))
   }
 
   def runAll[T, R](elements: Iterable[T], function: T => R): Iterable[Future[R]] = {
-    elements map { x => Future {function(x)}}
+    elements map { x => Future { function(x) } }
   }
 
   def invokeAll[T](tasks: Iterable[_ <: Callable[T]]): Iterable[T] =
-    resultAll(tasks.map { x => Future {x.call()}})
+    resultAll(tasks.map { x => Future { x.call() } })
 
   def invokeAll[T](tasks: Iterable[_ <: Callable[T]], timeout: Long, unit: TimeUnit): Iterable[T] =
-    resultAll(tasks.map { x => Future {x.call()}}, timeout, unit)
+    resultAll(tasks.map { x => Future { x.call() } }, timeout, unit)
 
   def ready[T](awaitable: Awaitable[T]): Awaitable[T] =
     Await.ready(awaitable, defaultDuration)

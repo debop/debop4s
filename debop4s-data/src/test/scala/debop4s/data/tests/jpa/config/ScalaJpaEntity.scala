@@ -1,6 +1,6 @@
 package debop4s.data.tests.jpa.config
 
-import debop4s.core.utils.{ToStringHelper, Hashs}
+import debop4s.core.utils.{ ToStringHelper, Hashs }
 import debop4s.data.model.LongEntity
 import javax.persistence._
 
@@ -15,12 +15,12 @@ import javax.persistence._
 @Access(AccessType.FIELD)
 class ScalaJpaEntity extends LongEntity {
 
-    @Column(name = "entityName", nullable = false, length = 32)
-    var name: String = _
+  @Column(name = "entityName", nullable = false, length = 32)
+  var name: String = _
 
-    override def hashCode(): Int = Hashs.compute(name)
+  override def hashCode(): Int = Hashs.compute(name)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-        .add("name", name)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("name", name)
 }

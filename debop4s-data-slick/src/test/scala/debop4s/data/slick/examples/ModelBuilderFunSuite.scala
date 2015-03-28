@@ -3,7 +3,7 @@ package debop4s.data.slick.examples
 import debop4s.data.slick.SlickExampleDatabase._
 import debop4s.data.slick.SlickExampleDatabase.driver.profile.createModel
 import debop4s.data.slick.SlickExampleDatabase.driver.simple._
-import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
+import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
 
 import scala.slick.ast.ColumnOption
 import scala.slick.model.Model

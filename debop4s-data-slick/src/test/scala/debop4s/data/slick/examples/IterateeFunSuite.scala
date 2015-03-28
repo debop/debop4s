@@ -36,7 +36,7 @@ class IterateeFunSuite extends AbstractSlickFunSuite {
           seen1 += s
           if (z > 5) z else z + i
       }
-      r1 shouldEqual (1 + 2 + 3)
+      r1 shouldEqual ( 1 + 2 + 3 )
       seen1 shouldEqual "abcd"
 
       // Do the same with enumerate() and terminate when down

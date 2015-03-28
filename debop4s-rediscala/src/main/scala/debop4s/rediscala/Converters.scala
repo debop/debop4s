@@ -3,7 +3,7 @@ package debop4s.rediscala
 import akka.util.ByteString
 import debop4s.rediscala.protocol._
 
-import scala.annotation.{implicitNotFound, tailrec}
+import scala.annotation.{ implicitNotFound, tailrec }
 import scala.collection.mutable
 import scala.util.Try
 
@@ -37,7 +37,7 @@ object MultiBulkConverter {
         val s = r.map(_.toByteString)
         val builder = Seq.newBuilder[(R, Double)]
         s.grouped(2).foreach {
-          case Seq(a, b) => builder += ((deserializer.deserialize(a), b.utf8String.toDouble))
+          case Seq(a, b) => builder += ( (deserializer.deserialize(a), b.utf8String.toDouble) )
         }
         builder.result()
       }
@@ -55,7 +55,7 @@ object MultiBulkConverter {
   @tailrec
   private def seqtoMapString(bsSeq: Seq[RedisReply], acc: mutable.Builder[(String, String), Map[String, String]]): Unit = {
     if (bsSeq.nonEmpty) {
-      acc += ((bsSeq.head.asOptByteString.map(_.utf8String).getOrElse(""), bsSeq.tail.head.asOptByteString.map(_.utf8String).getOrElse("")))
+      acc += ( (bsSeq.head.asOptByteString.map(_.utf8String).getOrElse(""), bsSeq.tail.head.asOptByteString.map(_.utf8String).getOrElse("")) )
       seqtoMapString(bsSeq.tail.tail, acc)
     }
   }
@@ -69,7 +69,7 @@ object MultiBulkConverter {
               s =>
                 val builder = Seq.newBuilder[(String, String)]
                 s.grouped(2).foreach {
-                  case Seq(a, b) => builder += ((a.toString, b.toString))
+                  case Seq(a, b) => builder += ( (a.toString, b.toString) )
                 }
                 builder.result()
             }.getOrElse(Seq())

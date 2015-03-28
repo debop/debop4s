@@ -3,18 +3,18 @@ package debop4s.core.utils
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.atomic.AtomicInteger
 
-import debop4s.core.concurrent.{Asyncs, CountDownLatch}
+import debop4s.core.concurrent.{ Asyncs, CountDownLatch }
 import debop4s.core.conversions.time._
-import debop4s.core.{AbstractCoreTest, Time}
+import debop4s.core.{ AbstractCoreTest, Time }
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.time.{Seconds, Span}
+import org.scalatest.time.{ Seconds, Span }
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 /**
  * TimerTest
@@ -83,7 +83,7 @@ class TimerTest extends AbstractCoreTest with MockitoSugar {
       counter.incrementAndGet()
     }
 
-    eventually(Timeout(Span(4, Seconds))) {assert(counter.get() > 2)}
+    eventually(Timeout(Span(4, Seconds))) { assert(counter.get() > 2) }
     timer.stop()
   }
 
@@ -95,7 +95,7 @@ class TimerTest extends AbstractCoreTest with MockitoSugar {
       counter.incrementAndGet()
     }
 
-    eventually(Timeout(Span(4, Seconds))) {assert(counter.get() === 1)}
+    eventually(Timeout(Span(4, Seconds))) { assert(counter.get() === 1) }
     timer.stop()
   }
 
@@ -153,7 +153,7 @@ class TimerTest extends AbstractCoreTest with MockitoSugar {
     }
 
     Thread.sleep(40.milliseconds.toMillis)
-    eventually(Timeout(Span(4, Seconds))) {assert(counter.get() == 1)}
+    eventually(Timeout(Span(4, Seconds))) { assert(counter.get() == 1) }
     timer.stop()
   }
 
@@ -196,7 +196,7 @@ class TimerTest extends AbstractCoreTest with MockitoSugar {
   test("Timer should schedule(when)") {
     val timer = MockTimer()
     val counter = new AtomicInteger(0)
-    timer.schedule(Time.now + 1.milliseconds) {counter.incrementAndGet()}
+    timer.schedule(Time.now + 1.milliseconds) { counter.incrementAndGet() }
     Thread.sleep(2)
     timer.tick()
     assert(counter.get() == 1)
@@ -206,7 +206,7 @@ class TimerTest extends AbstractCoreTest with MockitoSugar {
     val result = "boom"
     val timer = MockTimer()
     val counter = new AtomicInteger(0)
-    val task = timer.schedule(Time.now + 1.milliseconds) {counter.incrementAndGet()}
+    val task = timer.schedule(Time.now + 1.milliseconds) { counter.incrementAndGet() }
     task.cancel()
     Thread.sleep(2)
     timer.tick()

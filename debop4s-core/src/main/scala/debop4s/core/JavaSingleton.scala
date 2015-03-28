@@ -5,5 +5,5 @@ package debop4s.core
  * Created by debop on 2014. 4. 5.
  */
 trait JavaSingleton {
-    def get = this
+  def get = this
 }

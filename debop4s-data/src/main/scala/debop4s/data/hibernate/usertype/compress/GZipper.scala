@@ -1,6 +1,6 @@
 package debop4s.data.hibernate.usertype.compress
 
-import debop4s.core.compress.{Compressor, GZipCompressor}
+import debop4s.core.compress.{ Compressor, GZipCompressor }
 
 /**
  * debop4s.data.hibernate.usertype.compress.GZipper
@@ -10,9 +10,9 @@ import debop4s.core.compress.{Compressor, GZipCompressor}
  */
 private[data] trait GZipper {
 
-    private lazy val _compressor = new GZipCompressor()
+  private lazy val _compressor = new GZipCompressor()
 
-    def compressor: Compressor = _compressor
+  def compressor: Compressor = _compressor
 
 }
 

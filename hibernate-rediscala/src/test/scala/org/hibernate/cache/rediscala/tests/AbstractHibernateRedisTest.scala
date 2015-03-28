@@ -1,6 +1,6 @@
 package org.hibernate.cache.rediscala.tests
 
-import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.scalatest.{ BeforeAndAfter, Matchers, FunSuite }
 
 /**
  * org.hibernate.cache.rediscala.tests.AbstractRedisTest

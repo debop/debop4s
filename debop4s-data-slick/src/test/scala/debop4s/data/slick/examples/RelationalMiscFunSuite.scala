@@ -30,7 +30,7 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
       val q1 = for (t <- ts if t.a === "1" || t.a === "2") yield t
       q1.run.toSet shouldEqual Set(("1", "a"), ("2", "a"))
 
-      val q2 = for (t <- ts if (t.a =!= "1") || (t.b =!= "a")) yield t
+      val q2 = for (t <- ts if ( t.a =!= "1" ) || ( t.b =!= "a" )) yield t
       q2.run.toSet shouldEqual Set(("2", "a"), ("3", "b"))
 
       val q4 = for (t <- ts if t.a =!= "1" || t.b =!= "a") yield t
@@ -93,13 +93,13 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
       ts ++= Seq(("a2", "b2", "c2"), ("a1", "b1", "c1"))
 
       implicit class TupledQueryExtensionMethods[E1, E2, U1, U2, C[_]](q: Query[(E1, E2), (U1, U2), C]) {
-        def sortedValues(implicit ordered: (E1 => scala.slick.lifted.Ordered),
+        def sortedValues(implicit ordered: ( E1 => scala.slick.lifted.Ordered ),
                          shape: Shape[FlatShapeLevel, E2, U2, E2]): Query[E2, U2, C] =
           q.sortBy(_._1).map(_._2)
       }
 
       // sortBy(t.c).map(t => (t.a, t.b)) 와 같다
-      val q1 = (for (t <- ts) yield t.c ->(t.a, t.b)).sortedValues
+      val q1 = ( for (t <- ts) yield t.c ->(t.a, t.b) ).sortedValues
       q1.run shouldEqual Seq(("a1", "b1"), ("a2", "b2"))
     }
   }
@@ -129,7 +129,7 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
 
       // H2
       // select x2."a", (case when (x2."a" < 3) then 1 when (x2."a" < 4) then 2 else 0 end) from "relational_misc_t_conditional" x2
-      val q3 = ts.map { t => (t.a, Case.If(t.a < 3) Then 1 If (t.a < 4) Then 2 Else 0) }
+      val q3 = ts.map { t => (t.a, Case.If(t.a < 3) Then 1 If ( t.a < 4 ) Then 2 Else 0) }
       q3.run.toSet shouldEqual Set((1, 1), (2, 1), (3, 2), (4, 0))
     }
   }

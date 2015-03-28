@@ -1,7 +1,7 @@
 package org.hibernate.cache.rediscala.tests
 
 import java.util.Properties
-import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
+import org.scalatest.{ BeforeAndAfter, Matchers, FunSuite }
 
 /**
  * org.hibernate.cache.rediscala.tests.PropertiesTest
@@ -11,26 +11,26 @@ import org.scalatest.{BeforeAndAfter, Matchers, FunSuite}
  */
 class PropertiesTest extends FunSuite with Matchers with BeforeAndAfter {
 
-    test("load properties by class") {
-        val props = new Properties()
-        val cachePath = "/hibernate-redis.properties"
+  test("load properties by class") {
+    val props = new Properties()
+    val cachePath = "/hibernate-redis.properties"
 
-        val inputStream = getClass.getResourceAsStream(cachePath)
-        inputStream should not equal (null)
-        props.load(inputStream)
+    val inputStream = getClass.getResourceAsStream(cachePath)
+    inputStream should not equal ( null )
+    props.load(inputStream)
 
-        print("properties... " + props.toString)
-    }
+    print("properties... " + props.toString)
+  }
 
-    test("load properties by classLoader") {
-        val props = new Properties()
-        val cachePath = "hibernate-redis.properties"
+  test("load properties by classLoader") {
+    val props = new Properties()
+    val cachePath = "hibernate-redis.properties"
 
-        val inputStream = getClass.getClassLoader.getResourceAsStream(cachePath)
-        inputStream should not equal (null)
-        props.load(inputStream)
+    val inputStream = getClass.getClassLoader.getResourceAsStream(cachePath)
+    inputStream should not equal ( null )
+    props.load(inputStream)
 
-        print("properties... " + props.toString)
-    }
+    print("properties... " + props.toString)
+  }
 
 }

@@ -1,6 +1,6 @@
 package debop4s.core.jodatime
 
-import org.joda.time.{ReadablePeriod, PeriodType}
+import org.joda.time.{ ReadablePeriod, PeriodType }
 
 /**
  * com.github.time.RichReadablePeriod
@@ -9,6 +9,6 @@ import org.joda.time.{ReadablePeriod, PeriodType}
  */
 class RichReadablePeriod(val self: ReadablePeriod) extends AnyVal {
 
-    def periodType: PeriodType = self.getPeriodType
+  def periodType: PeriodType = self.getPeriodType
 
 }

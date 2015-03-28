@@ -12,8 +12,8 @@ import org.hibernate.cfg.Settings
  */
 class ItemValueExtractor(private val _region: RedisTransactionalDataRegion,
                          private val _settings: Settings)
-    extends AbstractReadWriteRedisAccessStrategy[RedisTransactionalDataRegion](_region, _settings) {
+  extends AbstractReadWriteRedisAccessStrategy[RedisTransactionalDataRegion](_region, _settings) {
 
-    def getValue[V](entry: Any): V = entry.asInstanceOf[V]
+  def getValue[V](entry: Any): V = entry.asInstanceOf[V]
 
 }

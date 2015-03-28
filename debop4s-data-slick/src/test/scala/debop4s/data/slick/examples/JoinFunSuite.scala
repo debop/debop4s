@@ -2,7 +2,7 @@ package debop4s.data.slick.examples
 
 import debop4s.data.slick.SlickExampleDatabase._
 import debop4s.data.slick.SlickExampleDatabase.driver.simple._
-import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
+import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
 
 import scala.util.Try
 
@@ -62,28 +62,28 @@ class JoinFunSuite extends AbstractSlickFunSuite {
   test("join") {
 
     withReadOnly { implicit session =>
-      val q1 = (for {
+      val q1 = ( for {
         c <- Categories
         p <- Posts if p.categoryId === c.id
-      } yield (p.id, c.id, c.name, p.title))
+      } yield (p.id, c.id, c.name, p.title) )
                .sortBy(_._1)
 
       LOG.debug("Implicit join")
       q1.run.foreach { x => LOG.debug(s"  $x") }
       q1.map(p => (p._1, p._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
-      val q2 = (for {
-        (c, p) <- Categories innerJoin Posts on (_.id === _.categoryId)
-      } yield (p.id, c.id, c.name, p.title))
+      val q2 = ( for {
+        (c, p) <- Categories innerJoin Posts on ( _.id === _.categoryId )
+      } yield (p.id, c.id, c.name, p.title) )
                .sortBy(_._1)
 
       LOG.debug("Explicit join")
       q2.run.foreach(x => LOG.debug(s"  $x"))
       q2.map(p => (p._1, p._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
-      val q3 = (for {
-        (c, p) <- Categories leftJoin Posts on (_.id === _.categoryId)
-      } yield (p.id, (p.id.?.getOrElse(0), c.id, c.name, p.title.?.getOrElse(""))))
+      val q3 = ( for {
+        (c, p) <- Categories leftJoin Posts on ( _.id === _.categoryId )
+      } yield (p.id, (p.id.?.getOrElse(0), c.id, c.name, p.title.?.getOrElse(""))) )
                .sortBy(_._1.nullsFirst)
                .map(_._2)
 
@@ -91,16 +91,16 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       q3.run.foreach(x => LOG.debug(s"  $x"))
       q3.map(p => (p._1, p._2)).run shouldEqual Seq((0, 4), (2, 1), (3, 2), (4, 3), (5, 2))
 
-      val q3a = (for {
-        (c, p) <- Categories leftJoin Posts on (_.id === _.categoryId)
-      } yield (p.id, c.id, c.name, p.title)).sortBy(_._1.nullsFirst)
+      val q3a = ( for {
+        (c, p) <- Categories leftJoin Posts on ( _.id === _.categoryId )
+      } yield (p.id, c.id, c.name, p.title) ).sortBy(_._1.nullsFirst)
 
       // NOT NULL 컬럼에 NULL 값이 있으므로 예외가 발생한다. p.id.?.getOrElse(0) 를 써줘야 한다.
       intercept[Exception] { q3a.run }
 
-      val q3b = (for {
-        (c, p) <- Categories leftJoin Posts on (_.id === _.categoryId)
-      } yield (p.id, (p.id.?.getOrElse(0), c.id, c.name, p.title.?.getOrElse(""))))
+      val q3b = ( for {
+        (c, p) <- Categories leftJoin Posts on ( _.id === _.categoryId )
+      } yield (p.id, (p.id.?.getOrElse(0), c.id, c.name, p.title.?.getOrElse(""))) )
                 .sortBy(_._1.nullsLast)
                 .map(_._2)
 
@@ -108,18 +108,18 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       q3b.run.foreach(x => LOG.debug(s"  $x"))
       q3b.map(p => (p._1, p._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2), (0, 4))
 
-      val q4 = (for {
-        (c, p) <- Categories rightJoin Posts on (_.id === _.categoryId)
-      } yield (p.id, c.id.?.getOrElse(0), c.name.?.getOrElse(""), p.title))
+      val q4 = ( for {
+        (c, p) <- Categories rightJoin Posts on ( _.id === _.categoryId )
+      } yield (p.id, c.id.?.getOrElse(0), c.name.?.getOrElse(""), p.title) )
                .sortBy(_._1)
 
       LOG.debug("Right outer join")
       q4.run.foreach(x => LOG.debug(s"  $x"))
       q4.map(r => (r._1, r._2)).run shouldEqual Seq((1, 0), (2, 1), (3, 2), (4, 3), (5, 2))
 
-      val q5 = (for {
-        (c, p) <- Categories outerJoin Posts on (_.id === _.categoryId)
-      } yield (p.id.?.getOrElse(0), c.id.?.getOrElse(0), c.name.?.getOrElse(""), p.title.?.getOrElse("")))
+      val q5 = ( for {
+        (c, p) <- Categories outerJoin Posts on ( _.id === _.categoryId )
+      } yield (p.id.?.getOrElse(0), c.id.?.getOrElse(0), c.name.?.getOrElse(""), p.title.?.getOrElse("")) )
                .sortBy(_._1)
 
       LOG.debug("Outer join")
@@ -205,7 +205,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       r5 shouldEqual Seq((1, 0), (2, 1), (3, 2), (4, 3))
 
       val q6 = for {
-        ((c, p), i) <- (Categories zip Posts).zipWithIndex
+        ((c, p), i) <- ( Categories zip Posts ).zipWithIndex
       } yield (c.id, p.categoryId, i)
 
       val r6 = q6.run

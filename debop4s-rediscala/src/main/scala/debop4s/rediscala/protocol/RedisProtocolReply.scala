@@ -94,22 +94,22 @@ object RedisProtocolReply {
     bs.head match {
       case ERROR => decodeString(bs.tail).map(r => (Error(r._1), r._2))
       case INTEGER => decodeInteger(bs.tail)
-      case STATUS => decodeString(bs.tail).map { r => (Status(r._1), r._2)}
+      case STATUS => decodeString(bs.tail).map { r => (Status(r._1), r._2) }
       case BULK => decodeBulk(bs.tail)
       case MULTIBULK => decodeMultiBulk(bs.tail)
-      case _ => throw new Exception(s"Redis Protocol error: Get ${bs.head} as initial reply byte.")
+      case _ => throw new Exception(s"Redis Protocol error: Get ${ bs.head } as initial reply byte.")
     }
   }
 
   lazy val decodeReplyPF: PartialFunction[ByteString, Option[(RedisReply, ByteString)]] = {
     case bs if bs.head == INTEGER => decodeInteger(bs.tail)
-    case bs if bs.head == STATUS => decodeString(bs.tail).map { r => (Status(r._1), r._2)}
+    case bs if bs.head == STATUS => decodeString(bs.tail).map { r => (Status(r._1), r._2) }
     case bs if bs.head == BULK => decodeBulk(bs.tail)
     case bs if bs.head == MULTIBULK => decodeMultiBulk(bs.tail)
   }
 
   lazy val decodeReplyStatus: PartialFunction[ByteString, Option[(Status, ByteString)]] = {
-    case bs if bs.head == STATUS => decodeString(bs.tail).map { r => (Status(r._1), r._2)}
+    case bs if bs.head == STATUS => decodeString(bs.tail).map { r => (Status(r._1), r._2) }
   }
 
   lazy val decodeReplyInteger: PartialFunction[ByteString, Option[(Integer, ByteString)]] = {
@@ -125,7 +125,7 @@ object RedisProtocolReply {
   }
 
   lazy val decodeReplyError: PartialFunction[ByteString, Option[(Error, ByteString)]] = {
-    case bs if bs.head == ERROR => decodeString(bs.tail).map { r => (Error(r._1), r._2)}
+    case bs if bs.head == ERROR => decodeString(bs.tail).map { r => (Error(r._1), r._2) }
   }
 
   def decodeInteger(bs: ByteString): Option[(Integer, ByteString)] = {
@@ -153,7 +153,7 @@ object RedisProtocolReply {
 
       if (i < 0) {
         Some(Bulk(None), tail)
-      } else if (tail.length < (i + LS.length)) {
+      } else if (tail.length < ( i + LS.length )) {
         None
       } else {
         val data: ByteString = tail.take(i)

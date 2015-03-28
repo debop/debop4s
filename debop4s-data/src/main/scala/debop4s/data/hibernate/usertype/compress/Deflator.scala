@@ -1,6 +1,6 @@
 package debop4s.data.hibernate.usertype.compress
 
-import debop4s.core.compress.{Compressor, DeflateCompressor}
+import debop4s.core.compress.{ Compressor, DeflateCompressor }
 
 /**
  * debop4s.data.hibernate.usertype.compress.Deflator
@@ -10,9 +10,9 @@ import debop4s.core.compress.{Compressor, DeflateCompressor}
  */
 private[data] trait Deflator {
 
-    private lazy val _compressor = new DeflateCompressor()
+  private lazy val _compressor = new DeflateCompressor()
 
-    def compressor: Compressor = _compressor
+  def compressor: Compressor = _compressor
 }
 
 /**

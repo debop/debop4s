@@ -2,7 +2,7 @@ package debop4s.data.slick.examples
 
 import debop4s.data.slick.SlickExampleDatabase._
 import debop4s.data.slick.SlickExampleDatabase.driver.simple._
-import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
+import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
 
 import scala.collection.mutable.ArrayBuffer
 import scala.slick.util.CloseableIterator
@@ -36,7 +36,7 @@ class InvokerFunSuite extends AbstractSlickFunSuite {
       q.buildColl[ArrayBuffer] shouldEqual ArrayBuffer(1, 2, 3, 4, 5)
       q.buildColl[Array].toList shouldEqual List(1, 2, 3, 4, 5)
 
-      ts ++= (6 to 100).toSeq
+      ts ++= ( 6 to 100 ).toSeq
 
       val it = q.iterator
       // it.use 는 Closer.using 과 같은 기능ㅇ르 수행합니다.
@@ -91,7 +91,7 @@ class InvokerFunSuite extends AbstractSlickFunSuite {
     // q.iterator 를 이용하여 정보를 가져온다. toStream 은 원하는 만큼만 로딩하여 작업할 수 있다.
     val it = f()
     it.use {
-      it.toStream.toList shouldEqual (1 to 1000).toList
+      it.toStream.toList shouldEqual ( 1 to 1000 ).toList
     }
 
     // g() 메소드를 수행하면 예외가 발생하므로
@@ -100,7 +100,7 @@ class InvokerFunSuite extends AbstractSlickFunSuite {
     withSession { implicit session =>
       val it2 = f()
       it2.use {
-        it2.toStream.toList shouldEqual (1 to 1000).toList
+        it2.toStream.toList shouldEqual ( 1 to 1000 ).toList
       }
     }
   }

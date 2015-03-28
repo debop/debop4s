@@ -1,7 +1,7 @@
 package debop4s.redis
 
 import akka.actor.ActorSystem
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfter, Matchers, FunSuite}
+import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfter, Matchers, FunSuite }
 import redis.RedisClient
 
 /**
@@ -10,16 +10,16 @@ import redis.RedisClient
  */
 class AbstractRedisTest extends FunSuite with Matchers with BeforeAndAfterAll with BeforeAndAfter {
 
-    implicit var akkaSystem: ActorSystem = _
-    var redis: RedisClient = _
+  implicit var akkaSystem: ActorSystem = _
+  var redis: RedisClient = _
 
-    override def beforeAll() {
-        akkaSystem = akka.actor.ActorSystem()
-        redis = RedisClient()
-    }
+  override def beforeAll() {
+    akkaSystem = akka.actor.ActorSystem()
+    redis = RedisClient()
+  }
 
-    override def afterAll() {
-        akkaSystem.shutdown()
-    }
+  override def afterAll() {
+    akkaSystem.shutdown()
+  }
 
 }

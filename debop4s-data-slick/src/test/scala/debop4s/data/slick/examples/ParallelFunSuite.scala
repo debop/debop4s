@@ -1,6 +1,6 @@
 package debop4s.data.slick.examples
 
-import debop4s.core.utils.{ClosableStopwatch, Closer}
+import debop4s.core.utils.{ ClosableStopwatch, Closer }
 import debop4s.data.slick.AbstractSlickFunSuite
 import debop4s.data.slick.SlickExampleDatabase._
 import debop4s.data.slick.SlickExampleDatabase.driver.simple._

@@ -10,17 +10,17 @@ import scala.beans.BeanProperty
 @Access(AccessType.FIELD)
 class VersionedItem extends Serializable {
 
-    @Id
-    @GeneratedValue
-    @BeanProperty
-    var id: java.lang.Long = _
+  @Id
+  @GeneratedValue
+  @BeanProperty
+  var id: java.lang.Long = _
 
-    @Version
-    @BeanProperty
-    var version: Long = _
+  @Version
+  @BeanProperty
+  var version: Long = _
 
-    var name: String = _
+  var name: String = _
 
-    var description: String = _
+  var description: String = _
 
 }

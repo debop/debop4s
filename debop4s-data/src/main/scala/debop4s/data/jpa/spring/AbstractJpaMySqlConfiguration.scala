@@ -16,19 +16,19 @@ import scala.collection.immutable.HashMap
  */
 abstract class AbstractJpaMySqlConfiguration extends AbstractJpaConfiguration {
 
-    @Bean
-    override def dataSource: DataSource = {
-        buildDataSource(DRIVER_CLASS_MYSQL,
-                           s"jdbc:mysql://localhost/$getDatabaseName",
-                           "root",
-                           "root")
-    }
+  @Bean
+  override def dataSource: DataSource = {
+    buildDataSource(DRIVER_CLASS_MYSQL,
+                     s"jdbc:mysql://localhost/$getDatabaseName",
+                     "root",
+                     "root")
+  }
 
-    override def jpaProperties: Properties = {
-        val props: Properties = super.jpaProperties
-        props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
-        props
-    }
+  override def jpaProperties: Properties = {
+    val props: Properties = super.jpaProperties
+    props.put(AvailableSettings.DIALECT, DIALECT_MYSQL)
+    props
+  }
 }
 
 /**
@@ -39,23 +39,23 @@ abstract class AbstractJpaMySqlConfiguration extends AbstractJpaConfiguration {
  */
 abstract class AbstractJpaMySqlHikariConfiguration extends AbstractJpaMySqlConfiguration {
 
-    @Bean
-    override def dataSource: DataSource = {
-        DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL,
-                                           s"jdbc:mysql://localhost/$getDatabaseName",
-                                           "root",
-                                           "root",
-                                           defaultProperties)
-    }
+  @Bean
+  override def dataSource: DataSource = {
+    DataSources.getHikariDataSource(DATASOURCE_CLASS_MYSQL,
+                                     s"jdbc:mysql://localhost/$getDatabaseName",
+                                     "root",
+                                     "root",
+                                     defaultProperties)
+  }
 
-    def defaultProperties = {
-        HashMap(
-                   "characterEncoding" -> "UTF-8",
-                   "useUnicode" -> "true",
-                   "cachePrepStmts" -> "true",
-                   "prepStmtCacheSize" -> "250",
-                   "prepStmtCacheSqlLimit" -> "2048",
-                   "useServerPrepStmts" -> "true"
-               )
-    }
+  def defaultProperties = {
+    HashMap(
+             "characterEncoding" -> "UTF-8",
+             "useUnicode" -> "true",
+             "cachePrepStmts" -> "true",
+             "prepStmtCacheSize" -> "250",
+             "prepStmtCacheSqlLimit" -> "2048",
+             "useServerPrepStmts" -> "true"
+           )
+  }
 }

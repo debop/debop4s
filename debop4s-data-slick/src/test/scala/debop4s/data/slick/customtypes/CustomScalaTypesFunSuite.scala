@@ -31,7 +31,7 @@ class CustomScalaTypesFunSuite extends AbstractSlickFunSuite {
 
   test("custom scala type - Bool") {
     withSession { implicit session =>
-      Try {As.ddl.drop}
+      Try { As.ddl.drop }
       As.ddl.create
 
       As ++= Seq(("A", True), ("B", False))

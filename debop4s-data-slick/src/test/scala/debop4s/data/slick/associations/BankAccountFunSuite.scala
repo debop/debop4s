@@ -30,7 +30,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     val ddl = BankAccounts.ddl ++ AccountOwners.ddl ++ BankAccountOwners.ddl
 
     withSession { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
     }
 
     withTransaction { implicit session =>
@@ -65,7 +65,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
   test("explicit inner join") {
     withReadOnly { implicit session =>
       val owners = for {
-        (account, map) <- BankAccounts innerJoin BankAccountOwners on (_.id === _.accountId)
+        (account, map) <- BankAccounts innerJoin BankAccountOwners on ( _.id === _.accountId )
         owner <- AccountOwners if owner.id === map.ownerId
       } yield owner
 

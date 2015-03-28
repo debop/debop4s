@@ -11,19 +11,19 @@ import org.slf4j.LoggerFactory
  */
 object Threads {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    implicit def makeRunnable(action: => Unit): Runnable = {
-        new Runnable {
-            def run() {
-                action
-            }
-        }
+  implicit def makeRunnable(action: => Unit): Runnable = {
+    new Runnable {
+      def run() {
+        action
+      }
     }
+  }
 
-    implicit def makeCallable[T](function: => T): Callable[T] = {
-        new Callable[T] {
-            def call() = function
-        }
+  implicit def makeCallable[T](function: => T): Callable[T] = {
+    new Callable[T] {
+      def call() = function
     }
+  }
 }

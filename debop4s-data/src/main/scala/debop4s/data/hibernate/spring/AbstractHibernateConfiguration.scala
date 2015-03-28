@@ -6,13 +6,13 @@ import javax.sql.DataSource
 import debop4s.data.hibernate.interceptor.PersistentObjectInterceptor
 import debop4s.data.hibernate.repository.HibernateDao
 import debop4s.data.jdbc.DataSources
-import org.hibernate.cfg.{AvailableSettings, NamingStrategy}
-import org.hibernate.{Interceptor, SessionFactory}
+import org.hibernate.cfg.{ AvailableSettings, NamingStrategy }
+import org.hibernate.{ Interceptor, SessionFactory }
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{ Bean, Configuration }
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.orm.hibernate4.{HibernateExceptionTranslator, HibernateTransactionManager, LocalSessionFactoryBean}
+import org.springframework.orm.hibernate4.{ HibernateExceptionTranslator, HibernateTransactionManager, LocalSessionFactoryBean }
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 /**

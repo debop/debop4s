@@ -2,7 +2,7 @@ package debop4s.data.slick.config
 
 import debop4s.config.ConfigUtils
 import debop4s.data.common.DataSources
-import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
+import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
 
 /**
  * Slick 관련 환경설정 테스트

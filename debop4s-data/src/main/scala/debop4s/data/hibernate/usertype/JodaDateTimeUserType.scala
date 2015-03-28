@@ -1,8 +1,8 @@
 package debop4s.data.hibernate.usertype
 
 import java.io.Serializable
-import java.sql.{ResultSet, PreparedStatement}
-import java.util.{Objects, Date}
+import java.sql.{ ResultSet, PreparedStatement }
+import java.util.{ Objects, Date }
 import org.hibernate.`type`.StandardBasicTypes
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
@@ -19,44 +19,44 @@ import org.joda.time.DateTime
  */
 class JodaDateTimeUserType extends UserType {
 
-    private def asDateTime(value: Any): DateTime = {
-        value match {
-            case x: java.lang.Long => new DateTime(x)
-            case x: Long => new DateTime(x)
-            case x: Date => new DateTime(x)
-            case x: DateTime => new DateTime(x)
-            case _ => null
-        }
+  private def asDateTime(value: Any): DateTime = {
+    value match {
+      case x: java.lang.Long => new DateTime(x)
+      case x: Long => new DateTime(x)
+      case x: Date => new DateTime(x)
+      case x: DateTime => new DateTime(x)
+      case _ => null
     }
+  }
 
-    def sqlTypes(): Array[Int] = Array(StandardBasicTypes.TIMESTAMP.sqlType())
+  def sqlTypes(): Array[Int] = Array(StandardBasicTypes.TIMESTAMP.sqlType())
 
-    def returnedClass(): Class[DateTime] = classOf[DateTime]
+  def returnedClass(): Class[DateTime] = classOf[DateTime]
 
-    def equals(x: Any, y: Any) = Objects.equals(x, y)
+  def equals(x: Any, y: Any) = Objects.equals(x, y)
 
-    def hashCode(x: Any) = Objects.hashCode(x)
+  def hashCode(x: Any) = Objects.hashCode(x)
 
-    def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
-        val value = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session, owner)
-        asDateTime(value)
+  def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
+    val value = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session, owner)
+    asDateTime(value)
+  }
+
+  def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
+    val date = value match {
+      case x: DateTime => x.toDate
+      case _ => null
     }
+    StandardBasicTypes.TIMESTAMP.nullSafeSet(st, date, index, session)
+  }
 
-    def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
-        val date = value match {
-            case x: DateTime => x.toDate
-            case _ => null
-        }
-        StandardBasicTypes.TIMESTAMP.nullSafeSet(st, date, index, session)
-    }
+  def deepCopy(value: Any) = value.asInstanceOf[AnyRef]
 
-    def deepCopy(value: Any) = value.asInstanceOf[AnyRef]
+  def isMutable = true
 
-    def isMutable = true
+  def disassemble(value: Any) = deepCopy(value).asInstanceOf[Serializable]
 
-    def disassemble(value: Any) = deepCopy(value).asInstanceOf[Serializable]
+  def assemble(cached: Serializable, owner: Any) = deepCopy(cached)
 
-    def assemble(cached: Serializable, owner: Any) = deepCopy(cached)
-
-    def replace(original: Any, target: Any, owner: Any) = deepCopy(original)
+  def replace(original: Any, target: Any, owner: Any) = deepCopy(original)
 }

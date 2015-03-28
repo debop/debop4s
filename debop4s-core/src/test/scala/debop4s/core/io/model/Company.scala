@@ -1,9 +1,9 @@
 package debop4s.core.io.model
 
-import java.{math, util}
+import java.{ math, util }
 
 import debop4s.core.ValueObject
-import debop4s.core.utils.{Hashs, ToStringHelper}
+import debop4s.core.utils.{ Hashs, ToStringHelper }
 
 /**
  * debop4s.core.tests.io.model.Company

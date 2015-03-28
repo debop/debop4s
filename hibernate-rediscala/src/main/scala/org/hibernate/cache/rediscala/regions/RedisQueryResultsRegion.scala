@@ -16,9 +16,9 @@ class RedisQueryResultsRegion(private[this] val _accessStrategyFactory: RedisAcc
                               private[this] val _cache: HibernateRedisCache,
                               private[this] val _regionName: String,
                               private[this] val _props: Properties)
-    extends RedisGeneralDataRegion(_accessStrategyFactory,
-        _cache,
-        _regionName,
-        _props)
-    with QueryResultsRegion {
+  extends RedisGeneralDataRegion(_accessStrategyFactory,
+                                  _cache,
+                                  _regionName,
+                                  _props)
+  with QueryResultsRegion {
 }

@@ -8,16 +8,16 @@ package debop4s.core
  */
 object BinaryStringFormat extends Enumeration {
 
-    type BinaryStringFormat = Value
+  type BinaryStringFormat = Value
 
-    /**
-     * Base64 인코딩
-     */
-    val Base64 = Value(0, "Base64")
+  /**
+   * Base64 인코딩
+   */
+  val Base64 = Value(0, "Base64")
 
-    /**
-     * Hex Decimal
-     */
-    val HexDecimal = Value(1, "HexDecimal")
+  /**
+   * Hex Decimal
+   */
+  val HexDecimal = Value(1, "HexDecimal")
 
 }

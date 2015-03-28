@@ -15,18 +15,18 @@ import org.hibernate.cache.rediscala.tests.Hashs
 @SerialVersionUID(8986275418970766284L)
 class JpaAccount extends Serializable {
 
-    @Id
-    @GeneratedValue
-    var id: java.lang.Long = _
+  @Id
+  @GeneratedValue
+  var id: java.lang.Long = _
 
-    @Column(name = "accountId")
-    def getId = id
+  @Column(name = "accountId")
+  def getId = id
 
-    var cashBalance: java.lang.Double = _
+  var cashBalance: java.lang.Double = _
 
-    @Column(name = "accountName", nullable = false, length = 32)
-    var name: String = _
+  @Column(name = "accountName", nullable = false, length = 32)
+  var name: String = _
 
-    override def hashCode(): Int = Hashs.compute(name)
+  override def hashCode(): Int = Hashs.compute(name)
 
 }

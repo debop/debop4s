@@ -13,75 +13,75 @@ import scala.collection.mutable
  */
 object Local {
 
-    private lazy val log = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-    type Context = mutable.LinkedHashMap[Any, Any]
+  type Context = mutable.LinkedHashMap[Any, Any]
 
-    private[this] lazy val threadLocal = new ThreadLocal[Context]() {
-        override def initialValue(): Context = {
-            new Context()
-        }
+  private[this] lazy val threadLocal = new ThreadLocal[Context]() {
+    override def initialValue(): Context = {
+      new Context()
     }
+  }
 
-    private def getStorage: Context = threadLocal.get()
+  private def getStorage: Context = threadLocal.get()
 
-    def save(): Context = threadLocal.get().clone()
+  def save(): Context = threadLocal.get().clone()
 
-    def restore(saved: Context): Unit = {
-        threadLocal.set(saved)
+  def restore(saved: Context): Unit = {
+    threadLocal.set(saved)
+  }
+
+  def get[T](key: Any): Option[T] = {
+    getStorage.get(key) match {
+      case Some(x) => Some(x.asInstanceOf[T])
+      case _ => None
     }
+  }
 
-    def get[T](key: Any): Option[T] = {
-        getStorage.get(key) match {
-            case Some(x) => Some(x.asInstanceOf[T])
-            case _ => None
-        }
-    }
+  def put(key: Any, value: Any) {
+    getStorage.update(key, value)
+  }
 
-    def put(key: Any, value: Any) {
-        getStorage.update(key, value)
-    }
+  def put[T](key: Any, optValue: Option[T]) {
+    getStorage(key) = optValue
+  }
 
-    def put[T](key: Any, optValue: Option[T]) {
-        getStorage(key) = optValue
-    }
+  def clearAll() {
+    getStorage.clear()
+  }
 
-    def clearAll() {
-        getStorage.clear()
+  def getOrCreate[T](key: Any, factory: => T): Option[T] = {
+    if (!getStorage.contains(key)) {
+      assert(factory != null)
+      val result: T = factory
+      put(key, result)
     }
+    get[T](key)
+  }
 
-    def getOrCreate[T](key: Any, factory: => T): Option[T] = {
-        if (!getStorage.contains(key)) {
-            assert(factory != null)
-            val result: T = factory
-            put(key, result)
-        }
-        get[T](key)
+  def getOrCreate[T](key: Any, factory: Callable[T]): Option[T] = synchronized {
+    if (!getStorage.contains(key)) {
+      assert(factory != null)
+      put(key, factory.call())
     }
-
-    def getOrCreate[T](key: Any, factory: Callable[T]): Option[T] = synchronized {
-        if (!getStorage.contains(key)) {
-            assert(factory != null)
-            put(key, factory.call())
-        }
-        get[T](key)
-    }
+    get[T](key)
+  }
 }
 
 final class Local[T] {
-    private[this] val key = UUID.randomUUID()
+  private[this] val key = UUID.randomUUID()
 
-    def apply(): Option[T] = Local.get[T](key)
+  def apply(): Option[T] = Local.get[T](key)
 
-    def set(value: T) {
-        Local.put(key, value)
-    }
+  def set(value: T) {
+    Local.put(key, value)
+  }
 
-    def update(value: T) {
-        set(value)
-    }
+  def update(value: T) {
+    set(value)
+  }
 
-    def clear() {
-        Local.getStorage.remove(key)
-    }
+  def clear() {
+    Local.getStorage.remove(key)
+  }
 }

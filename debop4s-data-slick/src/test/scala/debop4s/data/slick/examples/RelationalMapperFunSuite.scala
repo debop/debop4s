@@ -45,8 +45,8 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
 
       ts.map(r => (r.b, r.c)) ++= Seq((False, None), (True, Some(True)))
       ts.run.toSet shouldEqual Set((1, False, None), (2, True, Some(True)))
-      ts.filter(_.b === (True: Bool)).run.toSet shouldEqual Set((2, True, Some(True)))
-      ts.filter(_.b === (False: Bool)).run.toSet shouldEqual Set((1, False, None))
+      ts.filter(_.b === ( True: Bool )).run.toSet shouldEqual Set((2, True, Some(True)))
+      ts.filter(_.b === ( False: Bool )).run.toSet shouldEqual Set((1, False, None))
     }
   }
 
@@ -78,8 +78,8 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
 
       ts.map(x => (x.b, x.c)) ++= Seq((EnumValue1, None), (EnumValue1, Some(EnumValue2)), (EnumValue2, Some(EnumValue3)))
       ts.run.toSet shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)), (3, EnumValue2, Some(EnumValue3)))
-      ts.filter(_.b === (EnumValue1: EnumType)).run.toSet shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)))
-      ts.filter(_.b === (EnumValue2: EnumType)).run.toSet shouldEqual Set((3, EnumValue2, Some(EnumValue3)))
+      ts.filter(_.b === ( EnumValue1: EnumType )).run.toSet shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)))
+      ts.filter(_.b === ( EnumValue2: EnumType )).run.toSet shouldEqual Set((3, EnumValue2, Some(EnumValue3)))
     }
   }
 
@@ -104,8 +104,8 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
 
       ts.map(r => (r.b, r.c)) ++= Seq((False, None), (True, Some(True)))
       ts.run.toSet shouldEqual Set((1, False, None), (2, True, Some(True)))
-      ts.filter(_.b === (True: Bool)).run.toSet shouldEqual Set((2, True, Some(True)))
-      ts.filter(_.b === (False: Bool)).run.toSet shouldEqual Set((1, False, None))
+      ts.filter(_.b === ( True: Bool )).run.toSet shouldEqual Set((2, True, Some(True)))
+      ts.filter(_.b === ( False: Bool )).run.toSet shouldEqual Set((1, False, None))
     }
   }
 

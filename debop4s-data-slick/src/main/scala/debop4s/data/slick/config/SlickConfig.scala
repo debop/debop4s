@@ -1,7 +1,7 @@
 package debop4s.data.slick.config
 
 import com.typesafe.config.Config
-import debop4s.config.server.{DatabaseElement, DatabaseSetting, DatabaseSupport}
+import debop4s.config.server.{ DatabaseElement, DatabaseSetting, DatabaseSupport }
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
@@ -46,7 +46,7 @@ case class SlickConfig(config: Config) extends DatabaseSupport {
     try {
       config.getConfigList(nodeName).asScala.map { cfg =>
         val master = new DatabaseElement(cfg)
-        LOG.debug(s"새로운 Database 환경을 로드했습니다. master=${master.dbSetting}")
+        LOG.debug(s"새로운 Database 환경을 로드했습니다. master=${ master.dbSetting }")
         master
       }.toIndexedSeq
     } catch {

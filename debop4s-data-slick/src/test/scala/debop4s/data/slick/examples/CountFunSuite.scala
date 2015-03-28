@@ -20,7 +20,7 @@ class CountFunSuite extends AbstractSlickFunSuite {
     lazy val testTable = TableQuery[TestTable]
 
     withSession { implicit session =>
-      Try {testTable.ddl.drop}
+      Try { testTable.ddl.drop }
       testTable.ddl.create
 
       testTable ++= Seq(1, 2, 3, 4, 5)
@@ -55,7 +55,7 @@ class CountFunSuite extends AbstractSlickFunSuite {
 
     lazy val ddl = categories.ddl ++ posts.ddl
     withSession { implicit session =>
-      Try {ddl.drop}
+      Try { ddl.drop }
       ddl.create
 
       categories ++= Seq((1, "scala"), (2, "JVM"), (3, "Java"), (4, "Erlang"), (5, "Haskell"))

@@ -2,13 +2,13 @@ package debop4s.core.utils
 
 import java.util
 
-import debop4s.core.{AbstractCoreTest, ValueObject}
+import debop4s.core.{ AbstractCoreTest, ValueObject }
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 /**
  * debop4s.core.tests.tools.MappersTest

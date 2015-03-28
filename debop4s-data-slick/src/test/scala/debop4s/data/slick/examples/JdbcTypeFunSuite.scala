@@ -1,6 +1,6 @@
 package debop4s.data.slick.examples
 
-import java.sql.{Blob, Date, Time, Timestamp}
+import java.sql.{ Blob, Date, Time, Timestamp }
 import java.util.UUID
 import javax.sql.rowset.serial.SerialBlob
 
@@ -8,7 +8,7 @@ import debop4s.core.io.Serializers
 import debop4s.core.utils.Streams
 import debop4s.data.slick.SlickExampleDatabase._
 import debop4s.data.slick.SlickExampleDatabase.driver.simple._
-import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
+import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
 
 import scala.util.Try
 

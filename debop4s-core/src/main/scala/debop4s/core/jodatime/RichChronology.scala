@@ -1,6 +1,6 @@
 package debop4s.core.jodatime
 
-import org.joda.time.{DateTimeZone, Chronology}
+import org.joda.time.{ DateTimeZone, Chronology }
 
 /**
  * com.github.time.RichChronology
@@ -9,7 +9,7 @@ import org.joda.time.{DateTimeZone, Chronology}
  */
 class RichChronology(val self: Chronology) extends AnyVal {
 
-    def zone: Option[DateTimeZone] = nullCheck(self.getZone)
+  def zone: Option[DateTimeZone] = nullCheck(self.getZone)
 
-    private def nullCheck[T <: AnyRef](v: T): Option[T] = if (v == null) None else Some(v)
+  private def nullCheck[T <: AnyRef](v: T): Option[T] = if (v == null) None else Some(v)
 }

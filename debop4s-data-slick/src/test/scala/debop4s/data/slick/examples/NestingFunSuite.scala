@@ -38,10 +38,10 @@ class NestingFunSuite extends AbstractSlickFunSuite {
       // select x2."A", x2."B", x3."C", 5
       //   from "nested_tupled" x2, "nested_tupled" x3
       //  order by x3."C", x2."A"
-      val q1a = (for {
+      val q1a = ( for {
         (a, b) <- ts.map(t => (t.a, t.b))
         c <- ts.map(t => t.c)
-      } yield (a, b, c, 5))
+      } yield (a, b, c, 5) )
                 .sortBy(t => (t._3, t._1))
 
       q1a.run shouldEqual res1
@@ -50,18 +50,18 @@ class NestingFunSuite extends AbstractSlickFunSuite {
       // select x2."A", x2."B", x3."C", 5
       //   from "nested_tupled" x2, "nested_tupled" x3
       //  order by x3."C", x2."A"
-      val q1c = (for {
+      val q1c = ( for {
         (a, b) <- ts.map(t => (t.a, t.b))
         c <- ts.map(t => t.c)
-      } yield (a, b, c, LiteralColumn(5)))
+      } yield (a, b, c, LiteralColumn(5)) )
                 .sortBy(t => (t._3, t._1))
 
       q1c.run shouldEqual res1
 
-      val q1d = (for {
+      val q1d = ( for {
         (a, b) <- ts.map(t => (t.a, t.b))
         c <- ts.map(t => t.c)
-      } yield ((a, b), (c, 5)))
+      } yield ((a, b), (c, 5)) )
                 .sortBy(t => (t._2._1, t._1._1))
 
 

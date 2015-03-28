@@ -1,6 +1,6 @@
 package debop4s.data.hibernate.usertype.compress
 
-import debop4s.core.compress.{SnappyCompressor, Compressor}
+import debop4s.core.compress.{ SnappyCompressor, Compressor }
 
 /**
  * Snappyer
@@ -8,9 +8,9 @@ import debop4s.core.compress.{SnappyCompressor, Compressor}
  */
 private[data] trait Snappyer {
 
-    private lazy val _compressor = new SnappyCompressor()
+  private lazy val _compressor = new SnappyCompressor()
 
-    def compressor: Compressor = _compressor
+  def compressor: Compressor = _compressor
 }
 
 /**

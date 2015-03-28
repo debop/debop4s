@@ -5,15 +5,15 @@ import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
 
 import debop4s.data.jdbc.DataSources
-import debop4s.data.jpa.repository.{JpaDao, JpaQueryDslDao}
-import org.hibernate.cfg.{AvailableSettings, NamingStrategy}
+import debop4s.data.jpa.repository.{ JpaDao, JpaQueryDslDao }
+import org.hibernate.cfg.{ AvailableSettings, NamingStrategy }
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
-import org.springframework.orm.jpa.{JpaTransactionManager, LocalContainerEntityManagerFactoryBean}
+import org.springframework.orm.jpa.{ JpaTransactionManager, LocalContainerEntityManagerFactoryBean }
 import org.springframework.transaction.PlatformTransactionManager
 
 /**

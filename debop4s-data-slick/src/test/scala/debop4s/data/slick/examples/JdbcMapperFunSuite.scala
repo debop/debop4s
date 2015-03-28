@@ -279,20 +279,20 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
       Try { bs.ddl.drop }
       bs.ddl.create
 
-      bs += (1 :: true :: "a" :: HNil)
-      bs += (2 :: false :: "c" :: HNil)
-      bs += (3 :: false :: "b" :: HNil)
+      bs += ( 1 :: true :: "a" :: HNil )
+      bs += ( 2 :: false :: "c" :: HNil )
+      bs += ( 3 :: false :: "b" :: HNil )
 
       val q1 = (
                  for {
                    id :: b :: s :: HNil <- for {b <- bs} yield b.id :: b.b :: b.s :: HNil if !b
-                 } yield id :: b :: (s ++ s) :: HNil
+                 } yield id :: b :: ( s ++ s ) :: HNil
                  )
                .sortBy(h => h(2))
-               .map { case id :: b :: ss :: HNil => id :: ss :: (42 :: HNil) :: HNil }
+               .map { case id :: b :: ss :: HNil => id :: ss :: ( 42 :: HNil ) :: HNil }
 
-      q1.run shouldEqual Seq(3 :: "bb" :: (42 :: HNil) :: HNil,
-                              2 :: "cc" :: (42 :: HNil) :: HNil)
+      q1.run shouldEqual Seq(3 :: "bb" :: ( 42 :: HNil ) :: HNil,
+                              2 :: "cc" :: ( 42 :: HNil ) :: HNil)
     }
 
   }
@@ -336,7 +336,7 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
       val cs = TableQuery[C]
       Try { cs.ddl.drop }
       cs.ddl.create
-      cs += ("Foo" :: HNil)
+      cs += ( "Foo" :: HNil )
       cs.update("Foo" :: HNil)
       val cres :: HNil = cs.run.head
       cres shouldEqual "Foo"
@@ -351,11 +351,11 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
     class T(tag: Tag) extends Table[Data](tag, "mapped_fastpath_t") {
       def a = column[Int]("A")
       def b = column[Int]("B")
-      def * = (a, b) <>(Data.tupled, Data.unapply) fastPath (new FastPath(_) {
+      def * = (a, b) <>(Data.tupled, Data.unapply) fastPath ( new FastPath(_) {
         val (a, b) = (next[Int], next[Int])
         // HINT: ResultSet 을 읽어, 다른 변환을 할 수 있도록 합니다.
         override def read(r: Reader) = Data(a.read(r), b.read(r))
-      })
+      } )
     }
     val ts = TableQuery[T]
 

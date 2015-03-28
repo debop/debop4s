@@ -1,7 +1,7 @@
 package debop4s.core.io
 
-import debop4s.core.io.model.{Company, User}
-import debop4s.core.{AbstractCoreTest, YearWeek}
+import debop4s.core.io.model.{ Company, User }
+import debop4s.core.{ AbstractCoreTest, YearWeek }
 
 /**
  * AbstractSerializerTest
@@ -34,7 +34,7 @@ abstract class AbstractSerializerTest extends AbstractCoreTest {
       user.address = "ADDR_" + i
       company.users.add(user)
     }
-    log.debug(s"user count = ${company.users.size}")
+    log.debug(s"user count = ${ company.users.size }")
 
     val copied: Company = serializer.deserialize[Company](serializer.serialize(company), classOf[Company])
     assert(copied != null)

@@ -1,6 +1,6 @@
 package debop4s.core.jodatime
 
-import org.joda.time.{Chronology, DateTime, MutableDateTime, ReadableDateTime}
+import org.joda.time.{ Chronology, DateTime, MutableDateTime, ReadableDateTime }
 
 /**
  * com.github.time.RichReadableDateTime
@@ -9,31 +9,31 @@ import org.joda.time.{Chronology, DateTime, MutableDateTime, ReadableDateTime}
  */
 class RichReadableDateTime(val self: ReadableDateTime) extends AnyVal with Ordered[ReadableDateTime] {
 
-    def millis = self.getMillis
+  def millis = self.getMillis
 
-    def second: Int = self.getSecondOfMinute
+  def second: Int = self.getSecondOfMinute
 
-    def minute: Int = self.getMinuteOfHour
+  def minute: Int = self.getMinuteOfHour
 
-    def hour: Int = self.getHourOfDay
+  def hour: Int = self.getHourOfDay
 
-    def day: Int = self.getDayOfMonth
+  def day: Int = self.getDayOfMonth
 
-    def month: Int = self.getMonthOfYear
+  def month: Int = self.getMonthOfYear
 
-    def year: Int = self.getYear
+  def year: Int = self.getYear
 
-    def century: Int = self.getCenturyOfEra
+  def century: Int = self.getCenturyOfEra
 
-    def weekyear: Int = self.getWeekyear
+  def weekyear: Int = self.getWeekyear
 
-    def week: Int = self.getWeekOfWeekyear
+  def week: Int = self.getWeekOfWeekyear
 
-    def chronology: Chronology = self.getChronology
+  def chronology: Chronology = self.getChronology
 
-    def dateTime: DateTime = self.toDateTime
+  def dateTime: DateTime = self.toDateTime
 
-    def mutableDateTime: MutableDateTime = self.toMutableDateTime
+  def mutableDateTime: MutableDateTime = self.toMutableDateTime
 
-    def compare(that: ReadableDateTime): Int = self.compareTo(that)
+  def compare(that: ReadableDateTime): Int = self.compareTo(that)
 }

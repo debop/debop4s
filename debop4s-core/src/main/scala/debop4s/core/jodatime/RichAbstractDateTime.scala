@@ -1,8 +1,8 @@
 package debop4s.core.jodatime
 
-import java.util.{Locale, Calendar}
+import java.util.{ Locale, Calendar }
 import org.joda.time.base.AbstractDateTime
-import org.joda.time.{Chronology, DateTimeZone}
+import org.joda.time.{ Chronology, DateTimeZone }
 
 /**
  * com.github.time.RichAbstractDateTime
@@ -11,13 +11,13 @@ import org.joda.time.{Chronology, DateTimeZone}
  */
 class RichAbstractDateTime(val self: AbstractDateTime) extends AnyVal with Ordered[AbstractDateTime] {
 
-    def chronology: Chronology = self.getChronology
+  def chronology: Chronology = self.getChronology
 
-    def calendar(locale: Locale): Calendar = self.toCalendar(locale)
+  def calendar(locale: Locale): Calendar = self.toCalendar(locale)
 
-    def gregorianCalendar: Calendar = self.toGregorianCalendar
+  def gregorianCalendar: Calendar = self.toGregorianCalendar
 
-    def zone: DateTimeZone = self.getZone
+  def zone: DateTimeZone = self.getZone
 
-    def compare(that: AbstractDateTime): Int = self.compareTo(that)
+  def compare(that: AbstractDateTime): Int = self.compareTo(that)
 }

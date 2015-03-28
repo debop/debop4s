@@ -1,7 +1,7 @@
 package debop4s.data.slick.associations
 
 import debop4s.data.slick.AbstractSlickFunSuite
-import debop4s.data.slick.associations.model.{Order, OrderItem}
+import debop4s.data.slick.associations.model.{ Order, OrderItem }
 import debop4s.data.slick.associations.schema.AssociationDatabase._
 import debop4s.data.slick.associations.schema.AssociationDatabase.driver.simple._
 import org.joda.time.DateTime
@@ -28,7 +28,7 @@ class OrderFunSuite extends AbstractSlickFunSuite {
     super.beforeAll()
 
     val ddl = Orders.ddl ++ OrderItems.ddl
-    withTransaction { implicit session => Try {ddl.drop} }
+    withTransaction { implicit session => Try { ddl.drop } }
 
     withTransaction { implicit session =>
       ddl.create
@@ -58,7 +58,7 @@ class OrderFunSuite extends AbstractSlickFunSuite {
 
       val joinQuery =
         for {
-          (o, i) <- Orders innerJoin OrderItems on (_.id === _.orderId)
+          (o, i) <- Orders innerJoin OrderItems on ( _.id === _.orderId )
         } yield (o, i)
 
       val groupByQuery = joinQuery.groupBy(_._1.id) // group by order.id

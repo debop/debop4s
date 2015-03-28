@@ -16,25 +16,25 @@ import scala.concurrent.duration.Duration
  */
 class GcPredicator(pool: Pool, period: Duration, timer: Timer, estimator: Estimator[Double]) {
 
-    private[this] def loop() {
-        for (bps <- pool.estimateAllocRate(period, timer)) {
-            synchronized { estimator.measure(bps.toDouble) }
-            loop()
-        }
+  private[this] def loop() {
+    for (bps <- pool.estimateAllocRate(period, timer)) {
+      synchronized { estimator.measure(bps.toDouble) }
+      loop()
     }
+  }
 
-    loop()
+  loop()
 
-    def nextGcEstimate(): Time = {
-        val e = synchronized(estimator.estimate).toLong
+  def nextGcEstimate(): Time = {
+    val e = synchronized(estimator.estimate).toLong
 
-        if (e == 0) Time.Inf
-        else {
-            val PoolState(_, capacity, used) = pool.state()
-            val r = (capacity - used).inBytes
-            Time.now + ((1000 * r) / e).milliseconds
-        }
+    if (e == 0) Time.Inf
+    else {
+      val PoolState(_, capacity, used) = pool.state()
+      val r = ( capacity - used ).inBytes
+      Time.now + ( ( 1000 * r ) / e ).milliseconds
     }
+  }
 }
 
 // Note: it may be preoductive to make use of several inputs

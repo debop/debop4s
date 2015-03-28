@@ -1,7 +1,7 @@
 package debop4s.core.io.model
 
 import debop4s.core.ValueObject
-import debop4s.core.utils.{ToStringHelper, Hashs}
+import debop4s.core.utils.{ ToStringHelper, Hashs }
 
 /**
  * debop4s.core.tests.io.model.User
@@ -12,15 +12,15 @@ import debop4s.core.utils.{ToStringHelper, Hashs}
 @SerialVersionUID(-1375942267796202939L)
 class User extends ValueObject {
 
-    var name: String = _
-    var empNo: String = _
-    var address: String = _
+  var name: String = _
+  var empNo: String = _
+  var address: String = _
 
-    override def hashCode(): Int = Hashs.compute(name, empNo)
+  override def hashCode(): Int = Hashs.compute(name, empNo)
 
-    override protected def buildStringHelper: ToStringHelper =
-        super.buildStringHelper
-        .add("name", name)
-        .add("empNo", empNo)
-        .add("address", address)
+  override protected def buildStringHelper: ToStringHelper =
+    super.buildStringHelper
+    .add("name", name)
+    .add("empNo", empNo)
+    .add("address", address)
 }

@@ -1,7 +1,7 @@
 package debop4s.core.jodatime
 
 import java.util.Locale
-import org.joda.time.{ReadableInstant, DateTimeZone}
+import org.joda.time.{ ReadableInstant, DateTimeZone }
 
 /**
  * com.github.time.RichDateTimeZone
@@ -10,24 +10,24 @@ import org.joda.time.{ReadableInstant, DateTimeZone}
  */
 class RichDateTimeZone(val self: DateTimeZone) extends AnyVal {
 
-    def id: String = self.getID
+  def id: String = self.getID
 
-    def name(instant: Long): String = self.getName(instant)
+  def name(instant: Long): String = self.getName(instant)
 
-    def name(instant: Long, locale: Locale): String = self.getName(instant, locale)
+  def name(instant: Long, locale: Locale): String = self.getName(instant, locale)
 
-    def offset(instant: Long): Int = self.getOffset(instant)
+  def offset(instant: Long): Int = self.getOffset(instant)
 
-    def offset(instant: ReadableInstant): Int = self.getOffset(instant)
+  def offset(instant: ReadableInstant): Int = self.getOffset(instant)
 
-    def offsetFromLocal(instantLocal: Long) = self.getOffsetFromLocal(instantLocal)
+  def offsetFromLocal(instantLocal: Long) = self.getOffsetFromLocal(instantLocal)
 
-    def standardOffset(instant: Long): Int = self.getStandardOffset(instant)
+  def standardOffset(instant: Long): Int = self.getStandardOffset(instant)
 
-    def isStandardOffset(instant: Long) = self.isStandardOffset(instant)
+  def isStandardOffset(instant: Long) = self.isStandardOffset(instant)
 
-    def nameKey(instant: Long): String = self.getNameKey(instant)
+  def nameKey(instant: Long): String = self.getNameKey(instant)
 
-    def shortName(instant: Long): String = self.getShortName(instant)
+  def shortName(instant: Long): String = self.getShortName(instant)
 
 }

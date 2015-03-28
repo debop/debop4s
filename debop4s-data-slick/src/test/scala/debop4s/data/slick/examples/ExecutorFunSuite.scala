@@ -21,7 +21,7 @@ class ExecutorFunSuite extends AbstractSlickFunSuite {
     val ts = TableQuery[T]
 
     withSession { implicit session =>
-      Try {ts.ddl.drop}
+      Try { ts.ddl.drop }
       ts.ddl.create
       ts ++= Seq(2, 3, 1, 5, 4)
     }
@@ -44,7 +44,7 @@ class ExecutorFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     withSession { implicit session =>
-      Try {ts.ddl.drop}
+      Try { ts.ddl.drop }
       ts.ddl.create
       ts ++= Seq(2 -> "a", 3 -> "b", 1 -> "c", 5 -> "d", 4 -> "e")
     }

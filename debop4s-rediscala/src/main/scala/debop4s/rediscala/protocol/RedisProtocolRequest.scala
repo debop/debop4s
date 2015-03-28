@@ -15,7 +15,7 @@ object RedisProtocolRequest {
   @inline
   def multiBulk(command: String, args: Seq[ByteString]): ByteString = {
 
-    val argsSizeString = (args.size + 1).toString
+    val argsSizeString = ( args.size + 1 ).toString
     var length = 1 + argsSizeString.length + LS.length
 
     val cmdLengthString = command.length.toString

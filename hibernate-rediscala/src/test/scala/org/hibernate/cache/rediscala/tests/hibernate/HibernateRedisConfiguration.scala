@@ -1,15 +1,15 @@
 package org.hibernate.cache.rediscala.tests.hibernate
 
-import com.zaxxer.hikari.{HikariDataSource, HikariConfig}
+import com.zaxxer.hikari.{ HikariDataSource, HikariConfig }
 import java.util.Properties
 import org.hibernate.SessionFactory
 import org.hibernate.cache.rediscala.SingletonRedisRegionFactory
 import org.hibernate.cache.rediscala.tests.domain.Account
 import org.hibernate.cfg.AvailableSettings
 import org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{ Bean, Configuration }
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor
-import org.springframework.orm.hibernate4.{HibernateExceptionTranslator, HibernateTransactionManager, LocalSessionFactoryBean}
+import org.springframework.orm.hibernate4.{ HibernateExceptionTranslator, HibernateTransactionManager, LocalSessionFactoryBean }
 
 /**
  * org.hibernate.cache.rediscala.tests.hibernate.HibernateRedisConfiguration
@@ -20,69 +20,69 @@ import org.springframework.orm.hibernate4.{HibernateExceptionTranslator, Hiberna
 @Configuration
 class HibernateRedisConfiguration {
 
-    def databaseName: String = "hibernate"
+  def databaseName: String = "hibernate"
 
-    def getMappedPackageNames: Array[String] = Array(classOf[Account].getPackage.getName)
+  def getMappedPackageNames: Array[String] = Array(classOf[Account].getPackage.getName)
 
-    def hibernateProperties: Properties = {
+  def hibernateProperties: Properties = {
 
-        val props = new Properties()
+    val props = new Properties()
 
-        props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create")
-        props.setProperty(AvailableSettings.FORMAT_SQL, "true")
-        props.setProperty(AvailableSettings.SHOW_SQL, "false")
-        props.setProperty(AvailableSettings.POOL_SIZE, "100")
+    props.setProperty(AvailableSettings.HBM2DDL_AUTO, "create")
+    props.setProperty(AvailableSettings.FORMAT_SQL, "true")
+    props.setProperty(AvailableSettings.SHOW_SQL, "false")
+    props.setProperty(AvailableSettings.POOL_SIZE, "100")
 
-        // Secondary Cache
-        props.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true")
-        props.setProperty(AvailableSettings.USE_QUERY_CACHE, "true")
-        props.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[SingletonRedisRegionFactory].getName)
-        props.setProperty(AvailableSettings.CACHE_REGION_PREFIX, "hibernate")
-        props.setProperty(AvailableSettings.GENERATE_STATISTICS, "true")
-        props.setProperty(AvailableSettings.USE_STRUCTURED_CACHE, "true")
-        props.setProperty(AvailableSettings.TRANSACTION_STRATEGY, classOf[JdbcTransactionFactory].getName)
+    // Secondary Cache
+    props.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true")
+    props.setProperty(AvailableSettings.USE_QUERY_CACHE, "true")
+    props.setProperty(AvailableSettings.CACHE_REGION_FACTORY, classOf[SingletonRedisRegionFactory].getName)
+    props.setProperty(AvailableSettings.CACHE_REGION_PREFIX, "hibernate")
+    props.setProperty(AvailableSettings.GENERATE_STATISTICS, "true")
+    props.setProperty(AvailableSettings.USE_STRUCTURED_CACHE, "true")
+    props.setProperty(AvailableSettings.TRANSACTION_STRATEGY, classOf[JdbcTransactionFactory].getName)
 
-        props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
+    props.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties")
 
-        props
-    }
+    props
+  }
 
-    @Bean
-    def dataSource = {
-        val config = new HikariConfig()
+  @Bean
+  def dataSource = {
+    val config = new HikariConfig()
 
-        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
-        config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
-        config.addDataSourceProperty("user", "sa")
-        config.addDataSourceProperty("password", "")
+    config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
+    config.addDataSourceProperty("url", "jdbc:h2:mem:test;MVCC=true")
+    config.addDataSourceProperty("user", "sa")
+    config.addDataSourceProperty("password", "")
 
-        config.setInitializationFailFast(true)
+    config.setInitializationFailFast(true)
 
-        new HikariDataSource(config)
-    }
+    new HikariDataSource(config)
+  }
 
-    @Bean
-    def sessionFactory: SessionFactory = {
-        val factoryBean = new LocalSessionFactoryBean()
-        factoryBean.setPackagesToScan(getMappedPackageNames: _*)
-        factoryBean.setDataSource(dataSource)
-        factoryBean.setHibernateProperties(hibernateProperties)
+  @Bean
+  def sessionFactory: SessionFactory = {
+    val factoryBean = new LocalSessionFactoryBean()
+    factoryBean.setPackagesToScan(getMappedPackageNames: _*)
+    factoryBean.setDataSource(dataSource)
+    factoryBean.setHibernateProperties(hibernateProperties)
 
-        factoryBean.afterPropertiesSet()
+    factoryBean.afterPropertiesSet()
 
-        factoryBean.getObject
-    }
+    factoryBean.getObject
+  }
 
-    @Bean
-    def transactionManager =
-        new HibernateTransactionManager(sessionFactory)
+  @Bean
+  def transactionManager =
+    new HibernateTransactionManager(sessionFactory)
 
-    @Bean
-    def hibernateExceptionTranslator =
-        new HibernateExceptionTranslator()
+  @Bean
+  def hibernateExceptionTranslator =
+    new HibernateExceptionTranslator()
 
-    @Bean
-    def exceptionTranslation =
-        new PersistenceExceptionTranslationPostProcessor()
+  @Bean
+  def exceptionTranslation =
+    new PersistenceExceptionTranslationPostProcessor()
 
 }
