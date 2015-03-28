@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>debop4s-parent</artifactId>
+        <groupId>com.github.debop4s</groupId>
+        <version>0.4.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>data-slick3</name>
+    <artifactId>debop4s-data-slick3</artifactId>
+
+    <properties>
+        <slick3.version>3.0.0-RC1</slick3.version>
+    </properties>
+
+    <dependencies>
+        <!-- Slick -->
+        <dependency>
+            <groupId>com.typesafe.slick</groupId>
+            <artifactId>slick_${scala.main.version}</artifactId>
+            <version>${slick3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.slick</groupId>
+            <artifactId>slick-codegen_2.11</artifactId>
+            <version>${slick3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.slick</groupId>
+            <artifactId>slick-testkit_2.11</artifactId>
+            <version>${slick3.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- debop4s -->
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-config</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-data-common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <!-- Database Drivers -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
