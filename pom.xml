@@ -1001,19 +1001,9 @@
             <url>http://repo.typesafe.com/typesafe/releases/</url>
         </repository>
         <repository>
-            <id>spray</id>
-            <name>spray.io</name>
-            <url>http://repo.spray.io</url>
-        </repository>
-        <repository>
             <id>rediscala</id>
             <name>RedisScala</name>
             <url>http://dl.bintray.com/etaty/maven</url>
-        </repository>
-        <repository>
-            <id>activate-framework</id>
-            <name>Activate Framework</name>
-            <url>http://fwbrasil.net/maven/</url>
         </repository>
     </repositories>
 

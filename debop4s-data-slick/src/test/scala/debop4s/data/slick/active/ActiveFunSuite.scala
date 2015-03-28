@@ -18,7 +18,7 @@ class ActiveFunSuite extends AbstractSlickFunSuite {
   }
 
   test("Supplier 저장하기") {
-    val initialCount = withReadOnly { implicit session => Suppliers.count }
+    val initialCount = withReadOnly { implicit session => suppliers.count }
 
     var persisted: Supplier = null
 
@@ -31,16 +31,16 @@ class ActiveFunSuite extends AbstractSlickFunSuite {
     }
 
     withSession { implicit session =>
-      Suppliers.count shouldEqual ( initialCount + 1 )
+      suppliers.count shouldEqual ( initialCount + 1 )
       persisted.delete
-      Suppliers.count shouldEqual initialCount
+      suppliers.count shouldEqual initialCount
     }
 
   }
 
   test("Beer 저장하기") {
     withSession { implicit session =>
-      val supplier = Suppliers.save(Supplier(name = "Acme, Inc."))
+      val supplier = suppliers.save(Supplier(name = "Acme, Inc."))
       supplier.id shouldBe defined
 
       supplier.id.foreach { sid =>

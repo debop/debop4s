@@ -123,7 +123,7 @@ class MainFunSuite extends AbstractSlickFunSuite {
         o <- u.orders
       } yield (u.first, u.last, o.orderId, o.product, o.shipped, o.rebate)
       LOG.debug(s"q3=${ q3.selectStatement }")
-      LOG.debug("All Orders by Users with a last name by first name:")
+      LOG.debug("All orders by Users with a last name by first name:")
       q3.list.foreach { o => LOG.debug("\t" + o) }
 
       // H2:
@@ -170,7 +170,7 @@ class MainFunSuite extends AbstractSlickFunSuite {
         o <- Orders if o.userId === u.id
       } yield (u.first, (LiteralColumn(1) + o.orderId, 1), o.product)
       LOG.debug(s"q4d: ${ q4d.selectStatement }")
-      LOG.debug("Orders for Homer and Marge:")
+      LOG.debug("orders for Homer and Marge:")
       q4d.run.foreach { o => LOG.debug("  " + o) }
 
       // && 는 and 로 변환, || 는 or 로 변환

@@ -27,42 +27,42 @@ class OrderFunSuite extends AbstractSlickFunSuite {
   override def beforeAll(): Unit = {
     super.beforeAll()
 
-    val ddl = Orders.ddl ++ OrderItems.ddl
+    val ddl = orders.ddl ++ orderItems.ddl
     withTransaction { implicit session => Try { ddl.drop } }
 
     withTransaction { implicit session =>
       ddl.create
 
-      Orders.saveAll(orderData: _*)
-      OrderItems.saveAll(orderItemData: _*)
+      orders.saveAll(orderData: _*)
+      orderItems.saveAll(orderItemData: _*)
     }
   }
 
   test("one-to-many : order - orderItems") {
     withReadOnly { implicit session =>
       // select O.*, I.* from Order o inner join OrderItem I on (O.id = I.order_id)
-      val orderItems = Orders.innerJoin(OrderItems).on((o, i) => o.id === i.orderId)
+      val items = orders.innerJoin(orderItems).on((o, i) => o.id === i.orderId)
 
       // where O.no = 'A-128'
-      val q = orderItems.filter(_._1.no === "A-128".bind)
+      val q = items.filter(_._1.no === "A-128".bind)
 
       q.length.run shouldEqual 2
       LOG.debug(s"Query=${ q.selectStatement }")
 
       q.run foreach println
 
-      val orderItems2 = Orders.innerJoin(OrderItems).on(_.id === _.orderId)
-      orderItems2.length.run shouldEqual OrderItems.count
+      val orderItems2 = orders.innerJoin(orderItems).on(_.id === _.orderId)
+      orderItems2.length.run shouldEqual orderItems.count
 
       // GROUP BY
 
       val joinQuery =
         for {
-          (o, i) <- Orders innerJoin OrderItems on ( _.id === _.orderId )
+          (o, i) <- orders innerJoin orderItems on ( _.id === _.orderId )
         } yield (o, i)
 
       val groupByQuery = joinQuery.groupBy(_._1.id) // group by order.id
-    val itemAvgQuery = groupByQuery.map { case (id, items) => (id, items.length, items.map(_._2.price).avg) }
+    val itemAvgQuery = groupByQuery.map { case (id, its) => (id, its.length, its.map(_._2.price).avg) }
 
       LOG.debug(s"GroupBy:\n${ itemAvgQuery.selectStatement }")
 

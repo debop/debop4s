@@ -33,7 +33,7 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
 
   lazy val addressPersons =
     for {
-      person <- Persons
+      person <- persons
       addr <- person.address
     } yield {
       (addr.id, addr.street, addr.city, person.id, person.name, person.age)
@@ -42,32 +42,32 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
   override def beforeAll(): Unit = {
     super.beforeAll()
 
-    val ddl = Addresses.ddl ++ Persons.ddl ++ Tasks.ddl ++ PersonTasks.ddl
+    val ddl = addresses.ddl ++ persons.ddl ++ tasks.ddl ++ personTasks.ddl
 
     withSession { implicit session => Try { ddl.drop } }
 
     withSession { implicit session =>
       ddl.create
 
-      Addresses ++= addressData
-      Persons ++= personData
-      Tasks ++= taskData
-      PersonTasks ++= personTaskData
+      addresses ++= addressData
+      persons ++= personData
+      tasks ++= taskData
+      personTasks ++= personTaskData
     }
   }
 
   test("many-to-one join test") {
     withReadOnly { implicit session =>
-      LOG.debug(s"Addresses:")
-      Addresses.list foreach println
+      LOG.debug(s"addresses:")
+      addresses.list foreach println
 
-      LOG.debug(s"Persons:")
-      Persons.list foreach println
+      LOG.debug(s"persons:")
+      persons.list foreach println
 
       LOG.debug("address and persons")
-      Addresses.list foreach { addr =>
+      addresses.list foreach { addr =>
         LOG.debug("\t" + addr)
-        Persons.findByAddress(addr.id.get) foreach { person => LOG.debug("\t\t" + person) }
+        persons.findByAddress(addr.id.get) foreach { person => LOG.debug("\t\t" + person) }
       }
     }
   }
@@ -83,7 +83,7 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
     withReadOnly { implicit session =>
       val allTasks =
         for {
-          person <- Persons
+          person <- persons
           task <- person.tasks
         } yield task
 

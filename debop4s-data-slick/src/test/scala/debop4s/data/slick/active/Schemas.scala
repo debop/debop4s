@@ -20,11 +20,11 @@ trait QueryExtensions {
   implicit class SupplierQueryExtensions(query: TableQuery[Suppliers]) extends VersionableTableExtensions[Supplier, Int](query)
 
   implicit class SupplierExtensions(self: Supplier) {
-    def save(implicit sess: Session): Supplier = Suppliers.save(self)
+    def save(implicit sess: Session): Supplier = suppliers.save(self)
     def delete(implicit sess: Session): Boolean = {
-      val beerIds: Seq[Int] = Beers.filter(_.supplierId === self.id.bind).map(_.id).list
-      beerIds.foreach { id => Beers.deleteById(id) }
-      Suppliers.deleteEntity(self)
+      val beerIds: Seq[Int] = beers.filter(_.supplierId === self.id.bind).map(_.id).list
+      beerIds.foreach { id => beers.deleteById(id) }
+      suppliers.deleteEntity(self)
     }
   }
 
@@ -34,17 +34,17 @@ trait QueryExtensions {
   // 현재까지는 class 에 정의해도 큰 문제는 없다.
   implicit class BeerExtensions(self: Beer) {
 
-    def save(implicit sess: Session): Beer = Beers.save(self)
-    def delete(implicit sess: Session): Boolean = Beers.deleteEntity(self)
+    def save(implicit sess: Session): Beer = beers.save(self)
+    def delete(implicit sess: Session): Boolean = beers.deleteEntity(self)
 
     def supplier(implicit sess: Session): Option[Supplier] = {
-      Suppliers.findOptionById(self.supplierId)
+      suppliers.findOptionById(self.supplierId)
     }
 
     /** 지정한 Beer의 Supplier 가 공급하는 Beer 들을 조회합니다. */
     def friendBeers(implicit sess: Session): List[Beer] = {
       val q = for {
-        (s, b) <- Suppliers innerJoin Beers on ( _.id === _.supplierId ) if s.id == self.supplierId.bind
+        (s, b) <- suppliers innerJoin beers on ( _.id === _.supplierId ) if s.id == self.supplierId.bind
       } yield b
       q.list
     }
@@ -63,9 +63,11 @@ trait Schema {
     def name = column[String]("supplierName", O.Length(255, varying = true))
 
     def * = (id.?, version, name) <>(Supplier.tupled, Supplier.unapply)
+
+    def getBeers = beers.map(_.supplierId === id)
   }
 
-  lazy val Suppliers = TableQuery[Suppliers]
+  lazy val suppliers = TableQuery[Suppliers]
 
   class Beers(tag: Tag) extends IdTable[Beer, Int](tag, "active_beers") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -75,15 +77,15 @@ trait Schema {
 
     def * = (id.?, name, supplierId, price) <>(Beer.tupled, Beer.unapply)
 
-    def supplier = foreignKey("fk_beer_supplier", supplierId, Suppliers)(_.id)
+    def supplier = foreignKey("fk_beer_supplier", supplierId, suppliers)(_.id, onDelete=ForeignKeyAction.Cascade)
   }
 
-  lazy val Beers = TableQuery[Beers]
+  lazy val beers = TableQuery[Beers]
 
   def createSchema(implicit session: Session) = {
     LOG.info(s"Create beer and supplier database schema...")
 
-    val ddl = Suppliers.ddl ++ Beers.ddl
+    val ddl = suppliers.ddl ++ beers.ddl
 
     LOG.debug(s"Schema Drop:\n${ ddl.dropStatements.mkString("\n") }")
     LOG.debug(s"Schema Create:\n${ ddl.createStatements.mkString("\n") }")

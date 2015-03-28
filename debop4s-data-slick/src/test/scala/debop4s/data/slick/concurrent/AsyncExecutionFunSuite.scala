@@ -20,7 +20,7 @@ import scala.util.Try
 class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
 
   val EMP_COUNT = 1000
-  lazy val ddl = Employees.ddl
+  lazy val ddl = employees.ddl
 
   before {
     withTransaction { implicit session =>
@@ -47,13 +47,13 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
     Asyncs.readyAll(saveActions)
 
     withReadOnly { implicit session =>
-      Employees.count.run shouldEqual EMP_COUNT
+      employees.count.run shouldEqual EMP_COUNT
     }
   }
 
   private def saveEmployee(emp: Employee): Employee = {
     withTransaction { implicit session =>
-      Employees.save(emp)
+      employees.save(emp)
     }
   }
 

@@ -27,7 +27,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
   override protected def beforeAll(): Unit = {
     super.beforeAll()
 
-    val ddl = BankAccounts.ddl ++ AccountOwners.ddl ++ BankAccountOwners.ddl
+    val ddl = bankAccounts.ddl ++ accountOwners.ddl ++ bankAccountOwners.ddl
 
     withSession { implicit session =>
       Try { ddl.drop }
@@ -36,18 +36,18 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     withTransaction { implicit session =>
       ddl.create
 
-      BankAccounts ++= accountData
-      AccountOwners ++= ownerData
-      BankAccountOwners ++= accountOwnerMap
+      bankAccounts ++= accountData
+      accountOwners ++= ownerData
+      bankAccountOwners ++= accountOwnerMap
     }
   }
 
   test("implicit join - many-to-many") {
     withReadOnly { implicit session =>
       val owners = for {
-        account <- BankAccounts
-        map <- BankAccountOwners if map.accountId === account.id
-        owner <- AccountOwners if owner.id === map.ownerId
+        account <- bankAccounts
+        map <- bankAccountOwners if map.accountId === account.id
+        owner <- accountOwners if owner.id === map.ownerId
       } yield owner
 
       // Account Owner 가 join 으로 인해 여러 개가 중복될 수 있다. ( distinct 대신 groupBy 가 제공된다.)
@@ -56,17 +56,17 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
 
     // 삭제 처리를 시도해본다. (rollback 하므로 실제 데이터에는 영향은 없다)
     withRollback { implicit session =>
-      BankAccountOwners.delete
-      BankAccounts.delete
-      AccountOwners.delete
+      bankAccountOwners.delete
+      bankAccounts.delete
+      accountOwners.delete
     }
   }
 
   test("explicit inner join") {
     withReadOnly { implicit session =>
       val owners = for {
-        (account, map) <- BankAccounts innerJoin BankAccountOwners on ( _.id === _.accountId )
-        owner <- AccountOwners if owner.id === map.ownerId
+        (account, map) <- bankAccounts innerJoin bankAccountOwners on ( _.id === _.accountId )
+        owner <- accountOwners if owner.id === map.ownerId
       } yield owner
 
       owners.groupBy(x => x).map(_._1) foreach println
@@ -75,15 +75,15 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
 
   test("using pre defined query") {
     val qOwners = for {
-      account <- BankAccounts
+      account <- bankAccounts
       owner <- account.owners
     } yield owner
 
     withReadOnly { implicit session =>
-      // select distinct(*) from AccountOwners
+      // select distinct(*) from accountOwners
       qOwners.groupBy(x => x).map(_._1).list foreach println
 
-      // select id, count(*) from AccountOwners group by id
+      // select id, count(*) from accountOwners group by id
       qOwners.groupBy(_.id).map(x => (x._1, x._2.length)).list foreach println
     }
   }

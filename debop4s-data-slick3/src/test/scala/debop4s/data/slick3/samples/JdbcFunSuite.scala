@@ -2,6 +2,7 @@ package debop4s.data.slick3.samples
 
 import debop4s.core.concurrent.Asyncs
 import debop4s.core.concurrent._
+import debop4s.core.utils.Closer
 import debop4s.data.slick3.AbstractSlickFunSuite
 
 import slick.driver.H2Driver.api._
@@ -16,7 +17,7 @@ import scala.util.Try
 class JdbcFunSuite extends AbstractSlickFunSuite {
 
   type Person = (Int, String, Int, Int)
-  class People(tag:Tag) extends Table[Person](tag, "simple_jdbc_person") {
+  class People(tag: Tag) extends Table[Person](tag, "simple_jdbc_person") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
     def age = column[Int]("age")
@@ -28,7 +29,7 @@ class JdbcFunSuite extends AbstractSlickFunSuite {
   lazy val people = TableQuery[People]
 
   type Address = (Int, String, String)
-  class Addresses(tag:Tag) extends Table[Address](tag, "simple_jdbc_address") {
+  class Addresses(tag: Tag) extends Table[Address](tag, "simple_jdbc_address") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def street = column[String]("street")
     def city = column[String]("city")
@@ -44,17 +45,46 @@ class JdbcFunSuite extends AbstractSlickFunSuite {
     val db = Database.forConfig("h2mem1")
 
     val schema = people.schema ++ addresses.schema
-    Try { db.run(schema.drop).await }
+    println(schema.createStatements.mkString("\n"))
+
+    // db.run(DBIO.seq(
+    //    schema.create,
+    //    ... ,
+    //    schema.drop
+    // ))
     db.run(schema.create).await
 
-    db.run(addresses.map(x=>(x.street, x.city)).forceInsert(("jr", "seoul"))).await
+    db.run(addresses.map(x => (x.street, x.city)).forceInsert(("jr", "seoul"))).await
     db.run(people.map(x => (x.name, x.age, x.addressId)).forceInsert(("debop", 46, 1))).await
 
     // val action = sql"select ID, NAME, AGE from simple_jdbc_person".as[Person]
     val action: Query[People, (Int, String, Int, Int), Seq] = people
     val list = db.run(action.result).await
 
+    db.run(schema.drop).await
     db.close()
+  }
+
+  test("with session") {
+    val schema = people.schema ++ addresses.schema
+
+    Closer.using(Database.forConfig("h2mem1")) { db =>
+
+      db.withSession { implicit session =>
+        db.run(schema.create).await
+
+        db.run(DBIO.seq(
+                         addresses.map(x => (x.street, x.city)).forceInsert(("jr", "seoul")),
+                         people.map(x => (x.name, x.age, x.addressId)).forceInsert(("debop", 46, 1))
+                       )).await
+
+        val list = db.run(people.result).await
+        list.foreach { i => println(i) }
+
+        db.run(schema.drop).await
+      }
+    }
+
   }
 
 }
