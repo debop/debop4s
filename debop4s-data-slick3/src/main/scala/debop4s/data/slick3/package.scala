@@ -2,6 +2,10 @@ package debop4s.data
 
 import debop4s.core.concurrent._
 import debop4s.data.slick3.SlickContext.driver.api._
+import org.reactivestreams.{ Publisher, Subscriber, Subscription }
+
+import scala.concurrent.{ Future, Promise }
+import scala.util.control.NonFatal
 
 
 /**
@@ -17,10 +21,52 @@ package object slick3 {
       db.run(action).await
     }
 
+    /**
+     * action 을 순서대로 처리합니다.
+     * {{{
+     *   db.seq(action1, action2, action3)
+     *   // or
+     *   action1 >> action2 >> action3
+     *   // or
+     *   action1 andThen action2 andThen action3
+     * }}}
+     */
     def seq[E <: Effect](actions: DBIOAction[_, NoStream, E]*): Unit = {
       db.run(DBIO.seq[E](actions: _*)).await
     }
-
   }
+
+  implicit class PublisherExtensions[T](p: Publisher[T]) {
+
+    /**
+     * 동기 방식으로 reactive stream 을 읽어드여 Vector 로 빌드합니다.
+     */
+    def materialize: Future[Vector[T]] = {
+      val builder = Vector.newBuilder[T]
+      val pr = Promise[Vector[T]]()
+      try p.subscribe(new Subscriber[T] {
+        override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
+        override def onComplete(): Unit = pr.success(builder.result())
+        override def onError(throwable: Throwable): Unit = pr.failure(throwable)
+        override def onNext(t: T): Unit = builder += t
+      }) catch { case NonFatal(e) => pr.failure(e) }
+
+      pr.future
+    }
+
+    def foreach(f: T => Any): Future[Unit] = {
+      val pr = Promise[Unit]()
+
+      try p.subscribe(new Subscriber[T] {
+        override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
+        override def onComplete(): Unit = pr.success(())
+        override def onError(throwable: Throwable): Unit = pr.failure(throwable)
+        override def onNext(t: T): Unit = f(t)
+      }) catch { case NonFatal(e) => pr.failure(e) }
+
+      pr.future
+    }
+  }
+
 
 }

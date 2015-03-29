@@ -25,12 +25,12 @@
         </dependency>
         <dependency>
             <groupId>com.typesafe.slick</groupId>
-            <artifactId>slick-codegen_2.11</artifactId>
+            <artifactId>slick-codegen_${scala.main.version}</artifactId>
             <version>${slick3.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.slick</groupId>
-            <artifactId>slick-testkit_2.11</artifactId>
+            <artifactId>slick-testkit_${scala.main.version}</artifactId>
             <version>${slick3.version}</version>
             <scope>test</scope>
         </dependency>
