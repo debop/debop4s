@@ -27,6 +27,9 @@ object SlickContext {
 
   lazy val defaultDB = defaultDriver.api.Database.forDataSource(defaultDataSource)
 
+  def forDataSource(ds: DataSource = defaultDataSource): defaultDriver.backend.DatabaseDef =
+    defaultDriver.api.Database.forDataSource(ds)
+
   lazy val driver: JdbcDriver = defaultDriver
   lazy val jdbcDriver: String = defaultSetting.driverClass
 

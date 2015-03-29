@@ -5,14 +5,15 @@ import java.util.concurrent.TimeUnit
 import debop4s.core.utils.JavaTimer
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Promise, Await, Future }
 import scala.concurrent.duration._
+import scala.concurrent.{ Await, Future, Promise }
 
 /**
- * package
- * @author sunghyouk.bae@gmail.com 15. 3. 28.
+ * Concurrent package object
+ * @author sunghyouk.bae@gmail.com
  */
 package object concurrent {
+
   implicit class FutureExtensions[+A](underlying: Future[A]) {
 
     val timeout = FiniteDuration(5, TimeUnit.MINUTES)

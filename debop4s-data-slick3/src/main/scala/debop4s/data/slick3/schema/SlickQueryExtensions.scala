@@ -1,6 +1,6 @@
 package debop4s.data.slick3.schema
 
-import debop4s.data.slick3.model.{ Versionable, SlickEntity }
+import debop4s.data.slick3.model.{ SlickEntity, Versionable }
 
 /**
  * Slick Query 에 대한 확장 메소드를 제공하는 trait 입니다.

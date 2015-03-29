@@ -1,16 +1,8 @@
 package debop4s.data.slick3.samples
 
-import debop4s.core.concurrent.Asyncs
 import debop4s.core.concurrent._
-import debop4s.core.utils.Closer
 import debop4s.data.slick3.AbstractSlickFunSuite
-
 import slick.driver.H2Driver.api._
-import slick.jdbc.StaticQuery
-import slick.profile.SqlStreamingAction
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.Try
 
 /**
  * JdbcFunSuite

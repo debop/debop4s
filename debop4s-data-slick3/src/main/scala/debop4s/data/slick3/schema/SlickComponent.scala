@@ -1,11 +1,9 @@
 package debop4s.data.slick3.schema
 
 import debop4s.data.common.JdbcDrivers
-import debop4s.data.slick3.SlickContext
+import debop4s.data.slick3.SlickContext._
 import org.slf4j.LoggerFactory
 import slick.driver._
-import SlickContext._
-import SlickContext.driver.api._
 
 /**
  * Slick 사용 시 기본적으로 사용할 Database 용 trait 입니다.

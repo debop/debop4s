@@ -5,7 +5,8 @@ package debop4s.data.slick3.schema
  * SlickSchema
  * @author sunghyouk.bae@gmail.com
  */
-trait SlickSchema { this: SlickProfile =>
+trait SlickSchema {
+  this: SlickProfile =>
 
   import driver.api._
 

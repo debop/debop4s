@@ -6,7 +6,8 @@ import debop4s.data.slick3.SlickContext.driver.api._
  * EnumMapStringSupport
  * @author sunghyouk.bae@gmail.com 15. 3. 22.
  */
-trait EnumMapStringSupport { this: Enumeration =>
+trait EnumMapStringSupport {
+  this: Enumeration =>
 
   implicit val enum2StringMapper =
     MappedColumnType.base[Value, String](
@@ -15,7 +16,8 @@ trait EnumMapStringSupport { this: Enumeration =>
                                         )
 }
 
-trait EnumMapIntSupport { this: Enumeration =>
+trait EnumMapIntSupport {
+  this: Enumeration =>
 
   implicit val enum2IntMapper = MappedColumnType.base[Value, Int](_.id, this.apply)
 

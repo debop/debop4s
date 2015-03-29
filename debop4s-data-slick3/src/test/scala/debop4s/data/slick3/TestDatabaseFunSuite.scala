@@ -1,12 +1,10 @@
 package debop4s.data.slick3
 
 import debop4s.core.concurrent._
-import TestDatabase._
-import TestDatabase.driver.api._
+import debop4s.data.slick3.TestDatabase.driver.api._
 import slick.backend.DatabasePublisher
-import scala.concurrent.ExecutionContext.Implicits.global
 
-import scala.util.Try
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * TestDatabaseFunSuite
@@ -57,7 +55,7 @@ class TestDatabaseFunSuite extends AbstractSlickFunSuite {
 
     ranges.grouped(100).toSeq.par.foreach { is =>
       val codes = db.run(Codes.filter(_.id inSet is.toSet).result).await.toSet
-      codes.foreach {x => LOG.debug(x.toString())}
+      codes.foreach { x => LOG.debug(x.toString()) }
     }
   }
 

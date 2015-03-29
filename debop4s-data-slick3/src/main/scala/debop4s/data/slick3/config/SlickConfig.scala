@@ -1,6 +1,6 @@
 package debop4s.data.slick3.config
 
-import debop4s.config.server.{ DatabaseSetting, DatabaseElement, DatabaseSupport }
+import debop4s.config.server.{ DatabaseElement, DatabaseSetting, DatabaseSupport }
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
@@ -23,7 +23,7 @@ import scala.util.control.NonFatal
  * }
  * }}}
  */
-case class SlickConfig(config:com.typesafe.config.Config) extends DatabaseSupport {
+case class SlickConfig(config: com.typesafe.config.Config) extends DatabaseSupport {
 
   private val LOG = LoggerFactory.getLogger(getClass)
 
