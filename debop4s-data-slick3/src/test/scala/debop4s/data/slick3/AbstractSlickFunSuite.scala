@@ -23,7 +23,7 @@ abstract class AbstractSlickFunSuite
   lazy val driver = SlickContext.driver
   lazy val profile = driver.profile
 
-  private[this] var _db: SlickContext.defaultDriver.backend.DatabaseDef = _
+  private[this] var _db: SlickContext.driver.backend.DatabaseDef = _
 
   lazy val db = {
     if (_db == null) {
@@ -40,14 +40,17 @@ abstract class AbstractSlickFunSuite
     shutdown()
   }
 
-  private def initialize(): Unit = {
+  private def initialize(): Unit = synchronized {
     SlickContext.init("slick-h2", "slick")
     // SlickContext.init("slick-hsqldb", "slick")
     // SlickContext.init("slick-mysql", "slick")
+    // SlickContext.init("slick-mariadb", "slick")
     // SlickContext.init("slick-mariadb-master-slaves", "slick")
+
+    LOG.info(s"Slick Driver = ${ SlickContext.driver.getClass.getSimpleName }")
   }
 
-  private def shutdown() = {
+  private def shutdown() = synchronized {
     if (_db ne null) {
       _db.close()
       _db = null

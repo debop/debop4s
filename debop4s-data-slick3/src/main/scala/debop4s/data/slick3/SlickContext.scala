@@ -27,14 +27,14 @@ object SlickContext {
 
   lazy val defaultDB = defaultDriver.api.Database.forDataSource(defaultDataSource)
 
-  def forDataSource(ds: DataSource = defaultDataSource): defaultDriver.backend.DatabaseDef =
-    defaultDriver.api.Database.forDataSource(ds)
+  def forDataSource(ds: DataSource = defaultDataSource): driver.backend.DatabaseDef =
+    driver.api.Database.forDataSource(ds)
 
   lazy val driver: JdbcDriver = defaultDriver
   lazy val jdbcDriver: String = defaultSetting.driverClass
 
   def getDB(ds: DataSource = defaultDataSource) =
-    defaultDriver.api.Database.forDataSource(ds)
+    driver.api.Database.forDataSource(ds)
 
   def init(config: SlickConfig): Unit = {
     LOG.info(s"Slick 환경설정을 통해 Driver 등을 정의합니다.")

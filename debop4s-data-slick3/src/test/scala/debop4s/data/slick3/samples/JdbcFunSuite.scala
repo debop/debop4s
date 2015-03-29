@@ -1,8 +1,7 @@
 package debop4s.data.slick3.samples
 
-import debop4s.core.concurrent._
-import debop4s.data.slick3.AbstractSlickFunSuite
-import slick.driver.H2Driver.api._
+import debop4s.data.slick3.TestDatabase.driver.api._
+import debop4s.data.slick3.{ AbstractSlickFunSuite, _ }
 
 /**
  * JdbcFunSuite
@@ -10,54 +9,55 @@ import slick.driver.H2Driver.api._
  */
 class JdbcFunSuite extends AbstractSlickFunSuite {
 
-  type Person = (Int, String, Int, Int)
-  class People(tag: Tag) extends Table[Person](tag, "simple_jdbc_person") {
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("name")
-    def age = column[Int]("age")
-    def addressId = column[Int]("addressId")
-
-    def * = (id, name, age, addressId)
-    def address = foreignKey("fk_simple_jdbc_person_address", addressId, addresses)(_.id)
-  }
-  lazy val people = TableQuery[People]
-
   type Address = (Int, String, String)
-  class Addresses(tag: Tag) extends Table[Address](tag, "simple_jdbc_address") {
+  class Addresses(tag: Tag) extends Table[Address](tag, "address") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def street = column[String]("street")
-    def city = column[String]("city")
+    def street = column[String]("street", O.Length(255, true))
+    def city = column[String]("city", O.Length(255, true))
     def * = (id, street, city)
   }
   lazy val addresses = TableQuery[Addresses]
 
-  lazy val schema = people.schema ++ addresses.schema
+  type Person = (Int, String, Int, Int)
+  class People(tag: Tag) extends Table[Person](tag, "person") {
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("name", O.Length(255, true))
+    def age = column[Int]("age")
+    def addressId = column[Int]("addressId")
+
+    def * = (id, name, age, addressId)
+    def address = foreignKey("fk_person_address", addressId, addresses)(_.id, onDelete = ForeignKeyAction.Cascade)
+  }
+  lazy val people = TableQuery[People]
+
+  lazy val schema = addresses.schema ++ people.schema
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-
-    db.run(DBIO.seq(
-                     schema.create,
-                     addresses.map(x => (x.street, x.city)).forceInsert("정릉", "서울"),
-                     people.map(x => (x.name, x.age, x.addressId)).forceInsert(("debop", 46, 1))
-                   )
-          ).await
+    db.exec {
+      DBIO.seq(
+                schema.drop.asTry,
+                schema.create,
+                addresses.map(x => (x.street, x.city)) +=("정릉", "서울"),
+                people.map(x => (x.name, x.age, x.addressId)) +=("debop", 46, 1)
+              )
+    }
   }
 
   override def afterAll(): Unit = {
-    db.run(schema.drop).await
+    db.exec(schema.drop)
     super.afterAll()
   }
 
   test("plain sql query") {
     // val action = sql"select id, name, age, addressId from simple_jdbc_person".as[Person]
     val action = people.result
-    val list = db.run(action).await
+    val list = db.exec(action)
     list.foreach { p => LOG.debug(p.toString()) }
   }
 
   test("with session") {
-    val list = db.run(people.result).await
+    val list = db.exec(people.result)
     list.foreach { p => println(p) }
   }
 
