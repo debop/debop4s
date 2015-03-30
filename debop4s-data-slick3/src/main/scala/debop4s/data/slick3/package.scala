@@ -2,9 +2,10 @@ package debop4s.data
 
 import debop4s.core.concurrent._
 import debop4s.data.slick3.SlickContext.driver.api._
-import org.reactivestreams.{ Publisher, Subscriber, Subscription }
+import org.reactivestreams.{Publisher, Subscriber, Subscription}
 
-import scala.concurrent.{ Future, Promise }
+import scala.collection.generic.CanBuildFrom
+import scala.concurrent.{Future, Promise}
 import scala.util.control.NonFatal
 
 
@@ -31,8 +32,25 @@ package object slick3 {
      *   action1 andThen action2 andThen action3
      * }}}
      */
-    def seq[E <: Effect](actions: DBIOAction[_, NoStream, E]*): Unit = {
+    def seq[E <: Effect](actions: DBIOAction[_, NoStream, E]*):Unit = {
       db.run(DBIO.seq[E](actions: _*)).await
+    }
+
+    /**
+     * `Seq[ DBIO[R] ]` 를 `DBIO[ Seq[R] ]` 로 변환하여 db에서 실행한 후 Seq[R] 을 반환합니다.
+     * {{{
+     *   db.sequence(
+     *    schema.create,
+     *    q1.result,
+     *    q2.result
+     *   )
+     *
+     *   // returns Seq(Unit, q1.result, q2.result)
+     * }}}
+     */
+    def sequence[R, E <: Effect](in: DBIOAction[R, NoStream, E]*)
+                                (implicit cbf: CanBuildFrom[Seq[DBIOAction[R, NoStream, E]], R, Seq[R]]): Seq[R] = {
+      db.run(DBIO.sequence(in)).await
     }
   }
 
@@ -49,7 +67,7 @@ package object slick3 {
         override def onComplete(): Unit = pr.success(builder.result())
         override def onError(throwable: Throwable): Unit = pr.failure(throwable)
         override def onNext(t: T): Unit = builder += t
-      }) catch { case NonFatal(e) => pr.failure(e) }
+      }) catch {case NonFatal(e) => pr.failure(e)}
 
       pr.future
     }
@@ -62,7 +80,7 @@ package object slick3 {
         override def onComplete(): Unit = pr.success(())
         override def onError(throwable: Throwable): Unit = pr.failure(throwable)
         override def onNext(t: T): Unit = f(t)
-      }) catch { case NonFatal(e) => pr.failure(e) }
+      }) catch {case NonFatal(e) => pr.failure(e)}
 
       pr.future
     }

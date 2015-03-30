@@ -2,7 +2,7 @@ package debop4s.data.slick3.tests
 
 import debop4s.core.concurrent._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{ AbstractSlickFunSuite, _ }
+import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -21,7 +21,7 @@ class ActionFunSuite extends AbstractSlickFunSuite {
 
     db.exec {
       ts.schema.create >>
-      ( ts ++= Seq(2, 3, 1, 5, 4) )
+      (ts ++= Seq(2, 3, 1, 5, 4))
     }
     val q1 = ts.sortBy(_.a).map(_.a)
     val f1 = db.run(q1.result)
@@ -33,7 +33,7 @@ class ActionFunSuite extends AbstractSlickFunSuite {
     for {
       _ <- db.run {
         ts.schema.create >>
-        ( ts ++= Seq(2, 3, 1, 5, 4) )
+        (ts ++= Seq(2, 3, 1, 5, 4))
       }
       q1 = ts.sortBy(_.a).map(_.a)
       f1 = db.run(q1.result)
@@ -71,7 +71,7 @@ class ActionFunSuite extends AbstractSlickFunSuite {
 
     val p1 = db.stream {
       ts.schema.create >>
-      ( ts ++= Seq(2, 3, 1, 5, 4) ) >>
+      (ts ++= Seq(2, 3, 1, 5, 4)) >>
       q1.result
     }
 

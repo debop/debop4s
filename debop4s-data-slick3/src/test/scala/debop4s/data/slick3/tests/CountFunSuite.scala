@@ -19,9 +19,9 @@ class CountFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T]
     db.run(DBIO.seq(
-                     ts.schema.create,
-                     ts ++= Seq(1, 2, 3, 4, 5)
-                   ))
+      ts.schema.create,
+      ts ++= Seq(1, 2, 3, 4, 5)
+    ))
 
     db.run(Query(ts.length).result.map(_ shouldBe Vector(5))).await
     db.run(ts.length.result.map(_ shouldEqual 5)).await
@@ -62,9 +62,9 @@ class CountFunSuite extends AbstractSlickFunSuite {
     val q2 = Query(joinedQuery.length)
 
     db.run(DBIO.seq(
-                     q1.result.map(_ shouldEqual 2),
-                     q2.result.map(_ shouldEqual Vector(2))
-                   ))
+      q1.result.map(_ shouldEqual 2),
+      q2.result.map(_ shouldEqual Vector(2))
+    ))
 
 
     db.run(schema.drop).await
@@ -88,24 +88,24 @@ class CountFunSuite extends AbstractSlickFunSuite {
     db.run(schema.create).await
 
     db.run(DBIO.seq(
-                     as ++= Seq(1L, 2L),
-                     bs ++= Seq((1L, "1a"), (1L, "1b"), (2L, "2"))
-                   )).await
+      as ++= Seq(1L, 2L),
+      bs ++= Seq((1L, "1a"), (1L, "1b"), (2L, "2"))
+    )).await
 
     val qDirectLength = for {
       a <- as if a.id === 1L
-    } yield (a, ( for {
+    } yield (a, (for {
         b <- bs if b.aId === a.id
-      } yield b ).length)
+      } yield b).length)
 
     val qJoinLength = for {
       a <- as if a.id === 1L
-      l <- Query(( for {b <- bs if b.aId === a.id} yield b ).length)
+      l <- Query((for {b <- bs if b.aId === a.id} yield b).length)
     } yield (a, l)
 
-    val qOuterJoinLength = ( for {
-      (a, b) <- as joinLeft bs on ( _.id === _.aId )
-    } yield (a.id, b.map(_.data)) ).length
+    val qOuterJoinLength = (for {
+      (a, b) <- as joinLeft bs on (_.id === _.aId)
+    } yield (a.id, b.map(_.data))).length
 
     db.run(qDirectLength.result.map(_ shouldBe Seq((1L, 2)))).await
     db.run(qJoinLength.result.map(_ shouldBe Seq((1L, 2)))).await

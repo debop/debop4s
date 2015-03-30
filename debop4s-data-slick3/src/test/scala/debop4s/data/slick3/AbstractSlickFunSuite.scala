@@ -5,6 +5,9 @@ import org.scalatest._
 import org.slf4j.LoggerFactory
 import slick.driver.JdbcProfile
 import slick.profile.{ Capability, RelationalProfile, SqlProfile }
+import TestDatabase._
+import debop4s.data.slick3.SlickContext._
+import debop4s.data.slick3.SlickContext.driver.api._
 
 /**
  * AbstractSlickFunSuite
@@ -58,10 +61,10 @@ abstract class AbstractSlickFunSuite
   def jcap = JdbcProfile.capabilities
   def tcap = TestDB.capabilities
 
-  def ifCap[T](caps: Capability*)(f: => T): Unit =
-    if (caps.forall(capabilities.contains)) f
+  def ifCap[E <: Effect, R](caps: Capability*)(f: => DBIOAction[R, NoStream, E]): DBIOAction[Unit, NoStream, E] =
+    if(caps.forall(c => capabilities.contains(c))) f.andThen(DBIO.successful(())) else DBIO.successful(())
 
-  def ifNotCap[T](caps: Capability*)(f: => T): Unit =
-    if (!caps.forall(capabilities.contains)) f
+  def ifNotCap[E <: Effect, R](caps: Capability*)(f: => DBIOAction[R, NoStream, E]): DBIOAction[Unit, NoStream, E] =
+    if(!caps.forall(c => capabilities.contains(c))) f.andThen(DBIO.successful(())) else DBIO.successful(())
 
 }
