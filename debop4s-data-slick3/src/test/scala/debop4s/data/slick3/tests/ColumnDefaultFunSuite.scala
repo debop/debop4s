@@ -29,6 +29,8 @@ class ColumnDefaultFunSuite extends AbstractSlickFunSuite {
       (as.map(_.id) += 42) >>
       as.result
     } shouldEqual Seq((42, "foo", Some(true)))
+
+    db.exec { as.schema.drop }
   }
 
 }

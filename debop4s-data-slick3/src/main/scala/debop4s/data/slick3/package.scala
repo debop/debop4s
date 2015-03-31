@@ -3,6 +3,7 @@ package debop4s.data
 import debop4s.core.concurrent._
 import debop4s.data.slick3.SlickContext.driver.api._
 import org.reactivestreams.{Publisher, Subscriber, Subscription}
+import slick.lifted.QueryBase
 
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.{Future, Promise}
@@ -20,6 +21,10 @@ package object slick3 {
     /** 동기 방식으로 action 을 수행합니다. */
     def exec[R](action: DBIOAction[R, NoStream, Nothing]): R = {
       db.run(action).await
+    }
+
+    def result(query:Query[_, _, Seq]) = {
+      db.run(query.result).await
     }
 
     /**
