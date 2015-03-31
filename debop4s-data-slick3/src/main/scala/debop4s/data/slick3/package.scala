@@ -23,7 +23,7 @@ package object slick3 {
       db.run(action).await
     }
 
-    def result(query:Query[_, _, Seq]) = {
+    def result(query: Query[_, _, Seq]) = {
       db.run(query.result).await
     }
 
@@ -37,7 +37,7 @@ package object slick3 {
      *   action1 andThen action2 andThen action3
      * }}}
      */
-    def seq[E <: Effect](actions: DBIOAction[_, NoStream, E]*):Unit = {
+    def seq[E <: Effect](actions: DBIOAction[_, NoStream, E]*): Unit = {
       db.run(DBIO.seq[E](actions: _*)).await
     }
 
@@ -57,6 +57,19 @@ package object slick3 {
                                 (implicit cbf: CanBuildFrom[Seq[DBIOAction[R, NoStream, E]], R, Seq[R]]): Seq[R] = {
       db.run(DBIO.sequence(in)).await
     }
+
+    /**
+     * action 들을 병렬로 수행합니다.
+     * {{{
+     *   db.par(action1, action2, action3)
+     * }}}
+     */
+    def execPar[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
+      val results = actions.par.map { action =>
+        db.run(action)
+      }.seq
+      results.awaitAll
+    }
   }
 
   implicit class PublisherExtensions[T](p: Publisher[T]) {
@@ -72,7 +85,7 @@ package object slick3 {
         override def onComplete(): Unit = pr.success(builder.result())
         override def onError(throwable: Throwable): Unit = pr.failure(throwable)
         override def onNext(t: T): Unit = builder += t
-      }) catch {case NonFatal(e) => pr.failure(e)}
+      }) catch { case NonFatal(e) => pr.failure(e) }
 
       pr.future
     }
@@ -85,7 +98,7 @@ package object slick3 {
         override def onComplete(): Unit = pr.success(())
         override def onError(throwable: Throwable): Unit = pr.failure(throwable)
         override def onNext(t: T): Unit = f(t)
-      }) catch {case NonFatal(e) => pr.failure(e)}
+      }) catch { case NonFatal(e) => pr.failure(e) }
 
       pr.future
     }
