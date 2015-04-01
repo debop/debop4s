@@ -10,8 +10,8 @@
         </encoder>
     </appender>
 
-    <logger name="scala.slick" level="INFO"/>
-    <logger name="scala.slick.jdbc" level="DEBUG"/>
+    <logger name="slick" level="INFO"/>
+    <logger name="slick.jdbc" level="DEBUG"/>
 
     <root level="DEBUG">
         <appender-ref ref="console"/>
