@@ -1,13 +1,16 @@
 package debop4s.data
 
+import java.util.concurrent.{LinkedBlockingQueue, ThreadPoolExecutor, TimeUnit}
+
 import debop4s.core.concurrent._
 import debop4s.data.slick3.SlickContext.driver.api._
 import org.reactivestreams.{Publisher, Subscriber, Subscription}
-import slick.lifted.QueryBase
 
 import scala.collection.generic.CanBuildFrom
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.util.control.NonFatal
+import scala.util.{Failure, Success}
 
 
 /**
@@ -15,6 +18,8 @@ import scala.util.control.NonFatal
  * @author sunghyouk.bae@gmail.com
  */
 package object slick3 {
+
+  protected implicit def asyncTestExecutionContext = ExecutionContext.global
 
   implicit class DatabaseExtensions(db: SlickContext.driver.backend.DatabaseDef) {
 
@@ -88,6 +93,55 @@ package object slick3 {
       }) catch { case NonFatal(e) => pr.failure(e) }
 
       pr.future
+    }
+
+    /** Asynchronously consume a Reactive Stream and materialize it as a Vector, requesting new
+      * elements one by one and transforming them after the specified delay. This ensures that the
+      * transformation does not run in the synchronous database context but still preserves
+      * proper sequencing. */
+    def materializeAsync[R](tr: T => Future[R],
+                            delay: Duration = Duration(100L, TimeUnit.MILLISECONDS)): Future[Vector[R]] = {
+      val exe = new ThreadPoolExecutor(1, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable]())
+      val ec = ExecutionContext.fromExecutor(exe)
+      val builder = Vector.newBuilder[R]
+      val pr = Promise[Vector[R]]()
+      var sub: Subscription = null
+
+      def async[T](thunk: => T): Future[T] = {
+        val f = Future {
+          Thread.sleep(delay.toMillis)
+          thunk
+        }(ec)
+        f.onFailure { case t =>
+          pr.tryFailure(t)
+          sub.cancel()
+        }
+        f
+      }
+      try
+        p.subscribe(new Subscriber[T] {
+          def onSubscribe(s: Subscription): Unit = async {
+            sub = s
+            sub.request(1L)
+          }
+          def onComplete(): Unit = async(pr.trySuccess(builder.result()))
+          def onError(t: Throwable): Unit = async(pr.tryFailure(t))
+          def onNext(t: T): Unit = async {
+            tr(t).onComplete {
+              case Success(r) =>
+                builder += r
+                sub.request(1L)
+              case Failure(t) =>
+                pr.tryFailure(t)
+                sub.cancel()
+            }(ec)
+          }
+        }) catch {
+        case NonFatal(ex) => pr.tryFailure(ex)
+      }
+      val f = pr.future
+      f.onComplete(_ => exe.shutdown())
+      f
     }
 
     def foreach(f: T => Any): Future[Unit] = {

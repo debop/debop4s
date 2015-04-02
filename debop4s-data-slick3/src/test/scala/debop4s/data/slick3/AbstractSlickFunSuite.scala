@@ -1,13 +1,14 @@
 package debop4s.data.slick3
 
 import com.typesafe.slick.testkit.util.TestDB
+import debop4s.data.slick3.SlickContext.driver.api._
 import org.scalatest._
 import org.slf4j.LoggerFactory
 import slick.driver.JdbcProfile
-import slick.profile.{ Capability, RelationalProfile, SqlProfile }
-import TestDatabase._
-import debop4s.data.slick3.SlickContext._
-import debop4s.data.slick3.SlickContext.driver.api._
+import slick.profile.{Capability, RelationalProfile, SqlProfile}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
  * AbstractSlickFunSuite
@@ -66,5 +67,11 @@ abstract class AbstractSlickFunSuite
 
   def ifNotCap[E <: Effect, R](caps: Capability*)(f: => DBIOAction[R, NoStream, E]): DBIOAction[Unit, NoStream, E] =
     if(!caps.forall(c => capabilities.contains(c))) f.andThen(DBIO.successful(())) else DBIO.successful(())
+
+  def ifCapF[R](caps: Capability*)(f: => Future[R]): Future[Unit] =
+    if (caps.forall(c => capabilities.contains(c))) f.map(_ => ()) else Future.successful(())
+
+  def ifNotCapF[R](caps: Capability*)(f: => Future[R]): Future[Unit] =
+    if (!caps.forall(c => capabilities.contains(c))) f.map(_ => ()) else Future.successful(())
 
 }
