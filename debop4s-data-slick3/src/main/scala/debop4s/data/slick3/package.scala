@@ -32,6 +32,11 @@ package object slick3 {
       db.run(query.result).await
     }
 
+    def result(query: Query[_, _, Set]) = {
+      db.run(query.result).await
+    }
+
+
     /**
      * action 을 순서대로 처리합니다.
      * {{{
@@ -144,15 +149,24 @@ package object slick3 {
       f
     }
 
+    /**
+     * reactive stream 을 읽어 각 row 를 처리합니다.
+     * @param f
+     * @return
+     */
     def foreach(f: T => Any): Future[Unit] = {
       val pr = Promise[Unit]()
 
-      try p.subscribe(new Subscriber[T] {
-        override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
-        override def onComplete(): Unit = pr.success(())
-        override def onError(throwable: Throwable): Unit = pr.failure(throwable)
-        override def onNext(t: T): Unit = f(t)
-      }) catch { case NonFatal(e) => pr.failure(e) }
+      try {
+        p.subscribe(new Subscriber[T] {
+          override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
+          override def onComplete(): Unit = pr.success(())
+          override def onError(throwable: Throwable): Unit = pr.failure(throwable)
+          override def onNext(t: T): Unit = f(t)
+        })
+      } catch {
+        case NonFatal(e) => pr.failure(e)
+      }
 
       pr.future
     }
