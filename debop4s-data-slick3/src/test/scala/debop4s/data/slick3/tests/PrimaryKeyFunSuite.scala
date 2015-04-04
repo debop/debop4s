@@ -1,6 +1,6 @@
 package debop4s.data.slick3.tests
 
-import debop4s.core.concurrent._
+import debop4s.data.slick3._
 import debop4s.data.slick3.AbstractSlickFunSuite
 import debop4s.data.slick3.TestDatabase.driver.api._
 
@@ -26,7 +26,7 @@ class PrimaryKeyFunSuite extends AbstractSlickFunSuite {
 
     // asTry 는 Try {} 구문과 같고,
     // failed 는 실패 해야 하는 action을 뜻 함.
-    db.run(DBIO.seq(
+    db.seq(
       as.schema.drop.asTry,
       as.schema.create,
       as ++= Seq(
@@ -38,6 +38,5 @@ class PrimaryKeyFunSuite extends AbstractSlickFunSuite {
       (as +=(1, 1, "a11-confilict")).failed,
       as.schema.drop
     )
-    ).await
   }
 }
