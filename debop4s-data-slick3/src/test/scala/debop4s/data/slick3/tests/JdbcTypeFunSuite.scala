@@ -34,6 +34,18 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
     db.exec(ts.result.map(_.map { case (id, data) => (id, data.mkString) }.toSet)) shouldEqual Set((1, "123"), (2, "45"))
     db.exec(ts.result).map { case (id, data) => (id, data.mkString) }.toSet shouldBe Set((1, "123"), (2, "45"))
 
+    // implicitly 는 implicit 로 전달받는 인자를 정의한 함수를 implicit 변수를 다른 방법으로 표현하는 것입니다.
+    //
+    /*
+    class Pair[T: Ordering](val first: T, val second: T) {
+      def smaller(implicit ord:Ordering[T]) =
+        if(ord.compare(first, second) < 0) first else second
+
+      def smaller2 =
+        if(implicitly[Ordering[T]].compare(first, second) < 0) first else second
+    }
+    */
+
     if (implicitly[ColumnType[Array[Byte]]].hasLiteralForm) {
       db.exec(ts.filter(_.data === Array[Byte](4, 5)).map(_.data).to[Set].result).map(_.mkString) shouldEqual Set("45")
     }

@@ -1,6 +1,6 @@
 package debop4s.data.slick.examples
 
-import java.sql.{ Blob, Date, Time, Timestamp }
+import java.sql.{Blob, Date, Time, Timestamp}
 import java.util.UUID
 import javax.sql.rowset.serial.SerialBlob
 
@@ -8,7 +8,7 @@ import debop4s.core.io.Serializers
 import debop4s.core.utils.Streams
 import debop4s.data.slick.SlickExampleDatabase._
 import debop4s.data.slick.SlickExampleDatabase.driver.simple._
-import debop4s.data.slick.{ AbstractSlickFunSuite, SlickContext }
+import debop4s.data.slick.{AbstractSlickFunSuite, SlickContext}
 
 import scala.util.Try
 
@@ -36,6 +36,17 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
 
       ts.list.map { case (id, data) => (id, data.mkString) }.toSet shouldEqual Set((1, "123"), (2, "45"))
 
+      // implicitly 는 implicit 로 전달받는 인자를 정의한 함수를 implicit 변수를 다른 방법으로 표현하는 것입니다.
+      //
+      /*
+      class Pair[T: Ordering](val first: T, val second: T) {
+        def smaller(implicit ord:Ordering[T]) =
+          if(ord.compare(first, second) < 0) first else second
+
+        def smaller2 =
+          if(implicitly[Ordering[T]].compare(first, second) < 0) first else second
+      }
+      */
       if (implicitly[ColumnType[Array[Byte]]].hasLiteralForm) {
         LOG.debug("Array[Byte] 가 Literal 로 표현됨")
         ts.filter(_.data === Array[Byte](4, 5)).map(_.data).run.map(_.mkString) shouldEqual "45"

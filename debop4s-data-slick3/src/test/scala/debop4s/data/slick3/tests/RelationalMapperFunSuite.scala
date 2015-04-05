@@ -1,11 +1,8 @@
 package debop4s.data.slick3.tests
 
-import debop4s.data.slick3.AbstractSlickFunSuite
-import debop4s.data.slick3._
-import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
+import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.existentials
 
 /**
@@ -133,6 +130,18 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     class MyTable(tag: Tag) extends Table[MyId](tag, "table") {
       def * = ???
     }
+
+    // implicitly 는 implicit 로 전달받는 인자를 정의한 함수를 implicit 변수를 다른 방법으로 표현하는 것입니다.
+    //
+    /*
+    class Pair[T: Ordering](val first: T, val second: T) {
+      def smaller(implicit ord:Ordering[T]) =
+        if(ord.compare(first, second) < 0) first else second
+
+      def smaller2 =
+        if(implicitly[Ordering[T]].compare(first, second) < 0) first else second
+    }
+    */
 
     implicitly[Shape[_ <: FlatShapeLevel, MyTable, _, _]]
     TableQuery(new MyTable(_)).map(identity)

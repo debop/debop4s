@@ -51,6 +51,14 @@ package object slick3 {
       db.run(DBIO.seq[E](actions: _*)).await
     }
 
+    def seqWithPinned[E <: Effect](actions: DBIOAction[_, NoStream, E]*): Unit = {
+      db.run(DBIO.seq[E](actions: _*).withPinnedSession).await
+    }
+
+    def seqTransactionally[E <: Effect](actions: DBIOAction[_, NoStream, E]*): Unit = {
+      db.run(DBIO.seq[E](actions: _*).transactionally).await
+    }
+
     /**
      * `Seq[ DBIO[R] ]` 를 `DBIO[ Seq[R] ]` 로 변환하여 db에서 실행한 후 Seq[R] 을 반환합니다.
      * {{{

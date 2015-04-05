@@ -1,16 +1,10 @@
 package debop4s.data.slick3.tests
 
-import debop4s.core.concurrent._
-import debop4s.data.slick3.AbstractSlickFunSuite
-
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3._
-import debop4s.data.slick3.SlickContext._
-import slick.backend.DatabasePublisher
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 import slick.util.TupleMethods._
+
+import scala.concurrent.Future
 
 /**
  * NestingFunSuite
@@ -89,6 +83,18 @@ class NestingFunSuite extends AbstractSlickFunSuite {
     val r = Vector((1, "1", Some(1)), (2, "2", Some(2)), (3, "3", None))
 
     val setup = xs.schema.create >> (xs ++= r)
+
+    // implicitly 는 implicit 로 전달받는 인자를 정의한 함수를 implicit 변수를 다른 방법으로 표현하는 것입니다.
+    //
+    /*
+    class Pair[T: Ordering](val first: T, val second: T) {
+      def smaller(implicit ord:Ordering[T]) =
+        if(ord.compare(first, second) < 0) first else second
+
+      def smaller2 =
+        if(implicitly[Ordering[T]].compare(first, second) < 0) first else second
+    }
+    */
 
     // Construct all kind of Option Shapes
     implicitly[Shape[_, Rep[Int], _, _]]
