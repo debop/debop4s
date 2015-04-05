@@ -11,6 +11,8 @@ import scala.language.existentials
  */
 class RelationalMapperFunSuite extends AbstractSlickFunSuite {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   test("mapped type") {
     sealed trait Bool
     case object True extends Bool
