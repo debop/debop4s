@@ -19,7 +19,7 @@ import scala.util.{Failure, Success}
  */
 package object slick3 {
 
-  protected implicit def asyncTestExecutionContext = ExecutionContext.global
+  implicit def asyncTestExecutionContext = ExecutionContext.global
 
   implicit class DatabaseExtensions(db: SlickContext.driver.backend.DatabaseDef) {
 

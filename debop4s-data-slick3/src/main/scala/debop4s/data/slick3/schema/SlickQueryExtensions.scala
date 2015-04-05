@@ -1,6 +1,7 @@
 package debop4s.data.slick3.schema
 
-import debop4s.data.slick3.model.{ SlickEntity, Versionable }
+import debop4s.data.slick3._
+import debop4s.data.slick3.model.{SlickEntity, Versionable}
 
 /**
  * Slick Query 에 대한 확장 메소드를 제공하는 trait 입니다.
@@ -8,9 +9,9 @@ import debop4s.data.slick3.model.{ SlickEntity, Versionable }
  * @author sunghyouk.bae@gmail.com
  */
 trait SlickQueryExtensions {
-  this: SlickSchema with SlickProfile =>
+  this: SlickComponent =>
 
-  import driver.simple._
+  import driver.api._
 
   /**
    * Query method 를 제공하는 Extensions 입니다.
@@ -18,15 +19,16 @@ trait SlickQueryExtensions {
    * @tparam M Model 의 수형 (예: User)
    */
   abstract class BaseTableExtensions[M](query: TableQuery[_ <: Table[M]]) {
-    def count(implicit session: Session): Int = query.length.run
-    def exists(implicit session: Session): Boolean = query.exists.run
-    def list(implicit session: Session): List[M] = query.list
-    def page(pageIndex: Int = 0, pageSize: Int = 10)(implicit session: Session): List[M] =
-      query.drop(pageIndex * pageSize).take(pageSize).run.toList
+    def count: Int = db.exec(query.length.result)
+    def exists: Boolean = db.exec(query.exists.result)
+    def list: List[M] = db.exec(query.result).toList
 
-    def save(model: M)(implicit session: Session): M
-    def saveAll(models: M*)(implicit session: Session): List[M]
-    def deleteEntity(model: M)(implicit session: Session): Boolean
+    def page(pageIndex: Int = 0, pageSize: Int = 10): List[M] =
+      db.exec(query.drop(pageIndex * pageSize).take(pageSize).to[List].result)
+
+    def save(model: M): M
+    def saveAll(models: M*): List[M]
+    def deleteEntity(model: M): Boolean
   }
 
 
@@ -40,8 +42,11 @@ trait SlickQueryExtensions {
     extends BaseTableExtensions(query) {
 
     def extractId(entity: E): Option[Id]
+
     def withId(entity: E, id: Id): E
+
     def filterById(id: Id) = query.filter(_.id === id.bind)
+
     def filterByIdOption(idOpt: Option[Id]) =
       idOpt map { id => filterById(id) } getOrElse sys.error(s"idOpt=[$idOpt] should not be None.")
 
@@ -49,27 +54,27 @@ trait SlickQueryExtensions {
 
     protected def autoInc = query returning query.map(_.id)
 
-    def add(entity: E)(implicit session: Session): Id =
-      ( autoInc into { case (e, id) => id } insert entity ).asInstanceOf[Id]
+    def add(entity: E): Id =
+      (autoInc into { case (e, id) => id } forceInsert entity).asInstanceOf[Id]
 
-    override def save(entity: E)(implicit session: Session): E = {
+    override def save(entity: E): E = {
       extractId(entity) match {
         case Some(id) => filterById(id).update(entity); entity
         case None => withId(entity, add(entity))
       }
     }
 
-    override def saveAll(entities: E*)(implicit session: Session): List[E] =
+    override def saveAll(entities: E*): List[E] =
       entities.map(save).toList
 
-    override def deleteEntity(entity: E)(implicit session: Session): Boolean =
+    override def deleteEntity(entity: E): Boolean =
       extractId(entity).exists(id => deleteById(id))
 
-    def deleteById(id: Id)(implicit session: Session): Boolean =
-      filterById(id).delete == 1
+    def deleteById(id: Id): Boolean =
+      db.exec(filterById(id).delete) == 1
 
-    def findById(id: Id)(implicit session: Session): E = findOptionById(id).get
-    def findOptionById(id: Id)(implicit session: Session): Option[E] = filterById(id).firstOption
+    def findById(id: Id): E = findOptionById(id).get
+    def findOptionById(id: Id): Option[E] = db.result(filterById(id)).headOption.asInstanceOf[Option[E]]
 
     def compile = Compiled(query)
 
@@ -86,8 +91,8 @@ trait SlickQueryExtensions {
      * @param value 조회하고자하는 컬럼의 값
      * @return
      */
-    def byParam(column: String, value: Column[String]) =
-      query.withFilter(table => table.column[String](column) == value)
+    def byParam(column: String, value: Rep[String]) =
+      query.withFilter(table => table.column[String](column) === value)
   }
 
   abstract class IdTableExtensions[E <: SlickEntity[Id], Id: BaseColumnType](query: TableQuery[_ <: Table[E] with TableWithId[Id]])
@@ -96,29 +101,29 @@ trait SlickQueryExtensions {
     override def extractId(entity: E): Option[Id] = entity.id
     override def withId(entity: E, id: Id): E = entity.withId(id).asInstanceOf[E]
 
-    def deleteAll(entities: E*)(implicit session: Session): Boolean = {
+    def deleteAll(entities: E*): Boolean = {
       val ids = entities.flatMap(_.id).toSet
-      filterByIdIn(ids.toSeq: _*).delete == ids.size
+      db.exec(filterByIdIn(ids.toSeq: _*).delete) == ids.size
     }
 
-    def deleteAllById(ids: Id*)(implicit session: Session) = {
+    def deleteAllById(ids: Id*) = {
       val idsets = ids.toSet
-      filterByIdIn(idsets.toSeq: _*).delete == idsets.size
+      db.exec(filterByIdIn(idsets.toSeq: _*).delete) == idsets.size
     }
   }
 
   abstract class VersionableTableExtensions[E <: SlickEntity[Id] with Versionable, Id: BaseColumnType]
-  (query: TableQuery[_ <: Table[E] with TableWithId[Id] with TableWithVersion])
+  (query: TableQuery[_ <: Table[E] with TableWithIdAndVersion[Id]])
     extends IdTableExtensions(query) {
 
-    override def save(entity: E)(implicit session: Session): E = {
+    override def save(entity: E): E = {
       val currentVersion = entity.version
       val newEntity = entity.withVersion(currentVersion + 1).asInstanceOf[E]
 
       extractId(newEntity) match {
         case Some(id) =>
           val q = query.filter(_.id === id.bind).filter(_.version === currentVersion.bind)
-          if (q.length.run != 1)
+          if (db.exec(q.length.result) != 1)
             throw new StaleObjectStateException(entity)
           q.update(newEntity)
           newEntity

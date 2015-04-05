@@ -1,6 +1,7 @@
 package debop4s.data.slick3.schema
 
 import debop4s.data.common.JdbcDrivers
+import debop4s.data.slick3.SlickContext
 import debop4s.data.slick3.SlickContext._
 import org.slf4j.LoggerFactory
 import slick.driver._
@@ -31,7 +32,7 @@ trait SlickComponent
 
   protected val LOG = LoggerFactory.getLogger(getClass)
 
-  def isMySQL: Boolean = ( driver == MySQLDriver ) || isMariaDB
+  def isMySQL: Boolean = (driver == MySQLDriver) || isMariaDB
   def isMariaDB: Boolean = jdbcDriver == JdbcDrivers.DRIVER_CLASS_MARIADB
   def isH2: Boolean = driver == H2Driver
   def isHsqlDB: Boolean = driver == HsqldbDriver
@@ -39,4 +40,19 @@ trait SlickComponent
   def isSQLite: Boolean = driver == SQLiteDriver
   def isOracle: Boolean = driver.profile.toString.contains("OracleDriver")
 
+  private[this] var _db: SlickContext.driver.backend.DatabaseDef = _
+
+  lazy val db: SlickContext.driver.backend.DatabaseDef = {
+    if (_db == null) {
+      _db = SlickContext.forDataSource()
+    }
+    _db
+  }
+
+  protected def shutdown() = synchronized {
+    if (_db ne null) {
+      _db.close()
+      _db = null
+    }
+  }
 }
