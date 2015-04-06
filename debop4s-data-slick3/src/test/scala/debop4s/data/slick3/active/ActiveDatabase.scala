@@ -3,6 +3,7 @@ package debop4s.data.slick3.active
 import debop4s.data.slick3._
 import debop4s.data.slick3.model.{Versionable, IntEntity}
 import debop4s.data.slick3.schema.SlickComponent
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * ActiveDatabase
@@ -18,10 +19,14 @@ trait ActiveQueryExtensions {
   implicit class SupplierQueryExt(query: TableQuery[Suppliers]) extends VersionableTableExtensions[Supplier, Int](query)
 
   implicit class SupplierExtensions(self: Supplier) {
-    def save(implicit sess: Session): Supplier = suppliers.save(self)
-    def delete(implicit sess: Session): Boolean = {
-      db.exec(beers.filter(_.supplierId === self.id).delete)
-      suppliers.deleteEntity(self)
+    def save: Supplier = suppliers.save(self)
+    def delete: Int = {
+      db.exec(
+        (for {
+          _ <- beers.filter(_.supplierId === self.id.bind).delete
+          count <- suppliers.filter(_.id === self.id.bind).delete
+        } yield count).transactionally
+      ).asInstanceOf[Int]
     }
   }
 
@@ -36,11 +41,14 @@ trait ActiveQueryExtensions {
       suppliers.findOptionById(self.supplierId)
 
     def friendBeers: Seq[Beer] = {
-      val q = for {
-        (s, b) <- suppliers join beers on (_.id === _.supplierId) if s.id === self.supplierId
-      } yield b
+      //      val q = for {
+      //        (s, b) <- suppliers join beers on (_.id === _.supplierId) if s.id === self.supplierId.bind
+      //      } yield b
+      //
+      //      db.result(q.to[Seq]).asInstanceOf[Seq[Beer]]
 
-      db.result(q).toSeq.asInstanceOf[Seq[Beer]]
+      val q2 = beers.filter(b => b.supplierId === self.supplierId.bind && b.id =!= self.id.bind)
+      db.result(q2.to[Set]).toSeq.asInstanceOf[Seq[Beer]]
     }
   }
 

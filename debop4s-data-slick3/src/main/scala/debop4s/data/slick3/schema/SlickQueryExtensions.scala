@@ -2,6 +2,7 @@ package debop4s.data.slick3.schema
 
 import debop4s.data.slick3._
 import debop4s.data.slick3.model.{SlickEntity, Versionable}
+import slick.dbio.Effect.Write
 
 /**
  * Slick Query 에 대한 확장 메소드를 제공하는 trait 입니다.
@@ -54,24 +55,47 @@ trait SlickQueryExtensions {
 
     protected def autoInc = query returning query.map(_.id)
 
+    def addAction(entity: E): driver.DriverAction[_, NoStream, Write] =
+      autoInc into { case (e, id) => id } forceInsert entity
+
     def add(entity: E): Id =
-      (autoInc into { case (e, id) => id } forceInsert entity).asInstanceOf[Id]
+      db.exec(addAction(entity)).asInstanceOf[Id]
+
+
+    def updateAction(entity: E): driver.DriverAction[_, NoStream, Write] =
+      filterByIdOption(extractId(entity)).update(entity)
+
+    def saveAction(entity: E): driver.DriverAction[_, NoStream, Write] = {
+      extractId(entity) match {
+        case Some(id) => filterById(id).update(entity)
+        case None => addAction(entity)
+      }
+    }
 
     override def save(entity: E): E = {
       extractId(entity) match {
-        case Some(id) => filterById(id).update(entity); entity
+        case Some(id) => db.exec(filterById(id).update(entity)); entity
         case None => withId(entity, add(entity))
       }
     }
 
-    override def saveAll(entities: E*): List[E] =
+    override def saveAll(entities: E*): List[E] = {
       entities.map(save).toList
+    }
+
+    def deleteEntityAction(entity: E): Option[driver.DriverAction[Int, NoStream, Write]] = {
+      extractId(entity).map(id => deleteByIdAction(id))
+    }
 
     override def deleteEntity(entity: E): Boolean =
       extractId(entity).exists(id => deleteById(id))
 
     def deleteById(id: Id): Boolean =
       db.exec(filterById(id).delete) == 1
+
+    def deleteByIdAction(id: Id): driver.DriverAction[Int, NoStream, Write] = {
+      filterById(id).delete
+    }
 
     def findById(id: Id): E = findOptionById(id).get
     def findOptionById(id: Id): Option[E] = db.result(filterById(id)).headOption.asInstanceOf[Option[E]]
@@ -125,7 +149,7 @@ trait SlickQueryExtensions {
           val q = query.filter(_.id === id.bind).filter(_.version === currentVersion.bind)
           if (db.exec(q.length.result) != 1)
             throw new StaleObjectStateException(entity)
-          q.update(newEntity)
+          db.exec(q.update(newEntity))
           newEntity
         case None =>
           withId(newEntity, add(newEntity))

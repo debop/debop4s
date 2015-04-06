@@ -125,7 +125,7 @@ object SlickContext {
       f.onFailure { case t =>
         pr.tryFailure(t)
         sub.cancel()
-      }
+      }(ec)
       f
     }
     try
@@ -150,7 +150,7 @@ object SlickContext {
       case NonFatal(ex) => pr.tryFailure(ex)
     }
     val f = pr.future
-    f.onComplete(_ => exe.shutdown())
+    f.onComplete(_ => exe.shutdown())(ec)
     f
   }
 
