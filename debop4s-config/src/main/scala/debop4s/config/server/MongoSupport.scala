@@ -9,12 +9,15 @@ import debop4s.config.base._
  * @author sunghyouk.bae@gmail.com 15. 3. 21.
  */
 trait MongoSupport extends ConfigElementSupport {
+
   val mongo = new MongoElement(config.getConfig("mongo"))
+
 }
 
 class MongoElement(override val config: Config) extends ServerAddressElementSupport {
 
   val database = config.tryGetString("database", "test")
+
 }
 
 

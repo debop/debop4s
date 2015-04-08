@@ -8,6 +8,7 @@ import com.typesafe.config.ConfigValue
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
+import scala.util.Try
 import scala.util.control.NonFatal
 
 /**

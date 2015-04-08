@@ -13,7 +13,7 @@
     <artifactId>debop4s-data-slick3</artifactId>
 
     <properties>
-        <slick3.version>3.0.0-RC2</slick3.version>
+        <slick3.version>3.0.0-RC3</slick3.version>
     </properties>
 
     <dependencies>

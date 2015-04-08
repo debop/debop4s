@@ -59,7 +59,9 @@ package object core {
   }
 
   implicit class ByteExtensions(bytes: Array[Byte]) {
-    def toUtf8String = Strings.getUtf8String(bytes)
+    def toUtf8String = {
+      Strings.getUtf8String(bytes)
+    }
   }
 
   // implicit val defaultDuration: Duration = Duration(60, TimeUnit.MINUTES)
