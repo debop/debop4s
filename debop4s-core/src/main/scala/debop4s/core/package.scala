@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 import org.joda.time.base.AbstractInstant
 import org.joda.time.{ Duration => JDuration }
 import scala.concurrent._
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{FiniteDuration, Duration}
 
 
 /**
@@ -62,14 +62,18 @@ package object core {
     def toUtf8String = Strings.getUtf8String(bytes)
   }
 
-  implicit val defaultDuration: Duration = Duration(60, TimeUnit.MINUTES)
+  // implicit val defaultDuration: Duration = Duration(60, TimeUnit.MINUTES)
 
   implicit class AwaitableExtensions[T](task: Awaitable[T]) {
 
-    def ready()(implicit atMost: Duration = defaultDuration) {
+    implicit val defaultDuration: Duration = FiniteDuration(60, TimeUnit.MINUTES)
+
+    // TODO: Method 명 변경 (Awaitable의 result 와 같아서 문제 소지가 있다
+    def ready(implicit atMost: Duration = defaultDuration): Unit = {
       Await.ready(task, atMost)
     }
 
+    // TODO: Method 명 변경 (Awaitable의 result 와 같아서 문제 소지가 있다
     def result()(implicit atMost: Duration = defaultDuration): T = {
       Await.result[T](task, atMost)
     }

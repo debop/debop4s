@@ -107,17 +107,17 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ on x14.x7 = x2.x3
     ┇ group by x2.x3, x2.x4
      */
-    val owners = for {
+    val qOwners = for {
       ((a, m), o) <- bankAccounts join bankAccountOwners on (_.id === _.accountId) join accountOwners on (_._2.ownerId === _.id)
     } yield o
 
-    db.result { owners.groupBy(identity).map(_._1) } foreach println
-    db.exec { owners.groupBy(identity).map(_._1).length.result } shouldEqual 2
+    db.result { qOwners.groupBy(identity).map(_._1) } foreach println
+    db.exec { qOwners.groupBy(identity).map(_._1).length.result } shouldEqual 2
   }
 
   test("using pre defined query") {
 
-    val owners = for {
+    val qOwners = for {
       account <- bankAccounts
       owner <- account.owners
     } yield owner
@@ -128,7 +128,8 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ where (x2."owner_id" = x4."owner_id") and (x4."account_id" = x3."account_id")
     ┇ group by x2."owner_id", x2."owner_ssn"
      */
-    db.result(owners.groupBy(identity).map(_._1.id)) shouldEqual Seq(1, 2)
+    val q1 = qOwners.groupBy(identity).map(_._1.id)
+    db.result(q1) shouldEqual Seq(1, 2)
 
     /*
     ┇ select x2."owner_id", count(1)
@@ -136,8 +137,8 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ where (x2."owner_id" = x4."owner_id") and (x4."account_id" = x3."account_id")
     ┇ group by x2."owner_id"
      */
-    db.exec { owners.groupBy(_.id).map(x => (x._1, x._2.length)).result } shouldEqual Seq((1, 1), (2, 2))
+    val q2 = qOwners.groupBy(_.id).map(x => (x._1, x._2.length))
+    db.result(q2) shouldEqual Seq((1, 1), (2, 2))
   }
-
 
 }

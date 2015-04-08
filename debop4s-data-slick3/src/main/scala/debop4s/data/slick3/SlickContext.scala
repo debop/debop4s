@@ -38,8 +38,8 @@ object SlickContext {
   def forDataSource(ds: DataSource = defaultDataSource): driver.backend.DatabaseDef =
     driver.api.Database.forDataSource(ds)
 
-  lazy val driver: JdbcDriver = defaultDriver
-  lazy val jdbcDriver: String = defaultSetting.driverClass
+  lazy val driver    : JdbcDriver = defaultDriver
+  lazy val jdbcDriver: String     = defaultSetting.driverClass
 
   def getDB(ds: DataSource = defaultDataSource) =
     driver.api.Database.forDataSource(ds)
@@ -68,8 +68,6 @@ object SlickContext {
 
   /**
    * reactive stream 을 읽어 각 row 를 처리합니다.
-   * @param f
-   * @return
    */
   def foreach[T](p: Publisher[T])(f: T => Any): Future[Unit] = {
     val pr = Promise[Unit]()
@@ -91,7 +89,7 @@ object SlickContext {
   /**
    * 동기 방식으로 reactive stream 을 읽어드여 Vector 로 빌드합니다.
    */
-  def materialize[T](p:Publisher[T]): Future[Vector[T]] = {
+  def materialize[T](p: Publisher[T]): Future[Vector[T]] = {
     val builder = Vector.newBuilder[T]
     val pr = Promise[Vector[T]]()
     try p.subscribe(new Subscriber[T] {
@@ -104,10 +102,12 @@ object SlickContext {
     pr.future
   }
 
-  /** Asynchronously consume a Reactive Stream and materialize it as a Vector, requesting new
-    * elements one by one and transforming them after the specified delay. This ensures that the
-    * transformation does not run in the synchronous database context but still preserves
-    * proper sequencing. */
+  /**
+   * Asynchronously consume a Reactive Stream and materialize it as a Vector, requesting new
+   * elements one by one and transforming them after the specified delay. This ensures that the
+   * transformation does not run in the synchronous database context but still preserves
+   * proper sequencing.
+   **/
   def materializeAsync[T, R](p: Publisher[T])
                             (tr: T => Future[R],
                              delay: Duration = Duration(100L, TimeUnit.MILLISECONDS)): Future[Vector[R]] = {
@@ -128,7 +128,8 @@ object SlickContext {
       }(ec)
       f
     }
-    try
+
+    try {
       p.subscribe(new Subscriber[T] {
         def onSubscribe(s: Subscription): Unit = async {
           sub = s
@@ -146,9 +147,11 @@ object SlickContext {
               sub.cancel()
           }(ec)
         }
-      }) catch {
+      })
+    } catch {
       case NonFatal(ex) => pr.tryFailure(ex)
     }
+
     val f = pr.future
     f.onComplete(_ => exe.shutdown())(ec)
     f
