@@ -3,6 +3,8 @@ package debop4s.data.slick3.active
 import debop4s.data.slick3._
 import debop4s.data.slick3.model.{Versionable, IntEntity}
 import debop4s.data.slick3.schema.SlickComponent
+import slick.dbio
+import slick.dbio.Effect.Schema
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -21,12 +23,13 @@ trait ActiveQueryExtensions {
   implicit class SupplierExtensions(self: Supplier) {
     def save: Supplier = suppliers.save(self)
     def delete: Int = {
-      db.exec(
         (for {
           _ <- beers.filter(_.supplierId === self.id.bind).delete
           count <- suppliers.filter(_.id === self.id.bind).delete
-        } yield count).transactionally
-      ).asInstanceOf[Int]
+        } yield count)
+        .transactionally
+        .run
+        .asInstanceOf[Int]
     }
   }
 
@@ -48,7 +51,7 @@ trait ActiveQueryExtensions {
       //      db.result(q.to[Seq]).asInstanceOf[Seq[Beer]]
 
       val q2 = beers.filter(b => b.supplierId === self.supplierId.bind && b.id =!= self.id.bind)
-      db.result(q2.to[Set]).toSeq.asInstanceOf[Seq[Beer]]
+      q2.to[Seq].run.asInstanceOf[Seq[Beer]]
     }
   }
 
@@ -99,19 +102,14 @@ trait ActiveSchema {
     LOG.debug(s"Schema Drop:\n${ schema.dropStatements.mkString("\n") }")
     LOG.debug(s"Schema Create:\n${ schema.createStatements.mkString("\n") }")
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create
-    )
+    (schema.drop.asTry >> schema.create).run
   }
 
   def dropSchema() = {
     LOG.info(s"Drop Active Database schema...")
     LOG.debug(s"Schema Drop:\n${ schema.dropStatements.mkString("\n") }")
 
-    db.exec {
-      schema.drop.asTry
-    }
+    schema.drop.run
   }
 }
 

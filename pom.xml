@@ -118,7 +118,7 @@
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
                 <artifactId>scala-async_2.11</artifactId>
-                <version>0.9.1</version>
+                <version>0.9.3</version>
             </dependency>
 
             <!-- ScalaBlitz -->

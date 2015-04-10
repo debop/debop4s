@@ -5,7 +5,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.concurrent._
 
 /**
- * debop4s.core.stests.parallels.AsyncsTest
+ * debop4s.core.stests.async.AsyncsTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 25. 오후 1:40

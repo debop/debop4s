@@ -3,7 +3,7 @@ package debop4s.core.parallels
 import debop4s.core.AbstractCoreTest
 
 /**
- * debop4s.core.stests.parallels.ParallelsTest
+ * debop4s.core.stests.async.ParallelsTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 25. 오후 2:06

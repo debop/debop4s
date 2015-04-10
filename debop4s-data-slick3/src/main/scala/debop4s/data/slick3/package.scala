@@ -3,8 +3,14 @@ package debop4s.data
 import java.util.concurrent.{LinkedBlockingQueue, ThreadPoolExecutor, TimeUnit}
 
 import debop4s.core.concurrent._
+import debop4s.core.utils.Closer
+import debop4s.core.utils.Closer._
+import debop4s.data.slick3.SlickContext._
 import debop4s.data.slick3.SlickContext.driver.api._
 import org.reactivestreams.{Publisher, Subscriber, Subscription}
+import slick.backend.DatabasePublisher
+import slick.backend.DatabasePublisher
+import slick.backend.DatabasePublisher
 
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.duration.Duration
@@ -19,67 +25,82 @@ import scala.util.{Failure, Success}
  */
 package object slick3 {
 
-  private implicit def asyncTestExecutionContext = ExecutionContext.global
-
   implicit class DatabaseExtensions(db: SlickContext.driver.backend.DatabaseDef) {
 
     /** 동기 방식으로 action 을 수행합니다. */
     def exec[R](action: DBIOAction[R, NoStream, Nothing]): R = {
-      db.run(action).await
+      action.run(db)
+      // db.run(action).await
     }
 
-    def result(query: Query[_, _, Seq]) = {
-      db.run(query.result).await
+    def result[E, U, Seq[_]](query: Query[E, U, Seq]): Seq[_] = {
+      query.run(db)
+      // db.run(query.result).await
     }
 
-    def result(query: Query[_, _, Set]) = {
-      db.run(query.result).await
+    //    def result[E, U, Set[_]](query: Query[E, U, Set]) = {
+    //      db.run(query.result).await
+    //    }
+
+    def result[T](query: Rep[T]): T = {
+      query.run(db)
+      //db.run(query.result).await
     }
 
 
     /**
      * action 을 순서대로 처리합니다.
      * {{{
-     *   db.seq(action1, action2, action3)
+     *   Seq(action1, action2, action3).seq
      *   // or
      *   action1 >> action2 >> action3
      *   // or
      *   action1 andThen action2 andThen action3
      * }}}
      */
-    def seq[E <: Effect](actions: DBIOAction[_, NoStream, E]*): Unit = {
-      db.run(DBIO.seq[E](actions: _*)).await
+    def seq[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
+      DBIO.seq(actions: _*).run(db)
+      // db.run(DBIO.seq[E](actions: _*)).await
     }
 
-    def seqWithPinned[E <: Effect](actions: DBIOAction[_, NoStream, E]*): Unit = {
-      db.run(DBIO.seq[E](actions: _*).withPinnedSession).await
+    def withPinnedSession[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
+      DBIO.seq(actions: _*).withPinnedSession.run(db)
+      // db.run(DBIO.seq[E](actions: _*).withPinnedSession).await
     }
 
-    def seqTransactionally[E <: Effect](actions: DBIOAction[_, NoStream, E]*): Unit = {
-      db.run(DBIO.seq[E](actions: _*).transactionally).await
+    def withTransaction[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
+      DBIO.seq(actions: _*).transactionally.run(db)
+      // db.run(DBIO.seq[E](actions: _*).transactionally).await
+    }
+
+    def withTransaction[R](block: Session => R) = {
+      using(db.createSession()) { s =>
+        s.withTransaction { block(s) }
+      }
     }
 
     /**
      * `Seq[ DBIO[R] ]` 를 `DBIO[ Seq[R] ]` 로 변환하여 db에서 실행한 후 Seq[R] 을 반환합니다.
      * {{{
-     *   db.sequence(
+     *   Seq(
      *    schema.create,
      *    q1.result,
      *    q2.result
-     *   )
+     *   ).seqeunce
      *
      *   // returns Seq(Unit, q1.result, q2.result)
      * }}}
      */
     def sequence[R, E <: Effect](in: DBIOAction[R, NoStream, E]*)
                                 (implicit cbf: CanBuildFrom[Seq[DBIOAction[R, NoStream, E]], R, Seq[R]]): Seq[R] = {
-      db.run(DBIO.sequence(in)).await
+      DBIO.sequence(in).run(db)
+      // db.run(DBIO.sequence(in)).await
     }
 
     /**
      * action 들을 병렬로 수행합니다.
      * {{{
-     *   db.par(action1, action2, action3)
+     *   Seq(action1, action2, action3).execPar
      * }}}
      */
     def execPar[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
@@ -87,6 +108,51 @@ package object slick3 {
         db.run(action)
       }.seq
       results.awaitAll
+    }
+  }
+
+  implicit class DBIOActionExtensions[R](action: DBIOAction[R, NoStream, _]) {
+    /**
+     * {{{
+     *   val query = users.map(u=>(u.id, u.name))
+     *   val userList = query.run
+     * }}}
+     * @return
+     */
+    def run(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB): R = {
+      db.run(action).await
+    }
+  }
+
+  implicit class DBIOActionSeqExtensions[R](actions: Seq[DBIOAction[R, NoStream, _]]) {
+    /**
+     * {{{
+     *   val query = users.map(u=>(u.id, u.name))
+     *   val userList = query.run
+     * }}}
+     * @return
+     */
+    def run(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB) = {
+      db.run(DBIO.seq(actions: _*)).await
+    }
+  }
+
+  implicit class DBIOStreamActionExtensions[T](action: DBIOAction[_, Streaming[T], Nothing]) {
+
+    def stream(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB) = {
+      db.stream(action)
+    }
+  }
+
+  implicit class RepExtensions[T](r: Rep[T]) {
+    /**
+     * {{{
+     *   val count = users.length.run
+     * }}}
+     * @return
+     */
+    def run(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB): T = {
+      db.run(r.result).await
     }
   }
 
@@ -128,7 +194,7 @@ package object slick3 {
         f.onFailure { case t =>
           pr.tryFailure(t)
           sub.cancel()
-        }
+        }(ec)
         f
       }
       try
@@ -153,14 +219,14 @@ package object slick3 {
         case NonFatal(ex) => pr.tryFailure(ex)
       }
       val f = pr.future
-      f.onComplete(_ => exe.shutdown())
+      f.onComplete(_ => exe.shutdown())(ec)
       f
     }
 
     /**
      * reactive stream 을 읽어 각 row 를 처리합니다.
-     * @param f
-     * @return
+     * @param f 각 row를 처리할 함수
+     * @return Future[Unit]
      */
     def foreach(f: T => Any): Future[Unit] = {
       val pr = Promise[Unit]()

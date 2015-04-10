@@ -1,14 +1,14 @@
 package debop4s
 
-import java.lang.{ Boolean => JBoolean, Double => JDouble, Float => JFloat, Integer => JInt, Long => JLong }
+import java.lang.{Boolean => JBoolean, Double => JDouble, Float => JFloat, Integer => JInt, Long => JLong}
 import java.util.concurrent.TimeUnit
-import java.util.{ List => JList, Properties }
+import java.util.{List => JList, Properties}
 
 import com.typesafe.config.ConfigValue
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 import scala.util.control.NonFatal
 
 /**
@@ -129,12 +129,11 @@ package object config {
         cfg.getValue(path)
       }
 
-    @inline
-    private def tryGet[T](path: String, defaultValue: T)(block: => T): T = {
-      try {
-        block
-      } catch {
-        case NonFatal(e) =>
+
+    def tryGet[T](path: String, defaultValue: T)(block: => T): T = {
+      Try { block } match {
+        case Success(v) => v
+        case Failure(e) =>
           LOG.warn(s"환경설정에 정의되지 않아 기본값을 반환합니다. resourceBasename=$path, defaultValue=$defaultValue")
           defaultValue
       }

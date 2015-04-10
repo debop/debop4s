@@ -1,9 +1,11 @@
 package debop4s.data.slick3
 
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.{LinkedBlockingQueue, ThreadPoolExecutor, TimeUnit}
 import javax.sql.DataSource
 
 import com.typesafe.config.ConfigFactory
+import debop4s.config.server.DatabaseSetting
 import debop4s.data.common.DataSources
 import debop4s.data.slick3.config.SlickConfig
 import org.reactivestreams.{Publisher, Subscription, Subscriber}
@@ -25,7 +27,13 @@ object SlickContext {
 
   lazy val LOG = LoggerFactory.getLogger(getClass)
 
-  private var slickConfig: SlickConfig = _
+  private[this] val masterIndex = new AtomicInteger(0)
+  private[this] val slaveIndex = new AtomicInteger(0)
+
+  def getMasterIndex = masterIndex.get()
+  def getSlaveIndex = slaveIndex.get()
+
+  private var slickConfig: SlickConfig = null
 
   lazy val defaultSetting = slickConfig.database.dbSetting
   lazy val defaultDataSource = DataSources.getDataSource(defaultSetting)
@@ -33,23 +41,65 @@ object SlickContext {
   lazy val defaultDriver = SlickDrivers.getOrElse(defaultSetting.driverClass,
     sys.error("No suitable driver was found."))
 
-  lazy val defaultDB = defaultDriver.api.Database.forDataSource(defaultDataSource)
+  lazy val defaultDB = forDataSource(defaultDataSource)
 
   def forDataSource(ds: DataSource = defaultDataSource): driver.backend.DatabaseDef =
     driver.api.Database.forDataSource(ds)
 
-  lazy val driver    : JdbcDriver = defaultDriver
-  lazy val jdbcDriver: String     = defaultSetting.driverClass
+  lazy val driver: JdbcDriver = defaultDriver
+  lazy val jdbcDriver: String = defaultSetting.driverClass
 
   def getDB(ds: DataSource = defaultDataSource) =
     driver.api.Database.forDataSource(ds)
 
+  lazy val masterSettings: IndexedSeq[DatabaseSetting] = slickConfig.masterSettings
+  lazy val masterDataSources: IndexedSeq[DataSource] = masterSettings.map(DataSources.getDataSource)
+  lazy val masterDBs = masterDataSources.map { ds => driver.api.Database.forDataSource(ds) }
+
+  lazy val slaveSettings = slickConfig.slaveSettings
+  lazy val slaveDataSources = slaveSettings.map(DataSources.getDataSource)
+  lazy val slaveDBs = slaveDataSources.map { ds => driver.api.Database.forDataSource(ds) }
+
+  /**
+   * Master DB가 여려 개인 경우 round-robin 방식으로 Master DB를 선택합니다.
+   */
+  def masterDB: driver.backend.DatabaseDef = {
+    if (masterSettings.isEmpty) defaultDB
+    else {
+      synchronized {
+        val index = masterIndex.getAndIncrement
+        masterIndex.compareAndSet(masterSettings.length, 0)
+        masterDBs(index % masterSettings.length)
+      }
+    }
+  }
+  /**
+   * Slave DB가 여려 개인 경우 round-robin 방식으로 Slave DB를 선택합니다.
+   */
+  def slaveDB: driver.backend.DatabaseDef = {
+    if (slaveSettings.isEmpty) defaultDB
+    else {
+      synchronized {
+        val index = slaveIndex.getAndIncrement
+        slaveIndex.compareAndSet(slaveSettings.length, 0)
+        slaveDBs(index % masterSettings.length)
+      }
+    }
+  }
+
+
+  /**
+   * Database 환경설정 정보를 이용하여 SlickContext를 초기화합니다.
+   */
   def init(config: SlickConfig): Unit = {
     LOG.info(s"Slick 환경설정을 통해 Driver 등을 정의합니다.")
     require(config != null)
     this.slickConfig = config
   }
 
+  /**
+   * Database 환경설정 정보를 이용하여 SlickContext를 초기화합니다.
+   */
   def init(configPath: String, rootConfig: String = "slick"): Unit = {
     LOG.info(s"Slick 환경설정을 읽습니다. configPath=$configPath, rootConfig=$rootConfig")
     val config = SlickConfig(ConfigFactory.load(configPath).getConfig(rootConfig))

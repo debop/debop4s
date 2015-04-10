@@ -34,7 +34,7 @@ trait SlickEntity[Id] extends Serializable {
     case None => 0
   }
 
-  override def toString: String = s"${ this.getClass.getSimpleName }#id=$id"
+  // override def toString: String = s"${ this.getClass.getSimpleName }#id=$id"
 }
 
 trait IntEntity extends SlickEntity[Int]

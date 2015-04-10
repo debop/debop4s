@@ -39,6 +39,7 @@ object Local {
   }
 
   def put(key: Any, value: Any) {
+    log.trace(s"put to Local hashmap. key=$key, value=$value")
     getStorage.update(key, value)
   }
 
@@ -47,23 +48,26 @@ object Local {
   }
 
   def clearAll() {
+    log.debug(s"clear local storage.")
     getStorage.clear()
   }
 
   def getOrCreate[T](key: Any, factory: => T): Option[T] = {
-    if (!getStorage.contains(key)) {
-      assert(factory != null)
-      val result: T = factory
-      put(key, result)
-    }
+    getStorage.getOrElseUpdate(key, factory)
+    //    if (!getStorage.contains(key)) {
+    //      assert(factory != null)
+    //      val result: T = factory
+    //      put(key, result)
+    //    }
     get[T](key)
   }
 
   def getOrCreate[T](key: Any, factory: Callable[T]): Option[T] = synchronized {
-    if (!getStorage.contains(key)) {
-      assert(factory != null)
-      put(key, factory.call())
-    }
+    getStorage.getOrElseUpdate(key, factory.call())
+    //    if (!getStorage.contains(key)) {
+    //      assert(factory != null)
+    //      put(key, factory.call())
+    //    }
     get[T](key)
   }
 }

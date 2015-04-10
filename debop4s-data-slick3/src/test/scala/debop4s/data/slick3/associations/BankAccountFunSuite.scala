@@ -36,17 +36,16 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
   override def beforeAll(): Unit = {
     super.beforeAll()
 
-    db.exec {
+    {
       schema.drop.asTry >>
       schema.create >>
       (bankAccounts ++= accountData) >>
       (accountOwners ++= ownerData) >>
       (bankAccountOwners ++= accountOwnerMap)
-    }
-
+    }.run
   }
   override def afterAll(): Unit = {
-    db.exec { schema.drop }
+    schema.drop.run
     super.afterAll()
   }
 
@@ -66,9 +65,20 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
       } yield owner
 
     // Account Owner 가 join 으로 인해 여러 개가 중복될 수 있다. ( distinct 대신 groupBy 가 제공된다.)
-    db.exec { owners.groupBy(identity).map(_._1).result } foreach println
-    db.exec { owners.groupBy(identity).map(_._1).length.result } shouldEqual 2
+    owners.groupBy(identity).map(_._1).run foreach println
+    owners.groupBy(identity).map(_._1).length.run shouldEqual 2
 
+
+    db.withTransaction { session =>
+      try {
+        bankAccountOwners.delete
+        bankAccounts.delete
+        accountOwners.delete
+        Thread.sleep(100)
+      } finally {
+        session.rollback()
+      }
+    }
     // TODO: withSession, withTransaction, withRollback 은 구현해야겠다.
     Closer.using(db.createSession()) { s =>
       s.withTransaction {
@@ -82,7 +92,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
         }
       }
     }
-    db.exec { accountOwners.length.result } shouldEqual ownerData.size
+    accountOwners.length.run shouldEqual ownerData.size
   }
 
   test("explicit join") {
@@ -111,8 +121,8 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
       ((a, m), o) <- bankAccounts join bankAccountOwners on (_.id === _.accountId) join accountOwners on (_._2.ownerId === _.id)
     } yield o
 
-    db.result { qOwners.groupBy(identity).map(_._1) } foreach println
-    db.exec { qOwners.groupBy(identity).map(_._1).length.result } shouldEqual 2
+    qOwners.groupBy(identity).map(_._1).run foreach println
+    qOwners.groupBy(identity).map(_._1).length.run shouldEqual 2
   }
 
   test("using pre defined query") {
@@ -129,7 +139,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ group by x2."owner_id", x2."owner_ssn"
      */
     val q1 = qOwners.groupBy(identity).map(_._1.id)
-    db.result(q1) shouldEqual Seq(1, 2)
+    q1.run shouldEqual Seq(1, 2)
 
     /*
     ┇ select x2."owner_id", count(1)
@@ -138,7 +148,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ group by x2."owner_id"
      */
     val q2 = qOwners.groupBy(_.id).map(x => (x._1, x._2.length))
-    db.result(q2) shouldEqual Seq((1, 1), (2, 2))
+    q2.run shouldEqual Seq((1, 1), (2, 2))
   }
 
 }

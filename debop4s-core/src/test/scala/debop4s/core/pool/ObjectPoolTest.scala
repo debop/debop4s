@@ -58,7 +58,7 @@ class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
 
     val pool = new ObjectPool(new ObjectPoolConfig(), props)
     try {
-      Parallels.callFunction1(100)(x => {
+      Parallels.callFunction1(100) { x =>
         val po = pool.getResource
         po should not equal null
         po.isActive should equal(true)
@@ -72,7 +72,7 @@ class ObjectPoolTest extends FunSuite with Matchers with BeforeAndAfter {
           pool.returnResource(po)
           log.trace("return Resource")
         }
-      })
+      }
     }
     finally {
       pool.destroy()

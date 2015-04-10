@@ -70,13 +70,11 @@ package object core {
 
     implicit val defaultDuration: Duration = FiniteDuration(60, TimeUnit.MINUTES)
 
-    // TODO: Method 명 변경 (Awaitable의 result 와 같아서 문제 소지가 있다
-    def ready(implicit atMost: Duration = defaultDuration): Unit = {
+    def await(implicit atMost: Duration = defaultDuration): Unit = {
       Await.ready(task, atMost)
     }
 
-    // TODO: Method 명 변경 (Awaitable의 result 와 같아서 문제 소지가 있다
-    def result()(implicit atMost: Duration = defaultDuration): T = {
+    def asyncValue(implicit atMost: Duration = defaultDuration): T = {
       Await.result[T](task, atMost)
     }
   }

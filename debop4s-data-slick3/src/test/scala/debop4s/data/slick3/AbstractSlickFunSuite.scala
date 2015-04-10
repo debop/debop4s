@@ -24,7 +24,7 @@ abstract class AbstractSlickFunSuite
 
   private[this] var _db: SlickContext.driver.backend.DatabaseDef = _
 
-  lazy val db = {
+  implicit lazy val db = {
     if (_db == null) {
       _db = SlickContext.forDataSource()
     }

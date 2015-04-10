@@ -1,6 +1,5 @@
 package debop4s.data.slick3.associations
 
-import debop4s.core.utils.Closer
 import debop4s.data.slick3.associations._
 import debop4s.data.slick3._
 import debop4s.data.slick3.AbstractSlickFunSuite
@@ -21,11 +20,16 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
   override protected def beforeAll(): Unit = {
     super.beforeAll()
 
-    db.exec { schema.drop.asTry >> schema.create >> insertSampleData() }
+    { schema.drop.asTry >> schema.create >> insertSampleData() }.run
+  }
+
+  override protected def afterAll(): Unit = {
+    schema.drop.run
+    super.afterAll()
   }
 
   private def insertSampleData() = {
-    sites.forceInsertAll(Seq(Site(name = "SKT"), Site(name = "KT"))) andThen
+    (sites ++= Seq(Site(name = "SKT"), Site(name = "KT"))) >>
     (devices ++= Seq(
       Device(None, 5000, new DateTime(2013, 1, 1, 0, 0), 1),
       Device(None, 1000, new DateTime(2014, 1, 1, 0, 0), 1),
@@ -41,10 +45,18 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
 
     val qJoin = sitesById join devicesByPrice on sitesToDevices
 
-    // LOG.debug(s"Query=\n${ qJoin.selectStatement }")
+    qJoin.run foreach println
+    qJoin.map(_._1.name).run.toSet shouldEqual Set("SKT")
+  }
 
-    db.result(qJoin) foreach println
-    db.result(qJoin.map(_._1.name)).toSet shouldEqual Set("SKT")
+  implicit def joinCondition1: (Sites, Devices) => Rep[Boolean] =
+    (s: Sites, d: Devices) => s.id === d.siteId
+
+  test("inner join with implicit join condition") {
+    val query = sites join devices on joinCondition1
+
+    query.run foreach println
+    query.length.run shouldBe 4
   }
 
 }

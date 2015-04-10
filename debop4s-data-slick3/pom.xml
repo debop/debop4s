@@ -17,6 +17,12 @@
     </properties>
 
     <dependencies>
+        <!-- Scala Async -->
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-async_2.11</artifactId>
+        </dependency>
+
         <!-- Slick -->
         <dependency>
             <groupId>com.typesafe.slick</groupId>

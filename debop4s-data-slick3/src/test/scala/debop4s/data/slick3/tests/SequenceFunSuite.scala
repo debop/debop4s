@@ -31,7 +31,7 @@ class SequenceFunSuite extends AbstractSlickFunSuite {
     val schema = users.schema ++ mySequence.schema
     val q1 = for (u <- users) yield (mySequence.next, u.id)
 
-    db.seqWithPinned(
+    db.withPinnedSession(
       schema.create,
       users ++= Seq(1, 2, 3),
       q1.to[Set].result.map(_ shouldEqual Set((200, 1), (210, 2), (220, 3))),
@@ -58,7 +58,7 @@ class SequenceFunSuite extends AbstractSlickFunSuite {
       DBIO.sequence((1 to count).toList map (_ => q.result.map(_.head)))
     }
 
-    db.seqWithPinned(
+    db.withPinnedSession(
       values(s1).map(_ shouldEqual Seq(1, 2, 3, 4, 5)),
       values(s2).map(_ shouldEqual Seq(3, 4, 5, 6, 7)),
       values(s3).map(_ shouldEqual Seq(3, 5, 7, 9, 11)),

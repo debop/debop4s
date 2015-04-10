@@ -47,7 +47,7 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
     Asyncs.readyAll(saveActions)
 
     withReadOnly { implicit session =>
-      employees.count.run shouldEqual EMP_COUNT
+      employees.count shouldEqual EMP_COUNT
     }
   }
 

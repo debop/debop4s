@@ -424,7 +424,7 @@ class TimesTest extends AbstractTimePeriodTest {
         }
     }
   }
-  test("foreach periods as parallels") {
+  test("foreach periods as async") {
     val notTesting = Array(PeriodUnit.All, PeriodUnit.Second, PeriodUnit.Millisecond)
 
     PeriodUnit.values.foreach {
