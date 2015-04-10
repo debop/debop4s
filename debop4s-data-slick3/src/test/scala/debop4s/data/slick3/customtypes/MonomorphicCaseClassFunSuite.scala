@@ -30,20 +30,47 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
   lazy val userAddresses = TableQuery[UserAddresses]
 
   test("case class mapping") {
-    Seq(
-      userAddresses.schema.drop.asTry,
-      userAddresses.schema.create,
-      userAddresses += UserAddress(None, "a", Address("aaaa", "seoul", "11111")),
-      userAddresses += UserAddress(None, "b", Address("bbbb", "seoul", "22222")),
-      userAddresses += UserAddress(None, "c", Address("cccc", "seoul", "33333"))
-    ).run
+    {
+      userAddresses.schema.drop.asTry >>
+      userAddresses.schema.create >>
+      (userAddresses += UserAddress(None, "a", Address("aaaa", "seoul", "11111"))) >>
+      (userAddresses += UserAddress(None, "b", Address("bbbb", "seoul", "22222"))) >>
+      (userAddresses += UserAddress(None, "c", Address("cccc", "seoul", "33333")))
+    }.transactionally.run
 
     userAddresses.run foreach println
 
+    /*
+    ┇ select x2.`id`, x2.`name`, x2.`street`, x2.`city`, x2.`zipcode`
+    ┇ from (
+    ┇   select x3.`city` as `city`, x3.`id` as `id`, x3.`zipcode` as `zipcode`, x3.`name` as `name`, x3.`street` as `street`
+    ┇   from `case_class_address` x3
+    ┇   where x3.`id` = ?
+    ┇   limit 1
+    ┇ ) x2
+     */
     userAddresses.filter(_.id === 1.bind).take(1).run.head.address.street shouldEqual "aaaa"
 
+    /*
+    ┇ select x2.x3
+    ┇ from (
+    ┇   select x4.`zipcode` as x3
+    ┇   from `case_class_address` x4
+    ┇   where x4.`street` = ?
+    ┇   limit 1
+    ┇ ) x2
+     */
     userAddresses.filter(_.street === "bbbb".bind).map(_.zipcode).take(1).run.head shouldEqual "22222"
 
+    /*
+    ┇ select x2.x3
+    ┇ from (
+    ┇   select x4.`zipcode` as x3
+    ┇   from `case_class_address` x4
+    ┇   where x4.`city` = ?
+    ┇   limit 1
+    ┇ ) x2
+     */
     userAddresses.filter(_.address.city === "seoul".bind).map(_.address.zipcode).take(1).run.head shouldEqual "11111"
 
     userAddresses.schema.drop.run

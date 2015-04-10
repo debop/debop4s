@@ -28,11 +28,15 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
   }
   lazy val as = TableQuery[A]
 
+  before {
+    as.schema.create.run
+  }
+  after {
+    as.schema.drop.run
+  }
+
   test("custom scala type - Bool") {
-    Seq(
-      as.schema.create,
-      as ++= Seq(("A", True), ("B", False))
-    ).run
+    (as ++= Seq(("A", True), ("B", False))).run
 
     as.length.run shouldBe 2
 
@@ -85,8 +89,6 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     as.filter(_.isActive === False.asInstanceOf[Bool]).length.run shouldBe 1
-
-    as.schema.drop.run
   }
 
 }

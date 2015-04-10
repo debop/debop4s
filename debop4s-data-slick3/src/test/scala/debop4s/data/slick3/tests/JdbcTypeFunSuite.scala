@@ -27,6 +27,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     db.exec {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts +=(1, Array[Byte](1, 2, 3))) >>
       (ts +=(2, Array[Byte](4, 5)))
@@ -50,7 +51,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       db.exec(ts.filter(_.data === Array[Byte](4, 5)).map(_.data).to[Set].result).map(_.mkString) shouldEqual Set("45")
     }
 
-    db.exec { ts.schema.drop }
+    ts.schema.drop.run
   }
 
   test("byte array option") {
@@ -62,6 +63,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     db.exec {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts +=(1, Some(Array[Byte](6, 7)))) >>
       ifCap(rcap.setByteArrayNull) { ts +=(2, None) } >>
@@ -84,6 +86,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       lazy val ts = TableQuery[T]
 
       val a1 = (
+               ts.schema.drop.asTry >>
                  ts.schema.create >>
                  (ts +=(1, new SerialBlob(Array[Byte](1, 2, 3)))) >>
                  (ts +=(2, new SerialBlob(Array[Byte](4, 5)))) >>
@@ -100,7 +103,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       }
       f1.await
 
-      db.exec(ts.schema.drop)
+      ts.schema.drop.run
       Future {}
     }
   }
@@ -112,7 +115,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       val ba = Serializers.serializeObject(serialized.value)
       new SerialBlob(ba)
     }, { blob =>
-      val obj = Serializers.deserializeObject(blob.getBytes(0L, blob.length.toInt), classOf[Any]).asInstanceOf[T]
+      val obj = Serializers.deserializeObject(blob.getBytes(1L, blob.length.toInt), classOf[Any]).asInstanceOf[T]
       Serialized[T](obj)
     })
 
@@ -124,6 +127,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     db.exec {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts.map(_.b) ++= Seq(Serialized(List(1, 2, 3)), Serialized(List(4, 5)))) >>
       ts.to[Set].result.map(_ shouldEqual Set((1, Serialized(List(1, 2, 3))), (2, Serialized(List(4, 5))))) >>
@@ -152,6 +156,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T1]
 
     db.exec {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts +=(1, v)) >>
       ts.map(_.data).result.head.map(_ shouldEqual v) >>
@@ -178,6 +183,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
     }
     val t2 = TableQuery[T2]
     db.exec {
+      t2.schema.drop.asTry >>
       t2.schema.create >>
       (t2 += None) >>
       t2.result.head.map(_ shouldBe None) >>

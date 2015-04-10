@@ -60,6 +60,7 @@ class NestingFunSuite extends AbstractSlickFunSuite {
     } yield a ~ b ~ (c * 2)
 
     db.seq(
+      ts.schema.drop.asTry,
       ts.schema.create,
       ts ++= Seq((1, "1", "a"), (2, "2", "b"), (3, "3", "c")),
       q1a.result.map(_ shouldBe res1),
@@ -84,7 +85,7 @@ class NestingFunSuite extends AbstractSlickFunSuite {
     val q = xs.sortBy(_.a)
     val r = Vector((1, "1", Some(1)), (2, "2", Some(2)), (3, "3", None))
 
-    val setup = xs.schema.create >> (xs ++= r)
+    val setup = xs.schema.drop.asTry >> xs.schema.create >> (xs ++= r)
 
     // implicitly 는 implicit 로 전달받는 인자를 정의한 함수를 implicit 변수를 다른 방법으로 표현하는 것입니다.
     //

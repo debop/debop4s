@@ -20,10 +20,7 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
   lazy val schema = employees.schema
 
   before {
-    Seq(
-      schema.drop.asTry,
-      schema.create
-    ).run
+    { schema.drop.asTry >> schema.create }.run
   }
   after {
     schema.drop.run
@@ -33,19 +30,11 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
     val saveActions = (0 until EMP_COUNT) map { x =>
       val empNo = x.toString
       val hireDate = DateTime.now
-      saveEmployee(Employee(None, s"name=$empNo", s"no-$empNo", EncryptedString(s"pwd-$empNo"), hireDate))
+      employees += Employee(None, s"name=$empNo", s"no-$empNo", EncryptedString(s"pwd-$empNo"), hireDate)
     }
-    db.sequence(saveActions: _*)
+    saveActions.run
 
     employees.count shouldEqual EMP_COUNT
-    employees.run foreach println
+    employees.run foreach { emp => LOG.debug(emp.toString) }
   }
-
-  private def saveEmployee(emp: Employee) = {
-    Thread.sleep(rnd.nextInt(20))
-    employees.saveAction(emp)
-
-  }
-
-
 }

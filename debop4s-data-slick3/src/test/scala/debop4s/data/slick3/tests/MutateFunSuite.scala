@@ -39,7 +39,7 @@ class MutateFunSuite extends AbstractSlickFunSuite {
 
     val publisher = db.stream(data.mutate.transactionally)
 
-    SlickContext.foreach(publisher) { m =>
+    foreach(publisher) { m =>
       if (!m.end) {
         if (m.row._1 == 1) m.row = m.row.copy(_2 = "aa")
         else if (m.row._1 == 2) m.delete
@@ -56,6 +56,9 @@ class MutateFunSuite extends AbstractSlickFunSuite {
   }
 
   test("delete mutate") {
+    if (isMySQL) {
+      cancel("MySQL은 delete mutate 를 지원하지 않습니다.")
+    }
     class T(tag: Tag) extends Table[(Int, Int)](tag, "del_mutate_t") {
       def a = column[Int]("A")
       def b = column[Int]("B", O.PrimaryKey)
@@ -66,13 +69,14 @@ class MutateFunSuite extends AbstractSlickFunSuite {
 
     var seenEndMarker = false
     val a = {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq((1, 1), (1, 2), (1, 3), (1, 4))) >>
       (ts ++= Seq((2, 5), (2, 6), (2, 7), (2, 8))) >>
       runnableStreamableCompiledQueryActionExtensionMethods(tsByA(1)).mutate(sendEndMarker = true).transactionally
     }
 
-    SlickContext.foreach(db.stream(a)) { m =>
+    foreach(db.stream(a)) { m =>
       if (!m.end) m.delete
       else {
         seenEndMarker = true
@@ -81,9 +85,9 @@ class MutateFunSuite extends AbstractSlickFunSuite {
     }.await
 
     seenEndMarker shouldBe true
-    db.result(ts).to[Set] shouldBe Set((2, 5), (2, 6), (2, 7), (2, 8), (3, 9))
+    ts.to[Set].run shouldBe Set((2, 5), (2, 6), (2, 7), (2, 8), (3, 9))
 
-    db.exec { ts.schema.drop }
+    ts.schema.drop.run
   }
 
 }

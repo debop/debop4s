@@ -17,7 +17,7 @@ class JdbcMicsFunSuite extends AbstractSlickFunSuite {
   }
 
   test("override statements") {
-    class T(tag: Tag) extends Table[Int](tag, "t") {
+    class T(tag: Tag) extends Table[Int](tag, "misc_t") {
       def id = column[Int]("a")
       def * = id
     }
@@ -27,6 +27,7 @@ class JdbcMicsFunSuite extends AbstractSlickFunSuite {
     val q2 = ts.filter(_.id === 2)
 
     db.seq(
+      ts.schema.drop.asTry,
       ts.schema.create,
       ts ++= Seq(1, 2, 3),
       q1.result.map(_ shouldBe Seq(1)),

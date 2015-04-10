@@ -33,6 +33,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     val schema = categories.schema ++ posts.schema
 
     db.seq(
+      schema.drop.asTry,
       schema.create,
       categories ++= Seq((1, "Scala"), (2, "ScalaQuery"), (3, "Windows"), (4, "Software")),
       posts.map(_.ins) ++= Seq(
@@ -56,7 +57,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       p <- posts if p.categoryId === c.id
     } yield (p.id, c.id, c.name, p.title)).sortBy(_._1)
 
-    db.result(q1.map(r => (r._1, r._2))) shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
+    q1.map(r => (r._1, r._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
     // Explicit inner join
     /*
@@ -76,7 +77,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       (c, p) <- categories join posts on (_.id === _.categoryId)
     } yield (p.id, c.id, c.name, p.title)).sortBy(_._1)
 
-    db.result(q2.map(r => (r._1, r._2))) shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
+    q2.map(r => (r._1, r._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
     // NOTE: Left outer join (null first)
     /*
@@ -99,7 +100,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       (c, p) <- categories joinLeft posts on (_.id === _.categoryId)
     } yield (p.map(_.id), (p.map(_.id).getOrElse(0), c.id, c.name, p.map(_.title).getOrElse("")))).sortBy(_._1.nullsFirst).map(_._2)
 
-    db.result(q3.map(r => (r._1, r._2))) shouldEqual Seq((0, 4), (2, 1), (3, 2), (4, 3), (5, 2))
+    q3.map(r => (r._1, r._2)).run shouldEqual Seq((0, 4), (2, 1), (3, 2), (4, 3), (5, 2))
 
     // NOTE: Read NULL from non-nullable column
     /*
@@ -122,7 +123,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       (c, p) <- categories joinLeft posts on (_.id === _.categoryId)
     } yield (p.map(_.id), c.id, c.name, p.map(_.title))).sortBy(_._1.nullsFirst)
 
-    db.result(q3a.map(r => (r._1, r._2))) shouldBe List((None, 4), (Some(2), 1), (Some(3), 2), (Some(4), 3), (Some(5), 2))
+    q3a.map(r => (r._1, r._2)).run shouldEqual List((None, 4), (Some(2), 1), (Some(3), 2), (Some(4), 3), (Some(5), 2))
 
     // NOTE: Left outer join (null last)
     /*
@@ -145,7 +146,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       (c, p) <- categories joinLeft posts on (_.id === _.categoryId)
     } yield (p.map(_.id), (p.map(_.id).getOrElse(0), c.id, c.name, p.map(_.title).getOrElse("")))).sortBy(_._1.nullsLast).map(_._2)
 
-    db.result(q3b.map(r => (r._1, r._2))) shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2), (0, 4))
+    q3b.map(r => (r._1, r._2)).run shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2), (0, 4))
 
 
     // NOTE: Right outer join
@@ -169,7 +170,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       (c, p) <- categories joinRight posts on (_.id === _.categoryId)
     } yield (p.id, c.map(_.id).getOrElse(0), c.map(_.name).getOrElse(""), p.title)).sortBy(_._1)
 
-    db.result(q4.map(r => (r._1, r._2))) shouldBe List((1, 0), (2, 1), (3, 2), (4, 3), (5, 2))
+    q4.map(r => (r._1, r._2)).run shouldEqual List((1, 0), (2, 1), (3, 2), (4, 3), (5, 2))
 
 
     // NOTE: Full outer join
@@ -203,9 +204,9 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       (c, p) <- categories joinFull posts on (_.id === _.categoryId)
     } yield (p.map(_.id).getOrElse(0), c.map(_.id).getOrElse(0), c.map(_.name).getOrElse(""), p.map(_.title).getOrElse(""))).sortBy(_._1)
 
-    db.result(q5.map(r => (r._1, r._2))) shouldBe List((0, 4), (1, 0), (2, 1), (3, 2), (4, 3), (5, 2))
+    q5.map(r => (r._1, r._2)).run shouldEqual List((0, 4), (1, 0), (2, 1), (3, 2), (4, 3), (5, 2))
 
-    db.exec { schema.drop }
+    schema.drop.run
   }
 
   test("option extended join") {
@@ -221,6 +222,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     val schema = xs.schema ++ ys.schema
 
     db.seq(
+      schema.drop.asTry,
       schema.create,
       xs ++= Seq((1, "a"), (2, "b"), (3, "b"), (4, "c"), (5, "c")),
       ys ++= Seq((1, "a"), (2, "b"), (3, "b"), (4, "d"), (5, "d"))
@@ -240,7 +242,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ on x2.x3 = x4.x5
      */
     val q1 = (xs.map(_.b) joinLeft ys.map(_.b) on (_ === _)).to[Set]
-    db.result(q1) shouldEqual Set(("a", Some("a")), ("b", Some("b")), ("c", None))
+    q1.run shouldEqual Set(("a", Some("a")), ("b", Some("b")), ("c", None))
 
     // Nested left outer, lift primitive value
     /*
@@ -267,7 +269,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q2 = ((xs.map(_.b) joinLeft ys.map(_.b) on (_ === _)) joinLeft ys.map(_.b) on (_._1 === _)).to[Set]
-    db.result(q2) shouldEqual Set((("a", Some("a")), Some("a")), (("b", Some("b")), Some("b")), (("c", None), None))
+    q2.run shouldEqual Set((("a", Some("a")), Some("a")), (("b", Some("b")), Some("b")), (("c", None), None))
 
     // Left outer, lift non-primitive value
     /*
@@ -286,7 +288,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q3 = (xs joinLeft ys on (_.b === _.b)).to[Set]
-    db.result(q3) shouldBe Set(
+    q3.run shouldBe Set(
       ((1, "a"), Some((1, "a"))),
       ((2, "b"), Some((2, "b"))),
       ((2, "b"), Some((3, "b"))),
@@ -313,7 +315,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q4 = (xs joinLeft ys on (_.b === _.b)).map { case (x, yo) => (x.a, yo.map(_.a)) }.to[Set]
-    db.result(q4) shouldBe Set(
+    q4.run shouldBe Set(
       (1, Some(1)),
       (2, Some(2)),
       (2, Some(3)),
@@ -348,7 +350,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q5 = ((xs joinLeft ys on (_.b === _.b)) joinLeft ys on (_._1.b === _.b)).to[Set]
-    db.result(q5) shouldBe Set(
+    q5.run shouldBe Set(
       (((1, "a"), Some((1, "a"))), Some((1, "a"))),
       (((2, "b"), Some((2, "b"))), Some((2, "b"))),
       (((2, "b"), Some((2, "b"))), Some((3, "b"))),
@@ -379,7 +381,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q6 = (ys.map(_.b) joinRight xs.map(_.b) on (_ === _)).to[Set]
-    db.result(q6) shouldBe Set((Some("a"), "a"), (Some("b"), "b"), (None, "c"))
+    q6.run shouldBe Set((Some("a"), "a"), (Some("b"), "b"), (None, "c"))
 
     // Nested right outer, lift primitive value
     // (left-associative; non symmetrical to then nested left outer case)
@@ -407,7 +409,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q7 = ((ys.map(_.b) joinRight xs.map(_.b) on (_ === _)) joinRight xs.map(_.b) on (_._2 === _)).to[Set]
-    db.result(q7) shouldBe Set(
+    q7.run shouldBe Set(
       (Some((Some("a"), "a")), "a"),
       (Some((Some("b"), "b")), "b"),
       (Some((None, "c")), "c")
@@ -430,7 +432,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q8 = (ys joinRight xs on (_.b === _.b)).to[Set]
-    db.result(q8) shouldBe Set(
+    q8.run shouldBe Set(
       (Some((1, "a")), (1, "a")),
       (Some((2, "b")), (2, "b")),
       (Some((2, "b")), (3, "b")),
@@ -457,7 +459,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q9 = (ys joinRight xs on (_.b === _.b)).map { case (yo, x) => (yo.map(_.a), x.a) }.to[Set]
-    db.result(q9) shouldBe Set(
+    q9.run shouldBe Set(
       (Some(1), 1),
       (Some(2), 2),
       (Some(2), 3),
@@ -493,7 +495,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q10 = ((ys joinRight xs on (_.b === _.b)) joinRight xs on (_._1.map(_.b) === _.b)).to[Set]
-    db.result(q10) shouldBe Set(
+    q10.run shouldBe Set(
       (Some((Some((1, "a")), (1, "a"))), (1, "a")),
       (Some((Some((2, "b")), (2, "b"))), (2, "b")),
       (Some((Some((2, "b")), (2, "b"))), (3, "b")),
@@ -534,7 +536,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x2
      */
     val q11 = (xs.map(_.b) joinFull ys.map(_.b) on (_ === _)).to[Set]
-    db.result(q11) shouldBe Set(
+    q11.run shouldBe Set(
       (Some("a"), Some("a")),
       (Some("b"), Some("b")),
       (Some("c"), None),
@@ -567,18 +569,20 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇   ) x9
     ┇ ) x2
      */
-    val q12 = (xs joinFull ys on (_.b === _.b)).to[Set]
-    db.result(q12) shouldBe Set(
-      (Some((1, "a")), Some((1, "a"))),
-      (Some((2, "b")), Some((2, "b"))),
-      (Some((2, "b")), Some((3, "b"))),
-      (Some((3, "b")), Some((2, "b"))),
-      (Some((3, "b")), Some((3, "b"))),
-      (Some((4, "c")), None),
-      (Some((5, "c")), None),
-      (None, Some((4, "d"))),
-      (None, Some((5, "d")))
-    )
+    if (!SlickContext.isMySQL) {
+      val q12 = (xs joinFull ys on (_.b === _.b)).to[Set]
+      q12.run shouldBe Set(
+        (Some((1, "a")), Some((1, "a"))),
+        (Some((2, "b")), Some((2, "b"))),
+        (Some((2, "b")), Some((3, "b"))),
+        (Some((3, "b")), Some((2, "b"))),
+        (Some((3, "b")), Some((3, "b"))),
+        (Some((4, "c")), None),
+        (Some((5, "c")), None),
+        (None, Some((4, "d"))),
+        (None, Some((5, "d")))
+      )
+    }
 
     db.exec(schema.drop)
   }
@@ -609,7 +613,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     val q1 = xs joinLeft xs
     db.result(q1) shouldBe Vector(((1, 20), Some((1, 20))))
 
-    db.exec { xs.schema.drop }
+    xs.schema.drop.run
   }
 
   test("zip") {
@@ -636,6 +640,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     val schema = categories.schema ++ posts.schema
 
     db.exec {
+      schema.drop.asTry >>
       schema.create >>
       (categories ++= Seq((1, "Scala"), (3, "Windows"), (2, "ScalaQuery"), (4, "Software"))) >>
       (posts.map(p => (p.title, p.categoryId)) ++= Seq(
@@ -655,10 +660,12 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇   order by x4."id"
     ┇ ) x2
      */
-    val q1 = for {
-      (c, i) <- categories.sortBy(_.id).zipWithIndex
-    } yield (c.id, i)
-    db.result(q1) shouldBe List((1, 0), (2, 1), (3, 2), (4, 3))
+    if (!SlickContext.isMySQL) {
+      val q1 = for {
+        (c, i) <- categories.sortBy(_.id).zipWithIndex
+      } yield (c.id, i)
+      q1.run shouldEqual List((1, 0), (2, 1), (3, 2), (4, 3))
+    }
 
     /*
     ┇ select x2.x3, x4.x5
@@ -680,10 +687,12 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     ┇ ) x4
     ┇ on x2.x8 = x4.x12
      */
-    val q2 = for {
-      (c, p) <- categories.sortBy(_.id) zip posts.sortBy(_.categoryId)
-    } yield (c.id, p.categoryId)
-    db.result(q2) shouldBe List((1, -1), (2, 1), (3, 2), (4, 2))
+    if (!SlickContext.isMySQL) {
+      val q2 = for {
+        (c, p) <- categories.sortBy(_.id) zip posts.sortBy(_.categoryId)
+      } yield (c.id, p.categoryId)
+      q2.run shouldEqual List((1, -1), (2, 1), (3, 2), (4, 2))
+    }
 
     /*
     ┇ select x2.x3, x4.x5
@@ -700,7 +709,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     val q3 = for {
       (c, p) <- categories zip posts
     } yield (c.id, p.categoryId)
-    db.result(q3) shouldBe List((1, -1), (3, 1), (2, 2), (4, 3))
+    q3.run shouldEqual List((1, -1), (3, 1), (2, 2), (4, 3))
 
     /*
     ┇ select x2.x3, x4.x5
@@ -717,7 +726,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     val q4 = for {
       res <- categories.zipWith(posts, (c: Categories, p: Posts) => (c.id, p.categoryId))
     } yield res
-    db.result(q4) shouldBe List((1, -1), (3, 1), (2, 2), (4, 3))
+    q4.run shouldEqual List((1, -1), (3, 1), (2, 2), (4, 3))
 
     /*
     ┇ select x2."id", rownum - 1
@@ -726,7 +735,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     val q5 = for {
       (c, i) <- categories.zipWithIndex
     } yield (c.id, i)
-    db.result(q5) shouldBe List((1, 0), (3, 1), (2, 2), (4, 3))
+    q5.run shouldEqual List((1, 0), (3, 1), (2, 2), (4, 3))
 
     /*
     ┇ select x2.x3, x4.x5, rownum - 1
@@ -743,19 +752,22 @@ class JoinFunSuite extends AbstractSlickFunSuite {
     val q6 = for {
       ((c, p), i) <- (categories zip posts).zipWithIndex
     } yield (c.id, p.categoryId, i)
-    db.result(q6) shouldBe List((1, -1, 0), (3, 1, 1), (2, 2, 2), (4, 3, 3))
+    q6.run shouldEqual List((1, -1, 0), (3, 1, 1), (2, 2, 2), (4, 3, 3))
 
-    db.exec { schema.drop }
+    schema.drop.run
   }
 
   test("no join condition") {
-    class T(tag:Tag) extends Table[Int](tag, "nojoincondition_t") {
+    class T(tag: Tag) extends Table[Int](tag, "nojoincondition_t") {
       def id = column[Int]("id")
       def * = id
     }
     lazy val ts = TableQuery[T]
 
-    db.exec { ts.schema.create }
+    db.exec {
+      ts.schema.drop.asTry >>
+      ts.schema.create
+    }
 
     // left outer join
     /*
@@ -799,8 +811,10 @@ class JoinFunSuite extends AbstractSlickFunSuite {
      */
     val q3 = ts join ts
 
-    db.seq(q1.result, q2.result, q3.result)
+    db.exec {
+      q1.result >> q2.result >> q3.result
+    }
 
-    db.exec { ts.schema.drop }
+    ts.schema.drop.run
   }
 }

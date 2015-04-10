@@ -13,25 +13,26 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ActionFunSuite extends AbstractSlickFunSuite {
 
   test("simple action as future") {
-    class T(tag: Tag) extends Table[Int](tag, "t") {
+    class T(tag: Tag) extends Table[Int](tag, "action_t") {
       def a = column[Int]("a")
       def * = a
     }
     lazy val ts = TableQuery[T]
 
     db.exec {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(2, 3, 1, 5, 4))
     }
     val q1 = ts.sortBy(_.a).map(_.a)
-    val f1 = db.run(q1.result)
-    f1.await shouldEqual Seq(1, 2, 3, 4, 5)
+    q1.run shouldEqual Seq(1, 2, 3, 4, 5)
 
-    db.exec(ts.schema.drop)
+    ts.schema.drop.run
 
     // for 구문 방식 : 비동기 방식 작업 시 andThen 과 같은 역할을 수행합니다.
     for {
       _ <- db.run {
+        ts.schema.drop.asTry >>
         ts.schema.create >>
         (ts ++= Seq(2, 3, 1, 5, 4))
       }
@@ -61,7 +62,7 @@ class ActionFunSuite extends AbstractSlickFunSuite {
   }
 
   test("streaming") {
-    class T(tag: Tag) extends Table[Int](tag, "t") {
+    class T(tag: Tag) extends Table[Int](tag, "streaming_t") {
       def a = column[Int]("a")
       def * = a
     }
@@ -70,12 +71,13 @@ class ActionFunSuite extends AbstractSlickFunSuite {
     val q1 = ts.sortBy(_.a).map(_.a)
 
     val p1 = db.stream {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(2, 3, 1, 5, 4)) >>
       q1.result
     }
 
-    for {
+    val r = for {
       r1 <- p1.materialize
       _ = r1 shouldEqual Seq(1, 2, 3, 4, 5)
       r2 <- db.run(q1.result.head)
@@ -83,5 +85,9 @@ class ActionFunSuite extends AbstractSlickFunSuite {
       r3 <- db.run(q1.result.headOption)
       _ = r3 shouldEqual Some(1)
     } yield ()
+
+    r.await
+
+    ts.schema.drop.run
   }
 }

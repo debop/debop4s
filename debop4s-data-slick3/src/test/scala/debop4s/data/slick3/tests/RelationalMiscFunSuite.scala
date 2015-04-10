@@ -1,5 +1,6 @@
 package debop4s.data.slick3.tests
 
+import debop4s.data.slick3.SlickContext._
 import debop4s.data.slick3._
 import debop4s.data.slick3.AbstractSlickFunSuite
 import debop4s.data.slick3.TestDatabase.driver.api._
@@ -20,24 +21,24 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     lazy val ts = TableQuery[T]
 
-    db.seq(
-      ts.schema.create,
-      ts ++= Seq(("1", "a"), ("2", "a"), ("3", "b"))
-    )
+    {
+      ts.schema.create >>
+      (ts ++= Seq(("1", "a"), ("2", "a"), ("3", "b")))
+    }.run
 
     val q1 = for (t <- ts if t.a === "1" || t.a === "2") yield t
-    db.result(q1).toSet shouldEqual Set(("1", "a"), ("2", "a"))
+    q1.to[Set].run shouldEqual Set(("1", "a"), ("2", "a"))
 
     val q2 = for (t <- ts if (t.a =!= "1") || (t.b =!= "a")) yield t
-    db.result(q2).toSet shouldEqual Set(("2", "a"), ("3", "b"))
+    q2.to[Set].run shouldEqual Set(("2", "a"), ("3", "b"))
 
     // No need to test that the unexpected result is actually unexpected
     // now that the compiler prints a warning about it
 
     val q4 = for (t <- ts if t.a =!= "1" || t.b =!= "a") yield t
-    db.result(q4).toSet shouldEqual Set(("2", "a"), ("3", "b"))
+    q4.to[Set].run shouldEqual Set(("2", "a"), ("3", "b"))
 
-    db.exec { ts.schema.drop }
+    ts.schema.drop.run
   }
 
   test("like") {
@@ -86,6 +87,7 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
 
     db.exec {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(("a2", "b2", "c2"), ("a1", "b1", "c1")))
     }
@@ -93,9 +95,9 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     val q1 = (for {
       t1 <- ts
     } yield t1.c ->(t1.a, t1.b)).sortedValues
-    db.result(q1) shouldEqual Seq(("a1", "b1"), ("a2", "b2"))
+    q1.run shouldEqual Seq(("a1", "b1"), ("a2", "b2"))
 
-    db.exec { ts.schema.drop }
+    ts.schema.drop.run
   }
 
   test("conditional") {
@@ -106,20 +108,21 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     val ts = TableQuery[T1]
 
     db.exec {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(1, 2, 3, 4))
     }
 
     val q1 = ts.map { t => (t.a, Case If (t.a < 3) Then 1 Else 0) }
-    db.result(q1).to[Set] shouldEqual Set((1, 1), (2, 1), (3, 0), (4, 0))
+    q1.to[Set].run shouldEqual Set((1, 1), (2, 1), (3, 0), (4, 0))
 
     val q2 = ts.map { t => (t.a, Case If (t.a < 3) Then 1) }
-    db.result(q2).to[Set] shouldEqual Set((1, Some(1)), (2, Some(1)), (3, None), (4, None))
+    q2.to[Set].run shouldEqual Set((1, Some(1)), (2, Some(1)), (3, None), (4, None))
 
     val q3 = ts.map { t => (t.a, Case If (t.a < 3) Then 1 If (t.a < 4) Then 2 Else 0) }
-    db.result(q3).to[Set] shouldEqual Set((1, 1), (2, 1), (3, 2), (4, 0))
+    q3.to[Set].run shouldEqual Set((1, 1), (2, 1), (3, 2), (4, 0))
 
-    db.exec { ts.schema.drop }
+    ts.schema.drop.run
   }
 
   test("cast") {
@@ -130,19 +133,20 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T1]
 
-    db.exec {
+    {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(("foo", 1), ("bar", 2)))
-    }
+    }.run
 
     /*
     ┇ select x2."a"||cast(x2."b" as VARCHAR)
     ┇ from "cast_t" x2
      */
-    val q1 = ts.map(t => t.a ++ t.b.asColumnOf[String])
-    db.result(q1).to[Set] shouldEqual Set("foo1", "bar2")
+    val q1 = ts.map(t => t.a ++ (if (isMySQL) t.b.asColumnOfType[String]("CHAR(255)") else t.b.asColumnOf[String]))
+    q1.to[Set].run shouldEqual Set("foo1", "bar2")
 
-    db.exec { ts.schema.drop }
+    ts.schema.drop.run
   }
 
   test("option conversions") {
@@ -153,10 +157,11 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T1]
 
-    db.exec {
+    {
+      ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq((1, Some(10)), (2, None)))
-    }
+    }.run
 
     // GetOrElse in ResultSetMapping on client side ( 아닌데??? )
     /*
@@ -178,17 +183,15 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
      */
     val q2 = ts.map(t => (t.a, t.b.getOrElse(0) + 1))
 
-    db.seq(
-      q1.to[Set].result.map(_ shouldEqual Set((1, 10), (2, 0))),
-      q2.to[Set].result.map(_ shouldEqual Set((1, 11), (2, 1)))
-    )
+    q1.to[Set].run shouldEqual Set((1, 10), (2, 0))
+    q2.to[Set].run shouldEqual Set((1, 11), (2, 1))
 
-    db.exec { ts.schema.drop }
+    ts.schema.drop.run
   }
 
   test("init errors") {
-    case class Id(toInt:Int)
-    case class Customer(id:Id)
+    case class Id(toInt: Int)
+    case class Customer(id: Id)
 
     // Before making `shipped` and `toNode` in `TableQuery` lazy,
     // putting `Tables` before `A` caused a StackOverflowException
@@ -196,10 +199,12 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
       val as = TableQuery[A]
       implicit val idMapper = MappedColumnType.base[Id, Int](_.toInt, Id)
     }
-    class A(tag:Tag) extends Table[Customer](tag, "init_a") {
+    class A(tag: Tag) extends Table[Customer](tag, "init_a") {
       def id = column[Id]("id", O.PrimaryKey, O.AutoInc)(Tables.idMapper)
+
       import Tables.idMapper
-      def * = id <> (Customer.apply, Customer.unapply)
+
+      def * = id <>(Customer.apply, Customer.unapply)
     }
     Tables.as.schema
 

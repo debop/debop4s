@@ -35,13 +35,15 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     db.seq(
+      ts.schema.drop.asTry,
       ts.schema.create,
-      ts.map(t => (t.b, t.c)) ++= Seq((False, None), (True, Some(True))),
-      ts.to[Set].result.map(_ shouldEqual Set((1, False, None), (2, True, Some(True)))),
-      ts.filter(_.b === (True: Bool)).to[Set].result.map(_ shouldEqual Set((2, True, Some(True)))),
-      ts.filter(_.b === (False: Bool)).to[Set].result.map(_ shouldEqual Set((1, False, None))),
-      ts.schema.drop
+      ts.map(t => (t.b, t.c)) ++= Seq((False, None), (True, Some(True)))
     )
+    ts.to[Set].run shouldEqual Set((1, False, None), (2, True, Some(True)))
+    ts.filter(_.b === (True: Bool)).to[Set].run shouldEqual Set((2, True, Some(True)))
+    ts.filter(_.b === (False: Bool)).to[Set].run shouldEqual Set((1, False, None))
+    ts.schema.drop.run
+
   }
 
   test("mapped type - char") {
@@ -70,13 +72,14 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     db.seq(
+      ts.schema.drop.asTry,
       ts.schema.create,
-      ts.map(t => (t.b, t.c)) ++= Seq((EnumValue1, None), (EnumValue1, Some(EnumValue2)), (EnumValue2, Some(EnumValue3))),
-      ts.to[Set].result.map(_ shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)), (3, EnumValue2, Some(EnumValue3)))),
-      ts.filter(_.b === (EnumValue1: EnumType)).to[Set].result.map(_ shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)))),
-      ts.filter(_.b === (EnumValue2: EnumType)).to[Set].result.map(_ shouldEqual Set((3, EnumValue2, Some(EnumValue3)))),
-      ts.schema.drop
+      ts.map(t => (t.b, t.c)) ++= Seq((EnumValue1, None), (EnumValue1, Some(EnumValue2)), (EnumValue2, Some(EnumValue3)))
     )
+    ts.to[Set].run shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)), (3, EnumValue2, Some(EnumValue3)))
+    ts.filter(_.b === (EnumValue1: EnumType)).to[Set].run shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)))
+    ts.filter(_.b === (EnumValue2: EnumType)).to[Set].run shouldEqual Set((3, EnumValue2, Some(EnumValue3)))
+    ts.schema.drop.run
   }
 
   test("mapped ref") {
@@ -101,13 +104,17 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     db.seq(
+      ts.schema.drop.asTry,
       ts.schema.create,
-      ts.map(t => (t.b, t.c)) ++= Seq((False, None), (True, Some(True))),
-      ts.to[Set].result.map(_ shouldEqual Set((1, False, None), (2, True, Some(True)))),
-      ts.filter(_.b === (True: Bool)).to[Set].result.map(_ shouldEqual Set((2, True, Some(True)))),
-      ts.filter(_.b === (False: Bool)).to[Set].result.map(_ shouldEqual Set((1, False, None))),
-      ts.schema.drop
+      ts.map(t => (t.b, t.c)) ++= Seq((False, None), (True, Some(True)))
     )
+
+    ts.to[Set].run shouldEqual Set((1, False, None), (2, True, Some(True)))
+    ts.filter(_.b === (True: Bool)).to[Set].run shouldEqual Set((2, True, Some(True)))
+    ts.filter(_.b === (False: Bool)).to[Set].run shouldEqual Set((1, False, None))
+
+    ts.schema.drop.run
+
   }
 
   test("auto mapped") {
@@ -119,12 +126,14 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     lazy val ts = TableQuery[T]
 
     db.seq(
+      ts.schema.drop.asTry,
       ts.schema.create,
-      ts ++= Seq((MyMappedID(1), 2), (MyMappedID(3), 4)),
-      ts.to[Set].result.map(_ shouldEqual Set((MyMappedID(1), 2), (MyMappedID(3), 4))),
-      ts.filter(_.id === MyMappedID(1)).to[Set].result.map(_ shouldEqual Set((MyMappedID(1), 2))),
-      ts.schema.drop
+      ts ++= Seq((MyMappedID(1), 2), (MyMappedID(3), 4))
     )
+    ts.to[Set].run shouldEqual Set((MyMappedID(1), 2), (MyMappedID(3), 4))
+    ts.filter(_.id === MyMappedID(1)).to[Set].run shouldEqual Set((MyMappedID(1), 2))
+
+    ts.schema.drop.run
   }
 
   def mappedToMacroCompilerBug = {

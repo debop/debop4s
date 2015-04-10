@@ -1,7 +1,8 @@
 package debop4s.data.slick3.tests
 
+import debop4s.data.slick3._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
+import debop4s.data.slick3.AbstractSlickFunSuite
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -17,6 +18,12 @@ class SequenceFunSuite extends AbstractSlickFunSuite {
       cancel("Sequence 를 지원하지 않습니다.")
       Future {}
     }
+    if (SlickContext.isMySQL) {
+      cancel("MySQL은 지원하지 않습니다.")
+    }
+    if (SlickContext.isHqlDB) {
+      cancel("HqlDB를 지원하지 않습니다.")
+    }
     case class User(id: Int, first: String, last: String)
 
     class Users(tag: Tag) extends Table[Int](tag, "sequence_users_1") {
@@ -26,23 +33,29 @@ class SequenceFunSuite extends AbstractSlickFunSuite {
     val users = TableQuery[Users]
 
     // 사용자의 Sequence
-    val mySequence = Sequence[Int]("mysequence") start 200 inc 10
+    val mySequence = Sequence[Int]("s1") start 200 inc 10
 
     val schema = users.schema ++ mySequence.schema
-    val q1 = for (u <- users) yield (mySequence.next, u.id)
 
     db.withPinnedSession(
+      schema.drop.asTry,
       schema.create,
-      users ++= Seq(1, 2, 3),
-      q1.to[Set].result.map(_ shouldEqual Set((200, 1), (210, 2), (220, 3))),
-      schema.drop
+      users ++= Seq(1, 2, 3)
     )
+
+    val q1 = for (u <- users) yield (mySequence.next, u.id)
+    q1.to[Set].run shouldEqual Set((200, 1), (210, 2), (220, 3))
+
+    schema.drop.run
   }
 
   test("sequence 2") {
     ifNotCapF(scap.sequence) {
       cancel("Sequence 를 지원하지 않습니다.")
       Future {}
+    }
+    if (SlickContext.isMySQL) {
+      cancel("MySQL은 지원하지 않습니다.")
     }
 
     val s1 = Sequence[Int]("s1")
@@ -54,8 +67,12 @@ class SequenceFunSuite extends AbstractSlickFunSuite {
 
     def values(s: Sequence[Int], count: Int = 5, create: Boolean = true) = {
       val q = Query(s.next)
-      (if (create) s.schema.create else DBIO.successful()) >>
-      DBIO.sequence((1 to count).toList map (_ => q.result.map(_.head)))
+
+      (
+      if (create) { s.schema.drop.asTry >> s.schema.create }
+      else DBIO.successful()
+      ) >>
+      DBIO.sequence((1 to count).map { _ => q.result.map(_.head) })
     }
 
     db.withPinnedSession(
@@ -65,7 +82,7 @@ class SequenceFunSuite extends AbstractSlickFunSuite {
       ifCap(scap.sequenceMin, scap.sequenceMax, scap.sequenceCycle) {
         DBIO.seq(
           values(s4).map(_ shouldEqual Seq(3, 4, 5, 2, 3)),
-          values(s5).map(_ shouldEqual Set(3, 2, 5, 4, 3))
+          values(s5).map(_ shouldEqual Seq(3, 2, 5, 4, 3))
         )
       },
       ifCap(scap.sequenceMin, scap.sequenceMax, scap.sequenceLimited) {
