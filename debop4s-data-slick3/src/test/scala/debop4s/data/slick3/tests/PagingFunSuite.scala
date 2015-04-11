@@ -33,6 +33,7 @@ class PagingFunSuite extends AbstractSlickFunSuite {
     val q6 = q1 take 0
 
     db.seq(
+      ids.schema.drop.asTry,
       ids.schema.create,
       ids ++= (1 to 10),
       q1.result.map(_ shouldEqual (1 to 10).toSeq),
@@ -55,6 +56,7 @@ class PagingFunSuite extends AbstractSlickFunSuite {
     }
 
     db.seq(
+      ids.schema.drop.asTry,
       ids.schema.create,
       ids ++= (1 to 10),
       q(0, 5).result.map(_ shouldEqual (1 to 5).toSeq),

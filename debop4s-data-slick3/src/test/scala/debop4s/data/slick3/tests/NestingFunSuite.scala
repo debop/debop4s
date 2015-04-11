@@ -1,9 +1,9 @@
 package debop4s.data.slick3.tests
 
+import debop4s.data.slick3._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
-import slick.util.TupleMethods._
 
+import slick.util.TupleMethods._
 import scala.concurrent.Future
 
 /**
@@ -228,12 +228,10 @@ class NestingFunSuite extends AbstractSlickFunSuite {
       q2f3.result.map(_ shouldBe r.map(t => Some(t._1)).map { io => Some(io) }.map(_.flatten))
     )
 
-    val drop = xs.schema.drop
-
     db.exec {
       setup >>
       t1 >> t2 >> t3 >> t4 >> t5 >> t6 >>
-      drop
+      xs.schema.drop
     }
   }
 }

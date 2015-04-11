@@ -1,11 +1,11 @@
 package debop4s.data.slick3.tests
 
 import debop4s.core.concurrent._
-import debop4s.data.slick3.AbstractSlickFunSuite
 
-import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3._
 import debop4s.data.slick3.SlickContext._
+import debop4s.data.slick3.TestDatabase.driver.api._
+
 import slick.backend.DatabasePublisher
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,6 +23,9 @@ class MutateFunSuite extends AbstractSlickFunSuite {
       cancel("not support mutate")
       Future()
     }
+    if (isMySQL) {
+      cancel("MySQL은 update mutate 를 지원하지 않습니다.")
+    }
 
     class Data(tag: Tag) extends Table[(Int, String)](tag, "DATA") {
       def id = column[Int]("id", O.PrimaryKey)
@@ -32,12 +35,13 @@ class MutateFunSuite extends AbstractSlickFunSuite {
     val data = TableQuery[Data]
 
     var seenEndMarker = false
-    db.exec {
-      data.schema.create >>
-      (data ++= Seq((1, "a"), (2, "b"), (3, "c"), (4, "d")))
-    }
+    db.seq(
+      data.schema.drop.asTry,
+      data.schema.create,
+      data ++= Seq((1, "a"), (2, "b"), (3, "c"), (4, "d"))
+    )
 
-    val publisher = db.stream(data.mutate.transactionally)
+    val publisher = data.mutate.transactionally.stream
 
     foreach(publisher) { m =>
       if (!m.end) {
@@ -47,12 +51,12 @@ class MutateFunSuite extends AbstractSlickFunSuite {
       } else {
         seenEndMarker = true
       }
-    }
+    }.await
 
     seenEndMarker shouldBe false
-    db.run(data.sortBy(_.id).result).map(_ shouldBe Seq((1, "aa"), (3, "c"), (4, "d"), (5, "ee")))
+    data.sortBy(_.id).exec shouldEqual Seq((1, "aa"), (3, "c"), (4, "d"), (5, "ee"))
 
-    db.exec { data.schema.drop }
+    data.schema.drop.exec
   }
 
   test("delete mutate") {

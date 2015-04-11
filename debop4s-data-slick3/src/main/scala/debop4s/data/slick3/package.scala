@@ -44,7 +44,6 @@ package object slick3 {
       //db.run(query.result).await
     }
 
-
     /**
      * action 을 순서대로 처리합니다.
      * {{{

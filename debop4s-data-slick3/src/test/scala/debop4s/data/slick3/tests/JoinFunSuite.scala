@@ -4,6 +4,7 @@ import debop4s.data.slick3.AbstractSlickFunSuite
 
 import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3._
+import slick.lifted.BaseJoinQuery
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -584,7 +585,7 @@ class JoinFunSuite extends AbstractSlickFunSuite {
       )
     }
 
-    db.exec(schema.drop)
+    schema.drop.exec
   }
 
   test("computed star projection") {
@@ -811,9 +812,11 @@ class JoinFunSuite extends AbstractSlickFunSuite {
      */
     val q3 = ts join ts
 
-    db.exec {
-      q1.result >> q2.result >> q3.result
-    }
+    db.seq(
+      q1.result,
+      q2.result,
+      q3.result
+    )
 
     ts.schema.drop.exec
   }

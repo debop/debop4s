@@ -73,6 +73,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     val schema = suppliersStd.schema ++ coffeesStd.schema
 
     val setup = DBIO.seq(
+      schema.drop.asTry,
       schema.create,
       suppliersStd +=(101, "Acme, Inc.", "99 Market Street", "Groundsville", "CA", "95199"),
       suppliersStd +=(49, "Superior Coffee", "1 Party Place", "Mendocino", "CA", "95460"),
@@ -234,18 +235,18 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     } yield (c, d)
 
     val a3 = DBIO.seq(
-      q2.result.named("More elaborate query").map(_.toSet).map { r2 =>
-        r2 shouldBe Set(
+      q2.result.named("More elaborate query").map(_.toSet).map {
+        _ shouldBe Set(
           ("Colombian", "Acme, Inc."),
           ("French_Roast", "Superior Coffee"),
           ("Colombian_Decaf", "Acme, Inc.")
         )
       },
-      q3.result.named("Lifting scala values").map(_.toSet).map { r3 =>
-        r3 shouldBe Set(("Colombian_Decaf", "Acme, Inc.", "Colombian_Decaf", 0, 3396))
+      q3.result.named("Lifting scala values").map(_.toSet).map {
+        _ shouldBe Set(("Colombian_Decaf", "Acme, Inc.", "Colombian_Decaf", 0, 3396))
       },
-      q3b.result.named("Lifting scalar values, with extra tuple").map(_.toSet).map { r3b =>
-        r3b shouldBe Set(
+      q3b.result.named("Lifting scalar values, with extra tuple").map(_.toSet).map {
+        _ shouldBe Set(
           ("Colombian", "Acme, Inc.", "Colombian", 0, 799, 42),
           ("French_Roast", "Superior Coffee", "French_Roast", 0, 1598, 42),
           ("Colombian_Decaf", "Acme, Inc.", "Colombian_Decaf", 0, 3396, 42)
@@ -256,8 +257,8 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
           r4.toSet shouldBe Set(("Colombian", 42))
         }
       },
-      q4b.result.map(_.toSet).map { r4b =>
-        r4b shouldBe Set(
+      q4b.result.map(_.toSet).map {
+        _ shouldBe Set(
           (("Colombian", 799, 42), ("Colombian", 799, 42)),
           (("Colombian", 799, 42), ("French_Roast", 799, 42)),
           (("French_Roast", 799, 42), ("Colombian", 799, 42)),
@@ -325,24 +326,24 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     } yield (c._1.name, c._1.supId, c._2)
 
     val a5 = DBIO.seq(
-      q7a.result.named("Simple union").map(_.toSet).map { r7a =>
-        r7a shouldBe Set(
+      q7a.result.named("Simple union").map(_.toSet).map {
+        _ shouldBe Set(
           ("Colombian", 101, 0),
           ("French_Roast", 49, 0),
           ("Espresso", 150, 0),
           ("French_Roast_Decaf", 49, 0)
         )
       },
-      q7.result.named("Union").map(_.toSet).map { r7 =>
-        r7 shouldBe Set(
+      q7.result.named("Union").map(_.toSet).map {
+        _ shouldBe Set(
           ("Colombian", 101, 1),
           ("French_Roast", 49, 1),
           ("Espresso", 150, 2),
           ("French_Roast_Decaf", 49, 2)
         )
       },
-      q71.result.named("Transitive push-down without union").map(_.toSet).map { r71 =>
-        r71 shouldBe Set(
+      q71.result.named("Transitive push-down without union").map(_.toSet).map {
+        _ shouldBe Set(
           ("Colombian", 101, 1),
           ("French_Roast", 49, 1)
         )
@@ -364,22 +365,22 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     } yield (t._1, t._2)
 
     val a6 = DBIO.seq(
-      q7b.result.named("Union with filter on the outside").map(_.toSet).map { r7b =>
-        r7b shouldBe Set(
+      q7b.result.named("Union with filter on the outside").map(_.toSet).map {
+        _ shouldBe Set(
           ("French_Roast", 49, 1),
           ("Espresso", 150, 2),
           ("French_Roast_Decaf", 49, 2)
         )
       },
-      q8.result.named("Outer join").map(_.toSet).map { r8 =>
-        r8 shouldBe Set(
+      q8.result.named("Outer join").map(_.toSet).map {
+        _ shouldBe Set(
           ("Colombian", Some("Colombian")),
           ("French_Roast", Some("French_Roast")),
           ("Colombian_Decaf", None)
         )
       },
-      q8b.result.named("Nested outer join").map(_.toSet).map { r8b =>
-        r8b shouldBe Set(
+      q8b.result.named("Nested outer join").map(_.toSet).map {
+        _ shouldBe Set(
           ((("Colombian", 101, 799, 1, 0), Some(("Colombian", 101, 799, 1, 0))), Some(("Colombian", 101, 799, 1, 0))),
           ((("Colombian", 101, 799, 1, 0), Some(("Colombian", 101, 799, 1, 0))), Some(("Colombian_Decaf", 101, 849, 4, 0)))
         )
@@ -437,14 +438,17 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
       o <- orders if o.orderId === (for {o2 <- orders if o2.userId === o.userId} yield o2.orderId).max
     } yield o).sortBy(_.orderId).map(o => o.orderId ~ o.userId)
 
+    val schema = users.schema ++ orders.schema
+
     db.seq(
-      (users.schema ++ orders.schema).create,
+      schema.drop.asTry,
+      schema.create,
       q3.result,
       q4.result,
       q6a.result,
       q6b.result,
       q6c.result,
-      (users.schema ++ orders.schema).drop
+      schema.drop
     )
   }
 
@@ -483,8 +487,11 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     val schema = tableA.schema ++ tableB.schema ++ tableC.schema
 
     db.seq(
+      schema.drop.asTry,
       schema.create,
+
       queryErr2.result,
+
       schema.drop
     )
   }
@@ -496,20 +503,21 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     }
     lazy val as = TableQuery[A]
 
-    db.seq(
-    as.schema.create,
-    as += 42,
-    as.filter(_.id === 42.bind).length.result.map(_ shouldEqual 1), {
-      val q1 = Compiled { (n: Rep[Int]) =>
-        as.filter(_.id === n).map(a => as.length)
-      }
-      q1(42).result.map(_ shouldEqual Seq(1))
-    }, {
-      val q2 = as.filter(_.id in as.sortBy(_.id).map(_.id))
-      q2.result.map(_ shouldEqual Seq(42))
-    },
+    db.exec(
+      as.schema.drop.asTry >>
+      as.schema.create >>
+      (as += 42) >>
+      as.filter(_.id === 42.bind).length.result.map(_ shouldEqual 1) >> {
+        val q1 = Compiled { (n: Rep[Int]) =>
+          as.filter(_.id === n).map(a => as.length)
+        }
+        q1(42).result.map(_ shouldEqual Seq(1))
+      } >> {
+        val q2 = as.filter(_.id in as.sortBy(_.id).map(_.id))
+        q2.result.map(_ shouldEqual Seq(42))
+      } >>
 
-    as.schema.drop
+      as.schema.drop
     )
   }
 
@@ -525,6 +533,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     lazy val as = TableQuery[A]
 
     db.seq(
+      as.schema.drop.asTry,
       as.schema.create,
       as.map(a => (a.id, a.a, a.b)) ++= Seq(
         (1, "a1", "b1"),
@@ -534,7 +543,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     )
 
     val q1 = as.map(identity).filter(_.b === "b3")
-    db.result(q1).toSet shouldEqual Set((3, "a3"))
+    q1.exec.toSet shouldEqual Set((3, "a3"))
 
     /*
     ┇ select x2.x3, x4."a"
@@ -555,11 +564,9 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
       c2 <- as
     } yield (c.id, c2.a)
 
-    db.result(q2).toSet shouldEqual Set((1, "a1"), (1, "a2"), (1, "a3"), (2, "a1"), (2, "a2"), (2, "a3"), (3, "a1"), (3, "a2"), (3, "a3"))
+    q2.exec.toSet shouldEqual Set((1, "a1"), (1, "a2"), (1, "a3"), (2, "a1"), (2, "a2"), (2, "a3"), (3, "a1"), (3, "a2"), (3, "a3"))
 
-
-    db.exec(as.schema.drop)
-
+    as.schema.drop.exec
   }
 
 }

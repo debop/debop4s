@@ -1,10 +1,15 @@
 package debop4s.data.slick3.tests
 
+import debop4s.core.concurrent._
+
 import debop4s.data.slick3.AbstractSlickFunSuite
 import debop4s.data.slick3._
 import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import slick.jdbc.GetResult
+import slick.jdbc.{StaticQuery => Q, SQLActionBuilder, GetResult}
+import slick.profile.{SqlAction, SqlStreamingAction}
+
+import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -18,8 +23,49 @@ class PlainSQLFunSuite extends AbstractSlickFunSuite {
 
   implicit val getUserResult = GetResult(r => new User(r.<<, r.<<))
 
-  test("simple") {
-    // TODO
+  test("plain sql") {
+    def getUsers(id: Option[Int]) = {
+      if (id.isDefined)
+        sql"select id, name from plainsql_users where id=${ id.get }".as[User]
+      else
+        sql"select id, name from plainsql_users".as[User]
+    }
+    def insertUser(id: Int, name: String) = sqlu"insert into plainsql_users values($id, $name)"
+
+    val createTable = sqlu"create table plainsql_users(id int not null primary key,name varchar(255))"
+
+    val populateUsers = Seq(insertUser(1, "szeiger"), insertUser(0, "admin"), insertUser(2, "guest"), insertUser(3, "foo"))
+
+    val allIDs = sql"select id from plainsql_users".as[Int]
+    def userForID(id: Int) =
+      sql"select id, name from plainsql_users where id=$id".as[User]
+    def userForIdAndName(id: Int, name: String) =
+      sql"select id, name from plainsql_users where id=$id and name=$name".as[User]
+
+    db.seq(
+      sqlu"drop table plainsql_users".asTry,
+      createTable.map(_ shouldEqual 0)
+    )
+
+    db.exec(DBIO.seq(populateUsers: _*).transactionally)
+
+    allIDs.exec.foreach { id => LOG.debug(s"id=$id") }
+    allIDs.exec.toSet shouldEqual Set(0, 1, 2, 3)
+
+    userForID(2).exec.head shouldEqual User(2, "guest")
+    userForID(2).exec shouldEqual Seq(User(2, "guest"))
+
+    getUsers(Some(2)).exec shouldEqual Seq(User(2, "guest"))
+    getUsers(None).exec.toSet shouldEqual Set(User(0, "admin"), User(1, "szeiger"), User(2, "guest"), User(3, "foo"))
+
+    val s5 = mutable.Set[User]()
+    getUsers(None).stream.foreach { user =>
+      s5 += user
+    }.await
+
+    s5 shouldEqual Set(User(0, "admin"), User(1, "szeiger"), User(2, "guest"), User(3, "foo"))
+
+    db.exec { sqlu"drop table plainsql_users" }
   }
 
   test("interpolation") {
@@ -41,6 +87,7 @@ class PlainSQLFunSuite extends AbstractSlickFunSuite {
     val drop: DBIO[Int] = sqlu"drop table USERS"
 
     db.seq(
+      drop.asTry,
       create.map(_ shouldEqual 0),
       DBIO.fold((for {
         (id, name) <- List((1, "szeiger"), (0, "admin"), (2, "guest"), (3, "foo"))

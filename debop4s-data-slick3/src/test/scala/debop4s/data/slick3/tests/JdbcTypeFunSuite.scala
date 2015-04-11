@@ -6,8 +6,8 @@ import javax.sql.rowset.serial.SerialBlob
 
 import debop4s.core.concurrent._
 import debop4s.core.io.Serializers
-import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3._
+import debop4s.data.slick3.TestDatabase.driver.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -33,7 +33,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       (ts +=(2, Array[Byte](4, 5)))
     }
     db.exec(ts.result.map(_.map { case (id, data) => (id, data.mkString) }.toSet)) shouldEqual Set((1, "123"), (2, "45"))
-    db.exec(ts.result).map { case (id, data) => (id, data.mkString) }.toSet shouldBe Set((1, "123"), (2, "45"))
+    ts.exec.map { case (id, data) => (id, data.mkString) }.toSet shouldBe Set((1, "123"), (2, "45"))
 
     // implicitly 는 implicit 로 전달받는 인자를 정의한 함수를 implicit 변수를 다른 방법으로 표현하는 것입니다.
     //
@@ -48,7 +48,11 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
     */
 
     if (implicitly[ColumnType[Array[Byte]]].hasLiteralForm) {
-      db.exec(ts.filter(_.data === Array[Byte](4, 5)).map(_.data).to[Set].result).map(_.mkString) shouldEqual Set("45")
+      ts.filter(_.data === Array[Byte](4, 5))
+      .map(_.data)
+      .to[Set]
+      .exec
+      .map(_.mkString) shouldEqual Set("45")
     }
 
     ts.schema.drop.exec
@@ -87,13 +91,14 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
 
       val a1 = (
                ts.schema.drop.asTry >>
-                 ts.schema.create >>
-                 (ts +=(1, new SerialBlob(Array[Byte](1, 2, 3)))) >>
-                 (ts +=(2, new SerialBlob(Array[Byte](4, 5)))) >>
-                 ts.result
-                 ).transactionally
+               ts.schema.create >>
+               (ts +=(1, new SerialBlob(Array[Byte](1, 2, 3)))) >>
+               (ts +=(2, new SerialBlob(Array[Byte](4, 5)))) >>
+               ts.result
+               ).transactionally
 
-      val p1 = db.stream(a1).mapResult { case (id, data) => (id, data.getBytes(1, data.length.toInt).mkString) }
+      val p1 = a1.stream.mapResult { case (id, data) => (id, data.getBytes(1, data.length.toInt).mkString) }
+
       val f1 = p1.materialize.map(_.toSet shouldEqual Set((1, "123"), (2, "45"))) flatMap { _ =>
         val f = db.stream(ts.result.transactionally, bufferNext = false)
                 .materializeAsync[(Int, String)](
@@ -182,6 +187,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       def * = t
     }
     val t2 = TableQuery[T2]
+
     db.exec {
       t2.schema.drop.asTry >>
       t2.schema.create >>
