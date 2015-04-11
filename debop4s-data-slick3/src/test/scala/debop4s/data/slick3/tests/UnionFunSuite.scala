@@ -37,8 +37,11 @@ class UnionFunSuite extends AbstractSlickFunSuite {
     val q4b = q4 union q4
     val q4c = q4 union q4 union q4
 
+    val schema = managers.schema ++ employees.schema
+
     db.seq(
-      (managers.schema ++ employees.schema).create,
+      schema.drop.asTry,
+      schema.create,
       managers ++= Seq(
         (1, "Peter", "HR"),
         (2, "Amy", "IT"),
@@ -52,13 +55,13 @@ class UnionFunSuite extends AbstractSlickFunSuite {
         (8, "Greg", 3)
       )
     )
-    db.result(q1).toSet shouldEqual Set((2, "Amy"), (3, "Steve"))
-    db.result(q2).toSet shouldEqual Set((7, "Ben"), (8, "Greg"), (6, "Leonard"))
-    db.result(q3) shouldEqual Seq((2, "Amy"), (7, "Ben"), (8, "Greg"), (6, "Leonard"), (3, "Steve"))
-    db.result(q4b).toSet shouldEqual Set(1, 2, 3)
-    db.result(q4c).toSet shouldEqual Set(1, 2, 3)
+    q1.to[Set].exec shouldEqual Set((2, "Amy"), (3, "Steve"))
+    q2.to[Set].exec shouldEqual Set((7, "Ben"), (8, "Greg"), (6, "Leonard"))
+    q3.exec shouldEqual Seq((2, "Amy"), (7, "Ben"), (8, "Greg"), (6, "Leonard"), (3, "Steve"))
+    q4b.to[Set].exec shouldEqual Set(1, 2, 3)
+    q4c.to[Set].exec shouldEqual Set(1, 2, 3)
 
-    db.exec((managers.schema ++ employees.schema).drop)
+    schema.drop.exec
   }
 
   test("union without projection") {
@@ -66,6 +69,7 @@ class UnionFunSuite extends AbstractSlickFunSuite {
     val q = f("Peter") union f("Amy")
 
     db.seq(
+      managers.schema.drop.asTry,
       managers.schema.create,
       managers ++= Seq(
         (1, "Peter", "HR"),
@@ -73,8 +77,9 @@ class UnionFunSuite extends AbstractSlickFunSuite {
         (3, "Steve", "IT")
       )
     )
-    db.result(q).toSet shouldEqual Set((1, "Peter", "HR"), (2, "Amy", "IT"))
-    db.exec(managers.schema.drop)
+    q.to[Set].exec shouldEqual Set((1, "Peter", "HR"), (2, "Amy", "IT"))
+
+    managers.schema.drop.exec
   }
 
   test("union of joins") {
@@ -100,16 +105,18 @@ class UnionFunSuite extends AbstractSlickFunSuite {
     val q3 = q1 union q2
 
     val schema = coffees.schema ++ teas.schema
+
     db.seq(
+      schema.drop.asTry,
       schema.create,
       coffees ++= Seq((10L, 1L), (20L, 2L), (30L, 3L)),
       teas ++= Seq((100L, 1L), (200L, 2L), (300L, 3L))
     )
 
-    db.result(q1).toSet shouldEqual Set((10L, 1L), (20L, 2L), (30L, 3L))
-    db.result(q2).toSet shouldEqual Set((100L, 1L), (200L, 2L), (300L, 3L))
-    db.result(q3).toSet shouldEqual Set((10L, 1L), (20L, 2L), (30L, 3L), (100L, 1L), (200L, 2L), (300L, 3L))
+    q1.to[Set].exec shouldEqual Set((10L, 1L), (20L, 2L), (30L, 3L))
+    q2.to[Set].exec shouldEqual Set((100L, 1L), (200L, 2L), (300L, 3L))
+    q3.to[Set].exec shouldEqual Set((10L, 1L), (20L, 2L), (30L, 3L), (100L, 1L), (200L, 2L), (300L, 3L))
 
-    db.exec { schema.drop }
+    schema.drop.exec
   }
 }

@@ -55,11 +55,13 @@ class TemplateFunSuite extends AbstractSlickFunSuite {
 
     val schema = users.schema ++ orders.schema
 
-    db.exec {
-      schema.create >>
-      (users.map(_.first) ++= Seq("Homer", "Marge", "Apu", "Carl", "Lenny"))
-    }
-    val uids = db.exec(users.map(_.id).result)
+    db.seq(
+      schema.drop.asTry,
+      schema.create,
+      users.map(_.first) ++= Seq("Homer", "Marge", "Apu", "Carl", "Lenny")
+    )
+
+    val uids = users.map(_.id).exec
 
     db.seq(uids.map(uid => orders.map(o => (o.userId, o.product)) +=(uid, if (uid < 4) "Product A" else "Product B")): _*)
 
@@ -69,9 +71,10 @@ class TemplateFunSuite extends AbstractSlickFunSuite {
       q3.result.map(_.toSet shouldEqual Set("Marge", "Apu", "Carl", "Lenny")),
       q4.result.map(_.toSet shouldEqual Set("Marge", "Apu")),
       q5a.result.map(_ shouldEqual Seq("Apu")),
-      q5b.result.map(_.toSet shouldEqual Set("Homer", "Marge", "Apu", "Carl", "Lenny")),
-      schema.drop
+      q5b.result.map(_.toSet shouldEqual Set("Homer", "Marge", "Apu", "Carl", "Lenny"))
     )
+
+    schema.drop.exec
   }
 
   test("compiled") {
@@ -116,7 +119,11 @@ class TemplateFunSuite extends AbstractSlickFunSuite {
     val expShapedC = Compiled(expShaped)
 
     db.seq(
-      ts.schema.create,
+      ts.schema.drop.asTry,
+      ts.schema.create
+    )
+
+    db.seq(
       Compiled(ts.map(identity)) +=(1, "a"),
       Compiled(ts) ++= Seq((2, "b"), (3, "c")),
       byIdAndS(1, "a").result.map(_.toSet shouldEqual Set((1, "a"))),
@@ -128,9 +135,10 @@ class TemplateFunSuite extends AbstractSlickFunSuite {
       countBelowC(3).result.map(_ shouldEqual 2),
       joinC(1).result.map(_ shouldEqual Seq(((1, "a"), (1, "a")))),
       impShapedC.result.map(_ shouldEqual(3, 3)),
-      expShapedC.result.map(_ shouldEqual(3, 3)),
-      ts.schema.drop
+      expShapedC.result.map(_ shouldEqual(3, 3))
     )
+
+    ts.schema.drop.exec
 
   }
 

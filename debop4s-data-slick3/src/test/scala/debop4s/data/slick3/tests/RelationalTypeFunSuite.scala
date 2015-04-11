@@ -21,7 +21,9 @@ class RelationalTypeFunSuite extends AbstractSlickFunSuite {
       lazy val tbl = TableQuery[Tbl]
       val data = values.zipWithIndex.map { case (d, i) => (i + 1, d) }
       val q = tbl.sortBy(_.id)
+
       DBIO.seq(
+        tbl.schema.drop.asTry,
         tbl.schema.create,
         tbl ++= data,
         q.result.map(_ shouldEqual data),
@@ -51,6 +53,7 @@ class RelationalTypeFunSuite extends AbstractSlickFunSuite {
     lazy val as = TableQuery[A]
 
     db.seq(
+      as.schema.drop.asTry,
       as.schema.create,
       as +=(1, v),
       as.map(_.data).result.map(_ shouldEqual Seq(v)),
@@ -78,6 +81,7 @@ class RelationalTypeFunSuite extends AbstractSlickFunSuite {
     val ts = TableQuery[T]
 
     db.seq(
+      ts.schema.drop.asTry,
       ts.schema.create,
       ts += 42,
       ts.map(_ => ()).result.map(_ shouldEqual Seq(())),

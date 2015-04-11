@@ -21,10 +21,11 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     lazy val ts = TableQuery[T]
 
-    {
-      ts.schema.create >>
-      (ts ++= Seq(("1", "a"), ("2", "a"), ("3", "b")))
-    }.exec
+    db.seq(
+      ts.schema.drop.asTry,
+      ts.schema.create,
+      ts ++= Seq(("1", "a"), ("2", "a"), ("3", "b"))
+    )
 
     val q1 = for (t <- ts if t.a === "1" || t.a === "2") yield t
     q1.to[Set].exec shouldEqual Set(("1", "a"), ("2", "a"))
@@ -48,16 +49,17 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     lazy val t1s = TableQuery[T1]
 
-    db.exec {
-      t1s.schema.create >>
-      (t1s ++= Seq("foo", "bar", "foobar", "foo%"))
-    }
+    db.seq(
+      t1s.schema.drop.asTry,
+      t1s.schema.create,
+      t1s ++= Seq("foo", "bar", "foobar", "foo%")
+    )
 
     val q1 = for {t1 <- t1s if t1.a like "foo"} yield t1.a
-    db.result(q1) shouldEqual Seq("foo")
+    q1.exec shouldEqual Seq("foo")
 
     val q2 = for {t1 <- t1s if t1.a like "foo%"} yield t1.a
-    db.result(q2) shouldEqual Seq("foo", "foobar", "foo%")
+    q2.exec shouldEqual Seq("foo", "foobar", "foo%")
 
     db.exec {
       ifCap(rcap.likeEscape) {
@@ -66,7 +68,7 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
       }
     }
 
-    db.exec { t1s.schema.drop }
+    t1s.schema.drop.exec
   }
 
   test("sorting") {
@@ -86,11 +88,11 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
         q.sortBy(_._1).map(_._2)
     }
 
-    db.exec {
-      ts.schema.drop.asTry >>
-      ts.schema.create >>
-      (ts ++= Seq(("a2", "b2", "c2"), ("a1", "b1", "c1")))
-    }
+    db.seq(
+      ts.schema.drop.asTry,
+      ts.schema.create,
+      ts ++= Seq(("a2", "b2", "c2"), ("a1", "b1", "c1"))
+    )
 
     val q1 = (
              for {
@@ -136,11 +138,11 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T1]
 
-    {
+    db.exec {
       ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(("foo", 1), ("bar", 2)))
-    }.exec
+    }
 
     /*
     ┇ select x2."a"||cast(x2."b" as VARCHAR)
