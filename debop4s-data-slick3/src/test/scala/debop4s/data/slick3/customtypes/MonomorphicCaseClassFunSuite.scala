@@ -36,9 +36,9 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
       (userAddresses += UserAddress(None, "a", Address("aaaa", "seoul", "11111"))) >>
       (userAddresses += UserAddress(None, "b", Address("bbbb", "seoul", "22222"))) >>
       (userAddresses += UserAddress(None, "c", Address("cccc", "seoul", "33333")))
-    }.transactionally.run
+    }.transactionally.exec
 
-    userAddresses.run foreach println
+    userAddresses.exec foreach println
 
     /*
     ┇ select x2.`id`, x2.`name`, x2.`street`, x2.`city`, x2.`zipcode`
@@ -49,7 +49,7 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
     ┇   limit 1
     ┇ ) x2
      */
-    userAddresses.filter(_.id === 1.bind).take(1).run.head.address.street shouldEqual "aaaa"
+    userAddresses.filter(_.id === 1.bind).take(1).exec.head.address.street shouldEqual "aaaa"
 
     /*
     ┇ select x2.x3
@@ -60,7 +60,7 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
     ┇   limit 1
     ┇ ) x2
      */
-    userAddresses.filter(_.street === "bbbb".bind).map(_.zipcode).take(1).run.head shouldEqual "22222"
+    userAddresses.filter(_.street === "bbbb".bind).map(_.zipcode).take(1).exec.head shouldEqual "22222"
 
     /*
     ┇ select x2.x3
@@ -71,8 +71,8 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
     ┇   limit 1
     ┇ ) x2
      */
-    userAddresses.filter(_.address.city === "seoul".bind).map(_.address.zipcode).take(1).run.head shouldEqual "11111"
+    userAddresses.filter(_.address.city === "seoul".bind).map(_.address.zipcode).take(1).exec.head shouldEqual "11111"
 
-    userAddresses.schema.drop.run
+    userAddresses.schema.drop.exec
   }
 }

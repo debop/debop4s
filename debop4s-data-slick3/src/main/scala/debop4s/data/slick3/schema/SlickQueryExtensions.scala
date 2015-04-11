@@ -20,12 +20,12 @@ trait SlickQueryExtensions {
    * @tparam M Model 의 수형 (예: User)
    */
   abstract class BaseTableExtensions[M](query: TableQuery[_ <: Table[M]]) {
-    def count: Int = query.length.run
-    def exists: Boolean = query.exists.run
-    def list: List[M] = query.run.toList
+    def count: Int = query.length.exec
+    def exists: Boolean = query.exists.exec
+    def list: List[M] = query.exec.toList
 
     def page(pageIndex: Int = 0, pageSize: Int = 10): List[M] =
-      query.drop(pageIndex * pageSize).take(pageSize).to[List].run
+      query.drop(pageIndex * pageSize).take(pageSize).to[List].exec
 
     def save(model: M): M
     def saveAll(models: M*): List[M]
@@ -60,7 +60,7 @@ trait SlickQueryExtensions {
       autoInc into { case (e, id) => id } forceInsert entity
 
     def add(entity: E): Id =
-      addAction(entity).run.asInstanceOf[Id]
+      addAction(entity).exec.asInstanceOf[Id]
 
 
     def updateAction(entity: E): driver.DriverAction[_, NoStream, Write] =
@@ -75,7 +75,7 @@ trait SlickQueryExtensions {
 
     override def save(entity: E): E = {
       extractId(entity) match {
-        case Some(id) => filterById(id).update(entity).run; entity
+        case Some(id) => filterById(id).update(entity).exec; entity
         case None => withId(entity, add(entity))
       }
     }
@@ -95,7 +95,7 @@ trait SlickQueryExtensions {
           case Some(id) => filterById(id).update(entity)
           case None => addAction(entity)
         }
-      }.run
+      }.exec
     }
 
     def deleteEntityAction(entity: E): Option[driver.DriverAction[Int, NoStream, Write]] = {
@@ -106,14 +106,14 @@ trait SlickQueryExtensions {
       extractId(entity).exists(id => deleteById(id))
 
     def deleteById(id: Id): Boolean =
-      filterById(id).delete.run == 1
+      filterById(id).delete.exec == 1
 
     def deleteByIdAction(id: Id): driver.DriverAction[Int, NoStream, Write] = {
       filterById(id).delete
     }
 
     def findById(id: Id): E = findOptionById(id).get
-    def findOptionById(id: Id): Option[E] = filterById(id).run.headOption.asInstanceOf[Option[E]]
+    def findOptionById(id: Id): Option[E] = filterById(id).exec.headOption.asInstanceOf[Option[E]]
 
     def compile = Compiled(query)
 
@@ -142,12 +142,12 @@ trait SlickQueryExtensions {
 
     def deleteAll(entities: E*): Boolean = {
       val ids = entities.flatMap(_.id).toSet
-      filterByIdIn(ids.toSeq: _*).delete.run == ids.size
+      filterByIdIn(ids.toSeq: _*).delete.exec == ids.size
     }
 
     def deleteAllById(ids: Id*) = {
       val idsets = ids.toSet
-      filterByIdIn(idsets.toSeq: _*).delete.run == idsets.size
+      filterByIdIn(idsets.toSeq: _*).delete.exec == idsets.size
     }
   }
 
@@ -162,9 +162,9 @@ trait SlickQueryExtensions {
       extractId(newEntity) match {
         case Some(id) =>
           val q = query.filter(_.id === id.bind).filter(_.version === currentVersion.bind)
-          if (q.length.run != 1)
+          if (q.length.exec != 1)
             throw new StaleObjectStateException(entity)
-          q.update(newEntity).run
+          q.update(newEntity).exec
           newEntity
         case None =>
           withId(newEntity, add(newEntity))

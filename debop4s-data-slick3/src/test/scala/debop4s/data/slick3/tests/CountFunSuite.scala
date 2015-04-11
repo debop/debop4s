@@ -24,12 +24,12 @@ class CountFunSuite extends AbstractSlickFunSuite {
       (ts ++= Seq(1, 2, 3, 4, 5))
     }
 
-    db.exec(Query(ts.length).result) shouldBe Vector(5)
-    db.exec(ts.length.result) shouldEqual 5
-    db.exec(ts.filter(_.id < 3).length.result) shouldEqual 2
-    db.exec(ts.take(2).length.result) shouldEqual 2
+    Query(ts.length).exec shouldBe Vector(5)
+    ts.length.exec shouldBe 5
+    ts.filter(_.id < 3).length.exec shouldBe 2
+    ts.take(2).length.exec shouldBe 2
 
-    db.exec {ts.schema.drop}
+    ts.schema.drop.exec
   }
 
   test("count - join") {
@@ -60,16 +60,16 @@ class CountFunSuite extends AbstractSlickFunSuite {
       c <- categories
       p <- posts if p.category === c.id
     } yield (c, p)
+
     val q1 = joinedQuery.length
     val q2 = Query(joinedQuery.length)
 
-    db.seq(
-      q1.result.map(_ shouldEqual 2),
+    {
+      q1.result.map(_ shouldEqual 2) >>
       q2.result.map(_ shouldEqual Vector(2))
-    )
+    }.exec
 
-
-    db.exec {schema.drop}
+    schema.drop.exec
   }
 
   test("count - join 2") {
@@ -93,25 +93,29 @@ class CountFunSuite extends AbstractSlickFunSuite {
       bs ++= Seq((1L, "1a"), (1L, "1b"), (2L, "2"))
     )
 
-    val qDirectLength = for {
-      a <- as if a.id === 1L
-    } yield (a, (for {
+    val qDirectLength =
+      for {
+        a <- as if a.id === 1L
+      } yield (a, (for {
         b <- bs if b.aId === a.id
       } yield b).length)
 
-    val qJoinLength = for {
-      a <- as if a.id === 1L
-      l <- Query((for {b <- bs if b.aId === a.id} yield b).length)
-    } yield (a, l)
+    val qJoinLength =
+      for {
+        a <- as if a.id === 1L
+        l <- Query((for {b <- bs if b.aId === a.id} yield b).length)
+      } yield (a, l)
 
-    val qOuterJoinLength = (for {
-      (a, b) <- as joinLeft bs on (_.id === _.aId)
-    } yield (a.id, b.map(_.data))).length
+    val qOuterJoinLength =
+      (for {
+        (a, b) <- as joinLeft bs on (_.id === _.aId)
+      } yield (a.id, b.map(_.data))
+      ).length
 
-    db.exec(qDirectLength.result) shouldEqual Seq((1L, 2))
-    db.exec(qJoinLength.result) shouldEqual Seq((1L, 2))
-    db.exec(qOuterJoinLength.result) shouldBe 3
+    qDirectLength.exec shouldEqual Seq((1L, 2))
+    qJoinLength.exec shouldEqual Seq((1L, 2))
+    qOuterJoinLength.exec shouldBe 3
 
-    db.exec(schema.drop)
+    schema.drop.exec
   }
 }

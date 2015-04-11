@@ -50,23 +50,23 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
       persons ++= personData,
       tasks ++= taskData,
       personTasks ++= personTaskData
-    ).run
+    ).exec
   }
 
   override def afterAll(): Unit = {
-    schema.drop.run
+    schema.drop.exec
     super.afterAll()
   }
 
   test("many-to-one 테스트") {
-    addresses.run foreach println
-    persons.run foreach println
+    addresses.exec foreach println
+    persons.exec foreach println
 
-    addressPersons.run foreach println
+    addressPersons.exec foreach println
 
-    addresses.run foreach { addr =>
+    addresses.exec foreach { addr =>
       println("\t" + addr)
-      persons.findByAddress(addr.id.get).run foreach { person => println("\t\t" + person) }
+      persons.findByAddress(addr.id.get).exec foreach { person => println("\t\t" + person) }
     }
   }
 
@@ -76,8 +76,8 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
       task <- person.tasks
     } yield task
 
-    allTasks.run foreach println
-    allTasks.sortBy(_.id).run shouldEqual Seq(
+    allTasks.exec foreach println
+    allTasks.sortBy(_.id).exec shouldEqual Seq(
       Task(Some(1), "analysis"),
       Task(Some(2), "design"),
       Task(Some(3), "development"),

@@ -42,10 +42,10 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
       (bankAccounts ++= accountData) >>
       (accountOwners ++= ownerData) >>
       (bankAccountOwners ++= accountOwnerMap)
-    }.run
+    }.exec
   }
   override def afterAll(): Unit = {
-    schema.drop.run
+    schema.drop.exec
     super.afterAll()
   }
 
@@ -65,8 +65,8 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
       } yield owner
 
     // Account Owner 가 join 으로 인해 여러 개가 중복될 수 있다. ( distinct 대신 groupBy 가 제공된다.)
-    owners.groupBy(identity).map(_._1).run foreach println
-    owners.groupBy(identity).map(_._1).length.run shouldEqual 2
+    owners.groupBy(identity).map(_._1).exec foreach println
+    owners.groupBy(identity).map(_._1).length.exec shouldEqual 2
 
 
     db.withTransaction { session =>
@@ -92,7 +92,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
         }
       }
     }
-    accountOwners.length.run shouldEqual ownerData.size
+    accountOwners.length.exec shouldEqual ownerData.size
   }
 
   test("explicit join") {
@@ -121,8 +121,8 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
       ((a, m), o) <- bankAccounts join bankAccountOwners on (_.id === _.accountId) join accountOwners on (_._2.ownerId === _.id)
     } yield o
 
-    qOwners.groupBy(identity).map(_._1).run foreach println
-    qOwners.groupBy(identity).map(_._1).length.run shouldEqual 2
+    qOwners.groupBy(identity).map(_._1).exec foreach println
+    qOwners.groupBy(identity).map(_._1).length.exec shouldEqual 2
   }
 
   test("using pre defined query") {
@@ -139,7 +139,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ group by x2."owner_id", x2."owner_ssn"
      */
     val q1 = qOwners.groupBy(identity).map(_._1.id)
-    q1.run shouldEqual Seq(1, 2)
+    q1.exec shouldEqual Seq(1, 2)
 
     /*
     ┇ select x2."owner_id", count(1)
@@ -148,7 +148,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ group by x2."owner_id"
      */
     val q2 = qOwners.groupBy(_.id).map(x => (x._1, x._2.length))
-    q2.run shouldEqual Seq((1, 1), (2, 2))
+    q2.exec shouldEqual Seq((1, 1), (2, 2))
   }
 
 }

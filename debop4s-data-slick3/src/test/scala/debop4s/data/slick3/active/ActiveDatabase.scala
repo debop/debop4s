@@ -28,7 +28,7 @@ trait ActiveQueryExtensions {
           count <- suppliers.filter(_.id === self.id.bind).delete
         } yield count)
         .transactionally
-        .run
+        .exec
         .asInstanceOf[Int]
     }
   }
@@ -51,7 +51,7 @@ trait ActiveQueryExtensions {
       //      db.result(q.to[Seq]).asInstanceOf[Seq[Beer]]
 
       val q2 = beers.filter(b => b.supplierId === self.supplierId.bind && b.id =!= self.id.bind)
-      q2.to[Seq].run.asInstanceOf[Seq[Beer]]
+      q2.to[Seq].exec.asInstanceOf[Seq[Beer]]
     }
   }
 
@@ -102,14 +102,14 @@ trait ActiveSchema {
     LOG.debug(s"Schema Drop:\n${ schema.dropStatements.mkString("\n") }")
     LOG.debug(s"Schema Create:\n${ schema.createStatements.mkString("\n") }")
 
-    (schema.drop.asTry >> schema.create).run
+    (schema.drop.asTry >> schema.create).exec
   }
 
   def dropSchema() = {
     LOG.info(s"Drop Active Database schema...")
     LOG.debug(s"Schema Drop:\n${ schema.dropStatements.mkString("\n") }")
 
-    schema.drop.run
+    schema.drop.exec
   }
 }
 

@@ -2,6 +2,7 @@ package debop4s.data.slick3.tests
 
 import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -11,12 +12,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class JdbcMicsFunSuite extends AbstractSlickFunSuite {
 
   test("simple DBIO") {
-    db.exec {
-      SimpleDBIO[Boolean](_.connection.getAutoCommit)
-    } shouldEqual true
+    SimpleDBIO[Boolean](_.connection.getAutoCommit).exec shouldEqual true
   }
 
   test("override statements") {
+
     class T(tag: Tag) extends Table[Int](tag, "misc_t") {
       def id = column[Int]("a")
       def * = id

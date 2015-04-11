@@ -8,9 +8,6 @@ import debop4s.core.utils.Closer._
 import debop4s.data.slick3.SlickContext._
 import debop4s.data.slick3.SlickContext.driver.api._
 import org.reactivestreams.{Publisher, Subscriber, Subscription}
-import slick.backend.DatabasePublisher
-import slick.backend.DatabasePublisher
-import slick.backend.DatabasePublisher
 
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.duration.Duration
@@ -29,12 +26,12 @@ package object slick3 {
 
     /** 동기 방식으로 action 을 수행합니다. */
     def exec[R](action: DBIOAction[R, NoStream, Nothing]): R = {
-      action.run(db)
+      action.exec(db)
       // db.run(action).await
     }
 
     def result[E, U, Seq[_]](query: Query[E, U, Seq]): Seq[_] = {
-      query.run(db)
+      query.exec(db)
       // db.run(query.result).await
     }
 
@@ -43,7 +40,7 @@ package object slick3 {
     //    }
 
     def result[T](query: Rep[T]): T = {
-      query.run(db)
+      query.exec(db)
       //db.run(query.result).await
     }
 
@@ -59,17 +56,17 @@ package object slick3 {
      * }}}
      */
     def seq[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
-      DBIO.seq(actions: _*).run(db)
+      DBIO.seq(actions: _*).exec(db)
       // db.run(DBIO.seq[E](actions: _*)).await
     }
 
     def withPinnedSession[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
-      DBIO.seq(actions: _*).withPinnedSession.run(db)
+      DBIO.seq(actions: _*).withPinnedSession.exec(db)
       // db.run(DBIO.seq[E](actions: _*).withPinnedSession).await
     }
 
     def withTransaction[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
-      DBIO.seq(actions: _*).transactionally.run(db)
+      DBIO.seq(actions: _*).transactionally.exec(db)
       // db.run(DBIO.seq[E](actions: _*).transactionally).await
     }
 
@@ -93,7 +90,7 @@ package object slick3 {
      */
     def sequence[R, E <: Effect](in: DBIOAction[R, NoStream, E]*)
                                 (implicit cbf: CanBuildFrom[Seq[DBIOAction[R, NoStream, E]], R, Seq[R]]): Seq[R] = {
-      DBIO.sequence(in).run(db)
+      DBIO.sequence(in).exec(db)
       // db.run(DBIO.sequence(in)).await
     }
 
@@ -115,11 +112,11 @@ package object slick3 {
     /**
      * {{{
      *   val query = users.map(u=>(u.id, u.name))
-     *   val userList = query.run
+     *   val userList = query.exec
      * }}}
      * @return
      */
-    def run(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB): R = {
+    def exec(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB): R = {
       db.run(action).await
     }
   }
@@ -128,11 +125,11 @@ package object slick3 {
     /**
      * {{{
      *   val query = users.map(u=>(u.id, u.name))
-     *   val userList = query.run
+     *   val userList = query.exec
      * }}}
      * @return
      */
-    def run(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB) = {
+    def exec(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB) = {
       db.run(DBIO.seq(actions: _*)).await
     }
   }
@@ -147,11 +144,11 @@ package object slick3 {
   implicit class RepExtensions[T](r: Rep[T]) {
     /**
      * {{{
-     *   val count = users.length.run
+     *   val count = users.length.exec
      * }}}
      * @return
      */
-    def run(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB): T = {
+    def exec(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB): T = {
       db.run(r.result).await
     }
   }

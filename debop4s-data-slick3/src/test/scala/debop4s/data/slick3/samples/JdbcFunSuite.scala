@@ -1,7 +1,7 @@
 package debop4s.data.slick3.samples
 
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{ AbstractSlickFunSuite, _ }
+import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 
 /**
  * JdbcFunSuite
@@ -34,30 +34,27 @@ class JdbcFunSuite extends AbstractSlickFunSuite {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    db.exec {
-      DBIO.seq(
-                schema.drop.asTry,
-                schema.create,
-                addresses.map(x => (x.street, x.city)) +=("정릉", "서울"),
-                people.map(x => (x.name, x.age, x.addressId)) +=("debop", 46, 1)
-              )
-    }
+    Seq(
+      schema.drop.asTry,
+      schema.create,
+      addresses.map(x => (x.street, x.city)) +=("정릉", "서울"),
+      people.map(x => (x.name, x.age, x.addressId)) +=("debop", 46, 1)
+    ).exec
   }
 
   override def afterAll(): Unit = {
-    db.exec(schema.drop)
+    schema.drop.exec
     super.afterAll()
   }
 
   test("plain sql query") {
     // val action = sql"select id, name, age, addressId from simple_jdbc_person".as[Person]
-    val action = people.result
-    val list = db.exec(action)
+    val list = people.exec
     list.foreach { p => LOG.debug(p.toString()) }
   }
 
   test("with session") {
-    val list = db.exec(people.result)
+    val list = people.exec
     list.foreach { p => println(p) }
   }
 

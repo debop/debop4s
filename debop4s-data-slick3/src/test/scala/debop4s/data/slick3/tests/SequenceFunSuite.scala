@@ -44,9 +44,9 @@ class SequenceFunSuite extends AbstractSlickFunSuite {
     )
 
     val q1 = for (u <- users) yield (mySequence.next, u.id)
-    q1.to[Set].run shouldEqual Set((200, 1), (210, 2), (220, 3))
+    q1.to[Set].exec shouldEqual Set((200, 1), (210, 2), (220, 3))
 
-    schema.drop.run
+    schema.drop.exec
   }
 
   test("sequence 2") {

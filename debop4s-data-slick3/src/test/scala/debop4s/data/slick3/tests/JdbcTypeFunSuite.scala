@@ -51,7 +51,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       db.exec(ts.filter(_.data === Array[Byte](4, 5)).map(_.data).to[Set].result).map(_.mkString) shouldEqual Set("45")
     }
 
-    ts.schema.drop.run
+    ts.schema.drop.exec
   }
 
   test("byte array option") {
@@ -103,7 +103,7 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
       }
       f1.await
 
-      ts.schema.drop.run
+      ts.schema.drop.exec
       Future {}
     }
   }

@@ -26,11 +26,11 @@ class ColumnDefaultFunSuite extends AbstractSlickFunSuite {
     db.exec {
       as.schema.drop.asTry >>
       as.schema.create >>
-      (as.map(_.id) += 42) >>
-      as.result
-    } shouldEqual Seq((42, "foo", Some(true)))
+      (as.map(_.id) += 42)
+    }
+    as.exec shouldEqual Seq((42, "foo", Some(true)))
 
-    db.exec { as.schema.drop }
+    as.schema.drop.exec
   }
 
 }

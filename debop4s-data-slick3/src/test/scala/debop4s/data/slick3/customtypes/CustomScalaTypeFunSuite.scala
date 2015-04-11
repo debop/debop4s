@@ -29,16 +29,16 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
   lazy val as = TableQuery[A]
 
   before {
-    as.schema.create.run
+    as.schema.create.exec
   }
   after {
-    as.schema.drop.run
+    as.schema.drop.exec
   }
 
   test("custom scala type - Bool") {
-    (as ++= Seq(("A", True), ("B", False))).run
+    (as ++= Seq(("A", True), ("B", False))).exec
 
-    as.length.run shouldBe 2
+    as.length.exec shouldBe 2
 
     /*
     ┇ select x2.x3
@@ -49,7 +49,7 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
     ┇   limit 1
     ┇ ) x2
      */
-    as.filter(_.name === "A".bind).map(_.isActive).take(1).run.head shouldEqual True
+    as.filter(_.name === "A".bind).map(_.isActive).take(1).exec.head shouldEqual True
     /*
     ┇ select x2.x3
     ┇ from (
@@ -59,7 +59,7 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
     ┇   limit 1
     ┇ ) x2
      */
-    as.filter(_.name === "B".bind).map(_.isActive).take(1).run.head shouldEqual False
+    as.filter(_.name === "B".bind).map(_.isActive).take(1).exec.head shouldEqual False
 
     // NOTE: Custom Type 을 WHERE 절에 넣으려면 컬럼 수형과 같은 수형으로 type casting 을 해야 합니다.
     // NOTE: 그럼 EncryptedString 은 Casting 보다 실제 값을 지정하면 된다.
@@ -75,7 +75,7 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
     ┇   ) x7
     ┇ ) x2
      */
-    as.filter(_.isActive === True.asInstanceOf[Bool]).length.run shouldBe 1
+    as.filter(_.isActive === True.asInstanceOf[Bool]).length.exec shouldBe 1
 
     /*
     ┇ select x2.x3
@@ -88,7 +88,7 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
     ┇   ) x7
     ┇ ) x2
      */
-    as.filter(_.isActive === False.asInstanceOf[Bool]).length.run shouldBe 1
+    as.filter(_.isActive === False.asInstanceOf[Bool]).length.exec shouldBe 1
   }
 
 }

@@ -36,7 +36,7 @@ class InsertFunSuite extends AbstractSlickFunSuite {
 
     lazy val schema = src1.schema ++ dst1.schema ++ dst2.schema ++ dst3.schema
 
-    db.sequence(
+    db.seq(
       schema.drop.asTry,
       schema.create,
       src1 +=(1, "A"),
@@ -71,6 +71,7 @@ class InsertFunSuite extends AbstractSlickFunSuite {
     db.seq(
       as.schema.drop.asTry,
       as.schema.create,
+
       (ins1 +=("a", "b")) map { id1: Int => id1 shouldBe 1 },
 
       as.schema.drop

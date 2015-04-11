@@ -15,11 +15,11 @@ class EmployeeFunSuite extends AbstractSlickFunSuite {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    employees.schema.create.run
+    employees.schema.create.exec
   }
 
   override def afterAll(): Unit = {
-    employees.schema.drop.run
+    employees.schema.drop.exec
     super.afterAll()
   }
 
@@ -35,10 +35,10 @@ class EmployeeFunSuite extends AbstractSlickFunSuite {
     persistedEmp.isPersisted shouldBe true
     persistedEmp.password.text shouldEqual "debop"
 
-    employees.run foreach { emp => LOG.debug(s"\t$emp") }
+    employees.exec foreach { emp => LOG.debug(s"\t$emp") }
 
     // EncryptedString 처럼 Mapping 하는 것도 가능하다.
-    employees.filter(_.password === EncryptedString("debop")).length.run should be > 0
+    employees.filter(_.password === EncryptedString("debop")).length.exec should be > 0
 
     employees.count shouldBe (initialCount + 1)
   }

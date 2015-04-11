@@ -85,9 +85,9 @@ class MutateFunSuite extends AbstractSlickFunSuite {
     }.await
 
     seenEndMarker shouldBe true
-    ts.to[Set].run shouldBe Set((2, 5), (2, 6), (2, 7), (2, 8), (3, 9))
+    ts.to[Set].exec shouldBe Set((2, 5), (2, 6), (2, 7), (2, 8), (3, 9))
 
-    ts.schema.drop.run
+    ts.schema.drop.exec
   }
 
 }

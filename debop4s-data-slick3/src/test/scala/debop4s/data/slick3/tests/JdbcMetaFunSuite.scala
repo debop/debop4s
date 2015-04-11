@@ -37,11 +37,14 @@ class JdbcMetaFunSuite extends AbstractSlickFunSuite {
     LOG.info("Schema used to create tables:")
     schema.createStatements.foreach { s => LOG.debug("\t" + s) }
 
-    db.exec { schema.drop.asTry >> schema.create }
+    db.exec {
+      schema.drop.asTry >>
+      schema.create
+    }
 
     // TODO: Action 과 ResultSetAction 에 대한 Extensions 를 추가해야 겠다.
     LOG.info("Type info from Database Meta Data: ")
-    db.exec(MTypeInfo.getTypeInfo) foreach { typ => LOG.debug("\t" + typ) }
+    MTypeInfo.getTypeInfo.exec foreach { typ => LOG.debug("\t" + typ) }
 
     db.exec {
       ifCap(tcap.jdbcMetaGetFunctions) {
@@ -51,65 +54,63 @@ class JdbcMetaFunSuite extends AbstractSlickFunSuite {
         }
       }
     }
+
     LOG.info("Functions from Database Meta Data: ")
     ifCap(tcap.jdbcMetaGetFunctions) {
       val getFunctionsAction = MFunction.getFunctions(MQName.local("%"))
-      val fs = db.exec { getFunctionsAction }
+      val fs = getFunctionsAction.exec
       fs.foreach { f =>
         LOG.debug("\t" + f)
-        val cs = db.exec { f.getFunctionColumns() }
-        cs.foreach { c =>
-          LOG.debug("\t\t" + c)
-        }
+        val cs = f.getFunctionColumns().exec
+        cs.foreach { c => LOG.debug("\t\t" + c) }
       }
       getFunctionsAction
     }
 
 
     LOG.info("UDTs from Database Meta Data: ")
-    db.exec(MUDT.getUDTs(MQName.local("%"))) foreach { u => LOG.debug("\t" + u) }
+    MUDT.getUDTs(MQName.local("%")).exec foreach { u => LOG.debug("\t" + u) }
 
     LOG.info("Procedures from Database Meta Data:")
-    db.exec(MProcedure.getProcedures(MQName.local("%"))).foreach { p =>
+    MProcedure.getProcedures(MQName.local("%")).exec foreach { p =>
       LOG.debug("\t" + p)
-      db.exec(p.getProcedureColumns()).foreach { c =>
-        LOG.debug("\t\t" + c)
-      }
+      p.getProcedureColumns().exec.foreach { c => LOG.debug("\t\t" + c) }
     }
 
     LOG.info("Association Schema from Database Meta Data:")
-    db.exec(MTable.getTables(None, None, None, None))
+    MTable.getTables(None, None, None, None)
+    .exec
     .filter(t => Set("users_xx", "orders_xx") contains t.name.name)
     .foreach { t =>
       LOG.debug("\t" + t)
-      db.exec(t.getColumns).foreach { c =>
+      t.getColumns.exec.foreach { c =>
         LOG.debug("\t\t" + c)
-        db.exec(c.getColumnPrivileges) foreach { p => LOG.debug("\t\t\t" + p) }
+        c.getColumnPrivileges.exec foreach { p => LOG.debug("\t\t\t" + p) }
       }
 
-      db.exec(t.getVersionColumns) foreach { v => LOG.debug("\t\t\t" + v) }
-      db.exec(t.getPrimaryKeys) foreach { pk => LOG.debug("\t\t\t" + pk) }
-      db.exec(t.getImportedKeys) foreach { ik => LOG.debug("\t\t\t" + ik) }
-      db.exec(t.getExportedKeys) foreach { ek => LOG.debug("\t\t\t" + ek) }
+      t.getVersionColumns.exec foreach { v => LOG.debug("\t\t\t" + v) }
+      t.getPrimaryKeys.exec foreach { pk => LOG.debug("\t\t\t" + pk) }
+      t.getImportedKeys.exec foreach { ik => LOG.debug("\t\t\t" + ik) }
+      t.getExportedKeys.exec foreach { ek => LOG.debug("\t\t\t" + ek) }
 
       Try {
-        db.exec(t.getIndexInfo()) foreach { ii => LOG.debug("\t\t\t" + ii) }
+        t.getIndexInfo().exec foreach { ii => LOG.debug("\t\t\t" + ii) }
       }
-      db.exec(t.getTablePrivileges) foreach { p => LOG.debug("\t\t\t" + p) }
+      t.getTablePrivileges.exec foreach { p => LOG.debug("\t\t\t" + p) }
 
-      db.exec(t.getBestRowIdentifier(MBestRowIdentifierColumn.Scope.Session)) foreach { c =>
+      t.getBestRowIdentifier(MBestRowIdentifierColumn.Scope.Session).exec foreach { c =>
         LOG.debug("\t\t\t Row identifier for session: " + c)
       }
     }
 
     LOG.info("Schema from Database Meta Data:")
-    db.exec(MSchema.getSchemas) foreach { s => LOG.debug("\t" + s) }
+    MSchema.getSchemas.exec foreach { s => LOG.debug("\t" + s) }
 
     LOG.info("Client Info Properties from Database Meta Data:")
-    db.exec(MClientInfoProperty.getClientInfoProperties).foreach { c => LOG.debug("\t" + c) }
+    MClientInfoProperty.getClientInfoProperties.exec.foreach { c => LOG.debug("\t" + c) }
 
-    db.exec(MTable.getTables(None, None, None, None)).map(_.name.name) should contain allOf("users_xx", "orders_xx")
+    MTable.getTables(None, None, None, None).exec.map(_.name.name) should contain allOf("users_xx", "orders_xx")
 
-    db.exec { schema.drop }
+    schema.drop.exec
   }
 }

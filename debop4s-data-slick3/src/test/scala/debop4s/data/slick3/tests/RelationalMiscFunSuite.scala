@@ -24,21 +24,21 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     {
       ts.schema.create >>
       (ts ++= Seq(("1", "a"), ("2", "a"), ("3", "b")))
-    }.run
+    }.exec
 
     val q1 = for (t <- ts if t.a === "1" || t.a === "2") yield t
-    q1.to[Set].run shouldEqual Set(("1", "a"), ("2", "a"))
+    q1.to[Set].exec shouldEqual Set(("1", "a"), ("2", "a"))
 
     val q2 = for (t <- ts if (t.a =!= "1") || (t.b =!= "a")) yield t
-    q2.to[Set].run shouldEqual Set(("2", "a"), ("3", "b"))
+    q2.to[Set].exec shouldEqual Set(("2", "a"), ("3", "b"))
 
     // No need to test that the unexpected result is actually unexpected
     // now that the compiler prints a warning about it
 
     val q4 = for (t <- ts if t.a =!= "1" || t.b =!= "a") yield t
-    q4.to[Set].run shouldEqual Set(("2", "a"), ("3", "b"))
+    q4.to[Set].exec shouldEqual Set(("2", "a"), ("3", "b"))
 
-    ts.schema.drop.run
+    ts.schema.drop.exec
   }
 
   test("like") {
@@ -92,12 +92,15 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
       (ts ++= Seq(("a2", "b2", "c2"), ("a1", "b1", "c1")))
     }
 
-    val q1 = (for {
-      t1 <- ts
-    } yield t1.c ->(t1.a, t1.b)).sortedValues
-    q1.run shouldEqual Seq(("a1", "b1"), ("a2", "b2"))
+    val q1 = (
+             for {
+               t1 <- ts
+             } yield t1.c ->(t1.a, t1.b)
+             ).sortedValues
+    // val q1 = ts.map(x => (x.c, (x.a, x.b))).sortBy(_._1).map(_._2)
+    q1.exec shouldEqual Seq(("a1", "b1"), ("a2", "b2"))
 
-    ts.schema.drop.run
+    ts.schema.drop.exec
   }
 
   test("conditional") {
@@ -114,15 +117,15 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
 
     val q1 = ts.map { t => (t.a, Case If (t.a < 3) Then 1 Else 0) }
-    q1.to[Set].run shouldEqual Set((1, 1), (2, 1), (3, 0), (4, 0))
+    q1.to[Set].exec shouldEqual Set((1, 1), (2, 1), (3, 0), (4, 0))
 
     val q2 = ts.map { t => (t.a, Case If (t.a < 3) Then 1) }
-    q2.to[Set].run shouldEqual Set((1, Some(1)), (2, Some(1)), (3, None), (4, None))
+    q2.to[Set].exec shouldEqual Set((1, Some(1)), (2, Some(1)), (3, None), (4, None))
 
     val q3 = ts.map { t => (t.a, Case If (t.a < 3) Then 1 If (t.a < 4) Then 2 Else 0) }
-    q3.to[Set].run shouldEqual Set((1, 1), (2, 1), (3, 2), (4, 0))
+    q3.to[Set].exec shouldEqual Set((1, 1), (2, 1), (3, 2), (4, 0))
 
-    ts.schema.drop.run
+    ts.schema.drop.exec
   }
 
   test("cast") {
@@ -137,16 +140,17 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
       ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(("foo", 1), ("bar", 2)))
-    }.run
+    }.exec
 
     /*
     ┇ select x2."a"||cast(x2."b" as VARCHAR)
     ┇ from "cast_t" x2
      */
+    // HINT: MariaDB에서는 VARCHAR(255) 도 안되고, CHAR(255) 형식으로 해야 합니다.
     val q1 = ts.map(t => t.a ++ (if (isMySQL) t.b.asColumnOfType[String]("CHAR(255)") else t.b.asColumnOf[String]))
-    q1.to[Set].run shouldEqual Set("foo1", "bar2")
+    q1.to[Set].exec shouldEqual Set("foo1", "bar2")
 
-    ts.schema.drop.run
+    ts.schema.drop.exec
   }
 
   test("option conversions") {
@@ -157,11 +161,11 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T1]
 
-    {
+    db.exec {
       ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq((1, Some(10)), (2, None)))
-    }.run
+    }
 
     // GetOrElse in ResultSetMapping on client side ( 아닌데??? )
     /*
@@ -183,10 +187,10 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
      */
     val q2 = ts.map(t => (t.a, t.b.getOrElse(0) + 1))
 
-    q1.to[Set].run shouldEqual Set((1, 10), (2, 0))
-    q2.to[Set].run shouldEqual Set((1, 11), (2, 1))
+    q1.to[Set].exec shouldEqual Set((1, 10), (2, 0))
+    q2.to[Set].exec shouldEqual Set((1, 11), (2, 1))
 
-    ts.schema.drop.run
+    ts.schema.drop.exec
   }
 
   test("init errors") {

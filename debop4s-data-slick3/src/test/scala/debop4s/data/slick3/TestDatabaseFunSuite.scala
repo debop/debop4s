@@ -31,23 +31,23 @@ class TestDatabaseFunSuite extends AbstractSlickFunSuite {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    Codes.schema.create.run
+    Codes.schema.create.exec
   }
   override def afterAll(): Unit = {
-    Codes.schema.drop.run
+    Codes.schema.drop.exec
     super.beforeAll()
   }
 
   private def insertSampleData(): Unit = {
     ranges.grouped(100).toSeq.par.foreach { is =>
-      (Codes.map(c => (c.name, c.value)) ++= is.map(i => (s"name=$i", s"value=$i")).toSet).run
+      (Codes.map(c => (c.name, c.value)) ++= is.map(i => (s"name=$i", s"value=$i")).toSet).exec
     }
   }
 
   test("insert by grouped as parallel") {
     ranges.grouped(100).toSeq.par.foreach { is =>
       val samples = is.map(i => (s"name=$i", s"value=$i")).toSet
-      Codes.map(c => (c.name, c.value)).forceInsertAll(samples).run
+      Codes.map(c => (c.name, c.value)).forceInsertAll(samples).exec
     }
   }
 
@@ -55,7 +55,7 @@ class TestDatabaseFunSuite extends AbstractSlickFunSuite {
     insertSampleData()
 
     ranges.grouped(100).toSeq.par.foreach { is =>
-      val codes = Codes.filter(_.id inSet is.toSet).run.toSet
+      val codes = Codes.filter(_.id inSet is.toSet).exec.toSet
       codes.foreach { x => LOG.debug(x.toString()) }
     }
   }

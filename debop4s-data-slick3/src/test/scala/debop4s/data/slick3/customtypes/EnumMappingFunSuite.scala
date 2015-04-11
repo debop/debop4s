@@ -51,11 +51,11 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
     Seq(
       schema.drop.asTry,
       schema.create
-    ).run
+    ).exec
   }
 
   override def afterAll(): Unit = {
-    schema.drop.run
+    schema.drop.exec
     super.afterAll()
   }
 
@@ -73,9 +73,9 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
     ┇   limit 1
     ┇ ) x2
      */
-    val nexusLoaded = devices.filter(_.name === "Nexus".bind).take(1).run.headOption
-    val iphone5Loaded = devices.filter(_.name === "iPhone5".bind).take(1).run.headOption
-    val noneTypeLoaded = devices.filter(_.name === "None".bind).take(1).run.headOption
+    val nexusLoaded = devices.filter(_.name === "Nexus".bind).take(1).exec.headOption
+    val iphone5Loaded = devices.filter(_.name === "iPhone5".bind).take(1).exec.headOption
+    val noneTypeLoaded = devices.filter(_.name === "None".bind).take(1).exec.headOption
 
     nexusLoaded shouldBe defined
     nexusLoaded.get shouldEqual nexus
@@ -101,9 +101,9 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
     ┇   limit 1
     ┇ ) x2
      */
-    val nexusLoaded = device2s.filter(_.name === "Nexus".bind).take(1).run.headOption
-    val iphone5Loaded = device2s.filter(_.name === "iPhone5".bind).take(1).run.headOption
-    val noneTypeLoaded = device2s.filter(_.name === "None".bind).take(1).run.headOption
+    val nexusLoaded = device2s.filter(_.name === "Nexus".bind).take(1).exec.headOption
+    val iphone5Loaded = device2s.filter(_.name === "iPhone5".bind).take(1).exec.headOption
+    val noneTypeLoaded = device2s.filter(_.name === "None".bind).take(1).exec.headOption
 
     nexusLoaded shouldBe defined
     nexusLoaded.get shouldEqual nexus

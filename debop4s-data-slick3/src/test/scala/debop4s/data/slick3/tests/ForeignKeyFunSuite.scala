@@ -1,7 +1,7 @@
 package debop4s.data.slick3.tests
 
+import debop4s.data.slick3._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 
 /**
  * ForeignKeyFunSuite
@@ -29,13 +29,10 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
 
     val schema = categories.schema ++ posts.schema
 
-    db.seq(schema.drop.asTry, schema.create)
-
-    db.exec {
-      categories ++= Seq((1, "Scala"), (2, "ScalaQuery"), (3, "Windows"), (4, "Software"))
-    }
-
-    db.exec {
+    db.seq(
+      schema.drop.asTry,
+      schema.create,
+      categories ++= Seq((1, "Scala"), (2, "ScalaQuery"), (3, "Windows"), (4, "Software")),
       posts.map(p => (p.title, p.category)) ++= Seq(
         ("Test Post", None),
         ("Formal Language Processing in Scala, Part 5", Some(1)),
@@ -43,23 +40,23 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
         ("Removing Libraries and HomeGroup icons from the Windows 7 desktop", Some(3)),
         ("A ScalaQuery Update", Some(2))
       )
-    }
+    )
 
     val q1 = (for {
       p <- posts
       c <- p.categoryJoin
     } yield (p.id, c.id, c.name, p.title)).sortBy(_._1)
 
-    db.result(q1.map(p => (p._1, p._2))) shouldEqual List((2, 1), (3, 2), (4, 3), (5, 2))
+    q1.map(p => (p._1, p._2)).exec shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
     val q2 = (for {
       p <- posts
       c <- p.categoryFK
     } yield (p.id, c.id, c.name, p.title)).sortBy(_._1)
 
-    db.result(q2.map(p => (p._1, p._2))) shouldEqual List((2, 1), (3, 2), (4, 3), (5, 2))
+    q2.map(p => (p._1, p._2)).exec shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
-    db.exec { schema.drop }
+    schema.drop.exec
   }
 
   test("multi column foreign key") {
@@ -97,9 +94,9 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
       b <- a.bFK
     } yield (a.s, b.s)
 
-    db.result(q1).to[Set] shouldEqual Set(("a12", "b12"), ("a34", "b34"))
+    q1.to[Set].exec shouldEqual Set(("a12", "b12"), ("a34", "b34"))
 
-    db.exec { schema.drop }
+    schema.drop.exec
   }
 
   test("combine join") {
@@ -133,23 +130,22 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
       b <- bs
       a <- b.a
     } yield a.s).sorted
-    db.result(q1) shouldEqual List("a", "a", "b")
+    q1.exec shouldEqual List("a", "a", "b")
 
     val q2 = (for {
       c <- cs
       a <- c.a
     } yield a.s).sorted
-    db.result(q2) shouldBe List("a", "c")
+    q2.exec shouldBe List("a", "c")
 
     val q3 = (for {
       b <- bs
       c <- cs
       a <- b.a & c.a
     } yield a.s).sorted
-    db.result(q3) shouldBe List("a", "a")
+    q3.exec shouldBe List("a", "a")
 
-
-    db.exec { schema.drop }
+    schema.drop.exec
   }
 
   test("many to many") {
@@ -189,14 +185,12 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
       aToB ++= Seq(1 -> 1, 1 -> 2, 2 -> 2, 2 -> 3)
     )
 
-    val q1 = (for {
+    val q1 = for {
       a <- as if a.id >= 2
       b <- a.bs
-    } yield (a.s, b.s))
-    db.result(q1).to[Set] shouldEqual Set(("b", "y"), ("b", "z"))
+    } yield (a.s, b.s)
+    q1.to[Set].exec shouldEqual Set(("b", "y"), ("b", "z"))
 
-    db.exec { schema.drop }
+    schema.drop.exec
   }
-
-
 }

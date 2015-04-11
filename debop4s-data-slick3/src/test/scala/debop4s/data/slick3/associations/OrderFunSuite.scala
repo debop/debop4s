@@ -33,27 +33,27 @@ class OrderFunSuite extends AbstractSlickFunSuite {
     {
       schema.drop.asTry >>
       schema.create
-    }.run
+    }.exec
     orders.saveBatch(orderData: _*)
     orderItems.saveBatch(orderItemData: _*)
   }
 
   override def afterAll(): Unit = {
-    schema.drop.run
+    schema.drop.exec
     super.afterAll()
   }
 
   test("one-to-many : Order and OrderItems") {
-    orders.run foreach println
-    orderItems.run foreach println
+    orders.exec foreach println
+    orderItems.exec foreach println
 
     val innerJoin = orders join orderItems on { (o, i) => o.id === i.orderId }
     val q = innerJoin.filter(_._1.no === "A-128")
-    q.length.run shouldEqual 2
-    q.run foreach println
+    q.length.exec shouldEqual 2
+    q.exec foreach println
 
     val innerJoin2 = orders join orderItems on (_.id === _.orderId)
-    innerJoin2.length.run shouldEqual orderItems.count
+    innerJoin2.length.exec shouldEqual orderItems.count
 
     // group by
     val joinQuery = for {
@@ -62,7 +62,7 @@ class OrderFunSuite extends AbstractSlickFunSuite {
 
     val groupQuery = joinQuery.groupBy(_._1.id)
     val itemAvg = groupQuery.map { case (id, ois) => (id, ois.length, ois.map(_._2.price).avg) }
-    val res = itemAvg.run
+    val res = itemAvg.exec
     res foreach println
     res shouldEqual Seq(
       (1, 2, Some(150.0)),

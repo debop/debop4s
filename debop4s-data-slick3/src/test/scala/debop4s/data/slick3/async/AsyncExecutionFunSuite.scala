@@ -20,10 +20,10 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
   lazy val schema = employees.schema
 
   before {
-    { schema.drop.asTry >> schema.create }.run
+    { schema.drop.asTry >> schema.create }.exec
   }
   after {
-    schema.drop.run
+    schema.drop.exec
   }
 
   test("employee 병렬 저장") {
@@ -32,9 +32,9 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
       val hireDate = DateTime.now
       employees += Employee(None, s"name=$empNo", s"no-$empNo", EncryptedString(s"pwd-$empNo"), hireDate)
     }
-    saveActions.run
+    saveActions.exec
 
     employees.count shouldEqual EMP_COUNT
-    employees.run foreach { emp => LOG.debug(emp.toString) }
+    employees.exec foreach { emp => LOG.debug(emp.toString) }
   }
 }

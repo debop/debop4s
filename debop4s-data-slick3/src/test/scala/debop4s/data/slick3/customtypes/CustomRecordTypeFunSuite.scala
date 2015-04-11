@@ -38,10 +38,10 @@ class CustomRecordTypeFunSuite extends AbstractSlickFunSuite {
   lazy val pairShapes = TableQuery[PairShapes]
 
   before {
-    pairShapes.schema.create.run
+    pairShapes.schema.create.exec
   }
   after {
-    pairShapes.schema.drop.run
+    pairShapes.schema.drop.exec
   }
 
   test("custom record type") {
@@ -49,9 +49,9 @@ class CustomRecordTypeFunSuite extends AbstractSlickFunSuite {
       pairShapes +=("triangle", Pair(1, "a")),
       pairShapes +=("circle", Pair(2, "b")),
       pairShapes +=("rectangle", Pair(3, "c"))
-    ).run
+    ).exec
 
-    pairShapes.filter(_.name === "rectangle".bind).map(_.pair.a).run shouldBe Vector(3)
+    pairShapes.filter(_.name === "rectangle".bind).map(_.pair.a).exec shouldBe Vector(3)
 
     /*
     ┇ select x2.x3, 42, x2.x4
@@ -69,6 +69,6 @@ class CustomRecordTypeFunSuite extends AbstractSlickFunSuite {
             .sortBy { case Pair(_, ss) => ss }
             .map { case Pair(id, ss) => Pair(id, Pair(42, ss)) }
 
-    q.run shouldEqual Seq(Pair(2, Pair(42, "bb")), Pair(3, Pair(42, "cc")))
+    q.exec shouldEqual Seq(Pair(2, Pair(42, "bb")), Pair(3, Pair(42, "cc")))
   }
 }
