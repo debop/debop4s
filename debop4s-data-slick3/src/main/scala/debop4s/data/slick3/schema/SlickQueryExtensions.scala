@@ -55,13 +55,12 @@ trait SlickQueryExtensions {
 
     protected def autoInc = query returning query.map(_.id)
 
+    // NOTE: AutoInc 에 대해서 forceInsert가 아닌 insertOrUpdate 를 사용해야 한다.
     def addAction(entity: E): driver.DriverAction[_, NoStream, Write] =
       autoInc into { case (e, id) => id } insertOrUpdate entity
 
     def add(entity: E): Id = {
-      db.exec {
-        autoInc into { case (e, id) => id } insertOrUpdate entity
-      }.asInstanceOf[Option[Id]].get
+      db.exec(addAction(entity)).asInstanceOf[Option[Id]].get
     }
 
     def updateAction(entity: E): driver.DriverAction[_, NoStream, Write] =

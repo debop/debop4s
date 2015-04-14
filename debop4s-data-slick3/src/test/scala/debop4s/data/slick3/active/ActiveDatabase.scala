@@ -63,6 +63,7 @@ trait ActiveSchema {
 
   import driver.api._
 
+  // NOTE: Entity의 id 값은 항상 제일 뒤에 선언해야 합니다. (특히 Postgres 에서는)
   case class Beer(name: String,
                   price: Double,
                   supplierId: Int,
