@@ -12,7 +12,7 @@ import scala.annotation.varargs
  */
 object Guard {
 
-  def firstNotNull[T <: AnyRef](first: T, second: T): T = {
+  def firstNotNull[T](first: T, second: T): T = {
     if (!Objects.equals(first, null)) first
     else if (!Objects.equals(second, null)) second
     else throw new IllegalArgumentException("all parameter is null.")
@@ -194,6 +194,11 @@ object Guard {
     arg
   }
 
+  def shouldBeNegativeOrZeroNumber(arg: BigInt, argName: String) = {
+    shouldBe(arg <= 0, ShouldBePositiveNumber, argName)
+    arg
+  }
+
   def shouldNotBeNegativeNumber(arg: Int, argName: String) = {
     shouldBe(arg >= 0, ShouldBePositiveNumber, argName)
     arg
@@ -205,12 +210,12 @@ object Guard {
   }
 
   def shouldNotBeNegativeNumber(arg: Float, argName: String) = {
-    shouldBe(arg >= 0f, ShouldBePositiveNumber, argName)
+    shouldBe(arg >= 0F, ShouldBePositiveNumber, argName)
     arg
   }
 
   def shouldNotBeNegativeNumber(arg: Double, argName: String) = {
-    shouldBe(arg >= 0.0, ShouldBePositiveNumber, argName)
+    shouldBe(arg >= 0D, ShouldBePositiveNumber, argName)
     arg
   }
 
@@ -219,43 +224,68 @@ object Guard {
     arg
   }
 
+  def shouldNotBeNegativeNumber(arg: BigInt, argName: String) = {
+    shouldBe(arg >= 0, ShouldBePositiveNumber, argName)
+    arg
+  }
+
   def shouldBeInRange(value: Int, fromInclude: Int, toExclude: Int, argName: String) {
     shouldBe(value >= fromInclude && value < toExclude,
-              ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+      ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
   }
 
   def shouldBeInRange(value: Long, fromInclude: Long, toExclude: Long, argName: String) {
     shouldBe(value >= fromInclude && value < toExclude,
-              ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+      ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
   }
 
   def shouldBeInRange(value: Float, fromInclude: Float, toExclude: Float, argName: String) {
     shouldBe(value >= fromInclude && value < toExclude,
-              ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+      ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
   }
 
   def shouldBeInRange(value: Double, fromInclude: Double, toExclude: Double, argName: String) {
     shouldBe(value >= fromInclude && value < toExclude,
-              ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+      ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+  }
+
+  def shouldBeInRange(value: Int, range: Range, argName: String) {
+    shouldBe(range.contains(value.toInt),
+      ShouldBeInRangeInt, argName, value, range.start, range.end)
+  }
+
+  def shouldBeInRange(value: Long, range: Range, argName: String) {
+    shouldBe(range.contains(value.toInt),
+      ShouldBeInRangeInt, argName, value, range.start, range.end)
   }
 
   def shouldBeBetween(value: Int, fromInclude: Int, toInclude: Int, argName: String) {
     shouldBe(value >= fromInclude && value < toInclude,
-              ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
+      ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
   }
 
   def shouldBeBetween(value: Long, fromInclude: Long, toInclude: Long, argName: String) {
     shouldBe(value >= fromInclude && value < toInclude,
-              ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
+      ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
   }
 
   def shouldBeBetween(value: Float, fromInclude: Float, toInclude: Float, argName: String) {
     shouldBe(value >= fromInclude && value < toInclude,
-              ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
+      ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
   }
 
   def shouldBeBetween(value: Double, fromInclude: Double, toInclude: Double, argName: String) {
     shouldBe(value >= fromInclude && value < toInclude,
-              ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
+      ShouldBeInRangeDouble, argName, value, fromInclude, toInclude)
+  }
+
+  def shouldBeBetween(value: Int, range: Range, argName: String) {
+    shouldBe(range.contains(value.toInt),
+      ShouldBeInRangeInt, argName, value, range.start, range.end)
+  }
+
+  def shouldBeBetween(value: Long, range: Range, argName: String) {
+    shouldBe(range.contains(value.toInt),
+      ShouldBeInRangeInt, argName, value, range.start, range.end)
   }
 }

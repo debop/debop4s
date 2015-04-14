@@ -1,14 +1,9 @@
 package debop4s.core.jodatime
 
 import java.util
-import org.joda.time.DateTimeZone
-import org.joda.time.tz.{ Provider, NameProvider }
 
-/**
- * com.github.time.StaticDateTimeZone
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2014. 1. 6. 오후 9:44
- */
+import org.joda.time.DateTimeZone
+import org.joda.time.tz.{NameProvider, Provider}
 
 object JodaDateTimeZone extends JodaDateTimeZone
 

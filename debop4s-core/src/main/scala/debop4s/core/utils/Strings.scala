@@ -1,7 +1,6 @@
 package debop4s.core.utils
 
 import debop4s.core.BinaryStringFormat
-import debop4s.core.BinaryStringFormat.BinaryStringFormat
 import java.nio.charset.Charset
 import java.util
 import org.apache.commons.codec.binary.{ Base64, Hex }

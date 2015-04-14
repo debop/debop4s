@@ -1,8 +1,8 @@
 package debop4s.core.io
 
 import debop4s.core._
-import debop4s.core.utils.{ Streams, Strings }
-import java.io.{ InputStream, ByteArrayOutputStream, OutputStream }
+import debop4s.core.utils.{Streams, Strings}
+import java.io.{InputStream, ByteArrayOutputStream, OutputStream}
 import java.util.Objects
 import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -22,10 +22,8 @@ object Serializers {
   lazy val serializer = new FstSerializer()
 
   def serializeAsString[T](serializer: Serializer, graph: T): String = {
-    if (graph == null)
-      return Strings.EMPTY_STR
-
-    Strings.getStringFromBytes(serializer.serialize(graph), BinaryStringFormat.HexDecimal)
+    if (graph == null) ""
+    else Strings.getStringFromBytes(serializer.serialize(graph), BinaryStringFormat.HexDecimal)
   }
 
   def deserializeFromString[T](serializer: Serializer, str: String, clazz: Class[T]): T = {

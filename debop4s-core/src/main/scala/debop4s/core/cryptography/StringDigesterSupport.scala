@@ -45,35 +45,29 @@ trait StringDigesterSupport {
     standardStringDigester.matches(message, digest)
 }
 
-abstract class AbstractStringDigester(private val _iterations: Option[Int] = None) extends StringDigesterSupport {
+abstract class AbstractStringDigester(private val _iterations: Option[Int] = Some(5)) extends StringDigesterSupport {
   override protected def iterations = _iterations
 }
 
 /** MD5 String Digester */
-class MD5StringDigester(private val _iterations: Option[Int])
+class MD5StringDigester(private val _iterations: Option[Int] = Some(5))
   extends AbstractStringDigester(_iterations) {
-
-  def this() = this(None)
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
   def algorithm: String = "MD5"
 }
 
 /** SHA1 String Digester */
-class SHA1StringDigester(private val _iterations: Option[Int])
+class SHA1StringDigester(private val _iterations: Option[Int] = Some(5))
   extends AbstractStringDigester(_iterations) {
-
-  def this() = this(None)
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
   def algorithm: String = "SHA-1"
 }
 
 /** SHA256 String Digester */
-class SHA256StringDigester(private val _iterations: Option[Int])
+class SHA256StringDigester(private val _iterations: Option[Int] = Some(5))
   extends AbstractStringDigester(_iterations) {
-
-  def this() = this(None)
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
   def algorithm: String = "SHA-256"
@@ -83,8 +77,6 @@ class SHA256StringDigester(private val _iterations: Option[Int])
 class SHA384StringDigester(private val _iterations: Option[Int] = None)
   extends AbstractStringDigester(_iterations) {
 
-  def this() = this(None)
-
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
   def algorithm: String = "SHA-384"
 }
@@ -92,8 +84,6 @@ class SHA384StringDigester(private val _iterations: Option[Int] = None)
 /** SHA512 String Digester */
 class SHA512StringDigester(private val _iterations: Option[Int] = None)
   extends AbstractStringDigester(_iterations) {
-
-  def this() = this(None)
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
   def algorithm: String = "SHA-512"

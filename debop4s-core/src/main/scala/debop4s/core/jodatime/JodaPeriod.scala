@@ -1,6 +1,6 @@
 package debop4s.core.jodatime
 
-import org.joda.time.{ ReadablePartial, Period }
+import org.joda.time.{Period, ReadablePartial}
 
 
 object JodaPeriod extends JodaPeriod {

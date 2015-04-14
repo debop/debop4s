@@ -19,11 +19,10 @@
         <module>debop4s-data-common</module>
         <module>debop4s-data-jpa</module>
         <module>debop4s-data-slick</module>
+        <module>debop4s-data-slick3</module>
         <module>debop4s-data</module>
         <module>debop4s-testing</module>
         <module>debop4s-rediscala</module>
-        <module>debop4s-data-slick3</module>
-
     </modules>
 
     <properties>
@@ -299,7 +298,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>17.0</version>
+                <version>18.0</version>
             </dependency>
 
             <!-- snappy-java -->
@@ -327,7 +326,7 @@
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.2.4</version>
+                <version>2.3</version>
             </dependency>
 
             <!-- Jackson JSON Serializer -->
@@ -785,8 +784,7 @@
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>9.3-1102-jdbc41</version>
-                <scope>test</scope>
+                <version>9.4-1201-jdbc41</version>
             </dependency>
 
             <!-- Jetty -->
@@ -942,6 +940,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- project lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
 
         <!-- Logging -->
         <dependency>
@@ -1093,6 +1098,26 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <compilerVersion>${jdk.version}</compilerVersion>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
             </plugin>
 
             <plugin>

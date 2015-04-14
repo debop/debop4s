@@ -1,6 +1,6 @@
 package debop4s.core.model
 
-import debop4s.core.AbstractValueObject
+import debop4s.core.ValueObjectBase
 import debop4s.core.utils.{ Arrays, ToStringHelper, Hashs }
 import org.joda.time.DateTime
 import scala.collection.mutable
@@ -9,7 +9,7 @@ import scala.collection.mutable.ArrayBuffer
 
 case class Address(street: String, phone: String, properties: mutable.Buffer[String] = ArrayBuffer[String]())
 
-class User extends AbstractValueObject with Ordered[User] {
+class User extends ValueObjectBase with Ordered[User] {
 
   var firstName: String = _
   var lastName: String = _

@@ -50,7 +50,7 @@ trait SlickQueryExtensions {
     protected def autoInc = query returning query.map(_.id)
 
     def add(entity: E)(implicit session: Session): Id =
-      ( autoInc into { case (e, id) => id } insert entity ).asInstanceOf[Id]
+      (autoInc into { case (e, id) => id } forceInsert entity).asInstanceOf[Id]
 
     override def save(entity: E)(implicit session: Session): E = {
       extractId(entity) match {

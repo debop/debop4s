@@ -1,7 +1,8 @@
 package debop4s.core.jodatime
 
-import java.util.{ Calendar, Date }
-import org.joda.time.{ Chronology, LocalTime }
+import java.util.{Calendar, Date}
+import debop4s.core.conversions.jodatime._
+import org.joda.time.{Chronology, LocalTime}
 
 object JodaLocalTime extends JodaLocalTime
 

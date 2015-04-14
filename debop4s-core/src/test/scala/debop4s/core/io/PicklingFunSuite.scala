@@ -15,7 +15,7 @@ class PicklingFunSuite extends AbstractCoreTest {
   test("case class pickling") {
     val joe = PersonEntity(0, "joe", Array(3, 4, 13))
     val pickled = joe.pickle
-    println(s"pickled=$pickled")
+    log.debug(s"pickled=$pickled")
     val converted = pickled.unpickle[PersonEntity]
 
     converted.name shouldEqual joe.name

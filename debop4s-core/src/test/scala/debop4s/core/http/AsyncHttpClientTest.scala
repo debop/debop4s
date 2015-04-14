@@ -2,6 +2,7 @@ package debop4s.core.http
 
 import java.net.URI
 import java.security.KeyStore
+import java.util
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import org.apache.http.client.methods.{ HttpGet, HttpPost }
@@ -13,6 +14,7 @@ import org.apache.http.util.EntityUtils
 import org.apache.http.{ HttpException, HttpHeaders, HttpResponse, HttpStatus }
 import org.scalatest.FunSuite
 import org.slf4j.LoggerFactory
+import scala.collection.JavaConverters._
 
 /**
  * debop4s.core.tests.http.AsyncHttpClientTest
@@ -37,8 +39,7 @@ class AsyncHttpClientTest extends FunSuite {
     val httpgets = ( 0 until TEST_COUNT ).map(_ => new HttpGet(googleSearchURI("배성혁")))
     val httpResponses = HttpAsyncs.getAsParallel(httpgets: _*)
 
-    httpResponses.par.foreach {
-      response =>
+    httpResponses.par.foreach { response =>
         assert(response != null)
         assert(response.isSuccess)
         assert(response.get.getStatusLine.getStatusCode == HttpStatus.SC_OK)
@@ -50,8 +51,7 @@ class AsyncHttpClientTest extends FunSuite {
     val httpposts = ( 0 until TEST_COUNT ).map(_ => new HttpPost(googleSearchURI("배성혁")))
     val httpResponses = HttpAsyncs.postAsParallel(httpposts: _*)
 
-    httpResponses.par.foreach {
-      response =>
+    httpResponses.par.foreach { response =>
         assert(response != null)
         assert(response.isSuccess)
         assert(response.get.getStatusLine.getStatusCode == HttpStatus.SC_METHOD_NOT_ALLOWED)

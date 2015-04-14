@@ -2,12 +2,6 @@ package debop4s.core.jodatime
 
 import org.joda.time.Duration
 
-/**
- * com.github.time.StaticDuration
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2014. 1. 6. 오후 9:49
- */
-
 object JodaDuration extends JodaDuration {
 
   def apply(v: Long) = new Duration(v)

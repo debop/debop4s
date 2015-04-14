@@ -2,6 +2,8 @@ package debop4s.core.json
 
 import debop4s.core.utils.Strings
 
+abstract class AbstractJsonSerializer extends JsonSerializer
+
 /**
  * JSON Serializer 의 기본 클래스
  *
@@ -47,5 +49,25 @@ trait JsonSerializer {
    */
   @inline
   def deserializeFromText[T: Manifest](text: String): T
+
+  /**
+   * Json 형식의 데이터을 역직렬화하여, 객체로 빌드합니다.
+   *
+   * @param data    JSON으로 직렬화한 바이트 배열
+   * @return 역직렬화 한 객체
+   */
+  @inline
+  def deserialize[T](data: Array[Byte], clazz: Class[T]): T =
+    deserializeFromText[T](Strings.getUtf8String(data), clazz)
+
+  /**
+   *
+   * Json Text 형식의 문자열을 역직렬화하여, 객체로 빌드합니다.
+   *
+   * @param text    JSON으로 직렬화한 문자열
+   * @return 역직렬화 한 객체
+   */
+  @inline
+  def deserializeFromText[T](text: String, clazz: Class[T]): T
 
 }

@@ -29,7 +29,6 @@ trait SlickQueryExtensions {
 
     def save(model: M): M
     def saveAll(models: M*): List[M]
-    def saveBatch(models: M*): Unit
     def deleteEntity(model: M): Boolean
   }
 
@@ -59,9 +58,11 @@ trait SlickQueryExtensions {
     def addAction(entity: E): driver.DriverAction[_, NoStream, Write] =
       autoInc into { case (e, id) => id } forceInsert entity
 
-    def add(entity: E): Id =
-      addAction(entity).exec.asInstanceOf[Id]
-
+    def add(entity: E): Id = {
+      db.exec {
+        autoInc into { case (e, id) => id } forceInsert entity
+      }.asInstanceOf[Id]
+    }
 
     def updateAction(entity: E): driver.DriverAction[_, NoStream, Write] =
       filterByIdOption(extractId(entity)).update(entity)
@@ -82,20 +83,11 @@ trait SlickQueryExtensions {
 
     /**
      * 지정된 엔티티들을 저장 또는 갱신합니다.
-     * @param entities
+     * @param entities 저장할 엔티티들 (insert or update)
      * @return
      */
     override def saveAll(entities: E*): List[E] = {
       entities.map(save).toList
-    }
-
-    override def saveBatch(entities: E*): Unit = {
-      entities.map { entity =>
-        extractId(entity) match {
-          case Some(id) => filterById(id).update(entity)
-          case None => addAction(entity)
-        }
-      }.exec
     }
 
     def deleteEntityAction(entity: E): Option[driver.DriverAction[Int, NoStream, Write]] = {

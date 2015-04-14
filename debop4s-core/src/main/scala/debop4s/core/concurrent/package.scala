@@ -41,6 +41,7 @@ package object concurrent {
     /** future 객체가 완료된 후 지정된 시간만큼 지연을 시킨 후 결과를 반환하도록 합니다. */
     def delay(duration: FiniteDuration): Future[A] = {
       val promise = Promise[A]()
+
       underlying onComplete { result =>
         val timer = JavaTimer()
         timer.doLater(duration) {

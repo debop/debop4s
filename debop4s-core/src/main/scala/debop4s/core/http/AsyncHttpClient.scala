@@ -1,5 +1,7 @@
 package debop4s.core.http
 
+import java.util
+
 import debop4s.core.utils.Closer._
 import java.lang.String
 import java.net.URI
@@ -14,8 +16,11 @@ import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.nio.reactor.ConnectingIOReactor
 import org.apache.http.{ HttpException, HttpResponse }
+import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.util.Try
+import scala.util.control.NonFatal
+import scala.collection.JavaConverters._
 
 /**
  * 비동기 Http Client
@@ -25,29 +30,29 @@ import scala.util.Try
  */
 class AsyncHttpClient {
 
-  private lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-  val DEFAULT_TIMEOUT = 90
+  lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
+
+  val DEFAULT_TIMEOUT = 90 // seconds
 
   def execute(request: HttpUriRequest): Try[HttpResponse] = Try {
     assert(request != null)
 
-    using(HttpAsyncClients.createDefault()) {
-      client =>
-        client.start()
-        val future = client.execute(request, null)
-        future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+    using(HttpAsyncClients.createDefault()) { client =>
+      client.start()
+      val jfuture = client.execute(request, null)
+      jfuture.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
     }
   }
 
   def executeSSL(request: HttpUriRequest): Try[HttpResponse] = Try {
     assert(request != null)
 
-    using(createHttpAsyncClient(request.getURI)) {
-      client =>
-        client.start()
-        val future = client.execute(request, null)
-        future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+    using(createHttpAsyncClient(request.getURI)) { client =>
+      client.start()
+      val future = client.execute(request, null)
+      future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
     }
   }
 
@@ -140,8 +145,10 @@ class AsyncHttpClient {
 
   private def shutdownConnectionManager(connectionManager: PoolingNHttpClientConnectionManager) {
     if (connectionManager != null) {
-      Try {
+      try {
         connectionManager.shutdown()
+      } catch {
+        case NonFatal(e) => log.debug(s"ConnectionManager를 shutdown 하는데 실패했습니다. 무시합니다.", e)
       }
     }
   }
@@ -157,7 +164,6 @@ class AsyncHttpClient {
     HttpAsyncClients.createDefault
   }
 
-  @inline
   private def createSslIOSessionStrategy: SSLIOSessionStrategy = {
     try {
       val trustStore: KeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
@@ -166,14 +172,15 @@ class AsyncHttpClient {
       val sslcontext = SSLContexts.custom
                        .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy)
                        .build
-
-      new SSLIOSessionStrategy(sslcontext,
-                                Array[String]("TLSv1"),
-                                null,
-                                SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER)
+      new SSLIOSessionStrategy(
+        sslcontext,
+        Array[String]("TLSv1"),
+        null,
+        SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER
+      )
     }
     catch {
-      case e: Exception =>
+      case NonFatal(e) =>
         throw new HttpException("SSLIOSessionStrategy를 빌드하는데 실패했습니다.", e)
     }
   }

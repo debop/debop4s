@@ -10,7 +10,8 @@ import scala.annotation.switch
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 1:30
  */
-abstract class AbstractValueObject extends ValueObject
+@SerialVersionUID(1L)
+abstract class ValueObjectBase extends ValueObject
 
 /**
  * DDD 의 Value Object를 표현합니다.
@@ -23,7 +24,7 @@ trait ValueObject extends AnyRef with Serializable {
   @inline
   override def equals(obj: Any): Boolean = {
     ( obj: @switch ) match {
-      case vo: ValueObject => hashCode() == obj.hashCode()
+      case vo: ValueObject => (this.getClass == obj.getClass) && (hashCode() == obj.hashCode())
       case _ => false
     }
   }

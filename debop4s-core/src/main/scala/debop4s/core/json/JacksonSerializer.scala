@@ -1,18 +1,21 @@
 package debop4s.core.json
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.`type`.TypeReference
-import com.fasterxml.jackson.databind.{ DeserializationFeature, ObjectMapper }
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
-import java.lang.reflect.{ Type, ParameterizedType }
+import java.lang.reflect.{Type, ParameterizedType}
 
 
 /**
  * JacksonSerializer
  * Created by debop on 2014. 2. 22.
  */
-class JacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
+class JacksonSerializer(val mapper: ObjectMapper) extends AbstractJsonSerializer {
+
+  def this() = this(JacksonSerializer.defaultObjectMapper)
 
   override def serialize[T](graph: T): Array[Byte] =
     mapper.writeValueAsBytes(graph)
@@ -26,20 +29,17 @@ class JacksonSerializer(val mapper: ObjectMapper) extends JsonSerializer {
   override def deserializeFromText[T: Manifest](text: String): T =
     mapper.readValue(text, JacksonSerializer.typeReference[T])
 
-  def deserialize[T](data: Array[Byte], clazz: Class[T]): T =
+  override def deserialize[T](data: Array[Byte], clazz: Class[T]): T =
     mapper.readValue(data, clazz)
 
-  def deserializeFromText[T](text: String, clazz: Class[T]): T =
+  override def deserializeFromText[T](text: String, clazz: Class[T]): T =
     mapper.readValue(text, clazz)
 }
 
 object JacksonSerializer {
 
-  def apply(): JacksonSerializer = new JacksonSerializer(defaultObjectMapper)
-
-  def apply(mapper: ObjectMapper): JacksonSerializer = {
+  def apply(mapper: ObjectMapper = defaultObjectMapper): JacksonSerializer =
     new JacksonSerializer(mapper)
-  }
 
   lazy val defaultObjectMapper: ObjectMapper = {
     val mapper = new ObjectMapper() with ScalaObjectMapper
@@ -48,11 +48,15 @@ object JacksonSerializer {
     mapper.registerModule(new JodaModule)
     mapper.registerModule(DefaultScalaModule)
 
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+
     // HINT: Single Value 도 ARRAY 로 인식하게끔 합니다.
     mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
     mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
     mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+
+    // HINT: 알 수 없는 속성에 대해서는 무시하도록 합니다.
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     mapper
   }

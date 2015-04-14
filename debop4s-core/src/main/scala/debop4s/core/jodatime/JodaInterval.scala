@@ -1,14 +1,15 @@
 package debop4s.core.jodatime
 
-import org.joda.time.Interval
+import debop4s.core.conversions.jodatime._
+import org.joda.time.{DateTime, Interval}
 
 object JodaInterval extends JodaInterval
 
 trait JodaInterval {
 
-  def thisSecond: Interval = JDateTime.now.secondOfMinute.interval
+  def thisSecond: Interval = DateTime.now.secondOfMinute.interval
 
-  def thisMinute = JDateTime.now.minuteOfHour.interval
+  def thisMinute = DateTime.now.minuteOfHour.interval
 
-  def thisHour = JDateTime.now.hourOfDay.interval
+  def thisHour = DateTime.now.hourOfDay.interval
 }

@@ -1,6 +1,6 @@
 package debop4s.core.jodatime
 
-import org.joda.time.format.{ ISODateTimeFormat => fmt, DateTimeFormatter }
+import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat => fmt}
 
 object JodaISODateTimeFormat extends JodaISODateTimeFormat
 

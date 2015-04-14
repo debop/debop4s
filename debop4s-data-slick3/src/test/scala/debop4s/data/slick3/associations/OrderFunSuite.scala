@@ -34,8 +34,11 @@ class OrderFunSuite extends AbstractSlickFunSuite {
       schema.drop.asTry >>
       schema.create
     }.exec
-    orders.saveBatch(orderData: _*)
-    orderItems.saveBatch(orderItemData: _*)
+
+    Seq(
+      orders ++= orderData,
+      orderItems ++= orderItemData
+    ).exec
   }
 
   override def afterAll(): Unit = {
@@ -64,7 +67,7 @@ class OrderFunSuite extends AbstractSlickFunSuite {
     val itemAvg = groupQuery.map { case (id, ois) => (id, ois.length, ois.map(_._2.price).avg) }
     val res = itemAvg.exec
     res foreach println
-    res shouldEqual Seq(
+    res.toSet shouldEqual Set(
       (1, 2, Some(150.0)),
       (2, 2, Some(150.0)),
       (3, 2, Some(150.0))

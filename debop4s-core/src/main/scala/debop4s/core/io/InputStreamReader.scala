@@ -6,6 +6,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
+
+object InputStreamReader {
+  val DefaultMaxBufferSize = 4096
+
+  def apply(inputStream: InputStream, maxBufferSize: Int = DefaultMaxBufferSize) =
+    new InputStreamReader(inputStream, maxBufferSize)
+}
+
 /**
  * InputStreamReader
  * @author Sunghyouk Bae
@@ -56,10 +64,4 @@ class InputStreamReader(inputStream: InputStream, maxBufferSize: Int)
     discard()
     Future { inputStream.close() }
   }
-}
-
-object InputStreamReader {
-  val DefaultMaxBufferSize = 4096
-  def apply(inputStream: InputStream, maxBufferSize: Int = DefaultMaxBufferSize) =
-    new InputStreamReader(inputStream, maxBufferSize)
 }

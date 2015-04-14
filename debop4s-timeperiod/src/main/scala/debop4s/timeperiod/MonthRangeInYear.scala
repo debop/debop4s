@@ -1,6 +1,6 @@
 package debop4s.timeperiod
 
-import debop4s.core.AbstractValueObject
+import debop4s.core.ValueObjectBase
 import debop4s.core.utils.ToStringHelper
 
 /**
@@ -11,7 +11,7 @@ import debop4s.core.utils.ToStringHelper
  */
 @SerialVersionUID(-1797303419172720812L)
 class MonthRangeInYear(val startMonthOfYear: Int, val endMonthOfYear: Int)
-  extends AbstractValueObject with Ordered[MonthRangeInYear] {
+  extends ValueObjectBase with Ordered[MonthRangeInYear] {
 
   require(startMonthOfYear <= endMonthOfYear,
            s"startMonthOfYear[$startMonthOfYear] <= endMonthOfYear[$endMonthOfYear] 여야 합니다.")

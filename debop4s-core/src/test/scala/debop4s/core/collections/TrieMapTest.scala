@@ -35,7 +35,7 @@ class TrieMapTest extends AbstractCoreTest {
         }
       }
     }
-    println(entries)
+    log.debug(entries.mkString(","))
   }
 
 }

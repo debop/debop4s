@@ -29,7 +29,6 @@ class ScalaAsyncsSample extends AbstractCoreTest {
 
     val sum: Future[Int] = async { await(future1) + await(future2) }
     sum.await shouldBe (42 + 84)
-    sum.asyncValue shouldBe (42 + 84)
   }
 
 }

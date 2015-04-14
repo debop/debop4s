@@ -128,7 +128,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
   test("using pre defined query") {
 
     val qOwners = for {
-      account <- bankAccounts
+      account <- bankAccounts.sortBy(_.id.asc)
       owner <- account.owners
     } yield owner
 
@@ -138,7 +138,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ where (x2."owner_id" = x4."owner_id") and (x4."account_id" = x3."account_id")
     ┇ group by x2."owner_id", x2."owner_ssn"
      */
-    val q1 = qOwners.groupBy(identity).map(_._1.id)
+    val q1 = qOwners.groupBy(identity).map(_._1.id).sorted
     q1.exec shouldEqual Seq(1, 2)
 
     /*
@@ -147,7 +147,7 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     ┇ where (x2."owner_id" = x4."owner_id") and (x4."account_id" = x3."account_id")
     ┇ group by x2."owner_id"
      */
-    val q2 = qOwners.groupBy(_.id).map(x => (x._1, x._2.length))
+    val q2 = qOwners.groupBy(_.id).map(x => (x._1, x._2.length)).sortBy(_._1)
     q2.exec shouldEqual Seq((1, 1), (2, 2))
   }
 

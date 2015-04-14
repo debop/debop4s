@@ -1,6 +1,7 @@
 package debop4s.core.utils
 
 import debop4s.core.AbstractCoreTest
+import debop4s.core.compress.{SnappyStringEncoder, DeflateStringEncoder, GZipStringEncoder}
 
 /**
  * CodecsTest

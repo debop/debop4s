@@ -1,12 +1,12 @@
 package debop4s.core.io
 
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 import debop4s.core.utils.Closer._
 import org.nustaq.serialization.FSTConfiguration
 import org.slf4j.LoggerFactory
 
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 
 object FstSerializer {
 
@@ -20,9 +20,9 @@ object FstSerializer {
  */
 class FstSerializer(val conf: FSTConfiguration) extends Serializer {
 
-  private val log = LoggerFactory.getLogger(getClass)
-
   def this() = this(FSTConfiguration.createDefaultConfiguration())
+
+  private val log = LoggerFactory.getLogger(getClass)
 
   /**
    * 객체를 직렬화 합니다.
@@ -35,14 +35,11 @@ class FstSerializer(val conf: FSTConfiguration) extends Serializer {
       return Array.emptyByteArray
 
     using(new ByteArrayOutputStream()) { bos =>
-
       Try(conf.getObjectOutput(bos)) match {
-
         case Success(oos) =>
           oos.writeObject(graph, Seq[Class[_]](): _*)
           oos.flush()
           bos.toByteArray
-
         case Failure(e) =>
           log.error(s"Fail to serialize graph. $graph", e)
           Array.emptyByteArray
@@ -61,12 +58,9 @@ class FstSerializer(val conf: FSTConfiguration) extends Serializer {
       return null.asInstanceOf[T]
 
     using(new ByteArrayInputStream(bytes)) { bis =>
-
       Try(conf.getObjectInput(bis)) match {
-
         case Success(ois) =>
           ois.readObject.asInstanceOf[T]
-
         case Failure(e) =>
           log.error(s"Fail to deserialize data.", e)
           null.asInstanceOf[T]

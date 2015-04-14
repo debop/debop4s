@@ -1,11 +1,13 @@
 package debop4s.core.jodatime
 
-import java.util.{ Calendar, Date }
+import java.util.{Calendar, Date}
+import debop4s.core.conversions.jodatime._
 import org.joda.time.LocalDateTime
 
 object JodaLocalDateTime extends JodaLocalDateTime
 
 trait JodaLocalDateTime {
+
   type Property = LocalDateTime.Property
 
   def fromCalendarFields(calendar: Calendar) = LocalDateTime.fromCalendarFields(calendar)

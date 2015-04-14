@@ -1,8 +1,11 @@
 package debop4s.core.conversions
 
-import debop4s.core.Time
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration._
+
+import debop4s.core.Time
+
+import scala.concurrent.duration.Duration
+import scala.language.implicitConversions
 
 /**
  * time
@@ -11,6 +14,7 @@ import scala.concurrent.duration._
 object time {
 
   class RichWholeNumber(wrapped: Long) {
+
     def nanoseconds = Duration(wrapped, TimeUnit.NANOSECONDS)
     def nanosecond = nanoseconds
     def nanos = nanoseconds

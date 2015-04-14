@@ -1,7 +1,8 @@
 package debop4s.core.jodatime
 
 import java.util.Locale
-import org.joda.time.format.{ DateTimeFormat, DateTimeFormatter }
+
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 
 /**
  * com.github.time.StaticDateTimeFormat

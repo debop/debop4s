@@ -6,13 +6,14 @@ object DurationBuilder {
   def apply(underlying: Period): DurationBuilder = new DurationBuilder(underlying)
 }
 
-sealed class DurationBuilder(val underlying: Period) {
 
-  def -(that: DurationBuilder): DurationBuilder = DurationBuilder(this.underlying.minus(that.underlying))
-  def +(that: DurationBuilder): DurationBuilder = DurationBuilder(this.underlying.plus(that.underlying))
+class DurationBuilder(val underlying: Period) {
 
-  def ago: DateTime = JDateTime.now.minus(underlying)
-  def later: DateTime = JDateTime.now.plus(underlying)
+  def -(that: DurationBuilder): DurationBuilder = new DurationBuilder(this.underlying.minus(that.underlying))
+  def +(that: DurationBuilder): DurationBuilder = new DurationBuilder(this.underlying.plus(that.underlying))
+
+  def ago: DateTime = JodaDateTime.now.minus(underlying)
+  def later: DateTime = JodaDateTime.now.plus(underlying)
   def from(moment: DateTime): DateTime = moment.plus(underlying)
   def before(moment: DateTime): DateTime = moment.minus(underlying)
 
@@ -32,3 +33,7 @@ sealed class DurationBuilder(val underlying: Period) {
   def +(amount: Long): Duration = standardDuration.plus(amount)
   def +(amount: ReadableDuration): Duration = standardDuration.plus(amount)
 }
+
+
+
+

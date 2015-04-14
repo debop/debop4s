@@ -1,6 +1,6 @@
 package debop4s.core.logback
 
-import debop4s.core.AbstractValueObject
+import debop4s.core.ValueObjectBase
 import org.joda.time.DateTime
 import scala.collection.mutable
 
@@ -9,7 +9,7 @@ import scala.collection.mutable
  * Created by debop on 2014. 2. 22.
  */
 @SerialVersionUID(1431014486199195378L)
-class LogDocument extends AbstractValueObject {
+class LogDocument extends ValueObjectBase {
 
   var serverName: String = null
 

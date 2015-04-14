@@ -10,7 +10,7 @@ import debop4s.core.AbstractCoreTest
 class KoreanStringTest extends AbstractCoreTest {
 
   test("자소 추출하기") {
-    println(KoreanString.getJasoLetter("동해물과 백두산이 Hello World"))
+    log.debug(KoreanString.getJasoLetter("동해물과 백두산이 Hello World"))
   }
 
   test("초성 추출하기") {

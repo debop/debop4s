@@ -1,7 +1,7 @@
 package debop4s.core
 
 import debop4s.core.concurrent.Asyncs
-import java.lang.ref.{ PhantomReference, ReferenceQueue, Reference }
+import java.lang.ref.{PhantomReference, ReferenceQueue, Reference}
 import java.util
 import java.util.concurrent.atomic.AtomicReference
 import org.slf4j.LoggerFactory

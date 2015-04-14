@@ -1,6 +1,6 @@
 package debop4s.core.json
 
-import debop4s.core.AbstractValueObject
+import debop4s.core.ValueObjectBase
 import debop4s.core.utils.{ ToStringHelper, Hashs }
 import scala.beans.BeanProperty
 
@@ -12,7 +12,7 @@ import scala.beans.BeanProperty
  */
 @SerialVersionUID(2934074553940326254L)
 class JsonTextObject(@BeanProperty val className: String,
-                     @BeanProperty val jsonText: String) extends AbstractValueObject {
+                     @BeanProperty val jsonText: String) extends ValueObjectBase {
 
   override def hashCode(): Int = Hashs.compute(className, jsonText)
 

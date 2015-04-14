@@ -22,6 +22,7 @@ trait ActiveQueryExtensions {
 
   implicit class SupplierExtensions(self: Supplier) {
     def save: Supplier = suppliers.save(self)
+
     def delete: Int = {
         (for {
           _ <- beers.filter(_.supplierId === self.id.bind).delete

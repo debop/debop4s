@@ -1,5 +1,7 @@
 package debop4s.core
 
+import java.util.concurrent.atomic.AtomicBoolean
+
 import org.slf4j.LoggerFactory
 
 /**
@@ -8,27 +10,25 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 1:57
  */
-class AutoCloseableAction(val actionWhenClosing: Runnable) extends AutoCloseable {
+class AutoCloseableAction(val closingAction: Runnable) extends AutoCloseable {
 
-  def this() {
-    this(null)
-  }
+  def this() = this(null)
 
   lazy val log = LoggerFactory.getLogger(getClass)
 
-  private var closed = false
+  private[this] val _closed = new AtomicBoolean(false)
 
-  def isClosed = closed
+  def isClosed = _closed.get()
 
-  def close() {
-    if (!closed) {
+  def close(): Unit = synchronized {
+    if (!_closed.get) {
       try {
-        if (actionWhenClosing != null)
-          actionWhenClosing.run()
+        if (closingAction != null)
+          closingAction.run()
       } catch {
         case e: Throwable => log.warn("AutoClosable의 close 작업 시 예외가 발생했습니다.", e)
       } finally {
-        closed = true
+        _closed.compareAndSet(false, true)
       }
     }
   }

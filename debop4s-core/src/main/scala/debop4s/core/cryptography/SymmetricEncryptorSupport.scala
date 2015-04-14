@@ -20,6 +20,8 @@ trait SymmetricEncryptorSupport {
 
   private val DEFAULT_PASSWORD = "debop@hconnect.co.kr-21011"
 
+  private var password: String = DEFAULT_PASSWORD
+
   /**
    * 대칭형 암호화 알고리즘
    *
@@ -32,7 +34,7 @@ trait SymmetricEncryptorSupport {
     val encryptor = new StandardPBEByteEncryptor()
 
     encryptor.setSaltGenerator(new ZeroSaltGenerator())
-    encryptor.setPassword(DEFAULT_PASSWORD)
+    encryptor.setPassword(password)
     encryptor.setAlgorithm(algorithm)
 
     encryptor
@@ -41,7 +43,7 @@ trait SymmetricEncryptorSupport {
   private lazy val encryptorWithoutSalt = {
     val encryptor = new StandardPBEByteEncryptor()
 
-    encryptor.setPassword(DEFAULT_PASSWORD)
+    encryptor.setPassword(password)
     encryptor.setAlgorithm(algorithm)
 
     encryptor
@@ -56,7 +58,7 @@ trait SymmetricEncryptorSupport {
    * @param password 비밀번호
    */
   def setPassword(password: String) {
-    encryptor.setPassword(password)
+    this.password = password
   }
 
   /**
@@ -86,7 +88,7 @@ trait SymmetricEncryptorSupport {
    */
   @inline
   def encrypt(plainText: String): String = {
-    if (Strings.isEmpty(plainText)) Strings.EMPTY_STR
+    if (Strings.isEmpty(plainText)) return ""
 
     val cipher = encrypt(Strings.getUtf8Bytes(plainText))
     Strings.getStringFromBytes(cipher, BinaryStringFormat.HexDecimal)
@@ -126,7 +128,7 @@ trait SymmetricEncryptorSupport {
    */
   @inline
   def decrypt(cipherText: String): String = {
-    if (Strings.isEmpty(cipherText)) Strings.EMPTY_STR
+    if (Strings.isEmpty(cipherText)) return ""
 
     val plainBytes = Strings.getBytesFromString(cipherText, BinaryStringFormat.HexDecimal)
     Strings.getUtf8String(decrypt(plainBytes))

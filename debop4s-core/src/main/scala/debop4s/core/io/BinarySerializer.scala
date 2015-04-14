@@ -4,6 +4,10 @@ import debop4s.core.utils.Closer._
 import debop4s.core.utils._
 import java.io._
 
+object BinarySerializer {
+  def apply(): BinarySerializer = new BinarySerializer()
+}
+
 /**
  * Binary Serializer
  *
@@ -24,11 +28,10 @@ class BinarySerializer extends Serializer {
 
     val bos = new ByteArrayOutputStream()
 
-    using(new ObjectOutputStream(bos)) {
-      oos =>
-        oos.writeObject(graph)
-        oos.flush()
-        bos.toByteArray
+    using(new ObjectOutputStream(bos)) { oos =>
+      oos.writeObject(graph)
+      oos.flush()
+      bos.toByteArray
     }
   }
 
@@ -42,13 +45,11 @@ class BinarySerializer extends Serializer {
     if (Arrays.isEmpty(bytes))
       return null.asInstanceOf[T]
 
-    using(new ByteArrayInputStream(bytes)) {
-      bis =>
-        val ois = new ObjectInputStream(bis)
-        using(ois) {
-          input =>
-            input.readObject().asInstanceOf[T]
-        }
+    using(new ByteArrayInputStream(bytes)) { bis =>
+      val ois = new ObjectInputStream(bis)
+      using(ois) { input =>
+        input.readObject().asInstanceOf[T]
+      }
     }
   }
 }

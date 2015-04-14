@@ -67,8 +67,8 @@ class PoolTest extends AbstractCoreTest {
   test("reserve serial") {
     val pool = createPool(10)
 
-    ( 0 until 10 ) foreach { _ =>
-      println(Asyncs.result(pool.reserve()))
+    (0 until 10) foreach { _ =>
+      log.debug(Asyncs.result(pool.reserve()).toString)
     }
   }
 

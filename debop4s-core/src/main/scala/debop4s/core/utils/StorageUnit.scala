@@ -2,10 +2,9 @@ package debop4s.core.utils
 
 import scala.annotation.switch
 
-
 /**
  * 저장 용량에 대한 단위를 표현합니다.
- * Created by debop on 2014. 4. 5.
+ * @see [[debop4s.core.conversions.storage]]
  */
 class StorageUnit(val bytes: Long) extends Ordered[StorageUnit] {
 
@@ -27,11 +26,11 @@ class StorageUnit(val bytes: Long) extends Ordered[StorageUnit] {
 
   def -(that: StorageUnit): StorageUnit = new StorageUnit(this.bytes - that.bytes)
 
-  def *(scala: Double): StorageUnit = new StorageUnit(( this.bytes * scala ).toLong)
+  def *(scala: Double): StorageUnit = new StorageUnit((this.bytes * scala).toLong)
 
   @inline
   override def equals(obj: Any): Boolean = {
-    ( obj: @switch ) match {
+    (obj: @switch) match {
       case other: StorageUnit => bytes == other.bytes
       case _ => false
     }
@@ -62,7 +61,13 @@ class StorageUnit(val bytes: Long) extends Ordered[StorageUnit] {
   }
 }
 
+/**
+ * companion object for [[StorageUnit]]
+ *
+ * @see [[debop4s.core.conversions.storage]]
+ */
 object StorageUnit {
+
   lazy val infinite = new StorageUnit(Long.MaxValue)
 
   private def factor(s: String): Long = {

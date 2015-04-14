@@ -29,7 +29,7 @@ class ActiveDatabaseFunSuite extends AbstractSlickFunSuite {
     val supplier = Supplier(name = "Acme, Inc")
     supplier.id should not be defined
 
-    persisted = supplier.save
+    persisted = suppliers.save(supplier) // supplier.save
     persisted.id shouldBe defined
 
     persisted.copy(name = "Updated Name").save
@@ -37,11 +37,15 @@ class ActiveDatabaseFunSuite extends AbstractSlickFunSuite {
     suppliers.count shouldEqual (initialCount + 1)
     persisted.delete
     suppliers.count shouldEqual initialCount
+
+    suppliers.delete.exec
   }
 
   test("Beer 저장하기") {
     val supplier = suppliers.save(Supplier(name = "Acme, Inc."))
     supplier.id shouldBe defined
+
+    LOG.debug(s"Saved Supplier=$supplier")
 
     supplier.id.foreach { sid =>
       val beer1 = Beer(name = "OB", supplierId = sid, price = 3.2).save
