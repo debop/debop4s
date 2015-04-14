@@ -30,7 +30,7 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
     val saveActions = (0 until EMP_COUNT) map { x =>
       val empNo = x.toString
       val hireDate = DateTime.now
-      employees += Employee(None, s"name=$empNo", s"no-$empNo", EncryptedString(s"pwd-$empNo"), hireDate)
+      employees += Employee(s"name=$empNo", s"no-$empNo", EncryptedString(s"pwd-$empNo"), hireDate)
     }
     saveActions.exec
 

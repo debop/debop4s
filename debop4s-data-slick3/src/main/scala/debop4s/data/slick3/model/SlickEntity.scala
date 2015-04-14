@@ -24,7 +24,7 @@ trait SlickEntity[Id] extends Serializable {
 
   override def equals(obj: Any): Boolean = {
     obj match {
-      case vo: SlickEntity[_] => ( this.getClass == obj.getClass ) && ( this.hashCode() == obj.hashCode() )
+      case vo: SlickEntity[_] => (this.getClass == obj.getClass) && (this.hashCode() == obj.hashCode())
       case _ => false
     }
   }

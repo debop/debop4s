@@ -13,17 +13,17 @@ import org.joda.time.DateTime
 class OrderFunSuite extends AbstractSlickFunSuite {
 
   val orderData = Seq(
-    Order(None, "O-123", new DateTime(2014, 1, 1, 0, 0)),
-    Order(None, "A-128", new DateTime(2014, 2, 1, 0, 0)),
-    Order(None, "B-128", new DateTime(2014, 6, 1, 0, 0)))
+    Order("O-123", new DateTime(2014, 1, 1, 0, 0)),
+    Order("A-128", new DateTime(2014, 2, 1, 0, 0)),
+    Order("B-128", new DateTime(2014, 6, 1, 0, 0)))
 
   val orderItemData = Seq(
-    OrderItem(None, "Pencil", 100, 1),
-    OrderItem(None, "Desk", 200, 1),
-    OrderItem(None, "Mouse", 100, 2),
-    OrderItem(None, "Keyboard", 200, 2),
-    OrderItem(None, "A4", 100, 3),
-    OrderItem(None, "BlackPen", 200, 3))
+    OrderItem("Pencil", 100, 1),
+    OrderItem("Desk", 200, 1),
+    OrderItem("Mouse", 100, 2),
+    OrderItem("Keyboard", 200, 2),
+    OrderItem("A4", 100, 3),
+    OrderItem("BlackPen", 200, 3))
 
   lazy val schema = orders.schema ++ orderItems.schema
 

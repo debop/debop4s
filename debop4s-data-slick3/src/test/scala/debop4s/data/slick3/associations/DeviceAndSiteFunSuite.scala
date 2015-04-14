@@ -31,10 +31,10 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
   private def insertSampleData() = {
     (sites ++= Seq(Site(name = "SKT"), Site(name = "KT"))) >>
     (devices ++= Seq(
-      Device(None, 5000, new DateTime(2013, 1, 1, 0, 0), 1),
-      Device(None, 1000, new DateTime(2014, 1, 1, 0, 0), 1),
-      Device(None, 500, new DateTime(2013, 1, 1, 0, 0), 1),
-      Device(None, 2000, new DateTime(2014, 1, 1, 0, 0), 1)
+      Device(5000, new DateTime(2013, 1, 1, 0, 0), 1),
+      Device(1000, new DateTime(2014, 1, 1, 0, 0), 1),
+      Device(500, new DateTime(2013, 1, 1, 0, 0), 1),
+      Device(2000, new DateTime(2014, 1, 1, 0, 0), 1)
     ))
   }
 

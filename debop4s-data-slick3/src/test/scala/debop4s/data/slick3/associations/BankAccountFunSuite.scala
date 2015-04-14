@@ -14,15 +14,15 @@ import debop4s.data.slick3.associations.AssociationDatabase.driver.api._
 class BankAccountFunSuite extends AbstractSlickFunSuite {
 
   lazy val accountData = Seq(
-    BankAccount(None, "A-1111"),
-    BankAccount(None, "A-2222"),
-    BankAccount(None, "A-3333")
+    BankAccount("A-1111"),
+    BankAccount("A-2222"),
+    BankAccount("A-3333")
   )
 
   lazy val ownerData = Seq(
-    AccountOwner(None, "SSN-111"),
-    AccountOwner(None, "SSN-222"),
-    AccountOwner(None, "SSN-333")
+    AccountOwner("SSN-111"),
+    AccountOwner("SSN-222"),
+    AccountOwner("SSN-333")
   )
 
   lazy val accountOwnerMap = Seq(

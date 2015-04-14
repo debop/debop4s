@@ -12,24 +12,24 @@ import debop4s.data.slick3.associations.AssociationDatabase.driver.api._
 class PersonAddressFunSuite extends AbstractSlickFunSuite {
 
   val addressData = Seq(
-    Address(None, "율곡로", "서울"),
-    Address(None, "광화문로", "서울"),
-    Address(None, "테헤란로", "서울"),
-    Address(None, "광안대교", "부산")
+    Address("율곡로", "서울"),
+    Address("광화문로", "서울"),
+    Address("테헤란로", "서울"),
+    Address("광안대교", "부산")
   )
 
   val personData = Seq(
-    Person(None, "배성혁", 45, 1),
-    Person(None, "이순신", 45, 2),
-    Person(None, "강감찬", 45, 3),
-    Person(None, "고종", 45, 2)
+    Person("배성혁", 45, 1),
+    Person("이순신", 45, 2),
+    Person("강감찬", 45, 3),
+    Person("고종", 45, 2)
   )
 
   val taskData = Seq(
-    Task(None, "analysis"),
-    Task(None, "design"),
-    Task(None, "development"),
-    Task(None, "testing")
+    Task("analysis"),
+    Task("design"),
+    Task("development"),
+    Task("testing")
   )
 
   val personTaskData = Seq(PersonTask(1, 1), PersonTask(2, 3), PersonTask(3, 2), PersonTask(4, 4))
@@ -78,10 +78,10 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
 
     allTasks.exec foreach println
     allTasks.sortBy(_.id).exec shouldEqual Seq(
-      Task(Some(1), "analysis"),
-      Task(Some(2), "design"),
-      Task(Some(3), "development"),
-      Task(Some(4), "testing")
+      Task("analysis", Some(1)),
+      Task("design", Some(2)),
+      Task("development", Some(3)),
+      Task("testing", Some(4))
     )
   }
 

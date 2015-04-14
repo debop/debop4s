@@ -26,7 +26,7 @@ class EmployeeFunSuite extends AbstractSlickFunSuite {
   test("save and load Employee") {
     val initialCount = employees.count
 
-    val emp = Employee(None, "Sunghyouk Bae", "11111", EncryptedString("debop"), new DateTime(2015, 4, 9, 0, 0))
+    val emp = Employee("Sunghyouk Bae", "11111", EncryptedString("debop"), new DateTime(2015, 4, 9, 0, 0))
     emp.id should not be defined
     emp.isPersisted shouldBe false
 

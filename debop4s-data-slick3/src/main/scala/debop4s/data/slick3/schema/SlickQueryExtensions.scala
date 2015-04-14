@@ -56,12 +56,12 @@ trait SlickQueryExtensions {
     protected def autoInc = query returning query.map(_.id)
 
     def addAction(entity: E): driver.DriverAction[_, NoStream, Write] =
-      autoInc into { case (e, id) => id } forceInsert entity
+      autoInc into { case (e, id) => id } insertOrUpdate entity
 
     def add(entity: E): Id = {
       db.exec {
-        autoInc into { case (e, id) => id } forceInsert entity
-      }.asInstanceOf[Id]
+        autoInc into { case (e, id) => id } insertOrUpdate entity
+      }.asInstanceOf[Option[Id]].get
     }
 
     def updateAction(entity: E): driver.DriverAction[_, NoStream, Write] =
@@ -74,7 +74,7 @@ trait SlickQueryExtensions {
       }
     }
 
-    override def save(entity: E): E = {
+    override def save(entity: E) = {
       extractId(entity) match {
         case Some(id) => filterById(id).update(entity).exec; entity
         case None => withId(entity, add(entity))

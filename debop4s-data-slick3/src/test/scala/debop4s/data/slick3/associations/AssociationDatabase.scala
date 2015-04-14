@@ -25,7 +25,7 @@ trait AssociationSchema {
     def password = column[EncryptedString]("emp_passwd", O.Length(254))
     def hireDate = column[DateTime]("hire_date")
 
-    def * = (id.?, name, empNo, password, hireDate) <>(Employee.tupled, Employee.unapply)
+    def * = (name, empNo, password, hireDate, id.?) <>(Employee.tupled, Employee.unapply)
 
     def ixName = index("ix_emp_name", (name, password), unique = true)
     def ixEmpNo = index("ix_emp_no", empNo, unique = true)
@@ -36,7 +36,7 @@ trait AssociationSchema {
   class Sites(tag: Tag) extends IdTable[Site, Int](tag, "ass_site") {
     def id = column[Int]("site_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("site_name", O.Length(255))
-    def * = (id.?, name) <>(Site.tupled, Site.unapply)
+    def * = (name, id.?) <>(Site.tupled, Site.unapply)
   }
   lazy val sites = TableQuery[Sites]
   implicit class SiteQueryExt(query: TableQuery[Sites]) extends IdTableExtensions[Site, Int](query)
@@ -47,7 +47,7 @@ trait AssociationSchema {
     def acquisition = column[DateTime]("acquisition")
     def siteId = column[Int]("site_id")
 
-    def * = (id.?, price, acquisition, siteId) <>(Device.tupled, Device.unapply)
+    def * = (price, acquisition, siteId, id.?) <>(Device.tupled, Device.unapply)
 
     def site = foreignKey("fk_device_site", siteId, TableQuery[Sites])(_.id)
     def ixSite = index("ix_device_site", siteId, unique = false)
@@ -64,7 +64,7 @@ trait AssociationSchema {
     def no = column[String]("order_no", O.Length(64))
     def date = column[DateTime]("order_date")
 
-    def * = (id.?, no, date) <>(Order.tupled, Order.unapply)
+    def * = (no, date, id.?) <>(Order.tupled, Order.unapply)
 
     def ixOrderNo = index("ix_order_no", no, unique = true)
     def ixOrderDate = index("ix_order_date", date, unique = false)
@@ -80,7 +80,7 @@ trait AssociationSchema {
     def price = column[Double]("item_price")
     def orderId = column[Int]("order_id")
 
-    def * = (id.?, name, price, orderId) <>(OrderItem.tupled, OrderItem.unapply)
+    def * = (name, price, orderId, id.?) <>(OrderItem.tupled, OrderItem.unapply)
 
     def order = foreignKey("fk_orderitem_order", orderId, TableQuery[Orders])(_.id, onDelete = ForeignKeyAction.Cascade)
     def orderJoin = orders.filter(_.id === orderId)
@@ -94,7 +94,7 @@ trait AssociationSchema {
     def street = column[String]("street", O.Length(1024))
     def city = column[String]("city", O.Length(255))
 
-    def * = (id.?, street, city) <>(Address.tupled, Address.unapply)
+    def * = (street, city, id.?) <>(Address.tupled, Address.unapply)
   }
   lazy val addresses = TableQuery[Addresses]
   implicit class AddressQueryExt(query: TableQuery[Addresses]) extends IdTableExtensions[Address, Int](query)
@@ -106,7 +106,7 @@ trait AssociationSchema {
     def age = column[Int]("person_age")
     def addressId = column[Int]("addr_id")
 
-    def * = (id.?, name, age, addressId) <>(Person.tupled, Person.unapply)
+    def * = (name, age, addressId, id.?) <>(Person.tupled, Person.unapply)
 
     def address = foreignKey("fk_person_addr", addressId, TableQuery[Addresses])(_.id)
     def ixAddr = index("ix_person_addr", addressId, unique = false)
@@ -127,7 +127,7 @@ trait AssociationSchema {
     def id = column[Int]("task_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("task_name", O.Length(254))
 
-    def * = (id.?, name) <>(Task.tupled, Task.unapply)
+    def * = (name, id.?) <>(Task.tupled, Task.unapply)
   }
   lazy val tasks = TableQuery[Tasks]
   implicit class TaskQueryExt(query: TableQuery[Tasks]) extends IdTableExtensions[Task, Int](query)
@@ -150,7 +150,7 @@ trait AssociationSchema {
     def id = column[Int]("account_id", O.PrimaryKey, O.AutoInc)
     def number = column[String]("account_num", O.Length(64))
 
-    def * = (id.?, number) <>(BankAccount.tupled, BankAccount.unapply)
+    def * = (number, id.?) <>(BankAccount.tupled, BankAccount.unapply)
 
     def owners = {
       for {
@@ -166,7 +166,7 @@ trait AssociationSchema {
     def id = column[Int]("owner_id", O.PrimaryKey, O.AutoInc)
     def ssn = column[String]("owner_ssn", O.Length(64))
 
-    def * = (id.?, ssn) <>(AccountOwner.tupled, AccountOwner.unapply)
+    def * = (ssn, id.?) <>(AccountOwner.tupled, AccountOwner.unapply)
 
     def accounts = for {
       map <- bankAccountOwners

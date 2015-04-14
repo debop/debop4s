@@ -15,7 +15,7 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
 
   implicit object AddressShape extends CaseClassShape(LiftedAddress.tupled, Address.tupled)
 
-  case class UserAddress(var id: Option[Int] = None, name: String, address: Address)
+  case class UserAddress(name: String, address: Address, var id: Option[Int] = None)
 
   class UserAddresses(tag: Tag) extends Table[UserAddress](tag, "case_class_address") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -25,18 +25,21 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
     def zipcode = column[String]("zipcode", O.Length(32))
 
     def address = LiftedAddress(street, city, zipcode)
-    def * = (id.?, name, address) <>(UserAddress.tupled, UserAddress.unapply)
+    def * = (name, address, id.?) <>(UserAddress.tupled, UserAddress.unapply)
   }
   lazy val userAddresses = TableQuery[UserAddresses]
 
   test("case class mapping") {
     {
       userAddresses.schema.drop.asTry >>
-      userAddresses.schema.create >>
-      (userAddresses += UserAddress(None, "a", Address("aaaa", "seoul", "11111"))) >>
-      (userAddresses += UserAddress(None, "b", Address("bbbb", "seoul", "22222"))) >>
-      (userAddresses += UserAddress(None, "c", Address("cccc", "seoul", "33333")))
-    }.transactionally.exec
+      userAddresses.schema.create
+    }.exec
+
+    Seq(
+      userAddresses += UserAddress("a", Address("aaaa", "seoul", "11111")),
+      userAddresses += UserAddress("b", Address("bbbb", "seoul", "22222")),
+      userAddresses += UserAddress("c", Address("cccc", "seoul", "33333"))
+    ).exec
 
     userAddresses.exec foreach println
 

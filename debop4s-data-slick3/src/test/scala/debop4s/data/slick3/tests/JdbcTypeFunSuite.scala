@@ -81,39 +81,49 @@ class JdbcTypeFunSuite extends AbstractSlickFunSuite {
    * Blob 추가
    */
   test("blob") {
-    ifCapF(rcap.typeBlob) {
-      class T(tag: Tag) extends Table[(Int, Blob)](tag, "jdbctype_blob") {
-        def id = column[Int]("id")
-        def data = column[Blob]("data")
-        def * = (id, data)
-      }
-      lazy val ts = TableQuery[T]
+    if (SlickContext.isPostgres) {
+      cancel("Postgres 에서는 Blob 수형을 지원하지 않습니다.")
+    }
 
-      val a1 = (
-               ts.schema.drop.asTry >>
-               ts.schema.create >>
-               (ts +=(1, new SerialBlob(Array[Byte](1, 2, 3)))) >>
-               (ts +=(2, new SerialBlob(Array[Byte](4, 5)))) >>
-               ts.result
-               ).transactionally
-
-      val p1 = a1.stream.mapResult { case (id, data) => (id, data.getBytes(1, data.length.toInt).mkString) }
-
-      val f1 = p1.materialize.map(_.toSet shouldEqual Set((1, "123"), (2, "45"))) flatMap { _ =>
-        val f = db.stream(ts.result.transactionally, bufferNext = false)
-                .materializeAsync[(Int, String)](
-                { case (id, data) => db.io((id, data.getBytes(1, data.length.toInt).mkString)) })
-
-        f.map(_.toSet shouldEqual Set((1, "123"), (2, "45")))
-      }
-      f1.await
-
-      ts.schema.drop.exec
+    ifNotCapF(rcap.typeBlob) {
+      cancel("Blob 수형을 지원하지 않는 Driver 입니다.")
       Future {}
     }
+
+    class T(tag: Tag) extends Table[(Int, Blob)](tag, "jdbctype_blob") {
+      def id = column[Int]("id")
+      def data = column[Blob]("data")
+      def * = (id, data)
+    }
+    lazy val ts = TableQuery[T]
+
+    val a1 = (
+             ts.schema.drop.asTry >>
+             ts.schema.create >>
+             (ts +=(1, new SerialBlob(Array[Byte](1, 2, 3)))) >>
+             (ts +=(2, new SerialBlob(Array[Byte](4, 5)))) >>
+             ts.result
+             ).transactionally
+
+    val p1 = a1.stream.mapResult { case (id, data) => (id, data.getBytes(1, data.length.toInt).mkString) }
+
+    val f1 = p1.materialize.map(_.toSet shouldEqual Set((1, "123"), (2, "45"))) flatMap { _ =>
+      val f = db.stream(ts.result.transactionally, bufferNext = false)
+              .materializeAsync[(Int, String)](
+              { case (id, data) => db.io((id, data.getBytes(1, data.length.toInt).mkString)) })
+
+      f.map(_.toSet shouldEqual Set((1, "123"), (2, "45")))
+    }
+    f1.await
+
+    ts.schema.drop.exec
   }
 
   test("mapped blob") {
+    if (SlickContext.isPostgres) {
+      cancel("Postgres 에서는 Blob 수형을 지원하지 않습니다.")
+    }
+
     case class Serialized[T](value: T)
     implicit def serializedType[T] = MappedColumnType.base[Serialized[T], Blob](
     { serialized =>
