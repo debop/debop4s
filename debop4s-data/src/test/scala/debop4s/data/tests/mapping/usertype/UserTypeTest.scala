@@ -1,6 +1,6 @@
 package debop4s.data.tests.mapping.usertype
 
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.core.utils.{ Strings, Hashs }
 import debop4s.data.model.LongEntity
 import debop4s.data.tests.AbstractJpaTest
