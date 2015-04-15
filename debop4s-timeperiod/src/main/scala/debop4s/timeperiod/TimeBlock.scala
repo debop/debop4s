@@ -1,8 +1,8 @@
 package debop4s.timeperiod
 
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.utils.Times
-import org.joda.time.{ DateTime, Duration }
+import org.joda.time.{DateTime, Duration}
 import org.slf4j.LoggerFactory
 
 /**
@@ -63,8 +63,8 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
       TimeBlock(this)
     else
       TimeBlock(if (hasStart) start.plus(offset) else start,
-                 if (hasEnd) end.plus(offset) else end,
-                 readonly)
+        if (hasEnd) end.plus(offset) else end,
+        readonly)
   }
 
   def setup(ns: DateTime, nd: Duration) {

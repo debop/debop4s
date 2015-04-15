@@ -14,7 +14,7 @@ class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
   def dayOfMonth = value.getDayOfMonth
 
   def toDateTime(time: Timepart): DateTime = {
-    if (time != null) value + time.value.getMillis
+    if (time != null) value.plus(time.value.getMillis)
     else value
   }
 
@@ -22,7 +22,7 @@ class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
     toDateTime(Timepart(hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond))
 
   def toDateTime(millis: Long): DateTime =
-    toDateTime(Timepart(millis.toDateTime))
+    toDateTime(Timepart(new DateTime(millis)))
 
   def compare(that: Datepart) = value.compareTo(that.value)
 

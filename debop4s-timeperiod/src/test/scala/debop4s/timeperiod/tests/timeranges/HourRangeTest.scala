@@ -1,6 +1,6 @@
 package debop4s.timeperiod.tests.timeranges
 
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod._
 import debop4s.timeperiod.tests.AbstractTimePeriodTest
 import debop4s.timeperiod.timerange.HourRange
@@ -28,7 +28,7 @@ class HourRangeTest extends AbstractTimePeriodTest {
     hourRange.start.getSecondOfMinute should equal(0)
     hourRange.start.getMillisOfSecond should equal(0)
 
-    hourRange.end.getYear should equal(secondHour.getYear)
+    hourRange.end.getYear shouldEqual secondHour.getYear
     hourRange.end.getMonthOfYear should equal(secondHour.getMonthOfYear)
     hourRange.end.getDayOfMonth should equal(secondHour.getDayOfMonth)
     hourRange.end.getHourOfDay should equal(secondHour.getHourOfDay)

@@ -1,6 +1,6 @@
 package debop4s.timeperiod.tests.timeranges
 
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.core.parallels.Parallels
 import debop4s.timeperiod._
 import debop4s.timeperiod.tests.AbstractTimePeriodTest

@@ -1,7 +1,7 @@
 package debop4s.timeperiod
 
 import debop4s.core.NotSupportedException
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.core.utils.ToStringHelper
 import debop4s.timeperiod.OrderDirection.OrderDirection
 import debop4s.timeperiod.utils.Times

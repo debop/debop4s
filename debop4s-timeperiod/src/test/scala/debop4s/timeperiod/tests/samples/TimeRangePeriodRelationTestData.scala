@@ -1,6 +1,6 @@
 package debop4s.timeperiod.tests.samples
 
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.{ TimeRange, ITimeRange, ITimePeriod }
 import org.joda.time.{ Duration, DateTime }
 import scala.collection.mutable.ArrayBuffer

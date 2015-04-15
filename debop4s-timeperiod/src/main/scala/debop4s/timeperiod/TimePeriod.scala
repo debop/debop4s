@@ -1,7 +1,7 @@
 package debop4s.timeperiod
 
 import debop4s.core.ValueObject
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.core.utils.{ Options, Hashs }
 import debop4s.timeperiod.PeriodRelation.PeriodRelation
 import debop4s.timeperiod.utils.Times

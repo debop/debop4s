@@ -1,7 +1,7 @@
 package debop4s.timeperiod.utils
 
 import debop4s.core._
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.DayOfWeek.DayOfWeek
 import debop4s.timeperiod.Halfyear.Halfyear
 import debop4s.timeperiod.Month.Month

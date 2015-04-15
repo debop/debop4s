@@ -1,11 +1,11 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.core.jodatime._
-import debop4s.core.utils.{ ToStringHelper, Hashs }
+import debop4s.core.conversions.jodatime._
+import debop4s.core.utils.{ToStringHelper, Hashs}
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import java.util.Objects
-import org.joda.time.{ Duration, DateTime }
+import org.joda.time.{Duration, DateTime}
 
 /**
  * debop4s.timeperiod.calendars.DateDiff
@@ -31,15 +31,18 @@ class DateDiff(val start: DateTime,
   lazy val elapsedQuarters = quarters
   lazy val elapsedMonths = months - elapsedYears * MonthsPerYear
 
-  lazy val elapsedStartDays = start.plusYears(elapsedYears.toInt).plusMonths(elapsedMonths.toInt)
-  lazy val elapsedDays = new Duration(elapsedStartDays, end).getStandardDays.toLong
+  lazy val elapsedStartDays: DateTime =
+    start.plusYears(elapsedYears.toInt).plusMonths(elapsedMonths.toInt)
+
+  lazy val elapsedDays: Long =
+    new Duration(elapsedStartDays, end).getStandardDays
 
   lazy val elapsedStartHours =
     start.plusYears(elapsedYears.toInt)
     .plusMonths(elapsedMonths.toInt)
     .plusDays(elapsedDays.toInt)
 
-  lazy val elapsedHours = new Duration(elapsedStartHours, end).getStandardHours.toLong
+  lazy val elapsedHours: Long = new Duration(elapsedStartHours, end).getStandardHours
 
   lazy val elapsedStartMinutes =
     start.plusYears(elapsedYears.toInt)
@@ -47,7 +50,7 @@ class DateDiff(val start: DateTime,
     .plusDays(elapsedDays.toInt)
     .plusHours(elapsedHours.toInt)
 
-  lazy val elapsedMinutes = new Duration(elapsedStartMinutes, end).getStandardMinutes.toLong
+  lazy val elapsedMinutes: Long = new Duration(elapsedStartMinutes, end).getStandardMinutes
 
   lazy val elapsedStartSeconds =
     start.plusYears(elapsedYears.toInt)
@@ -56,7 +59,7 @@ class DateDiff(val start: DateTime,
     .plusHours(elapsedHours.toInt)
     .plusMinutes(elapsedMinutes.toInt)
 
-  lazy val elapsedSeconds = new Duration(elapsedStartSeconds, end).getStandardSeconds.toLong
+  lazy val elapsedSeconds: Long = new Duration(elapsedStartSeconds, end).getStandardSeconds
 
   def isEmpty = difference.isEqual(Duration.ZERO)
 
@@ -99,7 +102,7 @@ class DateDiff(val start: DateTime,
     val y2 = Times.yearOf(endYear, endMonthOfYear)
     val q2 = Times.quarterOfMonth(endMonthOfYear)
 
-    ( y2 * QuartersPerYear + q2.id ) - ( y1 * QuartersPerYear + q1.id )
+    (y2 * QuartersPerYear + q2.id) - (y1 * QuartersPerYear + q1.id)
   }
 
   @inline
@@ -118,8 +121,8 @@ class DateDiff(val start: DateTime,
       compareDate = compareDate - 1.month
     }
 
-    ( endYear * MonthsPerYear + endMonthOfYear ) -
-    ( calendar.year(compareDate) * MonthsPerYear + calendar.monthOfYear(compareDate) )
+    (endYear * MonthsPerYear + endMonthOfYear) -
+    (calendar.year(compareDate) * MonthsPerYear + calendar.monthOfYear(compareDate))
   }
 
   @inline
@@ -132,10 +135,9 @@ class DateDiff(val start: DateTime,
     val w2 = Times.startOfWeek(end)
 
     if (w1 == w2) 0
-    else ( new Duration(w1, w2).getStandardDays / DaysPerWeek ).toLong
+    else new Duration(w1, w2).getStandardDays / DaysPerWeek
   }
 
-  @inline
   private def roundEx(n: Double): Double = {
     math.round(n)
     //        if (n >= 0.0) math.round(n)

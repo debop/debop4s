@@ -1,7 +1,7 @@
 package debop4s.timeperiod.calendars
 
 import debop4s.core.NotSupportedException
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.DayOfWeek._
 import debop4s.timeperiod.SeekBoundaryMode._
 import debop4s.timeperiod.SeekDirection._

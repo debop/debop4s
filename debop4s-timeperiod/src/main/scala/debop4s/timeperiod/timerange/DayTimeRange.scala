@@ -1,6 +1,6 @@
 package debop4s.timeperiod.timerange
 
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.DayOfWeek._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times

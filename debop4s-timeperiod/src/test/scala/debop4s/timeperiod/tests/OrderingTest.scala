@@ -1,6 +1,7 @@
 package debop4s.timeperiod.tests
 
 import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import org.joda.time._
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite

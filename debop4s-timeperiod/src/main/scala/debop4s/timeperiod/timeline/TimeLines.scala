@@ -1,6 +1,6 @@
 package debop4s.timeperiod.timeline
 
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod._
 import org.slf4j.LoggerFactory
 

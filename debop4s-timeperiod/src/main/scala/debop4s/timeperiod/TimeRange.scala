@@ -1,6 +1,6 @@
 package debop4s.timeperiod
 
-import debop4s.core.jodatime._
+import debop4s.core.conversions.jodatime._
 import org.joda.time.{ Duration, DateTime }
 
 /**
