@@ -1,6 +1,11 @@
 package debop4s.core.parallels
 
-import java.util.concurrent.{ Callable, ThreadLocalRandom }
+import java.util.concurrent.{Callable, ThreadLocalRandom}
+
+import debop4s.core.{JAction1, Action1}
+import org.slf4j.LoggerFactory
+
+import scala.collection.Seq
 
 
 /**
@@ -11,13 +16,13 @@ import java.util.concurrent.{ Callable, ThreadLocalRandom }
  */
 object Parallels {
 
-  // private lazy val LOG = LoggerFactory.getLogger(getClass)
+  private lazy val LOG = LoggerFactory.getLogger(getClass)
 
   lazy val random = ThreadLocalRandom.current()
   lazy val processCount = Runtime.getRuntime.availableProcessors()
   lazy val workerCount = processCount * 2
 
-  def mapAsOrdered[T <: Ordered[T], V](items: Iterable[T], mapper: T => V): Iterable[V] = {
+  def mapAsOrdered[T <: Ordered[T], V](items: Iterable[T], mapper: T => V): Seq[V] = {
     items.par
     .map(x => (x, mapper(x)))
     .toList
@@ -34,17 +39,34 @@ object Parallels {
     run(Range(0, count))(r)
   }
 
-  def run(range: Range)(r: Runnable) {
+  def run(start: Int, end: Int, step: Int = 1)(r: Runnable) {
+    assert(r != null)
+    run(Range(start, end, step))(r)
+  }
+
+  def run(range: Seq[Int])(r: Runnable) {
     assert(range != null)
     assert(r != null)
     range.par.foreach(_ => r.run())
+  }
+
+  def run(count: Int, action1: JAction1[java.lang.Integer]) {
+    runAction1(Range(0, count)) { i =>
+      action1.perform(i)
+    }
+  }
+
+  def run(start: Int, end: Int, action1: JAction1[java.lang.Integer]) {
+    runAction1(Range(start, end)) { i =>
+      action1.perform(i)
+    }
   }
 
   def runAction(count: Int)(block: => Unit) {
     runAction(Range(0, count))(block)
   }
 
-  def runAction(range: Range)(block: => Unit) {
+  def runAction(range: Seq[Int])(block: => Unit) {
     assert(range != null)
     range.par.foreach(_ => block)
   }
@@ -53,7 +75,24 @@ object Parallels {
     runAction1(Range(0, count))(block)
   }
 
-  def runAction1(range: Range)(block: Int => Unit) {
+  def runAction1(count: Int, action1: JAction1[java.lang.Integer]) {
+    runAction1(Range(0, count)) { i =>
+      action1.perform(i)
+    }
+  }
+
+  def runAction1(start: Int, end: Int, action1: JAction1[java.lang.Integer]) {
+    runAction1(Range(start, end)) { i =>
+      action1.perform(i)
+    }
+  }
+  def runAction1(start: Int, end: Int, step: Int, action1: JAction1[java.lang.Integer]) {
+    runAction1(Range(start, end, step)) { i =>
+      action1.perform(i)
+    }
+  }
+
+  def runAction1(range: Seq[Int])(block: Int => Unit) {
     assert(range != null)
     range.par.foreach {
       i => block(i)
@@ -73,42 +112,56 @@ object Parallels {
     elements.grouped(size).foreach(_.foreach(block))
   }
 
-  def call[V](count: Int)(callable: Callable[V]) {
+  def call[V](count: Int)(callable: Callable[V]): Seq[V] = {
     assert(callable != null)
     call[V](Range(0, count))(callable)
   }
-
-  def call[V](range: Range)(callable: Callable[V]) {
-    assert(range != null)
-    range.par.foreach(_ => callable.call())
+  def call[V](start: Int, end: Int, step: Int)(callable: Callable[V]): Seq[V] = {
+    assert(callable != null)
+    call[V](Range(start, end, step))(callable)
   }
 
-  def callFunction[V](count: Int)(func: () => V): Iterable[V] = {
+  def call[V](range: Seq[Int])(callable: Callable[V]): Seq[V] = {
+    assert(range != null)
+    range.par.map(_ => callable.call()).seq
+  }
+
+  def callFunction[V](count: Int)(func: () => V): Seq[V] = {
     assert(func != null)
     callFunction(Range(0, count))(func)
   }
 
-  def callFunction[V](range: Range)(func: () => V): Iterable[V] = {
+  def callFunction[V](start: Int, end: Int, step: Int)(func: () => V): Seq[V] = {
     assert(func != null)
-    range.par.map(_ => func()).toList
+    callFunction(Range(start, end, step))(func)
   }
 
-  def callFunction1[V](count: Int)(func: Int => V): Iterable[V] = {
+  def callFunction[V](range: Seq[Int])(func: () => V): Seq[V] = {
     assert(func != null)
-    callFunction1(Range(0, count))(func)
+    range.par.map(_ => func()).seq
   }
 
-  def callFunction1[V](range: Range)(func: Int => V): Iterable[V] = {
+  def callFunction1[V](count: Int)(func: Int => V): Seq[V] = {
     assert(func != null)
-    range.par.map(i => func(i)).seq
+    callFunction1(Range(0, count))(func).toSeq
   }
 
-  def callEach[S, T](elements: Iterable[S])(func: S => T): Iterable[T] = {
+  def callFunction1[V](start: Int, end: Int, step: Int)(func: Int => V): Seq[V] = {
     assert(func != null)
-    elements.par.map(x => func(x)).seq
+    callFunction1(Range(start, end, step))(func).toSeq
   }
 
-  def callEach[S, T](elements: Iterable[S], size: Int = processCount)(func: S => T): Iterable[(S, T)] = {
-    elements.grouped(size).map(_.map(s => (s, func(s)))).flatten.toIterable
+  def callFunction1[V](range: Seq[Int])(func: Int => V): Seq[V] = {
+    assert(func != null)
+    range.par.map(i => func(i)).seq.toSeq
+  }
+
+  def callEach[S, T](elements: Iterable[S])(func: S => T): Seq[T] = {
+    assert(func != null)
+    elements.par.map(x => func(x)).seq.toSeq
+  }
+
+  def callEach[S, T](elements: Iterable[S], size: Int)(func: S => T): Seq[(S, T)] = {
+    elements.grouped(size).map(_.map(s => (s, func(s)))).flatten.toSeq
   }
 }

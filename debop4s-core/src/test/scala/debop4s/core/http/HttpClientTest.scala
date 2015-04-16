@@ -1,25 +1,21 @@
 package debop4s.core.http
 
-import debop4s.core.parallels.Parallels
-import debop4s.core.utils.{ Strings, Charsets }
 import java.net.URI
+
+import debop4s.core.AbstractCoreFunSuite
+import debop4s.core.parallels.Parallels
+import debop4s.core.utils.{Charsets, Strings}
 import org.apache.http.client.ResponseHandler
-import org.apache.http.client.fluent.{ Form, Request }
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.utils.URIBuilder
-import org.apache.http.impl.client.{ HttpClients, BasicResponseHandler }
+import org.apache.http.impl.client.{BasicResponseHandler, HttpClients}
 import org.apache.http.impl.nio.client.HttpAsyncClients
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
-import org.apache.http.{ NameValuePair, HttpStatus, HttpResponse }
-import org.fest.assertions.Assertions._
-import org.junit.{ Ignore, Test }
-import org.scalatest.junit.JUnitSuite
-import org.slf4j.LoggerFactory
-import scala.Predef.String
-import scala.collection.mutable.ArrayBuffer
+
+import scala.util.control.NonFatal
 
 /**
  * debop4s.core.tests.http.HttpClientTest
@@ -27,14 +23,20 @@ import scala.collection.mutable.ArrayBuffer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 2:42
  */
-class HttpClientTest extends JUnitSuite {
+class HttpClientTest extends AbstractCoreFunSuite {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+  val URI_STRING: String = "https://api.duckduckgo.com/"
 
-  private final val URI_STRING: String = "https://www.google.co.kr"
+  private def searchURI(searchStr: String) =
+    new URIBuilder()
+    // .setPath(URI_STRING + "/search")
+    .setPath(URI_STRING)
+    .setParameter("q", searchStr)
+    .setParameter("format", "json")
+    .setParameter("pretty", "1")
+    .build()
 
-  @Test
-  def httpGetMethod() {
+  test("http get") {
     val httpClient = new HttpClient()
     try {
       val responseStr = httpClient.get(URI_STRING)
@@ -44,76 +46,66 @@ class HttpClientTest extends JUnitSuite {
     }
   }
 
-  @Test
-  def httpGetWithParams() {
-    val uri = new URIBuilder()
-              .setPath(URI_STRING + "/search")
-              .setParameter("q", "배성혁")
-              .setParameter("oq", "배성혁")
-              .build
-
+  test("http get with parameters") {
+    val uri = searchURI("scala")
     val httpClient = new HttpClient()
     try {
       val responseStr = httpClient.get(URI_STRING)
-      assert(responseStr.isSuccess)
-      assert(Strings.isNotEmpty(responseStr.getOrElse("")))
+      responseStr.isSuccess shouldEqual true
+      Strings.isNotEmpty(responseStr.getOrElse("")) shouldEqual true
       log.trace(responseStr.getOrElse(""))
     } finally {
       httpClient.close()
     }
   }
 
-  @Test
-  @Ignore("POST 메소드 처리를 해주는 URL이 있어야 합니다.")
-  def postWithParams() {
+  test("http post with parameters") {
     val httpClient = new HttpClient()
 
     val uri: URI = new URIBuilder(URI_STRING).build
-    val nvps = new ArrayBuffer[NameValuePair]()
-    nvps += new BasicNameValuePair("q", "배성혁")
+    val nvps = Seq(new BasicNameValuePair("q", "scala"))
 
-    val responseStr = httpClient.post(uri, nvps.toList)
-    assert(Strings.isNotEmpty(responseStr.getOrElse("")))
+    val responseStr = httpClient.post(uri, nvps)
+    responseStr.isSuccess shouldEqual true
+    Strings.isNotEmpty(responseStr.getOrElse("")) shouldEqual true
     log.trace(responseStr.getOrElse(""))
 
   }
 
-  @Test
-  def responseHandler() {
-    val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁").setParameter("oq", "배성혁").build
+  test("response header") {
+    val uri = searchURI("scala")
     val httpGet: HttpGet = new HttpGet(uri)
     val responseHandler: ResponseHandler[String] = new BasicResponseHandler
     val responseBody = HttpClients.createDefault.execute(httpGet, responseHandler)
-    assert(responseBody != null)
+    responseBody should not be null
     log.trace(responseBody)
   }
 
-  @Test
-  def fluentGet() {
-    val response: HttpResponse = Request.Get(URI_STRING).execute.returnResponse
-    log.trace(EntityUtils.toString(response.getEntity))
-    assertThat(response.getStatusLine.getStatusCode).isEqualTo(HttpStatus.SC_OK)
-  }
+  //    @Test
+  //    def fluentGet() {
+  //        val response: HttpResponse = Request.Get(URI_STRING).execute.returnResponse
+  //        log.trace(EntityUtils.toString(response.getEntity))
+  //        response.getStatusLine.getStatusCode shouldEqual HttpStatus.SC_OK
+  //    }
+  //
+  //    @Test
+  //    @Ignore("POST 메소드 처리를 해주는 URL이 있어야 합니다.")
+  //    def fluentPost() {
+  //        val response =
+  //            Request.Post(URI_STRING)
+  //            .bodyForm(Form.form.add("username", "vip").add("password", "secret").build)
+  //            .execute
+  //            .returnResponse
+  //        response should not be null
+  //        response.getStatusLine.getStatusCode shouldEqual HttpStatus.SC_OK
+  //        log.trace(EntityUtils.toString(response.getEntity, Charsets.UTF_8))
+  //    }
 
-  @Test
-  @Ignore("POST 메소드 처리를 해주는 URL이 있어야 합니다.")
-  def fluentPost() {
-    val response =
-      Request.Post(URI_STRING)
-      .bodyForm(Form.form.add("username", "vip").add("password", "secret").build)
-      .execute
-      .returnResponse
-    assert(response != null)
-    assert(response.getStatusLine.getStatusCode == HttpStatus.SC_OK)
-    log.trace(EntityUtils.toString(response.getEntity, Charsets.UTF_8))
-  }
-
-  @Test
-  def asyncGet() {
+  test("async get") {
     val client = HttpAsyncClients.createDefault()
 
     client.start()
-    val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁").setParameter("oq", "배성혁").build
+    val uri = searchURI("scala")
     val httpGet: HttpGet = new HttpGet(uri)
     val futureResponse = client.execute(httpGet, null)
     while (!futureResponse.isDone) {
@@ -121,12 +113,11 @@ class HttpClientTest extends JUnitSuite {
       Thread.sleep(1L)
     }
     val response = futureResponse.get
-    assert(response != null)
+    response should not be null
     log.trace(EntityUtils.toString(response.getEntity, Charsets.UTF_8))
   }
 
-  @Test
-  def asyncMultipleGet() {
+  test("async multiple get") {
     val connectionManager = new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor)
     val client = HttpAsyncClients.custom.setConnectionManager(connectionManager).build
 
@@ -134,17 +125,20 @@ class HttpClientTest extends JUnitSuite {
       client.start()
       Parallels.runAction(10) {
         try {
-          val uri: URI = new URIBuilder().setPath(URI_STRING + "/search").setParameter("q", "배성혁")
-                         .setParameter("oq", "배성혁").build
+          val uri = new URIBuilder()
+                    .setPath(URI_STRING + "/search")
+                    .setParameter("q", "배성혁")
+                    .setParameter("oq", "배성혁")
+                    .build
+
           val httpGet: HttpGet = new HttpGet(uri)
           val futureResponse = client.execute(httpGet, null)
           val response = futureResponse.get
-          assert(response != null)
+          response should not be null
           log.trace(EntityUtils.toString(response.getEntity))
         }
         catch {
-          case e: Exception =>
-            log.error("예외가 발생했습니다.", e)
+          case NonFatal(e) => log.error("예외가 발생했습니다.", e)
         }
       }
     }
@@ -153,5 +147,4 @@ class HttpClientTest extends JUnitSuite {
       connectionManager.shutdown()
     }
   }
-
 }

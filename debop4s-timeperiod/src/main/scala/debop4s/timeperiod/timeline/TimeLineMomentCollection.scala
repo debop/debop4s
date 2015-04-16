@@ -1,6 +1,6 @@
 package debop4s.timeperiod.timeline
 
-import debop4s.core.utils.ToStringHelper
+import debop4s.core.ToStringHelper
 import debop4s.timeperiod.{ DateTimeOrdering, ITimePeriod }
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory

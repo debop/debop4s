@@ -1,7 +1,7 @@
 package debop4s.core.utils
 
 
-class LongOverflowException(msg: String) extends Exception(msg)
+class LongOverflowException(msg: String) extends RuntimeException(msg)
 
 object LongOverflowArith {
   def add(a: Long, b: Long) = {

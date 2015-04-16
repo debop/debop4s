@@ -8,7 +8,7 @@ import org.scalatest.junit.JUnitSuite
 import org.slf4j.LoggerFactory
 
 /**
- * com.github.time.tests.debop4s.timeperiod.tests.OrderingTest
+ * com.github.time.tests.debop4s.timeperiod.tests.OrderingFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 7. 오후 3:00

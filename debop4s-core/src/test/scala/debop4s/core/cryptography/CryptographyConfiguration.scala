@@ -1,6 +1,6 @@
 package debop4s.core.cryptography
 
-import debop4s.core.AbstractCoreTest
+import debop4s.core.AbstractCoreFunSuite
 import org.springframework.context.annotation.{ Bean, Configuration }
 
 /**
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.{ Bean, Configuration }
  * @since 2014. 2. 25. 오전 10:28
  */
 @Configuration
-class CryptographyConfiguration extends AbstractCoreTest {
+class CryptographyConfiguration extends AbstractCoreFunSuite {
 
   @Bean def md5: MD5StringDigester = new MD5StringDigester
   @Bean def sha1: SHA1StringDigester = new SHA1StringDigester

@@ -6,6 +6,7 @@ package debop4s.core.utils
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오후 11:50
  */
+@deprecated("use scala.Option object", since = "0.5.0")
 object Options {
 
   /**

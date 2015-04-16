@@ -1,5 +1,7 @@
 package debop4s.core
 
+import debop4s.core.utils.Time
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.{ Failure, Success }

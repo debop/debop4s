@@ -1,8 +1,10 @@
 package debop4s.core.utils
 
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream, OutputStream, InputStream }
+import java.io._
 import java.nio.charset.Charset
-import org.slf4j.LoggerFactory
+
+import debop4s.core.{Logging, _}
+
 import scala.annotation.tailrec
 
 /**
@@ -10,20 +12,18 @@ import scala.annotation.tailrec
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 9. 오후 11:00
  */
-object Streams {
+object Streams extends Logging {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
-
-  val BUFFER_SIZE = 1024
+  val BUFFER_SIZE = 4096
 
   /**
    * inputStream 정보를 읽어, outputStream에 복사합니다.
    */
   @tailrec
-  @inline
   def copy(inputStream: InputStream, outputStream: OutputStream, bufferSize: Int = BUFFER_SIZE) {
     val buffer = new Array[Byte](bufferSize)
-    inputStream.read(buffer, 0, buffer.size) match {
+
+    inputStream.read(buffer, 0, buffer.length) match {
       case -1 => ()
       case n =>
         outputStream.write(buffer, 0, n)
@@ -31,20 +31,28 @@ object Streams {
     }
   }
 
-  @inline
+  def toInputStream(bytes: Array[Byte]): InputStream = {
+    new ByteArrayInputStream(bytes)
+  }
+
+  def toInputStream(str: String, cs: Charset = Charsets.UTF_8): InputStream = {
+    if (Strings.isEmpty(str)) new ByteArrayInputStream(Array.emptyByteArray)
+    else toInputStream(str.getBytes(cs))
+  }
+
   def toOutputStream(is: InputStream): OutputStream = {
     val bos = new ByteArrayOutputStream()
     copy(is, bos)
     bos
   }
 
-  @inline
   def toOutputStream(bytes: Array[Byte]): OutputStream = {
     if (bytes == null || bytes.length == 0)
       return new ByteArrayOutputStream()
 
     val is = new ByteArrayInputStream(bytes)
     val os = new ByteArrayOutputStream(bytes.length)
+
     copy(is, os)
     os
   }
@@ -56,25 +64,25 @@ object Streams {
     toOutputStream(str.getBytes(cs))
   }
 
-  @inline
   def toByteArray(is: InputStream): Array[Byte] = {
     if (is == null)
-      Array.emptyByteArray
+      return Array.emptyByteArray
 
-    val os = new ByteArrayOutputStream()
-    try {
+    using(new ByteArrayOutputStream()) { os =>
       copy(is, os)
       os.toByteArray
-    } finally {
-      os.close()
     }
   }
 
-  def toString(is: InputStream): String =
-    Strings.getUtf8String(toByteArray(is))
+  def toString(is: InputStream): String = {
+    if (is == null) ""
+    else Strings.getUtf8String(toByteArray(is))
+  }
 
-  def toString(is: InputStream, cs: Charset): String =
-    new String(toByteArray(is), cs)
+  def toString(is: InputStream, cs: Charset): String = {
+    if (is == null) ""
+    else new String(toByteArray(is), cs)
+  }
 
 
   // TODO: Scala 고유의 Stream 처리 기능을 제공하자.

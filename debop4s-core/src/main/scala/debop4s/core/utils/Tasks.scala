@@ -1,6 +1,11 @@
 package debop4s.core.utils
 
-import org.slf4j.LoggerFactory
+import java.util.concurrent.atomic.AtomicInteger
+
+import debop4s.core.Logging
+
+import scala.util.Try
+import scala.util.control.NonFatal
 
 /**
  * debop4s.core.tools.Tasks
@@ -8,13 +13,53 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 13. 오후 7:59
  */
-object Tasks {
+object Tasks extends Logging {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  /** Thread Id */
+  private val sequenceId: AtomicInteger = new AtomicInteger(0)
 
   /**
-   * 지정된 block을 성공할 때까지 수행햅니다.
+   * 지정한 action을 수행할 background thread 를 생성하여 실행합니다.
+   *
+   * @param action background thread에서 실행할 코드 블럭
    */
+  def apply(action: Runnable) {
+    spawn("backgraound-" + sequenceId.incrementAndGet, action)
+  }
+
+  /**
+   * 지정된 action을 background thread 를 만들어서 실행하고, 스레드를 반환합니다.
+   *
+   * @param threadName thread name
+   * @param action     background thread에서 실행할 코드 블럭
+   * @return thread
+   */
+  def spawn(threadName: String, action: Runnable): Thread = {
+    spawn(threadName, action, daemon = false)
+  }
+
+  /**
+   * 지정된 action을 새로운 스레드를 만들어 실행하고, 스레드를 반환합니다.
+   *
+   * @param threadName thread name
+   * @param daemon     is background thread?
+   * @param action     background thread에서 실행할 코드 블럭
+   * @return thread
+   */
+  def spawn(threadName: String, action: Runnable, daemon: Boolean): Thread = {
+    require(action != null)
+    val thread: Thread = new Thread(action, threadName)
+    thread.setDaemon(daemon)
+    thread.start()
+    thread
+  }
+
+  /**
+   * 지정된 `block`을 성공할 때까지 `attempts` 만큼 시도합니다.
+   * @param attempts 시도 횟수
+   * @param waitTime 실패 시 재시도하기 전에 idle time in millis
+   */
+  @deprecated("제대로 작동하지 않네요. 더 테스트해야 합니다.", "2.0.0")
   def runWithRetry(attempts: Int, waitTime: Long = 1)(block: => Unit) {
     var remains = attempts
     while (remains > 0) {
@@ -22,7 +67,7 @@ object Tasks {
         block
         return
       } catch {
-        case e: Throwable =>
+        case NonFatal(e) =>
           if (remains <= 1) throw new RuntimeException(e)
           Thread.sleep(waitTime)
       }
@@ -31,21 +76,25 @@ object Tasks {
   }
 
   /**
-   * 지정된 func을 성공할 때까지 수행햅니다.
+   * 지정된 `func` 을 성공할 때까지 `attempts` 회 만큼 시도합니다.
+   * 실패 시에는
+   * @param attempts 시도 횟수
+   * @param waitTime 실패 시 재시도하기 전에 idle time in millis
    */
-  def callWithRetry[T](attempts: Int, waitTime: Long = 1)(func: () => T): T = {
+  @deprecated("제대로 작동하지 않네요. 더 테스트해야 합니다.", "2.0.0")
+  def callWithRetry[T](attempts: Int, waitTime: Long = 1)(func: => T): Try[T] = Try {
     var remains = attempts
+    var result: T = null.asInstanceOf[T]
     while (remains > 0) {
+      log.debug(s"run function... remains=$remains")
       try {
-        return func()
+        result = func
       } catch {
-        case e: Throwable =>
-          if (remains <= 1) throw new RuntimeException(e)
-          Thread.sleep(waitTime)
+        case e: Throwable => log.warn(s"fail to execution method.", e)
       }
       remains -= 1
     }
-    null.asInstanceOf[T]
+    result
   }
 
 }

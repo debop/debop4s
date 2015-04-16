@@ -4,6 +4,7 @@ import debop4s.core.concurrent.Asyncs
 import java.lang.ref.{PhantomReference, ReferenceQueue, Reference}
 import java.util
 import java.util.concurrent.atomic.AtomicReference
+import debop4s.core.utils.Time
 import org.slf4j.LoggerFactory
 import scala.annotation.varargs
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -12,7 +13,7 @@ import scala.concurrent.duration._
 import scala.util.control.NonFatal
 
 /**
- * Closable is a mixin trait to describe a closable ``resource``.
+ * Closable is a mixin trait to describe a closable `resource`.
  * Created by debop on 2014. 4. 6.
  */
 trait Closable {

@@ -13,7 +13,7 @@ import scala.concurrent.duration.Duration
  * ScalaAsyncsTest
  * Created by debop on 2014. 4. 4.
  */
-class ScalaAsyncsSample extends AbstractCoreTest {
+class ScalaAsyncsSample extends AbstractCoreFunSuite {
 
   implicit val defaultDuration: Duration = Duration(60, TimeUnit.MINUTES)
 

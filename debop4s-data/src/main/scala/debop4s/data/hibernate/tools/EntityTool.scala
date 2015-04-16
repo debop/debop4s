@@ -1,14 +1,17 @@
 package debop4s.data.hibernate.tools
 
-import debop4s.core.ValueObject
+import java.lang.{Iterable => JIterable}
+import java.util
+
+import debop4s.core.{Logging, ValueObject}
 import debop4s.core.json.JacksonSerializer
-import debop4s.core.utils.{ Graphs, Mappers, Strings }
+import debop4s.core.utils.{Graphs, Mappers, Strings}
 import debop4s.data.hibernate.repository.HibernateDao
 import debop4s.data.model.HibernateTreeEntity
-import org.hibernate.criterion.{ Restrictions, DetachedCriteria }
+import org.hibernate.criterion.{DetachedCriteria, Restrictions}
 import org.slf4j.LoggerFactory
+
 import scala.collection.JavaConversions._
-import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
 /**
@@ -17,11 +20,9 @@ import scala.reflect.ClassTag
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 25. 오후 3:28
  */
-object EntityTool {
+object EntityTool extends Logging {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
-
-  private lazy val json = JacksonSerializer()
+  private[this] lazy val json = JacksonSerializer()
 
   def asString(entity: ValueObject): String =
     if (entity == null) Strings.NULL_STR else entity.toString
@@ -136,12 +137,12 @@ object EntityTool {
   /**
    * Tree 상에서 현재 노드의 모든 조상 노드를 구합니다.
    */
-  def ancestors[T <: HibernateTreeEntity[T]](node: T): IndexedSeq[T] = {
-    val ans = ArrayBuffer[T]()
+  def ancestors[T <: HibernateTreeEntity[T]](node: T): util.List[T] = {
+    val ans = new util.ArrayList[T]()
     if (node != null) {
       var parent = node
       while (parent != null) {
-        ans += parent
+        ans add parent
         parent = parent.getParent
       }
     }
@@ -151,7 +152,7 @@ object EntityTool {
   /**
    * Tree 상에서 현재 노드의 모든 자손 노드를 구합니다.
    */
-  def descendents[T <: HibernateTreeEntity[T]](node: T): Seq[T] = {
+  def descendents[T <: HibernateTreeEntity[T]](node: T): JIterable[T] = {
     Graphs.depthFirstScan[T](node, x => x.children)
   }
 

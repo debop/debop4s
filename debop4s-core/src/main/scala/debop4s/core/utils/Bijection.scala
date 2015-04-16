@@ -23,7 +23,7 @@ object Bijection {
  * can convert to and from a set of objects and their serialized form
  * is an example of a bijection.
  */
-trait Bijection[A, B] extends ( A => B ) {
+trait Bijection[A, B] extends (A => B) {
   self =>
 
   def apply(a: A): B
@@ -37,8 +37,8 @@ trait Bijection[A, B] extends ( A => B ) {
 
   private lazy val _inverse = {
     new Bijection[B, A] {
-      def apply(b: B) = self.invert(b)
-      def invert(a: A) = self.apply(a)
+      override def apply(b: B) = self.invert(b)
+      def invert(a: A): B = self.apply(a)
       override def inverse = self
     }
   }

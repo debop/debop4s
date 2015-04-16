@@ -1,13 +1,13 @@
 package debop4s.core.json
 
 import com.fasterxml.jackson.databind.JsonMappingException
-import debop4s.core.AbstractCoreTest
+import debop4s.core.AbstractCoreFunSuite
 
 /**
  * JsonSerializerFunSuite
  * @author sunghyouk.bae@gmail.com
  */
-class JsonSerializerFunSuite extends AbstractCoreTest {
+class JsonSerializerFunSuite extends AbstractCoreFunSuite {
 
   lazy val json = JacksonSerializer()
 

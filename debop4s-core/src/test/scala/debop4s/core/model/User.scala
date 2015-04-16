@@ -1,7 +1,7 @@
 package debop4s.core.model
 
-import debop4s.core.ValueObjectBase
-import debop4s.core.utils.{ Arrays, ToStringHelper, Hashs }
+import debop4s.core.{ToStringHelper, ValueObjectBase}
+import debop4s.core.utils.{Arrays, Hashs}
 import org.joda.time.DateTime
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

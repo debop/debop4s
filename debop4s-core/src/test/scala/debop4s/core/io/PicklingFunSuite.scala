@@ -1,6 +1,6 @@
 package debop4s.core.io
 
-import debop4s.core.AbstractCoreTest
+import debop4s.core.AbstractCoreFunSuite
 import debop4s.core.io.model._
 
 import scala.pickling._
@@ -10,7 +10,7 @@ import scala.pickling.binary._
  * PicklingFunSuite
  * @author sunghyouk.bae@gmail.com
  */
-class PicklingFunSuite extends AbstractCoreTest {
+class PicklingFunSuite extends AbstractCoreFunSuite {
 
   test("case class pickling") {
     val joe = PersonEntity(0, "joe", Array(3, 4, 13))

@@ -1,6 +1,6 @@
 package debop4s.timeperiod
 
-import debop4s.core.Local
+import debop4s.core.utils.Local
 
 /**
  * debop4s.timeperiod.Periodcontext

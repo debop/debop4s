@@ -2,19 +2,18 @@ package debop4s
 
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.concurrent.{Callable, TimeUnit}
 
 import debop4s.core.concurrent.Asyncs
 import debop4s.core.utils.Strings
-import java.util.concurrent.{Callable, TimeUnit}
-import org.joda.time.base.AbstractInstant
-import org.joda.time.{Duration => JDuration, DateTime}
+import org.joda.time.{DateTime, Duration => JDuration}
 import org.slf4j.LoggerFactory
-import scala.concurrent._
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.{FiniteDuration, Duration}
+import scala.concurrent._
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.util.Try
 import scala.util.control.NonFatal
-
 
 
 /**
@@ -24,7 +23,7 @@ import scala.util.control.NonFatal
  */
 package object core {
 
-  private lazy val log = LoggerFactory.getLogger("kr.hconnect.core")
+  private lazy val log = LoggerFactory.getLogger("debop4s.core")
 
   val TimeConversions = debop4s.core.conversions.time
   val StorageConversions = debop4s.core.conversions.storage
@@ -77,14 +76,14 @@ package object core {
   implicit class AwaitableExtensions[+T](underlying: Awaitable[T]) {
 
     def await(timeout: Long): T = Await.result(underlying, Duration(timeout, TimeUnit.MILLISECONDS))
-    def await(atMost: Duration = defaultDuration) = Await.result(underlying, atMost)
+    def await(implicit atMost: Duration = defaultDuration) = Await.result(underlying, atMost)
 
     def hold(timeout: Long) = Asyncs.ready(underlying, timeout)
-    def hold(atMost: Duration = defaultDuration) = Await.ready(underlying, atMost)
+    def hold(implicit atMost: Duration = defaultDuration) = Await.ready(underlying, atMost)
   }
 
   implicit class AwaitableSequenceExtensions[A](underlying: Iterable[scala.concurrent.Future[A]]) {
-    val timeout = FiniteDuration(15, TimeUnit.MINUTES)
+    lazy val timeout = FiniteDuration(15, TimeUnit.MINUTES)
 
     def awaitAll(implicit timeout: Duration = timeout): Iterable[A] = {
       Await.result(Future.sequence(underlying), timeout)
@@ -98,7 +97,7 @@ package object core {
   /**
    * 지정한 코드 블럭을 `Runnable` 인스턴스로 빌드합니다.
    * {{{
-   *     import kr.hconnect.core.utils.Threads._
+   *     import debop4s.core.utils.Threads._
    *     val runnable = {
    *      // some code...
    *     }.makeRunnable

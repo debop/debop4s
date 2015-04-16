@@ -1,12 +1,15 @@
 package debop4s.core.utils
 
-import debop4s.core.BinaryStringFormat
+import java.lang.{Iterable => JIterable}
 import java.nio.charset.Charset
 import java.util
-import org.apache.commons.codec.binary.{ Base64, Hex }
-import org.slf4j.LoggerFactory
+import java.util.{Collection => JCollection, List => JList, Map => JMap}
+
+import debop4s.core.{BinaryStringFormat, Logging}
+import org.apache.commons.codec.binary.{Base64, Hex}
+
 import scala.annotation.varargs
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 import scala.util.matching.Regex
 import scala.util.matching.Regex.MatchData
@@ -16,41 +19,37 @@ import scala.util.matching.Regex.MatchData
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 9. 오후 10:06
  */
-object Strings {
+object Strings extends Logging {
+  /**
+   * 한국어 등 Multi byte 문자열임을 나타내는 접두사입니다.
+   */
+  lazy val MULTI_BYTES_PREFIX: Array[Byte] = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
-
-  lazy val MULTI_BYTES_PREFIX = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
   lazy val TRIMMING_STR = "..."
   lazy val NULL_STR = "<null>"
   lazy val EMPTY_STR = ""
   lazy val COMMA_STR = ","
+
+  /** 시스템의 Line 구분자 : LF | CRLF | CR */
   lazy val LINE_SEPARATOR = System.getProperty("line.separator")
 
+  /** 빈 공간을 찾는 RegEx */
   val WHITESPACE_BLOCK = "\\s+".r
 
-  // val UTF8: Charset = Charsets.UTF_8
+  val UTF8: Charset = Charsets.UTF_8
 
-  // join 함수의 암묵적 인자로 사용됩니다.
-  implicit val separator: String = COMMA_STR
-
-  @inline
   def asString(x: Any): String = x match {
-    case null => NULL_STR
     case None => None.toString
+    case null => NULL_STR
     case _ => x.toString
   }
 
-  @inline
   def isNull(cs: CharSequence): Boolean = cs == null
 
-  @inline
   def isNotNull(cs: CharSequence): Boolean = cs != null
 
-  @inline
   def isEmpty(cs: String): Boolean = isEmpty(cs, doTrim = true)
 
-  @inline
   def isEmpty(cs: String, doTrim: Boolean = true): Boolean = {
     if (cs == null)
       return true
@@ -59,29 +58,27 @@ object Strings {
     else cs.length == 0
   }
 
-  @inline
   def isNotEmpty(str: String): Boolean = isNotEmpty(str, doTrim = true)
 
-  @inline
   def isNotEmpty(cs: String, doTrim: Boolean): Boolean = !isEmpty(cs, doTrim)
 
-  @inline
+
   def isWhitespace(cs: CharSequence): Boolean = {
     if (cs == null)
       return true
 
     val sz = cs.length
-    for (i <- 0 until sz) {
+    var i = 0
+    while (i < sz) {
       if (!Character.isWhitespace(cs.charAt(i)))
         return false
+      i += 1
     }
     true
   }
 
-  @inline
   def isNotWhitespace(cs: CharSequence): Boolean = !isWhitespace(cs)
 
-  @inline
   def isMultiByteString(bytes: Array[Byte]): Boolean = {
     if (bytes == null || bytes.length < MULTI_BYTES_PREFIX.length)
       return false
@@ -89,7 +86,6 @@ object Strings {
     MULTI_BYTES_PREFIX.sameElements(bytes.take(MULTI_BYTES_PREFIX.length))
   }
 
-  @inline
   def isMultiByteString(str: CharSequence): Boolean = {
     if (isWhitespace(str))
       return false
@@ -104,15 +100,15 @@ object Strings {
   def needEllipsis(str: String, maxLength: Int = 80): Boolean =
     isNotEmpty(str) && str.length() > maxLength
 
-  @inline
+
   def ellipsisChar(str: String, maxLength: Int = 80): String = {
     if (isEmpty(str) || !needEllipsis(str, maxLength))
-      return str
-
-    str.substring(0, maxLength - TRIMMING_STR.length) + TRIMMING_STR
+      str
+    else
+      str.substring(0, maxLength - TRIMMING_STR.length) + TRIMMING_STR
   }
 
-  @inline
+
   def ellipsisPath(str: String, maxLength: Int = 80): String = {
     if (isEmpty(str) || !needEllipsis(str, maxLength))
       return str
@@ -130,7 +126,7 @@ object Strings {
     builder.toString()
   }
 
-  @inline
+
   def ellipsisFirst(str: String, maxLength: Int = 80): String = {
     if (isEmpty(str) || !needEllipsis(str, maxLength))
       return str
@@ -138,13 +134,13 @@ object Strings {
     TRIMMING_STR + str.substring(str.length - maxLength)
   }
 
-  @inline
+
   def intToHex(n: Int): Char = {
-    if (n < 10) ( n + 48 ).asInstanceOf[Char]
-    else ( n - 10 + 97 ).asInstanceOf[Char]
+    if (n < 10) (n + 48).asInstanceOf[Char]
+    else (n - 10 + 97).asInstanceOf[Char]
   }
 
-  @inline
+
   def hexToInt(h: Char): Int = {
     if (h > '0' && h <= '9') h - '0'
     else if (h > 'a' && h < 'f') h - 'a' + 10
@@ -164,17 +160,17 @@ object Strings {
    * 바이트 배열을 문자열로 표현합니다.
    */
   def toHexString(bytes: Array[Byte], from: Int, to: Int): String = {
-    val out = new StringBuilder
+    val sb = new StringBuilder((to - from) * 2)
 
-    for (i <- from until to) {
+    var i = from
+    while (i < to) {
       val b = bytes(i)
-      val s = ( b.toInt & 0xff ).toHexString
-      if (s.length < 2) {
-        out append '0'
-      }
-      out append s
+      val s = Integer.toHexString(b.toInt & 0xff)
+      if (s.length < 2) sb append '0'
+      sb append s
+      i += 1
     }
-    out.toString()
+    sb.toString()
   }
 
   /**
@@ -182,8 +178,9 @@ object Strings {
    * @see `toHexString`
    */
   def fromHexString(str: String): Array[Byte] = {
-    val buffer = new Array[Byte](( str.length + 1 ) / 2)
-    ( str.grouped(2).toSeq zipWithIndex ) foreach {
+    val buffer = new Array[Byte]((str.length + 1) / 2)
+
+    (str.grouped(2).toSeq zipWithIndex) foreach {
       case (substr, i) =>
         buffer(i) = java.lang.Integer.parseInt(substr, 16).toByte
     }
@@ -191,10 +188,8 @@ object Strings {
   }
 
   def getBytesFromHexString(hexString: String): Array[Byte] = {
-    if (isEmpty(hexString))
-      return Array.emptyByteArray
-
-    Hex.decodeHex(hexString.toCharArray)
+    if (isEmpty(hexString)) Array.emptyByteArray
+    else Hex.decodeHex(hexString.toCharArray)
   }
 
   def getHexString(bytes: Array[Byte]): String =
@@ -238,134 +233,145 @@ object Strings {
 
   def getStringFromBytes(bytes: Array[Byte],
                          format: BinaryStringFormat = BinaryStringFormat.HexDecimal): String = {
-    if (format == BinaryStringFormat.HexDecimal)
-      getHexString(bytes)
-    else
-      encodeBase64String(bytes)
+    if (format == BinaryStringFormat.HexDecimal) getHexString(bytes)
+    else encodeBase64String(bytes)
   }
 
   def getBytesFromString(str: String,
                          format: BinaryStringFormat = BinaryStringFormat.HexDecimal): Array[Byte] = {
-    if (format == BinaryStringFormat.HexDecimal)
-      getBytesFromHexString(str)
-    else
-      decodeBase64(str)
+    if (format == BinaryStringFormat.HexDecimal) getBytesFromHexString(str)
+    else decodeBase64(str)
   }
 
-  @inline
-  def deleteCharAny(cs: CharSequence, chars: Char*): CharSequence = {
+
+  def deleteCharAny(cs: CharSequence, chars: Char*): String = {
     if (cs == null || cs.length == 0 || chars == null || chars.length == 0)
-      return cs
+      return EMPTY_STR
 
     val builder = new StringBuilder()
-
-    for (i <- 0 until cs.length()) {
+    var i = 0
+    while (i < cs.length()) {
       val c = cs.charAt(i)
-      if (!chars.contains(c))
+      if (!chars.contains(c)) {
         builder.append(c)
+      }
+      i += 1
     }
     builder.toString()
   }
 
-  @inline
-  def deleteChar(cs: CharSequence, chars: Array[Char]): CharSequence = {
+  def deleteChar(cs: CharSequence, chars: Array[Char]): String = {
     if (cs == null || cs.length == 0 || chars == null || chars.length == 0)
-      return cs
+      return EMPTY_STR
 
     val builder = new StringBuilder()
-
-    for (i <- 0 until cs.length()) {
+    var i = 0
+    while (i < cs.length()) {
       val c = cs.charAt(i)
-      if (!chars.contains(c))
+      if (!chars.contains(c)) {
         builder.append(c)
+      }
+      i += 1
     }
     builder.toString()
   }
 
-  @inline
-  def deleteChar(cs: CharSequence, dc: Char): CharSequence = {
+  def deleteChar(cs: CharSequence, dc: Char): String = {
     if (cs == null || cs.length == 0)
-      return cs
+      return EMPTY_STR
 
     val builder = new StringBuilder()
 
-    for (i <- 0 until cs.length()) {
+    var i = 0
+    while (i < cs.length()) {
       val c = cs.charAt(i)
-      if (c != dc)
-        builder.append(c)
+      if (c != dc) builder.append(c)
+      i += 1
     }
     builder.toString()
   }
 
   @varargs
-  @inline
   def concat(items: Any*): String = {
     val builder = new StringBuilder()
-    items.foreach(x => builder.append(asString(x)))
+    var i = 0
+    while (i < items.length) {
+      builder.append(asString(items(i)))
+      i += 1
+    }
     builder.toString()
   }
 
   @varargs
-  @inline
   def concat(items: Any*)(implicit separator: String = ""): String = {
     if (items == null || items.isEmpty)
       return ""
 
-    val builder = new StringBuilder
+    val builder = new StringBuilder()
 
-    builder.append(asString(items.headOption.getOrElse("")))
-    items
-    .tail
-    .foreach(x => builder.append(separator).append(asString(x)))
+    var isFirst = true
+    var i = 0
+    while (i < items.length) {
+      if (!isFirst) {
+        builder.append(separator)
+        isFirst = false
+      }
+      builder.append(items(i))
+      i += 1
+    }
 
     builder.toString()
   }
 
-  @inline
   def subSequence(cs: CharSequence, fromIndex: Int = 0): CharSequence = {
     if (cs == null) null else cs.subSequence(fromIndex, cs.length())
   }
 
-  @inline
   def indexOf(cs: CharSequence, searchChar: Int, fromIndex: Int = 0): Int = {
     cs match {
       case s: String => s.indexOf(searchChar, fromIndex)
       case _ =>
-        val sz = cs.length()
-        for (i <- fromIndex until sz) {
+        var i = fromIndex
+        while (i < cs.length) {
           if (cs.charAt(i) == searchChar)
             return i
+          i += 1
         }
-        return -1
+        -1
+
     }
   }
 
-  @inline
   def lastIndexOf(cs: CharSequence, searchChar: Int, fromIndex: Int = 0): Int = {
     cs match {
       case s: String => s.lastIndexOf(searchChar, fromIndex)
       case _ =>
         var start = fromIndex
-        val sz = cs.length()
-        if (start >= sz)
-          start = sz - 1
-        for (i <- start to 0 by -1) {
+        if (start >= cs.length)
+          start = cs.length - 1
+
+        var i = start
+        while (i >= 0) {
           if (cs.charAt(i) == searchChar)
             return i
+          i -= 1
         }
-        return -1
+        -1
     }
   }
 
-  @inline
+
   def toCharArray(cs: CharSequence): Array[Char] = {
     cs match {
       case s: String => s.toCharArray
       case _ =>
         val sz = cs.length()
         val array = new Array[Char](sz)
-        for (i <- 0 until sz) {
+
+        var i = 0
+        while (i < sz) {
           array(i) = cs.charAt(i)
+          i += 1
         }
         array
     }
@@ -386,21 +392,66 @@ object Strings {
     }
   }
 
+  def mkString(items: JIterable[_], separator: String): String = {
+    val sb = new StringBuilder()
+    mkString(sb, items, separator)
+    sb.toString()
+  }
 
-  @inline
-  def join(items: java.lang.Iterable[_])(implicit separator: String): String =
-    items.mkString(separator)
+  def mkString(sb: StringBuilder, items: JIterable[_], separator: String): Unit = {
+    val iter = items.iterator()
+    var sp = ""
+    var first = true
 
-  @inline
-  @varargs
-  def join(items: Any*)(implicit separator: String): String = items.mkString(separator)
+    while (iter.hasNext) {
+      sb.append(sp).append(iter.next())
+      if (first) {
+        first = false
+        sp = separator
+      }
+    }
+  }
 
-  @inline
+  def mkString(items: JMap[_, _], separator: String): String = {
+    val sb = new StringBuilder()
+    mkString(sb, items, separator)
+    sb.toString()
+  }
+
+  def mkString(sb: StringBuilder, items: JMap[_, _], separator: String): Unit = {
+    val keys = items.keySet().iterator()
+    var sp = ""
+    var first = true
+
+    while (keys.hasNext) {
+      val key = keys.next()
+      val value = items.get(key)
+      sb.append(sp).append(key).append("=").append(value)
+      if (first) {
+        first = false
+        sp = separator
+      }
+    }
+  }
+
+  def join(items: java.lang.Iterable[_]): String = mkString(items, COMMA_STR)
+
+  def join(items: java.lang.Iterable[_], separator: String): String = mkString(items, separator)
+
+  def join(items: Iterable[_]): String = mkString(items.asJava, COMMA_STR)
+
+  def join(items: Iterable[_], separator: String): String = mkString(items.asJava, separator)
+
+  def join(items: Array[String]): String = mkString(items.toSeq.asJava, COMMA_STR)
+
+  def join(items: Array[String], separator: String): String = mkString(items.toSeq.asJava, separator)
+
+
   def quotedStr(str: String): String =
     if (isNull(str)) NULL_STR
     else String.format("\'%s\'", str.replace("\'", "\'\'"))
 
-  @inline
+
   def quotedStr(str: String, defaultStr: String): String =
     if (isWhitespace(str)) quotedStr(defaultStr)
     else quotedStr(str)
@@ -415,18 +466,12 @@ object Strings {
   }
 
   @varargs
-  def split(str: String, removeEmptyEntries: Boolean, separators: String*): Array[String] = {
-    split(str, ignoreCase = true, removeEmptyEntries = removeEmptyEntries, separators: _*)
-  }
-
-  @inline
-  @varargs
   def split(str: String, ignoreCase: Boolean, removeEmptyEntries: Boolean, separators: String*): Array[String] = {
     if (isEmpty(str))
       return Array[String]()
 
-    val results = ArrayBuffer[String]()
-    val seps = ArrayBuffer[Array[Char]]()
+    val results = new ArrayBuffer[String]()
+    val seps = new ArrayBuffer[Array[Char]]()
     for (sep <- separators) {
       if (ignoreCase) seps += sep.toLowerCase.toCharArray
       else seps += sep.toCharArray
@@ -435,15 +480,19 @@ object Strings {
 
     var startIndex = 0
     var prevIndex = 0
+
     while (startIndex < strArray.length) {
       var continue = true
       for (sep <- seps if continue) {
         if (sep.sameElements(strArray.drop(startIndex).take(sep.length))) {
           val item = str.substring(prevIndex, startIndex)
-          if (removeEmptyEntries) {
-            results += item.trim
-          } else {
-            results += item
+          if (item != null && item.length > 0) {
+            if (removeEmptyEntries) {
+              if (isNotWhitespace(item))
+                results += item.trim
+            } else {
+              results += item
+            }
           }
           prevIndex = startIndex + sep.length
           startIndex = startIndex + sep.length
@@ -453,6 +502,7 @@ object Strings {
       }
       startIndex += 1
     }
+
     if (prevIndex < strArray.length) {
       if (removeEmptyEntries)
         results += str.substring(prevIndex).trim
@@ -460,6 +510,7 @@ object Strings {
         results += str.substring(prevIndex)
     }
     results.toArray
+
   }
 
   def wordCount(str: String, word: String, ignoreCase: Boolean = true): Int = {
@@ -523,43 +574,52 @@ object Strings {
       EMPTY_STR
   }
 
-  @inline
+
   def objectToString(obj: Any): String = {
     asString(obj)
   }
 
   @varargs
-  def listToString(items: Any*): String = {
-    if (items == null) NULL_STR
-    else join(items.toArray)
+  def listToString(item: Any, items: Any*): String = {
+    join((Seq(item) ++ items).toIterable)
   }
+
 
   def listToString(items: java.lang.Iterable[_]): String = {
     if (items == null) NULL_STR
     else join(items)
   }
 
+
   def listToString(items: Array[_]): String = {
     if (items == null) NULL_STR
-    else join(items)
+    else join(items.toList)
   }
+
 
   def mapToString(map: util.Map[_, _], openStr: String = "{", delimeter: String = ",", closeStr: String = "}"): String = {
     if (map == null) NULL_STR
-    else openStr + join(mapToEntityList(map))(delimeter) + closeStr
+    else openStr + join(mapToEntityList(map), delimeter) + closeStr
   }
 
+
   def mapToEntityList(map: util.Map[_, _]): util.List[String] = {
-    val list = new ArrayBuffer[String]()
-    map.foreach(entry => list += ( entry._1.toString + "=" + entry._2.toString ))
+    val list = new util.ArrayList[String](map.size())
+    map.asScala.foreach { case (k, v) =>
+      list.add(k.toString + "=" + v.toString)
+    }
     list
   }
 
-  def regexSub(cs: CharSequence, re: Regex)(replace: ( Regex.MatchData => String )): String = {
+
+  def regexSub(cs: CharSequence, re: Regex)(replace: (Regex.MatchData => String)): String = {
     var offset = 0
     val out = new StringBuilder()
 
-    for (m <- re.findAllIn(cs).matchData) {
+    val matches = re.findAllIn(cs).matchData
+
+    while (matches.hasNext) {
+      val m = matches.next()
       if (m.start > offset) {
         out.append(cs.subSequence(offset, m.start))
       }
@@ -573,7 +633,10 @@ object Strings {
     out.toString()
   }
 
-  private val QUOTE_RE = "[\u0000-\u001f\u007f-\uffff\\\\\"]".r
+  /**
+   * quote 를 구분할 RegEx
+   */
+  val QUOTE_RE = "[\u0000-\u001f\u007f-\uffff\\\\\"]".r
 
   /**
    * 프린트 불가한 char 를 c 스타일로 quote 해 준다.
@@ -588,18 +651,18 @@ object Strings {
         case '"' => "\\\""
         case '\\' => "\\\\"
         case c =>
-          if (c <= 255) "\\x%02x".format(c.asInstanceOf[Int])
-          else "\\u%04x" format ( c.asInstanceOf[Int] )
+          if (c <= 255) "\\x%02x" format c.asInstanceOf[Int]
+          else "\\u%04x" format c.asInstanceOf[Int]
       }
     }
   }
 
   // we intentionally don't unquote "\$" here, so it can be used to escape interpolation later.
-  private val UNQUOTE_RE = """\\(u[\dA-Fa-f]{4}|x[\dA-Fa-f]{2}|[/rnt\"\\])""".r
+  val UNQUOTE_RE = """\\(u[\dA-Fa-f]{4}|x[\dA-Fa-f]{2}|[/rnt\"\\])""".r
 
   /**
    * Unquote an ASCII string that has been quoted in a style like
-   * {@link #quoteC} and convert it into a standard unicode string.
+   * `quoteC` and convert it into a standard unicode string.
    * `"\\uHHHH"` and `"\xHH"` expressions are unpacked
    * into unicode characters, as well as `"\r"`, `"\n"`,
    * `"\t"`, `"\\"`, and `'\"'`.

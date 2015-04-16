@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 
 /**
  * twitter/util 에 있는 pool 을 porting 했습니다.
@@ -23,7 +23,6 @@ trait Pool[A] {
 }
 
 class SimplePool[A](items: mutable.Queue[Future[A]]) extends Pool[A] {
-  private lazy val log = LoggerFactory.getLogger(getClass)
 
   def this(items: Seq[A]) = this {
     val queue = new mutable.Queue[Future[A]]
@@ -46,11 +45,11 @@ class SimplePool[A](items: mutable.Queue[Future[A]]) extends Pool[A] {
   def release(item: A) {
     items += Future.successful(item)
     synchronized {
-      if (!requests.isEmpty && !items.isEmpty)
+      if (requests.nonEmpty && items.nonEmpty)
         Some((requests.dequeue(), items.dequeue()))
       else
         None
-    } map { case (request, fa) =>
+    } foreach { case (request, fa) =>
       fa onComplete {
         case Success(a) => request.success(a)
         case Failure(e) => request.failure(e)
@@ -81,18 +80,22 @@ private class HealthyQueue[A](makeItem: () => Future[A],
 
   val self = new mutable.SynchronizedQueue[Future[A]]
   synchronized {
-    ( 0 until numItems ).foreach(_ => self += makeItem())
+    (0 until numItems).foreach(_ => self += makeItem())
   }
 
   private val log = LoggerFactory.getLogger(getClass)
 
-  override def +=(item: Future[A]) = {
+  override def +=(item: Future[A]): this.type = {
     synchronized { self += item }
     this
   }
 
+  override def enqueue(elems: Future[A]*): Unit = {
+    this ++= elems
+  }
+
   override def dequeue(): Future[A] = synchronized {
-    if (isEmpty)
+    if (self.isEmpty)
       throw new NoSuchElementException("queue is empty")
 
     self.dequeue() flatMap { item =>

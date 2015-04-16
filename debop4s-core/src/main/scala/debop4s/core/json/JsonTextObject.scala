@@ -1,7 +1,7 @@
 package debop4s.core.json
 
-import debop4s.core.ValueObjectBase
-import debop4s.core.utils.{ ToStringHelper, Hashs }
+import debop4s.core.{ToStringHelper, ValueObjectBase}
+import debop4s.core.utils.Hashs
 import scala.beans.BeanProperty
 
 /**

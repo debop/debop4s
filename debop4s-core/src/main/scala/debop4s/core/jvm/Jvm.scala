@@ -1,11 +1,12 @@
 package debop4s.core.jvm
 
-import debop4s.core.Time
+import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
+
 import debop4s.core.concurrent.NamedPoolThreadFactory
 import debop4s.core.conversions.time._
-import debop4s.core.utils.{ Stopwatch, Timer, StorageUnit }
-import java.util.concurrent.{ TimeUnit, Executors, ScheduledExecutorService }
+import debop4s.core.utils.{Stopwatch, StorageUnit, Time, Timer}
 import org.slf4j.LoggerFactory
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -28,10 +29,10 @@ case class PoolState(numCollections: Long,
                      used: StorageUnit) {
 
   def -(other: PoolState) = PoolState(
-                                       numCollections = this.numCollections - other.numCollections,
-                                       capacity = other.capacity,
-                                       used = this.used + other.capacity - other.used + other.capacity * ( this.numCollections - other.numCollections - 1 )
-                                     )
+    numCollections = this.numCollections - other.numCollections,
+    capacity = other.capacity,
+    used = this.used + other.capacity - other.used + other.capacity * (this.numCollections - other.numCollections - 1)
+  )
   override def toString: String =
     s"PoolState(n=$numCollections, remaining=${ capacity - used }[$used of $capacity])"
 }
@@ -58,7 +59,7 @@ trait Pool {
     timer.doLater(period) {
       val end = state()
       val interval = sw.stop()
-      ( ( end - begin ).used.inBytes * 1000 ) / interval.toLong
+      ((end - begin).used.inBytes * 1000) / interval.toLong
     }
   }
 }
@@ -131,11 +132,11 @@ trait Jvm {
     }
 
     executor.scheduleAtFixedRate(
-                                  new Runnable {def run() = sample() },
-                                  0,
-                                  period.toMillis,
-                                  TimeUnit.MILLISECONDS
-                                )
+      new Runnable {def run() = sample() },
+      0,
+      period.toMillis,
+      TimeUnit.MILLISECONDS
+    )
   }
 
   /**
@@ -152,9 +153,9 @@ trait Jvm {
     foreachGc {
       case gc @ Gc(_, _, timestamp, _) =>
         val floor = timestamp - bufferFor
-        buffer = ( gc :: buffer ) takeWhile ( _.timestamp > floor )
+        buffer = (gc :: buffer) takeWhile (_.timestamp > floor)
     }
-    (since: Time) => buffer takeWhile ( _.timestamp > since )
+    (since: Time) => buffer takeWhile (_.timestamp > since)
   }
 
   def forceGc()
@@ -169,7 +170,7 @@ trait Jvm {
   def mainClassName: String = {
     val mainClass = for {
       (_, stack) <- Thread.getAllStackTraces.asScala find { case (t, s) => t.getName == "main" }
-      frame <- stack.reverse find { elem => !( elem.getClassName startsWith "scala.tools.nsc.MainGenericRunner" ) }
+      frame <- stack.reverse find { elem => !(elem.getClassName startsWith "scala.tools.nsc.MainGenericRunner") }
     } yield frame.getClassName
 
     mainClass getOrElse "unknown"

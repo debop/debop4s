@@ -1,7 +1,8 @@
 package debop4s.timeperiod.calendars
 
+import debop4s.core.ToStringHelper
 import debop4s.core.conversions.jodatime._
-import debop4s.core.utils.{ToStringHelper, Hashs}
+import debop4s.core.utils.Hashs
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import java.util.Objects

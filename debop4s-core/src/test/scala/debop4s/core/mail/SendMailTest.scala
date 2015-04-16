@@ -1,8 +1,9 @@
 package debop4s.core.mail
 
-import javax.mail.internet.{ MimeBodyPart, MimeMultipart, InternetAddress, MimeMessage }
-import javax.mail.{ MessagingException, Transport, Message, Session }
-import org.scalatest.{ BeforeAndAfter, Matchers, FunSuite }
+import javax.mail.internet.{InternetAddress, MimeBodyPart, MimeMessage, MimeMultipart}
+import javax.mail.{Message, MessagingException, Session, Transport}
+
+import debop4s.core.AbstractCoreFunSuite
 import org.slf4j.LoggerFactory
 
 /**
@@ -12,9 +13,7 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 10. 오후 4:20
  */
-class SendMailTest extends FunSuite with Matchers with BeforeAndAfter {
-
-  lazy val log = LoggerFactory.getLogger(getClass)
+class SendMailTest extends AbstractCoreFunSuite {
 
   val to = "debop@hconnect.co.com"
   val from = "noreply@hconnect.co.com"

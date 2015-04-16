@@ -6,7 +6,7 @@ import debop4s.core.utils.JavaTimer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{ Await, Future, Promise }
+import scala.concurrent.{Awaitable, Await, Future, Promise}
 
 /**
  * Concurrent package object
@@ -16,7 +16,7 @@ package object concurrent {
 
   implicit class FutureExtensions[+A](underlying: Future[A]) {
 
-    val timeout = FiniteDuration(5, TimeUnit.MINUTES)
+    implicit val timeout = FiniteDuration(5, TimeUnit.MINUTES)
 
     /** future 객체의 수행이 완료될 때까지 기다렸다가 결과를 반환합니다. */
     def await(timeout: Long): A = {
@@ -55,7 +55,7 @@ package object concurrent {
 
   implicit class FutureListExtensions[+A](underlying: Iterable[Future[A]]) {
 
-    val timeout = FiniteDuration(15, TimeUnit.MINUTES)
+    implicit val timeout = FiniteDuration(15, TimeUnit.MINUTES)
 
     def awaitAll(implicit timeout: Duration = timeout): Iterable[A] = {
       Await.result(Future.sequence(underlying), timeout)

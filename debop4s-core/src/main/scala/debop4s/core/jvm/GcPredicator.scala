@@ -1,8 +1,8 @@
 package debop4s.core.jvm
 
-import debop4s.core.Time
 import debop4s.core.conversions.time._
-import debop4s.core.utils.Timer
+import debop4s.core.utils.{Time, Timer}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
@@ -31,8 +31,8 @@ class GcPredicator(pool: Pool, period: Duration, timer: Timer, estimator: Estima
     if (e == 0) Time.Inf
     else {
       val PoolState(_, capacity, used) = pool.state()
-      val r = ( capacity - used ).inBytes
-      Time.now + ( ( 1000 * r ) / e ).milliseconds
+      val r = (capacity - used).inBytes
+      Time.now + ((1000 * r) / e).milliseconds
     }
   }
 }

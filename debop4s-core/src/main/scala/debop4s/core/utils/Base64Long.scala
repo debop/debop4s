@@ -5,22 +5,24 @@ package debop4s.core.utils
  * 캐시 키 값에 사용하면 좋습니다.
  */
 object Base64Long {
-  lazy val StandardBase64Alphabet: Int => Char = Array[Char](
-                                                              'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-                                                              'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-                                                              'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-                                                              'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-                                                              'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-                                                              'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-                                                              'w', 'x', 'y', 'z', '0', '1', '2', '3',
-                                                              '4', '5', '6', '7', '8', '9', '+', '/'
-                                                            )
+
+  lazy val StandardBase64Alphabet: (Int) => Char =
+    Array[Char](
+      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+      'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+      'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+      'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+      'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+      'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+      'w', 'x', 'y', 'z', '0', '1', '2', '3',
+      '4', '5', '6', '7', '8', '9', '+', '/'
+    )
 
   /** The bit width of a base 64 digit. */
   private[this] val DigitWidth = 6
 
   /** Mask for the least-sgnificant digit. */
-  private[this] val DigitMask = ( 1 << DigitWidth ) - 1
+  private[this] val DigitMask = (1 << DigitWidth) - 1
 
   /** The amount to shift right for the first base 64 digit in a Long. */
   private[this] val StartingBitPosition = 60
@@ -47,19 +49,19 @@ object Base64Long {
     * representations of negative numbers are larger than positive numbers.
     */
   @inline
-  def toBase64(builder: StringBuilder, n: Long, alphabet: Int => Char = StandardBase64Alphabet) {
+  def toBase64(builder: StringBuilder, n: Long, alphabet: Int => Char = StandardBase64Alphabet): Unit = {
     if (n == 0) {
       // 0 은 특수 문자
       builder append alphabet(0)
     } else {
       var bitPosition = StartingBitPosition
-      while (( n >>> bitPosition ) == 0) {
+      while ((n >>> bitPosition) == 0) {
         bitPosition -= DigitWidth
       }
       // Copy in the 6-bit segments, one at a time.
       while (bitPosition >= 0) {
         val shifted = n >>> bitPosition
-        val digitValue = ( shifted & DigitMask ).toInt
+        val digitValue = (shifted & DigitMask).toInt
         builder.append(alphabet(digitValue))
         bitPosition -= DigitWidth
       }

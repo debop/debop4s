@@ -1,7 +1,7 @@
 package debop4s.core.collections;
 
 import debop4s.core.ValueObjectBase;
-import debop4s.core.utils.ToStringHelper;
+import debop4s.core.ToStringHelper;
 import lombok.Getter;
 
 import java.util.List;

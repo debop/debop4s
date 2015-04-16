@@ -1,7 +1,7 @@
 package debop4s.data.tests.mapping.associations
 
-import debop4s.core.ValueObject
-import debop4s.core.utils.{ ToStringHelper, Hashs }
+import debop4s.core.{ToStringHelper, ValueObject}
+import debop4s.core.utils.Hashs
 import debop4s.data.model.HibernateEntity
 import debop4s.data.tests.AbstractJpaTest
 import java.{ util, lang }

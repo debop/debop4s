@@ -2,7 +2,6 @@ package debop4s.core;
 
 import debop4s.core.utils.Hashs;
 import debop4s.core.utils.Strings;
-import debop4s.core.utils.ToStringHelper;
 import lombok.Getter;
 import lombok.Setter;
 import org.joda.time.DateTime;

@@ -13,21 +13,26 @@ import org.springframework.context.support.{ MessageSourceAccessor, ReloadableRe
 class GlobalizationConfiguration {
 
   /**
-   * NOTE: classpath에 있는 messages 를 xml configuration 에서 똑같이 정의하면 제대로 읽어드리는데,
-   * NOTE: java config에서 작업하면 파일을 찾지 못한다!!!
+   * 반환값을 꼭 `ReloadableResourceBundleMessageSource` 로 하고, Autowired 도 같은 수형으로 해야 제대로 처리한다.
+   * 다국어 properties 파일은 외부에 놓을 경우 file: 접두사를 두고, resources 에 있는 경우에는 classpath: 를 두면 된다.
+   * @return
    */
   @Bean
-  def resourceBundleMessageSource() = {
+  def messageSource(): ReloadableResourceBundleMessageSource = {
     val rbms = new ReloadableResourceBundleMessageSource()
-    rbms.setBasename("classpath:messages")
-    rbms.setDefaultEncoding("UTF-8")
-    rbms.setUseCodeAsDefaultMessage(true)
 
-    rbms.getParentMessageSource
+    // resources 에 있는 것은 classpath:i18n/messages 또는 i18n/messages 를 쓰면 된다.
+    rbms.setBasename("file:i18n/messages")
+    rbms.setDefaultEncoding("UTF-8")
+    rbms.setCacheSeconds(60)
+    rbms.setFallbackToSystemLocale(true)
+
+    rbms
   }
 
   @Bean
-  def messageSourceAccessor() =
-    new MessageSourceAccessor(resourceBundleMessageSource())
+  def messageSourceAccessor(): MessageSourceAccessor = {
+    new MessageSourceAccessor(messageSource())
+  }
 
 }

@@ -1,7 +1,11 @@
 package debop4s.core.testing
 
 import java.util.concurrent.Callable
+
+import debop4s.core.Action1
 import org.slf4j.LoggerFactory
+
+import scala.util.control.NonFatal
 
 /**
  * debop4s.core.testing.Testing
@@ -16,13 +20,10 @@ object Testing {
   def run(count: Int, runnable: Runnable) {
     log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
     try {
-      Range(0, count).par.foreach {
-        x =>
-          runnable.run()
-      }
+      Range(0, count).par.foreach(_ => runnable.run())
     } catch {
       case e: InterruptedException => log.warn("작업 중 interrupted 되었습니다.")
-      case e: Exception => log.error("작업 중 예외가 발생했습니다.", e)
+      case NonFatal(e) => log.error("작업 중 예외가 발생했습니다.", e)
     }
     log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
@@ -30,13 +31,21 @@ object Testing {
   def run(count: Int)(block: => Unit) {
     log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
     try {
-      Range(0, count).par.foreach {
-        x =>
-          block
-      }
+      Range(0, count).par.foreach(_ => block)
     } catch {
       case e: InterruptedException => log.warn("작업 중 interrupted 되었습니다.")
-      case e: Exception => log.error("작업 중 예외가 발생했습니다.", e)
+      case NonFatal(e) => log.error("작업 중 예외가 발생했습니다.", e)
+    }
+    log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
+  }
+
+  def run(count: Int, action1: Action1[java.lang.Integer]) {
+    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
+    try {
+      Range(0, count).par.foreach(x => action1.perform(x))
+    } catch {
+      case e: InterruptedException => log.warn("작업 중 interrupted 되었습니다.")
+      case NonFatal(e) => log.error("작업 중 예외가 발생했습니다.", e)
     }
     log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
@@ -44,36 +53,44 @@ object Testing {
   def runAction(count: Int)(block: Int => Unit) {
     log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
     try {
-      Range(0, count).par.foreach {
-        x =>
-          block(x)
-      }
+      Range(0, count).par.foreach(block)
     } catch {
       case e: InterruptedException => log.warn("작업 중 interrupted 되었습니다.")
-      case e: Exception => log.error("작업 중 예외가 발생했습니다.", e)
+      case NonFatal(e) => log.error("작업 중 예외가 발생했습니다.", e)
     }
     log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
 
-  def call[T](count: Int)(callable: Callable[T]): List[T] = {
+  def runAction(count: Int, action1: Action1[java.lang.Integer]) {
     log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
     try {
-      return Range(0, count).par.map(x => callable.call()).toList
+      Range(0, count).par.foreach(_ => action1.perform(_))
     } catch {
       case e: InterruptedException => log.warn("작업 중 interrupted 되었습니다.")
-      case e: Exception => log.error("작업 중 예외가 발생했습니다.", e)
+      case NonFatal(e) => log.error("작업 중 예외가 발생했습니다.", e)
     }
-    List()
+    log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
 
-  def runFunc[T](count: Int)(func: Int => T): List[T] = {
+  def call[T](count: Int)(callable: Callable[T]): Seq[T] = {
+    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
+    try {
+      return Range(0, count).par.map(_ => callable.call()).toList
+    } catch {
+      case e: InterruptedException => log.warn("작업 중 interrupted 되었습니다.")
+      case NonFatal(e) => log.error("작업 중 예외가 발생했습니다.", e)
+    }
+    Seq.empty[T]
+  }
+
+  def runFunc[T](count: Int)(func: Int => T): Seq[T] = {
     log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
     try {
       return Range(0, count).par.map(x => func(x)).toList
     } catch {
       case e: InterruptedException => log.warn("작업 중 interrupted 되었습니다.")
-      case e: Exception => log.error("작업 중 예외가 발생했습니다.", e)
+      case NonFatal(e) => log.error("작업 중 예외가 발생했습니다.", e)
     }
-    List()
+    Seq.empty[T]
   }
 }

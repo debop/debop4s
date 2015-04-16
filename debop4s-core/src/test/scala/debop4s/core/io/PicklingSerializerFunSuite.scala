@@ -1,9 +1,10 @@
 package debop4s.core.io
 
+import debop4s.core.AbstractCoreFunSuite
 import debop4s.core.io.model.{ Company, CompanyEntity }
 import org.scalatest.{ FunSuite, Matchers }
 
-class PicklingSerializerFunSuite extends FunSuite with Matchers {
+class PicklingSerializerFunSuite extends AbstractCoreFunSuite {
 
   val serializer = new PicklingSerializer()
 

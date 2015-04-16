@@ -1,7 +1,7 @@
 package debop4s.core.jvm
 
-import debop4s.core.Time
 import debop4s.core.conversions.storage._
+import debop4s.core.utils.Time
 
 
 /**

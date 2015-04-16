@@ -2,7 +2,7 @@ package debop4s.core.conversions
 
 import java.util.concurrent.TimeUnit
 
-import debop4s.core.Time
+import debop4s.core.utils.Time
 
 import scala.concurrent.duration.Duration
 import scala.language.implicitConversions

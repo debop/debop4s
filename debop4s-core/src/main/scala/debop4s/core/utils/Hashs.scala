@@ -38,15 +38,13 @@ object Hashs {
   @varargs
   def compute(objs: Any*): Int = {
     if (Arrays.isEmpty(objs))
-      NULL_VALUE
+      return NULL_VALUE
 
     var hash = NULL_VALUE
 
-    objs.foreach {
-      x =>
-        hash = hash * FACTOR + computeInternal(x)
+    objs.foreach { x =>
+      hash = hash * FACTOR + computeInternal(x)
     }
-
     hash
   }
 }

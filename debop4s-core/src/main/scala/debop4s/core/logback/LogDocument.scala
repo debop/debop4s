@@ -1,7 +1,10 @@
 package debop4s.core.logback
 
-import debop4s.core.ValueObjectBase
+import java.util
+
+import debop4s.core.{ToStringHelper, ValueObjectBase}
 import org.joda.time.DateTime
+import scala.beans.BeanProperty
 import scala.collection.mutable
 
 /**
@@ -11,25 +14,30 @@ import scala.collection.mutable
 @SerialVersionUID(1431014486199195378L)
 class LogDocument extends ValueObjectBase {
 
-  var serverName: String = null
+  @BeanProperty var serverName: String = null
+  @BeanProperty var applicationName: String = null
+  @BeanProperty var logger: String = null
+  @BeanProperty var levelInt: Int = 0
+  @BeanProperty var levelStr: String = null
+  @BeanProperty var threadName: String = null
+  @BeanProperty var message: String = null
+  @BeanProperty var timestamp: DateTime = null
+  @BeanProperty var marker: String = null
+  @BeanProperty var exception: String = null
+  @BeanProperty var stacktrace: util.List[String] = new util.ArrayList[String]()
 
-  var applicationName: String = null
-
-  var logger: String = null
-
-  var levelInt: Int = 0
-
-  var levelStr: String = null
-
-  var threadName: String = null
-
-  var message: String = null
-
-  var timestamp: DateTime = null
-
-  var marker: String = null
-
-  var exception: String = null
-
-  var stacktrace: mutable.Buffer[String] = null
+  override def toString: String = {
+    ToStringHelper(this)
+    .add("serverName", serverName)
+    .add("applicationName", applicationName)
+    .add("logger", logger)
+    .add("level", levelStr)
+    .add("threadName", threadName)
+    .add("message", message)
+    .add("timestamp", timestamp)
+    .add("marker", marker)
+    .add("exception", exception)
+    .add("stacktrace", stacktrace)
+    .toString
+  }
 }

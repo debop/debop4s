@@ -1,7 +1,6 @@
 package debop4s.data.model
 
-import debop4s.core.ValueObject
-import debop4s.core.utils.ToStringHelper
+import debop4s.core.{ToStringHelper, ValueObject}
 import javax.persistence.Transient
 
 /**

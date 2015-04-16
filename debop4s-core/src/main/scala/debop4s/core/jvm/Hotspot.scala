@@ -2,11 +2,11 @@ package debop4s.core.jvm
 
 import java.lang.management.ManagementFactory
 import javax.management.openmbean.CompositeDataSupport
-import javax.management.{ ObjectName, RuntimeMBeanException }
+import javax.management.{ObjectName, RuntimeMBeanException}
 
-import debop4s.core.Time
 import debop4s.core.conversions.storage._
 import debop4s.core.conversions.time._
+import debop4s.core.utils.Time
 
 import scala.collection.JavaConverters._
 
@@ -47,11 +47,11 @@ class Hotspot extends Jvm {
   private[this] def opt(name: String): Option[String] = {
     try {
       val o = ManagementFactory.getPlatformMBeanServer.invoke(
-                                                               DiagnosticBean,
-                                                               "getVMOption",
-                                                               Array(name),
-                                                               Array("java.lang.String")
-                                                             )
+        DiagnosticBean,
+        "getVMOption",
+        Array(name),
+        Array("java.lang.String")
+      )
       Some(o.asInstanceOf[CompositeDataSupport].get("value").asInstanceOf[String])
     } catch {
       case _: IllegalArgumentException => None
@@ -69,11 +69,11 @@ class Hotspot extends Jvm {
     counters(name).get(name)
 
   object opts extends Opts {
-    def compileThresh = opt("CompileThreshold") map ( _.toInt )
+    def compileThresh = opt("CompileThreshold") map (_.toInt)
   }
 
   private[this] def ticksToDuration(ticks: Long, freq: Long) =
-    ( 1000000 * ticks / freq ).microseconds
+    (1000000 * ticks / freq).microseconds
 
   private[this] def getGc(which: Int, cs: Map[String, Counter]) = {
     def get(what: String) = cs.get(s"sun.gc.collector.$which.$what")
@@ -81,7 +81,7 @@ class Hotspot extends Jvm {
     for {
       invocations <- get("invocations") map long
       lastEntryTicks <- get("lastEntryTicks") map long
-      name <- get("name") map ( _.getValue.toString )
+      name <- get("name") map (_.getValue.toString)
       time <- get("time") map long
       freq <- cs.get("sun.os.hrt.frequency") map long
       duration = ticksToDuration(time, freq)
@@ -117,9 +117,9 @@ class Hotspot extends Jvm {
     } yield epoch + ticksToDuration(ticks, freq)
 
     Snapshot(
-              timestamp getOrElse Time.epoch,
-              heap getOrElse Heap(0, 0, Seq()),
-              getGc(0, cs).toSeq ++ getGc(1, cs).toSeq)
+      timestamp getOrElse Time.epoch,
+      heap getOrElse Heap(0, 0, Seq()),
+      getGc(0, cs).toSeq ++ getGc(1, cs).toSeq)
   }
 
   val edenPool: Pool = new Pool {
@@ -136,7 +136,7 @@ class Hotspot extends Jvm {
   }
 
   def snapCounters: Map[String, String] =
-    counters("") mapValues ( _.getValue.toString )
+    counters("") mapValues (_.getValue.toString)
 
   def forceGc() = System.gc()
 }

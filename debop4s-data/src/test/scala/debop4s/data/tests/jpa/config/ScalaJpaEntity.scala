@@ -1,6 +1,7 @@
 package debop4s.data.tests.jpa.config
 
-import debop4s.core.utils.{ ToStringHelper, Hashs }
+import debop4s.core.ToStringHelper
+import debop4s.core.utils.Hashs
 import debop4s.data.model.LongEntity
 import javax.persistence._
 

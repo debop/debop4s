@@ -11,7 +11,7 @@
 // * @author Sunghyouk Bae
 // */
 //@RunWith(classOf[JUnitRunner])
-//class VarTest extends AbstractCoreTest {
+//class VarTest extends AbstractCoreFunSuite {
 //
 //    private case class U[T](init: T) extends UpdatableVar[T](init) {
 //

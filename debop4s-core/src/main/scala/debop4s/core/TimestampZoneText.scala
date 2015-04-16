@@ -1,7 +1,7 @@
 package debop4s.core
 
 import debop4s.core.conversions.jodatime._
-import debop4s.core.utils.{ToStringHelper, Hashs}
+import debop4s.core.utils.Hashs
 import org.joda.time.{DateTime, DateTimeZone}
 
 /**

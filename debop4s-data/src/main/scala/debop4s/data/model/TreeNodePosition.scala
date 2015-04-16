@@ -1,7 +1,7 @@
 package debop4s.data.model
 
-import debop4s.core.ValueObject
-import debop4s.core.utils.{ Hashs, ToStringHelper }
+import debop4s.core.{ToStringHelper, ValueObject}
+import debop4s.core.utils.Hashs
 import javax.persistence.{ Embeddable, Column }
 
 /**

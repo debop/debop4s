@@ -1,7 +1,7 @@
 package debop4s.timeperiod
 
-import debop4s.core.ValueObject
-import debop4s.core.utils.{ ToStringHelper, Hashs }
+import debop4s.core.{ToStringHelper, ValueObject}
+import debop4s.core.utils.Hashs
 import debop4s.timeperiod.DayOfWeek.DayOfWeek
 import java.util.Locale
 import org.joda.time.Duration

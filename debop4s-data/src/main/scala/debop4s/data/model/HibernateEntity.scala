@@ -1,6 +1,7 @@
 package debop4s.data.model
 
-import debop4s.core.utils.{ ToStringHelper, Hashs }
+import debop4s.core.ToStringHelper
+import debop4s.core.utils.Hashs
 import javax.persistence._
 import org.hibernate.annotations.{ DynamicUpdate, DynamicInsert }
 

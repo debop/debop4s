@@ -1,14 +1,15 @@
 package debop4s.core.jvm
 
-import debop4s.core.Time
-import debop4s.core.conversions.time._
-import debop4s.core.utils.Stopwatch
 import java.io.OutputStream
 import java.lang.management.ManagementFactory
-import java.nio.{ ByteOrder, ByteBuffer }
+import java.nio.{ByteBuffer, ByteOrder}
+
+import debop4s.core.conversions.time._
+import debop4s.core.utils.{Stopwatch, Time}
+
 import scala.collection.mutable
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ Promise, Future }
+import scala.concurrent.{Future, Promise}
 
 /**
  * CpuProfile
@@ -94,7 +95,7 @@ object CpuProfile {
     val bean = ManagementFactory.getThreadMXBean
     val stopwatch = Stopwatch()
     val end = howlong.fromNow
-    val period = ( 1000000 / frequency ).microseconds
+    val period = (1000000 / frequency).microseconds
     val myId = Thread.currentThread().getId
     var next = Time.now
 
@@ -119,7 +120,7 @@ object CpuProfile {
         nmissed += 1
         next += period
       }
-      val sleep = ( next - Time.now ).toMillis max 0
+      val sleep = (next - Time.now).toMillis max 0
       Thread.sleep(sleep)
     }
 

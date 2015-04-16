@@ -1,6 +1,5 @@
 package debop4s.core
 
-import debop4s.core.utils.ToStringHelper
 import scala.annotation.switch
 
 /**
@@ -23,13 +22,13 @@ trait ValueObject extends AnyRef with Serializable {
 
   @inline
   override def equals(obj: Any): Boolean = {
-    ( obj: @switch ) match {
+    (obj: @switch) match {
       case vo: ValueObject => (this.getClass == obj.getClass) && (hashCode() == obj.hashCode())
       case _ => false
     }
   }
 
-  override def hashCode(): Int = System.identityHashCode(this)
+  override def hashCode: Int = System.identityHashCode(this)
 
   override def toString: String = buildStringHelper.toString
 

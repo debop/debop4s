@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <!-- help : http://kr.hconnect.redis.logback.qos.ch/manual/appenders.html -->
+    <!-- help : http://debop4s.redis.logback.qos.ch/manual/appenders.html -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{ISO8601} %-5level [%thread] %logger{36}.%method : %msg%n</pattern>
@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <logger name="kr.hconnect.data.jdbc" level="TRACE"/>
+    <logger name="debop4s.data.jdbc" level="TRACE"/>
     <logger name="com.zaxxer.hikari" level="DEBUG"/>
 
     <root level="INFO">

@@ -3,10 +3,12 @@ package debop4s.core.utils
 import org.modelmapper.ModelMapper
 import org.modelmapper.config.Configuration.AccessLevel
 import org.modelmapper.convention.MatchingStrategies
+
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.reflect._
+import scala.util.Try
 
 /**
  * `ModelMapper`를 이용하여, 서로 상이한 수형 간의 정보를 복사할 수 있도록 합니다.
@@ -19,12 +21,15 @@ import scala.reflect._
  */
 object Mappers {
 
-  lazy val mapper = new ModelMapper()
+  lazy val mapper: ModelMapper = {
+    val mp = new ModelMapper()
+    mp.getConfiguration
+    .setFieldMatchingEnabled(true)
+    .setMatchingStrategy(MatchingStrategies.STANDARD)
+    .setFieldAccessLevel(AccessLevel.PRIVATE)
+    mp
+  }
 
-  mapper.getConfiguration
-  .setFieldMatchingEnabled(true)
-  .setMatchingStrategy(MatchingStrategies.STANDARD)
-  .setFieldAccessLevel(AccessLevel.PRIVATE)
 
   def map[T <: AnyRef](src: Any, dest: T) {
     mapper.map(src, dest)
@@ -53,4 +58,6 @@ object Mappers {
     val targetClass = classTag[T].runtimeClass
     srcs.par.map(src => mapper.map[T](src, targetClass).asInstanceOf[T]).toIndexedSeq
   }
+
+  def tryMap[T: ClassTag](src: Any) = Try { map[T](src) }
 }

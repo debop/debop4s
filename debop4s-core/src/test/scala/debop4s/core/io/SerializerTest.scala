@@ -1,9 +1,9 @@
 package debop4s.core.io
 
-import debop4s.core.compress.{ Compressor, DeflateCompressor, GZipCompressor, SnappyCompressor }
-import debop4s.core.cryptography.{ DESEncryptor, RC2Encryptor, SymmetricEncryptorSupport, TripleDESEncryptor }
-import debop4s.core.io.model.{ Company, User }
-import org.scalatest.{ BeforeAndAfter, FunSuite, Matchers }
+import debop4s.core.AbstractCoreFunSuite
+import debop4s.core.compress._
+import debop4s.core.cryptography._
+import debop4s.core.io.model.{Company, User}
 import org.slf4j.LoggerFactory
 
 /**
@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 15. 오후 8:52
  */
-class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
-
-  private lazy val log = LoggerFactory.getLogger(getClass)
+class SerializerTest extends AbstractCoreFunSuite {
 
   val serializers = Array[Serializer](new BinarySerializer(), new FstSerializer())
 
@@ -22,10 +20,10 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
 
   before {
     company = new Company()
-    company.code = "HCT"
-    company.name = "HealthConnect"
+    company.code = "GOOGLE"
+    company.name = "Google"
     company.amount = 10000L
-    company.description = "헬스커넥트"
+    company.description = "구글"
 
     for (i <- 0 until 100) {
       val user = new User()
@@ -40,40 +38,36 @@ class SerializerTest extends FunSuite with Matchers with BeforeAndAfter {
   test("comparessable serialize") {
     val compressors = Array[Compressor](new GZipCompressor(), new DeflateCompressor(), new SnappyCompressor())
 
-    compressors.foreach {
-      compressor =>
-        serializers.foreach {
-          serializer =>
-            val cs = new CompressableSerializer(serializer, compressor)
-            log.debug(s"encryptor=[${ compressor.getClass }], serializer=[${ serializer.getClass }]")
+    compressors.foreach { compressor =>
+      serializers.foreach { serializer =>
+        val cs = new CompressableSerializer(serializer, compressor)
+        log.debug(s"encryptor=[${ compressor.getClass }], serializer=[${ serializer.getClass }]")
 
-            val bytes = cs.serialize(company)
-            val deserialized = cs.deserialize(bytes, classOf[Company])
+        val bytes = cs.serialize(company)
+        val deserialized = cs.deserialize(bytes, classOf[Company])
 
-            assert(deserialized != null)
-            assert(deserialized.code == company.code)
-            assert(deserialized.users.size == company.users.size)
-        }
+        assert(deserialized != null)
+        assert(deserialized.code == company.code)
+        assert(deserialized.users.size == company.users.size)
+      }
     }
   }
 
   test("encryptable serialize") {
     val encryptors = Array[SymmetricEncryptorSupport](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
 
-    encryptors.foreach {
-      encryptor =>
-        serializers.foreach {
-          serializer =>
-            val es = new EncryptableSerializer(serializer, encryptor)
-            log.debug(s"encryptor=[${ encryptor.getClass }], serializer=[${ serializer.getClass }]")
+    encryptors.foreach { encryptor =>
+      serializers.foreach { serializer =>
+        val es = new EncryptableSerializer(serializer, encryptor)
+        log.debug(s"encryptor=[${ encryptor.getClass }], serializer=[${ serializer.getClass }]")
 
-            val bytes = es.serialize(company)
-            val deserialized = es.deserialize(bytes, classOf[Company])
+        val bytes = es.serialize(company)
+        val deserialized = es.deserialize(bytes, classOf[Company])
 
-            assert(deserialized != null)
-            assert(deserialized.code == company.code)
-            assert(deserialized.users.size == company.users.size)
-        }
+        assert(deserialized != null)
+        assert(deserialized.code == company.code)
+        assert(deserialized.users.size == company.users.size)
+      }
     }
 
   }

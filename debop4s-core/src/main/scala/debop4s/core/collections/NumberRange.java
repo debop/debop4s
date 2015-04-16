@@ -1,7 +1,7 @@
 package debop4s.core.collections;
 
 import com.google.common.collect.Lists;
-import debop4s.core.utils.ToStringHelper;
+import debop4s.core.ToStringHelper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

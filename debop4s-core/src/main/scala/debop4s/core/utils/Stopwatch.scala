@@ -9,7 +9,8 @@ object Stopwatch {
 }
 
 /**
- * Stopwatch
+ * 코드 실행 시간을 측정하는 Stopwatch 입니다.
+ * 내부적으로 nanotime 을 측정하고, milliseconds 단위로 표시합니다.
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 1:40
@@ -18,13 +19,8 @@ class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
 
-  def this() {
-    this("", false)
-  }
-
-  def this(msg: String) {
-    this(msg, false)
-  }
+  def this() = this("", false)
+  def this(msg: String) = this(msg, false)
 
   val NANO_TO_MILLISECONDS = 1000000.0
   var startTime: Long = 0
@@ -58,7 +54,7 @@ class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
       endTime = System.nanoTime()
       elapsedTime = endTime - startTime
     }
-    log.debug(s"$msg elapsed time=[${ nanoToMillis(elapsedTime) }] msecs.")
+    log.info(s"$msg elapsed time=[${ nanoToMillis(elapsedTime) }] ms.")
     nanoToMillis(elapsedTime)
   }
 
@@ -66,3 +62,19 @@ class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
 
   private def nanoToMillis(nano: Double): Double = nano / NANO_TO_MILLISECONDS
 }
+
+/**
+ * debop4s.core.tools.ClosableStopwatch
+ *
+ * @author 배성혁 sunghyouk.bae@gmail.com
+ * @since 2013. 12. 10. 오후 1:54
+ */
+class ClosableStopwatch(msg: String = "", runGC: Boolean = false) extends Stopwatch(msg, runGC) with AutoCloseable {
+
+  start()
+
+  def close() {
+    stop()
+  }
+}
+

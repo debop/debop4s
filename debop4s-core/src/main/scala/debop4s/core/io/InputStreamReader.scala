@@ -1,8 +1,11 @@
 package debop4s.core.io
 
-import debop4s.core._
 import java.io.InputStream
 import java.util.concurrent.locks.ReentrantReadWriteLock
+
+import debop4s.core._
+import debop4s.core.utils.Time
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 

@@ -1,7 +1,6 @@
 package debop4s.timeperiod
 
-import debop4s.core.ValueObjectBase
-import debop4s.core.utils.ToStringHelper
+import debop4s.core.{ToStringHelper, ValueObjectBase}
 
 /**
  * debop4s.timeperiod.MonthRangeInYear

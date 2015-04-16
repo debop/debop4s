@@ -1,6 +1,7 @@
 package debop4s.data.tests.mapping
 
-import debop4s.core.utils.{ ToStringHelper, Hashs }
+import debop4s.core.ToStringHelper
+import debop4s.core.utils.Hashs
 import debop4s.data.model.{ UpdatedTimestampEntity, HibernateEntity }
 import java.lang.{ Long => jLong }
 import javax.persistence._
