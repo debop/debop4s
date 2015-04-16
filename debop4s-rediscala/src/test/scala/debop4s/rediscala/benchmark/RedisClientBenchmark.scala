@@ -16,9 +16,10 @@ import scala.concurrent.Future
  */
 object RedisClientBenchmark extends PerformanceTest.Quickbenchmark {
 
+  implicit val ec = scala.concurrent.ExecutionContext.Implicits.global
+
   val sizes = Gen.range("size")(5000, 20000, 5000)
   val ranges = sizes.map(s => 0 until s)
-
 
   val redisClient = RedisClient()
   val redisPool4 = createRedisClientPool(4)
@@ -114,11 +115,11 @@ object RedisClientBenchmark extends PerformanceTest.Quickbenchmark {
   private def run(size: Int)(block: Int => Future[Boolean]): Unit = {
     val futures = mutable.ListBuffer[Future[Boolean]]()
 
-    var i = 0
-    while (i < size) {
+    for (i <- 0 until size) {
       futures += block(i)
-      i += 1
     }
-    Future.sequence(futures).await
+
+    futures.holdAll
+    // Await.ready(Future.sequence(futures), 60 seconds)
   }
 }
