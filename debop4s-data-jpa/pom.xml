@@ -15,6 +15,11 @@
     <dependencies>
         <dependency>
             <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-config</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
             <artifactId>debop4s-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
@@ -25,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.debop4s</groupId>
-            <artifactId>debop4s-data</artifactId>
+            <artifactId>debop4s-data-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

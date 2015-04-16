@@ -5,7 +5,7 @@ import javax.sql.DataSource
 
 import com.typesafe.config.ConfigFactory
 import debop4s.config.server.DatabaseElement
-import org.scalatest.{ FunSuite, Matchers, OptionValues }
+import org.scalatest.{FunSuite, Matchers, OptionValues}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -44,14 +44,14 @@ class DataSourcesFunSuite extends FunSuite with Matchers with OptionValues {
 
     val url = "jdbc:mysql://localhost:3306/test"
     val props = mutable.HashMap(
-                                 "characterEncoding" -> "UTF-8",
-                                 "useUnicode" -> "true",
-                                 "cachePrepStmts" -> "true",
-                                 "prepStmtCacheSize" -> "250",
-                                 "prepStmtCacheSqlLimit" -> "2048",
-                                 "useServerPrepStmts" -> "true",
-                                 "idleTimeout" -> "60000"
-                               ).asJava
+      "characterEncoding" -> "UTF-8",
+      "useUnicode" -> "true",
+      "cachePrepStmts" -> "true",
+      "prepStmtCacheSize" -> "250",
+      "prepStmtCacheSqlLimit" -> "2048",
+      "useServerPrepStmts" -> "true",
+      "idleTimeout" -> "60000"
+    ).asJava
     val ds = DataSources.getDataSource(JdbcDrivers.DRIVER_CLASS_MYSQL, url, "", "", props = props)
     ds should not be null
 
@@ -99,15 +99,19 @@ class DataSourcesFunSuite extends FunSuite with Matchers with OptionValues {
 
 
   def connectionTest(ds: DataSource) {
-    ( 0 until 500 ).par.foreach { index =>
+    (0 until 500).par.foreach { index =>
       val conn = ds.getConnection
-
-      conn should not be null
-      val ps = conn.prepareStatement("SELECT 1;")
-      ps.execute() shouldEqual true
-
-      ps.close()
-      conn.close()
+      try {
+        conn should not be null
+        val ps = conn.prepareStatement("SELECT 1;")
+        try {
+          ps.execute() shouldEqual true
+        } finally {
+          ps.close()
+        }
+      } finally {
+        conn.close()
+      }
     }
   }
 
