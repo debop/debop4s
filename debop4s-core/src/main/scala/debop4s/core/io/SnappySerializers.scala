@@ -10,7 +10,7 @@ object SnappyBinarySerializer {
 class SnappyBinarySerializer extends CompressableSerializer(BinarySerializer(), SnappyCompressor())
 
 object SnappyFstSerializer {
-
+  def apply(): SnappyFstSerializer = new SnappyFstSerializer()
 }
 
 class SnappyFstSerializer extends CompressableSerializer(FstSerializer(), SnappyCompressor())

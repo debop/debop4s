@@ -16,7 +16,7 @@ import scala.concurrent.Future
 import scala.util.control.NonFatal
 
 /**
- * log를 client 에 쓰는 kr.hconnect.redis.logback 용 appender 입니다.
+ * log를 client 에 쓰는 debop4s.rediscala.logback 용 appender 입니다.
  * @author sunghyouk.bae@gmail.com
  */
 class MongoDBAppender extends UnsynchronizedAppenderBase[LoggingEvent] {
