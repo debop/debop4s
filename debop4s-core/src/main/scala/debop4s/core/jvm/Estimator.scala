@@ -29,28 +29,28 @@ class Kalman(N: Int) {
    * Update the filter with measurement `m` and measurement error `e`
    */
   def measure(m: Double, e: Double) {
-    val i = ( n % N ).toInt
+    val i = (n % N).toInt
     mbuf(i) = m
     ebuf(i) = e
 
     if (n == 0) est = m
 
-    est += weight * ( m - est )
+    est += weight * (m - est)
     val mv = mvar
     val ev = evar
-    weight = if (mv + ev == 0) 1D else mv / ( mv + ev )
+    weight = if (mv + ev == 0) 1D else mv / (mv + ev)
     n += 1
   }
 
   private[this] def mvar = variance(
-                                     if (n < N) mbuf take n.toInt
-                                     else ebuf
-                                   )
+    if (n < N) mbuf take n.toInt
+    else ebuf
+  )
 
   private[this] def evar = variance(
-                                     if (n < N) ebuf take n.toInt
-                                     else ebuf
-                                   )
+    if (n < N) ebuf take n.toInt
+    else ebuf
+  )
 
   def estimate = est
 
@@ -60,8 +60,8 @@ class Kalman(N: Int) {
 
     val sum = samples.sum
     val mean = sum / samples.size
-    val diff = ( samples map { x => ( x - mean ) * ( x - mean ) } ).sum
-    diff / ( samples.size - 1 )
+    val diff = (samples map { x => (x - mean) * (x - mean) }).sum
+    diff / (samples.size - 1)
   }
 
   override def toString: String =
@@ -88,7 +88,7 @@ class KalmanGaussianError(N: Int, range: Double) extends Kalman(N) with Estimato
 class WindowedMeans(N: Int, windows: Seq[(Int, Int)]) extends Estimator[Double] {
   require(windows forall { case (_, i) => i <= N })
   private[this] val normalized = {
-    val sum = ( windows map { case (w, _) => w } ).sum
+    val sum = (windows map { case (w, _) => w }).sum
     windows map { case (w, i) => (w.toDouble / sum, i) }
   }
 
@@ -98,10 +98,10 @@ class WindowedMeans(N: Int, windows: Seq[(Int, Int)]) extends Estimator[Double] 
   private[this] def mean(from: Long, count: Int): Double = {
     require(count <= N && count > 0)
     val i = {
-      val x = ( ( from - count ) % N ).toInt
+      val x = ((from - count) % N).toInt
       if (x < 0) x + N else x
     }
-    val j = ( from % N ).toInt
+    val j = (from % N).toInt
     val sum = {
       if (i == j) buf.sum
       else if (i < j) buf.slice(i, j).sum
@@ -112,7 +112,7 @@ class WindowedMeans(N: Int, windows: Seq[(Int, Int)]) extends Estimator[Double] 
 
   def measure(m: Double) {
     if (n == 0) java.util.Arrays.fill(buf, m)
-    else buf(( n % N ).toInt) = m
+    else buf((n % N).toInt) = m
 
     n += 1
   }
@@ -135,7 +135,7 @@ class LoadAverage(interval: Double) extends Estimator[Double] {
   private[this] var first = true
 
   def measure(m: Double) {
-    load = if (load.isNaN) m else load * a + m * ( 1 - a )
+    load = if (load.isNaN) m else load * a + m * (1 - a)
   }
 
   def estimate = load
@@ -161,30 +161,30 @@ object EstimatorTest extends App {
       new KalmanGaussianError(n.toInt, error.toDouble)
     case Array("windowed", n, windows) =>
       new WindowedMeans(n.toInt,
-                         windows.split(",") map { w =>
-                           w.split(":") match {
-                             case Array(w, i) => (w.toInt, i.toInt)
-                             case _ => throw new IllegalArgumentException("bad weight, count pair " + w)
-                           }
-                         }
-                       )
+        windows.split(",") map { w =>
+          w.split(":") match {
+            case Array(w, i) => (w.toInt, i.toInt)
+            case _ => throw new IllegalArgumentException("bad weight, count pair " + w)
+          }
+        }
+      )
     case Array("load", interval) =>
       new LoadAverage(interval.toDouble)
     case _ => throw new IllegalArgumentException("bad args ")
   }
 
   val lines = scala.io.Source.stdin.getLines().drop(1)
-  val states = lines.toArray map ( _.split(" ") filter ( _ != "" ) map ( _.toDouble ) ) collect {
+  val states = lines.toArray map (_.split(" ") filter (_ != "") map (_.toDouble)) collect {
     case Array(s0c, s1c, s0u, s1u, ec, eu, oc, ou, pc, pu, ygc, ygct, fgc, fgct, gct) =>
       PoolState(ygc.toLong, ec.toLong.bytes, eu.toLong.bytes)
   }
 
   var elapsed = 1
   for (List(begin, end) <- states.toList.sliding(2)) {
-    val allocated = ( end - begin ).used
+    val allocated = (end - begin).used
     estimator.measure(allocated.inBytes)
     val r = end.capacity - end.used
-    val i = ( r.inBytes / estimator.estimate.toLong ) + elapsed
+    val i = (r.inBytes / estimator.estimate.toLong) + elapsed
     val j = states.indexWhere(_.numCollections > end.numCollections)
 
     if (j > 0)

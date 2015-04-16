@@ -34,7 +34,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
    */
   def apply(i: Int): A = {
     if (i >= _count) throw new IndexOutOfBoundsException(i.toString)
-    else array(( read + i ) % maxSize)
+    else array((read + i) % maxSize)
   }
 
   /**
@@ -42,7 +42,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
    */
   def update(i: Int, elem: A) {
     if (i >= _count) throw new IndexOutOfBoundsException(i.toString)
-    else array(( read + i ) % maxSize) = elem
+    else array((read + i) % maxSize) = elem
   }
 
   /**
@@ -50,8 +50,8 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
    */
   def +=(elem: A) {
     array(write) = elem
-    write = ( write + 1 ) % maxSize
-    if (_count == maxSize) read = ( read + 1 ) % maxSize
+    write = (write + 1) % maxSize
+    if (_count == maxSize) read = (read + 1) % maxSize
     else _count += 1
   }
 
@@ -69,7 +69,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
     if (read == write) throw new NoSuchElementException
     else {
       val res = array(read)
-      read = ( read + 1 ) % maxSize
+      read = (read + 1) % maxSize
       _count -= 1
       res
     }
@@ -89,7 +89,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
    */
   override def drop(n: Int): RingBuffer[A] = {
     if (n >= maxSize) clear()
-    else read = ( read + n ) % maxSize
+    else read = (read + n) % maxSize
     this
   }
 
@@ -107,7 +107,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
       i += 1
     }
     _count -= rmCount
-    write = ( read + _count ) % maxSize
+    write = (read + _count) % maxSize
     rmCount
   }
 }

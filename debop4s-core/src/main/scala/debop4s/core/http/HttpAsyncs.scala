@@ -1,17 +1,18 @@
 package debop4s.core.http
 
+import java.net.URI
+import java.nio.charset.Charset
 import java.util.{List => JList}
 
 import debop4s.core.json.JacksonSerializer
-import debop4s.core.utils.{Strings, Charsets}
-import java.net.URI
-import java.nio.charset.Charset
+import debop4s.core.utils.Charsets
 import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.{HttpDelete, HttpPost, HttpGet, HttpUriRequest}
+import org.apache.http.client.methods.{HttpDelete, HttpGet, HttpPost, HttpUriRequest}
 import org.apache.http.entity.StringEntity
 import org.apache.http.util.EntityUtils
-import org.apache.http.{NameValuePair, Header, HttpResponse}
+import org.apache.http.{Header, HttpResponse, NameValuePair}
 import org.slf4j.LoggerFactory
+
 import scala.annotation.varargs
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}

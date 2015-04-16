@@ -1,8 +1,9 @@
 package debop4s.core.concurrent
 
 import java.util.concurrent.atomic.AtomicReference
+
 import scala.annotation.tailrec
-import scala.concurrent.{ Promise, Future }
+import scala.concurrent.{Future, Promise}
 
 
 /**

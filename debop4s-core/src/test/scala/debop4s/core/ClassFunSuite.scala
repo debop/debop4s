@@ -1,6 +1,6 @@
 package debop4s.core
 
-import org.scalatest.{ Matchers, FunSuite }
+import org.scalatest.{FunSuite, Matchers}
 import org.slf4j.LoggerFactory
 
 /**

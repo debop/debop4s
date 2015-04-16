@@ -2,8 +2,9 @@ package debop4s.core.pool
 
 import java.net.URI
 import java.util.Properties
+
 import org.apache.commons.pool2.impl.DefaultPooledObject
-import org.apache.commons.pool2.{ PooledObject, BasePooledObjectFactory }
+import org.apache.commons.pool2.{BasePooledObjectFactory, PooledObject}
 
 /**
  * debop4s.core.tests.pool.ObjectFactory

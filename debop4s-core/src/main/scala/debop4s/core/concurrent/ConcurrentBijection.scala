@@ -1,8 +1,9 @@
 package debop4s.core.concurrent
 
 import java.util.concurrent.ConcurrentHashMap
+
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{ Map => MMap }
+import scala.collection.mutable.{Map => MMap}
 
 /*
  * A bijection that may be modified and accessed simultaneously.

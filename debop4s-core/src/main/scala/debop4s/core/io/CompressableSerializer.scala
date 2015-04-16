@@ -1,6 +1,6 @@
 package debop4s.core.io
 
-import debop4s.core.compress.{ GZipCompressor, Compressor }
+import debop4s.core.compress.{Compressor, GZipCompressor}
 import org.slf4j.LoggerFactory
 
 /**

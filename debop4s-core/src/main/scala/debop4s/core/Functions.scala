@@ -1,6 +1,6 @@
 package debop4s.core
 
-abstract class Function0[R] extends ( () => R )
+abstract class Function0[R] extends (() => R)
 
 abstract class ExceptionalFunction0[R] extends Function0[R] {
   /**
@@ -37,9 +37,9 @@ abstract class ExceptionalFunction[-T1, R] extends Function[T1, R] {
   def applyE(in: T1): R
 }
 
-abstract class Function2[-T1, -T2, R] extends ( (T1, T2) => R )
+abstract class Function2[-T1, -T2, R] extends ((T1, T2) => R)
 
-abstract class Command[-T1] extends ( T1 => Unit ) {
-  override def andThen[A](g: ( Unit ) => A) = super.andThen(g)
-  override def compose[A](g: ( A ) => T1) = super.compose(g)
+abstract class Command[-T1] extends (T1 => Unit) {
+  override def andThen[A](g: (Unit) => A) = super.andThen(g)
+  override def compose[A](g: (A) => T1) = super.compose(g)
 }

@@ -1,8 +1,9 @@
 package debop4s.core.model
 
-import debop4s.core.{ToStringHelper, ValueObjectBase}
 import debop4s.core.utils.{Arrays, Hashs}
+import debop4s.core.{ToStringHelper, ValueObjectBase}
 import org.joda.time.DateTime
+
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -63,7 +64,7 @@ object User {
     user.officeAddress = new Address("운니동 삼환빌딩 10F", "555-5555")
     user.officeAddress.properties ++= ArrayBuffer("office", "addr")
 
-    ( 0 until favoriteMovieSize ).foreach {
+    (0 until favoriteMovieSize).foreach {
       x =>
         user.favoriteMovies += "Favorite Movie number-" + x
     }

@@ -1,6 +1,7 @@
 package debop4s.core.concurrent
 
 import java.util.concurrent.atomic.AtomicReference
+
 import scala.annotation.tailrec
 import scala.collection.immutable.Queue
 import scala.concurrent._

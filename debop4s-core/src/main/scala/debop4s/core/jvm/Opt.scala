@@ -2,7 +2,7 @@ package debop4s.core.jvm
 
 import java.lang.management.ManagementFactory
 import javax.management.openmbean.CompositeDataSupport
-import javax.management.{ RuntimeMBeanException, ObjectName }
+import javax.management.{ObjectName, RuntimeMBeanException}
 
 /**
  * Retrieve the named JVM option.
@@ -15,11 +15,11 @@ object Opt {
   def apply(name: String): Option[String] = {
     try {
       val o = ManagementFactory.getPlatformMBeanServer.invoke(
-                                                               DiagnosticName,
-                                                               "getVMOption",
-                                                               Array(name),
-                                                               Array("java.lang.String")
-                                                             )
+        DiagnosticName,
+        "getVMOption",
+        Array(name),
+        Array("java.lang.String")
+      )
       Some(o.asInstanceOf[CompositeDataSupport].get("value").asInstanceOf[String])
     } catch {
       case _: IllegalArgumentException => None

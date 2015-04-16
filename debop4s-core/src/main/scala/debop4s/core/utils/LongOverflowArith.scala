@@ -6,7 +6,7 @@ class LongOverflowException(msg: String) extends RuntimeException(msg)
 object LongOverflowArith {
   def add(a: Long, b: Long) = {
     val c = a + b
-    if (( ( a ^ c ) & ( b ^ c ) ) < 0)
+    if (((a ^ c) & (b ^ c)) < 0)
       throw new LongOverflowException(a + " + " + b)
     else
       c
@@ -14,7 +14,7 @@ object LongOverflowArith {
 
   def sub(a: Long, b: Long) = {
     val c = a - b
-    if (( ( a ^ c ) & ( -b ^ c ) ) < 0)
+    if (((a ^ c) & (-b ^ c)) < 0)
       throw new LongOverflowException(a + " - " + b)
     else
       c

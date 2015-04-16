@@ -4,7 +4,7 @@ import debop4s.core.AbstractCoreFunSuite
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.support.AnnotationConfigContextLoader
-import org.springframework.test.context.{ ContextConfiguration, TestContextManager }
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 
 import scala.collection.JavaConverters._
 
@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
  * @since 2014. 2. 25. 오전 10:27
  */
 @ContextConfiguration(classes = Array(classOf[CryptographyConfiguration]),
-                       loader = classOf[AnnotationConfigContextLoader])
+  loader = classOf[AnnotationConfigContextLoader])
 class StringDigesterFunSuite extends AbstractCoreFunSuite {
 
   @Autowired val ctx: ApplicationContext = null

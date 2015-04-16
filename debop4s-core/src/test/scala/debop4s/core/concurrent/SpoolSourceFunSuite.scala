@@ -1,6 +1,7 @@
 package debop4s.core.concurrent
 
 import debop4s.core.AbstractCoreFunSuite
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -23,7 +24,7 @@ class SpoolSourceFunSuite extends AbstractCoreFunSuite {
     source.offer(4)
     source.offer(5)
 
-    Asyncs.result(futureSpool flatMap ( _.toSeq )) should contain only(1, 2, 3)
+    Asyncs.result(futureSpool flatMap (_.toSeq)) should contain only(1, 2, 3)
   }
 
   test("return multiple Future Spools that only see values added later") {
@@ -36,9 +37,9 @@ class SpoolSourceFunSuite extends AbstractCoreFunSuite {
     val futureSpool4 = source()
     source.close()
 
-    Asyncs.result(futureSpool1 flatMap ( _.toSeq )) should contain only(1, 2, 3)
-    Asyncs.result(futureSpool2 flatMap ( _.toSeq )) should contain only(2, 3)
-    Asyncs.result(futureSpool3 flatMap ( _.toSeq )) should contain only 3
+    Asyncs.result(futureSpool1 flatMap (_.toSeq)) should contain only(1, 2, 3)
+    Asyncs.result(futureSpool2 flatMap (_.toSeq)) should contain only(2, 3)
+    Asyncs.result(futureSpool3 flatMap (_.toSeq)) should contain only 3
     Asyncs.result(futureSpool4).isEmpty shouldEqual true
   }
 
@@ -49,7 +50,7 @@ class SpoolSourceFunSuite extends AbstractCoreFunSuite {
     val futureSpool2 = source()
     source.offer(1)
 
-    intercept[Exception] { Asyncs.result(futureSpool1 flatMap ( _.toSeq )) }
+    intercept[Exception] { Asyncs.result(futureSpool1 flatMap (_.toSeq)) }
     Asyncs.result(futureSpool2).isEmpty shouldEqual true
   }
 

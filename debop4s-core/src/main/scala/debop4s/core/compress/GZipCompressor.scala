@@ -1,8 +1,9 @@
 package debop4s.core.compress
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import java.util.zip.{GZIPInputStream, GZIPOutputStream}
+
 import debop4s.core.utils.Closer._
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
-import java.util.zip.{ GZIPInputStream, GZIPOutputStream }
 
 
 object GZipCompressor {

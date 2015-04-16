@@ -3,8 +3,8 @@ package debop4s.core.http.gcm
 import java.util
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import debop4s.core.{ToStringHelper, ValueObject}
 import debop4s.core.utils.Hashs
+import debop4s.core.{ToStringHelper, ValueObject}
 
 import scala.collection.JavaConverters._
 

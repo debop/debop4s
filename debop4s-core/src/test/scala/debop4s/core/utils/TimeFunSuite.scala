@@ -15,9 +15,9 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
 
   val easyVs = Seq(Zero, Inf, MinusInf, Undefined, fromNanoseconds(1), fromNanoseconds(-1))
   val vs = easyVs ++ Seq(
-                          fromNanoseconds(Long.MaxValue - 1),
-                          fromNanoseconds(Long.MinValue + 1)
-                        )
+    fromNanoseconds(Long.MaxValue - 1),
+    fromNanoseconds(Long.MinValue + 1)
+  )
 
   test("Inf, MinusInf, Undefined, Nanoseconds(_), Finite(_)") {
     Inf compare Undefined should be < 0
@@ -35,7 +35,7 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
   test("complementary diff") {
     // Note that this doesn't always hold because of two's complement arithmetic.
     for (a <- easyVs; b <- easyVs) {
-      a diff b shouldEqual ( -( b diff a ) )
+      a diff b shouldEqual (-(b diff a))
     }
   }
 
@@ -43,18 +43,18 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
     for (a <- vs; b <- vs) {
       val x = a compare b
       val y = b compare a
-      ( x == 0 && y == 0 ) || ( x * y < 0 ) shouldEqual true
+      (x == 0 && y == 0) || (x * y < 0) shouldEqual true
     }
   }
 
   test("commutative max") {
     for (a <- vs; b <- vs) {
-      a max b shouldEqual ( b max a )
+      a max b shouldEqual (b max a)
     }
   }
   test("commutative min") {
     for (a <- vs; b <- vs) {
-      a min b shouldEqual ( b min a )
+      a min b shouldEqual (b min a)
     }
   }
   test("handle underflows") {
@@ -224,29 +224,29 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
 
   test("reflect their underlying value") {
     val nss = Seq(
-                   2592000000000000000L, // 30000.days
-                   1040403005001003L, // 12.days+1.hour+3.seconds+5.milliseconds+1.microsecond+3.nanoseconds
-                   123000000000L, // 123.seconds
-                   1L
-                 )
+      2592000000000000000L, // 30000.days
+      1040403005001003L, // 12.days+1.hour+3.seconds+5.milliseconds+1.microsecond+3.nanoseconds
+      123000000000L, // 123.seconds
+      1L
+    )
     for (ns <- nss) {
       val t = fromNanoseconds(ns)
       t.inNanoseconds shouldEqual ns
-      t.inMicroseconds shouldEqual ( ns / 1000L )
-      t.inMilliseconds shouldEqual ( ns / 1000L / 1000L )
-      t.inLongSeconds shouldEqual ( ns / 1000L / 1000L / 1000L )
-      t.inMinutes shouldEqual ( ns / 1000L / 1000L / 1000L / 60L )
-      t.inHours shouldEqual ( ns / 1000L / 1000L / 1000L / 60L / 60L )
-      t.inDays shouldEqual ( ns / 1000L / 1000L / 1000L / 60L / 60L / 24L )
+      t.inMicroseconds shouldEqual (ns / 1000L)
+      t.inMilliseconds shouldEqual (ns / 1000L / 1000L)
+      t.inLongSeconds shouldEqual (ns / 1000L / 1000L / 1000L)
+      t.inMinutes shouldEqual (ns / 1000L / 1000L / 1000L / 60L)
+      t.inHours shouldEqual (ns / 1000L / 1000L / 1000L / 60L / 60L)
+      t.inDays shouldEqual (ns / 1000L / 1000L / 1000L / 60L / 60L / 24L)
     }
   }
 
   test("inSeconds equal inLongSeconds") {
     val nss = Seq(
-                   315370851000000000L, // 3650.days+3.hours+51.seconds
-                   1040403005001003L, // 12.days+1.hour+3.seconds+5.milliseconds+1.microsecond+3.nanoseconds
-                   1L
-                 )
+      315370851000000000L, // 3650.days+3.hours+51.seconds
+      1040403005001003L, // 12.days+1.hour+3.seconds+5.milliseconds+1.microsecond+3.nanoseconds
+      1L
+    )
     for (ns <- nss) {
       val t = fromNanoseconds(ns)
       t.inLongSeconds shouldEqual t.inSeconds
@@ -331,7 +331,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
   }
 
   test("now should be now") {
-    ( Time.now.inMillis - System.currentTimeMillis() ).abs should be < 20L
+    (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
   }
 
   test("withTimeAt") {
@@ -342,7 +342,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
       Time.now shouldEqual t0
     }
     println(s"Time.now.inMillis=${ Time.now }, currentTimeMillis=${ System.currentTimeMillis() }")
-    ( Time.now.inMillis - System.currentTimeMillis ).abs should be < 20L
+    (Time.now.inMillis - System.currentTimeMillis).abs should be < 20L
   }
 
   test("withTimeAt nested") {
@@ -355,7 +355,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
       }
       Time.now shouldEqual t0
     }
-    ( Time.now.inMillis - System.currentTimeMillis() ).abs should be < 20L
+    (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
   }
 
   test("withTimeAt threaded") {
@@ -380,7 +380,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
       thread.join()
       threadTime.get shouldNot be(t0)
     }
-    ( Time.now.inMillis - System.currentTimeMillis() ).abs should be < 20L
+    (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
   }
 
   test("withTimeFunction") {
@@ -392,7 +392,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
       Time.now shouldEqual t0
       val delta = 100.milliseconds
       t += delta
-      Time.now shouldEqual ( t0 + delta )
+      Time.now shouldEqual (t0 + delta)
     }
   }
 
@@ -403,7 +403,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
       Thread.sleep(50)
       Time.now shouldEqual t0
     }
-    ( Time.now.inMillis - System.currentTimeMillis() ).abs should be < 20L
+    (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
   }
 
   test("advance") {
@@ -413,9 +413,9 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     Time.withTimeAt(t0) { tc =>
       Time.now shouldEqual t0
       tc.advance(delta)
-      Time.now shouldEqual ( t0 + delta )
+      Time.now shouldEqual (t0 + delta)
     }
-    ( Time.now.inMillis - System.currentTimeMillis() ).abs should be < 20L
+    (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
   }
 
   test("compare") {
@@ -471,7 +471,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     val t0 = Time.now
     val t1 = t0 + 10L.seconds
     t1.since(t0) shouldEqual 10L.seconds
-    t0.since(t1) shouldEqual ( -10L ).seconds
+    t0.since(t1) shouldEqual (-10L).seconds
   }
 
   test("sinceEpoch") {
@@ -488,7 +488,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
 
   test("fromMicroseconds") {
     Time.fromMicroseconds(0).inNanoseconds shouldEqual 0L
-    Time.fromMicroseconds(-1).inNanoseconds shouldEqual ( -1L * 1000L )
+    Time.fromMicroseconds(-1).inNanoseconds shouldEqual (-1L * 1000L)
 
     Time.fromMicroseconds(Long.MaxValue).inNanoseconds shouldEqual Long.MaxValue
     Time.fromMicroseconds(Long.MaxValue - 1) shouldEqual Time.Inf
@@ -502,7 +502,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
 
   test("fromMillis") {
     Time.fromMilliseconds(0).inNanoseconds shouldEqual 0L
-    Time.fromMilliseconds(-1).inNanoseconds shouldEqual ( -1L * 1000000L )
+    Time.fromMilliseconds(-1).inNanoseconds shouldEqual (-1L * 1000000L)
 
     Time.fromMilliseconds(Long.MaxValue).inNanoseconds shouldEqual Long.MaxValue
     Time.fromMilliseconds(Long.MaxValue - 1) shouldEqual Time.Inf
@@ -518,7 +518,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     val t0 = Time.now
     val t1 = t0 + 10L.seconds
     t0.until(t1) shouldEqual 10L.seconds
-    t1.until(t0) shouldEqual ( -10L ).seconds
+    t1.until(t0) shouldEqual (-10L).seconds
   }
 
   test("untilEpoch") {

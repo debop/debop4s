@@ -4,7 +4,7 @@ import debop4s.core.utils.Time
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 
 /**
  * 리소스 관리를 위한 Trait

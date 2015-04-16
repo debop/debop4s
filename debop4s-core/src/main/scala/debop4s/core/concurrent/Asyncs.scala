@@ -3,10 +3,10 @@ package debop4s.core.concurrent
 import java.lang.{Iterable => JIterable}
 import java.util.concurrent.{Callable, TimeUnit}
 
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
-import scala.collection.JavaConverters._
 
 /**
  * Scala 에서 비동기 작업을 수행합니다.

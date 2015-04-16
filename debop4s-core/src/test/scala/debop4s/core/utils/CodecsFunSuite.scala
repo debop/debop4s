@@ -1,7 +1,7 @@
 package debop4s.core.utils
 
 import debop4s.core.AbstractCoreFunSuite
-import debop4s.core.compress.{SnappyStringEncoder, DeflateStringEncoder, GZipStringEncoder}
+import debop4s.core.compress.{DeflateStringEncoder, GZipStringEncoder, SnappyStringEncoder}
 
 /**
  * CodecsFunSuite

@@ -129,7 +129,7 @@ sealed trait Spool[+A] {
   def flatMap[B](f: A => Future[Spool[B]]): Future[Spool[B]] = {
     if (isEmpty) Future(empty[B])
     else f(head) flatMap {
-      _ ++# ( tail flatMap { _ flatMap f } )
+      _ ++# (tail flatMap { _ flatMap f })
     }
   }
 

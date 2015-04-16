@@ -1,8 +1,9 @@
 package debop4s.core.utils
 
-import java.util.concurrent.{ CountDownLatch => JCountDownLatch }
+import java.util.concurrent.{CountDownLatch => JCountDownLatch}
+
 import scala.annotation.tailrec
-import scala.util.{ Success, Failure, Try }
+import scala.util.{Failure, Success, Try}
 
 /**
  * Memorize
@@ -51,7 +52,7 @@ object Memorize {
           // CountDownLatch that will be completed when the value is
           // available.
           val latch = new JCountDownLatch(1)
-          memo = memo + ( a -> Left(latch) )
+          memo = memo + (a -> Left(latch))
 
           // The latch wrapped in Left indicates that the value
           // needs to be computed in this thread, and then the
@@ -94,7 +95,7 @@ object Memorize {
         // Update the memo table to indicate that the work has
         // been done, and signal to any waiting threads that the
         // work is complete.
-        synchronized { memo = memo + ( a -> Right(b.get) ) }
+        synchronized { memo = memo + (a -> Right(b.get)) }
         latch.countDown()
         b.get
     }

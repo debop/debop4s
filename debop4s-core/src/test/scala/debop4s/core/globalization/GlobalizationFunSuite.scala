@@ -1,14 +1,13 @@
 package debop4s.core.globalization
 
-import java.util.{ResourceBundle, Locale}
+import java.util.Locale
+
 import debop4s.core.AbstractCoreFunSuite
-import org.scalatest.{Matchers, FunSuite}
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import org.springframework.context.support.{MessageSourceAccessor, ReloadableResourceBundleMessageSource}
-import org.springframework.context.{MessageSource, ApplicationContext}
-import org.springframework.test.context.support.{AnnotationConfigContextLoader, GenericXmlContextLoader}
-import org.springframework.test.context.{TestContextManager, ContextConfiguration}
+import org.springframework.test.context.support.AnnotationConfigContextLoader
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 
 /**
  * GlobalizationTest

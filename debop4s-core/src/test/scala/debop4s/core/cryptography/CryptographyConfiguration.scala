@@ -1,7 +1,7 @@
 package debop4s.core.cryptography
 
 import debop4s.core.AbstractCoreFunSuite
-import org.springframework.context.annotation.{ Bean, Configuration }
+import org.springframework.context.annotation.{Bean, Configuration}
 
 /**
  * debop4s.core.stests.cryptography.CryptographyConfiguration

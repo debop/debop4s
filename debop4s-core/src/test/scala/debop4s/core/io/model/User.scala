@@ -1,7 +1,7 @@
 package debop4s.core.io.model
 
-import debop4s.core.{ToStringHelper, ValueObject}
 import debop4s.core.utils.Hashs
+import debop4s.core.{ToStringHelper, ValueObject}
 
 /**
  * debop4s.core.tests.io.model.User

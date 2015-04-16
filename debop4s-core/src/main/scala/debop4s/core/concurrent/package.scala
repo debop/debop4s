@@ -6,7 +6,7 @@ import debop4s.core.utils.JavaTimer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{Awaitable, Await, Future, Promise}
+import scala.concurrent.{Await, Future, Promise}
 
 /**
  * Concurrent package object

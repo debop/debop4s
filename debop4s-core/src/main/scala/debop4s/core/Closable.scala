@@ -1,11 +1,13 @@
 package debop4s.core
 
-import debop4s.core.concurrent.Asyncs
-import java.lang.ref.{PhantomReference, ReferenceQueue, Reference}
+import java.lang.ref.{PhantomReference, Reference, ReferenceQueue}
 import java.util
 import java.util.concurrent.atomic.AtomicReference
+
+import debop4s.core.concurrent.Asyncs
 import debop4s.core.utils.Time
 import org.slf4j.LoggerFactory
+
 import scala.annotation.varargs
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._

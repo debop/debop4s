@@ -4,6 +4,7 @@ import java.util.Locale
 
 import debop4s.core.AbstractCoreFunSuite
 import debop4s.core.utils.Locales.Implicits._
+
 import scala.collection.JavaConverters._
 
 /**

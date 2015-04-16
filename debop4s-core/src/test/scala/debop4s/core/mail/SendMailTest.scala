@@ -4,7 +4,6 @@ import javax.mail.internet.{InternetAddress, MimeBodyPart, MimeMessage, MimeMult
 import javax.mail.{Message, MessagingException, Session, Transport}
 
 import debop4s.core.AbstractCoreFunSuite
-import org.slf4j.LoggerFactory
 
 /**
  * 메일 발송 테스트를 위해서는 OSX에서는 sendemail 을 설치하세요.

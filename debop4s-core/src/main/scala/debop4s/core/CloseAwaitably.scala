@@ -1,8 +1,9 @@
 package debop4s.core
 
 import java.util.concurrent.atomic.AtomicBoolean
+
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ CanAwait, Future, Promise, Awaitable }
+import scala.concurrent.{Awaitable, CanAwait, Future, Promise}
 
 /**
  * A mixin to make an [[Awaitable]] out of a [[Closable]].

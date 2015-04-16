@@ -1,26 +1,24 @@
 package debop4s.core.http
 
-import java.util
-
-import debop4s.core.utils.Closer._
-import java.lang.String
 import java.net.URI
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
+
+import debop4s.core.utils.Closer._
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods._
-import org.apache.http.conn.ssl.{ TrustSelfSignedStrategy, SSLContexts }
-import org.apache.http.impl.nio.client.{ CloseableHttpAsyncClient, HttpAsyncClients }
+import org.apache.http.conn.ssl.{SSLContexts, TrustSelfSignedStrategy}
+import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClients}
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.nio.reactor.ConnectingIOReactor
-import org.apache.http.{ HttpException, HttpResponse }
+import org.apache.http.{HttpException, HttpResponse}
 import org.slf4j.LoggerFactory
+
 import scala.annotation.varargs
 import scala.util.Try
 import scala.util.control.NonFatal
-import scala.collection.JavaConverters._
 
 /**
  * 비동기 Http Client

@@ -1,8 +1,7 @@
 package debop4s.core.jvm
 
 import java.lang.Thread.State._
-import java.lang.management.{ ThreadInfo, ManagementFactory }
-import scala.Some
+import java.lang.management.{ManagementFactory, ThreadInfo}
 
 /**
  * A thread contention summary providing a brief overview of threads
@@ -35,7 +34,7 @@ class ContentionSnapshot {
                   .filter(_ != null)
                   .collect { case Blocked(info) => info }
 
-    val ownerIds = blocked map ( _.getLockOwnerId ) filter ( _ != -1 )
+    val ownerIds = blocked map (_.getLockOwnerId) filter (_ != -1)
     val owners =
       if (ownerIds.size == 0) Seq[String]()
       else bean.getThreadInfo(ownerIds.toArray, true, true).map(_.toString).toSeq
@@ -48,9 +47,9 @@ class ContentionSnapshot {
       }
 
     Snapshot(
-              blockedThreads = blocked.map(_.toString).toSeq,
-              lockOwners = owners,
-              deadlocks = deadlocks.map(_.toString).toSeq)
+      blockedThreads = blocked.map(_.toString).toSeq,
+      lockOwners = owners,
+      deadlocks = deadlocks.map(_.toString).toSeq)
   }
 }
 

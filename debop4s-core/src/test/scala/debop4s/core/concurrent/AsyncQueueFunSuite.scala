@@ -1,6 +1,7 @@
 package debop4s.core.concurrent
 
 import debop4s.core.AbstractCoreFunSuite
+
 import scala.util.Try
 
 /**

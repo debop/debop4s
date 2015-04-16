@@ -1,7 +1,8 @@
 package debop4s.core.concurrent
 
-import org.scalatest.{ Matchers, FunSuite }
-import scala.util.{ Success, Failure, Try }
+import org.scalatest.{FunSuite, Matchers}
+
+import scala.util.{Failure, Success, Try}
 
 /**
  * TrySample

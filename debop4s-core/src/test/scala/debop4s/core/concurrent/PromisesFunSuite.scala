@@ -1,6 +1,7 @@
 package debop4s.core.concurrent
 
 import debop4s.core.AbstractCoreFunSuite
+
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 
@@ -42,7 +43,7 @@ class PromisesFunSuite extends AbstractCoreFunSuite {
     val count = 10
     val tasks = new ArrayBuffer[Future[Int]]()
 
-    ( 0 until 10 ).foreach {
+    (0 until 10).foreach {
       _ =>
         tasks += Promises.exec[Int] {
           callable()

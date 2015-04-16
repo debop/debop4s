@@ -1,7 +1,9 @@
 package debop4s.core
 
-import debop4s.core.concurrent.Asyncs
 import java.util.concurrent.atomic.AtomicReference
+
+import debop4s.core.concurrent.Asyncs
+
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -151,12 +153,12 @@ class EventFunSuite extends AbstractCoreFunSuite {
     e.build.register(Witness(ref))
     assert(ref.get.isEmpty)
 
-    ( 0 until 50 ) foreach { i => e1.notify(i) }
-    ( 0 until 50 ) foreach { i => e2.notify(i.toString) }
-    ( 50 until 100 ) foreach { i => e2.notify(i.toString) }
-    ( 50 until 100 ) foreach { i => e1.notify(i) }
+    (0 until 50) foreach { i => e1.notify(i) }
+    (0 until 50) foreach { i => e2.notify(i.toString) }
+    (50 until 100) foreach { i => e2.notify(i.toString) }
+    (50 until 100) foreach { i => e1.notify(i) }
 
-    ref.get shouldEqual ( ( 0 until 100 ) zip ( ( 0 until 100 ) map ( _.toString ) ) )
+    ref.get shouldEqual ((0 until 100) zip ((0 until 100) map (_.toString)))
   }
 
   test("Event.joinLast") {

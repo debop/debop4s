@@ -1,14 +1,14 @@
 package debop4s.core.io
 
-import debop4s.core.AbstractCoreFunSuite
-import debop4s.core.utils.{ Strings, Charsets }
-import java.io.{ BufferedReader, ByteArrayInputStream }
+import java.io.{BufferedReader, ByteArrayInputStream}
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousFileChannel
 import java.nio.charset.Charset
-import java.nio.file.{ Path, StandardOpenOption, Files, Paths }
-import org.scalatest.{ BeforeAndAfter, Matchers, FunSuite }
-import org.slf4j.LoggerFactory
+import java.nio.file.{Files, Path, Paths, StandardOpenOption}
+
+import debop4s.core.AbstractCoreFunSuite
+import debop4s.core.utils.{Charsets, Strings}
+
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
@@ -26,7 +26,7 @@ class FileChannelFunSuite extends AbstractCoreFunSuite {
     val path = Paths.get("channel.txt")
     val writer = Files.newBufferedWriter(path, Charsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
     try {
-      ( 0 until 100 ).foreach {
+      (0 until 100).foreach {
         x => writer.write(TEST_TEXT)
       }
       writer.flush()

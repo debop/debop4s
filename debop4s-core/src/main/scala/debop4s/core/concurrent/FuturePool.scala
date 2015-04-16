@@ -1,11 +1,12 @@
 package debop4s.core.concurrent
 
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.{ Future => JFuture, CancellationException, RejectedExecutionException, Executors, ExecutorService }
+import java.util.concurrent.{CancellationException, ExecutorService, Executors, Future => JFuture, RejectedExecutionException}
+
 import debop4s.core.utils.Local
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Future, Promise }
+import scala.concurrent.{Future, Promise}
 import scala.util.Try
 
 /**

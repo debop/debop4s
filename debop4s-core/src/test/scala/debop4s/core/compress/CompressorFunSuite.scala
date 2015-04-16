@@ -1,10 +1,6 @@
 package debop4s.core.compress
 
 import debop4s.core.AbstractCoreFunSuite
-import debop4s.core.compress._
-import debop4s.core.utils.Charsets
-import org.scalatest.{ BeforeAndAfter, Matchers, FunSuite }
-import org.slf4j.LoggerFactory
 
 
 /**

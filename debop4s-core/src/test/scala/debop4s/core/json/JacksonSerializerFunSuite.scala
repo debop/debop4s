@@ -3,8 +3,7 @@ package debop4s.core.json
 import debop4s.core.AbstractCoreFunSuite
 import debop4s.core.json.model.Models._
 import debop4s.core.model.User
-import org.joda.time.{ DateTimeZone, DateTime }
-import scala.Some
+import org.joda.time.{DateTime, DateTimeZone}
 
 /**
  * JacksonSerializerFunSuite
@@ -33,13 +32,13 @@ class JacksonSerializerFunSuite extends AbstractCoreFunSuite {
   }
 
   val project = Project(
-                         "test",
-                         DateTime.now(DateTimeZone.UTC), // 시간은 모두 UTC 로 나타내야 합니다.
-                         Some(Language("Scala", 2.75)),
-                         List(Team("QA", List(Employee("John Doe", 5), Employee("Mike", 3))),
-                               Team("Impl", List(Employee("Mark", 4), Employee("Mary", 5), Employee("Nick Noob", 1)))
-                             )
-                       )
+    "test",
+    DateTime.now(DateTimeZone.UTC), // 시간은 모두 UTC 로 나타내야 합니다.
+    Some(Language("Scala", 2.75)),
+    List(Team("QA", List(Employee("John Doe", 5), Employee("Mike", 3))),
+      Team("Impl", List(Employee("Mark", 4), Employee("Mary", 5), Employee("Nick Noob", 1)))
+    )
+  )
 
   test("case class serialize/deserialize") {
     val ser = serialize(project)

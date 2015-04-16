@@ -1,6 +1,6 @@
 package debop4s.core.conversions
 
-import debop4s.core.utils.{WeightUnit, LengthUnit}
+import debop4s.core.utils.{LengthUnit, WeightUnit}
 
 /**
  * 단위 변환 관련

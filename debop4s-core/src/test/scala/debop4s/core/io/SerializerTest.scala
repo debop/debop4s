@@ -4,7 +4,6 @@ import debop4s.core.AbstractCoreFunSuite
 import debop4s.core.compress._
 import debop4s.core.cryptography._
 import debop4s.core.io.model.{Company, User}
-import org.slf4j.LoggerFactory
 
 /**
  * SerializerTest

@@ -1,12 +1,14 @@
 package debop4s.core.concurrent
 
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.{Future => JFuture, _}
+
 import debop4s.core.AbstractCoreFunSuite
 import debop4s.core.conversions.time._
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.{ Future => JFuture, _ }
 import org.scalatest.concurrent.Eventually
-import org.scalatest.time.{ Millis, Seconds, Span }
-import scala.concurrent.{ Future, Promise }
+import org.scalatest.time.{Millis, Seconds, Span}
+
+import scala.concurrent.{Future, Promise}
 
 /**
  * FuturePoolFunSuite

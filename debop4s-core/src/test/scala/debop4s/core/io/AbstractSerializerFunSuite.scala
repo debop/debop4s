@@ -1,6 +1,6 @@
 package debop4s.core.io
 
-import debop4s.core.io.model.{ Company, User }
+import debop4s.core.io.model.{Company, User}
 import debop4s.core.{AbstractCoreFunSuite, YearWeek}
 
 /**

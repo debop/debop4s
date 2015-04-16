@@ -1,12 +1,13 @@
 package debop4s.core.json
 
+import java.lang.reflect.{ParameterizedType, Type}
+
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
-import java.lang.reflect.{Type, ParameterizedType}
 
 
 /**

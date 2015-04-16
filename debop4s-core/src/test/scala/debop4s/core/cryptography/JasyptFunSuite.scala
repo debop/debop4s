@@ -3,8 +3,8 @@ package debop4s.core.cryptography
 import java.security.Security
 
 import debop4s.core.AbstractCoreFunSuite
-import org.jasypt.digest.{ PooledStringDigester, StandardStringDigester }
-import org.jasypt.encryption.pbe.{ StandardPBEByteEncryptor, StandardPBEStringEncryptor }
+import org.jasypt.digest.{PooledStringDigester, StandardStringDigester}
+import org.jasypt.encryption.pbe.{StandardPBEByteEncryptor, StandardPBEStringEncryptor}
 import org.jasypt.util.text.BasicTextEncryptor
 
 import scala.collection.JavaConverters._
@@ -62,7 +62,7 @@ class JasyptFunSuite extends AbstractCoreFunSuite {
       digester.setAlgorithm(algorithm)
       digester.setIterations(10)
 
-      ( 0 until 10 ).par.foreach { x =>
+      (0 until 10).par.foreach { x =>
         val digest = digester.digest("password")
 
         digester.matches("Password", digest) shouldEqual false
@@ -74,8 +74,8 @@ class JasyptFunSuite extends AbstractCoreFunSuite {
 
   val PLAIN_TEXT = "동해물과 백두산이 마르고 닳도록~ Hello World! 1234567890 ~!@#$%^&*()"
   val EncryptorAlgorithm = Array("AES", "AESWARP", "ARCFOUR", "BLOWFISH", "DES", "DESEDE",
-                                  "DESEDEWARP", "PBEWITHMD5ANDDES", "PBEWITHMD5ANDTRIPLEDES",
-                                  "PBEWITHSHA1ANDDESEDE", "PBEWITHSHA1ANDRC2_40", "RC2")
+    "DESEDEWARP", "PBEWITHMD5ANDDES", "PBEWITHMD5ANDTRIPLEDES",
+    "PBEWITHSHA1ANDDESEDE", "PBEWITHSHA1ANDRC2_40", "RC2")
 
   test("basic test encryptor") {
     Security.getAlgorithms("Cipher").asScala.foreach { algorithm =>

@@ -1,14 +1,14 @@
 package debop4s.core.concurrent
 
-import java.util.concurrent.{ ConcurrentLinkedQueue, RejectedExecutionException }
+import java.util.concurrent.{ConcurrentLinkedQueue, RejectedExecutionException}
 
 import debop4s.core.AbstractCoreFunSuite
 import org.scalatest.Ignore
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Future, Promise }
-import scala.util.{ Failure, Success, Try }
+import scala.concurrent.{Future, Promise}
+import scala.util.{Failure, Success, Try}
 
 // 부정기적으로 예외가 생기네요 ㅠ.ㅠ
 @Ignore
@@ -138,7 +138,7 @@ class AsyncSemaphoreFunSuite extends AbstractCoreFunSuite {
   test("should execute queued up async functions as permits become available") {
     var counter = 0
     val queue = new mutable.Queue[Promise[Unit]]()
-    val func = new ( () => Future[Unit] ) {
+    val func = new (() => Future[Unit]) {
       def apply(): Future[Unit] = {
         counter = counter + 1
         val promise = Promise[Unit]()
@@ -179,7 +179,7 @@ class AsyncSemaphoreFunSuite extends AbstractCoreFunSuite {
   }
 
   test("should release permit even if queued up function throws an exception") {
-    val badFunc = new ( () => Future[Unit] ) {
+    val badFunc = new (() => Future[Unit]) {
       def apply(): Future[Unit] = throw new RuntimeException("bad func calling")
     }
     helper.sem.acquireAndRun(badFunc())
@@ -191,7 +191,7 @@ class AsyncSemaphoreFunSuite extends AbstractCoreFunSuite {
   test("should execute queued up sync functions as permits become available") {
     var counter = 0
     val queue = new mutable.Queue[Promise[Unit]]()
-    val funcFuture = new ( () => Future[Unit] ) {
+    val funcFuture = new (() => Future[Unit]) {
       def apply(): Future[Unit] = {
         counter = counter + 1
         val promise = Promise[Unit]()
@@ -233,7 +233,7 @@ class AsyncSemaphoreFunSuite extends AbstractCoreFunSuite {
   test("should handle queued up sync functions which throw exception") {
     var counter = 0
     val queue = new mutable.Queue[Promise[Unit]]()
-    val funcFuture = new ( () => Future[Unit] ) {
+    val funcFuture = new (() => Future[Unit]) {
       def apply(): Future[Unit] = {
         counter = counter + 1
         val promise = Promise[Unit]()
@@ -241,7 +241,7 @@ class AsyncSemaphoreFunSuite extends AbstractCoreFunSuite {
         promise.future
       }
     }
-    val badFunc = new ( () => Int ) {
+    val badFunc = new (() => Int) {
       def apply(): Int = {
         throw new Exception("error!")
       }

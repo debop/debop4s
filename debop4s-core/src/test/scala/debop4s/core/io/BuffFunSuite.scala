@@ -31,7 +31,7 @@ class BuffFunSuite extends AbstractCoreFunSuite with MockitoSugar {
     assert(buff.length == 6)
     val x = Array.fill(6) { 0.toByte }
     buff.write(x, 0)
-    assert(x.toSeq == ( a1 ++ a2 ).toSeq)
+    assert(x.toSeq == (a1 ++ a2).toSeq)
   }
 
   test("Buff.concat.slice") {

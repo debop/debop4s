@@ -1,8 +1,7 @@
 package debop4s.core.compress
 
-import debop4s.core.compress.{ SnappyCompressor, DeflateCompressor, GZipCompressor }
 import debop4s.core.utils.Charsets
-import org.scalameter.{ Gen, PerformanceTest }
+import org.scalameter.{Gen, PerformanceTest}
 
 /**
  * CompressorBenchmark

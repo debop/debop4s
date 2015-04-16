@@ -1,10 +1,9 @@
 package debop4s.core.compress
 
-import java.io.{OutputStream, InputStream}
+import java.io.InputStream
 
 import akka.util.ByteString
 import debop4s.core.BinaryStringFormat
-import debop4s.core.BinaryStringFormat._
 import debop4s.core.utils.{Charsets, Streams, Strings}
 
 import scala.concurrent.ExecutionContext.Implicits.global

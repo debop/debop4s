@@ -1,7 +1,6 @@
 package debop4s.core.utils
 
-import org.joda.time.{ DateTimeConstants, DateTime }
-import org.slf4j.LoggerFactory
+import org.joda.time.{DateTime, DateTimeConstants}
 
 /**
  * 날짜 관련 헬퍼 클래스. (더 만은 메소드는 `debop4s.timeperiod.utils.Times` 클래스를 사용하세요

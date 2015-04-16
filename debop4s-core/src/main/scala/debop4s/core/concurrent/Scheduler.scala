@@ -1,10 +1,12 @@
 package debop4s.core.concurrent
 
-import debop4s.core.utils.Threads
 import java.lang.management.ManagementFactory
 import java.util
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.{ RejectedExecutionException, Executors, ThreadFactory, ExecutorService }
+import java.util.concurrent.{ExecutorService, Executors, RejectedExecutionException, ThreadFactory}
+
+import debop4s.core.utils.Threads
+
 import scala.concurrent.CanAwait
 import scala.util.Random
 
@@ -100,8 +102,8 @@ private class LocalScheduler extends Scheduler {
           val cpu0 = bean.getCurrentThreadCpuTime
           val usr0 = bean.getCurrentThreadUserTime
           run()
-          cpuTime += ( bean.getCurrentThreadCpuTime - cpu0 ) * SampleScale
-          usrTime += ( bean.getCurrentThreadUserTime - usr0 ) * SampleScale
+          cpuTime += (bean.getCurrentThreadCpuTime - cpu0) * SampleScale
+          usrTime += (bean.getCurrentThreadUserTime - usr0) * SampleScale
         } else {
           run()
         }
@@ -147,9 +149,9 @@ private class LocalScheduler extends Scheduler {
   def submit(r: Runnable) = get().submit(r)
   def flush() = get().flush()
 
-  def usrTime = ( activations.iterator map ( _.usrTime ) ).sum
-  def cpuTime = ( activations.iterator map ( _.cpuTime ) ).sum
-  def numDispatches = ( activations.iterator map ( _.numDispatches ) ).sum
+  def usrTime = (activations.iterator map (_.usrTime)).sum
+  def cpuTime = (activations.iterator map (_.cpuTime)).sum
+  def numDispatches = (activations.iterator map (_.numDispatches)).sum
 
   def blocking[T](f: => T)(implicit perm: CanAwait) = f
 }

@@ -1,6 +1,7 @@
 package debop4s.core.utils
 
 import debop4s.core.AbstractCoreFunSuite
+
 import scala.collection.mutable
 
 /**

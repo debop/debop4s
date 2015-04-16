@@ -1,6 +1,7 @@
 package debop4s.core.io
 
-import java.io.{ InputStream, FileInputStream, File }
+import java.io.{File, FileInputStream, InputStream}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.Try

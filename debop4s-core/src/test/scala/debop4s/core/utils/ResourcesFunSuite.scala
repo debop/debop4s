@@ -1,7 +1,8 @@
 package debop4s.core.utils
 
-import debop4s.core.AbstractCoreFunSuite
 import java.io.InputStream
+
+import debop4s.core.AbstractCoreFunSuite
 
 /**
  * ResourcesFunSuite

@@ -40,7 +40,7 @@ trait Buff {
 
       def slice(start: Int, end: Int): Buff = {
         left.slice(start min left.length, end min left.length) concat
-        right.slice(( start - left.length ) max 0, ( end - left.length ) max 0)
+        right.slice((start - left.length) max 0, (end - left.length) max 0)
       }
 
       def write(buff: Array[Byte], offset: Int) {
@@ -97,7 +97,7 @@ object Buff {
     override def slice(start: Int, end: Int): Buff = {
       require(start >= 0 && end >= 0, "Index out of bounds")
       if (end <= start || start > length) Buff.Empty
-      else ByteArray(bytes, this.start + start, ( this.start + end ) min this.end)
+      else ByteArray(bytes, this.start + start, (this.start + end) min this.end)
     }
     override def toString: String = s"ByteArray(${ super.toString })"
     override def equals(other: Any): Boolean = other match {

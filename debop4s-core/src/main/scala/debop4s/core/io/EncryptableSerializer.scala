@@ -1,6 +1,6 @@
 package debop4s.core.io
 
-import debop4s.core.cryptography.{ RC2Encryptor, SymmetricEncryptorSupport }
+import debop4s.core.cryptography.{RC2Encryptor, SymmetricEncryptorSupport}
 import org.slf4j.LoggerFactory
 
 /**

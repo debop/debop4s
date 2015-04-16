@@ -3,8 +3,8 @@ package debop4s.core.concurrent
 import debop4s.core.AbstractCoreFunSuite
 
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 /**
  * debop4s.core.stests.async.AsyncsFunSuite

@@ -1,7 +1,8 @@
 package debop4s.core.utils
 
+import java.net.{Inet4Address, InetAddress, UnknownHostException}
+
 import debop4s.core._
-import java.net.{ Inet4Address, UnknownHostException, InetAddress }
 
 /**
  * NetUtil
@@ -19,7 +20,7 @@ object NetUtil {
     case ip: Inet4Address =>
       val addr = ip.getAddress
       if (addr(0) == 10.toByte) true // 10/8
-      else if (addr(0) == 172.toByte && ( addr(1) & 0xf0 ) == 16.toByte) true // 172/12
+      else if (addr(0) == 172.toByte && (addr(1) & 0xf0) == 16.toByte) true // 172/12
       else if (addr(0) == 192.toByte && addr(1) == 168.toByte) true // 192.168/16
       else false
     case _ => false
@@ -58,7 +59,7 @@ object NetUtil {
     val num4 = ipv4DecimalToInt(ip.substring(dot3 + 1))
     if (num4 < 0) return None
 
-    Some(( num1 << 24 ) | ( num2 << 16 ) | ( num3 << 8 ) | num4)
+    Some((num1 << 24) | (num2 << 16) | (num3 << 8) | num4)
   }
 
   private[this] def ipv4DecimalToInt(s: String): Int = {
@@ -69,7 +70,7 @@ object NetUtil {
     while (i < s.length) {
       val c = s.charAt(i).toInt
       if (c < '0' || c > '9') return -1
-      num = ( num * 10 ) + ( c - '0' )
+      num = (num * 10) + (c - '0')
       i += 1
     }
     if (num >= 0 && num <= 255) num else -1
@@ -79,10 +80,10 @@ object NetUtil {
     inetAddress match {
       case inetAddress: Inet4Address =>
         val addr = inetAddress.getAddress
-        ( ( addr(0) & 0xff ) << 24 ) |
-        ( ( addr(1) & 0xff ) << 16 ) |
-        ( ( addr(2) & 0xff ) << 8 ) |
-        ( addr(3) & 0xff )
+        ((addr(0) & 0xff) << 24) |
+        ((addr(1) & 0xff) << 16) |
+        ((addr(2) & 0xff) << 8) |
+        (addr(3) & 0xff)
       case _ =>
         throw new IllegalArgumentException("non-Inet4Address cannot be converted to an Int")
     }
@@ -101,7 +102,7 @@ object NetUtil {
       case t => t.getOrElse(32)
     }
     val netIp = ipToInt(arr.padTo(4, "0").mkString("."))
-    val mask = ( 1 << 31 ) >> ( pLen - 1 )
+    val mask = (1 << 31) >> (pLen - 1)
     (netIp, mask)
   }
 
@@ -111,7 +112,7 @@ object NetUtil {
   }
 
   def isIpInBlock(ip: Int, ipBlock: (Int, Int)): Boolean = ipBlock match {
-    case (netIp, mask) => ( mask & ip ) == netIp
+    case (netIp, mask) => (mask & ip) == netIp
   }
 
   //  def isInetAddressInBlock(inetAddress:InetAddress, ipBlock:(Int, Int)): Boolean =

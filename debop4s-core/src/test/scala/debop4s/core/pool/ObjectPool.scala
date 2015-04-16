@@ -1,6 +1,7 @@
 package debop4s.core.pool
 
 import java.util.Properties
+
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import org.slf4j.LoggerFactory
 

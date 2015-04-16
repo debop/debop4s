@@ -1,7 +1,8 @@
 package debop4s.core.utils
 
-import debop4s.core.AbstractCoreFunSuite
 import java.net.InetAddress
+
+import debop4s.core.AbstractCoreFunSuite
 
 /**
  * NetUtilsTest
@@ -90,12 +91,12 @@ class NetUtilFunSuite extends AbstractCoreFunSuite {
 
   test("isIpInBlocks") {
     val blocks = Seq(
-                      NetUtil.cidrToIpBlock("127"),
-                      NetUtil.cidrToIpBlock("10.1.1.0/24"),
-                      NetUtil.cidrToIpBlock("192.168.0.0/16"),
-                      NetUtil.cidrToIpBlock("200.1.1.1"),
-                      NetUtil.cidrToIpBlock("200.1.1.2/32")
-                    )
+      NetUtil.cidrToIpBlock("127"),
+      NetUtil.cidrToIpBlock("10.1.1.0/24"),
+      NetUtil.cidrToIpBlock("192.168.0.0/16"),
+      NetUtil.cidrToIpBlock("200.1.1.1"),
+      NetUtil.cidrToIpBlock("200.1.1.2/32")
+    )
 
     NetUtil.isIpInBlocks("127.0.0.1", blocks) shouldEqual true
     NetUtil.isIpInBlocks("128.0.0.1", blocks) shouldEqual false

@@ -1,8 +1,6 @@
 package debop4s.core.testing
 
 import debop4s.core.AbstractCoreFunSuite
-import org.scalatest.{ BeforeAndAfter, Matchers, FunSuite }
-import org.slf4j.LoggerFactory
 
 /**
  * debop4s.core.tests.testing.TestingFunSuite
@@ -39,7 +37,7 @@ class TestingFunSuite extends AbstractCoreFunSuite {
       var guess = 1.0
       var error = 100.0
       do {
-        guess = ( n / guess + guess ) / 2.0
+        guess = (n / guess + guess) / 2.0
         error = math.abs(guess * guess - n)
       } while (error > Tolerance)
       guess

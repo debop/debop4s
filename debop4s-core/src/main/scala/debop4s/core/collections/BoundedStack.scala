@@ -31,7 +31,7 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
   /** 특정 순서의 요소를 조회합니다 */
   def apply(index: Int): A = {
     if (index >= _count) throw new IndexOutOfBoundsException(index.toString)
-    else array(( top + index ) % maxSize)
+    else array((top + index) % maxSize)
   }
 
   def +=(elem: A) {
@@ -44,7 +44,7 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
     if (index == 0) this += elem
     else if (index > _count) throw new IndexOutOfBoundsException(index.toString)
     else if (index == _count) {
-      array(( top + index ) % maxSize) = elem
+      array((top + index) % maxSize) = elem
       _count += 1
     } else {
       val swapped = this(index)
@@ -57,7 +57,7 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
    * 해당 인덱스의 요소를 `elem` 으로 변경한다.
    */
   def update(index: Int, elem: A) {
-    array(( top + index ) % maxSize) = elem
+    array((top + index) % maxSize) = elem
   }
 
   def ++=(iter: Iterable[A]) {
@@ -72,7 +72,7 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
     if (_count == 0) throw new NoSuchElementException
     else {
       val res = array(top)
-      top = ( top + 1 ) % maxSize
+      top = (top + 1) % maxSize
       _count -= 1
       res
     }

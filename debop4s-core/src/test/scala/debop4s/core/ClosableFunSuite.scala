@@ -3,6 +3,7 @@ package debop4s.core
 import debop4s.core.TimeConversions._
 import debop4s.core.utils.Time
 import org.scalatest.concurrent.Eventually._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -29,12 +30,12 @@ class ClosableFunSuite extends AbstractCoreFunSuite {
   test("Closable.closeOnCollect") {
     @volatile var closed = false
     Closable.closeOnCollect(
-                             Closable.make { t =>
-                               closed = true
-                               Future()
-                             },
-                             new Object {}
-                           )
+      Closable.make { t =>
+        closed = true
+        Future()
+      },
+      new Object {}
+    )
     System.gc()
     eventually { assert(closed) }
   }

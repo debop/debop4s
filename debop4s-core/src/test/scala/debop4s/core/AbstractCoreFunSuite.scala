@@ -1,7 +1,6 @@
 package debop4s.core
 
 import org.scalatest._
-import org.slf4j.LoggerFactory
 
 /**
  * AbstractCoreFunSuite

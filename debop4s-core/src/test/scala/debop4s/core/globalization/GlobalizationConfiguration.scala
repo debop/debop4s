@@ -1,7 +1,7 @@
 package debop4s.core.globalization
 
-import org.springframework.context.annotation.{ Bean, Configuration }
-import org.springframework.context.support.{ MessageSourceAccessor, ReloadableResourceBundleMessageSource }
+import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.support.{MessageSourceAccessor, ReloadableResourceBundleMessageSource}
 
 /**
  * GlobalizationConfiguration

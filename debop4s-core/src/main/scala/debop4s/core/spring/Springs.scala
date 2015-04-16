@@ -3,6 +3,7 @@ package debop4s.core.spring
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.context.support.GenericApplicationContext
+
 import scala.annotation.varargs
 import scala.util.control.NonFatal
 

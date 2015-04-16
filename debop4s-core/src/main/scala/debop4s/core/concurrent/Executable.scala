@@ -4,8 +4,7 @@ import java.util.concurrent.atomic.AtomicLong
 
 import org.slf4j.LoggerFactory
 
-import scala.util.{Success, Failure, Try}
-import scala.util.control.NonFatal
+import scala.util.{Failure, Success, Try}
 
 /**
  * 제한 시간이 있는 실행 객체의 trait

@@ -7,7 +7,7 @@ import debop4s.core.concurrent.Spool._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Future, Promise }
+import scala.concurrent.{Future, Promise}
 
 /**
  * SpoolFunSuite
@@ -25,7 +25,7 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
   }
 
   test("Empty Spool - map") {
-    assert(( emptySpool map { x => x * 2 } ) == Spool.empty[Int])
+    assert((emptySpool map { x => x * 2 }) == Spool.empty[Int])
   }
 
   test("Empty Spool - deconstruct") {
@@ -36,10 +36,10 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
   }
 
   test("Empty Spool - append via ++") {
-    assert(( emptySpool ++ Spool.empty[Int] ) == Spool.empty[Int])
-    assert(( Spool.empty[Int] ++ emptySpool ) == Spool.empty[Int])
+    assert((emptySpool ++ Spool.empty[Int]) == Spool.empty[Int])
+    assert((Spool.empty[Int] ++ emptySpool) == Spool.empty[Int])
 
-    val s2 = emptySpool ++ ( 3 **:: 4 **:: Spool.empty[Int] )
+    val s2 = emptySpool ++ (3 **:: 4 **:: Spool.empty[Int])
     Asyncs.result(s2.toSeq) shouldEqual Seq(3, 4)
   }
 
@@ -48,7 +48,7 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
     Asyncs.result(Spool.empty[Int] ++# Future(emptySpool)) shouldEqual Spool.empty[Int]
 
     val s2 = emptySpool ++# Future(3 **:: 4 **:: Spool.empty[Int])
-    Asyncs.result(s2 flatMap ( _.toSeq )) shouldEqual Seq(3, 4)
+    Asyncs.result(s2 flatMap (_.toSeq)) shouldEqual Seq(3, 4)
   }
 
   test("Empty Spool - fold left") {
@@ -92,25 +92,25 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
   }
 
   test("Simple Spool - append via ++") {
-    Asyncs.result(( simpleSpool ++ Spool.empty[Int] ).toSeq) shouldEqual Seq(1, 2)
-    Asyncs.result(( Spool.empty[Int] ++ simpleSpool ).toSeq) shouldEqual Seq(1, 2)
+    Asyncs.result((simpleSpool ++ Spool.empty[Int]).toSeq) shouldEqual Seq(1, 2)
+    Asyncs.result((Spool.empty[Int] ++ simpleSpool).toSeq) shouldEqual Seq(1, 2)
 
-    val s2 = simpleSpool ++ ( 3 **:: 4 **:: Spool.empty[Int] )
+    val s2 = simpleSpool ++ (3 **:: 4 **:: Spool.empty[Int])
     Asyncs.result(s2.toSeq) shouldEqual Seq(1, 2, 3, 4)
   }
 
   test("Simple Spool - append via ++ with Future rhs") {
-    Asyncs.result(simpleSpool ++# Future(Spool.empty[Int]) flatMap ( _.toSeq )) shouldEqual Seq(1, 2)
-    Asyncs.result(Spool.empty[Int] ++# Future(simpleSpool) flatMap ( _.toSeq )) shouldEqual Seq(1, 2)
+    Asyncs.result(simpleSpool ++# Future(Spool.empty[Int]) flatMap (_.toSeq)) shouldEqual Seq(1, 2)
+    Asyncs.result(Spool.empty[Int] ++# Future(simpleSpool) flatMap (_.toSeq)) shouldEqual Seq(1, 2)
 
     val s2 = simpleSpool ++# Future(3 **:: 4 **:: Spool.empty[Int])
-    Asyncs.result(s2 flatMap ( _.toSeq )) shouldEqual Seq(1, 2, 3, 4)
+    Asyncs.result(s2 flatMap (_.toSeq)) shouldEqual Seq(1, 2, 3, 4)
   }
 
   test("Simple Spool - flatMap") {
-    val f = (x: Int) => Future(x.toString **:: ( x * 2 ).toString **:: Spool.empty[String])
+    val f = (x: Int) => Future(x.toString **:: (x * 2).toString **:: Spool.empty[String])
     val s2 = simpleSpool flatMap f
-    Asyncs.result(s2 flatMap ( _.toSeq )) shouldEqual Seq("1", "2", "2", "4")
+    Asyncs.result(s2 flatMap (_.toSeq)) shouldEqual Seq("1", "2", "2", "4")
   }
 
   test("Simple Spool fold left") {
@@ -124,7 +124,7 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
   }
 
   test("be roundtrippable through toSeq/toSpool") {
-    val seq = ( 0 to 10 ).seq
+    val seq = (0 to 10).seq
     Asyncs.result(seq.toSpool.toSeq) shouldEqual seq
   }
 
@@ -168,7 +168,7 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
     Thread.sleep(1)
     xs shouldEqual ArrayBuffer(1)
 
-    p success ( 2 *:: p1.future )
+    p success (2 *:: p1.future)
     Thread.sleep(1)
     xs shouldEqual ArrayBuffer(1, 2)
 
@@ -214,7 +214,7 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
     val s = 1 *:: p.future
 
     val f = s foreach { _ => throw new Exception("sad panda") }
-    p success ( 2 *:: p1.future )
+    p success (2 *:: p1.future)
     intercept[Exception] { Asyncs.result(f) }
   }
 
@@ -225,7 +225,7 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
     val s = 1 *:: p.future
 
     val f = s foreach { _ => throw new EOFException("sad panda") }
-    p success ( 2 *:: p1.future )
+    p success (2 *:: p1.future)
     intercept[EOFException] { Asyncs.result(f) }
   }
 
@@ -298,7 +298,7 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
 
     val f = s.foldLeft(0) { (x, y) => x + y }
 
-    p success ( 2 *:: p1.future )
+    p success (2 *:: p1.future)
     p1 success Spool.empty[Int]
 
     Asyncs.result(f) shouldEqual 3

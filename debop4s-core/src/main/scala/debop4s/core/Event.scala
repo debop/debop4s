@@ -1,11 +1,12 @@
 package debop4s.core
 
-import java.util.concurrent.atomic.{ AtomicInteger, AtomicReference }
+import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
+
 import scala.collection.generic.CanBuild
 import scala.collection.immutable.Queue
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Future, Promise }
-import scala.util.{ Failure, Success, Try }
+import scala.concurrent.{Future, Promise}
+import scala.util.{Failure, Success, Try}
 
 /**
  * twitter/util Event 를 porting 했습니다.
@@ -269,7 +270,7 @@ object Event {
     override def register(s: Witness[T]): Closable = {
       registers ::= s
       Closable.make { _ =>
-        registers = registers filter ( _ ne s )
+        registers = registers filter (_ ne s)
         Future {}
       }
     }

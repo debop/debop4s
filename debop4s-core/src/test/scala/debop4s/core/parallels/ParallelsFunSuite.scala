@@ -14,14 +14,14 @@ class ParallelsFunSuite extends AbstractCoreFunSuite {
   private val UpperBound = 1000
 
   val runnable: Unit = {
-    ( LowerBound until UpperBound ).foreach {
+    (LowerBound until UpperBound).foreach {
       x => Hero.findRoot(x)
     }
     log.trace(s"FindRoot($UpperBound) = ${ Hero.findRoot(UpperBound) }")
   }
 
   val runnable1 = (x: Int) => {
-    ( LowerBound until UpperBound ).foreach {
+    (LowerBound until UpperBound).foreach {
       x => Hero.findRoot(x)
     }
     log.trace(s"FindRoot($UpperBound) = ${ Hero.findRoot(UpperBound) }")
@@ -57,7 +57,7 @@ object Hero {
     var error = 1.0
 
     while (error > Tolerance) {
-      guess = ( number / guess + guess ) / 2.0
+      guess = (number / guess + guess) / 2.0
       error = math.abs(guess * guess - number)
     }
     guess

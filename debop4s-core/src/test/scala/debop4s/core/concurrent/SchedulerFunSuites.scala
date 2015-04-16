@@ -3,6 +3,7 @@ package debop4s.core.concurrent
 import debop4s.core.AbstractCoreFunSuite
 import debop4s.core.utils.Threads
 import org.scalatest.concurrent.Eventually
+
 import scala.concurrent.Promise
 
 class LocalSchedulerFunSuite extends AbstractCoreFunSuite {
@@ -49,7 +50,7 @@ class LocalSchedulerFunSuite extends AbstractCoreFunSuite {
           ran ::= which
         }
     }
-    ran shouldEqual ( 0 until N ).reverse
+    ran shouldEqual (0 until N).reverse
   }
 }
 

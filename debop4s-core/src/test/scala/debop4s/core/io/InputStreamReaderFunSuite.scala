@@ -1,8 +1,9 @@
 package debop4s.core.io
 
+import java.io.ByteArrayInputStream
+
 import debop4s.core.AbstractCoreFunSuite
 import debop4s.core.concurrent.Asyncs
-import java.io.ByteArrayInputStream
 
 /**
  * InputStreamReaderFunSuite

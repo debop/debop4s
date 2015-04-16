@@ -1,8 +1,8 @@
 package debop4s.core.json.model
 
 import com.google.common.collect.Lists
+import debop4s.core.utils.{Arrays, Hashs}
 import debop4s.core.{ToStringHelper, ValueObject}
-import debop4s.core.utils.{Hashs, Arrays}
 import org.joda.time.DateTime
 
 import scala.collection.mutable

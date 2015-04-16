@@ -2,7 +2,7 @@ package debop4s.core.parallels
 
 import java.util.concurrent.{Callable, ThreadLocalRandom}
 
-import debop4s.core.{JAction1, Action1}
+import debop4s.core.JAction1
 import org.slf4j.LoggerFactory
 
 import scala.collection.Seq

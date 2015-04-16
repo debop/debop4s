@@ -56,7 +56,7 @@ class RingBufferFunSuite extends AbstractCoreFunSuite {
 
   test("removeWhere") {
     val buf = RingBuffer[Int](6)
-    buf ++= ( 0 until 10 )
+    buf ++= (0 until 10)
     assert(buf.toList === List(4, 5, 6, 7, 8, 9))
     buf.removeWhere(_ % 3 == 0)
     assert(buf.toList === List(4, 5, 7, 8))

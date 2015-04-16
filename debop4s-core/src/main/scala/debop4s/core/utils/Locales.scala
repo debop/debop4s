@@ -4,7 +4,6 @@ import java.util
 import java.util.Locale
 
 import debop4s.core.Logging
-import org.slf4j.LoggerFactory
 
 /**
  * 로케일 (`Locale`) 정보를 쉽게 사용하기 위한 Utility class

@@ -1,8 +1,9 @@
 package debop4s.core.io
 
+import java.io._
+
 import debop4s.core.utils.Closer._
 import debop4s.core.utils._
-import java.io._
 
 object BinarySerializer {
   def apply(): BinarySerializer = new BinarySerializer()

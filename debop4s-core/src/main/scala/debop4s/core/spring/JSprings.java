@@ -1,8 +1,8 @@
 package debop4s.core.spring;
 
 import debop4s.core.AutoCloseableAction;
-import debop4s.core.utils.Local;
 import debop4s.core.tools.ArrayTool;
+import debop4s.core.utils.Local;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.annotation.Autowired;

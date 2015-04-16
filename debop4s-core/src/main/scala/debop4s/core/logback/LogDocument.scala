@@ -4,8 +4,8 @@ import java.util
 
 import debop4s.core.{ToStringHelper, ValueObjectBase}
 import org.joda.time.DateTime
+
 import scala.beans.BeanProperty
-import scala.collection.mutable
 
 /**
  * logback 로그 정보를 표현하는 클래스입니다.

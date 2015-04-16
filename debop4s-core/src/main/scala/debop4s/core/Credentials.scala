@@ -1,7 +1,8 @@
 package debop4s.core
 
-import java.io.{ IOException, File }
+import java.io.{File, IOException}
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.io.Source
 import scala.util.parsing.combinator._
@@ -16,7 +17,7 @@ object Credentials {
     override val whiteSpace = "(?:\\s+|#.*\\n)+".r
     val token = "[\\w-_]+".r
 
-    def auth = ( token <~ ":" ) ~ "[^\\n]+".r ^^ { case k ~ v => (k, v) }
+    def auth = (token <~ ":") ~ "[^\\n]+".r ^^ { case k ~ v => (k, v) }
     def content: Parser[Map[String, String]] = rep(auth) ^^ { auths => Map(auths: _*) }
 
     def apply(in: String): Map[String, String] = {

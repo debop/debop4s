@@ -1,7 +1,8 @@
 package debop4s.core.io
 
-import debop4s.core.AbstractCoreFunSuite
 import java.io.IOException
+
+import debop4s.core.AbstractCoreFunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
