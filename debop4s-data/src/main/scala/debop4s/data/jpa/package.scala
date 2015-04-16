@@ -1,18 +1,20 @@
 package debop4s.data
 
+import java.util.{Calendar, Collections, Date}
+import javax.persistence.criteria.{CriteriaBuilder, CriteriaQuery, Predicate, Root}
+import javax.persistence.{EntityManager, LockModeType, TemporalType, TypedQuery}
+
 import com.mysema.query.QueryMetadata
-import com.mysema.query.jpa.impl.{ JPAUpdateClause, JPADeleteClause, JPAQuery }
-import com.mysema.query.types.{ OrderSpecifier, EntityPath }
-import java.util.{ Calendar, Date, Collections }
-import javax.persistence.criteria.{ Predicate, CriteriaBuilder, Root, CriteriaQuery }
-import javax.persistence.{ TemporalType, LockModeType, TypedQuery, EntityManager }
+import com.mysema.query.jpa.impl.{JPADeleteClause, JPAQuery, JPAUpdateClause}
+import com.mysema.query.types.{EntityPath, OrderSpecifier}
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain._
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.query.QueryUtils
-import org.springframework.data.jpa.repository.support.{ JpaEntityInformationSupport, JpaEntityInformation }
+import org.springframework.data.jpa.repository.support.{JpaEntityInformation, JpaEntityInformationSupport}
+
 import scala.annotation.varargs
 import scala.collection.JavaConversions._
 
@@ -31,7 +33,7 @@ package object jpa {
     val COUNT_QUERY_STRING: String = "select count(%s) from %s x"
 
     def getEntityInfo[T](entityClass: Class[T]): JpaEntityInformation[T, _] = {
-      JpaEntityInformationSupport.getMetadata[T](entityClass, em)
+      JpaEntityInformationSupport.getEntityInformation[T](entityClass, em)
     }
 
     def getQuery[T](resultClass: Class[T], spec: Specification[T], pageable: Pageable): TypedQuery[T] = {

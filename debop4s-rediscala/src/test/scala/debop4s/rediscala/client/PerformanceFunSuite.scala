@@ -11,15 +11,16 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 import redis.RedisClient
 
 import scala.async.Async._
+import scala.collection.immutable.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
 /**
  * PerformanceFunSuite
  * @author sunghyouk.bae@gmail.com 2014. 9. 4.
  */
-@ContextConfiguration(classes = Array(classOf[RedisConfiguration]),
-  loader = classOf[AnnotationConfigContextLoader])
+@ContextConfiguration(classes = Array(classOf[RedisConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class PerformanceFunSuite extends FunSuite with Matchers with OptionValues {
 
   lazy val log = LoggerFactory.getLogger(getClass)
@@ -37,27 +38,25 @@ class PerformanceFunSuite extends FunSuite with Matchers with OptionValues {
   test("RedisClient Multithread set") {
 
     {
-      val tasks = (0 until RUN_COUNT).par.map { x =>
-        async {
+      val tasks: Seq[Future[Boolean]] = (0 until RUN_COUNT).par.map { x =>
           redis.set(s"key-$x", s"value-$x")
-        }
       }.seq
       tasks.awaitAll
       log.debug("쓰기 완료")
     }
     {
-      val tasks = (0 until RUN_COUNT).par.map { x =>
+      val tasks: Seq[Future[Unit]] = (0 until RUN_COUNT).par.map { x =>
         async {
           val value = await(redis.get[String](s"key-$x"))
           value.orNull shouldEqual s"value-$x"
         }
       }.seq
-      tasks.awaitAll
+      tasks.holdAll
       log.debug("읽기 완료")
     }
 
     {
-      val tasks = (0 until RUN_COUNT).par.map { x =>
+      val tasks: Seq[Future[Long]] = (0 until RUN_COUNT).par.map { x =>
         async {
           await(redis.del(s"key-$x"))
         }
@@ -68,13 +67,13 @@ class PerformanceFunSuite extends FunSuite with Matchers with OptionValues {
     log.debug("삭제 완료 완료")
 
     {
-      val tasks = (0 until RUN_COUNT).par.map { x =>
+      val tasks: Seq[Future[Unit]] = (0 until RUN_COUNT).par.map { x =>
         async {
           val value = await(redis.get[String](s"key-$x"))
           value.orNull shouldEqual s"value-$x"
         }
       }.seq
-      tasks.await
+      tasks.holdAll
     }
     log.debug("삭제 확인 완료")
   }

@@ -4,6 +4,7 @@ import java.util
 import java.util.concurrent.ConcurrentHashMap
 
 import debop4s.core._
+import debop4s.rediscala._
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.cache.{Cache, CacheManager}

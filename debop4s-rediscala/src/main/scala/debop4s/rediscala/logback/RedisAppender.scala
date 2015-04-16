@@ -5,7 +5,7 @@ import ch.qos.logback.core.{CoreConstants, UnsynchronizedAppenderBase}
 import debop4s.core._
 import debop4s.core.json.JacksonSerializer
 import debop4s.core.logback.LogDocument
-import debop4s.rediscala.RedisConsts
+import debop4s.rediscala.{RedisConsts, _}
 import org.joda.time.DateTime
 import redis.RedisClient
 

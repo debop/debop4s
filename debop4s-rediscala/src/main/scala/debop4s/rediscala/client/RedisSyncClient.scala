@@ -1,5 +1,6 @@
 package debop4s.rediscala.client
 
+import debop4s.rediscala._
 import redis._
 import redis.commands.Transactions
 

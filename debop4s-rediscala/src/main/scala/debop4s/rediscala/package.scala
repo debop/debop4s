@@ -1,20 +1,18 @@
-package debop4s.rediscala.utils
+package debop4s
 
 import java.lang.{Double => JDouble, Long => JLong}
 import java.util.{List => JList, Map => JMap, Set => JSet}
 
 import akka.util.ByteString
 import com.google.common.collect.Lists
-import debop4s.rediscala.MemberScore
-import redis.api.Limit
 
 import scala.collection.JavaConverters._
 
 /**
- * Akka 사용을 위한 Utility object
- * @author debop created at 2014. 5. 2.
+ * package
+ * @author sunghyouk.bae@gmail.com
  */
-object AkkaUtil {
+package object rediscala {
 
   implicit val actorSystem = akka.actor.ActorSystem("rediscala")
   implicit val executor = actorSystem.dispatcher

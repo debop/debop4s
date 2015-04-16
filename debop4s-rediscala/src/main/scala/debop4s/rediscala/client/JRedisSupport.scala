@@ -5,8 +5,7 @@ import java.sql.Timestamp
 import java.util
 import java.util.{List => JList, Map => JMap, Set => JSet}
 
-import debop4s.rediscala.MemberScore
-import debop4s.rediscala.utils.AkkaUtil._
+import debop4s.rediscala.{MemberScore, _}
 import redis.api._
 import redis.protocol.Status
 import redis.{RedisBlockingClient, RedisCommands}

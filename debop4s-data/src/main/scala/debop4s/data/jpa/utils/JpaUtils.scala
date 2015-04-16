@@ -1,15 +1,16 @@
 package debop4s.data.jpa.utils
 
+import java.util.{Calendar, Date}
+import javax.persistence.criteria.{CriteriaQuery, Predicate, Root}
+import javax.persistence.{EntityManager, TemporalType, TypedQuery}
+
 import debop4s.data.jpa.JpaParameter
-import java.util.{ Calendar, Date }
-import javax.persistence.criteria.{ Predicate, Root, CriteriaQuery }
-import javax.persistence.{ TemporalType, TypedQuery, EntityManager }
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.{ Sort, Pageable }
+import org.springframework.data.domain.{Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.query.QueryUtils
-import org.springframework.data.jpa.repository.support.{ JpaEntityInformationSupport, JpaEntityInformation }
+import org.springframework.data.jpa.repository.support.{JpaEntityInformation, JpaEntityInformationSupport}
 
 
 /**
@@ -28,7 +29,7 @@ object JpaUtils {
   }
 
   def getEntityInformation[T](em: EntityManager, entityClass: Class[T]): JpaEntityInformation[T, _] =
-    JpaEntityInformationSupport.getMetadata(entityClass, em)
+    JpaEntityInformationSupport.getEntityInformation[T](entityClass, em)
 
   def getQuery[T](em: EntityManager, resultClass: Class[T], spec: Specification[T], pageable: Pageable): TypedQuery[T] = {
     val sort = if (pageable == null) null else pageable.getSort

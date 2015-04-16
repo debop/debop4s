@@ -1,9 +1,8 @@
 package debop4s.rediscala.config
 
 import com.typesafe.config.ConfigFactory
-import debop4s.rediscala.RedisClientFactory
+import debop4s.rediscala.{RedisClientFactory, _}
 import debop4s.rediscala.client._
-import debop4s.rediscala.utils.AkkaUtil._
 import org.springframework.context.annotation.ComponentScan.Filter
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import redis.{RedisClient, RedisClientMasterSlaves, RedisClientPool}

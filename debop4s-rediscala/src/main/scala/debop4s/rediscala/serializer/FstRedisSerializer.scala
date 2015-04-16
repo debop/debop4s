@@ -2,6 +2,7 @@ package debop4s.rediscala.serializer
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
+import debop4s.core._
 import org.nustaq.serialization.FSTConfiguration
 
 /**

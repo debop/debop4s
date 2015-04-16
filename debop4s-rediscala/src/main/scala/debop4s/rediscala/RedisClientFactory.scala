@@ -1,5 +1,6 @@
 package debop4s.rediscala
 
+import debop4s.config.server.{RedisElement, RedisServerElement}
 import org.slf4j.LoggerFactory
 import redis._
 import redis.api.pubsub.Message
@@ -11,8 +12,6 @@ import redis.api.pubsub.Message
 object RedisClientFactory {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
-
-  implicit val actorSystem = AkkaUtil.actorSystem
 
   /**
    * 환경설정 정보 `RedisElement` 로부터  `RedisServer` 를 생성합니다.

@@ -3,6 +3,7 @@ package debop4s.rediscala.client
 import java.lang.{Double => JDouble, Iterable => JIterable, Long => JLong}
 import java.util.{List => JList, Map => JMap, Set => JSet}
 
+import debop4s.rediscala._
 import org.slf4j.LoggerFactory
 import redis._
 import redis.commands.Transactions

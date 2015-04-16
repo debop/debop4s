@@ -1,5 +1,7 @@
 package debop4s.rediscala.client
 
+import debop4s.core._
+import debop4s.rediscala._
 import redis._
 import redis.api.{LimitOffsetCount, Order}
 import redis.commands.Transactions
@@ -61,9 +63,7 @@ class RedisSyncMasterSlavesClient(private[this] val _redis: RedisClientMasterSla
                                                getPatterns: Seq[String],
                                                order: Option[Order],
                                                alpha: Boolean): Seq[R] = {
-    Asyncs.result {
-      _redis.masterClient.sort(key, byPattern, limit, getPatterns, order, alpha)
-    }
+    _redis.masterClient.sort(key, byPattern, limit, getPatterns, order, alpha).await
   }
 
 }

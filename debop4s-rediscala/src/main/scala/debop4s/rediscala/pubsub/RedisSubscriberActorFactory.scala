@@ -1,7 +1,7 @@
 package debop4s.rediscala.pubsub
 
 import akka.actor.{ActorRef, Props}
-import debop4s.rediscala.utils.AkkaUtil._
+import debop4s.rediscala._
 import redis.actors.RedisSubscriberActor
 
 import scala.annotation.varargs

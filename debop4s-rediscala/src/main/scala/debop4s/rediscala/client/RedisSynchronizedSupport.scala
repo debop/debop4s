@@ -2,8 +2,7 @@ package debop4s.rediscala.client
 
 import akka.util.ByteString
 import debop4s.core.concurrent.Asyncs
-import debop4s.rediscala.MemberScore
-import debop4s.rediscala.utils.AkkaUtil._
+import debop4s.rediscala.{MemberScore, _}
 import redis._
 import redis.api._
 import redis.protocol.Status

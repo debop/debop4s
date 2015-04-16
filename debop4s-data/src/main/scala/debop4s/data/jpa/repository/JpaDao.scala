@@ -1,17 +1,20 @@
 package debop4s.data.jpa.repository
 
-import debop4s.data.jpa.utils.JpaUtils
 import java.util.Collections
-import javax.persistence.criteria.{ Predicate, CriteriaBuilder, CriteriaQuery, Root }
-import javax.persistence.{ EntityManager, PersistenceContext }
+import javax.persistence.criteria.{CriteriaBuilder, CriteriaQuery, Predicate, Root}
+import javax.persistence.{EntityManager, PersistenceContext}
+
+import debop4s.data.jpa.utils.JpaUtils
 import org.slf4j.LoggerFactory
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
+import org.springframework.data.jpa.provider.PersistenceProvider
 import org.springframework.data.jpa.repository.query.QueryUtils
 import org.springframework.data.jpa.repository.support._
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+
 import scala.collection.JavaConversions._
 
 /**
@@ -32,7 +35,7 @@ class JpaDao {
   private def persistenceProvider: PersistenceProvider = PersistenceProvider.fromEntityManager(em)
 
   private def getEntityInformation[T](entityClass: Class[T]): JpaEntityInformation[T, _] =
-    JpaEntityInformationSupport.getMetadata[T](entityClass, em)
+    JpaEntityInformationSupport.getEntityInformation[T](entityClass, em)
 
   private def getDeleteAllQueryString[T](entityClass: Class[T]) = {
     JpaUtils.getQueryString(JpaUtils.DELETE_ALL_QUERY_STRING, getEntityInformation(entityClass).getEntityName)

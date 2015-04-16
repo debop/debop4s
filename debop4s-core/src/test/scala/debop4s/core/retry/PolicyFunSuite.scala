@@ -2,7 +2,6 @@ package debop4s.core.retry
 
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
 
-import debop4s.core.concurrent.Asyncs
 import debop4s.core.utils.JavaTimer
 import debop4s.core.{AbstractCoreFunSuite, _}
 import org.scalatest.BeforeAndAfterAll
@@ -61,7 +60,7 @@ class PolicyFunSuite extends AbstractCoreFunSuite with BeforeAndAfterAll {
       val c = counter.incrementAndGet()
       Future.failed(new RuntimeException(s"always failing - $c"))
     }
-    Asyncs.ready(future, Duration.Inf)
+    // Asyncs.hold(future, Duration.Inf)
     future.hold(Duration.Inf)
     counter.get() shouldEqual 4
   }

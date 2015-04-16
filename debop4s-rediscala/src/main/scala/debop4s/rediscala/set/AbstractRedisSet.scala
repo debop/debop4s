@@ -3,6 +3,7 @@ package debop4s.rediscala.set
 import debop4s.rediscala.AbstractRedis
 
 import scala.annotation.varargs
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**

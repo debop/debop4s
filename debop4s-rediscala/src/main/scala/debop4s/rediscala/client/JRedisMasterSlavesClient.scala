@@ -2,6 +2,7 @@ package debop4s.rediscala.client
 
 import java.util.{List => JList}
 
+import debop4s.rediscala._
 import redis._
 import redis.api.{LimitOffsetCount, Order}
 import redis.commands.Transactions

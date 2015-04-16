@@ -3,6 +3,7 @@ package debop4s.rediscala.utils
 import java.util.concurrent.TimeUnit
 
 import debop4s.core._
+import debop4s.rediscala._
 import redis.RedisClient
 
 import scala.concurrent.Future
@@ -37,7 +38,7 @@ class RedisHelper(val redis: RedisClient) {
    * 특정 키 값을 1 감소 시키고, 그 값을 반환한다.
    * Id 값 관리에 유용하다.
    */
-  def decreaseAndGet(key: String, decrement: Long = 1) = {
+  def decreaseAndGet(key: String, decrement: Long = 1): Future[Long] = {
     redis.decrby(key, decrement)
     .andThen {
       case Success(x) => redis.get(key).map(x => x.getOrElse(0))
@@ -84,7 +85,7 @@ class RedisHelper(val redis: RedisClient) {
       if (redis.exists(lockName).await) {
         foundLock = true
         try {
-          Thread.sleep(5)
+          Thread.sleep(10)
         } catch {
           case ignored: InterruptedException =>
           case NonFatal(e) => throw new RuntimeException(s"Fail to wait for unlock. lockName=$lockName", e)

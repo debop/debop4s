@@ -1,13 +1,13 @@
 package debop4s.rediscala.benchmark
 
-import debop4s.rediscala.utils.AkkaUtil._
+import debop4s.core._
+import debop4s.rediscala._
 import org.scalameter.{Gen, PerformanceTest}
 import redis.{RedisClient, RedisClientPool, RedisServer}
 
 import scala.async.Async._
 import scala.collection.mutable
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 /**
  * RedisClient 와 RedisPoolClient 의 성능 비교
@@ -120,6 +120,6 @@ object RedisClientBenchmark extends PerformanceTest.Quickbenchmark {
       futures += block(i)
       i += 1
     }
-    Await.ready(Future.sequence(futures), 60 seconds)
+    Future.sequence(futures).await
   }
 }

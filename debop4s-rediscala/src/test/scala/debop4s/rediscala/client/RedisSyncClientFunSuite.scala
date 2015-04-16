@@ -15,6 +15,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 import redis.api.{DESC, Limit, LimitOffsetCount}
 
 import scala.collection.mutable
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -675,7 +676,7 @@ class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
     }
 
     // Timeout 이 되면 None 을 반환합니다.
-    future.await shouldBe defined
+    future.await should not be defined
     syncRedis.del("brpoplpushTimeout1", "brpoplpushTimeout2")
   }
 

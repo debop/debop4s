@@ -1,7 +1,7 @@
 package debop4s.rediscala.benchmark
 
+import debop4s.rediscala._
 import debop4s.rediscala.client.{RedisSyncClient, RedisSyncMasterSlavesClient}
-import debop4s.rediscala.utils.AkkaUtil._
 import org.scalameter.{Gen, PerformanceTest}
 import redis.{RedisClientMasterSlaves, RedisServer}
 
