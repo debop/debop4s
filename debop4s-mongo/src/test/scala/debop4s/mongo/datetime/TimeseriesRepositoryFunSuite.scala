@@ -10,8 +10,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
  * TimeseriesRepositoryFunSuite
  * @author sunghyouk.bae@gmail.com
  */
-@ContextConfiguration(classes = Array(classOf[TimeseriesConfiguration]),
-  loader = classOf[AnnotationConfigContextLoader])
+@ContextConfiguration(classes = Array(classOf[TimeseriesConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class TimeseriesRepositoryFunSuite extends AbstractMongoFunSuite {
 
   @Autowired val timeseriesRepo: TimeseriesRepository = null

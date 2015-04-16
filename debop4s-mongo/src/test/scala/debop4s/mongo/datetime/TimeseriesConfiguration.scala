@@ -1,11 +1,11 @@
 package debop4s.mongo.datetime
 
 import debop4s.mongo.config.MongoConfigBase
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
 @Configuration
-@ComponentScan(basePackages = Array("kr.hconnect.mongo.datetime"))
+// @ComponentScan(basePackageClasses = Array(classOf[TimeseriesRepository]))
 @EnableMongoRepositories(basePackageClasses = Array(classOf[TimeseriesRepository]))
 class TimeseriesConfiguration extends MongoConfigBase {
 
