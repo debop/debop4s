@@ -29,12 +29,12 @@ package object concurrent {
     }
 
     /** future 객체의 결과를 기다립니다. */
-    def holdAll(timeout: Long): Future[A] = {
+    def hold(timeout: Long): Future[A] = {
       Await.ready(underlying, Duration(timeout, TimeUnit.MILLISECONDS))
     }
 
     /** future 객체의 결과를 기다립니다. */
-    def holdAll(implicit timeout: Duration = timeout): Future[A] = {
+    def hold(implicit timeout: Duration = timeout): Future[A] = {
       Await.ready(underlying, timeout)
     }
 

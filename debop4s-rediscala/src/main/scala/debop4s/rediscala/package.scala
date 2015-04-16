@@ -17,8 +17,8 @@ package object rediscala {
   implicit val actorSystem = akka.actor.ActorSystem("rediscala")
   implicit val executor = actorSystem.dispatcher
 
-  val NegativeInfinity = Limit(Double.NegativeInfinity)
-  val PositiveInfinity = Limit(Double.PositiveInfinity)
+  val NegativeInfinity = redis.api.Limit(Double.NegativeInfinity)
+  val PositiveInfinity = redis.api.Limit(Double.PositiveInfinity)
 
   implicit def toUtf8Str(v: Any): String = v match {
     case Some(v: ByteString) => v.utf8String

@@ -111,7 +111,6 @@ object RedisClientBenchmark extends PerformanceTest.Quickbenchmark {
     }
   }
 
-  @inline
   private def run(size: Int)(block: Int => Future[Boolean]): Unit = {
     val futures = mutable.ListBuffer[Future[Boolean]]()
 
