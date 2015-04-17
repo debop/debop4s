@@ -1,6 +1,6 @@
 package debop4s.redis.base
 
-import debop4s.core.concurrent.Asyncs
+import debop4s.core._
 import debop4s.redis.AbstractRedisTest
 
 /**
@@ -12,14 +12,14 @@ class RedisCappedCollectionTest extends AbstractRedisTest {
   test("크기가 제한된 List") {
 
     val name = "col-10"
-    Asyncs.ready(redis.del(name))
+    redis.del(name).await
 
     val coll = RedisCappedCollection[Int](name, 10)
 
     for (x <- 0 until 100) {
       coll.lpush(x)
     }
-    val list = Asyncs.result(coll.getRange(0, 100))
+    val list = coll.getRange(0, 100).await
     println(list)
     assert(list === Array.range(90, 100).reverse)
 

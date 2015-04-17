@@ -1,0 +1,157 @@
+<%@ val person: debop4s.web.scalatra.scalate.Person %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>회원가입(쿠폰)</title>
+</head>
+<body>
+<!-- email content -->
+<div style="width: 640px; padding: 0 40px; margin: 20px auto;">
+<div
+style="height:192px; padding: 23px 0 0; margin: 0; background: url(http://static.health-on.co.kr/images/mailtemplate/welcome/mail_img1.gif) no-repeat;">
+<table style="border-collapse: collapse;">
+<tbody>
+<tr>
+<td style="width: 184px; height: 34px; padding: 0 304px 0 15px;">
+<a href="http://www.health-on.co.kr" target="_blank">
+    <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/logo.png" alt="헬스온 홈페이지"
+        style="border: 0;">
+    </a>
+</td>
+<td style="width: 34px; height: 34px; padding: 0 10px 0 0;">
+    <a href="https://www.facebook.com/healthon.hct" target="_blank">
+        <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/mail_img_btn_fb.png" alt="페이스북"
+            style="border: 0;">
+        </a>
+    </td>
+    <td style="width: 34px; height: 34px; padding: 0 10px 0 0;">
+        <a href="http://blog.naver.com/healthon_hct" target="_blank">
+            <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/mail_img_btn_blog.png" alt="네이버 블로그"
+                style="border: 0;">
+            </a>
+        </td>
+        <td style="width: 34px; height: 34px; padding: 0 15px 0 0;">
+            <a href="http://www.youtube.com/user/healtonhct" target="_blank">
+                <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/mail_img_btn_youtube.png" alt="유투브"
+                    style="border: 0;">
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p style="padding: 0 0 0 15px; margin: 20px 0 0; font-family: '돋움', Dotum; font-size: 25px; line-height: 25px; color: #919191;">
+    <span style="color: #009ddc; letter-spacing: -1px;">${person.name}</span>님, 헬스온 가입을 환영합니다.
+</p>
+</div>
+<div>
+<img src="http://static.health-on.co.kr/images/mailtemplate/welcome/mail_img2.gif"
+alt="무거운 뱃살, 이제 내려놓으세요! - 헬스온으로 친구와 즐겁게 걷기경쟁을 시작하세요!">
+</div>
+<div style="padding: 0 0 25px; margin: 25px 0 0; border-bottom: 1px solid #ccc;">
+<div>
+<img src="http://static.health-on.co.kr/images/mailtemplate/welcome/con_1.gif" alt="헬스온 가입내역">
+</div>
+<div style="padding: 0 0 0 25px; margin: 10px 0 0;">
+<table style="border-collapse: collapse;">
+<tbody>
+    <th scope="row" style="width: 60px; height: 16px; padding: 3px 0 0;">
+    <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/tag_id.gif" alt="ID">
+    </th>
+    <td style="width: 125px; height: 12px; padding: 1px 10px 3px;">
+        <span style="font-family: '돋움', Dotum; font-size: 12px;">${person.id}</span>
+    </td>
+    <th scope="row" style="width: 60px; height: 16px; padding: 3px 0 0;">
+        <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/tag_name.gif" alt="사용자명">
+        </th>
+        <td style="width: 125px; height: 12px; padding: 1px 10px 3px;">
+            <span style="font-family: '돋움', Dotum; font-size: 12px;">${person.name}</span>
+        </td>
+        <th scope="row" style="width: 60px; height: 16px; padding: 3px 0 0;">
+            <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/tag_date.gif" alt="가입일">
+            </th>
+            <td style="width: 125px; height: 12px; padding: 1px 10px 3px;">
+                <span style="font-family: '돋움', Dotum; font-size: 12px;">${person.registDate}</span>
+            </td>
+        </tbody>
+    </table>
+    </div>
+</div>
+<div style="padding: 0 0 25px; margin: 25px 0 0; border-bottom: 1px solid #ccc;">
+<table style="border-collapse: collapse;">
+<tbody>
+<tr>
+<td style="width: 320px; vertical-align: top; text-align: left;">
+<div style="padding: 0 0 10px;">
+<img src="http://static.health-on.co.kr/images/mailtemplate/welcome/con_3.gif" alt="걷기도 친구와 함께 하면 효과만점!">
+</div>
+<p style="margin: 0 0 0 15px; font-family: '돋움', Dotum; font-size: 12px; line-height: 18px;">혼자서 운동할 때보다 친구와
+    함께 운동하면 <span style="color: #009ddc;">1.9배</span>,<br>
+        온라인의 가상친구와 함께 하면 무려 <span style="color: #ff5933;">2.1배</span><br>
+            더 오래 운동한답니다.<br>
+                (미국의학협회 저널 내과학, 2009)
+            </p>
+        </td>
+        <td style="width: 320px; vertical-align: top; text-align: left;">
+            <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/con_3_2.gif"
+                alt="가상친구와 운동 21분, 친구와 운동 19분, 나혼자 운동 10분">
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<div style="padding: 0 0 25px; margin: 25px 0 0; border-bottom: 1px solid #ccc;">
+<table style="border-collapse: collapse;">
+<tbody>
+<tr>
+<td style="width: 320px; vertical-align: top; text-align: left;">
+<div style="padding: 0 0 10px;">
+    <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/con_4.gif" alt="걷기도 친구와 함께 하면 효과만점!">
+    </div>
+    <p style="margin: 0 0 0 15px; font-family: '돋움', Dotum; font-size: 12px; line-height: 18px;">친구와 함께 다이어트를 시도한
+        사람은 혼자서<br>
+            다이어트를 시도한 사람보다 <span style="color: #ff5933;">30% 더 많이 감량</span><br>
+            한다는 연구결과도 있습니다.<br>
+                (미국행동의학연보, 2012)
+            </p>
+            </td>
+            <td style="width: 320px; vertical-align: top; text-align: left;">
+            <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/con_4_2.gif"
+                alt="6개월간 나혼자 다이어트: 4kg 감량; 6개월간 친구와 다이어트: 6kg 감량">
+            </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div style="padding: 0 0 25px; margin: 25px 0 0;">
+    <div style="text-align: center;">
+        <a href="http://static.health-on.co.kr/recommend.html?id=${person.encName}" target="_blank">
+            <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/btn_1.gif" alt="헬스온 추천메일 보내기"
+                style="border: 0;">
+            </a>
+        </div>
+        <div style="text-align: center; margin: 15px 0 0;">
+            <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/event.gif"
+                alt="11번가 할인쿠폰 5,000원 - 지금 가입하면 11번가 할인쿠폰의 행운이! (5월 한정 선착순 가입 1,000명)">
+            </div>
+        </div>
+        <div
+            style="height: 116px; padding: 20px 17px; background: url(http://112.220.64.34/http://static.health-on.co.kr/images/mailtemplate/welcome/footer.gif) no-repeat;">
+            <p style="margin: 0; font-family: '돋움', Dotum; font-size: 12px; line-height: 16px; color: #ccc;">본 메일은 발신전용으로 회신되지
+            않습니다.</p>
+
+            <p style="margin: 0; font-family: '돋움', Dotum; font-size: 12px; line-height: 16px; color: #ccc;">궁금한 점은 헬스온 앱 > 설정 >
+            1:1문의사항을 이용하여 문의해 주십시오.</p>
+
+            <div style="margin: 15px 0 0 140px;">
+            <p style="margin: 0; font-family: '돋움', Dotum; font-size: 11px; line-height: 16px; color: #919191;">헬스커텍트 주식회사 <a
+            href="http://www.hconnect.co.kr">www.hconnect.co.kr</a></p>
+
+            <p style="margin: 0; font-family: '돋움', Dotum; font-size: 11px; line-height: 16px; color: #919191;">Copyright ⓒ
+                2014 Health Connect Co., Ltd. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+    <!-- // email content -->
+</body>
+</html>

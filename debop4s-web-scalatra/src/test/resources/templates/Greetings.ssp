@@ -1,0 +1,15 @@
+<%@ val title:String = "환영메일" %>
+<%@ val username:String %>
+<!DOCTYPE html>
+<html>
+<head lang="ko">
+<meta charset="UTF-8">
+<title>${title}</title>
+</head>
+<body>
+${username}! 안녕하세요^^
+
+<br/>
+    <img src="http://static.health-on.co.kr/images/mailtemplate/welcome/logo.png"/>
+    </body>
+</html>

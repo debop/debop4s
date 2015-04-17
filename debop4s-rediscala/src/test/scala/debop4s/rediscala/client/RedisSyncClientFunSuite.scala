@@ -22,8 +22,7 @@ import scala.concurrent.Future
  * RedisSyncClientTest
  * @author debop created at 2014. 4. 30.
  */
-@ContextConfiguration(classes = Array(classOf[RedisConfiguration]),
-  loader = classOf[AnnotationConfigContextLoader])
+@ContextConfiguration(classes = Array(classOf[RedisConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
 
   @Autowired val syncRedis: RedisSyncClient = null
@@ -145,7 +144,7 @@ class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
 
   test("object encoding") {
     syncRedis.set("objectEncoding", "objectEncodingValue")
-    syncRedis.objectEncoding("objectEncoding") shouldEqual Some("raw")
+    syncRedis.objectEncoding("objectEncoding") shouldEqual Some("embstr")
     syncRedis.objectEncoding("objectEncodingNotExists") shouldEqual None
     syncRedis.del("objectEncoding", "objectEncodingValue")
   }

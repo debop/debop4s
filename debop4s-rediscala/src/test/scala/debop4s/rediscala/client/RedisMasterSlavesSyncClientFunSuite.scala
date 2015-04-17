@@ -8,7 +8,7 @@ import debop4s.core._
 import debop4s.rediscala.MemberScore
 import debop4s.rediscala.config.RedisConfiguration
 import debop4s.rediscala.serializer.BinaryValueFormatter
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{FunSuite, Matchers, OptionValues}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.support.AnnotationConfigContextLoader
 import org.springframework.test.context.{ContextConfiguration, TestContextManager}
@@ -21,9 +21,8 @@ import scala.concurrent.duration._
  * RedisMasterSlavesSyncClientFunSuite
  * @author sunghyouk.bae@gmail.com
  */
-@ContextConfiguration(classes = Array(classOf[RedisConfiguration]),
-  loader = classOf[AnnotationConfigContextLoader])
-class RedisMasterSlavesSyncClientFunSuite extends FunSuite with Matchers {
+@ContextConfiguration(classes = Array(classOf[RedisConfiguration]), loader = classOf[AnnotationConfigContextLoader])
+class RedisMasterSlavesSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
 
   @Autowired val syncRedis: RedisSyncClient = null
   // @Autowired val syncRedis2: RedisSyncClient = null
@@ -144,7 +143,7 @@ class RedisMasterSlavesSyncClientFunSuite extends FunSuite with Matchers {
 
   test("object encoding") {
     syncRedis.set("objectEncoding", "objectEncodingValue")
-    syncRedis.objectEncoding("objectEncoding") shouldEqual Some("raw")
+    syncRedis.objectEncoding("objectEncoding") shouldEqual Some("embstr")
     syncRedis.objectEncoding("objectEncodingNotExists") shouldEqual None
     syncRedis.del("objectEncoding", "objectEncodingValue")
   }

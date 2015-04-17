@@ -9,25 +9,22 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>debop4s-testing</artifactId>
+    <artifactId>debop4s-shiro</artifactId>
+    <name>shiro</name>
 
     <dependencies>
         <dependency>
             <groupId>com.github.debop4s</groupId>
-            <artifactId>debop4s-core</artifactId>
+            <artifactId>debop4s-rediscala</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
-        <!-- ScalaTest -->
         <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
-            <scope>compile</scope>
+            <groupId>com.etaty.rediscala</groupId>
+            <artifactId>rediscala_2.11</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.axel22</groupId>
-            <artifactId>scalameter_2.11</artifactId>
-            <scope>compile</scope>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
         </dependency>
     </dependencies>
 </project>
