@@ -2,7 +2,7 @@ package debop4s.timeperiod.timeline
 
 import debop4s.core.ValueObject
 import debop4s.core.utils.Hashs
-import debop4s.timeperiod.{ ITimePeriodCollection, TimePeriodCollection }
+import debop4s.timeperiod._
 import org.joda.time.DateTime
 
 /**

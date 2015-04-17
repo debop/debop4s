@@ -1,21 +1,18 @@
 package debop4s.timeperiod
 
-import debop4s.core.{ToStringHelper, NotSupportedException}
+import java.lang.{Iterable => JIterable}
+
+import debop4s.core.NotSupportedException
 import debop4s.core.conversions.jodatime._
-import debop4s.timeperiod.OrderDirection.OrderDirection
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
-import org.joda.time.{ Duration, DateTime }
-import org.slf4j.LoggerFactory
+import org.joda.time.{DateTime, Duration}
+
 import scala.annotation.varargs
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-
-/**
- * debop4s.timeperiod.TimePeriodContainer
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 14. 오후 11:45
- */
 trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod {
 
   def periods: mutable.ArrayBuffer[ITimePeriod]
@@ -36,7 +33,7 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
 
   override def isEmpty = periods.isEmpty
 
-  //    override def contains(elem: Any): Boolean = periods.contains(elem)
+  // def contains(elem: Any): Boolean = periods.contains(elem)
 
   /** 시작시각을 설정합니다. */
   def start_=(x: DateTime)
@@ -67,8 +64,8 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     }
   }
 
-  def addAll(elems: Iterable[ITimePeriod]) {
-    elems.foreach(add)
+  def addAll(elems: JIterable[_ <: ITimePeriod]) {
+    elems.asScala.foreach(add)
   }
 
   @varargs
@@ -91,8 +88,8 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     periods.insert(n, elems.toSeq: _*)
   }
 
-  def containsAll(elems: Iterable[_]): Boolean = {
-    elems.filter(_.isInstanceOf[ITimePeriod]).forall(x => periods.contains(x))
+  def containsAll(elems: JIterable[_]): Boolean = {
+    elems.asScala.filter(_.isInstanceOf[ITimePeriod]).forall(x => periods.contains(x))
   }
 
   def remove(x: Any): Boolean = {
@@ -104,18 +101,17 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
     }
   }
 
-  def removeAll(elems: Iterable[_]): Boolean = {
-    elems.foreach {
+  def removeAll(elems: JIterable[_]): Boolean = {
+    elems.asScala.foreach {
       case elem: ITimePeriod if periods.contains(elem) => remove(elem)
     }
     true
   }
 
-  def retainAll(elems: Iterable[_]): Boolean = {
+  def retainAll(elems: JIterable[_]): Boolean = {
     periods.clear()
-    elems.foreach {
+    elems.asScala.foreach {
       case elem: ITimePeriod if !periods.contains(elem) => periods += elem
-      case _ =>
     }
     true
   }
@@ -123,7 +119,6 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
   override def update(n: Int, newelem: ITimePeriod) {
     periods.update(n, newelem)
   }
-
 
   def set(index: Int, elem: ITimePeriod) = {
     periods.update(index, elem)
@@ -137,34 +132,40 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
   override def lastIndexOf[T >: ITimePeriod](o: T): Int = periods.lastIndexOf(o)
 
   def sortByStart(sortDir: OrderDirection) {
-    var sorted: ArrayBuffer[ITimePeriod] = null
+    var sorted = null: ArrayBuffer[ITimePeriod]
+
     if (sortDir == OrderDirection.ASC) {
-      sorted = periods.sortWith((x, y) => x.start < y.start)
+      sorted = periods.sortBy(_.start)
     } else {
-      sorted = periods.sortWith((x, y) => x.start > y.start)
+      sorted = periods.sortBy(-_.start.getMillis)
     }
+
     periods.clear()
     periods ++= sorted
   }
 
   def sortByEnd(sortDir: OrderDirection) {
-    var sorted: ArrayBuffer[ITimePeriod] = null
+    var sorted = null: ArrayBuffer[ITimePeriod]
+
     if (sortDir == OrderDirection.ASC) {
-      sorted = periods.sortWith((x, y) => x.end < y.end)
+      sorted = periods.sortBy(_.end)
     } else {
-      sorted = periods.sortWith((x, y) => x.end > y.end)
+      sorted = periods.sortBy(-_.end.getMillis)
     }
+
     periods.clear()
     periods ++= sorted
   }
 
   def sortByDuration(sortDir: OrderDirection) {
-    var sorted: ArrayBuffer[ITimePeriod] = null
+    var sorted = null: ArrayBuffer[ITimePeriod]
+
     if (sortDir == OrderDirection.ASC) {
-      sorted = periods.sortWith((x, y) => x.duration < y.duration)
+      sorted = periods.sortBy(_.duration) // periods.sortWith((x, y) => x.duration < y.duration)
     } else {
-      sorted = periods.sortWith((x, y) => x.duration > y.duration)
+      sorted = periods.sortBy(-_.duration.getMillis) // periods.sortWith((x, y) => x.duration > y.duration)
     }
+
     periods.clear()
     periods ++= sorted
   }
@@ -175,15 +176,13 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
 
   def compare(x: ITimePeriod, y: ITimePeriod): Int = x.start.compareTo(y.start)
 
-  override protected def buildStringHelper: ToStringHelper =
+  override protected def buildStringHelper =
     super.buildStringHelper
     .add("periods", periods)
 }
 
 @SerialVersionUID(-7112720659283751048L)
 class TimePeriodContainer extends ITimePeriodContainer {
-
-  private lazy val log = LoggerFactory.getLogger(getClass)
 
   implicit val dateTimeOrdering = new DateTimeOrdering()
 
@@ -194,13 +193,13 @@ class TimePeriodContainer extends ITimePeriodContainer {
   override def start: DateTime = {
     if (size == 0) MinPeriodTime
     else if (periods.isEmpty) MinPeriodTime
-    else periods.minBy(x => x.start).start
+    else periods.par.minBy(x => x.start).start
   }
 
   override def end: DateTime = {
     if (size == 0) MaxPeriodTime
     else if (periods.isEmpty) MaxPeriodTime
-    else periods.maxBy(x => x.end).end
+    else periods.par.maxBy(x => x.end).end
   }
 
   override def start_=(x: DateTime) {
@@ -216,15 +215,13 @@ class TimePeriodContainer extends ITimePeriodContainer {
 
   def duration: Duration = if (hasPeriod) new Duration(start, end) else MaxDuration
 
-  def getDuration = duration
-
   def hasStart = start != MinPeriodTime
 
   def hasEnd = end != MaxPeriodTime
 
   def hasPeriod = hasStart && hasEnd
 
-  def isMoment = hasStart && ( start eq end )
+  def isMoment = hasStart && (start eq end)
 
   def isAnytime = !hasStart && !hasEnd
 
@@ -241,11 +238,11 @@ class TimePeriodContainer extends ITimePeriodContainer {
   def move(offset: Duration) {
     if (offset != null && offset.getMillis != 0) {
       log.trace(s"모든 기간을 offset=[$offset] 만큼 이동합니다.")
-      _periods.foreach(_.move(offset))
+      _periods.par.foreach(_.move(offset))
     }
   }
 
-  def isSamePeriod(other: ITimePeriod) = ( other != null ) && ( start eq other.start ) && ( end eq other.end )
+  def isSamePeriod(other: ITimePeriod) = (other != null) && (start eq other.start) && (end eq other.end)
 
   def hasInside(moment: DateTime) = Times.hasInside(this, moment)
 
@@ -267,7 +264,7 @@ class TimePeriodContainer extends ITimePeriodContainer {
 
 object TimePeriodContainer {
 
-  def apply(collection: Iterable[ITimePeriod]): TimePeriodContainer = {
+  def apply(collection: JIterable[_ <: ITimePeriod]): TimePeriodContainer = {
     val container = new TimePeriodContainer()
     container.addAll(collection)
     container
@@ -276,7 +273,7 @@ object TimePeriodContainer {
   @varargs
   def apply(periods: ITimePeriod*): TimePeriodContainer = {
     val container = new TimePeriodContainer()
-    container.addAll(periods)
+    container.addAll(periods: _*)
     container
   }
 }

@@ -1,36 +1,56 @@
 package debop4s.timeperiod.timerange
 
+import java.util
+
+import com.google.common.collect.Lists
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
-/**
- * debop4s.timeperiod.timerange.WeekTimeRange
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 28. 오후 11:05
- */
+import scala.beans.BeanProperty
+import scala.collection.SeqView
+
+
 @SerialVersionUID(-1899389597363540458L)
 class WeekTimeRange(private[this] val _moment: DateTime,
-                    val weekCount: Int,
+                    @BeanProperty val weekCount: Int,
                     private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(WeekTimeRange.getPeriodOf(_moment, weekCount), _calendar) {
 
   def year: Int = start.getYear
+  def getYear = year
 
   def weekyear: Int = start.getWeekyear
+  def getWeekYear = weekyear
+
+  def weekOfWeekyear = start.getWeekOfWeekyear
+  def getWeekOfWeekyear = weekOfWeekyear
 
   def startWeekOfYear: Int = Times.weekOfYear(start).weekOfWeekyear
+  def getStartWeekOfYear = startWeekOfYear
 
   def endWeekOfYear: Int = Times.weekOfYear(end).weekOfWeekyear
+  def getEndWeekOfYear = endWeekOfYear
 
-  @inline
-  def days = {
+  def days: SeqView[DayRange, Seq[_]] = {
     val startDay = startDayStart
     val dayCount = weekCount * DaysPerWeek
 
-    ( 0 until dayCount ).view.map { d =>
+    (0 until dayCount).view.map { d =>
       DayRange(startDay.plusDays(d), calendar)
     }
+  }
+
+  def getDays: util.List[DayRange] = {
+    val startDay = startDayStart
+    val dayCount = weekCount * DaysPerWeek
+
+    val results = Lists.newArrayListWithCapacity[DayRange](dayCount)
+    (0 until dayCount) foreach { d =>
+      results add DayRange(startDay.plusDays(d), calendar)
+    }
+    results
   }
 }
 

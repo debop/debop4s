@@ -1,29 +1,31 @@
 package debop4s.timeperiod.calendars
 
+import debop4s.core.Logging
 import debop4s.core.conversions.jodatime._
-import debop4s.timeperiod.SeekBoundaryMode._
-import debop4s.timeperiod.SeekDirection._
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timeline.TimeGapCalculator
 import debop4s.timeperiod.utils.Durations
-import org.joda.time.{ Duration, DateTime }
+import org.joda.time.{DateTime, Duration}
 import org.slf4j.LoggerFactory
 
+import scala.collection.JavaConverters._
+
 /**
- * debop4s.timeperiod.calendars.DateAdd
+ * kr.hconnect.timeperiod.calendars.DateAdd
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 1:51
  */
-class DateAdd {
-
-  private lazy val log = LoggerFactory.getLogger(getClass)
+class DateAdd extends Logging {
 
   protected val _includePeriods = TimePeriodCollection()
   protected val _excludePeriods = TimePeriodCollection()
 
   def includePeriods = _includePeriods
-
   def excludePeriods = _excludePeriods
+
+  def getIncludePeriods = _includePeriods
+  def getExcludePeriods = _excludePeriods
 
   /**
    * start 시각으로부터 offset 기간이 지난 시각을 계산합니다.
@@ -49,6 +51,7 @@ class DateAdd {
         calculateEnd(start, offset, SeekDirection.Forward, seekBoundary)
 
     log.trace(s"Add. start=[$start] + offset[$offset]의 결과 end=[$end], remaining=[$remaining]")
+
     end
   }
 
@@ -74,6 +77,7 @@ class DateAdd {
         calculateEnd(start, offset, SeekDirection.Backward, seekBoundary)
 
     log.trace(s"Subtract. start=[$start] + offset[$offset]의 결과 end=[$end], remaining=[$remaining]")
+
     end
   }
 
@@ -87,7 +91,7 @@ class DateAdd {
     var remaining = offset
     var end: DateTime = null
 
-    val searchPeriods = TimePeriodCollection(_includePeriods.periods)
+    val searchPeriods = TimePeriodCollection(_includePeriods.periods.asJava)
     if (searchPeriods.size == 0)
       searchPeriods.add(TimeRange.Anytime)
 
@@ -97,12 +101,16 @@ class DateAdd {
       availablePeriods.addAll(searchPeriods)
     } else {
       val gapCalculator = new TimeGapCalculator[TimeRange]()
-      searchPeriods.foreach { p =>
+
+      var i = 0
+      while (i < searchPeriods.length) {
+        val p = searchPeriods(i)
         if (excludePeriods.hasOverlapPeriods(p)) {
           gapCalculator.gaps(excludePeriods, p).foreach(gap => availablePeriods.add(gap))
         } else {
           availablePeriods.add(p)
         }
+        i += 1
       }
     }
 
@@ -130,7 +138,8 @@ class DateAdd {
 
     if (seekDir == SeekDirection.Forward) {
       val start = availablePeriods.indexOf(startPeriod)
-      for (i <- start until availablePeriods.size) {
+      var i = start
+      while (i < availablePeriods.length) {
         val gap = availablePeriods(i)
         val gapRemaining = new Duration(seekMoment, gap.end)
 
@@ -148,10 +157,13 @@ class DateAdd {
           return (null, remaining)
         }
         seekMoment = availablePeriods(i + 1).start
+        i += 1
       }
     } else {
       val start = availablePeriods.indexOf(startPeriod)
-      for (i <- start to 0 by -1) {
+      // for (i <- start to 0 by -1) {
+      var i = start
+      while (i >= 0) {
         val gap = availablePeriods(i)
         val gapRemaining = new Duration(gap.start, seekMoment)
 
@@ -169,10 +181,12 @@ class DateAdd {
           return (null, remaining)
         }
         seekMoment = availablePeriods(i - 1).end
+        i -= 1
       }
     }
 
     log.debug("해당 일자를 찾지 못했습니다.")
+
     (null, remaining)
   }
 }
@@ -184,10 +198,12 @@ object DateAdd {
   private lazy val log = LoggerFactory.getLogger(getClass)
 
   @inline
-  private[timeperiod] def findNextPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {
+  private def findNextPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {
     var nearest: ITimePeriod = null
     var moment = start
     var difference = MaxDuration
+
+    log.trace(s"find next period. start=$start")
 
     periods
     .filter(period => period.end >= start)
@@ -204,13 +220,16 @@ object DateAdd {
         moment = period.start
       }
     }
+
     (nearest, moment)
   }
 
-  private[timeperiod] def findPreviousPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {
+  private def findPreviousPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {
     var nearest: ITimePeriod = null
     var moment = start
     var difference = MaxDuration
+
+    log.trace(s"find previous period. start=$start")
 
     periods
     .filter(p => p.start <= start)
@@ -230,6 +249,7 @@ object DateAdd {
         moment = period.end
       }
     }
+
     (nearest, moment)
   }
 }

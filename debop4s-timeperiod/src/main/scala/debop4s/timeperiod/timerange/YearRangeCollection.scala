@@ -1,25 +1,44 @@
 package debop4s.timeperiod.timerange
 
+import java.util
+
+import com.google.common.collect.Lists
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import org.joda.time.DateTime
 
-/**
- * debop4s.timeperiod.timerange.YearRangeCollection
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2013. 12. 30. 오전 10:36
- */
+import scala.collection.SeqView
+
 @SerialVersionUID(6717411713272815855L)
 class YearRangeCollection(private[this] val _year: Int,
                           private[this] val _yearCount: Int,
                           private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends YearTimeRange(_year, _yearCount, _calendar) {
 
+  def this(year: Int, yearCount: Int) =
+    this(year, yearCount, DefaultTimeCalendar)
+
+  def this(moment: DateTime, yearCount: Int) =
+    this(moment.getYear, yearCount, DefaultTimeCalendar)
+
+  def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) =
+    this(moment.getYear, yearCount, calendar)
+
   @inline
-  def years = {
-    ( 0 until yearCount ).view.map { y =>
+  def years: SeqView[YearRange, Seq[_]] = {
+    (0 until yearCount).view.map { y =>
       YearRange(startYear + y, calendar)
     }
+  }
+
+  def getYears: util.List[YearRange] = {
+    val years = Lists.newArrayListWithCapacity[YearRange](yearCount)
+    var i = 0
+    while (i < yearCount) {
+      years add YearRange(startYear + i, calendar)
+      i += 1
+    }
+    years
   }
 }
 

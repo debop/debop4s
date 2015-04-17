@@ -1,14 +1,14 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.timeperiod.DayOfWeek.DayOfWeek
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
-import debop4s.timeperiod.{ TimePeriodCollection, ITimePeriodCollection }
+
 import scala.annotation.varargs
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * debop4s.timeperiod.calendars.CalendarVisitorFilter
+ * kr.hconnect.timeperiod.calendars.CalendarVisitorFilter
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 3. 오전 10:17
@@ -24,19 +24,44 @@ class CalendarVisitorFilter extends ICalendarVisitorFilter {
   lazy val _minuteOfHours = ArrayBuffer[Int]()
   lazy val _weekDays = mutable.HashSet[DayOfWeek]()
 
-  def excludePeriods: ITimePeriodCollection = _excludePeriods
+  def excludePeriods = _excludePeriods
+  def getExcludePeriods = _excludePeriods
 
-  def years: ArrayBuffer[Int] = _years
+  def years = _years
+  def getYears = _years
 
-  def monthOfYears: ArrayBuffer[Int] = _monthOfYears
+  @varargs
+  def addYears(yrs: Int*) = _years ++= yrs
 
-  def dayOfMonths: ArrayBuffer[Int] = _dayOfMonths
+  def monthOfYears = _monthOfYears
+  def getMonthOfYears = _monthOfYears
 
-  def weekDays: mutable.HashSet[DayOfWeek] = _weekDays
+  @varargs
+  def addMonthOfYears(months: Int*) = _monthOfYears ++= months
 
-  def hourOfDays: ArrayBuffer[Int] = _hourOfDays
+  def dayOfMonths = _dayOfMonths
+  def getDayOfMonths = dayOfMonths
 
-  def minuteOfHours: ArrayBuffer[Int] = _minuteOfHours
+  @varargs
+  def addDayOfMonths(days: Int*) = _dayOfMonths ++= days
+
+  def weekDays = _weekDays
+  def getWeekDays = _weekDays
+
+  @varargs
+  def addWeekDays(days: DayOfWeek*) = _weekDays ++= days
+
+  def hourOfDays = _hourOfDays
+  def getHourOfDays = _hourOfDays
+
+  @varargs
+  def addHourOfDays(hrs: Int*) = _hourOfDays ++= hrs
+
+  def minuteOfHours = _minuteOfHours
+  def getMinuteOfHours = _minuteOfHours
+
+  @varargs
+  def addMinuteOfHours(minutes: Int*) = _minuteOfHours ++= minutes
 
   def addWorkingWeekdays() {
     addWeekdays(Weekdays: _*)

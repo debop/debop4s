@@ -2,8 +2,9 @@ package debop4s.timeperiod.calendars
 
 import debop4s.timeperiod.calendars.CollectKind.CollectKind
 
+
 /**
- * debop4s.timeperiod.calendars.CalendarPeriodCollectContext
+ * kr.hconnect.timeperiod.calendars.CalendarPeriodCollectContext
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 12:51
  */

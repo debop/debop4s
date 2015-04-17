@@ -1,10 +1,13 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.timeperiod.SeekDirection.SeekDirection
+import debop4s.core.Logging
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.calendars.CollectKind.CollectKind
 import debop4s.timeperiod.timerange._
-import org.slf4j.LoggerFactory
+
+import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 
 object CalendarPeriodCollector {
@@ -26,7 +29,7 @@ object CalendarPeriodCollector {
 }
 
 /**
- * debop4s.timeperiod.calendars.CalendarPeriodCollector
+ * kr.hconnect.timeperiod.calendars.CalendarPeriodCollector
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 12:54
  */
@@ -34,11 +37,17 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                               private[this] val _limits: ITimePeriod,
                               private[this] val _seekDir: SeekDirection = SeekDirection.Forward,
                               private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends CalendarVisitor[CalendarPeriodCollectorFilter, CalendarPeriodCollectorContext](_filter, _limits, _seekDir, _calendar) {
+  extends CalendarVisitor[CalendarPeriodCollectorFilter, CalendarPeriodCollectorContext](_filter, _limits, _seekDir, _calendar)
+  with Logging {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  def this(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod) =
+    this(filter, limits, SeekDirection.Forward, DefaultTimeCalendar)
+  def this(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod, seekDir: SeekDirection) =
+    this(filter, limits, seekDir, DefaultTimeCalendar)
+  def this(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod, calendar: ITimeCalendar) =
+    this(filter, limits, SeekDirection.Forward, calendar)
 
-  val periods: ITimePeriodCollection = TimePeriodCollection()
+  @BeanProperty val periods: ITimePeriodCollection = TimePeriodCollection()
 
   def collectYears() {
     collectInternal(CollectKind.Year)
@@ -108,24 +117,23 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
       .filter(monthFilter)
       .foreach(m => periods.add(m))
     } else {
-      filter.collectingMonths.foreach {
-        m =>
-          if (m.isSingleMonth) {
-            val month = MonthRange(year.year, m.startMonthOfYear, year.calendar)
-            if (monthFilter(month)) {
-              periods.add(month)
-            }
-          } else {
-            val months =
-              MonthRangeCollection(year.year,
-                                    m.startMonthOfYear,
-                                    m.endMonthOfYear - m.startMonthOfYear,
-                                    year.calendar)
-            val isMatching = months.months.forall(m => isMatchingMonth(m, context))
-            if (isMatching && checkLimits(months)) {
-              periods.addAll(months.months)
-            }
+      filter.collectingMonths.foreach { m =>
+        if (m.isSingleMonth) {
+          val month = MonthRange(year.year, m.startMonthOfYear, year.calendar)
+          if (monthFilter(month)) {
+            periods.add(month)
           }
+        } else {
+          val months =
+            MonthRangeCollection(year.year,
+              m.startMonthOfYear,
+              m.endMonthOfYear - m.startMonthOfYear,
+              year.calendar)
+          val isMatching = months.months.forall(m => isMatchingMonth(m, context))
+          if (isMatching && checkLimits(months)) {
+            periods.addAll(months.months.asJava)
+          }
+        }
       }
     }
     false
@@ -162,7 +170,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                                   month.calendar)
             val isMatching = days.days.forall(d => isMatchingDay(d, context))
             if (isMatching && checkLimits(days)) {
-              periods.addAll(days.days)
+              periods.addAll(days.days.asJava)
             }
           }
       }

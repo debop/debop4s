@@ -1,9 +1,8 @@
 package debop4s.timeperiod
 
 /**
- * debop4s.timeperiod.timeline.package
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 31. 오후 8:09
+ * timeline package
+ * Created by debop on 2014. 4. 19.
  */
 package object timeline {
 

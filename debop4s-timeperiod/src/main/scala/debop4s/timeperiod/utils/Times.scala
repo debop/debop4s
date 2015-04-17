@@ -1,30 +1,26 @@
 package debop4s.timeperiod.utils
 
+import java.lang.{Iterable => JIterable}
+import java.util
+import java.util.{Calendar, Date, List => JList, Set => JSet}
+
 import debop4s.core._
 import debop4s.core.conversions.jodatime._
-import debop4s.timeperiod.DayOfWeek.DayOfWeek
-import debop4s.timeperiod.Halfyear.Halfyear
-import debop4s.timeperiod.Month.Month
-import debop4s.timeperiod.PeriodRelation.PeriodRelation
-import debop4s.timeperiod.PeriodUnit.PeriodUnit
-import debop4s.timeperiod.Quarter.Quarter
+import debop4s.core.utils.Strings
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timerange._
-import java.util.Calendar
-import org.joda.time.{ Duration, DateTimeZone, DateTime }
-import org.slf4j.LoggerFactory
-import scala.collection.JavaConversions._
-import scala.collection.mutable.ArrayBuffer
-import scala.collection.parallel
+import org.joda.time.{DateTime, DateTimeZone, Duration}
+
+import scala.collection.JavaConverters._
+import scala.util.control.NonFatal
 
 /**
- * debop4s.timeperiod.tools.Times
+ * Times
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 9:09
  */
-object Times {
-
-  private lazy val log = LoggerFactory.getLogger(getClass)
+object Times extends Logging {
 
   lazy val NullString = "<null>"
   lazy val UnixEpoch = new DateTime(0, DateTimeZone.UTC)
@@ -72,11 +68,11 @@ object Times {
   def timeZoneForOffsetMillis(millisOffset: Int): DateTimeZone =
     DateTimeZone.forOffsetMillis(millisOffset)
 
-  def availableTimeZone(): Set[DateTimeZone] =
-    DateTimeZone.getAvailableIDs.map(id => DateTimeZone.forID(id)).toSet
+  def availableTimeZone(): JSet[DateTimeZone] =
+    DateTimeZone.getAvailableIDs.asScala.map(id => DateTimeZone.forID(id)).asJava
 
-  def availableOffsetMillis(): Set[Int] =
-    availableTimeZone().map(tz => tz.getOffset(0))
+  def availableOffsetMillis(): JSet[Int] =
+    availableTimeZone().asScala.map(tz => tz.getOffset(0)).asJava
 
   def datepart(moment: DateTime): Datepart = Datepart(moment)
 
@@ -87,6 +83,11 @@ object Times {
 
   def asDate(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 
+  def asDate(date: Date): DateTime = toDateTime(date).withTimeAtStartOfDay()
+
+  def asDateTime(year: Int, monthOfYear: Int, dayOfMonth: Int): DateTime =
+    new DateTime(year, monthOfYear, dayOfMonth, 0, 0)
+
   def asDateTime(year: Int,
                  monthOfYear: Int = 1,
                  dayOfMonth: Int = 1,
@@ -96,18 +97,34 @@ object Times {
                  millis: Int = 0): DateTime =
     new DateTime(year, monthOfYear, dayOfMonth, hour, minute, second, millis)
 
+  def asDateTime(timestamp: Long): DateTime = asDateTime(timestamp, DateTimeZone.getDefault)
+  def asDateTime(timestamp: Long, timezone: DateTimeZone): DateTime = {
+    if (timezone != null)
+      new DateTime(timestamp, timezone)
+    else
+      new DateTime(timestamp, DateTimeZone.getDefault)
+  }
+  def asDateTime(timestamp: Long, timezoneId: String): DateTime = {
+    if (Strings.isEmpty(timezoneId)) asDateTime(timestamp)
+    else asDateTime(timestamp, DateTimeZone.forID(timezoneId))
+  }
+
   def asString(period: ITimePeriod): String =
     if (period == null) NullString else period.toString
 
-  def toDateTime(value: String, defaultValue: DateTime = new DateTime(0)): DateTime = {
+  def toDateTime(date: Date): DateTime = new DateTime(date)
+
+  def toDateTime(value: String): DateTime = toDateTime(value, new DateTime(0))
+
+  def toDateTime(value: String, defaultValue: DateTime): DateTime = {
     try {
       DateTime.parse(value)
     } catch {
-      case t: Throwable => defaultValue
+      case NonFatal(e) => defaultValue
     }
   }
 
-  def toTimePeriodCollection[T <: ITimePeriod](sequence: Iterable[T]): TimePeriodCollection =
+  def toTimePeriodCollection[T <: ITimePeriod](sequence: JIterable[T]): TimePeriodCollection =
     TimePeriodCollection(sequence)
 
   def yearOf(moment: DateTime): Int = yearOf(moment.getYear, moment.getMonthOfYear)
@@ -132,11 +149,11 @@ object Times {
       return YearHalfyear(startYear, startHalfyear)
 
     val offsetYear = math.abs(delta) / HalfyearsPerYear + 1
-    val startHalfyearCount = ( startYear + offsetYear ) * HalfyearsPerYear + startHalfyear.id - 1
+    val startHalfyearCount = (startYear + offsetYear) * HalfyearsPerYear + startHalfyear.getValue - 1
     val targetHalfyearCount = startHalfyearCount + delta
 
     val year = targetHalfyearCount / HalfyearsPerYear - offsetYear
-    val halfyear = Halfyear(( targetHalfyearCount % HalfyearsPerYear ) + 1)
+    val halfyear = Halfyear.valueOf((targetHalfyearCount % HalfyearsPerYear) + 1)
 
     val result = YearHalfyear(year, halfyear)
 
@@ -162,16 +179,16 @@ object Times {
       return YearQuarter(year, quarter)
 
     val offsetYear = math.abs(delta) / QuartersPerYear + 1
-    val startQuarters = ( year + offsetYear ) * QuartersPerYear + quarter.id - 1
+    val startQuarters = (year + offsetYear) * QuartersPerYear + quarter.getValue - 1
     val targetQuarters = startQuarters + delta
     val y = targetQuarters / QuartersPerYear - offsetYear
-    val q = ( targetQuarters % QuartersPerYear ) + 1
+    val q = (targetQuarters % QuartersPerYear) + 1
 
-    YearQuarter(y, Quarter(q))
+    YearQuarter(y, Quarter.valueOf(q))
   }
 
   def quarterOfMonth(monthOfYear: Int): Quarter =
-    Quarter(( monthOfYear - 1 ) / MonthsPerQuarter + 1)
+    Quarter.valueOf((monthOfYear - 1) / MonthsPerQuarter + 1)
 
   def monthsOfQuarter(quarter: Quarter): Array[Int] = quarter match {
     case Quarter.First => FirstQuarterMonths
@@ -190,10 +207,10 @@ object Times {
       return YearMonth(year, monthOfYear)
 
     val offset = math.abs(count) / MonthsPerYear + 1
-    val startMonths = ( year + offset ) * MonthsPerYear + monthOfYear - 1
+    val startMonths = (year + offset) * MonthsPerYear + monthOfYear - 1
     val endMonths = startMonths + count
     val y = endMonths / MonthsPerYear - offset
-    val m = ( endMonths % MonthsPerYear ) + 1
+    val m = (endMonths % MonthsPerYear) + 1
 
     YearMonth(y, m)
   }
@@ -205,7 +222,7 @@ object Times {
   def startOfWeek(moment: DateTime): DateTime = {
     val day = asDate(moment)
     val dow = day.getDayOfWeek
-    day - ( dow - 1 ).day
+    day - (dow - 1).day
   }
 
   /**
@@ -240,8 +257,10 @@ object Times {
     lastDay.getWeekOfWeekyear
   }
 
-  def startOfYearWeek(weekyear: Int, weekOfWeekYear: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DateTime =
-    new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(weekOfWeekYear)
+  def startOfYearweek(weekyear: Int, weekOfWeekyear: Int): DateTime =
+    startOfYearweek(weekyear, weekOfWeekyear, DefaultTimeCalendar)
+  def startOfYearweek(weekyear: Int, weekOfWeekyear: Int, calendar: ITimeCalendar = DefaultTimeCalendar): DateTime =
+    new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(weekOfWeekyear)
 
   def dayStart(moment: DateTime): DateTime = moment.withTimeAtStartOfDay()
 
@@ -254,8 +273,8 @@ object Times {
     if (days == 0) return day
 
     val weeks = math.abs(days) / DaysPerWeek + 1
-    val offset = weeks * DaysPerWeek + day.id - 1 + days
-    DayOfWeek(( offset % DaysPerWeek ) + 1)
+    val offset = weeks * DaysPerWeek + day.getValue - 1 + days
+    DayOfWeek.valueOf((offset % DaysPerWeek) + 1)
   }
 
   @inline
@@ -402,7 +421,7 @@ object Times {
 
   def startTimeOfMonth(moment: DateTime): DateTime = asDate(moment.getYear, moment.getMonthOfYear)
 
-  def startTimeOfMonth(year: Int, month: Month): DateTime = asDate(year, month.id)
+  def startTimeOfMonth(year: Int, month: Month): DateTime = asDate(year, month.getValue)
 
   def startTimeOfMonth(year: Int, monthOfYear: Int): DateTime = asDate(year, monthOfYear)
 
@@ -465,11 +484,11 @@ object Times {
 
   def halfyearOf(moment: DateTime): Halfyear = halfyearOf(moment.getMonthOfYear)
 
-  def startMonthOfQuarter(quarter: Quarter): Int = ( quarter.id - 1 ) * MonthsPerQuarter + 1
+  def startMonthOfQuarter(quarter: Quarter): Int = (quarter.getValue - 1) * MonthsPerQuarter + 1
 
-  def endMonthOfQuarter(quarter: Quarter): Int = quarter.id * MonthsPerQuarter
+  def endMonthOfQuarter(quarter: Quarter): Int = quarter.getValue * MonthsPerQuarter
 
-  def quarterOf(monthOfYear: Int): Quarter = Quarter(( monthOfYear - 1 ) / MonthsPerQuarter + 1)
+  def quarterOf(monthOfYear: Int): Quarter = Quarter.valueOf((monthOfYear - 1) / MonthsPerQuarter + 1)
 
   def quarterOf(moment: DateTime): Quarter = quarterOf(moment.getMonthOfYear)
 
@@ -478,11 +497,11 @@ object Times {
 
   /** 지정한 일의 다음 주의 같은 요일 */
   def nextDayOfWeek(moment: DateTime): DateTime =
-    nextDayOfWeek(moment, DayOfWeek(moment.getDayOfWeek))
+    nextDayOfWeek(moment, DayOfWeek.valueOf(moment.getDayOfWeek))
 
   @inline
   def nextDayOfWeek(moment: DateTime, dayOfWeek: DayOfWeek): DateTime = {
-    val dow = dayOfWeek.id
+    val dow = dayOfWeek.getValue
     var next = moment.plusDays(1)
     while (next.getDayOfWeek != dow) {
       next = next.plusDays(1)
@@ -491,13 +510,13 @@ object Times {
   }
 
   def prevDayOfWeek(moment: DateTime): DateTime =
-    prevDayOfWeek(moment, DayOfWeek(moment.getDayOfWeek))
+    prevDayOfWeek(moment, DayOfWeek.valueOf(moment.getDayOfWeek))
 
   @inline
   def prevDayOfWeek(moment: DateTime, dayOfWeek: DayOfWeek): DateTime = {
     val dow = dayOfWeek
     var previous = moment.minusDays(1)
-    while (previous.getDayOfWeek != dow.id) {
+    while (previous.getDayOfWeek != dow.getValue) {
       previous = previous.minusDays(1)
     }
     previous
@@ -526,17 +545,25 @@ object Times {
     setDate(moment, moment.getYear, moment.getMonthOfYear, day)
   }
 
-  def combine(date: DateTime, time: DateTime): DateTime = setTime(date, time.getMillisOfDay)
+  def combine(date: DateTime, time: DateTime): DateTime =
+    setTime(date, time.getMillisOfDay)
 
-  def getTime(moment: DateTime): Duration = new Duration(moment.getMillisOfDay)
+  def getTime(moment: DateTime): Duration =
+    new Duration(moment.getMillisOfDay)
 
   def hasTime(moment: DateTime): Boolean = moment.getMillisOfDay > 0
 
 
-  def setTime(moment: DateTime, time: DateTime): DateTime = setTime(moment, time.getMillisOfDay)
+  def setTime(moment: DateTime, time: DateTime): DateTime = moment.withMillisOfDay(time.getMillisOfDay)
 
-  def setTime(moment: DateTime, millisOfDay: Int): DateTime =
-    moment.withTimeAtStartOfDay().plusMillis(millisOfDay)
+  def setTime(moment: DateTime, hourOfDay: Int): DateTime =
+    setTime(moment, hourOfDay, 0, 0, 0)
+
+  def setTime(moment: DateTime, hourOfDay: Int, minuteOfHour: Int): DateTime =
+    setTime(moment, hourOfDay, minuteOfHour, 0, 0)
+
+  def setTime(moment: DateTime, hourOfDay: Int, minuteOfHour: Int, secondOfMinute: Int): DateTime =
+    setTime(moment, hourOfDay, minuteOfHour, secondOfMinute, 0)
 
   def setTime(moment: DateTime, hourOfDay: Int, minuteOfHour: Int = 0, secondOfMinute: Int = 0, millisOfSecond: Int = 0): DateTime =
     moment.withTime(hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond)
@@ -558,48 +585,49 @@ object Times {
 
   def since(moment: DateTime, duration: Duration): DateTime = moment.plus(duration)
 
-  @inline
   def min(a: DateTime, b: DateTime): DateTime = {
-    if (a != null && b != null) {
-      if (a < b) a else b
-    }
-    else if (a == null) b
-    else if (b == null) a
-    else null
+    a min b
+    //        if (a != null && b != null) {
+    //            if (a < b) a else b
+    //        }
+    //        else if (a == null) b
+    //        else if (b == null) a
+    //        else null
   }
 
-  @inline
   def max(a: DateTime, b: DateTime): DateTime = {
-    if (a != null && b != null) {
-      if (a > b) a else b
-    }
-    else if (a == null) b
-    else if (b == null) a
-    else null
+    a max b
+    //        if (a != null && b != null) {
+    //            if (a > b) a else b
+    //        }
+    //        else if (a == null) b
+    //        else if (b == null) a
+    //        else null
   }
 
-  @inline
   def min(a: Duration, b: Duration): Duration = {
-    if (a != null && b != null) {
-      if (a < b) a else b
-    }
-    else if (a == null) b
-    else if (b == null) a
-    else null
+    a min b
+    //        if (a != null && b != null) {
+    //            if (a < b) a else b
+    //        }
+    //        else if (a == null) b
+    //        else if (b == null) a
+    //        else null
   }
 
   @inline
   def max(a: Duration, b: Duration): Duration = {
-    if (a != null && b != null) {
-      if (a > b) a else b
-    }
-    else if (a == null) b
-    else if (b == null) a
-    else null
+    a max b
+    //        if (a != null && b != null) {
+    //            if (a > b) a else b
+    //        }
+    //        else if (a == null) b
+    //        else if (b == null) a
+    //        else null
   }
 
   def adjustPeriod(start: DateTime, end: DateTime): (DateTime, DateTime) =
-    (min(start, end), max(start, end))
+    (start min end, start max end)
 
   def adjustPeriod(start: DateTime, duration: Duration): (DateTime, Duration) = {
     if (duration.getMillis < 0)
@@ -608,7 +636,7 @@ object Times {
       (start, duration)
   }
 
-  def timeblock(start: DateTime, duration: Duration): TimeBlock =
+  def timeBlock(start: DateTime, duration: Duration): TimeBlock =
     TimeBlock(start, duration, readonly = false)
 
   def timeBlock(start: DateTime, end: DateTime): TimeBlock =
@@ -643,8 +671,13 @@ object Times {
 
   @inline
   def periodOf(moment: DateTime,
+               unit: PeriodUnit): ITimePeriod =
+    periodOf(moment, unit, DefaultTimeCalendar)
+
+  @inline
+  def periodOf(moment: DateTime,
                unit: PeriodUnit,
-               calendar: ITimeCalendar = DefaultTimeCalendar): ITimePeriod = {
+               calendar: ITimeCalendar): ITimePeriod = {
     unit match {
       case PeriodUnit.All => TimeRange.Anytime
       case PeriodUnit.Year => yearRange(moment, calendar)
@@ -677,8 +710,8 @@ object Times {
       case PeriodUnit.Minute => minuteRanges(moment, periodCount, calendar)
       case PeriodUnit.Second =>
         CalendarTimeRange(trimToMillis(moment),
-                           trimToMillis(moment).plusSeconds(periodCount),
-                           calendar)
+          trimToMillis(moment).plusSeconds(periodCount),
+          calendar)
 
       case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
     }
@@ -735,7 +768,7 @@ object Times {
 
   @inline
   def hasInside(period: ITimePeriod, target: DateTime): Boolean = {
-    ( target >= period.start ) && ( target <= period.end )
+    (target >= period.start) && (target <= period.end)
   }
 
   @inline
@@ -815,9 +848,9 @@ object Times {
   }
 
   lazy val NotOverlapedRelations = Array(PeriodRelation.After,
-                                          PeriodRelation.StartTouching,
-                                          PeriodRelation.EndTouching,
-                                          PeriodRelation.Before)
+    PeriodRelation.StartTouching,
+    PeriodRelation.EndTouching,
+    PeriodRelation.Before)
 
   @inline
   def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
@@ -879,26 +912,28 @@ object Times {
   def trimToYear(moment: DateTime): DateTime =
     asDate(moment.getYear)
 
-  def trimToMonth(moment: DateTime, monthOfYear: Int = 1) =
-    asDate(moment.getYear, monthOfYear)
+  def trimToMonth(m: DateTime): DateTime = trimToMonth(m, 1)
+  def trimToMonth(m: DateTime, monthOfYear: Int): DateTime =
+    asDate(m.getYear, monthOfYear)
 
-  def trimToDay(moment: DateTime, dayOfMonth: Int = 1) =
-    asDate(moment.getYear, moment.getMonthOfYear, dayOfMonth)
+  def trimToDay(m: DateTime): DateTime = trimToDay(m, 1)
+  def trimToDay(m: DateTime, dayOfMonth: Int): DateTime =
+    asDate(m.getYear, m.getMonthOfYear, dayOfMonth)
 
-  def trimToHour(moment: DateTime, hourOfDay: Int = 0) =
-    asDate(moment).withHourOfDay(hourOfDay)
+  def trimToHour(m: DateTime): DateTime = trimToHour(m, 0)
+  def trimToHour(m: DateTime, hourOfDay: Int): DateTime =
+    asDate(m).withHourOfDay(hourOfDay)
 
-  def trimToMinute(m: DateTime, minuteOfHour: Int = 0) =
+  def trimToMinute(m: DateTime): DateTime = trimToMinute(m, 0)
+  def trimToMinute(m: DateTime, minuteOfHour: Int): DateTime =
     asDate(m).withTime(m.getHourOfDay, minuteOfHour, 0, 0)
 
-  //trimToHour(moment, moment.getHourOfDay).withMinuteOfHour(minuteOfHour)
-
-  def trimToSecond(m: DateTime, secondOfMinute: Int = 0) =
+  def trimToSecond(m: DateTime): DateTime = trimToSecond(m, 0)
+  def trimToSecond(m: DateTime, secondOfMinute: Int): DateTime =
     asDate(m).withTime(m.getHourOfDay, m.getMinuteOfHour, secondOfMinute, 0)
 
-  // trimToMinute(moment, moment.getMinuteOfHour).withSecondOfMinute(secondOfMinute)
-
-  def trimToMillis(m: DateTime, millisOfSecond: Int = 0) =
+  def trimToMillis(m: DateTime): DateTime = trimToMillis(m, 0)
+  def trimToMillis(m: DateTime, millisOfSecond: Int): DateTime =
     m.withMillisOfSecond(millisOfSecond)
 
   def assertValidPeriod(start: DateTime, end: DateTime) {
@@ -912,12 +947,12 @@ object Times {
     assert(!period.isReadonly, s"TimePeriod가 읽기 전용입니다. period=[$period]")
   }
 
-  def allItemsAreEqual(left: Iterable[_ <: ITimePeriod], right: Iterable[_ <: ITimePeriod]): Boolean = {
+  def allItemsAreEqual(left: JIterable[_ <: ITimePeriod], right: JIterable[_ <: ITimePeriod]): Boolean = {
     require(left != null)
     require(right != null)
 
-    if (left.size != right.size) false
-    else left.sameElements(right)
+    if (left.asScala.size != right.asScala.size) false
+    else left.asScala.sameElements(right.asScala)
   }
 
   def isWeekday(dayOfWeek: DayOfWeek): Boolean = Weekdays.contains(dayOfWeek)
@@ -940,266 +975,266 @@ object Times {
   }
 
   @inline
-  def foreachYears(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
+  def foreachYears(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
-    val years = ArrayBuffer[ITimePeriod]()
+    val years = new util.ArrayList[ITimePeriod]()
     if (period.isAnytime)
       return years
 
     if (isSameYear(period.start, period.end)) {
-      years += TimeRange(period)
+      years add TimeRange(period)
       return years
     }
 
-    years += TimeRange(period.start, endTimeOfYear(period.start))
+    years add TimeRange(period.start, endTimeOfYear(period.start))
 
     var current = startTimeOfYear(period.start).plusYears(1)
     val endYear = period.end.getYear
     val calendar = DefaultTimeCalendar
 
     while (current.getYear < endYear) {
-      years += yearRange(current, calendar)
+      years add yearRange(current, calendar)
       current = current.plusYears(1)
     }
 
     if (current < period.end) {
-      years += TimeRange(startTimeOfYear(current), period.end)
+      years add TimeRange(startTimeOfYear(current), period.end)
     }
 
     years
   }
 
   @inline
-  def foreachHalfyears(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
+  def foreachHalfyears(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
-    val halfyears = ArrayBuffer[ITimePeriod]()
+    val halfyears = new util.ArrayList[ITimePeriod]()
     if (period.isAnytime)
       return halfyears
 
     assertHasPeriod(period)
 
     if (isSameHalfyear(period.start, period.end)) {
-      halfyears :+ TimeRange(period)
+      halfyears add TimeRange(period)
       return halfyears
     }
 
     var current = endTimeOfHalfyear(period.start)
-    halfyears += TimeRange(period.start, current)
+    halfyears add TimeRange(period.start, current)
 
-    val endHashcode = period.end.getYear * 10 + halfyearOf(period.end).id
+    val endHashcode = period.end.getYear * 10 + halfyearOf(period.end).getValue
     current = current.plusDays(1)
     val calendar = DefaultTimeCalendar
 
-    while (current.getYear * 10 + halfyearOf(current).id < endHashcode) {
-      halfyears += halfyearRange(current, calendar)
+    while (current.getYear * 10 + halfyearOf(current).getValue < endHashcode) {
+      halfyears add halfyearRange(current, calendar)
       current = current.plusMonths(MonthsPerHalfyear)
     }
 
     if (current < period.end) {
-      halfyears += TimeRange(startTimeOfHalfyear(current), period.end)
+      halfyears add TimeRange(startTimeOfHalfyear(current), period.end)
     }
 
     halfyears
   }
 
   @inline
-  def foreachQuarters(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
+  def foreachQuarters(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
-    val quarters = ArrayBuffer[ITimePeriod]()
+    val quarters = new util.ArrayList[ITimePeriod]()
     if (period.isAnytime)
       return quarters
 
     assertHasPeriod(period)
 
     if (isSameQuarter(period.start, period.end)) {
-      quarters += TimeRange(period)
+      quarters add TimeRange(period)
       return quarters
     }
 
     var current = endTimeOfQuarter(period.start)
-    quarters += TimeRange(period.start, current)
+    quarters add TimeRange(period.start, current)
 
-    val endHashcode = period.end.getYear * 10 + quarterOf(period.end).id
+    val endHashcode = period.end.getYear * 10 + quarterOf(period.end).getValue
     current = current + 1.days
     val calendar = DefaultTimeCalendar
 
-    while (current.getYear * 10 + quarterOf(current).id < endHashcode) {
-      quarters += quarterRange(current, calendar)
+    while (current.getYear * 10 + quarterOf(current).getValue < endHashcode) {
+      quarters add quarterRange(current, calendar)
       current = current.plusMonths(MonthsPerQuarter)
     }
 
     if (current < period.end) {
-      quarters += TimeRange(startTimeOfQuarter(current), period.end)
+      quarters add TimeRange(startTimeOfQuarter(current), period.end)
     }
 
     quarters
   }
 
   @inline
-  def foreachMonths(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
+  def foreachMonths(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
-    val months = ArrayBuffer[ITimePeriod]()
+    val months = new util.ArrayList[ITimePeriod]()
     if (period.isAnytime)
       return months
 
     assertHasPeriod(period)
 
     if (isSameMonth(period.start, period.end)) {
-      months += TimeRange(period)
+      months add TimeRange(period)
       return months
     }
 
     var current = endTimeOfMonth(period.start)
-    months += TimeRange(period.start, current)
+    months add TimeRange(period.start, current)
 
     val monthEnd = startTimeOfMonth(period.end)
     val calendar = DefaultTimeCalendar
 
     current = current.plusDays(1)
     while (current < monthEnd) {
-      months += monthRange(current, calendar)
+      months add monthRange(current, calendar)
       current = current.plusMonths(1)
     }
 
     current = startTimeOfMonth(current)
     if (current < period.end) {
-      months += TimeRange(current, period.end)
+      months add TimeRange(current, period.end)
     }
     months
   }
 
   @inline
-  def foreachWeeks(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
+  def foreachWeeks(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
-    val weeks = ArrayBuffer[ITimePeriod]()
+    val weeks = new util.ArrayList[ITimePeriod]()
     if (period.isAnytime)
       return weeks
 
     assertHasPeriod(period)
 
     if (isSameWeek(period.start, period.end)) {
-      weeks += TimeRange(period)
+      weeks add TimeRange(period)
       return weeks
     }
 
     var current = period.start
     val endWeek = endTimeOfWeek(current)
     if (endWeek >= period.end) {
-      weeks += TimeRange(current, period.end)
+      weeks add TimeRange(current, period.end)
       return weeks
     }
 
-    weeks += TimeRange(current, endWeek)
+    weeks add TimeRange(current, endWeek)
     current = endWeek.plusWeeks(1)
     val calendar = DefaultTimeCalendar
 
     while (current < period.end) {
-      weeks += weekRange(current, calendar)
+      weeks add weekRange(current, calendar)
       current = current.plusWeeks(1)
     }
 
     current = startTimeOfWeek(current)
     if (current < period.end) {
-      weeks += TimeRange(current, period.end)
+      weeks add TimeRange(current, period.end)
     }
     weeks
   }
 
   @inline
-  def foreachDays(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
+  def foreachDays(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
-    val days = ArrayBuffer[ITimePeriod]()
+    val days = new util.ArrayList[ITimePeriod]()
     if (period.isAnytime)
       return days
 
     assertHasPeriod(period)
 
     if (isSameDay(period.start, period.end)) {
-      days += TimeRange(period)
+      days add TimeRange(period)
       return days
     }
 
-    days += TimeRange(period.start, endTimeOfDay(period.start))
+    days add TimeRange(period.start, endTimeOfDay(period.start))
     val endDay = period.end.withTimeAtStartOfDay()
     var current = period.start.withTimeAtStartOfDay().plusDays(1)
 
     while (current < endDay) {
-      days += dayRange(current, DefaultTimeCalendar)
+      days add dayRange(current, DefaultTimeCalendar)
       current = current.plusDays(1)
     }
 
     if (period.end.getMillisOfDay > 0)
-      days += TimeRange(endDay, period.end)
+      days add TimeRange(endDay, period.end)
 
     days
   }
 
   @inline
-  def foreachHours(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
+  def foreachHours(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
-    val hours = ArrayBuffer[ITimePeriod]()
+    val hours = new util.ArrayList[ITimePeriod]()
     if (period.isAnytime)
       return hours
 
     assertHasPeriod(period)
 
     if (isSameHour(period.start, period.end)) {
-      hours += TimeRange(period)
+      hours add TimeRange(period)
       return hours
     }
 
-    hours += TimeRange(period.start, endTimeOfHour(period.start))
+    hours add TimeRange(period.start, endTimeOfHour(period.start))
 
     val endHour = period.end
     var current = trimToHour(period.start, period.start.getHourOfDay + 1)
     val maxHour = endHour.minusHours(1)
 
     while (current <= maxHour) {
-      hours += hourRange(current, DefaultTimeCalendar)
+      hours add hourRange(current, DefaultTimeCalendar)
       current = current.plusHours(1)
     }
 
     if (endHour.minusHours(endHour.getHourOfDay).getMillisOfDay > 0) {
-      hours += TimeRange(startTimeOfHour(endHour), endHour)
+      hours add TimeRange(startTimeOfHour(endHour), endHour)
     }
     hours
   }
 
   @inline
-  def foreachMinutes(period: ITimePeriod): ArrayBuffer[ITimePeriod] = {
+  def foreachMinutes(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
-    val minutes = ArrayBuffer[ITimePeriod]()
+    val minutes = new util.ArrayList[ITimePeriod]()
     if (period.isAnytime)
       return minutes
 
     assertHasPeriod(period)
 
     if (isSameMinute(period.start, period.end)) {
-      minutes += TimeRange(period)
+      minutes add TimeRange(period)
       return minutes
     }
 
-    minutes += TimeRange(period.start, endTimeOfMinute(period.start))
+    minutes add TimeRange(period.start, endTimeOfMinute(period.start))
 
     val endMin = period.end
     var current = trimToMinute(period.start, period.start.getMinuteOfHour + 1)
     val maxMin = endMin - 1.minutes
 
     while (current <= maxMin) {
-      minutes += minuteRange(current, DefaultTimeCalendar)
+      minutes add minuteRange(current, DefaultTimeCalendar)
       current = current.plusMinutes(1)
     }
 
     if (endMin.minusMinutes(endMin.getMinuteOfHour).getMillisOfDay > 0) {
-      minutes += TimeRange(startTimeOfMinute(endMin), period.end)
+      minutes add TimeRange(startTimeOfMinute(endMin), period.end)
     }
 
     minutes
@@ -1265,12 +1300,12 @@ object Times {
     var current = endTimeOfHalfyear(period.start)
     val head = TimeRange(period.start, current)
 
-    val endHashcode = period.end.getYear * 10 + halfyearOf(period.end).id
+    val endHashcode = period.end.getYear * 10 + halfyearOf(period.end).getValue
     val calendar = DefaultTimeCalendar
     current = current.plusDays(1)
 
     def nextHalfyears(current: DateTime): Stream[ITimePeriod] = {
-      if (current.getYear * 10 + halfyearOf(current).id < endHashcode) {
+      if (current.getYear * 10 + halfyearOf(current).getValue < endHashcode) {
         halfyearRange(current, calendar) #:: nextHalfyears(current.plusMonths(MonthsPerHalfyear))
       } else if (current < period.end) {
         TimeRange(startTimeOfHalfyear(current), period.end) #:: Stream.empty[ITimePeriod]
@@ -1298,12 +1333,12 @@ object Times {
     var current = endTimeOfQuarter(period.start)
     val head = TimeRange(period.start, current)
 
-    val endHashcode = period.end.getYear * 10 + quarterOf(period.end).id
+    val endHashcode = period.end.getYear * 10 + quarterOf(period.end).getValue
     current = current + 1.days
     val calendar = DefaultTimeCalendar
 
     def nextQuarters(current: DateTime): Stream[ITimePeriod] = {
-      if (current.getYear * 10 + quarterOf(current).id < endHashcode) {
+      if (current.getYear * 10 + quarterOf(current).getValue < endHashcode) {
         quarterRange(current, calendar) #:: nextQuarters(current.plusMonths(MonthsPerQuarter))
       } else if (current < period.end) {
         TimeRange(startTimeOfQuarter(current), period.end) #:: Stream.empty[ITimePeriod]
@@ -1498,20 +1533,104 @@ object Times {
     assert(period != null && period.hasPeriod, s"기간이 설정되지 않았습니다. period=$period")
   }
 
-  def runPeriods[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): Iterable[T] = {
+  def runPeriods[R](period: ITimePeriod, unit: PeriodUnit)
+                   (func: ITimePeriod => R): JIterable[R] = {
     require(period != null)
     require(func != null)
 
-    foreachPeriods(period, unit).map(p => func(p))
+    foreachPeriods(period, unit).asScala.map(func).asJava
   }
 
-  def runPeriodsAsParallel[T](period: ITimePeriod, unit: PeriodUnit)(func: ITimePeriod => T): parallel.ParIterable[(ITimePeriod, T)] = {
+  def runPeriods[R](period: ITimePeriod,
+                    unit: PeriodUnit,
+                    func1: Func1[ITimePeriod, R]): JIterable[R] = {
+    require(period != null)
+    require(func1 != null)
+
+    foreachPeriods(period, unit).asScala.map(func1.execute).asJava
+  }
+
+  def runPeriodsAsStream[R](period: ITimePeriod, unit: PeriodUnit)
+                           (func: ITimePeriod => R): Stream[R] = {
     require(period != null)
     require(func != null)
 
-    foreachPeriods(period, unit).par.map(p => (p, func(p))).toIterable
+    periodsStream(period, unit).map(func)
+  }
+
+  def runPeriodsAsStream[R](period: ITimePeriod,
+                            unit: PeriodUnit,
+                            func1: Func1[ITimePeriod, R]): Stream[R] = {
+    require(period != null)
+    require(func1 != null)
+
+    periodsStream(period, unit).map(func1.execute)
+  }
+
+  def runPeriodsAsParallel[R](period: ITimePeriod, unit: PeriodUnit)
+                             (func: ITimePeriod => R): JIterable[(ITimePeriod, R)] = {
+    require(period != null)
+    require(func != null)
+
+    foreachPeriods(period, unit).asScala.par.map(p => (p, func(p))).seq.asJava
+  }
+
+  def runPeriodsAsParallel[R](period: ITimePeriod,
+                              unit: PeriodUnit,
+                              func1: Func1[ITimePeriod, R]): JIterable[(ITimePeriod, R)] = {
+    require(period != null)
+    require(func1 != null)
+
+    foreachPeriods(period, unit).asScala.par.map(p => (p, func1.execute(p))).seq.asJava
   }
 
   def getOrDefaultTimeCalendar(calendar: ITimeCalendar) =
     if (calendar != null) calendar else DefaultTimeCalendar
+
+
+  /**
+   * 해당 일자의 월 주차 (week of month)
+   */
+  def monthWeek(moment: DateTime): MonthWeek = {
+    val result = moment.getWeekOfWeekyear - Times.startTimeOfMonth(moment).getWeekOfWeekyear + 1
+
+    if (result > 0) MonthWeek(moment.getMonthOfYear, result)
+    else MonthWeek(moment.plusMonths(1).getMonthOfYear, result)
+  }
+
+  @inline
+  def minusDate(moment: DateTime, unit: PeriodUnit, dates: Int): DateTime = {
+    unit match {
+      case PeriodUnit.Year => moment.minusYears(dates)
+      case PeriodUnit.Halfyear => moment.minusMonths(MonthsPerHalfyear)
+      case PeriodUnit.Quarter => moment.minusMonths(MonthsPerQuarter)
+      case PeriodUnit.Month => moment.minusMonths(dates)
+      case PeriodUnit.Week => moment.minusWeeks(dates)
+      case PeriodUnit.Day => moment.minusDays(dates)
+      case PeriodUnit.Hour => moment.minusHours(dates)
+      case PeriodUnit.Minute => moment.minusMinutes(dates)
+      case PeriodUnit.Second => moment.minusSeconds(dates)
+      case PeriodUnit.Millisecond => moment.minusMillis(dates)
+
+      case _ => moment
+    }
+  }
+
+  @inline
+  def plusDate(moment: DateTime, unit: PeriodUnit, dates: Int): DateTime = {
+    unit match {
+      case PeriodUnit.Year => moment.plusYears(dates)
+      case PeriodUnit.Halfyear => moment.plusMonths(MonthsPerHalfyear)
+      case PeriodUnit.Quarter => moment.plusMonths(MonthsPerQuarter)
+      case PeriodUnit.Month => moment.plusMonths(dates)
+      case PeriodUnit.Week => moment.plusWeeks(dates)
+      case PeriodUnit.Day => moment.plusDays(dates)
+      case PeriodUnit.Hour => moment.plusHours(dates)
+      case PeriodUnit.Minute => moment.plusMinutes(dates)
+      case PeriodUnit.Second => moment.plusSeconds(dates)
+      case PeriodUnit.Millisecond => moment.plusMillis(dates)
+
+      case _ => moment
+    }
+  }
 }

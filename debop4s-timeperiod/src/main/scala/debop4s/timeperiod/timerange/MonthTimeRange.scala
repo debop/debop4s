@@ -1,33 +1,52 @@
 package debop4s.timeperiod.timerange
 
-import debop4s.core.conversions.jodatime._
+import java.util
+
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
+import scala.beans.BeanProperty
+import scala.collection.SeqView
+
 /**
- * debop4s.timeperiod.timerange.MonthTimeRange
+ * kr.hconnect.timeperiod.timerange.MonthTimeRange
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오전 11:41
  */
 class MonthTimeRange(private[this] val _year: Int,
                      private[this] val _monthOfYear: Int,
-                     val monthCount: Int,
+                     @BeanProperty val monthCount: Int,
                      private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
   @inline
-  def days = {
+  def days: SeqView[DayRange, Seq[_]] = {
     val startMonth = Times.startTimeOfMonth(start)
 
     for {
-      m <- ( 0 until monthCount ).view
-      month = startMonth + m.month
+      m <- (0 until monthCount).view
+      month = startMonth.plusMonths(m)
       dayOfMonth = Times.daysInMonth(month.getYear, month.getMonthOfYear)
-      d <- ( 0 until dayOfMonth ).view
+      d <- (0 until dayOfMonth).view
     } yield {
-      DayRange(month + d.day, calendar)
+      DayRange(month.plusDays(d), calendar)
     }
+  }
+
+  def getDays: util.List[DayRange] = {
+    val startMonth = Times.startTimeOfMonth(start)
+    val days = new util.ArrayList[DayRange](monthCount * 31)
+
+    (0 until monthCount).foreach { m =>
+      val month = startMonth.plusMonths(m)
+      val dayOfMonth = Times.daysInMonth(month.getYear, month.getMonthOfYear)
+      (0 until dayOfMonth).foreach { d =>
+        days add new DayRange(month.plusDays(d), calendar)
+      }
+    }
+    days
   }
 }
 

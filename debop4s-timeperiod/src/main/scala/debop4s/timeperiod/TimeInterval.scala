@@ -1,15 +1,10 @@
 package debop4s.timeperiod
 
 import debop4s.core.conversions.jodatime._
-import debop4s.timeperiod.IntervalEdge.IntervalEdge
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
-import org.joda.time.{ Duration, DateTime }
+import org.joda.time.{DateTime, Duration}
 
-/**
- * debop4s.timeperiod.TimeInterval
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 14. 오후 10:48
- */
 trait ITimeInterval extends ITimePeriod {
 
   def isStartOpen: Boolean
@@ -74,6 +69,10 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
                    private[this] val _readonly: Boolean = false)
   extends TimePeriod(_start, _end, _readonly) with ITimeInterval {
 
+  def this() = this(MinPeriodTime, MaxPeriodTime, IntervalEdge.Closed, IntervalEdge.Closed, true, false)
+  def this(start: DateTime, end: DateTime) = this(start, end, IntervalEdge.Closed, IntervalEdge.Closed, true, false)
+  def this(period: ITimePeriod) = this(period.start, period.end, IntervalEdge.Closed, IntervalEdge.Closed, true, false)
+
   def startEdge = _startEdge
 
   def startEdge_=(edge: IntervalEdge) {
@@ -110,7 +109,7 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
 
   def isIntervalEnabled: Boolean = this.intervalEnabled
 
-  override def hasStart: Boolean = !( start == MinPeriodTime ) || !isStartClosed
+  override def hasStart: Boolean = !(start == MinPeriodTime) || !isStartClosed
 
   def setIntervalEnabled(intervalEnabled: Boolean) {
     this.intervalEnabled = intervalEnabled
@@ -135,7 +134,7 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
     startEdge = edge
   }
 
-  override def hasEnd: Boolean = !( super.end == MaxPeriodTime ) || !isEndClosed
+  override def hasEnd: Boolean = !(super.end == MaxPeriodTime) || !isEndClosed
 
   def getEndInterval: DateTime = super.end
 
@@ -159,13 +158,13 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
 
   def expandStartTo(moment: DateTime) {
     assertMutable()
-    if (start.compareTo(moment) > 0)
+    if (start > moment)
       start = moment
   }
 
   def expandEndTo(moment: DateTime) {
     assertMutable()
-    if (end.compareTo(moment) < 0)
+    if (end < moment)
       end = moment
   }
 
@@ -182,13 +181,13 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
 
   def shrinkStartTo(moment: DateTime) {
     assertMutable()
-    if (start.compareTo(moment) < 0)
+    if (start < moment)
       start = moment
   }
 
   def shrinkEndTo(moment: DateTime) {
     assertMutable()
-    if (end.compareTo(moment) > 0)
+    if (end > moment)
       end = moment
   }
 
@@ -199,20 +198,20 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
   }
 
   def shrinkTo(period: ITimePeriod) {
-    assert(period != null)
+    require(period != null)
     assertMutable()
     if (period.hasStart) shrinkStartTo(period.start)
     if (period.hasEnd) shrinkEndTo(period.end)
   }
 
-  /** 현재 IInterval에서 오프셋만큼 이동한 {@link ITimeInterval}을 반환합니다. */
+  /** 현재 IInterval에서 오프셋만큼 이동한 [[ITimeInterval]]을 반환합니다. */
   override def copy(offset: Duration = Duration.ZERO): ITimeInterval = {
     new TimeInterval(getStartInterval.plus(offset),
-                      getEndInterval.plus(offset),
-                      getStartEdge,
-                      getEndEdge,
-                      isIntervalEnabled,
-                      isReadonly)
+      getEndInterval.plus(offset),
+      getStartEdge,
+      getEndEdge,
+      isIntervalEnabled,
+      isReadonly)
   }
 
   override def reset() {
@@ -260,17 +259,15 @@ object TimeInterval {
             readonly: Boolean): TimeInterval = {
     require(period != null)
 
-    if (period.isAnytime) Anytime
-    else {
-      new TimeInterval(
-                        period.start,
-                        period.end,
-                        startEdge,
-                        endEdge,
-                        intervalEnabled,
-                        readonly
-                      )
-    }
+    if (period.isAnytime)
+      Anytime
+    else
+      new TimeInterval(period.start,
+        period.end,
+        startEdge,
+        endEdge,
+        intervalEnabled,
+        readonly)
   }
 }
 

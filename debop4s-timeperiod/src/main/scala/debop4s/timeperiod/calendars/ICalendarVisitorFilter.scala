@@ -1,16 +1,11 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.timeperiod.DayOfWeek._
-import debop4s.timeperiod.ITimePeriodCollection
+import debop4s.core.Logging
+import debop4s.timeperiod._
+
 import scala.collection.mutable
 
-/**
- * debop4s.timeperiod.calendars.ICalendarVisitorFilter
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 1. 3. 오전 10:40
- */
-trait ICalendarVisitorFilter extends Serializable {
+trait ICalendarVisitorFilter extends Serializable with Logging {
 
   def excludePeriods: ITimePeriodCollection
 

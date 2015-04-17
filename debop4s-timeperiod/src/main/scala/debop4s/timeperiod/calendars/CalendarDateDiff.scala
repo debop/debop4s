@@ -1,23 +1,35 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.timeperiod.DayOfWeek.DayOfWeek
+import debop4s.core.Logging
+import debop4s.core.conversions.jodatime._
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timeline.TimeGapCalculator
-import debop4s.timeperiod.utils.{ Durations, Times }
-import org.joda.time.{ DateTime, Duration }
-import org.slf4j.LoggerFactory
+import debop4s.timeperiod.utils.{Durations, Times}
+import org.joda.time.{DateTime, Duration}
+
 import scala.annotation.varargs
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
+
+object CalendarDateDiff {
+
+  def apply(): CalendarDateDiff =
+    new CalendarDateDiff()
+
+  def apply(calendar: ITimeCalendar): CalendarDateDiff =
+    new CalendarDateDiff(calendar)
+}
+
 /**
- * debop4s.timeperiod.calendars.CalendarDateDiff
+ * kr.hconnect.timeperiod.calendars.CalendarDateDiff
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오후 7:55
  */
-class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset) {
+class CalendarDateDiff(val calendar: ITimeCalendar) extends Logging {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  def this() = this(TimeCalendar.getEmptyOffset)
 
   require(calendar != null)
   assert(calendar.startOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
@@ -25,7 +37,7 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
 
   private val collectorFilter = new CalendarPeriodCollectorFilter()
 
-  def weekDays: mutable.Set[DayOfWeek.DayOfWeek] = collectorFilter.weekDays
+  def weekDays: mutable.Set[DayOfWeek] = collectorFilter.weekDays
 
   def workingHours: ArrayBuffer[HourRangeInDay] = collectorFilter.collectingHours
 
@@ -70,11 +82,11 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
     val gaps: ITimePeriodCollection = gapCalc.gaps(collector.periods, diffRange)
     var difference = Duration.ZERO
 
-    gaps.foreach(gap => difference = difference.plus(gap.duration))
+    gaps.foreach(gap => difference = difference + gap.duration)
 
     log.trace(s"fromTime=[$fromTime] ~ toTime=[$toTime]의 Working Time을 구했습니다. difference=[$difference]")
 
-    if (fromTime.compareTo(toTime) <= 0) difference
+    if (fromTime <= toTime) difference
     else Durations.negate(difference)
   }
 }

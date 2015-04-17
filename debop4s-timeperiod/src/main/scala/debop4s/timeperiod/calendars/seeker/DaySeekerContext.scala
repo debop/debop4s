@@ -3,11 +3,7 @@ package debop4s.timeperiod.calendars.seeker
 import debop4s.timeperiod.calendars.ICalendarVisitorContext
 import debop4s.timeperiod.timerange.DayRange
 
-/**
- * debop4s.timeperiod.calendars.seeker.DaySeekerContext
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2014. 1. 5. 오후 8:17
- */
+
 class DaySeekerContext(val startDay: DayRange,
                        private[this] val _dayCount: Int) extends ICalendarVisitorContext {
 

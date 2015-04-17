@@ -1,12 +1,12 @@
 package debop4s.timeperiod.timerange
 
-import debop4s.timeperiod.Halfyear.Halfyear
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
 /**
- * debop4s.timeperiod.timerange.HalfyearRange
+ * kr.hconnect.timeperiod.timerange.HalfyearRange
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오후 6:16
  */
@@ -14,6 +14,10 @@ class HalfyearRange(private[this] val _year: Int,
                     private[this] val _halfyear: Halfyear,
                     private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends HalfyearTimeRange(_year, _halfyear, 1, _calendar) {
+
+  def this() = this(Times.today.getYear, Times.halfyearOf(Times.today), DefaultTimeCalendar)
+  def this(moment: DateTime) = this(moment.getYear, Times.halfyearOf(moment), DefaultTimeCalendar)
+  def this(year: Int, halfyear: Halfyear) = this(year, halfyear, DefaultTimeCalendar)
 
   def addHalfyears(count: Int): HalfyearRange = {
     val yhy = Times.addHalfyear(startYear, startHalfyear, count)

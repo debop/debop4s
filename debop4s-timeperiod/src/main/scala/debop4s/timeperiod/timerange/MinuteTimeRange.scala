@@ -1,24 +1,29 @@
 package debop4s.timeperiod.timerange
 
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
+import scala.beans.BeanProperty
+
 /**
- * debop4s.timeperiod.timerange.MinuteTimeRange
+ * kr.hconnect.timeperiod.timerange.MinuteTimeRange
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 27. 오후 7:03
  */
 @SerialVersionUID(-5669915582907325590L)
 class MinuteTimeRange(private[this] val _start: DateTime,
-                      val minuteCount: Int = 1,
+                      @BeanProperty val minuteCount: Int = 1,
                       private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(Times.relativeMinutePeriod(_start, minuteCount), _calendar) {
 
   assert(minuteCount >= 0)
 
   val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
+
+  def getEndMinite = endMinute
 }
 
 object MinuteTimeRange {

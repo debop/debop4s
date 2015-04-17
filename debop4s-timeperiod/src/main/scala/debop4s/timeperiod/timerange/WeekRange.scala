@@ -1,5 +1,6 @@
 package debop4s.timeperiod.timerange
 
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
@@ -15,11 +16,16 @@ class WeekRange(private[this] val _weekyear: Int,
                 private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends WeekTimeRange(Times.startTimeOfWeek(_weekyear, _weekOfWeekyear), 1, _calendar) {
 
-  def weekOfWeekyear = start.getWeekOfWeekyear
+  def this() = this(Times.today.getWeekyear, Times.today.getWeekOfWeekyear, DefaultTimeCalendar)
+  def this(weekyear: Int, weekOfWeekyear: Int) = this(weekyear, weekOfWeekyear, DefaultTimeCalendar)
+  def this(moment: DateTime) = this(moment.getWeekyear, moment.getWeekOfWeekyear, DefaultTimeCalendar)
+  def this(moment: DateTime, calendar: ITimeCalendar) = this(moment.getWeekyear, moment.getWeekOfWeekyear, calendar)
 
   def firstDayOfWeek: DateTime = start
+  def getFirstDayOfWeek = firstDayOfWeek
 
   def lastDayOfWeek: DateTime = firstDayOfWeek.plusDays(6)
+  def getLastDayOfWeek = lastDayOfWeek
 
   def isMultipleCalendarYears: Boolean =
     calendar.year(firstDayOfWeek) != calendar.year(lastDayOfWeek)
@@ -29,7 +35,7 @@ class WeekRange(private[this] val _weekyear: Int,
   def nextWeek: WeekRange = addWeeks(1)
 
   def addWeeks(weeks: Int): WeekRange = {
-    WeekRange(Times.startOfYearWeek(weekyear, weekOfWeekyear, calendar).plusWeeks(weeks), calendar)
+    WeekRange(Times.startOfYearweek(weekyear, weekOfWeekyear, calendar).plusWeeks(weeks), calendar)
   }
 }
 

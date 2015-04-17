@@ -2,16 +2,16 @@ package debop4s.timeperiod.calendars
 
 import debop4s.core.NotSupportedException
 import debop4s.core.conversions.jodatime._
-import debop4s.timeperiod.DayOfWeek._
-import debop4s.timeperiod.SeekBoundaryMode._
-import debop4s.timeperiod.SeekDirection._
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timeline.TimeGapCalculator
 import debop4s.timeperiod.timerange.WeekRange
 import debop4s.timeperiod.utils.Durations
-import org.joda.time.{ Duration, DateTime }
-import org.slf4j.LoggerFactory
+import org.joda.time.{DateTime, Duration}
+
 import scala.annotation.varargs
+import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 object CalendarDateAdd {
@@ -21,12 +21,10 @@ object CalendarDateAdd {
 
 class CalendarDateAdd extends DateAdd {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
-
-  val calendar = TimeCalendar.getEmptyOffset
-  val weekDays = ArrayBuffer[DayOfWeek]()
-  val workingHours = ArrayBuffer[HourRangeInDay]()
-  val workingDayHours = ArrayBuffer[DayHourRange]()
+  @BeanProperty val calendar = TimeCalendar.getEmptyOffset
+  @BeanProperty val weekDays = ArrayBuffer[DayOfWeek]()
+  @BeanProperty val workingHours = ArrayBuffer[HourRangeInDay]()
+  @BeanProperty val workingDayHours = ArrayBuffer[DayHourRange]()
 
   override def includePeriods = throw new NotSupportedException("IncludePeriods는 지원하지 않습니다.")
 
@@ -55,18 +53,19 @@ class CalendarDateAdd extends DateAdd {
    */
   @inline
   override def add(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode): DateTime = {
-    log.trace(s"Add... start=$start, offset=$offset 시각을 계산합니다. seekBoundary=$seekBoundary")
+    trace(s"Add... start=$start, offset=$offset 시각을 계산합니다. seekBoundary=$seekBoundary")
 
     if (weekDays.size == 0 && excludePeriods.size == 0 && workingHours.size == 0)
       return start.plus(offset)
 
-    val (end, remaining) =
+    val (end, _) =
       if (offset < Duration.ZERO)
         calculateEnd(start, Durations.negate(offset), SeekDirection.Backward, seekBoundary)
       else
         calculateEnd(start, offset, SeekDirection.Forward, seekBoundary)
 
-    log.trace(s"Add finished. start=[$start] + offset=[$offset] => end=[$end] seekBoundary=[$seekBoundary]")
+    trace(s"Add finished. start=[$start] + offset=[$offset] => end=[$end] seekBoundary=[$seekBoundary]")
+
     end
   }
 
@@ -75,18 +74,19 @@ class CalendarDateAdd extends DateAdd {
    */
   @inline
   override def subtract(start: DateTime, offset: Duration, seekBoundary: SeekBoundaryMode): DateTime = {
-    log.trace(s"subtract... start=[$start] - offset=[$offset] 시각을 계산합니다. seekBoundary=$seekBoundary")
+    trace(s"subtract... start=[$start] - offset=[$offset] 시각을 계산합니다. seekBoundary=$seekBoundary")
 
     if (weekDays.size == 0 && excludePeriods.size == 0 && workingHours.size == 0)
       return start.minus(offset)
 
-    val (end, remaining) =
+    val (end, _) =
       if (offset < Duration.ZERO)
         calculateEnd(start, Durations.negate(offset), SeekDirection.Forward, seekBoundary)
       else
         calculateEnd(start, offset, SeekDirection.Backward, seekBoundary)
 
-    log.trace(s"Subtract finished. start=[$start] - offset=[$offset] => end=[$end] seekBoundary=[$seekBoundary]")
+    trace(s"Subtract finished. start=[$start] - offset=[$offset] => end=[$end] seekBoundary=[$seekBoundary]")
+
     end
   }
 
@@ -95,8 +95,8 @@ class CalendarDateAdd extends DateAdd {
                             offset: Duration,
                             seekDir: SeekDirection = SeekDirection.Forward,
                             seekBoundary: SeekBoundaryMode = SeekBoundaryMode.Next): (DateTime, Duration) = {
-    log.trace("기준시각으로부터 오프셋만큼 떨어진 시각을 구합니다. " +
-              s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
+    trace("기준시각으로부터 오프셋만큼 떨어진 시각을 구합니다. " +
+          s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
 
     require(offset >= Duration.ZERO, s"offset 값은 0 이상이어야 합니다. offset=[$offset]")
 
@@ -108,15 +108,15 @@ class CalendarDateAdd extends DateAdd {
 
     while (week != null) {
       _includePeriods.clear()
-      _includePeriods.addAll(getAvailableWeekPeriods(week))
+      _includePeriods.addAll(getAvailableWeekPeriods(week).asJava)
 
-      log.trace(s"가능한 기간=[${ _includePeriods }]")
+      trace(s"가능한 기간=[${ _includePeriods }]")
 
-      val results = super.calculateEnd(moment, remaining, seekDir, seekBoundary)
-      end = results._1
-      remaining = results._2
+      val (e, r) = super.calculateEnd(moment, remaining, seekDir, seekBoundary)
+      end = e
+      remaining = r
 
-      log.trace(s"완료기간을 구했습니다. end=[$end], remaining=[$remaining]")
+      trace(s"완료기간을 구했습니다. end=[$end], remaining=[$remaining]")
 
       if (end != null || remaining == null)
         return (end, remaining)
@@ -131,16 +131,17 @@ class CalendarDateAdd extends DateAdd {
           moment = week.end
       }
     }
-    log.trace("기준시각으로부터 offset 기간만큼 떨어진 시각을 구했습니다. " +
-              s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
-    log.debug(s"결과: end=[$end], remaining=[$remaining]")
+
+    trace("기준시각으로부터 offset 기간만큼 떨어진 시각을 구했습니다. " +
+          s"start=[$start], offset=[$offset], seekDir=[$seekDir], seekBoundary=[$seekBoundary]")
+    debug(s"결과: end=[$end], remaining=[$remaining]")
 
     (end, remaining)
   }
 
   @inline
   private def findNextWeek(current: WeekRange): WeekRange = {
-    log.trace(s"current week=[$current] 이후 week 기간을 구합니다...")
+    trace(s"current week=[$current] 이후 week 기간을 구합니다...")
 
     var next: WeekRange = null
 
@@ -157,13 +158,14 @@ class CalendarDateAdd extends DateAdd {
         next = null
     }
 
-    log.trace(s"current week=[$current] 이후 week 기간=[$next]")
+    trace(s"current week=[$current] 이후 week 기간=[$next]")
+
     next
   }
 
   @inline
   private def findPreviousWeek(current: WeekRange): WeekRange = {
-    log.trace(s"current week=[$current] 이전 week 기간을 구합니다...")
+    trace(s"current week=[$current] 이전 week 기간을 구합니다...")
 
     var previous: WeekRange = null
 
@@ -180,14 +182,14 @@ class CalendarDateAdd extends DateAdd {
         previous = null
     }
 
-    log.trace(s"current week=[$current] 이전 week 기간=[$previous]")
+    trace(s"current week=[$current] 이전 week 기간=[$previous]")
     previous
   }
 
   @inline
   private def getAvailableWeekPeriods(limits: ITimePeriod): Seq[ITimePeriod] = {
     assert(limits != null)
-    log.trace(s"가능한 주간 기간을 추출합니다... limits=[$limits]")
+    trace(s"가능한 주간 기간을 추출합니다... limits=[$limits]")
 
     if (weekDays.size == 0 && workingHours.size == 0 && workingDayHours.size == 0) {
       val result = TimePeriodCollection()
@@ -203,7 +205,8 @@ class CalendarDateAdd extends DateAdd {
     val weekCollector = CalendarPeriodCollector(filter, limits, SeekDirection.Forward, calendar)
     weekCollector.collectHours()
 
-    log.trace(s"가능한 주간 기간=${ weekCollector.periods }")
+    trace(s"가능한 주간 기간=${ weekCollector.periods }")
+
     weekCollector.periods
   }
 

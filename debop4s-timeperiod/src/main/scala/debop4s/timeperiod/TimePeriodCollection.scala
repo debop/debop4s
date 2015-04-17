@@ -1,40 +1,37 @@
 package debop4s.timeperiod
 
-import debop4s.timeperiod.PeriodRelation.PeriodRelation
+import java.lang.{Iterable => JIterable}
+
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
+
 import scala.collection.mutable.ArrayBuffer
 
-/**
- * debop4s.timeperiod.TimePeriodCollection
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 14. 오후 11:45
- */
 trait ITimePeriodCollection extends ITimePeriodContainer {
 
   /**
    * 대상 ITimePeriod 기간에 속하는 기간이 있다면 true를 반환합니다.
    */
   def hasInsidePeriods(target: ITimePeriod): Boolean =
-    periods.exists(x => Times.hasInside(x, target))
+    periods.par.exists(x => Times.hasInside(x, target))
 
   /**
    * 대상 ITimePeriod 기간과 교집합이 존재하면 true를 반환합니다.
    */
   def hasOverlapPeriods(target: ITimePeriod): Boolean =
-    periods.exists(x => Times.overlapsWith(x, target))
+    periods.par.exists(x => Times.overlapsWith(x, target))
 
   /**
    * 대상 시각과 교집합이 존재하면 true를 반환합니다.
    */
   def hasIntersectionPeriods(moment: DateTime): Boolean =
-    periods.exists(x => Times.hasInside(x, moment))
+    periods.par.exists(x => Times.hasInside(x, moment))
 
   /**
    * 대상 ITimePeriod 기간과 교집합이 존재하면 true를 반환합니다.
    */
   def hasIntersectionPeriods(target: ITimePeriod): Boolean =
-    periods.exists(x => Times.intersectWith(x, target))
+    periods.par.exists(x => Times.intersectWith(x, target))
 
   /**
    * 대상 ITimePeriod 기간을 포함하는 ITimePeriod 들을 열거합니다.
@@ -64,8 +61,8 @@ trait ITimePeriodCollection extends ITimePeriodContainer {
                       relation: PeriodRelation,
                       relations: PeriodRelation*): Seq[ITimePeriod] = {
 
-    val filteringRelation = ArrayBuffer[PeriodRelation]()
-    filteringRelation += relation
+    val filteringRelation = ArrayBuffer[PeriodRelation](relation)
+    // filteringRelation += relation
     if (relations != null && relations.size > 0)
       filteringRelation ++= relations
 
@@ -75,6 +72,31 @@ trait ITimePeriodCollection extends ITimePeriodContainer {
 
 @SerialVersionUID(106296570654143822L)
 class TimePeriodCollection extends TimePeriodContainer with ITimePeriodCollection {
+
+  def this(period: ITimePeriod) {
+    this()
+    add(period)
+  }
+  def this(period1: ITimePeriod, period2: ITimePeriod) {
+    this()
+    addAll(Seq(period1, period2): _*)
+  }
+  def this(period1: ITimePeriod, period2: ITimePeriod, period3: ITimePeriod) {
+    this()
+    addAll(Seq(period1, period2, period3): _*)
+  }
+  def this(period1: ITimePeriod, period2: ITimePeriod, period3: ITimePeriod, period4: ITimePeriod) {
+    this()
+    addAll(Seq(period1, period2, period3, period4): _*)
+  }
+  def this(periods: ITimePeriod*) {
+    this()
+    addAll(periods: _*)
+  }
+  def this(collection: JIterable[ITimePeriod]) {
+    this()
+    addAll(collection)
+  }
 
   override def toString: String = periods.mkString(",")
 
@@ -90,7 +112,7 @@ object TimePeriodCollection {
     tpc
   }
 
-  def apply(collection: Iterable[ITimePeriod]): TimePeriodCollection = {
+  def apply(collection: JIterable[_ <: ITimePeriod]): TimePeriodCollection = {
     val tpc = new TimePeriodCollection()
     tpc.addAll(collection)
     tpc

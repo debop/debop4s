@@ -1,15 +1,16 @@
 package debop4s.timeperiod
 
-import debop4s.core.{ToStringHelper, ValueObject}
-import debop4s.core.conversions.jodatime._
-import debop4s.core.utils.{Options, Hashs}
-import debop4s.timeperiod.DayOfWeek.DayOfWeek
-import debop4s.timeperiod.utils.Times
 import java.util.Locale
-import org.joda.time.{ DateTime, Duration }
+
+import debop4s.core.ValueObject
+import debop4s.core.conversions.jodatime._
+import debop4s.core.utils.{Hashs, Options}
+import debop4s.timeperiod.TimeSpec._
+import debop4s.timeperiod.utils.Times
+import org.joda.time.{DateTime, Duration}
 
 /**
- * debop4s.timeperiod.TimeCalendar
+ * TimeCalendar
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 26. 오후 1:45
@@ -50,7 +51,7 @@ trait ITimeCalendar extends ITimePeriodMapper {
   def dayOfMonth(time: DateTime): Int = time.getDayOfMonth
 
   /** 지정된 날짜의 요일 */
-  def dayOfWeek(time: DateTime): DayOfWeek = DayOfWeek(time.getDayOfWeek)
+  def dayOfWeek(time: DateTime): DayOfWeek = DayOfWeek.valueOf(time.getDayOfWeek)
 
   /** 지정된 년,월의 날짜수 */
   def daysInMonth(year: Int, month: Int): Int = Times.daysInMonth(year, month)
@@ -59,7 +60,7 @@ trait ITimeCalendar extends ITimePeriodMapper {
   def weekOfYear(time: DateTime): Int = Times.weekOfYear(time).weekOfWeekyear
 
   /** 지정된 년, 주차에 해당하는 주의 첫번째 일자를 반환한다. (예: 2011년 3주차의 첫번째 일자는?) */
-  def startOfYearWeek(year: Int, weekOfYear: Int): DateTime = Times.startOfYearWeek(year, weekOfYear)
+  def startOfYearWeek(year: Int, weekOfYear: Int): DateTime = Times.startOfYearweek(year, weekOfYear)
 
   def mapStart(moment: DateTime): DateTime =
     if (moment > MinPeriodTime) moment.plus(startOffset)
@@ -70,22 +71,23 @@ trait ITimeCalendar extends ITimePeriodMapper {
     else moment
 
   def unmapStart(moment: DateTime): DateTime =
-    if (moment.compareTo(MinPeriodTime) > 0) moment.minus(startOffset)
+    if (moment > MinPeriodTime) moment.minus(startOffset)
     else moment
 
   def unmapEnd(moment: DateTime): DateTime =
-    if (moment.compareTo(MaxPeriodTime) < 0) moment.minus(endOffset)
+    if (moment < MaxPeriodTime) moment.minus(endOffset)
     else moment
 }
 
 @SerialVersionUID(-8731693901249037388L)
 class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCalendar {
 
+  def this() = this(TimeCalendarConfig())
   def this(locale: Locale = Locale.getDefault,
            startOffset: Duration = DefaultStartOffset,
-           endOffset: Duration = DefaultEndOffset) {
-    this(new TimeCalendarConfig(locale, startOffset, endOffset))
-  }
+           endOffset: Duration = DefaultEndOffset) =
+    this(TimeCalendarConfig(locale, startOffset, endOffset))
+
 
   require(cfg != null)
   require(cfg.startOffset != null && cfg.startOffset.millis >= 0, "startOffset must be greater than or equal zero.")
@@ -102,10 +104,10 @@ class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCa
 
   def endOffset: Duration = _endOffset
 
-  override def hashCode(): Int =
+  override def hashCode: Int =
     Hashs.compute(locale, startOffset, endOffset, firstDayOfWeek)
 
-  override protected def buildStringHelper: ToStringHelper =
+  override protected def buildStringHelper =
     super.buildStringHelper
     .add("locale", locale)
     .add("startOffset", startOffset)
@@ -119,28 +121,19 @@ object TimeCalendar {
 
   def apply(locale: Locale = Locale.getDefault,
             startOffset: Duration = DefaultStartOffset,
-            endOffset: Duration = DefaultEndOffset): TimeCalendar = {
+            endOffset: Duration = DefaultEndOffset): TimeCalendar =
     new TimeCalendar(new TimeCalendarConfig(locale, startOffset, endOffset))
-  }
 
-  def apply(cfg: TimeCalendarConfig): TimeCalendar = {
+  def apply(cfg: TimeCalendarConfig): TimeCalendar =
     new TimeCalendar(cfg)
-  }
 
   def getDefault: TimeCalendar = getDefault(Locale.getDefault)
 
-  def getDefault(locale: Locale): TimeCalendar = {
+  def getDefault(locale: Locale): TimeCalendar =
     TimeCalendar(TimeCalendarConfig(locale))
-    //        val config = new TimeCalendarConfig(locale)
-    //        config.startOffset = DefaultStartOffset
-    //        config.endOffset = DefaultEndOffset
-
-    //        TimeCalendar(config)
-  }
 
   def getEmptyOffset: TimeCalendar = getEmptyOffset(Locale.getDefault)
 
-  def getEmptyOffset(locale: Locale): TimeCalendar = {
+  def getEmptyOffset(locale: Locale): TimeCalendar =
     new TimeCalendar(locale, EmptyDuration, EmptyDuration)
-  }
 }

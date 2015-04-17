@@ -1,12 +1,12 @@
 package debop4s.timeperiod
 
-import debop4s.core.ValueObject
 import debop4s.core.conversions.jodatime._
-import debop4s.core.utils.{ Options, Hashs }
-import debop4s.timeperiod.PeriodRelation.PeriodRelation
+import debop4s.core.utils.{Hashs, Options}
+import debop4s.core.{Logging, ValueObject}
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
-import org.joda.time.{ Duration, DateTime }
-import org.slf4j.LoggerFactory
+import org.joda.time.{DateTime, Duration}
+
 import scala.beans.BeanProperty
 
 /**
@@ -14,18 +14,27 @@ import scala.beans.BeanProperty
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 8:15
  */
-trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializable {
+trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializable with Logging {
 
   def compare(that: ITimePeriod): Int = if (that != null) start.compareTo(that.start) else 1
 
   /** 시작 시각 */
   def start: DateTime
 
+  /** 시작 시각 */
+  def getStart = start
+
   /** 종료 시각 */
   def end: DateTime
 
+  /** 종료 시각 */
+  def getEnd = end
+
   /** 기간 */
   def duration: Duration
+
+  /** 기간 */
+  def getDuration = duration
 
   /** 시작 시각이 있는지 여부 */
   def hasStart: Boolean
@@ -49,10 +58,16 @@ trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializabl
   def setup(ns: DateTime, ne: DateTime)
 
   /** 기간을 offset만큼 이동한 새로운 인스턴스를 반환합니다. */
-  def copy(offset: Duration = Duration.ZERO): ITimePeriod
+  def copy(): ITimePeriod = copy(Duration.ZERO)
+
+  /** 기간을 offset만큼 이동한 새로운 인스턴스를 반환합니다. */
+  def copy(offset: Duration): ITimePeriod
 
   /** 기간을 offset만큼 이동시킵니다. */
-  def move(offset: Duration = Duration.ZERO)
+  def move(): Unit = move(Duration.ZERO)
+
+  /** 기간을 offset만큼 이동시킵니다. */
+  def move(offset: Duration)
 
   /** 시작과 완료 시각이 같은지 여부 */
   def isSamePeriod(other: ITimePeriod): Boolean
@@ -87,27 +102,35 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
                           private[this] val _end: DateTime = MaxPeriodTime,
                           var readonly: Boolean = false) extends ITimePeriod {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  def this() = this(MinPeriodTime, MaxPeriodTime, false)
+  def this(readonly: Boolean) = this(MinPeriodTime, MaxPeriodTime, readonly)
+  def this(moment: DateTime) = this(moment, moment, false)
+  def this(moment: DateTime, readonly: Boolean) = this(moment, moment, false)
+  def this(start: DateTime, end: DateTime) = this(start, end, false)
+  def this(start: DateTime, duration: Duration) = this(start, start + duration, false)
+  def this(start: DateTime, duration: Duration, readonly: Boolean) = this(start, start + duration, readonly)
 
-  private var (startTime, endTime) =
+  private val (_newStart, _newEnd) =
     Times.adjustPeriod(
-                        Options.toOption(_start).getOrElse(MinPeriodTime),
-                        Options.toOption(_end).getOrElse(MaxPeriodTime)
-                      )
+      Options.toOption(_start).getOrElse(MinPeriodTime),
+      Options.toOption(_end).getOrElse(MaxPeriodTime)
+    )
 
   @BeanProperty
+  protected var startTime: DateTime = _newStart
+
+  @BeanProperty
+  protected var endTime: DateTime = _newEnd
+
   def start = startTime
 
-  @BeanProperty
   protected def start_=(v: DateTime) {
     assertMutable()
     startTime = v
   }
 
-  @BeanProperty
   def end = endTime
 
-  @BeanProperty
   protected def end_=(v: DateTime) {
     assertMutable()
     endTime = v
@@ -123,14 +146,14 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
   def duration = new Duration(start, end)
 
   def duration_=(v: Duration) {
-    assert(duration >= 0.millis, "Duration 은 0 이상이어야 합니다.")
+    assert(duration.getMillis >= 0, "Duration 은 0 이상이어야 합니다.")
     if (hasStart)
       end = start + duration
   }
 
-  def hasStart = start != MinPeriodTime
+  def hasStart = (start != null) && (start != MinPeriodTime)
 
-  def hasEnd = end != MaxPeriodTime
+  def hasEnd = (end != null) && (end != MaxPeriodTime)
 
   def hasPeriod = hasStart && hasEnd
 
@@ -139,8 +162,8 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
   def isAnytime = !hasStart && !hasEnd
 
   def setup(start: DateTime, end: DateTime) {
-    val ns = Options.toOption(start).getOrElse(MinPeriodTime)
-    val ne = Options.toOption(end).getOrElse(MaxPeriodTime)
+    val ns = Option(start).getOrElse(MinPeriodTime)
+    val ne = Option(end).getOrElse(MaxPeriodTime)
 
     if (ns < ne) {
       this.startTime = ns
@@ -151,17 +174,18 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
     }
   }
 
-  override def copy(offset: Duration = Duration.ZERO): ITimePeriod = {
-    if (offset.isZero)
+  override def copy(offset: Duration): ITimePeriod = {
+    if (offset.getMillis == 0)
       return TimeRange(this)
 
     val s = if (hasStart) start + offset else start
     val e = if (hasEnd) end + offset else end
+
     TimeRange(s, e, readonly)
   }
 
-  def move(offset: Duration = Duration.ZERO) {
-    if (offset.isZero) return
+  def move(offset: Duration) {
+    if (offset.getMillis == 0) return
     assertMutable()
 
     if (hasStart)
@@ -172,7 +196,7 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
   }
 
   def isSamePeriod(other: ITimePeriod): Boolean =
-    ( other != null ) && ( start == other.start ) && ( end == other.end )
+    (other != null) && (start == other.start) && (end == other.end)
 
   def hasInside(moment: DateTime) = Times.hasInside(this, moment)
 
@@ -199,12 +223,11 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
     assert(!isReadonly, "일기전용 인스턴스입니다.")
   }
 
-
   override def equals(obj: Any): Boolean = {
     obj != null && getClass.equals(obj.getClass) && hashCode() == obj.hashCode()
   }
 
-  override def hashCode() = Hashs.compute(start, end, readonly)
+  override def hashCode = Hashs.compute(start, end, readonly)
 
   override protected def buildStringHelper =
     super.buildStringHelper

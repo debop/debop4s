@@ -1,8 +1,8 @@
 package debop4s.timeperiod.timeline
 
+import debop4s.core.Logging
 import debop4s.timeperiod._
 import org.joda.time.DateTime
-import org.slf4j.LoggerFactory
 
 
 /**
@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 31. 오후 8:16
  */
-trait ITimeLine extends Serializable {
+trait ITimeLine extends Serializable with Logging {
 
   def periods: ITimePeriodContainer
 
   def limits: ITimePeriod
 
-  def periodMapper: ITimePeriodMapper
+  def periodMapper: Option[ITimePeriodMapper]
 
   def combinePeriods: ITimePeriodCollection
 
@@ -37,24 +37,18 @@ object TimeLine {
 
   def apply[T <: ITimePeriod](periods: ITimePeriodContainer,
                               limits: ITimePeriod,
-                              mapper: ITimePeriodMapper): TimeLine[T] = {
+                              mapper: Option[ITimePeriodMapper] = None): TimeLine[T] = {
     new TimeLine[T](periods, limits, mapper)
   }
 }
 
-/**
- * debop4s.timeperiod.timeline.TimeLine
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 31. 오후 8:10
- */
 @SerialVersionUID(8784228432548497611L)
 class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContainer,
                                  private[this] val _aLimits: ITimePeriod = null,
-                                 private[this] val mapper: ITimePeriodMapper = null) extends ITimeLine {
+                                 private[this] val mapper: Option[ITimePeriodMapper] = None)
+  extends ITimeLine {
 
   require(_periods != null)
-
-  private lazy val log = LoggerFactory.getLogger(getClass)
 
   private val _limits = if (_aLimits != null) TimeRange(_aLimits) else TimeRange(_periods)
 
@@ -116,26 +110,30 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
     // setup gap set with all start/end points
     val intersections = new TimePeriodCollection()
 
+
     periods
     .filter(!_.isMoment)
-    .foreach {
-      mp =>
-        val intersection = limits.intersection(mp)
-        if (intersection != null && !intersection.isMoment) {
-          if (mapper != null) {
-            intersection.setup(mapPeriodStart(intersection.start), mapPeriodEnd(intersection.end))
-          }
-          intersections.add(intersection)
+    .foreach { mp =>
+      val intersection = limits.intersection(mp)
+      if (intersection != null && !intersection.isMoment) {
+        if (mapper != null) {
+          intersection.setup(mapPeriodStart(intersection.start), mapPeriodEnd(intersection.end))
         }
+        intersections.add(intersection)
+      }
     }
+
     moments.addAll(intersections)
     moments
   }
 
-  private def mapPeriodStart(moment: DateTime) =
-    if (mapper != null) mapper.unmapStart(moment) else moment
+  private def mapPeriodStart(moment: DateTime) = mapper match {
+    case Some(m) => m.unmapStart(moment)
+    case _ => moment
+  }
 
-  private def mapPeriodEnd(moment: DateTime) =
-    if (mapper != null) mapper.unmapEnd(moment) else moment
-
+  private def mapPeriodEnd(moment: DateTime) = mapper match {
+    case Some(m) => m.unmapEnd(moment)
+    case _ => moment
+  }
 }

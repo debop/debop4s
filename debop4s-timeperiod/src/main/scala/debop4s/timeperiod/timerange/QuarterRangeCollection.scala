@@ -1,27 +1,45 @@
 package debop4s.timeperiod.timerange
 
-import debop4s.timeperiod.Quarter.Quarter
+import java.util
+
+import com.google.common.collect.Lists
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
-/**
- * debop4s.timeperiod.timerange.QuarterRangeCollection
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 29. 오후 5:41
- */
+
 @SerialVersionUID(-1191375103809489196L)
-class QuarterRangeCollection(private val _year: Int,
-                             private val _quarter: Quarter,
-                             private val _quarterCount: Int,
-                             private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+class QuarterRangeCollection(private[this] val _year: Int,
+                             private[this] val _quarter: Quarter,
+                             private[this] val _quarterCount: Int,
+                             private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends QuarterTimeRange(_year, _quarter, _quarterCount, _calendar) {
+
+  def this(year: Int, quarter: Quarter, quarterCount: Int) =
+    this(year, quarter, quarterCount, DefaultTimeCalendar)
+
+  def this(moment: DateTime, quarterCount: Int) =
+    this(moment.getYear, Times.quarterOfMonth(moment.getMonthOfYear), quarterCount, DefaultTimeCalendar)
+
+  def this(moment: DateTime, quarterCount: Int, calendar: ITimeCalendar) =
+    this(moment.getYear, Times.quarterOfMonth(moment.getMonthOfYear), quarterCount, calendar)
 
   @inline
   def quarters = {
-    ( 0 until quarterCount ).view.map { q =>
+    (0 until quarterCount).view.map { q =>
       QuarterRange(start.plusMonths(q * MonthsPerQuarter), calendar)
     }
+  }
+
+  def getQuarters: util.List[QuarterRange] = {
+    val results = Lists.newArrayListWithCapacity[QuarterRange](quarterCount)
+    var q = 0
+    while (q < quarterCount) {
+      results add QuarterRange(start.plusMonths(q * MonthsPerQuarter), calendar)
+      q += 1
+    }
+    results
   }
 }
 

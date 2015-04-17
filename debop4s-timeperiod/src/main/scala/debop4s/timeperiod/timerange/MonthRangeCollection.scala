@@ -1,7 +1,14 @@
 package debop4s.timeperiod.timerange
 
+import java.util
+
+import com.google.common.collect.Lists
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import org.joda.time.DateTime
+
+import scala.collection.SeqView
+
 
 /**
  * MonthRangeCollection
@@ -15,11 +22,29 @@ class MonthRangeCollection(private[this] val _year: Int,
                            private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends MonthTimeRange(_year, _monthOfYear, _monthCount, _calendar) {
 
+  def this(year: Int, monthOfYear: Int, monthCount: Int) =
+    this(year, monthOfYear, monthCount, DefaultTimeCalendar)
+  def this(moment: DateTime, monthCount: Int) =
+    this(moment.getYear, moment.getMonthOfYear, monthCount, DefaultTimeCalendar)
+  def this(moment: DateTime, monthCount: Int, calendar: ITimeCalendar) =
+    this(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
+
+
   @inline
-  def months = {
-    ( 0 until monthCount ).view.map { m =>
+  def months: SeqView[MonthRange, Seq[_]] = {
+    (0 until monthCount).view.map { m =>
       MonthRange(start.plusMonths(m), calendar)
     }
+  }
+
+  def getMonths: util.List[MonthRange] = {
+    val results = Lists.newArrayListWithCapacity[MonthRange](monthCount)
+    var m = 0
+    while (m < monthCount) {
+      results add MonthRange(start.plusMonths(m), calendar)
+      m += 1
+    }
+    results
   }
 }
 

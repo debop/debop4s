@@ -1,11 +1,13 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.core.Guard
+import debop4s.core.Logging
 import debop4s.core.conversions.jodatime._
-import debop4s.timeperiod.SeekDirection.SeekDirection
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timerange._
-import org.slf4j.LoggerFactory
+
+import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 /**
  * 특정 기간에 대한 필터링 정보를 기반으로 기간들을 필터링 할 수 있도록 특정 기간을 탐색하는 Visitor입니다.
@@ -14,88 +16,101 @@ import org.slf4j.LoggerFactory
  * @since 2014. 1. 3. 오후 2:14
  */
 abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisitorContext]
-(val filter: F,
- val limits: ITimePeriod,
- val seekDirection: SeekDirection = SeekDirection.Forward,
- val calendar: ITimeCalendar = DefaultTimeCalendar) {
-
-  private lazy val log = LoggerFactory.getLogger(getClass)
+(@BeanProperty val filter: F,
+ @BeanProperty val limits: ITimePeriod,
+ @BeanProperty val seekDirection: SeekDirection = SeekDirection.Forward,
+ @BeanProperty val calendar: ITimeCalendar = DefaultTimeCalendar) extends Logging {
 
   protected def startPeriodVisit(context: C) {
     startPeriodVisit(limits, context)
   }
 
-  @inline
   protected final def startPeriodVisit(period: ITimePeriod, context: C) {
     log.trace(s"기간을 탐색합니다. period=[$period], context=[$context], seekDirection=[$seekDirection]")
-    Guard.shouldNotBeNull(period, "period")
+    require(period != null)
 
     if (period.isMoment) return
 
     onVisitStart()
 
     val years = YearRangeCollection(period.start.getYear,
-                                     period.end.getYear - period.start.getYear + 1,
-                                     if (calendar != null) calendar else DefaultTimeCalendar)
+      period.end.getYear - period.start.getYear + 1,
+      if (calendar != null) calendar else DefaultTimeCalendar)
 
     val isForward = seekDirection == SeekDirection.Forward
 
     if (onVisitYears(years, context) && enterYears(years, context)) {
       val yearsToVisit =
-        if (isForward) years.years
-        else years.years.sortWith(_.end > _.end)
+        if (isForward) years.getYears
+        else years.getYears.asScala.sortBy(y => -y.end.getMillis).asJava
+      // else years.getYears.asScala.sortWith(_.end > _.end).asJava
 
-      yearsToVisit.foreach {
-        year =>
-          val canVisitMonth =
-            if (!year.overlapsWith(period)) false
-            else if (!onVisitYear(year, context)) false
-            else if (!enterMonths(year, context)) false
-            else true
 
-          if (canVisitMonth) {
-            val monthsToVisit =
-              if (isForward) years.months
-              else years.months.sortWith(_.end > _.end)
+      var yearIdx = 0
+      while (yearIdx < yearsToVisit.size) {
+        val year = yearsToVisit.get(yearIdx)
+        yearIdx += 1
 
-            monthsToVisit.foreach {
-              month =>
-                val canVisitDay =
-                  if (!month.overlapsWith(period)) false
-                  else if (!onVisitMonth(month, context)) false
-                  else if (!enterDays(month, context)) false
+        val canVisitMonth =
+          if (!year.overlapsWith(period)) false
+          else if (!onVisitYear(year, context)) false
+          else if (!enterMonths(year, context)) false
+          else true
+
+        if (canVisitMonth) {
+          val monthsToVisit =
+            if (isForward) years.getMonths
+            else years.getMonths.asScala.sortBy(m => -m.end.getMillis).asJava
+          //else years.getMonths.asScala.sortWith(_.end > _.end).asJava
+
+          var mIdx = 0
+          while (mIdx < monthsToVisit.size()) {
+            val month = monthsToVisit.get(mIdx)
+            mIdx += 1
+
+            val canVisitDay =
+              if (!month.overlapsWith(period)) false
+              else if (!onVisitMonth(month, context)) false
+              else if (!enterDays(month, context)) false
+              else true
+
+            if (canVisitDay) {
+              val daysToVisit =
+                if (isForward) month.getDays
+                else month.getDays.asScala.sortBy(d => -d.end.getMillis).asJava
+              //else month.getDays.asScala.sortWith(_.end > _.end).asJava
+
+              var dIdx = 0
+              while (dIdx < daysToVisit.size()) {
+                val day = daysToVisit.get(dIdx)
+                dIdx += 1
+
+                val canVisitHour =
+                  if (!day.overlapsWith(period)) false
+                  else if (!onVisitDay(day, context)) false
+                  else if (!enterHours(day, context)) false
                   else true
 
-                if (canVisitDay) {
-                  val daysToVisit =
-                    if (isForward) month.days
-                    else month.days.sortWith(_.end > _.end)
+                if (canVisitHour) {
+                  val hoursToVisit =
+                    if (isForward) day.getHours
+                    else day.getHours.asScala.sortBy(h => -h.end.getMillis).asJava
+                  // day.getHours.asScala.sortWith(_.end > _.end).asJava
 
-                  daysToVisit.foreach {
-                    day =>
-                      val canVisitHour =
-                        if (!day.overlapsWith(period)) false
-                        else if (!onVisitDay(day, context)) false
-                        else if (!enterHours(day, context)) false
-                        else true
-
-                      if (canVisitHour) {
-                        val hoursToVisit =
-                          if (isForward) day.hours
-                          else day.hours.sortWith(_.end > _.end)
-
-                        hoursToVisit.foreach {
-                          hour =>
-                            val canVisitMinute = hour.overlapsWith(period) && onVisitHour(hour, context)
-                            if (canVisitMinute) {
-                              enterMinutes(hour, context)
-                            }
-                        }
-                      }
+                  var hIdx = 0
+                  while (hIdx < hoursToVisit.size) {
+                    val hour = hoursToVisit.get(hIdx)
+                    hIdx += 1
+                    val canVisitMinute = hour.overlapsWith(period) && onVisitHour(hour, context)
+                    if (canVisitMinute) {
+                      enterMinutes(hour, context)
+                    }
                   }
                 }
+              }
             }
           }
+        }
       }
     }
 
@@ -112,7 +127,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
     val minStart = MinPeriodTime
     val maxEnd = MaxPeriodTime - 1.year
-    val offset = direction.id
+    val offset = direction.getValue
 
     var current = year
     while (lastVisited == null && current.start > minStart && current.end < maxEnd) {
@@ -136,7 +151,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
     val minStart = MinPeriodTime
     val maxEnd = MaxPeriodTime - 1.year
-    val offset = direction.id
+    val offset = direction.getValue
 
     var current = month
     while (lastVisited == null && current.start > minStart && current.end < maxEnd) {
@@ -160,7 +175,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
     val minStart = MinPeriodTime
     val maxEnd = MaxPeriodTime - 1.year
-    val offset = direction.id
+    val offset = direction.getValue
 
     var current = day
     while (lastVisited == null && current.start > minStart && current.end < maxEnd) {
@@ -184,7 +199,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
     val minStart = MinPeriodTime
     val maxEnd = MaxPeriodTime - 1.year
-    val offset = direction.id
+    val offset = direction.getValue
 
     var current = hour
     while (lastVisited == null && current.start > minStart && current.end < maxEnd) {
@@ -272,7 +287,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
       false
     else if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(hr.dayOfMonth))
       false
-    else if (filter.weekDays.size > 0 && !filter.weekDays.contains(DayOfWeek(hr.start.getDayOfWeek)))
+    else if (filter.weekDays.size > 0 && !filter.weekDays.contains(DayOfWeek.valueOf(hr.start.getDayOfWeek)))
       false
     else if (filter.hourOfDays.size > 0 && !filter.hourOfDays.contains(hr.hourOfDay))
       false
@@ -288,7 +303,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
       false
     else if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(mr.dayOfMonth))
       false
-    else if (filter.weekDays.size > 0 && !filter.weekDays.contains(DayOfWeek(mr.start.getDayOfWeek)))
+    else if (filter.weekDays.size > 0 && !filter.weekDays.contains(DayOfWeek.valueOf(mr.start.getDayOfWeek)))
       false
     else if (filter.hourOfDays.size > 0 && !filter.hourOfDays.contains(mr.hourOfDay))
       false

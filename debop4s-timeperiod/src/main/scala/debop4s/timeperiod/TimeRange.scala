@@ -1,20 +1,20 @@
 package debop4s.timeperiod
 
 import debop4s.core.conversions.jodatime._
-import org.joda.time.{ Duration, DateTime }
+import debop4s.timeperiod.TimeSpec._
+import org.joda.time.{DateTime, Duration}
 
-/**
- * debop4s.timeperiod.TimeRange
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 14. 오후 9:40
- */
 trait ITimeRange extends ITimePeriod {
 
   /** 시작시각을 설정합니다 */
   def start_=(v: DateTime)
 
+  def setStart(v: DateTime) = start_=(v)
+
   /** 완료시각을 설정합니다. */
   def end_=(v: DateTime)
+
+  def setEnd(v: DateTime) = end_=(v)
 
   /** 시작시각을 기준으로 기간을 설정합니다. */
   def duration_=(v: Duration)
@@ -49,6 +49,26 @@ class TimeRange(private[this] val _start: DateTime = MinPeriodTime,
                 private[this] val _readonly: Boolean = false)
   extends TimePeriod(_start, _end, _readonly) with ITimeRange {
 
+  def this() = this(MinPeriodTime, MaxPeriodTime, false)
+  def this(readonly: Boolean) = this(MinPeriodTime, MaxPeriodTime, readonly)
+  def this(moment: DateTime) = this(moment, moment, false)
+  def this(start: DateTime, end: DateTime) = this(start, end, false)
+  def this(start: DateTime, duration: Duration) = this(start, start + duration, false)
+  def this(start: DateTime, duration: Duration, readonly: Boolean) =
+    this(start, start + duration, readonly)
+
+  def this(period: ITimePeriod) = this(period.start, period.end, period.isReadonly)
+
+  def this(start: Option[DateTime], end: Option[DateTime]) =
+    this(start.getOrElse(MinPeriodTime),
+      end.getOrElse(MaxPeriodTime),
+      false)
+
+  def this(start: Option[DateTime], end: Option[DateTime], readonly: Option[Boolean]) =
+    this(start.getOrElse(MinPeriodTime),
+      end.getOrElse(MaxPeriodTime),
+      readonly.getOrElse(false))
+
   override def start_=(v: DateTime) {
     assertMutable()
     assert(v <= end, "시작시각이 완료시각보다 클 수 없습니다.")
@@ -66,7 +86,7 @@ class TimeRange(private[this] val _start: DateTime = MinPeriodTime,
     super.duration_=(v)
   }
 
-  override def copy(offset: Duration = Duration.ZERO) = {
+  override def copy(offset: Duration = Duration.ZERO): TimeRange = {
     if (offset == Duration.ZERO)
       TimeRange(this)
     else
@@ -159,7 +179,7 @@ object TimeRange {
     apply(start, duration, readonly = false)
 
   def apply(start: DateTime, duration: Duration, readonly: Boolean): TimeRange =
-    new TimeRange(start, start.plus(duration), readonly)
+    new TimeRange(start, start + duration, readonly)
 
   def apply(period: ITimePeriod): TimeRange = apply(period, period.isReadonly)
 

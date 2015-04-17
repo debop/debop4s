@@ -29,6 +29,11 @@
             <artifactId>joda-convert</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.carrotsearch</groupId>
+            <artifactId>junit-benchmarks</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

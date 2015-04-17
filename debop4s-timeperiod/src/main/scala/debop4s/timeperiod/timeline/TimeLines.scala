@@ -5,7 +5,7 @@ import debop4s.timeperiod._
 import org.slf4j.LoggerFactory
 
 /**
- * TimeLines
+ * TimeLine 관련 Helper class 입니다.
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 31. 오후 9:17
  */
@@ -19,20 +19,25 @@ object TimeLines {
     if (moments.isEmpty)
       return periods
 
+
     val momentsSize = moments.size
     var itemIndex = 0
+
+
     while (itemIndex < momentsSize) {
       val periodStart = moments(itemIndex)
       var balance = periodStart.startCount
       assert(balance > 0, s"balance > 0 이여아합니다. balance=[$balance]")
 
       var periodEnd: ITimeLineMoment = null
+
       while (itemIndex < momentsSize - 1 && balance > 0) {
         itemIndex += 1
         periodEnd = moments(itemIndex)
         balance += periodEnd.startCount
         balance -= periodEnd.endCount
       }
+
       assert(periodEnd != null, s"periodEnd should not null.")
 
       if (periodEnd.startCount <= 0 && itemIndex < momentsSize) {
@@ -41,6 +46,7 @@ object TimeLines {
       }
       itemIndex += 1
     }
+
     periods
   }
 
@@ -51,8 +57,9 @@ object TimeLines {
 
     var intersectionStart = -1
     var balance = 0
+    var i = 0
 
-    for (i <- 0 until moments.size) {
+    while (i < moments.size) {
       val moment = moments(i)
       val startCount = moment.startCount
       val endCount = moment.endCount
@@ -66,6 +73,7 @@ object TimeLines {
         periods.add(period)
         intersectionStart = -1
       }
+      i += 1
     }
 
     periods
@@ -113,6 +121,7 @@ object TimeLines {
       }
       itemIndex += 1
     }
+
     // find ending gap
     val periodEnd = moments.max
 

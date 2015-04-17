@@ -1,9 +1,10 @@
 package debop4s.timeperiod.timeline
 
 import debop4s.core.ToStringHelper
-import debop4s.timeperiod.{ DateTimeOrdering, ITimePeriod }
+import debop4s.timeperiod._
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
+
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 

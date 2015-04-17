@@ -1,16 +1,18 @@
 package debop4s.timeperiod
 
-import debop4s.core.{ToStringHelper, ValueObjectBase}
+import debop4s.core.ValueObject
 
 /**
- * debop4s.timeperiod.MonthRangeInYear
+ * MonthRangeInYear
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 3. 오전 10:42
  */
 @SerialVersionUID(-1797303419172720812L)
 class MonthRangeInYear(val startMonthOfYear: Int, val endMonthOfYear: Int)
-  extends ValueObjectBase with Ordered[MonthRangeInYear] {
+  extends ValueObject with Ordered[MonthRangeInYear] {
+
+  def this() = this(1, 12)
 
   require(startMonthOfYear <= endMonthOfYear,
            s"startMonthOfYear[$startMonthOfYear] <= endMonthOfYear[$endMonthOfYear] 여야 합니다.")
@@ -23,10 +25,10 @@ class MonthRangeInYear(val startMonthOfYear: Int, val endMonthOfYear: Int)
   def compare(that: MonthRangeInYear) =
     hashCode() - that.hashCode()
 
-  override def hashCode(): Int =
+  override def hashCode: Int =
     startMonthOfYear * 100 + endMonthOfYear
 
-  override protected def buildStringHelper: ToStringHelper =
+  override protected def buildStringHelper =
     super.buildStringHelper
     .add("startMonthOfYear", startMonthOfYear)
     .add("endMonthOfYear", endMonthOfYear)

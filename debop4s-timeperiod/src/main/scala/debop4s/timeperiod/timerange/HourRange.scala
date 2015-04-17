@@ -1,27 +1,34 @@
 package debop4s.timeperiod.timerange
 
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
-/**
- * debop4s.timeperiod.timerange.HourRange
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 28. 오후 9:48
- */
 @SerialVersionUID(2876823794105220883L)
 class HourRange(private[this] val _moment: DateTime,
-                private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+                private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends HourTimeRange(_moment, 1, _calendar) {
 
+  def this() = this(Times.now, DefaultTimeCalendar)
+  def this(calendar: ITimeCalendar) = this(Times.now, calendar)
+  def this(moment: DateTime) = this(moment, DefaultTimeCalendar)
+  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, hourOfDay: Int) =
+    this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, 0), DefaultTimeCalendar)
+  def this(year: Int, monthOfYear: Int, dayOfMonth: Int, hourOfDay: Int, calendar: ITimeCalendar) =
+    this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, 0), calendar)
 
   def year: Int = startYear
+  def getYear = year
 
   def monthOfYear: Int = startMonthOfYear
+  def getMonthOfYear = monthOfYear
 
   def dayOfMonth: Int = startDayOfMonth
+  def getDayOfMonth = dayOfMonth
 
   def hourOfDay: Int = startHourOfDay
+  def getHourOfDay = hourOfDay
 
   def previousHour: HourRange = addHours(-1)
 

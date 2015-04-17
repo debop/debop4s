@@ -1,24 +1,29 @@
 package debop4s.timeperiod.timerange
 
-import debop4s.timeperiod.Quarter.Quarter
+import java.util
+
+import com.google.common.collect.Lists
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 
-/**
- * debop4s.timeperiod.timerange.QuarterTimeRange
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since  2013. 12. 29. 오후 4:54
- */
+import scala.beans.BeanProperty
+import scala.collection.SeqView
+
+
 @SerialVersionUID(-1642725884160403253L)
-abstract class QuarterTimeRange(private val _year: Int,
-                                private val _quarter: Quarter,
-                                val quarterCount: Int,
-                                private val _calendar: ITimeCalendar = DefaultTimeCalendar)
+abstract class QuarterTimeRange(private[this] val _year: Int,
+                                private[this] val _quarter: Quarter,
+                                @BeanProperty val quarterCount: Int,
+                                private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(QuarterTimeRange.getPeriodOf(_year, _quarter, quarterCount, _calendar),
                              _calendar) {
 
   val startQuarter: Quarter = _quarter
   val endQuarter: Quarter = Times.quarterOfMonth(end.getMonthOfYear)
+
+  def getStartQuarter = startQuarter
+  def getEndQuarter = endQuarter
 
   override def startMonthOfYear: Int = Times.startMonthOfQuarter(startQuarter)
 
@@ -26,13 +31,20 @@ abstract class QuarterTimeRange(private val _year: Int,
 
   def isMultipleCalendarYears: Boolean = startYear != endYear
 
-  @inline
-  def months = {
+  def months: SeqView[MonthRange, Seq[_]] = {
     val monthCount = quarterCount * MonthsPerQuarter
-
-    ( 0 until monthCount ).view.map { m =>
+    (0 until monthCount).view.map { m =>
       MonthRange(start.plusMonths(m), calendar)
     }
+  }
+
+  def getMonths: util.List[MonthRange] = {
+    val monthCount = quarterCount * MonthsPerQuarter
+    val mrs = Lists.newArrayListWithCapacity[MonthRange](monthCount)
+    (0 until monthCount) foreach { m =>
+      mrs add MonthRange(start.plusMonths(m), calendar)
+    }
+    mrs
   }
 }
 
@@ -45,7 +57,7 @@ object QuarterTimeRange {
     require(quarterCount > 0)
 
     val yearStart = Times.asDate(year, 1, 1)
-    val start = yearStart.plusMonths(( quarter.id - 1 ) * MonthsPerQuarter)
+    val start = yearStart.plusMonths((quarter.getValue - 1) * MonthsPerQuarter)
     val end = start.plusMonths(quarterCount * MonthsPerQuarter)
 
     TimeRange(start, end)

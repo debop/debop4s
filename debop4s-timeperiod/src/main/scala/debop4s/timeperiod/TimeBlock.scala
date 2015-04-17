@@ -1,12 +1,12 @@
 package debop4s.timeperiod
 
 import debop4s.core.conversions.jodatime._
+import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
-import org.slf4j.LoggerFactory
 
 /**
- * debop4s.timeperiod.TimeBlock
+ * TimeBlock
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 9:59
  */
@@ -14,11 +14,15 @@ trait ITimeBlock extends ITimePeriod {
 
   def start_=(v: DateTime)
 
+  def setStart(v: DateTime) = start_=(v)
+
   def end_=(v: DateTime)
 
-  def duration: Duration
+  def setEnd(v: DateTime) = end_=(v)
 
   def duration_=(d: Duration)
+
+  def setDuration(d: Duration) = duration_=(d)
 
   def setup(ns: DateTime, ne: DateTime)
 
@@ -36,21 +40,36 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
                 private[this] val _readonly: Boolean = false)
   extends TimePeriod(_start, _end, _readonly) with ITimeBlock {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  def this() = this(MinPeriodTime, MaxPeriodTime, false)
+  def this(readonly: Boolean) = this(MinPeriodTime, MaxPeriodTime, readonly)
+  def this(moment: DateTime) = this(moment, moment, false)
+  def this(moment: DateTime, readonly: Boolean) = this(moment, moment, false)
+  def this(start: DateTime, end: DateTime) = this(start, end, false)
+  def this(start: DateTime, duration: Duration) = {
+    this(start, start + duration, false)
+    require(duration.getMillis >= 0)
+  }
+  def this(start: DateTime, duration: Duration, readonly: Boolean) {
+    this(start, start + duration, readonly)
+    require(duration.getMillis >= 0)
+  }
+  def this(src: ITimePeriod) = this(src.start, src.end, src.isReadonly)
+  def this(src: ITimePeriod, readonly: Boolean) = this(src.start, src.end, readonly)
 
   override def start_=(v: DateTime) {
     assertMutable()
     assert(v <= end, "시작시각이 완료시각보다 클 수 없습니다.")
     super.start_=(v)
   }
+
   override def end_=(v: DateTime) {
     assertMutable()
     assert(v >= start, "완료시각이 시작시각보다 작을 수 없습니다.")
     super.end_=(v)
-
   }
 
   var _duration: Duration = new Duration(start, end)
+
   override def duration = _duration
   override def duration_=(v: Duration) {
     assertMutable()
@@ -58,13 +77,15 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
     durationFromStart(v)
   }
 
-  override def copy(offset: Duration = Duration.ZERO) = {
+  override def copy(offset: Duration): TimeBlock = {
     if (offset == Duration.ZERO)
       TimeBlock(this)
     else
-      TimeBlock(if (hasStart) start.plus(offset) else start,
-        if (hasEnd) end.plus(offset) else end,
-        readonly)
+      TimeBlock(
+        if (hasStart) start + offset else start,
+        if (hasEnd) end + offset else end,
+        readonly
+      )
   }
 
   def setup(ns: DateTime, nd: Duration) {
@@ -85,7 +106,7 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
       this.end = MaxPeriodTime
     } else {
       _duration = nd
-      this.end = start.plus(nd)
+      this.end = start + nd
     }
   }
 
@@ -93,7 +114,7 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
     assertMutable()
     assertValidDuration(nd)
     _duration = nd
-    this.start = this.end.minus(nd)
+    this.start = this.end - nd
   }
 
   def previousBlock(offset: Duration = Duration.ZERO): ITimeBlock = {
