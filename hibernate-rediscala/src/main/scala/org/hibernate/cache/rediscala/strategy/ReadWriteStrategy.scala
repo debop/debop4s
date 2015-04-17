@@ -1,15 +1,9 @@
 package org.hibernate.cache.rediscala.strategy
 
-import org.hibernate.cache.rediscala.regions.{ RedisNaturalIdRegion, RedisEntityRegion, RedisCollectionRegion }
-import org.hibernate.cache.spi.access.{ SoftLock, NaturalIdRegionAccessStrategy, EntityRegionAccessStrategy, CollectionRegionAccessStrategy }
+import org.hibernate.cache.rediscala.regions.{RedisCollectionRegion, RedisEntityRegion, RedisNaturalIdRegion}
+import org.hibernate.cache.spi.access.{CollectionRegionAccessStrategy, EntityRegionAccessStrategy, NaturalIdRegionAccessStrategy, SoftLock}
 import org.hibernate.cfg.Settings
 
-/**
- * org.hibernate.cache.rediscala.strategy.ReadWriteRedisCollectionRegionAccessStrategy
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오후 1:19
- */
 class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: RedisCollectionRegion,
                                                    private[this] val _settings: Settings)
   extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
@@ -21,12 +15,6 @@ class ReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: Re
     super.get(key, txTimestamp)
 }
 
-/**
- * org.hibernate.cache.rediscala.strategy.ReadWriteRedisEntityRegionAccessStrategy
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오후 1:17
- */
 class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisEntityRegion,
                                                private[this] val _settings: Settings)
   extends AbstractReadWriteRedisAccessStrategy(_region, _settings)
@@ -62,12 +50,6 @@ class ReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisE
   }
 }
 
-/**
- * org.hibernate.cache.rediscala.strategy.ReadWriteRedisNaturalIdRegionAccessStrategy
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오후 1:22
- */
 class ReadWriteRedisNaturalIdRegionAccessStrategy(private[this] val _region: RedisNaturalIdRegion,
                                                   private[this] val _settings: Settings)
   extends AbstractReadWriteRedisAccessStrategy(_region, _settings)

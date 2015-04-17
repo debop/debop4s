@@ -1,6 +1,6 @@
 package org.hibernate.cache.rediscala.strategy
 
-import org.hibernate.cache.rediscala.regions.{ RedisNaturalIdRegion, RedisEntityRegion, RedisCollectionRegion }
+import org.hibernate.cache.rediscala.regions.{RedisCollectionRegion, RedisEntityRegion, RedisNaturalIdRegion}
 import org.hibernate.cache.spi.access._
 import org.hibernate.cfg.Settings
 import org.slf4j.LoggerFactory

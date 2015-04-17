@@ -1,15 +1,15 @@
 package org.hibernate.cache.rediscala.serializer
 
 import java.io
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 import org.nustaq.serialization.FSTConfiguration
 import org.slf4j.LoggerFactory
 
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
+
 
 private[rediscala] object FstRedisSerializer {
-
   lazy val conf = FSTConfiguration.createDefaultConfiguration()
 
   def apply[T](): FstRedisSerializer[T] = new FstRedisSerializer[T]()
@@ -22,7 +22,6 @@ private[rediscala] object FstRedisSerializer {
 class FstRedisSerializer[T] extends RedisSerializer[T] {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
-
 
   override def serialize(graph: T): Array[Byte] = {
     if (graph == null || graph == None)
@@ -70,4 +69,5 @@ class FstRedisSerializer[T] extends RedisSerializer[T] {
     }
   }
 }
+
 

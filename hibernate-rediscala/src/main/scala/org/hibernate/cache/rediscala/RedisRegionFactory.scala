@@ -1,9 +1,13 @@
 package org.hibernate.cache.rediscala
 
 import java.util.Properties
+
 import org.hibernate.cache.CacheException
+import org.hibernate.cache.rediscala.utils.RedisCacheUtil
 import org.hibernate.cfg.Settings
 import org.slf4j.LoggerFactory
+
+import scala.util.control.NonFatal
 
 /**
  * RedisRegionFactory
@@ -21,12 +25,12 @@ class RedisRegionFactory(private[this] val _props: Properties) extends AbstractR
     this.settings = settings
     try {
       if (cache == null) {
-        this.cache = HibernateRedisUtil.createCacheClient(properties)
+        this.cache = RedisCacheUtil.createRedisCache(properties)
         manageExpiration(cache)
       }
       log.info("RedisRegionFactory를 시작합니다.")
     } catch {
-      case e: Exception => throw new CacheException(e)
+      case NonFatal(e) => throw new CacheException(e)
     }
   }
 
@@ -43,7 +47,7 @@ class RedisRegionFactory(private[this] val _props: Properties) extends AbstractR
       this.cache = null
       log.info("RedisRegionFactory를 중지했습니다.")
     } catch {
-      case e: Exception => log.error("jedisClient region factory fail to stop.", e)
+      case NonFatal(e) => log.error("Redis region factory fail to stop.", e)
     }
   }
 }

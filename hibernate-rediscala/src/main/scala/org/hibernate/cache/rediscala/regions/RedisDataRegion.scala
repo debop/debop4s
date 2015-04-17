@@ -2,10 +2,15 @@ package org.hibernate.cache.rediscala.regions
 
 import java.util
 import java.util.Properties
-import org.hibernate.cache.rediscala.client.HibernateRedisCache
+
+import org.hibernate.cache.rediscala._
+import org.hibernate.cache.rediscala.client.RedisCache
 import org.hibernate.cache.rediscala.strategy.RedisAccessStrategyFactory
-import org.hibernate.cache.rediscala.{ Promises, HibernateRedisUtil }
+import org.hibernate.cache.rediscala.utils.RedisCacheUtil
 import org.hibernate.cache.spi.Region
+import org.slf4j.LoggerFactory
+
+import scala.collection.JavaConverters._
 
 
 /**
@@ -15,51 +20,49 @@ import org.hibernate.cache.spi.Region
  * @since 2014. 2. 21. 오전 9:25
  */
 abstract class RedisDataRegion(protected val accessStrategyFactory: RedisAccessStrategyFactory,
-                               val cache: HibernateRedisCache,
+                               val cache: RedisCache,
                                val regionName: String,
                                val props: Properties) extends Region {
+  protected lazy val log = LoggerFactory.getLogger(getClass)
 
-  val expireInSeconds = HibernateRedisUtil.expireInSeconds(regionName)
+  val expireInSeconds = RedisCacheUtil.expiryInSeconds(regionName)
 
   override def getName: String = regionName
 
-  @volatile var regionDeleted = false
+  @volatile var regionDeleted = true
 
   override def destroy(): Unit = synchronized {
     if (regionDeleted) return
 
-    try {
-      Promises.await(cache.deleteRegion(regionName))
-    } finally {
-      regionDeleted = true
-    }
+    cache.deleteRegion(regionName).await
+    regionDeleted = true
   }
 
   override def contains(key: Any): Boolean = {
-    Promises.await(cache.exists(regionName, key.toString))
+    cache.exists(regionName, key.toString).await
   }
 
   override def getSizeInMemory: Long = {
-    Promises.await(cache.dbSize)
+    val sizeInMemory = cache.dbSize.await
+
+    log.trace(s"size in memory. region=$regionName, size=$sizeInMemory")
+    sizeInMemory
   }
 
   override def getElementCountInMemory: Long = {
-    Promises.await(cache.keySizeInRegion(regionName))
+    val elementCount = cache.keySizeInRegion(regionName).await
+
+    log.trace(s"get key size in region. region=$regionName, elementCount=$elementCount")
+    elementCount
   }
 
   override def getElementCountOnDisk: Long = -1L
 
   override def toMap: util.Map[Any, Any] = {
-    val map = Promises.await(cache.getAll(regionName))
-
-    val results = new util.HashMap[Any, Any]()
-    map.foreach { case (k, v) =>
-      results.put(k.asInstanceOf[Any], v.asInstanceOf[Any])
-    }
-    results
+    cache.getAll(regionName).await.map { case (k, v) => (k.asInstanceOf[Any], v) }.asJava
   }
 
-  override def nextTimestamp: Long = HibernateRedisUtil.nextTimestamp()
+  override def nextTimestamp: Long = RedisCacheUtil.nextTimestamp
 
   override def getTimeout: Int = 0
 

@@ -1,14 +1,18 @@
 package org.hibernate.cache.rediscala
 
 import java.util.Properties
-import org.hibernate.cache.rediscala.client.HibernateRedisCache
+import java.util.concurrent.ConcurrentSkipListSet
+
+import org.hibernate.cache.rediscala.client.RedisCache
 import org.hibernate.cache.rediscala.regions._
 import org.hibernate.cache.rediscala.strategy._
 import org.hibernate.cache.spi._
 import org.hibernate.cache.spi.access.AccessType
 import org.hibernate.cfg.Settings
 import org.slf4j.LoggerFactory
-import scala.collection.mutable
+
+import scala.collection.JavaConverters._
+import scala.util.control.NonFatal
 
 /**
  * AbstractRedisRegionFactory
@@ -22,9 +26,9 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
 
   protected var settings: Settings = null
   protected val accessStrategyFactory = RedisAccessStrategyFactory()
-  protected val regionNames = new mutable.LinkedHashSet[String] with mutable.SynchronizedSet[String]
+  protected val regionNames = new ConcurrentSkipListSet[String]()
 
-  protected var cache: HibernateRedisCache = null
+  protected var cache: RedisCache = null
   protected var expirationThread: Thread = null
 
   override def isMinimalPutsEnabledByDefault: Boolean = true
@@ -37,7 +41,7 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
   override def buildEntityRegion(regionName: String,
                                  properties: Properties,
                                  metadata: CacheDataDescription): EntityRegion = {
-    regionNames += regionName
+    regionNames.add(regionName)
     new RedisEntityRegion(accessStrategyFactory,
                            cache,
                            regionName,
@@ -49,7 +53,7 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
   override def buildCollectionRegion(regionName: String,
                                      properties: Properties,
                                      metadata: CacheDataDescription): CollectionRegion = {
-    regionNames += regionName
+    regionNames.add(regionName)
     new RedisCollectionRegion(accessStrategyFactory,
                                cache,
                                regionName,
@@ -61,7 +65,7 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
   override def buildNaturalIdRegion(regionName: String,
                                     properties: Properties,
                                     metadata: CacheDataDescription): NaturalIdRegion = {
-    regionNames += regionName
+    regionNames.add(regionName)
     new RedisNaturalIdRegion(accessStrategyFactory,
                               cache,
                               regionName,
@@ -72,7 +76,7 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
 
   override def buildQueryResultsRegion(regionName: String,
                                        properties: Properties): QueryResultsRegion = {
-    regionNames += regionName
+    regionNames.add(regionName)
     new RedisQueryResultsRegion(accessStrategyFactory,
                                  cache,
                                  regionName,
@@ -86,7 +90,7 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
                                properties)
   }
 
-  protected def manageExpiration(cache: HibernateRedisCache): Unit = synchronized {
+  protected def manageExpiration(cache: RedisCache): Unit = synchronized {
     if (expirationThread != null && expirationThread.isAlive)
       return
 
@@ -94,15 +98,16 @@ abstract class AbstractRedisRegionFactory(val props: Properties) extends RegionF
       override def run() {
         while (true) {
           try {
-            Thread.sleep(1000)
+            Thread.sleep(3000)
             if (cache != null && regionNames.size > 0) {
-              regionNames.par.foreach { region =>
+              regionNames.asScala.par.foreach { region =>
                 cache.expire(region)
               }
             }
           } catch {
             case ignored: InterruptedException =>
-            case e: Exception => log.debug(s"Error occurred in expiration management thread. but it was ignored", e)
+            case NonFatal(e) =>
+              log.debug(s"Error occurred in expiration management thread. but it was ignored", e)
           }
         }
       }

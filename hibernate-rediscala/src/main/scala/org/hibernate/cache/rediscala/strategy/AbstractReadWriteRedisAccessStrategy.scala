@@ -1,19 +1,16 @@
 package org.hibernate.cache.rediscala.strategy
 
 import java.util.concurrent.atomic.AtomicLong
+
 import org.hibernate.cache.rediscala.regions.RedisTransactionalDataRegion
 import org.hibernate.cache.spi.access.SoftLock
 import org.hibernate.cfg.Settings
 
-/**
- * org.hibernate.cache.rediscala.strategy.AbstractReadWriteRedisAccessStrategy
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오후 1:47
- */
 class AbstractReadWriteRedisAccessStrategy[T <: RedisTransactionalDataRegion]
-(private[this] val _region: T, private[this] val _settings: Settings)
-  extends AbstractRedisAccessStrategy[T](_region, _settings) {
+(
+  private[this] val _region: T,
+  private[this] val _settings: Settings
+  ) extends AbstractRedisAccessStrategy[T](_region, _settings) {
 
   private val nextLockId = new AtomicLong()
 

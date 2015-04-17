@@ -5,12 +5,6 @@ import org.hibernate.cache.spi.access.SoftLock
 import org.hibernate.cfg.Settings
 import org.slf4j.LoggerFactory
 
-/**
- * org.hibernate.cache.rediscala.strategy.AbstractRedisAccessStrategy
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오전 9:28
- */
 abstract class AbstractRedisAccessStrategy[T <: RedisTransactionalDataRegion](val region: T, val settings: Settings) {
 
   private lazy val log = LoggerFactory.getLogger(getClass)

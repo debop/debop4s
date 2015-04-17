@@ -1,7 +1,11 @@
 package org.hibernate.cache.rediscala.serializer
 
 import java.io
-import java.io.{ ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream }
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
+
+private[rediscala] object BinaryRedisSerializer {
+  def apply[T](): BinaryRedisSerializer[T] = new BinaryRedisSerializer[T]()
+}
 
 /**
  * BinaryRedisSerializer
@@ -50,7 +54,4 @@ private[rediscala] class BinaryRedisSerializer[T] extends RedisSerializer[T] {
   }
 }
 
-private[rediscala] object BinaryRedisSerializer {
 
-  def apply[T](): BinaryRedisSerializer[T] = new BinaryRedisSerializer[T]()
-}

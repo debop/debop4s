@@ -21,3 +21,4 @@ private[rediscala] trait RedisSerializer[T] {
   def deserialize(bytes: Array[Byte]): T
 
 }
+

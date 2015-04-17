@@ -1,15 +1,10 @@
 package org.hibernate.cache.rediscala.strategy
 
-import org.hibernate.cache.rediscala.regions.{ RedisNaturalIdRegion, RedisEntityRegion, RedisCollectionRegion }
-import org.hibernate.cache.spi.access.{ NaturalIdRegionAccessStrategy, SoftLock, CollectionRegionAccessStrategy, EntityRegionAccessStrategy }
+import org.hibernate.cache.rediscala.regions._
+import org.hibernate.cache.spi.access._
 import org.hibernate.cfg.Settings
 
-/**
- * NonStrictReadWriteRedisCollectionRegionAccessStrategy
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오후 1:19
- */
+
 class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _region: RedisCollectionRegion,
                                                             private[this] val _settings: Settings)
   extends AbstractRedisAccessStrategy(_region, _settings)
@@ -40,12 +35,6 @@ class NonStrictReadWriteRedisCollectionRegionAccessStrategy(private[this] val _r
   }
 }
 
-/**
- * NonStrictReadWriteRedisEntityRegionAccessStrategy
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오후 1:16
- */
 class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _region: RedisEntityRegion,
                                                         private[this] val _settings: Settings)
   extends AbstractRedisAccessStrategy(_region, _settings)
@@ -94,12 +83,6 @@ class NonStrictReadWriteRedisEntityRegionAccessStrategy(private[this] val _regio
   }
 }
 
-/**
- * NonStrictReadWriteRedisNatualIdRegionAccessStrategy
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오후 1:22
- */
 class NonStrictReadWriteRedisNatualIdRegionAccessStrategy(private[this] val _region: RedisNaturalIdRegion,
                                                           private[this] val _settings: Settings)
   extends AbstractRedisAccessStrategy(_region, _settings)

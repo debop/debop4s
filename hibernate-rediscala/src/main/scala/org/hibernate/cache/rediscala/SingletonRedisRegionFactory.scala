@@ -2,9 +2,13 @@ package org.hibernate.cache.rediscala
 
 import java.util.Properties
 import java.util.concurrent.atomic.AtomicInteger
+
 import org.hibernate.cache.CacheException
+import org.hibernate.cache.rediscala.utils.RedisCacheUtil
 import org.hibernate.cfg.Settings
 import org.slf4j.LoggerFactory
+
+import scala.util.control.NonFatal
 
 /**
  * SingletonRedisRegionFactory
@@ -24,13 +28,13 @@ class SingletonRedisRegionFactory(private[this] val _props: Properties) extends 
     this.settings = settings
     try {
       if (cache == null) {
-        this.cache = HibernateRedisUtil.createCacheClient(properties)
+        this.cache = RedisCacheUtil.createRedisCache(properties)
         manageExpiration(cache)
       }
       referenceCount.incrementAndGet()
       log.info("RedisRegionFactory를 시작합니다.")
     } catch {
-      case e: Exception => throw new CacheException(e)
+      case NonFatal(e) => throw new CacheException(e)
     }
   }
 
@@ -48,7 +52,7 @@ class SingletonRedisRegionFactory(private[this] val _props: Properties) extends 
         this.cache = null
         log.info("RedisRegionFactory를 중지했습니다.")
       } catch {
-        case e: Exception => log.error("jedisClient region factory fail to stop.", e)
+        case NonFatal(e) => log.error("jedisClient region factory fail to stop.", e)
       }
     }
   }

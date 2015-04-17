@@ -4,12 +4,7 @@ import org.hibernate.cache.rediscala.regions._
 import org.hibernate.cache.spi.access.AccessType._
 import org.hibernate.cache.spi.access._
 
-/**
- * org.hibernate.cache.rediscala.strategy.AccessStrategyFactory
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2014. 2. 21. 오후 1:09
- */
+
 trait RedisAccessStrategyFactory {
 
   def createEntityRegionAccessStrategy(entityRegion: RedisEntityRegion,
@@ -41,7 +36,7 @@ class RedisAccessStrategyFactoryImpl extends RedisAccessStrategyFactory {
       case TRANSACTIONAL =>
         new TransactionalRedisCollectionAccessStrategy(collectionRegion, collectionRegion.settings)
 
-      case _ => throw new IllegalArgumentException(s"unrecognized access strategy type. [$accessType]")
+      case _ => throw new IllegalArgumentException(s"unrecognized access strategy kind. [$accessType]")
     }
   }
 
@@ -58,7 +53,7 @@ class RedisAccessStrategyFactoryImpl extends RedisAccessStrategyFactory {
       case TRANSACTIONAL =>
         new TransactionalRedisEntityRegionAccessStrategy(entityRegion, entityRegion.settings)
 
-      case _ => throw new IllegalArgumentException(s"unrecognized access strategy type. [$accessType]")
+      case _ => throw new IllegalArgumentException(s"unrecognized access strategy kind. [$accessType]")
     }
   }
 
@@ -74,7 +69,7 @@ class RedisAccessStrategyFactoryImpl extends RedisAccessStrategyFactory {
       case TRANSACTIONAL =>
         new TransactionalRedisNatualIdRegionAccessStrategy(entityRegion, entityRegion.settings)
 
-      case _ => throw new IllegalArgumentException(s"unrecognized access strategy type. [$accessType]")
+      case _ => throw new IllegalArgumentException(s"unrecognized access strategy kind. [$accessType]")
     }
   }
 }
