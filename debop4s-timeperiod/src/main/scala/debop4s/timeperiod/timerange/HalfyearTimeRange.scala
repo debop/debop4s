@@ -12,7 +12,7 @@ import scala.collection.SeqView
 
 
 /**
- * kr.hconnect.timeperiod.timerange.HalfyearTimeRange
+ * debop4s.timeperiod.timerange.HalfyearTimeRange
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오후 5:49
  */

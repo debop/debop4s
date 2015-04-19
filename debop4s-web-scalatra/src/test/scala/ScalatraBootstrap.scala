@@ -10,6 +10,6 @@ class ScalatraBootstrap extends SpringScalatraBootstrap {
     Array(classOf[SpringConfiguration])
   }
   //  override protected def basePackages(): Array[String] = {
-  //    Array("kr.hconnect.scalatra")
+  //    Array("debop4s.scalatra")
   //  }
 }

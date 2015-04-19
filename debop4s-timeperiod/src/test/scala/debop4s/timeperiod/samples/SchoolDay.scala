@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 import scala.beans.BeanProperty
 
 /**
- * kr.hconnect.timeperiod.tests.samples.SchoolDay
+ * debop4s.timeperiod.tests.samples.SchoolDay
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 8. 오후 11:34
  */

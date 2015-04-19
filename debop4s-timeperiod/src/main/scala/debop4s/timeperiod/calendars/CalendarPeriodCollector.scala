@@ -29,7 +29,7 @@ object CalendarPeriodCollector {
 }
 
 /**
- * kr.hconnect.timeperiod.calendars.CalendarPeriodCollector
+ * debop4s.timeperiod.calendars.CalendarPeriodCollector
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 12:54
  */

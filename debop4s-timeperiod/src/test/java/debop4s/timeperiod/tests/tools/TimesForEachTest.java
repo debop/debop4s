@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.tools.TimesForEachTest
+ * debop4s.timeperiod.test.tools.TimesForEachTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 24. 오전 12:22

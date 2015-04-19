@@ -8,7 +8,7 @@ import org.joda.time.Duration
 
 
 /**
- * kr.hconnect.timeperiod.tests.kr.hconnect.redis.base.WeeksTest
+ * debop4s.timeperiod.tests.debop4s.redis.base.WeeksTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 17. 오전 11:45

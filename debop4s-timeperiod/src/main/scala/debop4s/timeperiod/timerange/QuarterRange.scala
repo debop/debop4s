@@ -6,7 +6,7 @@ import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
 /**
- * kr.hconnect.timeperiod.timerange.QuarterRange
+ * debop4s.timeperiod.timerange.QuarterRange
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오후 5:41
  */

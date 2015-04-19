@@ -22,7 +22,7 @@ object DaySeeker {
 }
 
 /**
- * kr.hconnect.timeperiod.calendars.seeker.DaySeeker
+ * debop4s.timeperiod.calendars.seeker.DaySeeker
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오후 8:17
  */

@@ -12,7 +12,7 @@ import static debop4s.timeperiod.utils.Times.*;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.tools.TimesTrimTest
+ * debop4s.timeperiod.test.tools.TimesTrimTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 24. 오후 4:50

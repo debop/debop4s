@@ -4,7 +4,7 @@ import debop4s.timeperiod.calendars.CollectKind.CollectKind
 
 
 /**
- * kr.hconnect.timeperiod.calendars.CalendarPeriodCollectContext
+ * debop4s.timeperiod.calendars.CalendarPeriodCollectContext
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 12:51
  */

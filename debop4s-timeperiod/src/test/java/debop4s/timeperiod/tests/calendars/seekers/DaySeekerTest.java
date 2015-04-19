@@ -16,7 +16,7 @@ import org.junit.Test;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.calendars.seekers.DaySeekerFunSuite
+ * debop4s.timeperiod.test.calendars.seekers.DaySeekerFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 27. 오후 6:16

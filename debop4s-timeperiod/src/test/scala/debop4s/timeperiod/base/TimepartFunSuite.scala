@@ -7,7 +7,7 @@ import debop4s.timeperiod.utils.{Durations, Times}
 import org.joda.time.{DateTime, Duration}
 
 /**
- * kr.hconnect.timeperiod.tests.kr.hconnect.redis.base.TimepartTest
+ * debop4s.timeperiod.tests.debop4s.redis.base.TimepartTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 7. 오후 4:02

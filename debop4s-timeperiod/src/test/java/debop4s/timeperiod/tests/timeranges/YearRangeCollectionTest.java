@@ -16,7 +16,7 @@ import java.util.List;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.timeranges.YearRangeCollectionFunSuite
+ * debop4s.timeperiod.test.timeranges.YearRangeCollectionFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 26. 오전 12:12

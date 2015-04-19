@@ -13,7 +13,7 @@ import org.junit.Test;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.calendars.DateDiffFunSuite
+ * debop4s.timeperiod.test.calendars.DateDiffFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 26. 오후 6:55

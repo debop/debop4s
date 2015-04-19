@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 
 /**
- * kr.hconnect.timeperiod.test.TimePeriodTestBase
+ * debop4s.timeperiod.test.TimePeriodTestBase
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 17. 오후 2:08

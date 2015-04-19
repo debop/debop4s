@@ -11,7 +11,7 @@ import scala.beans.BeanProperty
 import scala.collection.SeqView
 
 /**
- * kr.hconnect.timeperiod.timerange.MonthTimeRange
+ * debop4s.timeperiod.timerange.MonthTimeRange
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오전 11:41
  */

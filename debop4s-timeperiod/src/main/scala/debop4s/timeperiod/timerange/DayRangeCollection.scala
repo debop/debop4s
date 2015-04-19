@@ -11,7 +11,7 @@ import scala.collection.SeqView
 
 
 /**
- * kr.hconnect.timeperiod.timerange.DayRangeCollection
+ * debop4s.timeperiod.timerange.DayRangeCollection
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 28. 오후 10:45
  */

@@ -8,7 +8,7 @@ import scala.beans.BeanProperty
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * kr.hconnect.timeperiod.tests.samples.TimeBlockPeriodRelationTestData
+ * debop4s.timeperiod.tests.samples.TimeBlockPeriodRelationTestData
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 8. 오후 11:47
  */

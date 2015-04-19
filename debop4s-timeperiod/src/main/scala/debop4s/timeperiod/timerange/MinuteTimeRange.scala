@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 import scala.beans.BeanProperty
 
 /**
- * kr.hconnect.timeperiod.timerange.MinuteTimeRange
+ * debop4s.timeperiod.timerange.MinuteTimeRange
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 27. 오후 7:03

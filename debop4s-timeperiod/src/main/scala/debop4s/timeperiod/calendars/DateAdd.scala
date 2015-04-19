@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 import scala.collection.JavaConverters._
 
 /**
- * kr.hconnect.timeperiod.calendars.DateAdd
+ * debop4s.timeperiod.calendars.DateAdd
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 1:51
  */

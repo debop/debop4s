@@ -8,7 +8,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * kr.hconnect.timeperiod.calendars.CalendarVisitorFilter
+ * debop4s.timeperiod.calendars.CalendarVisitorFilter
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 3. 오전 10:17

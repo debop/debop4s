@@ -10,7 +10,7 @@ import org.joda.time.{DateTime, Duration}
 import org.junit.Test
 
 /**
- * kr.hconnect.timeperiod.tests.kr.hconnect.redis.base.TimeRangeTest
+ * debop4s.timeperiod.tests.debop4s.redis.base.TimeRangeTest
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 8. 오후 11:29
  */

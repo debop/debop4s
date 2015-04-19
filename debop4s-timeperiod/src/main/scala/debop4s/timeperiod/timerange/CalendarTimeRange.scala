@@ -7,7 +7,7 @@ import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
 
 /**
- * kr.hconnect.timeperiod.timerange.CalendarTimeRange
+ * debop4s.timeperiod.timerange.CalendarTimeRange
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 27. 오후 4:16

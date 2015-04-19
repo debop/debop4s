@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <!-- help : http://kr.hconnect.redis.logback.qos.ch/manual/appenders.html -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{ISO8601} %-5level [%thread] %logger{36}.%method : %msg%n</pattern>

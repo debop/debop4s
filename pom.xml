@@ -21,18 +21,15 @@
         <module>debop4s-rediscala</module>
 
         <module>debop4s-data-common</module>
-        <module>debop4s-data-jpa</module>
         <module>debop4s-data-slick</module>
         <module>debop4s-data-slick3</module>
-        <module>debop4s-data</module>
+        <module>debop4s-data-orm</module>
 
         <module>debop4s-shiro</module>
         <module>debop4s-web-spring</module>
         <module>debop4s-web-scalatra</module>
 
         <module>debop4s-benchmark</module>
-
-
     </modules>
 
     <properties>
@@ -43,7 +40,7 @@
         <scalatra.version>2.3.1</scalatra.version>
         <slick.version>2.1.0</slick.version>
 
-        <springframework.version>4.1.5.RELEASE</springframework.version>
+        <springframework.version>4.1.6.RELEASE</springframework.version>
         <hibernate.version>4.3.7.Final</hibernate.version>
 
         <hibernate.validator.version>5.1.3.Final</hibernate.validator.version>
@@ -541,6 +538,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
                 <version>${springframework.version}</version>
             </dependency>
             <dependency>

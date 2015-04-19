@@ -11,7 +11,7 @@ import static debop4s.timeperiod.DayOfWeek.*;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.tools.TimesCalendarTest
+ * debop4s.timeperiod.test.tools.TimesCalendarTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 21. 오후 7:00

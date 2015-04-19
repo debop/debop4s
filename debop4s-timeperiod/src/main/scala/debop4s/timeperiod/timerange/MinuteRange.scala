@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 
 
 /**
- * kr.hconnect.timeperiod.timerange.MinuteRange
+ * debop4s.timeperiod.timerange.MinuteRange
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 27. 오후 7:11

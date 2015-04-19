@@ -18,7 +18,7 @@ import static debop4s.timeperiod.utils.Times.*;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.timeranges.DayRangeFunSuite
+ * debop4s.timeperiod.test.timeranges.DayRangeFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 25. 오후 4:04

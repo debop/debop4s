@@ -16,7 +16,7 @@ import java.util.Locale;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.tools.DurationsFunSuite
+ * debop4s.timeperiod.test.tools.DurationsFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 21. 오전 11:24

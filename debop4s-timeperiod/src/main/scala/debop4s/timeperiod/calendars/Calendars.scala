@@ -1,7 +1,7 @@
 package debop4s.timeperiod.calendars
 
 /**
- * kr.hconnect.timeperiod.calendars.Calendars
+ * debop4s.timeperiod.calendars.Calendars
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 1. 3. 오전 10:32

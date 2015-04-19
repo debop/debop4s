@@ -10,7 +10,7 @@ import debop4s.timeperiod.utils.{Durations, Times}
 import org.joda.time.DateTime
 
 /**
- * kr.hconnect.timeperiod.tests.timelines.TimeGapCalendarTest
+ * debop4s.timeperiod.tests.timelines.TimeGapCalendarTest
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 12. 오후 7:53
  */

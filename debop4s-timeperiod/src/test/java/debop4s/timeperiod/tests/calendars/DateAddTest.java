@@ -17,7 +17,7 @@ import static debop4s.timeperiod.utils.Times.asDate;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.calendars.DateAddFunSuite
+ * debop4s.timeperiod.test.calendars.DateAddFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 26. 오후 2:35

@@ -13,7 +13,7 @@ import scala.beans.BeanProperty
 import scala.collection.SeqView
 
 /**
- * kr.hconnect.timeperiod.timerange.YearTimeRange
+ * debop4s.timeperiod.timerange.YearTimeRange
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 27. 오후 6:48

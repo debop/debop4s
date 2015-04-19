@@ -5,7 +5,7 @@ import debop4s.timeperiod.tests.AbstractTimeFunSuite
 import debop4s.timeperiod.utils.Times._
 
 /**
- * kr.hconnect.timeperiod.tests.kr.hconnect.redis.base.TimePeriodContainerTest
+ * debop4s.timeperiod.tests.debop4s.redis.base.TimePeriodContainerTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 19. 오후 4:11

@@ -13,7 +13,7 @@ import org.junit.Test;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.timeranges.YearRangeFunSuite
+ * debop4s.timeperiod.test.timeranges.YearRangeFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 26. 오전 12:23

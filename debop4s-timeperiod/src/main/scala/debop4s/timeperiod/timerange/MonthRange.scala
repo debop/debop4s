@@ -6,7 +6,7 @@ import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
 /**
- * kr.hconnect.timeperiod.timerange.MonthRange
+ * debop4s.timeperiod.timerange.MonthRange
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 29. 오후 4:31
  */

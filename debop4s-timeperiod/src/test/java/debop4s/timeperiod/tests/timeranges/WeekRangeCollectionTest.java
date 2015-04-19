@@ -17,7 +17,7 @@ import java.util.List;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * kr.hconnect.timeperiod.test.timeranges.WeekRangeCollectionFunSuite
+ * debop4s.timeperiod.test.timeranges.WeekRangeCollectionFunSuite
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 25. 오후 11:49

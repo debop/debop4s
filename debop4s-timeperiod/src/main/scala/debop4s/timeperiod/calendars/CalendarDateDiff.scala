@@ -23,7 +23,7 @@ object CalendarDateDiff {
 }
 
 /**
- * kr.hconnect.timeperiod.calendars.CalendarDateDiff
+ * debop4s.timeperiod.calendars.CalendarDateDiff
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오후 7:55
  */

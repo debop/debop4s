@@ -18,7 +18,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import static scala.collection.JavaConversions.seqAsJavaList;
 
 /**
- * kr.hconnect.timeperiod.test.timelines.TimeGapCalculatorTest
+ * debop4s.timeperiod.test.timelines.TimeGapCalculatorTest
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 26. 오전 12:39

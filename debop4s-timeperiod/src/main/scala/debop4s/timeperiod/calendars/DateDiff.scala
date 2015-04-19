@@ -11,7 +11,7 @@ import org.joda.time.{DateTime, Duration}
 import scala.beans.BeanProperty
 
 /**
- * kr.hconnect.timeperiod.calendars.DateDiff
+ * debop4s.timeperiod.calendars.DateDiff
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 3:40
  */
