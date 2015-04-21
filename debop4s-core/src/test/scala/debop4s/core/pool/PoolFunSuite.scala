@@ -2,7 +2,8 @@ package debop4s.core.pool
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import debop4s.core.{AbstractCoreFunSuite, _}
+import debop4s.core._
+import debop4s.core.concurrent._
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global

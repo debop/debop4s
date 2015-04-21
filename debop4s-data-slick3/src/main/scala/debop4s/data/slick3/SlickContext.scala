@@ -41,7 +41,7 @@ object SlickContext {
   lazy val defaultDriver = SlickDrivers.getOrElse(defaultSetting.driverClass,
     sys.error("No suitable driver was found."))
 
-  lazy val defaultDB = forDataSource(defaultDataSource)
+  def defaultDB = forDataSource(defaultDataSource)
 
   def forDataSource(ds: DataSource = defaultDataSource): driver.backend.DatabaseDef =
     driver.api.Database.forDataSource(ds)

@@ -7,8 +7,6 @@ import slick.dbio.{Effect, NoStream, SynchronousDatabaseAction}
 import slick.jdbc.{JdbcBackend, TransactionIsolation}
 import slick.util.DumpInfo
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 /**
  * TransactionFunSuite
  * @author sunghyouk.bae@gmail.com

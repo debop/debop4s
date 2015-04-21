@@ -8,7 +8,6 @@ import debop4s.data.slick3.TestDatabase.driver.api._
 
 import slick.backend.DatabasePublisher
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 

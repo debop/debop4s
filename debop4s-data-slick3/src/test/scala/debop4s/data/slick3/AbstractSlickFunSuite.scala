@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory
 import slick.driver.JdbcProfile
 import slick.profile.{Capability, RelationalProfile, SqlProfile}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -18,6 +17,8 @@ abstract class AbstractSlickFunSuite
   extends FunSuite with Matchers with OptionValues with BeforeAndAfter with BeforeAndAfterAll {
 
   protected lazy val LOG = LoggerFactory.getLogger(getClass)
+
+  implicit val executionContext = scala.concurrent.ExecutionContext.global
 
   lazy val driver = SlickContext.driver
   lazy val profile = driver.profile

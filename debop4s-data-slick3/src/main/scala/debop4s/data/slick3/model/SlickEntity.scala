@@ -37,16 +37,24 @@ trait SlickEntity[Id] extends Serializable {
   // override def toString: String = s"${ this.getClass.getSimpleName }#id=$id"
 }
 
-trait IntEntity extends SlickEntity[Int]
-trait LongEntitiy extends SlickEntity[Long]
-trait UuidEntity extends SlickEntity[UUID]
-trait StringEntity extends SlickEntity[String]
-
-trait Versionable extends Serializable {
-  def version: Long
-  def version_=(newVersion: Long)
-  def withVersion(version: Long): this.type = {
-    this.version = version
-    this
-  }
+trait IntEntity extends Identifiable with SlickEntity[Int] {
+  override type Id = Int
 }
+trait LongEntitiy extends Identifiable with SlickEntity[Long] {
+  override type Id = Long
+}
+trait UuidEntity extends SlickEntity[UUID] with Identifiable {
+  override type Id = UUID
+}
+trait StringEntity extends SlickEntity[String] with Identifiable {
+  override type Id = String
+}
+
+//trait Versionable extends Serializable {
+//  def version: Long
+//  def version_=(newVersion: Long)
+//  def withVersion(version: Long): this.type = {
+//    this.version = version
+//    this
+//  }
+//}

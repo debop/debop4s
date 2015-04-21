@@ -68,31 +68,30 @@ class BankAccountFunSuite extends AbstractSlickFunSuite {
     owners.groupBy(identity).map(_._1).exec foreach println
     owners.groupBy(identity).map(_._1).length.exec shouldEqual 2
 
-
-    db.withTransaction { session =>
-      try {
-        bankAccountOwners.delete
-        bankAccounts.delete
-        accountOwners.delete
-        Thread.sleep(100)
-      } finally {
-        session.rollback()
-      }
-    }
-    // TODO: withSession, withTransaction, withRollback 은 구현해야겠다.
-    Closer.using(db.createSession()) { s =>
-      s.withTransaction {
-        try {
-          bankAccountOwners.delete
-          bankAccounts.delete
-          accountOwners.delete
-          Thread.sleep(100)
-        } finally {
-          s.rollback()
-        }
-      }
-    }
-    accountOwners.length.exec shouldEqual ownerData.size
+    //    db.withTransaction { session =>
+    //      try {
+    //        bankAccountOwners.delete
+    //        bankAccounts.delete
+    //        accountOwners.delete
+    //        Thread.sleep(100)
+    //      } finally {
+    //        session.rollback()
+    //      }
+    //    }
+    //    // TODO: withSession, withTransaction, withRollback 은 구현해야겠다.
+    //    Closer.using(db.createSession()) { s =>
+    //      s.withTransaction {
+    //        try {
+    //          bankAccountOwners.delete
+    //          bankAccounts.delete
+    //          accountOwners.delete
+    //          Thread.sleep(100)
+    //        } finally {
+    //          s.rollback()
+    //        }
+    //      }
+    //    }
+    //    accountOwners.count shouldEqual ownerData.size
   }
 
   test("explicit join") {

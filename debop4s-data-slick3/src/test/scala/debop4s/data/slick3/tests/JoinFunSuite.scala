@@ -6,7 +6,6 @@ import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3._
 import slick.lifted.BaseJoinQuery
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**

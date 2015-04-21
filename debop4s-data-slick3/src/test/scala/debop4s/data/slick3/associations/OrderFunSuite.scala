@@ -56,7 +56,7 @@ class OrderFunSuite extends AbstractSlickFunSuite {
     q.exec foreach println
 
     val innerJoin2 = orders join orderItems on (_.id === _.orderId)
-    innerJoin2.length.exec shouldEqual orderItems.count
+    innerJoin2.length.result.commit shouldEqual orderItems.count.commit
 
     // group by
     val joinQuery = for {

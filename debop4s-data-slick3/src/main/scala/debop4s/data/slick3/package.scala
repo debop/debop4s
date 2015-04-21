@@ -2,16 +2,16 @@ package debop4s.data
 
 import java.util.concurrent.{LinkedBlockingQueue, ThreadPoolExecutor, TimeUnit}
 
+import debop4s.core._
 import debop4s.core.concurrent._
-import debop4s.core.utils.Closer
-import debop4s.core.utils.Closer._
 import debop4s.data.slick3.SlickContext._
 import debop4s.data.slick3.SlickContext.driver.api._
 import org.reactivestreams.{Publisher, Subscriber, Subscription}
 
 import scala.collection.generic.CanBuildFrom
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.language.postfixOps
 import scala.util.control.NonFatal
 import scala.util.{Failure, Success}
 
@@ -21,6 +21,45 @@ import scala.util.{Failure, Success}
  * @author sunghyouk.bae@gmail.com
  */
 package object slick3 {
+
+  implicit class DBIOExtensions[T](dbAction: DBIO[T]) {
+
+    def query(implicit timeout: Duration = 30 seconds): T = {
+      runAction(dbAction)
+    }
+
+    def commit(implicit timeout: Duration = 5 minutes): T = {
+      runAction(dbAction.transactionally)
+    }
+
+    def rollback(implicit ec: ExecutionContext, timeout: Duration = 5 minutes): T = {
+      val db = SlickContext.defaultDB
+      val session = db.createSession()
+      session.force()
+      try {
+        db.run(dbAction).await(timeout)
+      } finally {
+        db.withSession { session => session.conn.rollback() }
+        db.close()
+      }
+    }
+
+    def runOnDb(implicit ec: ExecutionContext, timeout: Duration = 5 minutes): T = {
+      rollback(ec, timeout)
+    }
+
+    private def runAction(dbAction: DBIO[T])(implicit timeout: Duration): T = {
+      val db = SlickContext.defaultDB
+
+      // keey the database in memory with an extra connection
+      db.createSession().force()
+      try {
+        db.run(dbAction).await(timeout)
+      } finally {
+        db.close()
+      }
+    }
+  }
 
   implicit class DatabaseExtensions(db: SlickContext.driver.backend.DatabaseDef) {
 
@@ -100,7 +139,7 @@ package object slick3 {
      * }}}
      */
     def execPar[E <: Effect](actions: DBIOAction[_, NoStream, E]*) = {
-      val results = actions.par.map { action =>
+      val results: Seq[Future[Any]] = actions.par.map { action =>
         db.run(action)
       }.seq
       results.awaitAll

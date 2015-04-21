@@ -5,8 +5,6 @@ import debop4s.data.slick3._
 import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3.AbstractSlickFunSuite
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 /**
  * AggregateFunSuite
  * @author sunghyouk.bae@gmail.com

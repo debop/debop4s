@@ -24,23 +24,23 @@ class EmployeeFunSuite extends AbstractSlickFunSuite {
   }
 
   test("save and load Employee") {
-    val initialCount = employees.count
+    val initialCount = employees.count.commit
 
     val emp = Employee("Sunghyouk Bae", "11111", EncryptedString("debop"), new DateTime(2015, 4, 9, 0, 0))
     emp.id should not be defined
-    emp.isPersisted shouldBe false
+    // emp.isPersisted shouldBe false
 
-    val persistedEmp = employees.save(emp)
+    val persistedEmp = employees.save(emp).commit
     persistedEmp.id shouldBe defined
     persistedEmp.isPersisted shouldBe true
     persistedEmp.password.text shouldEqual "debop"
 
-    employees.exec foreach { emp => LOG.debug(s"\t$emp") }
+    employees.result.commit foreach { emp => LOG.debug(s"\t$emp") }
 
     // EncryptedString 처럼 Mapping 하는 것도 가능하다.
     employees.filter(_.password === EncryptedString("debop")).length.exec should be > 0
 
-    employees.count shouldBe (initialCount + 1)
+    employees.count.commit shouldBe (initialCount + 1)
   }
 
 }

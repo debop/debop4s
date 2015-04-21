@@ -3,7 +3,8 @@ package debop4s.core.retry
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
 
 import debop4s.core.utils.JavaTimer
-import debop4s.core.{AbstractCoreFunSuite, _}
+import debop4s.core._
+import debop4s.core.concurrent._
 import org.scalatest.BeforeAndAfterAll
 
 import scala.concurrent.ExecutionContext.Implicits.global

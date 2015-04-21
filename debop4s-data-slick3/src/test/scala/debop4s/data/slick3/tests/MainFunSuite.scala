@@ -7,8 +7,6 @@ import debop4s.data.slick3.TestDatabase.driver.api._
 
 import slick.backend.DatabasePublisher
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 /**
  * MainFunSuite
  * @author sunghyouk.bae@gmail.com

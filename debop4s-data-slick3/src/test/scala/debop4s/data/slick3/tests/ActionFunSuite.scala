@@ -4,7 +4,6 @@ import debop4s.core.concurrent._
 import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**

@@ -7,7 +7,6 @@ import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 import slick.lifted.CompiledFunction
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.reflect.ClassTag
 
 /**

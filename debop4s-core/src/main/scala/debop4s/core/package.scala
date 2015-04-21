@@ -71,28 +71,30 @@ package object core {
     def toUtf8String = Strings.getUtf8String(bytes)
   }
 
-  implicit val defaultDuration = Asyncs.defaultDuration
+  // NOTE: using import debop4s.core.concurrent._
+  //
+  //   implicit val defaultDuration = Asyncs.defaultDuration
 
-  implicit class AwaitableExtensions[+T](underlying: Awaitable[T]) {
-
-    def await(timeout: Long): T = Await.result(underlying, Duration(timeout, TimeUnit.MILLISECONDS))
-    def await(implicit atMost: Duration = defaultDuration) = Await.result(underlying, atMost)
-
-    def hold(timeout: Long) = Asyncs.ready(underlying, timeout)
-    def hold(implicit atMost: Duration = defaultDuration) = Await.ready(underlying, atMost)
-  }
-
-  implicit class AwaitableSequenceExtensions[A](underlying: Iterable[scala.concurrent.Future[A]]) {
-    lazy val timeout = FiniteDuration(15, TimeUnit.MINUTES)
-
-    def awaitAll(implicit timeout: Duration = timeout): Iterable[A] = {
-      Await.result(Future.sequence(underlying), timeout)
-    }
-
-    def holdAll(implicit timeout: Duration = timeout): Future[Iterable[A]] = {
-      Await.ready(Future.sequence(underlying), timeout)
-    }
-  }
+  //  implicit class AwaitableExtensions[+T](underlying: Awaitable[T]) {
+  //
+  //    def await(timeout: Long): T = Await.result(underlying, Duration(timeout, TimeUnit.MILLISECONDS))
+  //    def await(implicit atMost: Duration = defaultDuration) = Await.result(underlying, atMost)
+  //
+  //    def hold(timeout: Long): Unit = Asyncs.ready(underlying, timeout)
+  //    def hold(implicit atMost: Duration = defaultDuration): Unit = Await.ready(underlying, atMost)
+  //  }
+  //
+  //  implicit class AwaitableSequenceExtensions[A](underlying: Iterable[scala.concurrent.Future[A]]) {
+  //    lazy val timeout = FiniteDuration(15, TimeUnit.MINUTES)
+  //
+  //    def awaitAll(implicit timeout: Duration = timeout): Iterable[A] = {
+  //      Await.result(Future.sequence(underlying), timeout)
+  //    }
+  //
+  //    def holdAll(implicit timeout: Duration = timeout): Unit = {
+  //      Await.ready(Future.sequence(underlying), timeout)
+  //    }
+  //  }
 
   /**
    * 지정한 코드 블럭을 `Runnable` 인스턴스로 빌드합니다.

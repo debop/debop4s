@@ -24,7 +24,7 @@ package object concurrent {
     }
 
     /** future 객체의 수행이 완료될 때까지 기다렸다가 결과를 반환합니다. */
-    def await(implicit timeout: FiniteDuration = timeout): A = {
+    def await(implicit timeout: Duration = timeout): A = {
       Await.result(underlying, timeout)
     }
 

@@ -28,7 +28,12 @@ import slick.driver._
  * @author sunghyouk.bae@gmail.com 15. 3. 22.
  */
 trait SlickComponent
-  extends SlickQueryExtensions with SlickSchema with SlickProfile with SlickColumnMapper {
+  extends EntityTableQueries
+  with ActiveRecordExtensions
+  with SlickQueryExtensions
+  with SlickSchema
+  with SlickProfile
+  with SlickColumnMapper {
 
   protected val LOG = LoggerFactory.getLogger(getClass)
 

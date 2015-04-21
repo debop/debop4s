@@ -12,8 +12,6 @@ import scala.concurrent.Future
  */
 class NestingFunSuite extends AbstractSlickFunSuite {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-
   test("nested tuples") {
     class T(tag: Tag) extends Table[(Int, String, String)](tag, "T") {
       def a = column[Int]("A")

@@ -4,7 +4,6 @@ import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3._
 import slick.jdbc.meta._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
 /**

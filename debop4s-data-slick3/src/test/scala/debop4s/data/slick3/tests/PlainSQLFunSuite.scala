@@ -10,8 +10,6 @@ import slick.jdbc.{StaticQuery => Q, SQLActionBuilder, GetResult}
 import slick.profile.{SqlAction, SqlStreamingAction}
 
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext.Implicits.global
-
 
 /**
  * PlainSQLFunSuite

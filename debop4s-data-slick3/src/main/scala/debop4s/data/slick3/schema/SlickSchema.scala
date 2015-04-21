@@ -1,5 +1,7 @@
 package debop4s.data.slick3.schema
 
+import debop4s.data.slick3.model.{Versionable, Identifiable}
+
 
 /**
  * SlickSchema
@@ -11,7 +13,7 @@ trait SlickSchema {
   import driver.api._
 
   /** 자동 증가형 Id 컬럼을 가진 Table Schema 를 표현하는 trait */
-  trait TableWithId[Id] {
+  trait IdColumn[Id] {
     def id: Rep[Id]
   }
 
@@ -20,35 +22,28 @@ trait SlickSchema {
    */
   abstract class IdTable[E, Id](tag: Tag, schemaName: Option[String], tableName: String)
                                (implicit colType: BaseColumnType[Id])
-    extends Table[E](tag, schemaName, tableName) with TableWithId[Id] {
+    extends Table[E](tag, schemaName, tableName) with IdColumn[Id] {
 
     def this(tag: Tag, tableName: String)(implicit colType: BaseColumnType[Id]) =
       this(tag, None, tableName)
   }
 
   /** Version 정보를 가진 Table 에 대한 Schema 를 정의하는 trait 입니다. */
-  trait TableWithVersion {
-    def version: Column[Long]
+  trait VersionColumn {
+    def version: Rep[Long]
   }
-
-  /** Version 정보를 가진 Table 에 대한 Schema 를 정의하는 클래스입니다. */
-  abstract class VersionTable[E](tag: Tag, schemaName: Option[String], tableName: String)
-                                (implicit colType: BaseColumnType[Long])
-    extends Table[E](tag, schemaName, tableName) with TableWithVersion {
-
-    def this(tag: Tag, tableName: String)(implicit colType: BaseColumnType[Long]) =
-      this(tag, None, tableName)
-  }
-
-  trait TableWithIdAndVersion[Id] extends TableWithId[Id] with TableWithVersion
 
   /** Id와 Version 정보를 가진 Table 에 대한 Schema 를 정의하는 클래스입니다. */
-  abstract class IdVersionTable[E, Id](tag: Tag, schemaName: Option[String], tableName: String)
-                                      (implicit colType: BaseColumnType[Id])
-    extends Table[E](tag, schemaName, tableName) with TableWithIdAndVersion[Id] {
+  abstract class IdVersionTable[M, Id](tag: Tag, schemaName: Option[String], tableName: String)
+                                      (implicit val colType: BaseColumnType[Id])
+    extends IdTable[M, Id](tag, schemaName, tableName)(colType) with VersionColumn {
 
-    def this(tag: Tag, tableName: String)(implicit colType: BaseColumnType[Id]) =
+    def this(tag: Tag, tableName: String)(implicit mapping: BaseColumnType[Id]) =
       this(tag, None, tableName)
   }
+
+  type EntityTable[M <: Identifiable] = IdTable[M, M#Id]
+
+  type VersionableEntityTable[M <: Versionable] = IdVersionTable[M, M#Id]
 
 }

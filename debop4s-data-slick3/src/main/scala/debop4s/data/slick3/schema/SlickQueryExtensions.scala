@@ -1,8 +1,12 @@
 package debop4s.data.slick3.schema
 
 import debop4s.data.slick3._
-import debop4s.data.slick3.model.{SlickEntity, Versionable}
-import slick.dbio.Effect.Write
+import shapeless.Lens
+import slick.ast.BaseTypedType
+import slick.dbio.{FailureAction, SuccessAction}
+
+import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
 
 /**
  * Slick Query 에 대한 확장 메소드를 제공하는 trait 입니다.
@@ -10,160 +14,109 @@ import slick.dbio.Effect.Write
  * @author sunghyouk.bae@gmail.com
  */
 trait SlickQueryExtensions {
-  this: SlickComponent =>
+  self: SlickComponent =>
 
   import driver.api._
 
+  trait DeleteAll {
+    this: TableQuery[_ <: Table[_]] =>
+
+    def deleteAll(): DBIO[Int] = {
+      this.filter(_ => LiteralColumn(true)).delete
+    }
+  }
+
   /**
    * Query method 를 제공하는 Extensions 입니다.
-   * @param query `Table[M]` 에 대한 쿼리 객체 (에: TableQuery[User])
-   * @tparam M Model 의 수형 (예: User)
    */
-  abstract class BaseTableExtensions[M](query: TableQuery[_ <: Table[M]]) {
-    def count: Int = query.length.exec
-    def exists: Boolean = query.exists.exec
-    def list: List[M] = query.exec.toList
+  abstract class ActiveTableQuery[M, T <: Table[M]](cons: Tag => T) extends TableQuery(cons) {
+    def count: DBIO[Int] = this.size.result
 
-    def page(pageIndex: Int = 0, pageSize: Int = 10): List[M] =
-      query.drop(pageIndex * pageSize).take(pageSize).to[List].exec
-
-    def save(model: M): M
-    def saveAll(models: M*): List[M]
-    def deleteEntity(model: M): Boolean
+    def save(model: M)(implicit ec: ExecutionContext): DBIO[M]
+    def update(model: M)(implicit ec: ExecutionContext): DBIO[M]
+    def delete(model: M)(implicit ec: ExecutionContext): DBIO[Unit]
   }
 
 
   /**
    * Id를 가지는 정보 (Entity) 를 위한 쿼리 확장 메소드를 제공합니다.
-   * @param query `IdTable[E]` 에 대한 쿼리 객체
-   * @tparam E  Entity 수형
+   * @tparam M  Entity 수형
    * @tparam Id Entity Identifier 의 수형
    */
-  abstract class BaseIdTableExtensions[E, Id: BaseColumnType](query: TableQuery[_ <: Table[E] with TableWithId[Id]])
-    extends BaseTableExtensions(query) {
+  abstract class TableWithIdQuery[M, Id, T <: IdTable[M, Id]](cons: Tag => T, idLens: Lens[M, Option[Id]])
+                                                             (implicit ev: BaseTypedType[Id])
+    extends ActiveTableQuery[M, T](cons) {
 
-    def extractId(entity: E): Option[Id]
-
-    def withId(entity: E, id: Id): E
-
-    def filterById(id: Id) = query.filter(_.id === id.bind)
-
-    def filterByIdOption(idOpt: Option[Id]) =
-      idOpt map { id => filterById(id) } getOrElse sys.error(s"idOpt=[$idOpt] should not be None.")
-
-    def filterByIdIn(ids: Id*) = query.filter(_.id inSet ids)
-
-    protected def autoInc = query returning query.map(_.id)
-
-    // NOTE: AutoInc 에 대해서 forceInsert가 아닌 insertOrUpdate 를 사용해야 한다.
-    def addAction(entity: E): driver.DriverAction[_, NoStream, Write] =
-      autoInc into { case (e, id) => id } insertOrUpdate entity
-
-    def add(entity: E): Id = {
-      db.exec(addAction(entity)).asInstanceOf[Option[Id]].get
-    }
-
-    def updateAction(entity: E): driver.DriverAction[_, NoStream, Write] =
-      filterByIdOption(extractId(entity)).update(entity)
-
-    def saveAction(entity: E): driver.DriverAction[_, NoStream, Write] = {
-      extractId(entity) match {
-        case Some(id) => filterById(id).update(entity)
-        case None => addAction(entity)
+    private def tryExtractId(model: M): DBIO[Id] = {
+      idLens.get(model) match {
+        case Some(id) => SuccessAction(id)
+        case None => FailureAction(new RowNotFoundException(model))
       }
     }
 
-    override def save(entity: E) = {
-      extractId(entity) match {
-        case Some(id) => filterById(id).update(entity).exec; entity
-        case None => withId(entity, add(entity))
+    val filterById = this.findBy(x => x.id)
+
+    def findById(id: Id): DBIO[M] = filterById(id).result.head
+
+    def findOptionById(id: Id): DBIO[Option[M]] = filterById(id).result.headOption
+
+    def add(model: M): DBIO[Id] = {
+      this.returning(this.map(_.id)) += model
+    }
+
+    override def save(model: M)(implicit ec: ExecutionContext): DBIO[M] = {
+      idLens.get(model) match {
+        case Some(id) => update(id, model)
+        case None => add(model).map { id => idLens.set(model)(Option(id)) }
       }
     }
 
-    /**
-     * 지정된 엔티티들을 저장 또는 갱신합니다.
-     * @param entities 저장할 엔티티들 (insert or update)
-     * @return
-     */
-    override def saveAll(entities: E*): List[E] = {
-      entities.map(save).toList
+    override def update(model: M)(implicit ec: ExecutionContext): DBIO[M] = {
+      tryExtractId(model).flatMap { id => update(id, model) }
     }
 
-    def deleteEntityAction(entity: E): Option[driver.DriverAction[Int, NoStream, Write]] = {
-      extractId(entity).map(id => deleteByIdAction(id))
+    protected def update(id: Id, model: M)(implicit ec: ExecutionContext): DBIO[M] = {
+      val triedUpdate = filterById(id).update(model).mustAffectOneSingleRow.asTry
+
+      triedUpdate.map {
+        case Success(_) => model
+        case Failure(NoRowsAffectedException) => throw new RowNotFoundException(model)
+        case Failure(e) => throw e
+      }
     }
 
-    override def deleteEntity(entity: E): Boolean =
-      extractId(entity).exists(id => deleteById(id))
-
-    def deleteById(id: Id): Boolean =
-      filterById(id).delete.exec == 1
-
-    def deleteByIdAction(id: Id): driver.DriverAction[Int, NoStream, Write] = {
-      filterById(id).delete
+    override def delete(model: M)(implicit ec: ExecutionContext): DBIO[Unit] = {
+      tryExtractId(model).flatMap { id =>
+        deleteById(id)
+      }
     }
 
-    def findById(id: Id): E = findOptionById(id).get
-    def findOptionById(id: Id): Option[E] = filterById(id).exec.headOption.asInstanceOf[Option[E]]
-
-    def compile = Compiled(query)
-
-    def byId(id: Id) = query.filter(_.id === id.bind)
-
-    /**
-     * 특정 컬럼명에 특정 값에 따른 동적 쿼리를 생성합니다.
-     * {{{
-     *   users.byParam("email", "sunghyouk.bae@gmail.com")
-     *        .sortDynamic("email.asc, registDate.desc")
-     *        .paging(0, 10)
-     * }}}
-     * @param column 컬럼 명
-     * @param value 조회하고자하는 컬럼의 값
-     * @return
-     */
-    def byParam(column: String, value: Rep[String]) =
-      query.withFilter(table => table.column[String](column) === value)
-  }
-
-  abstract class IdTableExtensions[E <: SlickEntity[Id], Id: BaseColumnType](query: TableQuery[_ <: Table[E] with TableWithId[Id]])
-    extends BaseIdTableExtensions(query) {
-
-    override def extractId(entity: E): Option[Id] = entity.id
-    override def withId(entity: E, id: Id): E = entity.withId(id).asInstanceOf[E]
-
-    def deleteAll(entities: E*): Boolean = {
-      val ids = entities.flatMap(_.id).toSet
-      filterByIdIn(ids.toSeq: _*).delete.exec == ids.size
+    def deleteById(id: Id)(implicit ec: ExecutionContext): DBIO[Unit] = {
+      filterById(id).delete.mustAffectOneSingleRow.map(_ => Unit)
     }
 
-    def deleteAllById(ids: Id*) = {
-      val idsets = ids.toSet
-      filterByIdIn(idsets.toSeq: _*).delete.exec == idsets.size
+    def deleteAll()(implicit ec: ExecutionContext): DBIO[Unit] = {
+      this.filter(_ => LiteralColumn(true)).delete.map(_ => Unit)
     }
   }
 
-  abstract class VersionableTableExtensions[E <: SlickEntity[Id] with Versionable, Id: BaseColumnType]
-  (query: TableQuery[_ <: Table[E] with TableWithIdAndVersion[Id]])
-    extends IdTableExtensions(query) {
+  implicit class UpdateActionExtensionMethods(dbAction: DBIO[Int]) {
 
-    override def save(entity: E): E = {
-      val currentVersion = entity.version
-      val newEntity = entity.withVersion(currentVersion + 1).asInstanceOf[E]
+    def mustAffectOneSingleRow(implicit ec: ExecutionContext): DBIO[Int] = {
+      dbAction.flatMap {
+        case 1 => dbAction
+        case 0 => DBIO.failed(NoRowsAffectedException)
+        case n if n > 1 => DBIO.failed(new TooManyRowsAffectedException(affectedRowCount = n, expectedRowCount = 1))
+      }
+    }
 
-      extractId(newEntity) match {
-        case Some(id) =>
-          val q = query.filter(_.id === id.bind).filter(_.version === currentVersion.bind)
-          if (q.length.exec != 1)
-            throw new StaleObjectStateException(entity)
-          q.update(newEntity).exec
-          newEntity
-        case None =>
-          withId(newEntity, add(newEntity))
+    def mustAffectAtLeastOneRow(implicit ec: ExecutionContext): DBIO[Int] = {
+      dbAction.flatMap {
+        case n if n >= 1 => dbAction
+        case 0 => DBIO.failed(NoRowsAffectedException)
       }
     }
   }
 
-  class StaleObjectStateException[T <: Versionable](versionable: T)
-    extends RuntimeException(s"Optimistic locking error = object in stale state: $versionable")
 
 }

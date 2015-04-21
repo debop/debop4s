@@ -9,7 +9,6 @@ import debop4s.data.slick3.SlickContext._
 import slick.backend.DatabasePublisher
 import slick.util.TupleMethods._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
