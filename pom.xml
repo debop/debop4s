@@ -141,6 +141,13 @@
                 <version>2.2.0</version>
             </dependency>
 
+            <!-- Shapeless -->
+            <dependency>
+                <groupId>com.chuusai</groupId>
+                <artifactId>shapeless_${scala.main.version}</artifactId>
+                <version>2.1.0</version>
+            </dependency>
+
             <!-- Scalatra -->
             <dependency>
                 <groupId>org.scalatra</groupId>
@@ -911,7 +918,7 @@
             <dependency>
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest_2.11</artifactId>
-                <version>2.2.0</version>
+                <version>2.2.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

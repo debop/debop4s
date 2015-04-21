@@ -41,6 +41,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Shapeless -->
+        <dependency>
+            <groupId>com.chuusai</groupId>
+            <artifactId>shapeless_${scala.main.version}</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
         <!-- debop4s -->
         <dependency>
             <groupId>com.github.debop4s</groupId>

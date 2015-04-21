@@ -21,7 +21,8 @@ class HikariDataSourceFactory extends AbstractDataSourceFactory {
    * HikariCP DataSource를 생성합니다.
    * @param dataSourceClassName dataSourceClassName
    *                            ( 기존 driverClass 가 아닙니다 : mysql용은 com.mysql.jdbc.jdbc2.optional.MysqlDataSource 입니다 )
-   * @param url         Database 주소
+   * @param driverClass jdbc driver class
+   * @param url         jdbc url
    * @param username    사용자 명
    * @param passwd      사용자 패스워드
    * @return [[javax.sql.DataSource]] 인스턴스

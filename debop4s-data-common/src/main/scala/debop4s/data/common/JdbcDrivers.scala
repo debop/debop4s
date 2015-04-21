@@ -1,8 +1,7 @@
 package debop4s.data.common
 
 /**
- * JdbcDrivers
- * @author sunghyouk.bae@gmail.com
+ * JDBC Driver Class 명칭
  */
 object JdbcDrivers {
 
