@@ -1,6 +1,7 @@
 package debop4s.rediscala
 
 import debop4s.core._
+import debop4s.core.concurrent._
 
 /**
  * RedisCappedCollectionTest

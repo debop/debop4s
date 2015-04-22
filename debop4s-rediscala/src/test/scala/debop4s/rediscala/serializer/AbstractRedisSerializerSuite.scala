@@ -2,6 +2,7 @@ package debop4s.rediscala.serializer
 
 import akka.util.ByteString
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.rediscala.AbstractRedisFunSuite
 import debop4s.rediscala.client.RedisSyncClient
 import redis.{ByteStringFormatter, RedisClient}

@@ -3,6 +3,7 @@ package debop4s.rediscala.spring
 import java.util.concurrent.TimeUnit
 
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.rediscala.serializer.SnappyFstValueFormatter
 import org.slf4j.LoggerFactory
 import org.springframework.cache.Cache

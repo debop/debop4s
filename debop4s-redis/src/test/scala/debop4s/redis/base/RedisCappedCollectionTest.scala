@@ -1,6 +1,6 @@
 package debop4s.redis.base
 
-import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.redis.AbstractRedisTest
 
 /**

@@ -148,6 +148,13 @@
                 <version>2.1.0</version>
             </dependency>
 
+            <!-- ReactiveX RxScala -->
+            <dependency>
+                <groupId>io.reactivex</groupId>
+                <artifactId>rxscala_${scala.main.version}</artifactId>
+                <version>0.24.1</version>
+            </dependency>
+
             <!-- Scalatra -->
             <dependency>
                 <groupId>org.scalatra</groupId>

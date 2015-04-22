@@ -1,6 +1,7 @@
 package debop4s.rediscala.client
 
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.rediscala.config.RedisConfiguration
 import debop4s.rediscala.serializer.SnappyFstValueFormatter
 import org.scalatest.{FunSuite, Matchers, OptionValues}

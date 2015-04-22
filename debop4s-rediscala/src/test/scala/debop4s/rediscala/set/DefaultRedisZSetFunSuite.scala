@@ -1,6 +1,7 @@
 package debop4s.rediscala.set
 
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.rediscala.{AbstractRedisFunSuite, _}
 import org.springframework.beans.factory.annotation.Autowired
 

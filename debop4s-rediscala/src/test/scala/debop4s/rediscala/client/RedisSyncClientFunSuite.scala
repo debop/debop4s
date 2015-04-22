@@ -5,6 +5,7 @@ import java.util
 import akka.util.ByteString
 import com.google.common.collect.Sets
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.rediscala.MemberScore
 import debop4s.rediscala.config.RedisConfiguration
 import debop4s.rediscala.serializer.BinaryValueFormatter

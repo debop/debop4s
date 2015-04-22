@@ -1,6 +1,6 @@
 package debop4s.rediscala
 
-import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.rediscala.serializer.SnappyFstValueFormatter
 import debop4s.rediscala.utils.RedisHelper
 import redis.RedisClient

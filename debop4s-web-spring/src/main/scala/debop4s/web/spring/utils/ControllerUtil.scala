@@ -7,6 +7,7 @@ import java.util.{Map => JMap}
 import javax.servlet.http.HttpServletResponse
 
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.core.io.FileUtils
 import debop4s.web.spring.ApiResult
 import org.slf4j.LoggerFactory

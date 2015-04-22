@@ -3,6 +3,7 @@ package debop4s.rediscala.logback
 import ch.qos.logback.classic.spi.{LoggingEvent, ThrowableProxyUtil}
 import ch.qos.logback.core.{CoreConstants, UnsynchronizedAppenderBase}
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.core.json.JacksonSerializer
 import debop4s.core.logback.LogDocument
 import debop4s.rediscala.{RedisConsts, _}

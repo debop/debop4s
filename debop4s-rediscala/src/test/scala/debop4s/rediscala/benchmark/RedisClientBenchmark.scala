@@ -1,6 +1,7 @@
 package debop4s.rediscala.benchmark
 
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.rediscala._
 import org.scalameter.{Gen, PerformanceTest}
 import redis.{RedisClient, RedisClientPool, RedisServer}

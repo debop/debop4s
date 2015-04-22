@@ -3,6 +3,7 @@ package debop4s.rediscala.utils
 import java.util.concurrent.TimeUnit
 
 import debop4s.core._
+import debop4s.core.concurrent._
 import debop4s.rediscala._
 import redis.RedisClient
 
