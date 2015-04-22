@@ -14,9 +14,12 @@ import scala.concurrent.duration.Duration
  *
  * from Twitter/util
  */
-class GcPredicator(pool: Pool, period: Duration, timer: Timer, estimator: Estimator[Double]) {
+class GcPredicator(pool: Pool,
+                   period: Duration,
+                   timer: Timer,
+                   estimator: Estimator[Double]) {
 
-  private[this] def loop() {
+  private[this] def loop(): Unit = {
     for (bps <- pool.estimateAllocRate(period, timer)) {
       synchronized { estimator.measure(bps.toDouble) }
       loop()

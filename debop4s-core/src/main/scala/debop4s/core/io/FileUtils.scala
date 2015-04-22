@@ -28,13 +28,14 @@ import scala.util.{Failure, Success, Try}
  */
 object FileUtils {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  val DEFUALT_BUFFER_SIZE = 4096
-  val UTF8 = Charset.forName("UTF-8")
+  val DEFUALT_BUFFER_SIZE: Int = 4096
+  val UTF8: Charset = Charset.forName("UTF-8")
 
   @varargs
-  def combine(base: String, others: String*): Path = Paths.get(base, others: _*)
+  def combine(base: String, others: String*): Path =
+    Paths.get(base, others: _*)
 
   @varargs
   def combine(base: Path, others: String*): Path = {
@@ -45,7 +46,8 @@ object FileUtils {
     result
   }
 
-  def combine(base: Path, other: Path) = base.resolve(other)
+  def combine(base: Path, other: Path): Path =
+    base.resolve(other)
 
   @varargs
   def createDirectory(dir: Path, attrs: FileAttribute[_]*): Path =
@@ -93,7 +95,8 @@ object FileUtils {
    * @param path the resource-relative path to make a temp file from
    * @return the temp File object
    */
-  def createTempFile(path: Path): File = createTempFile(getClass, path)
+  def createTempFile(path: Path): File =
+    createTempFile(getClass, path)
 
   /**
    * Create a temporary file from the given (resource) path. The
@@ -144,7 +147,7 @@ object FileUtils {
    * 파일/디렉토리를 복사합니다.
    */
   @varargs
-  def copy(src: Path, target: Path, options: CopyOption*) {
+  def copy(src: Path, target: Path, options: CopyOption*): Unit = {
     Files.copy(src, target, options: _*)
   }
 
@@ -169,7 +172,7 @@ object FileUtils {
   /**
    * 지정한 경로의 파일을 삭제합니다.
    */
-  def delete(path: Path) {
+  def delete(path: Path): Unit = {
     log.debug(s"delete file. path=$path")
     Files.delete(path)
   }
@@ -177,7 +180,7 @@ object FileUtils {
   /**
    * 지정한 경로의 파일이 존재한다면 삭제합니다.
    */
-  def deleteIfExists(path: Path) {
+  def deleteIfExists(path: Path): Unit = {
     Files.deleteIfExists(path)
   }
 
@@ -206,7 +209,7 @@ object FileUtils {
     }
   }
 
-  def deleteDirectoryAsync(dir: Path, deep: Boolean = true) = Future {
+  def deleteDirectoryAsync(dir: Path, deep: Boolean = true): Future[Unit] = Future {
     deleteDirectory(dir, deep)
   }
 
@@ -217,7 +220,8 @@ object FileUtils {
   def exists(path: Path, linkOptions: LinkOption*): Boolean =
     Files.exists(path, linkOptions: _*)
 
-  def readAllBytes(path: Path): Array[Byte] = Files.readAllBytes(path)
+  def readAllBytes(path: Path): Array[Byte] =
+    Files.readAllBytes(path)
 
   def readAllBytesAsync(path: Path): Future[Array[Byte]] =
     readAllBytesAsync(path, StandardOpenOption.READ)
@@ -281,66 +285,58 @@ object FileUtils {
   }
 
   @varargs
-  def readAllLinesAsync(path: Path, cs: Charset, openOptions: OpenOption*): Future[Try[util.List[String]]] = Future {
-    val future = readAllBytesAsync(path, openOptions: _*)
-    readAllLines(Await.result(future, 60 seconds), cs)
-  }
+  def readAllLinesAsync(path: Path, cs: Charset, openOptions: OpenOption*): Future[Try[util.List[String]]] =
+    Future {
+      val future = readAllBytesAsync(path, openOptions: _*)
+      readAllLines(Await.result(future, 60 seconds), cs)
+    }
 
-  def readAllLinesAsync(is: InputStream): Future[Try[util.List[String]]] = {
+  def readAllLinesAsync(is: InputStream): Future[Try[util.List[String]]] =
     readAllLinesAsync(is, UTF8)
-  }
 
-  def readAllLinesAsync(is: InputStream, cs: Charset): Future[Try[util.List[String]]] = Future {
-    readAllLines(is, cs)
-  }
+  def readAllLinesAsync(is: InputStream, cs: Charset): Future[Try[util.List[String]]] =
+    Future { readAllLines(is, cs) }
 
-  def readAllLinesAsync(input: Array[Byte]): Future[Try[util.List[String]]] = {
+  def readAllLinesAsync(input: Array[Byte]): Future[Try[util.List[String]]] =
     readAllLinesAsync(input, UTF8)
-  }
 
-  def readAllLinesAsync(input: Array[Byte], cs: Charset): Future[Try[util.List[String]]] = Future {
-    readAllLines(input, cs)
-  }
+  def readAllLinesAsync(input: Array[Byte], cs: Charset): Future[Try[util.List[String]]] =
+    Future { readAllLines(input, cs) }
 
-  def write(path: Path, input: Array[Byte]): Try[Path] = {
+  def write(path: Path, input: Array[Byte]): Try[Path] =
     write(path, input, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-  }
 
   @varargs
-  def write(path: Path, input: Array[Byte], options: OpenOption*): Try[Path] = Try {
-    Files.write(path, input, options: _*)
-  }
+  def write(path: Path, input: Array[Byte], options: OpenOption*): Try[Path] =
+    Try { Files.write(path, input, options: _*) }
 
-  def write(path: Path, lines: JIterable[String], cs: Charset = UTF8): Try[Path] = {
+  def write(path: Path, lines: JIterable[String], cs: Charset = UTF8): Try[Path] =
     write(path, lines, cs, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-  }
 
   @varargs
-  def write(path: Path, lines: JIterable[String], cs: Charset, options: OpenOption*): Try[Path] = Try {
-    Files.write(path, lines, cs, options: _*)
-  }
+  def write(path: Path, lines: JIterable[String], cs: Charset, options: OpenOption*): Try[Path] =
+    Try { Files.write(path, lines, cs, options: _*) }
 
-  def writeAsync(path: Path, input: Array[Byte]): Future[Int] = {
+  def writeAsync(path: Path, input: Array[Byte]): Future[Int] =
     writeAsync(path, input, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-  }
 
   @varargs
   @inline
-  def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Int] = Future {
-    Try(AsynchronousFileChannel.open(path, options: _*)) match {
-      case Success(channel) =>
-        using(channel) { fc =>
-          val future = fc.write(ByteBuffer.wrap(input), 0)
-          future.get(15, TimeUnit.MINUTES)
-        }
-      case Failure(e) =>
-        throw new RuntimeException("Fail to write to file.", e)
+  def writeAsync(path: Path, input: Array[Byte], options: OpenOption*): Future[Int] =
+    Future {
+      Try(AsynchronousFileChannel.open(path, options: _*)) match {
+        case Success(channel) =>
+          using(channel) { fc =>
+            val future = fc.write(ByteBuffer.wrap(input), 0)
+            future.get(15, TimeUnit.MINUTES)
+          }
+        case Failure(e) =>
+          throw new RuntimeException("Fail to write to file.", e)
+      }
     }
-  }
 
-  def writeAsync(path: Path, lines: JIterable[String], cs: Charset = UTF8): Future[Int] = {
+  def writeAsync(path: Path, lines: JIterable[String], cs: Charset = UTF8): Future[Int] =
     writeAsync(path, lines, cs, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-  }
 
   @varargs
   def writeAsync(path: Path, lines: JIterable[String], cs: Charset, options: OpenOption*): Future[Int] = {

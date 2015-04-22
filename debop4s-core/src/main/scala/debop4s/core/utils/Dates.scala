@@ -67,7 +67,7 @@ object Dates {
   /**
    * 해당 일이 속한 월 주차 (Month-Week) 의 주차
    */
-  @deprecated("getMonthAndWeekOfMonth 를 사용하세요", "2.0.0")
+  @deprecated("getMonthAndWeekOfMonth 를 사용하세요", "0.5.0")
   def getWeekOfMonth(moment: DateTime): Int =
     moment.getWeekOfWeekyear - startOfMonth(moment).getWeekOfWeekyear + 1
 

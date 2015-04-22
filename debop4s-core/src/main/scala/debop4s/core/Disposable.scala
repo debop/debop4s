@@ -21,16 +21,14 @@ trait Disposable[+T] {
 
 object Disposable {
   def const[T](t: T) = new Disposable[T] {
-    def get = t
-
-    def dispose(deadline: Time) = Future(())
+    override def get = t
+    override def dispose(deadline: Time) = Future(())
   }
 }
 
-trait Managed[+T] {
-  selfT =>
+trait Managed[+T] {selfT =>
 
-  def foreach(action: T => Unit) {
+  def foreach(action: T => Unit): Unit = {
     val r = this.make()
     try action(r.get) finally r.dispose()
   }

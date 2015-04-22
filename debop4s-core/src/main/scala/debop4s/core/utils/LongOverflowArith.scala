@@ -4,7 +4,8 @@ package debop4s.core.utils
 class LongOverflowException(msg: String) extends RuntimeException(msg)
 
 object LongOverflowArith {
-  def add(a: Long, b: Long) = {
+
+  def add(a: Long, b: Long): Long = {
     val c = a + b
     if (((a ^ c) & (b ^ c)) < 0)
       throw new LongOverflowException(a + " + " + b)
@@ -12,7 +13,7 @@ object LongOverflowArith {
       c
   }
 
-  def sub(a: Long, b: Long) = {
+  def sub(a: Long, b: Long): Long = {
     val c = a - b
     if (((a ^ c) & (-b ^ c)) < 0)
       throw new LongOverflowException(a + " - " + b)

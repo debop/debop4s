@@ -17,11 +17,11 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
   require(maxSize > 0, s"maxSize should greater than 0")
 
   private val array = new Array[A](maxSize)
-  private var top = 0
-  private var _count = 0
+  private var top: Int = 0
+  private var _count: Int = 0
 
-  def length = _count
-  override def size = _count
+  def length: Int = _count
+  override def size: Int = _count
 
   def clear(): Unit = {
     top = 0

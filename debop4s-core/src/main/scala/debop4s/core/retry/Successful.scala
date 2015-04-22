@@ -28,8 +28,8 @@ object Successful {
   implicit def tried[A]: Successful[Try[A]] =
     Successful(_.isSuccess)
 
-  val always = Successful(Function.const(true))
-  val never = Successful(Function.const(false))
+  val always: Successful[Any] = Successful(Function.const(true))
+  val never: Successful[Any] = Successful(Function.const(false))
 
 
   def apply[T](predicate: T => Boolean) = new Successful[T](predicate)

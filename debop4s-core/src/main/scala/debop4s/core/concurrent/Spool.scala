@@ -52,7 +52,7 @@ sealed trait Spool[+A] {
    * Apply {{f}} for each item in the spool, until the end.  {{f}} is
    * applied as the items become available.
    */
-  def foreach[B](f: A => B) = foreachElem { _ foreach f }
+  def foreach[B](f: A => B): Future[Unit] = foreachElem { _ foreach f }
 
   /**
    * A version of {{foreach}} that wraps each element in an {{Option}},
@@ -144,11 +144,12 @@ sealed trait Spool[+A] {
 }
 
 object Spool {
+
   case class Cons[A](value: A, next: Future[Spool[A]]) extends Spool[A] {
-    def isEmpty = false
-    def head = value
-    def tail = next
-    def collect[B](f: PartialFunction[A, B]) = {
+    def isEmpty: Boolean = false
+    def head: A = value
+    def tail: Future[Spool[A]] = next
+    def collect[B](f: PartialFunction[A, B]): Future[Spool[B]] = {
       val _next = next flatMap { _.collect(f) }
       if (f.isDefinedAt(head)) Future(Cons(f(head), _next))
       else _next
@@ -158,9 +159,10 @@ object Spool {
   }
 
   private class LazyCons[A](val head: A, next: => Future[Spool[A]]) extends Spool[A] {
-    def isEmpty = false
-    lazy val tail = next
-    def collect[B](f: PartialFunction[A, B]) = {
+    def isEmpty: Boolean = false
+    lazy val tail: Future[Spool[A]] = next
+
+    def collect[B](f: PartialFunction[A, B]): Future[Spool[B]] = {
       val _next = tail flatMap { _.collect(f) }
       if (f.isDefinedAt(head)) Future(Cons(f(head), _next))
       else _next
@@ -170,11 +172,11 @@ object Spool {
   }
 
   object Empty extends Spool[Nothing] {
-    def isEmpty = true
-    def head = throw new NoSuchElementException("spool is empty")
-    def tail = Future.failed(new NoSuchElementException("spool is empty"))
-    def collect[B](f: PartialFunction[Nothing, B]) = Future(this)
-    override def toString = "Empty"
+    def isEmpty: Boolean = true
+    def head: Nothing = throw new NoSuchElementException("spool is empty")
+    def tail: Future[Nothing] = Future.failed(new NoSuchElementException("spool is empty"))
+    def collect[B](f: PartialFunction[Nothing, B]): Future[Empty.type] = Future(this)
+    override def toString: String = "Empty"
   }
 
   /**

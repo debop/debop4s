@@ -126,20 +126,20 @@ object jodatime {
     /**
      * Duration 값의 절대값을 반환합니다.
      */
-    def abs = if (self < JDuration.ZERO) new JDuration(-self.getMillis) else self
+    def abs: JDuration = if (self < JDuration.ZERO) new JDuration(-self.getMillis) else self
 
     /**
      * 현재 시각 (`Time.now`) 이후의 값을 반환합니다.
      */
-    def fromNow = DateTime.now() + self
+    def fromNow: DateTime = DateTime.now() + self
     /**
      * 현재 시각 (`Time.now`) 이전의 값을 반환합니다.
      */
-    def ago = DateTime.now() - self
+    def ago: DateTime = DateTime.now() - self
     /**
      * Unix Epoch 이후의 값을 반환합니다.
      */
-    def afterEpoch = new DateTime(0) + self
+    def afterEpoch: DateTime = new DateTime(0) + self
 
     /**
      * `self` 와 지정된 `that`의 차이를 반환합니다.
@@ -157,7 +157,7 @@ object jodatime {
     def asUtc(): DateTime = self.toDateTime(DateTimeZone.UTC)
 
     /** 지정한 TimeZone으로 변경한다 */
-    def asLocal(tz: DateTimeZone = DateTimeZone.getDefault) = self.toDateTime(tz)
+    def asLocal(tz: DateTimeZone = DateTimeZone.getDefault): DateTime = self.toDateTime(tz)
 
     /** Timestamp 수형으로 변환한다 */
     def asTimestamp: Timestamp = new Timestamp(self.getMillis)

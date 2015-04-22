@@ -17,33 +17,33 @@ object Stopwatch {
  */
 class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
-
   def this() = this("", false)
   def this(msg: String) = this(msg, false)
 
-  val NANO_TO_MILLISECONDS = 1000000.0
-  var startTime: Long = 0
-  var endTime: Long = 0
-  var elapsedTime: Long = 0
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  def getElapsedTime = elapsedTime
+  private[this] val NANO_TO_MILLISECONDS: Double = 1000000.0
+
+  private[this] var startTime: Long = 0L
+  private[this] var endTime: Long = 0L
+  private[this] var elapsedTime: Long = 0L
+
+  def getElapsedTime: Long = elapsedTime
 
   private def cleanUp() {
     System.gc()
   }
 
-  def reset() {
-    startTime = 0
-    endTime = 0
-    elapsedTime = 0
+  def reset(): Unit = {
+    startTime = 0L
+    endTime = 0L
+    elapsedTime = 0L
   }
 
-  def start() {
+  def start(): Unit = {
     if (startTime != 0) reset()
     if (this.runGC) cleanUp()
     startTime = System.nanoTime()
-    log.trace(s"start stopwatch at $startTime")
   }
 
   def stop(): Double = {
@@ -58,9 +58,11 @@ class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
     nanoToMillis(elapsedTime)
   }
 
-  override def toString: String = s"$msg elapsed time=[${ nanoToMillis(elapsedTime) }] msecs."
+  override def toString: String =
+    s"$msg elapsed time=[${ nanoToMillis(elapsedTime) }] msecs."
 
-  private def nanoToMillis(nano: Double): Double = nano / NANO_TO_MILLISECONDS
+  private def nanoToMillis(nano: Double): Double =
+    nano / NANO_TO_MILLISECONDS
 }
 
 /**
@@ -69,12 +71,11 @@ class Stopwatch(val msg: String = "", val runGC: Boolean = false) {
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 1:54
  */
-class ClosableStopwatch(msg: String = "", runGC: Boolean = false) extends Stopwatch(msg, runGC) with AutoCloseable {
+class ClosableStopwatch(msg: String = "", runGC: Boolean = false)
+  extends Stopwatch(msg, runGC) with AutoCloseable {
 
   start()
 
-  def close() {
-    stop()
-  }
+  def close(): Unit = stop()
 }
 

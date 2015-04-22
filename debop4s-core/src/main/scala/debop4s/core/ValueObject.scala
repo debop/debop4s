@@ -18,9 +18,8 @@ abstract class ValueObjectBase extends ValueObject
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 1:30
  */
-trait ValueObject extends AnyRef with Serializable {
+trait ValueObject extends Serializable {
 
-  @inline
   override def equals(obj: Any): Boolean = {
     (obj: @switch) match {
       case vo: ValueObject => (this.getClass == obj.getClass) && (hashCode() == obj.hashCode())

@@ -28,11 +28,12 @@ import scala.util.control.NonFatal
  */
 class AsyncHttpClient {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  lazy val requestConfig = RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
+  lazy val requestConfig: RequestConfig =
+    RequestConfig.custom.setSocketTimeout(3000).setConnectTimeout(3000).build()
 
-  val DEFAULT_TIMEOUT = 90 // seconds
+  val DEFAULT_TIMEOUT: Int = 90 // seconds
 
   def execute(request: HttpUriRequest): Try[HttpResponse] = Try {
     assert(request != null)
@@ -143,7 +144,7 @@ class AsyncHttpClient {
     new DefaultConnectingIOReactor()
   }
 
-  private def shutdownConnectionManager(connectionManager: PoolingNHttpClientConnectionManager) {
+  private def shutdownConnectionManager(connectionManager: PoolingNHttpClientConnectionManager): Unit = {
     if (connectionManager != null) {
       try {
         connectionManager.shutdown()
@@ -172,12 +173,10 @@ class AsyncHttpClient {
       val sslcontext = SSLContexts.custom
                        .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy)
                        .build
-      new SSLIOSessionStrategy(
-        sslcontext,
-        Array[String]("TLSv1"),
-        null,
-        SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER
-      )
+      new SSLIOSessionStrategy(sslcontext,
+                               Array[String]("TLSv1"),
+                               null,
+                               SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER)
     }
     catch {
       case NonFatal(e) =>

@@ -1,7 +1,7 @@
 package debop4s.core.json
 
 import debop4s.core.utils.Hashs
-import debop4s.core.{ToStringHelper, ValueObjectBase}
+import debop4s.core.{ToStringHelper, ValueObject}
 
 import scala.beans.BeanProperty
 
@@ -13,9 +13,9 @@ import scala.beans.BeanProperty
  */
 @SerialVersionUID(2934074553940326254L)
 class JsonTextObject(@BeanProperty val className: String,
-                     @BeanProperty val jsonText: String) extends ValueObjectBase {
+                     @BeanProperty val jsonText: String) extends ValueObject {
 
-  override def hashCode(): Int = Hashs.compute(className, jsonText)
+  override def hashCode: Int = Hashs.compute(className, jsonText)
 
   override protected def buildStringHelper: ToStringHelper =
     super.buildStringHelper
@@ -25,9 +25,9 @@ class JsonTextObject(@BeanProperty val className: String,
 
 object JsonTextObject {
 
-  lazy val serializer = JacksonSerializer()
+  private[this] lazy val serializer: JsonSerializer = JacksonSerializer()
 
-  val Empty = apply()
+  val Empty: JsonTextObject = apply()
 
   def apply(): JsonTextObject = new JsonTextObject(null, null)
 

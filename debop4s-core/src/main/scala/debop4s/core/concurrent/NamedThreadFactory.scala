@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicInteger
  * @since 2013. 12. 10. 오후 2:01
  */
 class NamedThreadFactory(val prefix: Option[String] = None) extends ThreadFactory {
-  val name = prefix.getOrElse("thread")
-  val group = new ThreadGroup(Thread.currentThread().getThreadGroup, name)
-  val threadNumber = new AtomicInteger(1)
+  val name: String = prefix.getOrElse("thread")
+  val group: ThreadGroup = new ThreadGroup(Thread.currentThread().getThreadGroup, name)
+  val threadNumber: AtomicInteger = new AtomicInteger(1)
 
   def newThread(r: Runnable): Thread = {
     val threadName = name + "-" + threadNumber.getAndIncrement
@@ -27,10 +27,10 @@ class NamedThreadFactory(val prefix: Option[String] = None) extends ThreadFactor
 
 object NamedThreadFactory {
 
-  private lazy val threadFactory = new NamedThreadFactory()
+  // private lazy val threadFactory: NamedThreadFactory = new NamedThreadFactory()
 
   def apply(): NamedThreadFactory = new NamedThreadFactory()
 
-  def apply(prefix: String) = new NamedThreadFactory(Some(prefix))
+  def apply(prefix: String): NamedThreadFactory = new NamedThreadFactory(Some(prefix))
 
 }

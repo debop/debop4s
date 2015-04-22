@@ -1,7 +1,7 @@
 package debop4s.core.jvm
 
 import java.io.OutputStream
-import java.lang.management.ManagementFactory
+import java.lang.management.{ManagementFactory, ThreadMXBean}
 import java.nio.{ByteBuffer, ByteOrder}
 
 import debop4s.core.conversions.time._
@@ -26,19 +26,20 @@ case class CpuProfile(counts: Map[Seq[StackTraceElement], Long], // counts of ea
    *
    * http://google-perftools.googlecode.com/svn/trunk/doc/cpuprofile-fileformat.html
    */
-  def writeGoogleProfile(out: OutputStream) {
-    var next = 1
+  def writeGoogleProfile(out: OutputStream): Unit = {
+    var next: Int = 1
     val uniq = mutable.HashMap[StackTraceElement, Int]()
-    val word = ByteBuffer.allocate(8)
+    val word: ByteBuffer = ByteBuffer.allocate(8)
+
     word.order(ByteOrder.LITTLE_ENDIAN)
 
-    def putWord(n: Long) {
+    def putWord(n: Long): Unit = {
       word.clear()
       word.putLong(n)
       out.write(word.array())
     }
 
-    def putString(s: String) {
+    def putString(s: String): Unit = {
       out.write(s.getBytes)
     }
 
@@ -49,9 +50,11 @@ case class CpuProfile(counts: Map[Seq[StackTraceElement], Long], // counts of ea
       uniq(frame) = next
       next += 1
     }
+
     putString("---\n---prifile\n")
     Seq(0, 3, 0, 1, 0).foreach(w => putWord(w))
-    for ((stack, n) <- counts if !stack.isEmpty) {
+
+    for ((stack, n) <- counts if stack.nonEmpty) {
       putWord(n)
       putWord(stack.size)
       stack.foreach(frame => putWord(uniq(frame)))
@@ -86,30 +89,29 @@ object CpuProfile {
    * - Limit stack depth?
    */
   def record(howlong: Duration, frequency: Int, state: Thread.State): CpuProfile = {
+
     require(frequency < 10000)
 
     // TODO: it may make sense to write a custom hash function here
     // that needn't traverse the all stack trace elems. Usually, the
     // top handful of frames are distinguishing.
     val counts = mutable.HashMap[Seq[StackTraceElement], Long]()
-    val bean = ManagementFactory.getThreadMXBean
+    val bean: ThreadMXBean = ManagementFactory.getThreadMXBean
     val stopwatch = Stopwatch()
-    val end = howlong.fromNow
-    val period = (1000000 / frequency).microseconds
-    val myId = Thread.currentThread().getId
-    var next = Time.now
+    val end: Time = howlong.fromNow
+    val period: Duration = (1000000 / frequency).microseconds
+    val myId: Long = Thread.currentThread().getId
+    var next: Time = Time.now
 
-    var n = 0
-    var nmissed = 0
+    var n: Int = 0
+    var nmissed: Int = 0
 
     stopwatch.start()
 
     while (Time.now < end) {
-      for (thread <- bean.dumpAllThreads(false, false)
-           if thread.getThreadState == state &&
-              thread.getThreadId != myId) {
-        val s = thread.getStackTrace.toSeq
-        if (!s.isEmpty)
+      for (thread <- bean.dumpAllThreads(false, false) if thread.getThreadState == state && thread.getThreadId != myId) {
+        val s: Seq[StackTraceElement] = thread.getStackTrace.toSeq
+        if (s.nonEmpty)
           counts(s) = counts.getOrElse(s, 0L) + 1L
       }
 
@@ -134,6 +136,7 @@ object CpuProfile {
    */
   def recordInThread(howlong: Duration, frequency: Int, state: Thread.State): Future[CpuProfile] = {
     val p = Promise[CpuProfile]()
+
     val thread = new Thread("CpuProfile") {
       override def run() {
         p success record(howlong, frequency, state)

@@ -19,7 +19,8 @@ class LruMap[K, V](val maxSize: Int, underlying: util.Map[K, V]) extends JMapWra
  * companion object for [[LruMap]]
  */
 object LruMap {
-  def makeUnderlying[K, V](maxSize: Int) = new LRUMap(maxSize).asInstanceOf[util.Map[K, V]]
+  def makeUnderlying[K, V](maxSize: Int): util.Map[K, V] =
+    new LRUMap(maxSize).asInstanceOf[util.Map[K, V]]
 }
 
 /**

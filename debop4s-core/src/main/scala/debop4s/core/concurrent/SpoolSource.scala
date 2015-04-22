@@ -17,7 +17,7 @@ class SpoolSource[A] {
 
   // when the SpoolSource is closed, promiseRef will be permanently set to emptyPromise,
   // which always returns an empty spool.
-  private val emptyPromise = {
+  private val emptyPromise: Promise[Spool[A]] = {
     val empty = Promise[Spool[A]]()
     empty success Spool.empty[A]
     empty
@@ -40,7 +40,7 @@ class SpoolSource[A] {
    * If multiple threads call offer simultaneously, the operation is thread-safe but
    * the resulting order of values in the spool is non-deterministic.
    */
-  final def offer(value: A) {
+  final def offer(value: A): Unit = {
     val nextPromise = Promise[Spool[A]]()
     updatingTailCall(nextPromise) { currentPromise =>
       currentPromise success Spool.cons(value, nextPromise.future)
@@ -51,7 +51,7 @@ class SpoolSource[A] {
    * Closes this SpoolSource, which also terminates the generated Spool.
    * This method is idempotent.
    */
-  final def close() {
+  final def close(): Unit = {
     updatingTailCall(emptyPromise) { currentPromise =>
       currentPromise success Spool.empty[A]
     }
@@ -61,15 +61,16 @@ class SpoolSource[A] {
    * Raises exception on this SpoolSource, which also terminates the generated Spool.
    * This method is idempotent.
    */
-  final def raise(e: Throwable) {
+  final def raise(e: Throwable): Unit = {
     updatingTailCall(emptyPromise) { currentPromise =>
       currentPromise failure e
     }
   }
 
   @tailrec
-  private[this] def updatingTailCall(newPromise: Promise[Spool[A]])(f: Promise[Spool[A]] => Unit) {
+  private[this] def updatingTailCall(newPromise: Promise[Spool[A]])(f: Promise[Spool[A]] => Unit): Unit = {
     val currentPromise = promiseRef.get()
+
     if (currentPromise ne emptyPromise) {
       if (promiseRef.compareAndSet(currentPromise, newPromise)) {
         f(currentPromise)

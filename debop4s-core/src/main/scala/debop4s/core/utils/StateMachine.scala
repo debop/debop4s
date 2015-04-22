@@ -18,16 +18,14 @@ trait StateMachine {
   protected trait State
   protected var state: State = _
 
-  def getState = this.state
+  def getState: this.type#State = this.state
 
   /**
    * 현재 상태가 case 구문에 존재하면 처리하고, 없으면 `InvalidStateTransition` 예외를 발생시킵니다.
    */
-  protected def transition[A](command: String)(f: PartialFunction[State, A]) = synchronized {
-    if (f.isDefinedAt(state)) {
-      f(state)
-    } else {
-      throw new InvalidStateTransition(state.toString, command)
+  protected def transition[A](command: String)(f: PartialFunction[State, A]): A =
+    synchronized {
+      if (f.isDefinedAt(state)) f(state)
+      else throw new InvalidStateTransition(state.toString, command)
     }
-  }
 }

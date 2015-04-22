@@ -25,8 +25,7 @@ object Guard {
 
   def shouldBe(cond: Boolean): Unit = assert(cond)
 
-  def shouldBe(cond: Boolean, msg: String): Unit =
-    assert(cond, msg)
+  def shouldBe(cond: Boolean, msg: String): Unit = assert(cond, msg)
 
   @varargs
   def shouldBe(cond: Boolean, fmt: String, args: Any*): Unit =
@@ -227,61 +226,61 @@ object Guard {
 
   def shouldBeInRange(value: Int, fromInclude: Int, toExclude: Int, argName: String): Unit = {
     shouldBe(value >= fromInclude && value < toExclude,
-      ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+             ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
   }
 
   def shouldBeInRange(value: Long, fromInclude: Long, toExclude: Long, argName: String): Unit = {
     shouldBe(value >= fromInclude && value < toExclude,
-      ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+             ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
   }
 
   def shouldBeInRange(value: Float, fromInclude: Float, toExclude: Float, argName: String): Unit = {
     shouldBe(value >= fromInclude && value < toExclude,
-      ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+             ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
   }
 
   def shouldBeInRange(value: Double, fromInclude: Double, toExclude: Double, argName: String): Unit = {
     shouldBe(value >= fromInclude && value < toExclude,
-      ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
+             ShouldBeInRangeInt, argName, value, fromInclude, toExclude)
   }
 
   def shouldBeInRange(value: Int, range: Range, argName: String): Unit = {
     shouldBe(range.contains(value.toInt),
-      ShouldBeInRangeInt, argName, value, range.start, range.end)
+             ShouldBeInRangeInt, argName, value, range.start, range.end)
   }
 
   def shouldBeInRange(value: Long, range: Range, argName: String): Unit = {
     shouldBe(range.contains(value.toInt),
-      ShouldBeInRangeInt, argName, value, range.start, range.end)
+             ShouldBeInRangeInt, argName, value, range.start, range.end)
   }
 
   def shouldBeBetween(value: Int, fromInclude: Int, toInclude: Int, argName: String): Unit = {
     shouldBe(value >= fromInclude && value < toInclude,
-      ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
+             ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
   }
 
   def shouldBeBetween(value: Long, fromInclude: Long, toInclude: Long, argName: String): Unit = {
     shouldBe(value >= fromInclude && value < toInclude,
-      ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
+             ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
   }
 
   def shouldBeBetween(value: Float, fromInclude: Float, toInclude: Float, argName: String): Unit = {
     shouldBe(value >= fromInclude && value < toInclude,
-      ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
+             ShouldBeInRangeInt, argName, value, fromInclude, toInclude)
   }
 
   def shouldBeBetween(value: Double, fromInclude: Double, toInclude: Double, argName: String): Unit = {
     shouldBe(value >= fromInclude && value < toInclude,
-      ShouldBeInRangeDouble, argName, value, fromInclude, toInclude)
+             ShouldBeInRangeDouble, argName, value, fromInclude, toInclude)
   }
 
   def shouldBeBetween(value: Int, range: Range, argName: String): Unit = {
     shouldBe(range.contains(value.toInt),
-      ShouldBeInRangeInt, argName, value, range.start, range.end)
+             ShouldBeInRangeInt, argName, value, range.start, range.end)
   }
 
   def shouldBeBetween(value: Long, range: Range, argName: String): Unit = {
     shouldBe(range.contains(value.toInt),
-      ShouldBeInRangeInt, argName, value, range.start, range.end)
+             ShouldBeInRangeInt, argName, value, range.start, range.end)
   }
 }

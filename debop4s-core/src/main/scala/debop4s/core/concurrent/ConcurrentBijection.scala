@@ -12,10 +12,10 @@ import scala.collection.mutable
  */
 class ConcurrentBijection[A, B] extends mutable.Map[A, B] {
 
-  val forward = new ConcurrentHashMap[A, B]()
-  val reverse = new ConcurrentHashMap[B, A]()
+  val forward: ConcurrentHashMap[A, B] = new ConcurrentHashMap[A, B]()
+  val reverse: ConcurrentHashMap[B, A] = new ConcurrentHashMap[B, A]()
 
-  def toOpt[T](x: T) = if (x == null) None else Some(x)
+  def toOpt[T](x: T): Option[T] = if (x == null) None else Some(x)
 
   def -=(key: A): this.type = {
     synchronized {

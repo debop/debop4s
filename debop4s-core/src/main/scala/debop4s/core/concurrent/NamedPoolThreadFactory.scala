@@ -18,10 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger
 class NamedPoolThreadFactory(val name: String, val makeDaemons: Boolean) extends ThreadFactory {
   def this(name: String) = this(name, false)
 
-  val group = new ThreadGroup(Thread.currentThread().getThreadGroup, name)
-  val threadNumber = new AtomicInteger(1)
+  val group: ThreadGroup = new ThreadGroup(Thread.currentThread().getThreadGroup, name)
+  val threadNumber: AtomicInteger = new AtomicInteger(1)
 
-  def newThread(r: Runnable) = {
+  def newThread(r: Runnable): Thread = {
     val thread = new Thread(group, r, name + "-" + threadNumber.getAndIncrement)
     thread.setDaemon(makeDaemons)
     if (thread.getPriority != Thread.NORM_PRIORITY) {

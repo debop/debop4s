@@ -8,7 +8,7 @@ import scala.concurrent.duration.Duration
  */
 object TimeUtil {
 
-  def toDuration(ns: Long) = ns match {
+  def toDuration(ns: Long): Duration = ns match {
     case Long.MaxValue => Duration.Inf
     case Long.MinValue => Duration.MinusInf
     case _ =>
@@ -20,7 +20,7 @@ object TimeUtil {
       }
   }
 
-  def abs(d: Duration) = d match {
+  def abs(d: Duration): Duration = d match {
     case Duration.Inf => Duration.Inf
     case Duration.MinusInf => Duration.Inf
     case Duration.Undefined => Duration.Undefined

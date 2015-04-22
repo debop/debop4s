@@ -1,5 +1,7 @@
 package debop4s.config.server
 
+import java.util.Properties
+
 import com.typesafe.config.Config
 import debop4s.config._
 import debop4s.config.base.ConfigElementSupport
@@ -27,13 +29,9 @@ trait HibernateSupport extends ConfigElementSupport {
  */
 class HibernateElement(override val config: Config) extends ConfigElementSupport {
 
-  val hbm2ddl = config.tryGetString("hbm2ddl", "none")
-
-  val showSql = config.tryGetBoolean("showSql", defaultValue = false)
-
-  val useSecondCache = config.tryGetBoolean("useSecondCache", false)
-
-  val cacheProviderConfig = config.tryGetString("cacheProviderConfig", "")
-
-  val properties = config.asProperties()
+  val hbm2ddl: String = config.tryGetString("hbm2ddl", "none")
+  val showSql: Boolean = config.tryGetBoolean("showSql", defaultValue = false)
+  val useSecondCache: Boolean = config.tryGetBoolean("useSecondCache", false)
+  val cacheProviderConfig: String = config.tryGetString("cacheProviderConfig", "")
+  val properties: Properties = config.asProperties()
 }

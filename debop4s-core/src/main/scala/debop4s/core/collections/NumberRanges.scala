@@ -1,6 +1,6 @@
 package debop4s.core.collections
 
-import scala.collection.immutable.NumericRange
+import scala.collection.immutable.{Seq, NumericRange}
 import scala.collection.immutable.NumericRange.Exclusive
 
 /**
@@ -15,7 +15,7 @@ object NumberRanges {
     def apply(start: Int, end: Int, step: Int = 1): Exclusive[Int] =
       Range.Int(start, end, step)
 
-    def group(start: Int, end: Int, step: Int, groupSize: Int) =
+    def group(start: Int, end: Int, step: Int, groupSize: Int): Iterator[Seq[Int]] =
       Range.Int(start, end, step).toSeq.grouped(groupSize)
   }
 
@@ -25,7 +25,7 @@ object NumberRanges {
     def apply(start: Long, end: Long, step: Long = 1L): Exclusive[Long] =
       Range.Long(start, end, step)
 
-    def group(start: Long, end: Long, step: Long, groupSize: Int) =
+    def group(start: Long, end: Long, step: Long, groupSize: Int): Iterator[Seq[Long]] =
       Range.Long(start, end, step).toSeq.grouped(groupSize)
   }
 
@@ -35,7 +35,7 @@ object NumberRanges {
     def apply(start: BigInt, end: BigInt, step: BigInt = 1L): Exclusive[BigInt] =
       Range.BigInt(start, end, step)
 
-    def group(start: BigInt, end: BigInt, step: BigInt, groupSize: Int) =
+    def group(start: BigInt, end: BigInt, step: BigInt, groupSize: Int): Iterator[Seq[BigInt]] =
       Range.BigInt(start, end, step).toSeq.grouped(groupSize)
   }
 
@@ -45,7 +45,7 @@ object NumberRanges {
     def apply(start: BigDecimal, end: BigDecimal, step: BigDecimal = 1L): Exclusive[BigDecimal] =
       Range.BigDecimal(start, end, step)
 
-    def group(start: BigDecimal, end: BigDecimal, step: BigDecimal, groupSize: Int) =
+    def group(start: BigDecimal, end: BigDecimal, step: BigDecimal, groupSize: Int): Iterator[Seq[BigDecimal]] =
       Range.BigDecimal(start, end, step).toSeq.grouped(groupSize)
   }
 
@@ -55,7 +55,7 @@ object NumberRanges {
     def apply(start: Double, end: Double, step: Double = 1D): NumericRange[Double] =
       Range.Double(start, end, step)
 
-    def group(start: Double, end: Double, step: Double, groupSize: Int) =
+    def group(start: Double, end: Double, step: Double, groupSize: Int): Iterator[Seq[Double]] =
       Range.Double(start, end, step).toSeq.grouped(groupSize)
   }
 }

@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory
  */
 trait StringDigesterSupport {
 
-  protected lazy val LOG = LoggerFactory.getLogger(getClass)
+  protected lazy val log = LoggerFactory.getLogger(getClass)
 
   protected def iterations: Option[Int] = None
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
   def algorithm: String
 
-  lazy val standardStringDigester = {
+  lazy val standardStringDigester: StandardStringDigester = {
     val digester = new StandardStringDigester()
 
     digester.setAlgorithm(algorithm)
@@ -45,7 +45,9 @@ trait StringDigesterSupport {
     standardStringDigester.matches(message, digest)
 }
 
-abstract class AbstractStringDigester(private val _iterations: Option[Int] = Some(5)) extends StringDigesterSupport {
+abstract class AbstractStringDigester(private val _iterations: Option[Int] = Some(5))
+  extends StringDigesterSupport {
+
   override protected def iterations = _iterations
 }
 

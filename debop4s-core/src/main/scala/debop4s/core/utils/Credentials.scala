@@ -13,10 +13,11 @@ import scala.util.parsing.combinator._
 object Credentials {
 
   object parser extends RegexParsers {
+
     override val whiteSpace = "(?:\\s+|#.*\\n)+".r
     val token = "[\\w-_]+".r
 
-    def auth = (token <~ ":") ~ "[^\\n]+".r ^^ { case k ~ v => (k, v) }
+    def auth: parser.Parser[(String, String)] = (token <~ ":") ~ "[^\\n]+".r ^^ { case k ~ v => (k, v) }
     def content: Parser[Map[String, String]] = rep(auth) ^^ { auths => Map(auths: _*) }
 
     def apply(in: String): Map[String, String] = {
@@ -30,9 +31,8 @@ object Credentials {
 
   def apply(file: File): Map[String, String] = parser(Source.fromFile(file).mkString)
   def apply(data: String): Map[String, String] = parser(data)
-  def byName(name: String): Map[String, String] = {
+  def byName(name: String): Map[String, String] =
     apply(new File(System.getenv().asScala.getOrElse("KEY_FOLDER", "/etc/keys")))
-  }
 }
 
 

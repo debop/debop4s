@@ -19,7 +19,7 @@ trait Pool[A] {
   /**
    * 사용한 객체를 `Pool`에 보관합니다.
    */
-  def release(a: A)
+  def release(a: A): Unit
 }
 
 class SimplePool[A](items: mutable.Queue[Future[A]]) extends Pool[A] {
@@ -30,7 +30,7 @@ class SimplePool[A](items: mutable.Queue[Future[A]]) extends Pool[A] {
     queue
   }
 
-  private val requests = mutable.Queue[Promise[A]]()
+  private[this] val requests = mutable.Queue[Promise[A]]()
 
   def reserve(): Future[A] = synchronized {
     if (items.isEmpty) {
@@ -42,7 +42,7 @@ class SimplePool[A](items: mutable.Queue[Future[A]]) extends Pool[A] {
     }
   }
 
-  def release(item: A) {
+  def release(item: A): Unit = {
     items += Future.successful(item)
     synchronized {
       if (requests.nonEmpty && items.nonEmpty)
@@ -59,16 +59,14 @@ class SimplePool[A](items: mutable.Queue[Future[A]]) extends Pool[A] {
 }
 
 abstract class FactoryPool[A](numItems: Int) extends Pool[A] {
-  private val healthyQueue = new HealthyQueue[A](makeItem, numItems, isHealthy)
-  private val simplePool = new SimplePool[A](healthyQueue)
+
+  private[this] val healthyQueue = new HealthyQueue[A](makeItem, numItems, isHealthy)
+  private[this] val simplePool = new SimplePool[A](healthyQueue)
 
   def reserve(): Future[A] = simplePool.reserve()
-  def release(a: A) {
-    simplePool.release(a)
-  }
-  def dispose(a: A) {
-    healthyQueue += makeItem()
-  }
+  def release(a: A): Unit = simplePool.release(a)
+
+  def dispose(a: A): Unit = healthyQueue += makeItem()
 
   protected def makeItem(): Future[A]
   protected def isHealthy(a: A): Boolean
@@ -78,12 +76,13 @@ private class HealthyQueue[A](makeItem: () => Future[A],
                               numItems: Int,
                               isHealthy: A => Boolean) extends mutable.QueueProxy[Future[A]] {
 
-  val self = new mutable.SynchronizedQueue[Future[A]]
+  override val self = new mutable.SynchronizedQueue[Future[A]]
+
   synchronized {
     (0 until numItems).foreach(_ => self += makeItem())
   }
 
-  private val log = LoggerFactory.getLogger(getClass)
+  // private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   override def +=(item: Future[A]): this.type = {
     synchronized { self += item }
@@ -102,7 +101,7 @@ private class HealthyQueue[A](makeItem: () => Future[A],
       if (isHealthy(item)) {
         Future(item)
       } else {
-        // LOG.debug(s"not healthy item! $item")
+        // log.debug(s"not healthy item! $item")
         val newItem = makeItem()
         synchronized {
           this += newItem

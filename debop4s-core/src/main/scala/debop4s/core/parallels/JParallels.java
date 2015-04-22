@@ -118,10 +118,6 @@ public final class JParallels {
             List<Future<Void>> results = executor.invokeAll(tasks);
 
             JAsyncs.waitAll(results);
-//            for (Future<Void> result : results) {
-//                result.get();
-//            }
-
             log.debug("병렬로 작업을 수행합니다... fromInclude=[{}], toExclude=[{}], step=[{}], workerCount=[{}]",
                       fromInclude, toExclude, step, workerCount);
 
@@ -195,9 +191,6 @@ public final class JParallels {
 
             List<Future<Void>> results = executor.invokeAll(tasks);
             JAsyncs.waitAll(results);
-//            for (Future<Void> result : results) {
-//                result.get();
-//            }
             log.debug("모든 작업을 병렬로 수행하였습니다!");
 
         } catch (Exception e) {
@@ -411,11 +404,6 @@ public final class JParallels {
             }
             List<Future<Void>> results = executor.invokeAll(tasks);
             JAsyncs.waitAll(results);
-//            for (Future<Void> result : results) {
-//                result.get();
-//            }
-
-
             log.debug("모든 작업을 병렬로 수행하였습니다. workerCount=[{}]", workerCount);
 
         } catch (Exception e) {
@@ -546,9 +534,6 @@ public final class JParallels {
             }
             List<Future<Void>> results = executor.invokeAll(tasks);
             JAsyncs.waitAll(results);
-//            for (Future<Void> result : results) {
-//                result.get();
-//            }
             log.debug("모든 작업을 병렬로 수행하였습니다!");
         } catch (Exception e) {
             log.error("데이터에 대한 병렬 작업 중 예외가 발생했습니다.", e);
@@ -671,10 +656,6 @@ public final class JParallels {
             // 작업 시작
             List<Future<Void>> results = executor.invokeAll(tasks);
             JAsyncs.waitAll(results);
-//            for (Future<Void> result : results)
-//                result.get();
-
-
             log.debug("모든 작업을 병렬로 수행했습니다. workCount=[{}]", workerCount);
         } catch (Exception e) {
             log.error("데이터에 대한 병렬작업중 예외가 발생했습니다.", e);

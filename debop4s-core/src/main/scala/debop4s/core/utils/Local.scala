@@ -15,7 +15,7 @@ import scala.collection.mutable
  */
 object Local {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   type Context = mutable.LinkedHashMap[Any, Any]
 
@@ -40,54 +40,43 @@ object Local {
     }
   }
 
-  def put(key: Any, value: Any) {
-    log.trace(s"put to Local hashmap. key=$key, value=$value")
+  def put(key: Any, value: Any): Unit =
     getStorage.update(key, value)
-  }
 
-  def put[T](key: Any, optValue: Option[T]) {
+  def put[T](key: Any, optValue: Option[T]): Unit =
     getStorage(key) = optValue
-  }
 
-  def clearAll() {
+  def clearAll(): Unit = {
     log.debug(s"clear local storage.")
     getStorage.clear()
   }
 
   def getOrCreate[T](key: Any, factory: => T): Option[T] = {
     getStorage.getOrElseUpdate(key, factory)
-    //    if (!getStorage.contains(key)) {
-    //      assert(factory != null)
-    //      val result: T = factory
-    //      put(key, result)
-    //    }
     get[T](key)
   }
 
   def getOrCreate[T](key: Any, factory: Callable[T]): Option[T] = synchronized {
     getStorage.getOrElseUpdate(key, factory.call())
-    //    if (!getStorage.contains(key)) {
-    //      assert(factory != null)
-    //      put(key, factory.call())
-    //    }
     get[T](key)
   }
 }
 
 final class Local[T] {
+
   private[this] val key = UUID.randomUUID()
 
   def apply(): Option[T] = Local.get[T](key)
 
-  def set(value: T) {
+  def set(value: T): Unit = {
     Local.put(key, value)
   }
 
-  def update(value: T) {
+  def update(value: T): Unit = {
     set(value)
   }
 
-  def clear() {
+  def clear(): Unit = {
     Local.getStorage.remove(key)
   }
 }

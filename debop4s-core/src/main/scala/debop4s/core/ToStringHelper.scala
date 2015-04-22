@@ -35,11 +35,6 @@ class ToStringHelper(val className: String) extends Serializable {
     builder.append("}")
     builder.toString()
   }
-
-  //  @inline
-  //  private def addMap(name: String, value: Any) {
-  //    map.put(name, value)
-  //  }
 }
 
 

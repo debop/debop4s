@@ -1,16 +1,17 @@
 package debop4s.core.utils
 
-import java.util.concurrent
+import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicBoolean
 
 import debop4s.core._
 import debop4s.core.concurrent.NamedPoolThreadFactory
 import debop4s.core.conversions.time._
+import org.slf4j.LoggerFactory
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
 import scala.concurrent.duration._
+import scala.concurrent.{Future, _}
 import scala.util.Try
 import scala.util.control.NonFatal
 
@@ -22,22 +23,22 @@ trait TimerTask extends Closable {
   /**
    * Timer 작업을 취소합니다.
    */
-  def cancel()
+  def cancel(): Unit
 
   /**
    * 지정한 작업 완료 시간에 작업을 종료합니다.
-   * @param deadline
+   * @param deadline 완료 시각
    * @return
    */
-  override def close(deadline: Time): Future[Unit] = Future {
-    cancel()
-  }
+  override def close(deadline: Time): Future[Unit] = Future { cancel() }
 }
 
 /**
  * 주기적으로 작업을 수행할 수 있도록 하는 Timer 입니다.
  */
-trait Timer extends Logging {
+trait Timer {
+
+  protected lazy val log = LoggerFactory.getLogger(getClass)
 
   /**
    * 특정 시각에 `block` 을 실행시킵니다.
@@ -68,16 +69,16 @@ trait Timer extends Logging {
   /**
    * 지정한 지연 시간 후에 `func` 을 수행합니다.
    */
-  def doLater[A](delay: Duration)(func: => A): scala.concurrent.Future[A] = {
-    log.trace(s"현재시각으로부터 delay=$delay 이후에 작업을 수행합니다.")
+  def doLater[A](delay: Duration)(func: => A): Future[A] = {
+    log.debug(s"현재시각으로부터 delay=$delay 이후에 작업을 수행합니다.")
     doAt(Time.now + delay)(func)
   }
 
   /**
    * 특정 시간에 `func` 을 수행합니다.
    */
-  def doAt[A](time: Time)(func: => A): scala.concurrent.Future[A] = {
-    log.trace(s"지정된 시각 $time 에 작업을 시작하도록 예약 합니다.")
+  def doAt[A](time: Time)(func: => A): Future[A] = {
+    log.debug(s"지정된 시각 $time 에 작업을 시작하도록 예약 합니다.")
 
     val pending = new AtomicBoolean(true)
     val p = Promise[A]()
@@ -89,6 +90,7 @@ trait Timer extends Logging {
     }
     p.future onFailure {
       case cause =>
+        log.warn(s"작업 중 예외가 발생했습니다.", cause)
         if (pending.compareAndSet(true, false))
           task.cancel()
     }
@@ -98,7 +100,7 @@ trait Timer extends Logging {
   /**
    * Timer 를 중단합니다.
    */
-  def stop()
+  def stop(): Unit
 }
 
 object Timer {
@@ -126,23 +128,22 @@ class NullTimer extends Timer {
 
 object ThreadStoppingTimer {
 
-  implicit val executor = new concurrent.ForkJoinPool(2)
+  implicit val executor = new ForkJoinPool(2)
 
-  def apply(underlying: Timer)(implicit executor: java.util.concurrent.ExecutorService): ThreadStoppingTimer =
+  def apply(underlying: Timer)(implicit executor: ExecutorService): ThreadStoppingTimer =
     new ThreadStoppingTimer(underlying, executor)
 }
 
-class ThreadStoppingTimer(underlying: Timer, executor: concurrent.ExecutorService) extends Timer {
+class ThreadStoppingTimer(underlying: Timer, executor: ExecutorService) extends Timer {
 
-  override def schedule(when: Time)(block: => Unit): TimerTask = {
+  override def schedule(when: Time)(block: => Unit): TimerTask =
     underlying.schedule(when)(block)
-  }
-  override def schedule(when: Time, period: Duration)(block: => Unit): TimerTask = {
+
+  override def schedule(when: Time, period: Duration)(block: => Unit): TimerTask =
     underlying.schedule(when, period)(block)
-  }
-  override def stop(): Unit = {
+
+  override def stop(): Unit =
     executor.submit(Threads.makeRunnable { underlying.stop() })
-  }
 }
 
 trait ReferenceCountedTimer extends Timer {
@@ -160,14 +161,14 @@ class ReferenceCountingTimer(factory: () => Timer) extends ReferenceCountedTimer
   private[this] var refcount = 0
   private[this] var underlying = null: Timer
 
-  override def acquire() = synchronized {
+  override def acquire(): Unit = synchronized {
     refcount += 1
     if (refcount == 1) {
       require(underlying == null)
       underlying = factory()
     }
   }
-  override def stop() = synchronized {
+  override def stop(): Unit = synchronized {
     refcount -= 1
     if (refcount == 0) {
       underlying.stop()
@@ -194,9 +195,9 @@ object JavaTimer {
 /**
  * `java.util.Timer` 를 사용하는 Timer 입니다.
  */
-class JavaTimer(isDaemon: Boolean) extends Timer {
+class JavaTimer(isDaemon: Boolean = false) extends Timer {
 
-  def this() = this(false)
+  //  def this() = this(false)
 
   private[this] val underlying = new java.util.Timer(isDaemon)
 
@@ -228,12 +229,12 @@ class JavaTimer(isDaemon: Boolean) extends Timer {
   override def stop() = underlying.cancel()
 
   def logError(t: Throwable) {
-    error(s"WARNING: JavaTimer 에서 작업 실행 시 예외가 발생했습니다. $t")
+    log.error(s"WARNING: JavaTimer 에서 작업 실행 시 예외가 발생했습니다. $t")
     t.printStackTrace(System.err)
   }
 
   private def toJavaTimerTask(block: => Unit) = new java.util.TimerTask {
-    def run() {
+    override def run(): Unit = {
       try {
         block
       } catch {
@@ -269,26 +270,25 @@ object ScheduledThreadPoolTimer {
  * @param rejectedExecutionHandler 작업 거부 시 수행할 handler
  */
 class ScheduledThreadPoolTimer(poolSize: Int,
-                               threadFactory: java.util.concurrent.ThreadFactory,
-                               rejectedExecutionHandler: Option[concurrent.RejectedExecutionHandler]) extends Timer {
+                               threadFactory: ThreadFactory,
+                               rejectedExecutionHandler: Option[RejectedExecutionHandler]) extends Timer {
 
-  def this(poolSize: Int, threadFactory: concurrent.ThreadFactory) =
+  def this(poolSize: Int, threadFactory: ThreadFactory) =
     this(poolSize, threadFactory, None)
 
-  def this(poolSize: Int, threadFactory: concurrent.ThreadFactory, handler: concurrent.RejectedExecutionHandler) =
+  def this(poolSize: Int, threadFactory: ThreadFactory, handler: RejectedExecutionHandler) =
     this(poolSize, threadFactory, Some(handler))
 
   /** Construct a ScheduledThreadPoolTimer with a NamedPoolThreadFactory. */
   def this(poolSize: Int, name: String = "timer", makeDaemons: Boolean) =
     this(poolSize, NamedPoolThreadFactory(name, makeDaemons), None)
 
-  private[this] val underlying: concurrent.ScheduledThreadPoolExecutor = {
-    log.trace(s"ScheduledThreadPoolExecutor 를 생성합니다.")
+  private[this] val underlying: ScheduledThreadPoolExecutor = {
     rejectedExecutionHandler match {
+      case Some(handler: RejectedExecutionHandler) =>
+        new ScheduledThreadPoolExecutor(poolSize, threadFactory, handler)
       case None =>
-        new concurrent.ScheduledThreadPoolExecutor(poolSize, threadFactory)
-      case Some(handler: concurrent.RejectedExecutionHandler) =>
-        new concurrent.ScheduledThreadPoolExecutor(poolSize, threadFactory, handler)
+        new ScheduledThreadPoolExecutor(poolSize, threadFactory)
     }
   }
 
@@ -301,11 +301,11 @@ class ScheduledThreadPoolTimer(poolSize: Int,
   override def schedule(when: Time)(block: => Unit): TimerTask = {
     val runBlock = runnable { block }
     val javaFuture = underlying.schedule(runBlock,
-      when.sinceNow.toMillis,
-      concurrent.TimeUnit.MILLISECONDS)
+                                         when.sinceNow.toMillis,
+                                         TimeUnit.MILLISECONDS)
 
     new TimerTask {
-      def cancel() {
+      override def cancel(): Unit = {
         javaFuture.cancel(true)
         underlying.remove(runBlock)
       }
@@ -318,9 +318,9 @@ class ScheduledThreadPoolTimer(poolSize: Int,
    * @param block  실행할 메소드 블럭
    * @return `TimerTask` instance
    */
-  override def schedule(when: Time, period: Duration)(block: => Unit): TimerTask = {
+  override def schedule(when: Time, period: Duration)(block: => Unit): TimerTask =
     schedule(when.sinceNow, period)(block)
-  }
+
   /**
    * 정기적으로 `block` 을 실행시킵니다.
    * @param wait  초기 지연 시각
@@ -331,12 +331,12 @@ class ScheduledThreadPoolTimer(poolSize: Int,
   def schedule(wait: Duration, period: Duration)(block: => Unit): TimerTask = {
     val runblock = runnable { block }
     val javaFuture = underlying.scheduleAtFixedRate(runblock,
-      wait.toMillis,
-      period.toMillis,
-      concurrent.TimeUnit.MILLISECONDS)
+                                                    wait.toMillis,
+                                                    period.toMillis,
+                                                    TimeUnit.MILLISECONDS)
 
     new TimerTask {
-      def cancel() {
+      override def cancel(): Unit = {
         javaFuture.cancel(true)
         underlying.remove(runblock)
       }
@@ -357,8 +357,8 @@ class MockTimer extends Timer {
   // These are weird semantics admittedly, but there may
   // be a bunch of tests that rely on them already.
   case class Task(var when: Time, func: () => Unit) extends TimerTask {
-    var isCancelled = false
-    def cancel() {
+    var isCancelled: Boolean = false
+    override def cancel() {
       isCancelled = true
       nCancelled += 1
       when = Time.now
@@ -366,9 +366,9 @@ class MockTimer extends Timer {
     }
   }
 
-  var isStopped = false
+  var isStopped: Boolean = false
   var tasks = ArrayBuffer[Task]()
-  var nCancelled = 0
+  var nCancelled: Int = 0
 
   def tick() {
     if (isStopped)

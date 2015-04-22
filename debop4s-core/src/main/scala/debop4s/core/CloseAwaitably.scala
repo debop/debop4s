@@ -24,9 +24,9 @@ trait CloseAwaitably extends Awaitable[Unit] {
   private[this] val closed = new AtomicBoolean(false)
 
   protected def closeAwaitably(f: => Future[Unit]): Future[Unit] = {
-    if (closed.compareAndSet(false, true)) {
+    if (closed.compareAndSet(false, true))
       onClose.completeWith(f)
-    }
+
     onClose.future
   }
 
@@ -35,11 +35,9 @@ trait CloseAwaitably extends Awaitable[Unit] {
     this
   }
 
-  def result(timeout: Duration)(implicit permit: CanAwait): Unit = {
+  def result(timeout: Duration)(implicit permit: CanAwait): Unit =
     onClose.future.result(timeout)
-  }
 
-  def isReady(implicit permit: CanAwait): Boolean = {
+  def isReady(implicit permit: CanAwait): Boolean =
     onClose.future.isCompleted
-  }
 }

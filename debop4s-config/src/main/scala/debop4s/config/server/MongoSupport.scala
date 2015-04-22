@@ -10,13 +10,13 @@ import debop4s.config.base._
  */
 trait MongoSupport extends ConfigElementSupport {
 
-  val mongo = new MongoElement(config.getConfig("mongo"))
+  val mongo: MongoElement = new MongoElement(config.getConfig("mongo"))
 
 }
 
 class MongoElement(override val config: Config) extends ServerAddressElementSupport {
 
-  val database = config.tryGetString("database", "test")
+  val database: String = config.tryGetString("database", "test")
 
 }
 

@@ -2,7 +2,7 @@ package debop4s.core.utils
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import debop4s.core.Logging
+import org.slf4j.LoggerFactory
 
 import scala.util.Try
 import scala.util.control.NonFatal
@@ -13,19 +13,20 @@ import scala.util.control.NonFatal
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 13. 오후 7:59
  */
-object Tasks extends Logging {
+object Tasks {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   /** Thread Id */
-  private val sequenceId: AtomicInteger = new AtomicInteger(0)
+  private[this] val sequenceId: AtomicInteger = new AtomicInteger(0)
 
   /**
    * 지정한 action을 수행할 background thread 를 생성하여 실행합니다.
    *
    * @param action background thread에서 실행할 코드 블럭
    */
-  def apply(action: Runnable) {
+  def apply(action: Runnable): Thread =
     spawn("backgraound-" + sequenceId.incrementAndGet, action)
-  }
 
   /**
    * 지정된 action을 background thread 를 만들어서 실행하고, 스레드를 반환합니다.
@@ -34,9 +35,8 @@ object Tasks extends Logging {
    * @param action     background thread에서 실행할 코드 블럭
    * @return thread
    */
-  def spawn(threadName: String, action: Runnable): Thread = {
+  def spawn(threadName: String, action: Runnable): Thread =
     spawn(threadName, action, daemon = false)
-  }
 
   /**
    * 지정된 action을 새로운 스레드를 만들어 실행하고, 스레드를 반환합니다.

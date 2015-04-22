@@ -15,15 +15,15 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
 
   def this() = this(16)
 
-  private val array = new Array[A](maxSize)
-  private var read = 0
-  private var write = 0
-  private var _count = 0
+  private val array: Array[A] = new Array[A](maxSize)
+  private var read: Int = 0
+  private var write: Int = 0
+  private var _count: Int = 0
 
-  def length = _count
-  override def size = _count
+  def length: Int = _count
+  override def size: Int = _count
 
-  def clear() {
+  def clear(): Unit = {
     read = 0
     write = 0
     _count = 0
@@ -40,7 +40,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
   /**
    * Overwrites an element with a new value
    */
-  def update(i: Int, elem: A) {
+  def update(i: Int, elem: A): Unit = {
     if (i >= _count) throw new IndexOutOfBoundsException(i.toString)
     else array((read + i) % maxSize) = elem
   }
@@ -48,14 +48,14 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
   /**
    * 새로운 요소를 추가합니다.
    */
-  def +=(elem: A) {
+  def +=(elem: A): Unit = {
     array(write) = elem
     write = (write + 1) % maxSize
     if (_count == maxSize) read = (read + 1) % maxSize
     else _count += 1
   }
 
-  def ++=(iter: Iterable[A]) {
+  def ++=(iter: Iterable[A]): Unit = {
     val it = iter.iterator
     while (it.hasNext) {
       this += it.next()
@@ -75,7 +75,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
     }
   }
 
-  override def iterator = new Iterator[A] {
+  override def iterator: Iterator[A] = new Iterator[A] {
     var idx = 0
     def hasNext = idx != _count
     def next() = {
@@ -84,6 +84,7 @@ class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
       res
     }
   }
+
   /**
    * 지정된 갯수만큼 버퍼의 요소를 삭제합니다.
    */

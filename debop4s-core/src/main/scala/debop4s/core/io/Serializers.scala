@@ -19,9 +19,9 @@ import scala.concurrent._
  */
 object Serializers {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  lazy val serializer = new FstSerializer()
+  private[this] lazy val serializer = new FstSerializer()
 
   def serializeAsString[T](serializer: Serializer, graph: T): String = {
     if (graph == null) ""
@@ -56,19 +56,18 @@ object Serializers {
     deserializeObject[T](serializeObject(graph), graph.getClass.asInstanceOf[Class[T]])
   }
 
-  def serializeObjectAsync[T](graph: T): Future[Array[Byte]] = Future {
-    serializer.serialize(graph)
-  }
+  def serializeObjectAsync[T](graph: T): Future[Array[Byte]] =
+    Future { serializer.serialize(graph) }
 
-  def deserializeObjectAsync[T](bytes: Array[Byte], clazz: Class[T]): Future[T] = Future {
-    serializer.deserialize(bytes, clazz)
-  }
+  def deserializeObjectAsync[T](bytes: Array[Byte], clazz: Class[T]): Future[T] =
+    Future { serializer.deserialize(bytes, clazz) }
 
-  def copyObjectAsync[T](graph: T): Future[T] = Future {
-    if (Objects.equals(graph, null))
-      return null
+  def copyObjectAsync[T](graph: T): Future[T] =
+    Future {
+      if (Objects.equals(graph, null))
+        return null
 
-    val bytes = serializer.serialize(graph)
-    serializer.deserialize(bytes, graph.getClass)
-  }
+      val bytes = serializer.serialize(graph)
+      serializer.deserialize(bytes, graph.getClass)
+    }
 }

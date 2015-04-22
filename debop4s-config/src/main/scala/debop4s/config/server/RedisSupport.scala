@@ -1,5 +1,7 @@
 package debop4s.config.server
 
+import java.util
+
 import com.typesafe.config.Config
 import debop4s.config._
 import debop4s.config.base._
@@ -13,7 +15,7 @@ import scala.util.control.NonFatal
  */
 trait RedisSupport extends ConfigElementSupport {
 
-  val redis = new RedisServerElement(config.getConfig("redis"))
+  val redis: RedisServerElement = new RedisServerElement(config.getConfig("redis"))
 
 }
 

@@ -14,7 +14,7 @@ trait Cancellable {
   /**
    * 작업을 취소합니다. 취소 작업은 연결된 `cancellable object` 에게 전파된다.
    */
-  def cancel()
+  def cancel(): Unit
 
   /**
    * 현 `cancellable`에 `other`를 연결합니다.
@@ -34,7 +34,9 @@ object Cancellable {
 class CancellableSink(cancelTask: => Unit) extends Cancellable {
 
   private[this] val wasCancelled = new AtomicBoolean(false)
+
   override def isCancelled: Boolean = wasCancelled.get()
+
   override def cancel(): Unit = {
     if (wasCancelled.compareAndSet(false, true)) {
       cancelTask

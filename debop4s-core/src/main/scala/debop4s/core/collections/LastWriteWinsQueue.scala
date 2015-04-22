@@ -35,7 +35,7 @@ class LastWriteWinsQueue[A] extends java.util.Queue[A] {
 
   def toArray[T](array: Array[T with java.lang.Object]): Array[T with java.lang.Object] = {
     val contained = item.get()
-    if (contained.isDefined && array.size > 0) {
+    if (contained.isDefined && array.length > 0) {
       array(0) = contained.get.asInstanceOf[T with java.lang.Object]
       array
     } else if (contained.isDefined) {
@@ -45,21 +45,21 @@ class LastWriteWinsQueue[A] extends java.util.Queue[A] {
     }
   }
 
-  def toArray = toArray(new Array[AnyRef](0))
+  def toArray: Array[AnyRef] = toArray(new Array[AnyRef](0))
   def iterator = null
-  def contains(p1: AnyRef) = false
-  def isEmpty = item.get.isDefined
-  def size = if (item.get.isDefined) 1 else 0
-  def peek = item.get.getOrElse(null.asInstanceOf[A])
-  def element = item.get.getOrElse(throw new NoSuchElementException)
-  override def poll = item.getAndSet(None).getOrElse(null.asInstanceOf[A])
-  def remove = item.getAndSet(None).getOrElse(throw new NoSuchElementException)
+  def contains(p1: AnyRef): Boolean = false
+  def isEmpty: Boolean = item.get.isDefined
+  def size: Int = if (item.get.isDefined) 1 else 0
+  def peek: A = item.get.getOrElse(null.asInstanceOf[A])
+  def element: A = item.get.getOrElse(throw new NoSuchElementException)
+  override def poll: A = item.getAndSet(None).getOrElse(null.asInstanceOf[A])
+  def remove: A = item.getAndSet(None).getOrElse(throw new NoSuchElementException)
 
-  def offer(p1: A) = {
+  def offer(p1: A): Boolean = {
     item.set(Some(p1))
     true
   }
-  def add(p1: A) = {
+  def add(p1: A): Boolean = {
     item.set(Some(p1))
     true
   }

@@ -19,8 +19,9 @@ object Log {
   def apply(clazz: Class[_], suffix: String): Log =
     apply(clazz.getName.replace("$", "#").stripSuffix("#") + "." + suffix)
 
-  val exceptionIdGenerator = new AtomicLong(System.currentTimeMillis())
-  def nextExceptionId = exceptionIdGenerator.incrementAndGet().toHexString
+  private[this] val exceptionIdGenerator = new AtomicLong(System.currentTimeMillis())
+
+  def nextExceptionId: String = exceptionIdGenerator.incrementAndGet().toHexString
 }
 
 /**
@@ -33,7 +34,7 @@ trait Log extends Serializable {
   lazy val log = LoggerFactory.getLogger(getClass.getName.replace("$", "#").stripSuffix("#"))
 
   @inline
-  private def withThrowable(e: Throwable)(block: => Unit) {
+  private def withThrowable(e: Throwable)(block: => Unit): Unit = {
     if (e != null) {
       val stackRef: Option[String] =
         if (log.isDebugEnabled) {
@@ -56,18 +57,18 @@ trait Log extends Serializable {
   }
 
   @inline
-  private def format(message: String, args: Seq[Any]) = {
+  private def format(message: String, args: Seq[Any]): String = {
     if (args.isEmpty) message
     else message.format(args.map(_.asInstanceOf[AnyRef]): _*)
   }
 
-  def error(m: => String, args: Any*) {
+  def error(m: => String, args: Any*): Unit = {
     if (log.isErrorEnabled) {
       log.error(format(m, args.toSeq))
     }
   }
 
-  def error(e: Throwable, m: => String, args: Any*) {
+  def error(e: Throwable, m: => String, args: Any*): Unit = {
     if (log.isErrorEnabled) {
       withThrowable(e) {
         log.error(format(m, args.toSeq))
@@ -75,7 +76,7 @@ trait Log extends Serializable {
     }
   }
 
-  def error(e: Throwable) {
+  def error(e: Throwable): Unit = {
     if (log.isErrorEnabled) {
       withThrowable(e) {
         log.error(if (e != null) e.getMessage else "")
@@ -83,13 +84,13 @@ trait Log extends Serializable {
     }
   }
 
-  def warn(m: => String, args: Any*) {
+  def warn(m: => String, args: Any*): Unit = {
     if (log.isWarnEnabled) {
       log.warn(format(m, args.toSeq))
     }
   }
 
-  def warn(e: Throwable, m: => String, args: Any*) {
+  def warn(e: Throwable, m: => String, args: Any*): Unit = {
     if (log.isWarnEnabled) {
       withThrowable(e) {
         log.warn(format(m, args.toSeq))
@@ -97,7 +98,7 @@ trait Log extends Serializable {
     }
   }
 
-  def warn(e: Throwable) {
+  def warn(e: Throwable): Unit = {
     if (log.isWarnEnabled) {
       withThrowable(e) {
         log.warn(if (e != null) e.getMessage else "")
@@ -105,13 +106,13 @@ trait Log extends Serializable {
     }
   }
 
-  def info(m: => String, args: Any*) {
+  def info(m: => String, args: Any*): Unit = {
     if (log.isInfoEnabled) {
       log.info(format(m, args.toSeq))
     }
   }
 
-  def info(e: Throwable, m: => String, args: Any*) {
+  def info(e: Throwable, m: => String, args: Any*): Unit = {
     if (log.isInfoEnabled) {
       withThrowable(e) {
         log.info(format(m, args.toSeq))
@@ -119,7 +120,7 @@ trait Log extends Serializable {
     }
   }
 
-  def info(e: Throwable) {
+  def info(e: Throwable): Unit = {
     if (log.isInfoEnabled) {
       withThrowable(e) {
         log.info(if (e != null) e.getMessage else "")
@@ -127,13 +128,13 @@ trait Log extends Serializable {
     }
   }
 
-  def debug(m: => String, args: Any*) {
+  def debug(m: => String, args: Any*): Unit = {
     if (log.isDebugEnabled) {
       log.debug(format(m, args.toSeq))
     }
   }
 
-  def debug(e: Throwable, m: => String, args: Any*) {
+  def debug(e: Throwable, m: => String, args: Any*): Unit = {
     if (log.isDebugEnabled) {
       withThrowable(e) {
         log.debug(format(m, args.toSeq))
@@ -141,7 +142,7 @@ trait Log extends Serializable {
     }
   }
 
-  def debug(e: Throwable) {
+  def debug(e: Throwable): Unit = {
     if (log.isDebugEnabled) {
       withThrowable(e) {
         log.debug(if (e != null) e.getMessage else "")
@@ -149,13 +150,13 @@ trait Log extends Serializable {
     }
   }
 
-  def trace(m: => String, args: Any*) {
+  def trace(m: => String, args: Any*): Unit = {
     if (log.isTraceEnabled) {
       log.trace(format(m, args.toSeq))
     }
   }
 
-  def trace(e: Throwable, m: => String, args: Any*) {
+  def trace(e: Throwable, m: => String, args: Any*): Unit = {
     if (log.isTraceEnabled) {
       withThrowable(e) {
         log.trace(format(m, args.toSeq))
@@ -163,7 +164,7 @@ trait Log extends Serializable {
     }
   }
 
-  def trace(e: Throwable) {
+  def trace(e: Throwable): Unit = {
     if (log.isTraceEnabled) {
       withThrowable(e) {
         log.trace(if (e != null) e.getMessage else "")

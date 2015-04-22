@@ -4,7 +4,6 @@ import org.modelmapper.ModelMapper
 import org.modelmapper.config.Configuration.AccessLevel
 import org.modelmapper.convention.MatchingStrategies
 
-import scala.collection.immutable.IndexedSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.reflect._
@@ -31,11 +30,11 @@ object Mappers {
   }
 
 
-  def map[T <: AnyRef](src: Any, dest: T) {
+  def map[T <: AnyRef](src: Any, dest: T): Unit =
     mapper.map(src, dest)
-  }
 
-  def map[T: ClassTag](src: Any) = mapper.map[T](src, classTag[T].runtimeClass)
+  def map[T: ClassTag](src: Any): T =
+    mapper.map[T](src, classTag[T].runtimeClass)
 
   def mapAll[T: ClassTag](srcs: Iterable[_]): Seq[T] = {
     val targetClass = classTag[T].runtimeClass
@@ -54,10 +53,11 @@ object Mappers {
     mapAll(srcs)
   }
 
-  def mapAllAsParallel[T: ClassTag](srcs: Iterable[_]): IndexedSeq[T] = {
+  def mapAllAsParallel[T: ClassTag](srcs: Iterable[_]): Iterable[T] = {
     val targetClass = classTag[T].runtimeClass
-    srcs.par.map(src => mapper.map[T](src, targetClass).asInstanceOf[T]).toIndexedSeq
+    srcs.par.map(src => mapper.map[T](src, targetClass).asInstanceOf[T]).seq
   }
 
-  def tryMap[T: ClassTag](src: Any) = Try { map[T](src) }
+  def tryMap[T: ClassTag](src: Any): Try[T] =
+    Try { map[T](src) }
 }

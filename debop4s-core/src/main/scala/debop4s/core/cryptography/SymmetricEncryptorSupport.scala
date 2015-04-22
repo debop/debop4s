@@ -18,19 +18,18 @@ trait SymmetricEncryptorSupport {
 
   protected lazy val log = LoggerFactory.getLogger(getClass)
 
-  private val DEFAULT_PASSWORD = "debop@hconnect.co.kr-21011"
+  private[this] val DEFAULT_PASSWORD: String = "debop@hconnect.co.kr-21011"
 
-  private var password: String = DEFAULT_PASSWORD
+  private[this] var password: String = DEFAULT_PASSWORD
 
   /**
    * 대칭형 암호화 알고리즘
-   *
    * @return 대칭형 암호화 알고리즘
    */
   def algorithm: String
 
   /** 암호화 객체 */
-  protected lazy val encryptor = {
+  protected lazy val encryptor: StandardPBEByteEncryptor = {
     val encryptor = new StandardPBEByteEncryptor()
 
     encryptor.setSaltGenerator(new ZeroSaltGenerator())
@@ -40,7 +39,7 @@ trait SymmetricEncryptorSupport {
     encryptor
   }
 
-  private lazy val encryptorWithoutSalt = {
+  private lazy val encryptorWithoutSalt: StandardPBEByteEncryptor = {
     val encryptor = new StandardPBEByteEncryptor()
 
     encryptor.setPassword(password)
@@ -57,7 +56,7 @@ trait SymmetricEncryptorSupport {
    *
    * @param password 비밀번호
    */
-  def setPassword(password: String) {
+  def setPassword(password: String): Unit = {
     this.password = password
   }
 
@@ -88,7 +87,8 @@ trait SymmetricEncryptorSupport {
    */
   @inline
   def encrypt(plainText: String): String = {
-    if (Strings.isEmpty(plainText)) return ""
+    if (Strings.isEmpty(plainText))
+      return ""
 
     val cipher = encrypt(Strings.getUtf8Bytes(plainText))
     Strings.getStringFromBytes(cipher, BinaryStringFormat.HexDecimal)
@@ -128,7 +128,8 @@ trait SymmetricEncryptorSupport {
    */
   @inline
   def decrypt(cipherText: String): String = {
-    if (Strings.isEmpty(cipherText)) return ""
+    if (Strings.isEmpty(cipherText))
+      return ""
 
     val plainBytes = Strings.getBytesFromString(cipherText, BinaryStringFormat.HexDecimal)
     Strings.getUtf8String(decrypt(plainBytes))

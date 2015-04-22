@@ -15,12 +15,12 @@ import scala.util.control.NonFatal
 // NOTE: Spring Bean으로 등록될 Class에 Logging trait 를 상속 받으면, Bean을 찾지 못하는 경우가 있습니다.
 trait BackgroundWorkerSupport {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   @volatile protected var running = false
   @volatile protected var stopWorker = false
 
-  private var workerThread: Thread = _
+  private var workerThread = None: Option[Thread]
 
   def isRunning: Boolean = running
   def isStopWorker: Boolean = stopWorker
@@ -42,10 +42,14 @@ trait BackgroundWorkerSupport {
       stopWorker = false
 
       try {
-        workerThread = createWorkerThread()
-        workerThread.start()
-        running = true
-
+        workerThread = Some(createWorkerThread())
+        workerThread match {
+          case Some(thread) =>
+            thread.start()
+            running = true
+          case _ =>
+            new RuntimeException("cannot create worker thread.")
+        }
         log.info(s"$workerName 수신 작업을 시작했습니다.")
       } catch {
         case NonFatal(e) =>
@@ -59,12 +63,13 @@ trait BackgroundWorkerSupport {
     if (running) {
       try {
         log.info(s"$workerName 수신 작업을 종료합니다...")
-        stopWorker = true
-        Thread.sleep(10)
-        if (workerThread != null) {
-          workerThread.interrupt()
-          workerThread.join(500L)
-          workerThread = null
+        workerThread match {
+          case Some(thread) =>
+            thread.interrupt()
+            thread.join(500L)
+            workerThread = None
+          case _ =>
+            new RuntimeException("fail to stop worker thread.")
         }
       } catch {
         case irr: InterruptedException =>
@@ -72,9 +77,9 @@ trait BackgroundWorkerSupport {
           log.debug(s"$workerName 수신 작업용 Thread를 종료하는데 실패했습니다.", ignored)
       } finally {
         running = false
+        stopWorker = true
       }
       log.info(s"$workerName 수신 작업을 종료했습니다.")
     }
   }
-
 }

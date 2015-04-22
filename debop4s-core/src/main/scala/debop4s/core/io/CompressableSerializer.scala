@@ -1,7 +1,6 @@
 package debop4s.core.io
 
 import debop4s.core.compress.{Compressor, GZipCompressor}
-import org.slf4j.LoggerFactory
 
 /**
  * 객체를 직렬화하면서 압축하고, 압축된 정보를 역직렬화 합니다.
@@ -9,14 +8,14 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 10. 오후 5:48
  */
-class CompressableSerializer(private val _serializer: Serializer, val compressor: Compressor)
+class CompressableSerializer(private[this] val _serializer: Serializer,
+                             val compressor: Compressor)
   extends SerializerDecorator(_serializer) {
 
-  private lazy val log = LoggerFactory.getLogger(classOf[CompressableSerializer])
+  // private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  def this(serializer: Serializer) {
-    this(serializer, new GZipCompressor())
-  }
+  def this(serializer: Serializer) = this(serializer, new GZipCompressor())
+
 
   /**
    * 객체를 직렬화 합니다.

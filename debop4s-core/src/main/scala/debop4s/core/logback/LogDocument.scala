@@ -26,7 +26,7 @@ class LogDocument extends ValueObjectBase {
   @BeanProperty var exception: String = null
   @BeanProperty var stacktrace: util.List[String] = new util.ArrayList[String]()
 
-  override def toString: String = {
+  override def toString: String =
     ToStringHelper(this)
     .add("serverName", serverName)
     .add("applicationName", applicationName)
@@ -39,5 +39,4 @@ class LogDocument extends ValueObjectBase {
     .add("exception", exception)
     .add("stacktrace", stacktrace)
     .toString
-  }
 }

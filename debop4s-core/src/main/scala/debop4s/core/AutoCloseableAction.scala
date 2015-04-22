@@ -14,11 +14,11 @@ class AutoCloseableAction(val closingAction: Runnable) extends AutoCloseable {
 
   def this() = this(null)
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   private[this] val _closed = new AtomicBoolean(false)
 
-  def isClosed = _closed.get()
+  def isClosed: Boolean = _closed.get()
 
   def close(): Unit = synchronized {
     if (!_closed.get) {

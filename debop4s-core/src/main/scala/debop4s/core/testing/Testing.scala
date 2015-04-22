@@ -15,10 +15,9 @@ import scala.util.control.NonFatal
  */
 object Testing {
 
-  lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  def run(count: Int, runnable: Runnable) {
-    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
+  def run(count: Int, runnable: Runnable): Unit = {
     try {
       Range(0, count).par.foreach(_ => runnable.run())
     } catch {
@@ -28,8 +27,7 @@ object Testing {
     log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
 
-  def run(count: Int)(block: => Unit) {
-    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
+  def run(count: Int)(block: => Unit): Unit = {
     try {
       Range(0, count).par.foreach(_ => block)
     } catch {
@@ -39,8 +37,7 @@ object Testing {
     log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
 
-  def run(count: Int, action1: Action1[java.lang.Integer]) {
-    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
+  def run(count: Int, action1: Action1[java.lang.Integer]): Unit = {
     try {
       Range(0, count).par.foreach(x => action1.perform(x))
     } catch {
@@ -50,8 +47,7 @@ object Testing {
     log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
 
-  def runAction(count: Int)(block: Int => Unit) {
-    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
+  def runAction(count: Int)(block: Int => Unit): Unit = {
     try {
       Range(0, count).par.foreach(block)
     } catch {
@@ -61,8 +57,7 @@ object Testing {
     log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
 
-  def runAction(count: Int, action1: Action1[java.lang.Integer]) {
-    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
+  def runAction(count: Int, action1: Action1[java.lang.Integer]): Unit = {
     try {
       Range(0, count).par.foreach(_ => action1.perform(_))
     } catch {
@@ -73,7 +68,6 @@ object Testing {
   }
 
   def call[T](count: Int)(callable: Callable[T]): Seq[T] = {
-    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
     try {
       return Range(0, count).par.map(_ => callable.call()).toList
     } catch {
@@ -84,7 +78,6 @@ object Testing {
   }
 
   def runFunc[T](count: Int)(func: Int => T): Seq[T] = {
-    log.trace(s"멀티스레드로 지정한 코드를 $count 번 수행합니다.")
     try {
       return Range(0, count).par.map(x => func(x)).toList
     } catch {

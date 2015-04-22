@@ -1,5 +1,7 @@
 package debop4s.core.jvm
 
+import java.lang.reflect.Method
+
 import scala.concurrent.duration.Duration
 
 
@@ -9,22 +11,36 @@ import scala.concurrent.duration.Duration
  * https://github.com/mariusaeriksen/heapster
  */
 class Heapster(klass: Class[_]) {
-  private val startM = klass.getDeclaredMethod("start")
-  private val stopM = klass.getDeclaredMethod("stop")
-  private val dumpProfileM =
+
+  private[this] val startM: Method =
+    klass.getDeclaredMethod("start")
+
+  private[this] val stopM: Method =
+    klass.getDeclaredMethod("stop")
+
+  private[this] val dumpProfileM: Method =
     klass.getDeclaredMethod("dumpProfile", classOf[java.lang.Boolean])
-  private val clearProfileM = klass.getDeclaredMethod("clearProfile")
-  private val setSamplingPeriodM =
+
+  private[this] val clearProfileM: Method =
+    klass.getDeclaredMethod("clearProfile")
+
+  private[this] val setSamplingPeriodM: Method =
     klass.getDeclaredMethod("setSamplingPeriod", classOf[java.lang.Integer])
 
-  def start() { startM.invoke(null) }
-  def shutdown() { stopM.invoke(null) }
-  def setSamplingPeriod(period: java.lang.Integer) { setSamplingPeriodM.invoke(null, period) }
-  def clearProfile() { clearProfileM.invoke(null) }
+  def start(): Unit = { startM.invoke(null) }
+
+  def shutdown(): Unit = { stopM.invoke(null) }
+
+  def setSamplingPeriod(period: java.lang.Integer): Unit =
+    setSamplingPeriodM.invoke(null, period)
+
+  def clearProfile(): Unit =
+    clearProfileM.invoke(null)
+
   def dumpProfile(forceGC: java.lang.Boolean): Array[Byte] =
     dumpProfileM.invoke(null, forceGC).asInstanceOf[Array[Byte]]
 
-  def profile(howlong: Duration, samplingPeriod: Int = 10 << 19, forceGC: Boolean = true) = {
+  def profile(howlong: Duration, samplingPeriod: Int = 10 << 19, forceGC: Boolean = true): Array[Byte] = {
     clearProfile()
     setSamplingPeriod(samplingPeriod)
 
@@ -37,7 +53,7 @@ class Heapster(klass: Class[_]) {
 
 object Heapster {
   val instance: Option[Heapster] = {
-    val loader = ClassLoader.getSystemClassLoader
+    val loader: ClassLoader = ClassLoader.getSystemClassLoader
     try {
       Some(new Heapster(loader.loadClass("Heapster")))
     } catch {

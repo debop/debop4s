@@ -11,9 +11,9 @@ import scala.concurrent._
 
 
 object InputStreamReader {
-  val DefaultMaxBufferSize = 4096
+  val DefaultMaxBufferSize: Int = 4096
 
-  def apply(inputStream: InputStream, maxBufferSize: Int = DefaultMaxBufferSize) =
+  def apply(inputStream: InputStream, maxBufferSize: Int = DefaultMaxBufferSize): InputStreamReader =
     new InputStreamReader(inputStream, maxBufferSize)
 }
 
@@ -21,11 +21,12 @@ object InputStreamReader {
  * InputStreamReader
  * @author Sunghyouk Bae
  */
-class InputStreamReader(inputStream: InputStream, maxBufferSize: Int)
+class InputStreamReader(inputStream: InputStream,
+                        maxBufferSize: Int)
   extends Reader with Closable with CloseAwaitably {
 
   @volatile private[this] var discarded = false
-  private val lock = new ReentrantReadWriteLock()
+  private[this] val lock: ReentrantReadWriteLock = new ReentrantReadWriteLock()
 
   def read(n: Int): Future[Buff] = {
     if (discarded)
@@ -61,7 +62,9 @@ class InputStreamReader(inputStream: InputStream, maxBufferSize: Int)
   /**
    * Discard this reader
    */
-  def discard() { discarded = true }
+  def discard(): Unit = {
+    discarded = true
+  }
 
   def close(deadline: Time): Future[Unit] = closeAwaitably {
     discard()

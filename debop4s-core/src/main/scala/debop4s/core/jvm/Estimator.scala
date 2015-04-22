@@ -8,7 +8,7 @@ import scala.util.Random
  */
 trait Estimator[T] {
   /** A scalar measurement `m` was taken */
-  def measure(m: T)
+  def measure(m: T): Unit
 
   /** Estimate the current value */
   def estimate: T
@@ -22,13 +22,13 @@ class Kalman(N: Int) {
   private[this] val mbuf = new Array[Double](N)
   private[this] val ebuf = new Array[Double](N)
   private[this] var est: Double = _
-  private[this] var n = 0L
+  private[this] var n: Long = 0L
   private[this] var weight: Double = 0.0
 
   /**
    * Update the filter with measurement `m` and measurement error `e`
    */
-  def measure(m: Double, e: Double) {
+  def measure(m: Double, e: Double): Unit = {
     val i = (n % N).toInt
     mbuf(i) = m
     ebuf(i) = e
@@ -42,26 +42,22 @@ class Kalman(N: Int) {
     n += 1
   }
 
-  private[this] def mvar = variance(
-    if (n < N) mbuf take n.toInt
-    else ebuf
-  )
+  private[this] def mvar: Double =
+    variance(if (n < N) mbuf take n.toInt else ebuf)
 
-  private[this] def evar = variance(
-    if (n < N) ebuf take n.toInt
-    else ebuf
-  )
+  private[this] def evar: Double =
+    variance(if (n < N) ebuf take n.toInt else ebuf)
 
-  def estimate = est
+  def estimate: Double = est
 
   private[this] def variance(samples: Array[Double]): Double = {
-    if (samples == null || samples.size <= 1)
+    if (samples == null || samples.length <= 1)
       return 0D
 
     val sum = samples.sum
-    val mean = sum / samples.size
+    val mean = sum / samples.length
     val diff = (samples map { x => (x - mean) * (x - mean) }).sum
-    diff / (samples.size - 1)
+    diff / (samples.length - 1)
   }
 
   override def toString: String =
@@ -75,11 +71,10 @@ class Kalman(N: Int) {
 class KalmanGaussianError(N: Int, range: Double) extends Kalman(N) with Estimator[Double] {
   require(range > 0D && range < 1D)
 
-  private[this] val rnd = new Random(System.currentTimeMillis())
+  private[this] val rnd: Random = new Random(System.currentTimeMillis())
 
-  def measure(m: Double) {
+  def measure(m: Double): Unit =
     measure(m, rnd.nextGaussian() * range * m)
-  }
 }
 
 /**
@@ -87,13 +82,14 @@ class KalmanGaussianError(N: Int, range: Double) extends Kalman(N) with Estimato
  */
 class WindowedMeans(N: Int, windows: Seq[(Int, Int)]) extends Estimator[Double] {
   require(windows forall { case (_, i) => i <= N })
-  private[this] val normalized = {
+
+  private[this] val normalized: Seq[(Double, Int)] = {
     val sum = (windows map { case (w, _) => w }).sum
     windows map { case (w, i) => (w.toDouble / sum, i) }
   }
 
-  private[this] val buf = new Array[Double](N)
-  private[this] var n = 0L
+  private[this] val buf: Array[Double] = new Array[Double](N)
+  private[this] var n: Long = 0L
 
   private[this] def mean(from: Long, count: Int): Double = {
     require(count <= N && count > 0)
@@ -110,14 +106,14 @@ class WindowedMeans(N: Int, windows: Seq[(Int, Int)]) extends Estimator[Double] 
     sum / count
   }
 
-  def measure(m: Double) {
+  def measure(m: Double): Unit = {
     if (n == 0) java.util.Arrays.fill(buf, m)
     else buf((n % N).toInt) = m
 
     n += 1
   }
 
-  def estimate = {
+  def estimate: Double = {
     require(n > 0)
     val weightedMeans = normalized map { case (w, i) => w * mean(n, i) }
     weightedMeans.sum
@@ -134,15 +130,15 @@ class LoadAverage(interval: Double) extends Estimator[Double] {
   private[this] var load = Double.NaN
   private[this] var first = true
 
-  def measure(m: Double) {
+  def measure(m: Double): Unit = {
     load = if (load.isNaN) m else load * a + m * (1 - a)
   }
 
-  def estimate = load
+  def estimate: Double = load
 }
 
 /**
- * Take a GC LOG produced by:
+ * Take a GC log produced by:
  *
  * {{{
  * $ jstat -gc \$PID 250 ...
@@ -156,30 +152,32 @@ object EstimatorTest extends App {
 
   import debop4s.core.conversions.storage._
 
-  val estimator = args match {
+  val estimator: Estimator[Double] = args match {
     case Array("kalman", n, error) =>
       new KalmanGaussianError(n.toInt, error.toDouble)
     case Array("windowed", n, windows) =>
       new WindowedMeans(n.toInt,
-        windows.split(",") map { w =>
-          w.split(":") match {
-            case Array(w, i) => (w.toInt, i.toInt)
-            case _ => throw new IllegalArgumentException("bad weight, count pair " + w)
-          }
-        }
+                        windows.split(",") map { w =>
+                          w.split(":") match {
+                            case Array(w, i) => (w.toInt, i.toInt)
+                            case _ => throw new IllegalArgumentException("bad weight, count pair " + w)
+                          }
+                        }
       )
     case Array("load", interval) =>
       new LoadAverage(interval.toDouble)
     case _ => throw new IllegalArgumentException("bad args ")
   }
 
-  val lines = scala.io.Source.stdin.getLines().drop(1)
-  val states = lines.toArray map (_.split(" ") filter (_ != "") map (_.toDouble)) collect {
-    case Array(s0c, s1c, s0u, s1u, ec, eu, oc, ou, pc, pu, ygc, ygct, fgc, fgct, gct) =>
-      PoolState(ygc.toLong, ec.toLong.bytes, eu.toLong.bytes)
-  }
+  val lines: Iterator[String] = scala.io.Source.stdin.getLines().drop(1)
+  val states: Array[PoolState] =
+    lines.toArray map (_.split(" ") filter (_ != "") map (_.toDouble)) collect {
+      case Array(s0c, s1c, s0u, s1u, ec, eu, oc, ou, pc, pu, ygc, ygct, fgc, fgct, gct) =>
+        PoolState(ygc.toLong, ec.toLong.bytes, eu.toLong.bytes)
+    }
 
-  var elapsed = 1
+  var elapsed: Int = 1
+
   for (List(begin, end) <- states.toList.sliding(2)) {
     val allocated = (end - begin).used
     estimator.measure(allocated.inBytes)

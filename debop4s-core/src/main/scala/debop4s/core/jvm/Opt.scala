@@ -10,7 +10,7 @@ import javax.management.{ObjectName, RuntimeMBeanException}
  */
 object Opt {
 
-  private[this] val DiagnosticName = ObjectName.getInstance("com.sun.management:type=HotSpotDiagnostic")
+  private[this] val DiagnosticName: ObjectName = ObjectName.getInstance("com.sun.management:type=HotSpotDiagnostic")
 
   def apply(name: String): Option[String] = {
     try {

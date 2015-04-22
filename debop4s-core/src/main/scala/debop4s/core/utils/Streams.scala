@@ -3,7 +3,8 @@ package debop4s.core.utils
 import java.io._
 import java.nio.charset.Charset
 
-import debop4s.core.{Logging, _}
+import debop4s.core._
+import org.slf4j.LoggerFactory
 
 import scala.annotation.tailrec
 
@@ -12,15 +13,17 @@ import scala.annotation.tailrec
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 9. 오후 11:00
  */
-object Streams extends Logging {
+object Streams {
 
-  val BUFFER_SIZE = 4096
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
+
+  private[this] val BUFFER_SIZE: Int = 4096
 
   /**
    * inputStream 정보를 읽어, outputStream에 복사합니다.
    */
   @tailrec
-  def copy(inputStream: InputStream, outputStream: OutputStream, bufferSize: Int = BUFFER_SIZE) {
+  def copy(inputStream: InputStream, outputStream: OutputStream, bufferSize: Int = BUFFER_SIZE): Unit = {
     val buffer = new Array[Byte](bufferSize)
 
     inputStream.read(buffer, 0, buffer.length) match {
@@ -31,14 +34,12 @@ object Streams extends Logging {
     }
   }
 
-  def toInputStream(bytes: Array[Byte]): InputStream = {
+  def toInputStream(bytes: Array[Byte]): InputStream =
     new ByteArrayInputStream(bytes)
-  }
 
-  def toInputStream(str: String, cs: Charset = Charsets.UTF_8): InputStream = {
+  def toInputStream(str: String, cs: Charset = Charsets.UTF_8): InputStream =
     if (Strings.isEmpty(str)) new ByteArrayInputStream(Array.emptyByteArray)
     else toInputStream(str.getBytes(cs))
-  }
 
   def toOutputStream(is: InputStream): OutputStream = {
     val bos = new ByteArrayOutputStream()
@@ -50,18 +51,18 @@ object Streams extends Logging {
     if (bytes == null || bytes.length == 0)
       return new ByteArrayOutputStream()
 
-    val is = new ByteArrayInputStream(bytes)
     val os = new ByteArrayOutputStream(bytes.length)
-
-    copy(is, os)
+    using(new ByteArrayInputStream(bytes)) { is =>
+      copy(is, os)
+    }
     os
   }
 
   def toOutputStream(str: String, cs: Charset = Charsets.UTF_8): OutputStream = {
     if (Strings.isEmpty(str))
-      return new ByteArrayOutputStream()
-
-    toOutputStream(str.getBytes(cs))
+      new ByteArrayOutputStream()
+    else
+      toOutputStream(str.getBytes(cs))
   }
 
   def toByteArray(is: InputStream): Array[Byte] = {

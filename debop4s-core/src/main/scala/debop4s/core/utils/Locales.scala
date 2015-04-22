@@ -4,12 +4,15 @@ import java.util
 import java.util.Locale
 
 import debop4s.core.Logging
+import org.slf4j.LoggerFactory
 
 /**
  * 로케일 (`Locale`) 정보를 쉽게 사용하기 위한 Utility class
  * @author sunghyouk.bae@gmail.com
  */
-object Locales extends Logging {
+object Locales {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   object Implicits {
 

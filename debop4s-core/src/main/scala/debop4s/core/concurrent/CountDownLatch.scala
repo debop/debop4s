@@ -1,5 +1,6 @@
 package debop4s.core.concurrent
 
+import java.util.concurrent
 import java.util.concurrent.TimeUnit
 
 import scala.concurrent.TimeoutException
@@ -11,20 +12,21 @@ import scala.concurrent.duration._
  */
 class CountDownLatch(val initialCount: Int) {
 
-  val underlying = new java.util.concurrent.CountDownLatch(initialCount)
+  val underlying: concurrent.CountDownLatch = new java.util.concurrent.CountDownLatch(initialCount)
 
-  def count = underlying.getCount
+  def count: Long = underlying.getCount
 
-  def isZero = count == 0
+  def isZero: Boolean = count == 0
 
-  def countDown() = underlying.countDown()
+  def countDown(): Unit = underlying.countDown()
 
-  def await() = underlying.await()
+  def await(): Unit = underlying.await()
 
-  def await(timeout: Duration) = underlying.await(timeout.toMillis, TimeUnit.MILLISECONDS)
+  def await(timeout: Duration): Boolean = underlying.await(timeout.toMillis, TimeUnit.MILLISECONDS)
 
-  def within(timeout: Duration) = await(timeout) || {
-    throw new TimeoutException(timeout.toString)
-  }
+  def within(timeout: Duration): Boolean =
+    await(timeout) || {
+      throw new TimeoutException(timeout.toString)
+    }
 
 }

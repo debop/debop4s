@@ -3,6 +3,7 @@ package debop4s.core.utils
 import java.io.InputStream
 
 import debop4s.core._
+import org.slf4j.LoggerFactory
 
 /**
  * debop4s.core.tools.Resources
@@ -10,7 +11,9 @@ import debop4s.core._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 13. 오후 7:52
  */
-object Resources extends Logging {
+object Resources {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   /**
    * 지정한 경로의 리소스를 읽기위한 InputStream 을 반환합니다.
@@ -19,8 +22,7 @@ object Resources extends Logging {
    * @return 리소스의 Input Stream. 해당 리소스가 없다면 null 을 반환한다.
    */
   def getClassPathResourceStream(path: String): InputStream = {
-    require(Strings.isNotEmpty(path))
-    debug(s"리소스 파일을 읽습니다. path=$path")
+    log.debug(s"리소스 파일을 읽습니다. path=$path")
 
     val url = if (path.startsWith("/")) path.substring(1) else path
     getClass.getClassLoader.getResourceAsStream(url)
@@ -34,9 +36,7 @@ object Resources extends Logging {
    * @return 리소스의 Input Stream. 해당 리소스가 없다면 null 을 반환한다.
    */
   def getClassPathResourceStream(path: String, classLoader: ClassLoader): InputStream = {
-    require(Strings.isNotEmpty(path))
-    require(classLoader != null)
-    debug(s"리소스 파일을 읽습니다. path=[$path]")
+    log.debug(s"리소스 파일을 읽습니다. path=[$path], classLoader=$classLoader")
 
     val url = if (path.startsWith("/")) path.substring(1) else path
     classLoader.getResourceAsStream(url)
@@ -48,8 +48,7 @@ object Resources extends Logging {
    * @return 리소스의 문자열, 없으면 빈문자열을 반환합니다.
    */
   def getString(path: String): String = {
-    require(Strings.isNotEmpty(path))
-    debug(s"read resource string. path=$path")
+    log.debug(s"read resource string. path=$path")
 
     using(getClassPathResourceStream(path)) { is =>
       Streams.toString(is)
@@ -63,8 +62,7 @@ object Resources extends Logging {
    * @return 리소스의 문자열, 없으면 빈문자열을 반환합니다.
    */
   def getString(path: String, classLoader: ClassLoader): String = {
-    require(Strings.isNotEmpty(path))
-    debug(s"read resource string. path=$path, classLoader=$classLoader")
+    log.debug(s"read resource string. path=$path, classLoader=$classLoader")
 
     using(getClassPathResourceStream(path, classLoader)) { is =>
       Streams.toString(is)
@@ -77,8 +75,7 @@ object Resources extends Logging {
    * @return 리소스의 문자열, 없으면 빈문자열을 반환합니다.
    */
   def getBytes(path: String): Array[Byte] = {
-    require(Strings.isNotEmpty(path))
-    debug(s"load resource bytes. path=$path")
+    log.debug(s"load resource bytes. path=$path")
 
     using(getClassPathResourceStream(path)) { is =>
       Streams.toByteArray(is)
@@ -92,8 +89,7 @@ object Resources extends Logging {
    * @return 리소스의 문자열, 없으면 빈문자열을 반환합니다.
    */
   def getBytes(path: String, classLoader: ClassLoader): Array[Byte] = {
-    require(Strings.isNotEmpty(path))
-    debug(s"load resource bytes. path=$path, classLoader=$classLoader")
+    log.debug(s"load resource bytes. path=$path, classLoader=$classLoader")
 
     using(getClassPathResourceStream(path, classLoader)) { is =>
       Streams.toByteArray(is)

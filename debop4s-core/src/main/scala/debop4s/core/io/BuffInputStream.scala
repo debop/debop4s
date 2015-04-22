@@ -3,8 +3,7 @@ package debop4s.core.io
 import java.io.InputStream
 
 /**
- * BuffInputStream
- * Created by debop on 2014. 4. 7.
+ * 버퍼링이 되는 `InputStream` 입니다.
  */
 class BuffInputStream(val buff: Buff) extends InputStream {
 
@@ -16,9 +15,9 @@ class BuffInputStream(val buff: Buff) extends InputStream {
 
   override def available(): Int = synchronized { rest.length }
 
-  override def close() {}
+  override def close(): Unit = {}
 
-  override def mark(readlimit: Int) = synchronized { mrk = rest }
+  override def mark(readlimit: Int): Unit = synchronized { mrk = rest }
 
   override def markSupported(): Boolean = true
 
@@ -45,7 +44,7 @@ class BuffInputStream(val buff: Buff) extends InputStream {
     n
   }
 
-  override def reset() = synchronized { rest = mrk }
+  override def reset(): Unit = synchronized { rest = mrk }
 
   override def skip(n: Long): Long = synchronized {
     if (n <= 0) return 0

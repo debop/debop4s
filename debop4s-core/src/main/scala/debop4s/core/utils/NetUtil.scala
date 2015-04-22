@@ -16,15 +16,16 @@ object NetUtil {
    * ip address 가 private 인지 여부
    * 10.*.*.*, 172.16.*.*, 192.168.*.* 인 경우가 private 이다
    */
-  def isPrivateAddress(ip: InetAddress): Boolean = ip match {
-    case ip: Inet4Address =>
-      val addr = ip.getAddress
-      if (addr(0) == 10.toByte) true // 10/8
-      else if (addr(0) == 172.toByte && (addr(1) & 0xf0) == 16.toByte) true // 172/12
-      else if (addr(0) == 192.toByte && addr(1) == 168.toByte) true // 192.168/16
-      else false
-    case _ => false
-  }
+  def isPrivateAddress(ip: InetAddress): Boolean =
+    ip match {
+      case ip: Inet4Address =>
+        val addr = ip.getAddress
+        if (addr(0) == 10.toByte) true // 10/8
+        else if (addr(0) == 172.toByte && (addr(1) & 0xf0) == 16.toByte) true // 172/12
+        else if (addr(0) == 192.toByte && addr(1) == 168.toByte) true // 192.168/16
+        else false
+      case _ => false
+    }
 
   /**
    * ip v4 문자열을 `Int`로 변환합니다.
@@ -98,7 +99,7 @@ object NetUtil {
   def ipToIpBlock(ip: String, prefixLen: Option[Int]): (Int, Int) = {
     val arr = ip.split('.')
     val pLen = prefixLen match {
-      case None if arr.size != 4 => arr.size * 8
+      case None if arr.length != 4 => arr.length * 8
       case t => t.getOrElse(32)
     }
     val netIp = ipToInt(arr.padTo(4, "0").mkString("."))
@@ -106,27 +107,25 @@ object NetUtil {
     (netIp, mask)
   }
 
-  def cidrToIpBlock(cidr: String): (Int, Int) = cidr.split('/') match {
-    case Array(ip, prefixLen) => ipToIpBlock(ip, Some(prefixLen.toInt))
-    case Array(ip) => ipToIpBlock(ip, None)
-  }
+  def cidrToIpBlock(cidr: String): (Int, Int) =
+    cidr.split('/') match {
+      case Array(ip, prefixLen) => ipToIpBlock(ip, Some(prefixLen.toInt))
+      case Array(ip) => ipToIpBlock(ip, None)
+    }
 
-  def isIpInBlock(ip: Int, ipBlock: (Int, Int)): Boolean = ipBlock match {
-    case (netIp, mask) => (mask & ip) == netIp
-  }
+  def isIpInBlock(ip: Int, ipBlock: (Int, Int)): Boolean =
+    ipBlock match {
+      case (netIp, mask) => (mask & ip) == netIp
+    }
 
   //  def isInetAddressInBlock(inetAddress:InetAddress, ipBlock:(Int, Int)): Boolean =
   //    isInetAddressInBlock(inetAddress, ipBlock)
 
-  def isIpInBlocks(ip: Int, ipBlocks: Iterable[(Int, Int)]): Boolean = {
-    ipBlocks exists {
-      ipBlock =>
-        isIpInBlock(ip, ipBlock)
-    }
-  }
-  def isIpInBlocks(ip: String, ipBlocks: Iterable[(Int, Int)]): Boolean = {
+  def isIpInBlocks(ip: Int, ipBlocks: Iterable[(Int, Int)]): Boolean =
+    ipBlocks exists { ipBlock => isIpInBlock(ip, ipBlock) }
+
+  def isIpInBlocks(ip: String, ipBlocks: Iterable[(Int, Int)]): Boolean =
     isIpInBlocks(ipToInt(ip), ipBlocks)
-  }
 
   def isInetAddressInBlocks(inetAddress: InetAddress, ipBlocks: Iterable[(Int, Int)]): Boolean =
     isIpInBlocks(inetAddressToInt(inetAddress), ipBlocks)

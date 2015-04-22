@@ -19,17 +19,18 @@ object Directly {
   /**
    * 성공할 때까지 재시도 합니다.
    */
-  def forever: Policy = new Policy {
-    override def apply[T](promise: PromiseWrapper[T])
-                         (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
-      retry(promise, promise)
+  def forever: Policy =
+    new Policy {
+      override def apply[T](promise: PromiseWrapper[T])
+                           (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+        retry(promise, promise)
+      }
     }
-  }
 
   /**
    * 성공할 때까지 재시도 횟수 (기본 3회) 만큼 재시도 합니다.
    */
-  def apply(max: Int = 3): Policy = {
+  def apply(max: Int = 3): Policy =
     new CountingPolicy {
       override def apply[T](promise: PromiseWrapper[T])
                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
@@ -40,7 +41,7 @@ object Directly {
         run(max)
       }
     }
-  }
+
 }
 
 object Pause {
@@ -48,7 +49,7 @@ object Pause {
   /**
    * 실패시에 delay 시간 후에 영원히 재시도 합니다.
    */
-  def forever(delay: FiniteDuration = DEFAULT_DELAY)(implicit timer: Timer): Policy = {
+  def forever(delay: FiniteDuration = DEFAULT_DELAY)(implicit timer: Timer): Policy =
     new Policy {
       self =>
       override def apply[T](promise: PromiseWrapper[T])
@@ -57,12 +58,11 @@ object Pause {
         retry(promise, orElse)
       }
     }
-  }
 
   /**
    * 실패 시에 일정 시간 지연 후 최대 재시도 횟수(기본 4회) 내에서 재시도합니다.
    */
-  def apply(max: Int = 4, delay: FiniteDuration = DEFAULT_DELAY)(implicit timer: Timer): Policy = {
+  def apply(max: Int = 4, delay: FiniteDuration = DEFAULT_DELAY)(implicit timer: Timer): Policy =
     new CountingPolicy {
       override def apply[T](promise: PromiseWrapper[T])
                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
@@ -74,7 +74,7 @@ object Pause {
         run(max)
       }
     }
-  }
+
 }
 
 object Backoff {
@@ -82,7 +82,7 @@ object Backoff {
   /**
    * 성공할 때까지 영원히 재시도하는데, 재시도 시 마다 지연 시간이 지수(exponential) 형태로 증가합니다.
    */
-  def forever(delay: FiniteDuration = DEFAULT_DELAY, base: Int = 2)(implicit timer: Timer): Policy = {
+  def forever(delay: FiniteDuration = DEFAULT_DELAY, base: Int = 2)(implicit timer: Timer): Policy =
     new Policy {
       override def apply[T](promise: PromiseWrapper[T])
                            (implicit success: Successful[T], executor: ExecutionContext): Future[T] = {
@@ -93,7 +93,6 @@ object Backoff {
         run(delay)
       }
     }
-  }
 
   /**
    * 성공할 때까지 최대 재시도 횟수 (기본: 0회) 만큼 재시도하는데, 재시도 시 마다 지연 시간이 지수(exponential) 형태로 증가합니다.
@@ -101,7 +100,7 @@ object Backoff {
   def apply(max: Int = 8,
             delay: FiniteDuration = DEFAULT_DELAY,
             base: Int = 2)
-           (implicit timer: Timer): Policy = {
+           (implicit timer: Timer): Policy =
     new CountingPolicy {
       override def apply[T](promise: PromiseWrapper[T])
                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
@@ -116,7 +115,6 @@ object Backoff {
         run(max, delay)
       }
     }
-  }
 
 }
 
@@ -135,7 +133,7 @@ object Backoff {
 object When {
   type Depends = PartialFunction[Any, Policy]
 
-  def apply(depends: Depends): Policy = {
+  def apply(depends: Depends): Policy =
     new Policy {
       override def apply[T](promise: PromiseWrapper[T])
                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
@@ -156,7 +154,6 @@ object When {
         }
       }
     }
-  }
 }
 
 
@@ -172,9 +169,8 @@ trait Policy {
               (implicit successful: Successful[T], executionContext: ExecutionContext): Future[T]
 
   def apply[T](promise: => Future[T])
-              (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+              (implicit successful: Successful[T], executor: ExecutionContext): Future[T] =
     apply { () => promise }
-  }
 
   /**
    * `promise` 를 작업하고, 실패 시에는 `orElse` 를 수행하고, 예외가 발생한 경우는 `recovery` 로 복원합니다.
@@ -198,6 +194,7 @@ trait Policy {
 }
 
 trait CountingPolicy extends Policy {
+
   protected def countdown[T](max: Int,
                              promise: () => Future[T],
                              orElse: Int => Future[T])
@@ -206,7 +203,7 @@ trait CountingPolicy extends Policy {
     log.debug(s"작업을 시도합니다. 남은 재시도 횟수=$max")
 
     // 성공했거나, 재시도 횟수가 0이라면 재시도를 끝내도록 한다. (실패했거나 아직 재시도 횟수가 남았다면 다시 시도하도록한다)
-    val countedSuccess = successful.or(max < 1)
+    val countedSuccess: Successful[T] = successful.or(max < 1)
     val recovery = (f: Future[T]) => if (max < 1) f else orElse(max - 1)
 
     retry(promise, () => orElse(max - 1), recovery)(countedSuccess, executor)

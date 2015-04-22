@@ -21,8 +21,7 @@ import scala.util.{Failure, Success, Try}
  *
  * Created by debop on 2014. 4. 13.
  */
-trait Event[+T] {
-  self =>
+trait Event[+T] {self =>
 
   /**
    * Register the given [[debop4s.core.Witness]] to this Event.
@@ -282,8 +281,7 @@ object Event {
 }
 
 /** A witness is the recipient of [[debop4s.core.Event]] */
-trait Witness[-N] {
-  self =>
+trait Witness[-N] {self =>
 
   /** Notify this witness with the given note. */
   def notify(note: N)

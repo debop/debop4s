@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 
 /**
- * logback LOG message 를 Redis PubSub channel에서 받아와서 console에 쓰도록 하는 Subscriber 입니다.
+ * logback log message 를 Redis PubSub channel에서 받아와서 console에 쓰도록 하는 Subscriber 입니다.
  *
  *
  * Created by debop on 2014. 2. 22.

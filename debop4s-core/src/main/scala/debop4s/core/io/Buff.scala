@@ -16,7 +16,7 @@ trait Buff {
    * @param output 버퍼 정보를 쓸 대상 바이트 배열
    * @param offset 대상 바이트 배열의 오프셋
    */
-  def write(output: Array[Byte], offset: Int)
+  def write(output: Array[Byte], offset: Int): Unit
 
   def length: Int
 
@@ -64,6 +64,7 @@ trait Buff {
     case other: Buff => Buff.equals(this, other)
     case _ => false
   }
+
   override def toString: String = {
     toArray.mkString(",")
   }
@@ -73,8 +74,8 @@ trait Buff {
 object Buff {
 
   private class Noop extends Buff {
-    def write(output: Array[Byte], offset: Int) = ()
-    def length = 0
+    def write(output: Array[Byte], offset: Int): Unit = ()
+    def length: Int = 0
     def slice(start: Int, end: Int): Buff = {
       require(start >= 0 && end >= 0, "Index out of bounds")
       this
@@ -95,13 +96,17 @@ object Buff {
     override def write(output: Array[Byte], offset: Int): Unit = {
       System.arraycopy(bytes, start, output, offset, length)
     }
+
     override def length: Int = end - start
+
     override def slice(start: Int, end: Int): Buff = {
       require(start >= 0 && end >= 0, "Index out of bounds")
       if (end <= start || start > length) Buff.Empty
       else ByteArray(bytes, this.start + start, (this.start + end) min this.end)
     }
+
     override def toString: String = s"ByteArray(${ super.toString })"
+
     override def equals(other: Any): Boolean = other match {
       case other: ByteArray
         if other.start == 0 && other.end == other.bytes.length && start == 0 && end == bytes.length =>
@@ -121,32 +126,31 @@ object Buff {
       else ByteArray(bytes, 0, bytes.length)
     }
 
-    def apply(bytes: Byte*): Buff = apply(Array[Byte](bytes: _*))
+    def apply(bytes: Byte*): Buff =
+      apply(Array[Byte](bytes: _*))
 
-    def unapply(buffer: Buff): Option[(Array[Byte], Int, Int)] = buffer match {
-      case ba: ByteArray => Some(ba.bytes, ba.start, ba.end)
-      case _ => None
-    }
+    def unapply(buffer: Buff): Option[(Array[Byte], Int, Int)] =
+      buffer match {
+        case ba: ByteArray => Some(ba.bytes, ba.start, ba.end)
+        case _ => None
+      }
   }
 
   /**
    * `Buffer` 를 java nio `ByteBuffer` 로 변환합니다.
-   * @param buffer
-   * @return
+   * @param buffer Buff 인스턴스
    */
-  def toByteBuffer(buffer: Buff): ByteBuffer = buffer match {
-    case ByteArray(bytes, s, e) => ByteBuffer.wrap(bytes, s, e - s)
-    case buff =>
-      val bytes = new Array[Byte](buff.length)
-      buff.write(bytes, 0)
-      ByteBuffer.wrap(bytes)
-  }
+  def toByteBuffer(buffer: Buff): ByteBuffer =
+    buffer match {
+      case ByteArray(bytes, s, e) => ByteBuffer.wrap(bytes, s, e - s)
+      case buff =>
+        val bytes = new Array[Byte](buff.length)
+        buff.write(bytes, 0)
+        ByteBuffer.wrap(bytes)
+    }
 
   /**
    * 두 개의 Buffer의 값이 같은지 비교합니다.
-   * @param x
-   * @param y
-   * @return
    */
   def equals(x: Buff, y: Buff): Boolean = {
     if (x.length != y.length)
@@ -160,8 +164,6 @@ object Buff {
 
   /**
    * `Buffer` 내용을 16진수 문자열로 표현합니다.
-   * @param buffer
-   * @return
    */
   def toHexString(buffer: Buff): String = {
     val bytes = new Array[Byte](buffer.length)
@@ -171,17 +173,19 @@ object Buff {
   }
 
   object Utf8 {
-    private val utf8 = Charset.forName("UTF-8")
+    private[this] val utf8: Charset = Charset.forName("UTF-8")
 
     def apply(s: String): Buff = ByteArray(s.getBytes(utf8))
-    def unapply(buff: Buff): Option[String] = buff match {
-      case ba: ByteArray =>
-        val s = new String(ba.bytes, ba.start, ba.end - ba.start, utf8)
-        Some(s)
-      case buf =>
-        val bytes = new Array[Byte](buff.length)
-        buff.write(bytes, 0)
-        Some(new String(bytes, utf8))
-    }
+
+    def unapply(buff: Buff): Option[String] =
+      buff match {
+        case ba: ByteArray =>
+          val s = new String(ba.bytes, ba.start, ba.end - ba.start, utf8)
+          Some(s)
+        case buf =>
+          val bytes = new Array[Byte](buff.length)
+          buff.write(bytes, 0)
+          Some(new String(bytes, utf8))
+      }
   }
 }

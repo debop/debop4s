@@ -6,7 +6,7 @@ package debop4s.core.utils
  */
 object Base64Long {
 
-  lazy val StandardBase64Alphabet: (Int) => Char =
+  private[this] lazy val standardBase64Alphabet: (Int) => Char =
     Array[Char](
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
       'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -19,13 +19,13 @@ object Base64Long {
     )
 
   /** The bit width of a base 64 digit. */
-  private[this] val DigitWidth = 6
+  private[this] val digitWidth: Int = 6
 
   /** Mask for the least-sgnificant digit. */
-  private[this] val DigitMask = (1 << DigitWidth) - 1
+  private[this] val digitMask: Int = (1 << digitWidth) - 1
 
   /** The amount to shift right for the first base 64 digit in a Long. */
-  private[this] val StartingBitPosition = 60
+  private[this] val startingBitPosition: Int = 60
 
   /** Enable re-use of the StringBuilder for toBase64(Long): String */
   private[this] val threadLocalBuilder = new ThreadLocal[StringBuilder] {
@@ -36,34 +36,35 @@ object Base64Long {
   def toBase64(n: Long): String = {
     val builder = threadLocalBuilder.get()
     builder.clear()
-    toBase64(builder, n)
+    setBase64(builder, n)
     builder.toString()
   }
 
-  /** `Long` 수형의 값을 base 64 인코딩을 수행하여 `StringBuilder` 에 추가합니다.
-    * The Base64 encoding uses the standard Base64 alphabet (with '+' and '/'). It does not pad the
-    * result. The representation is just like base 10 or base 16, where leading zero digits are
-    * omitted.
-    *
-    * The number is treated as unsigned, so there is never a leading negative sign, and the
-    * representations of negative numbers are larger than positive numbers.
-    */
+  /**
+   * `Long` 수형의 값을 base 64 인코딩을 수행하여 `StringBuilder` 에 추가합니다.
+   * The Base64 encoding uses the standard Base64 alphabet (with '+' and '/'). It does not pad the
+   * result. The representation is just like base 10 or base 16, where leading zero digits are
+   * omitted.
+   *
+   * The number is treated as unsigned, so there is never a leading negative sign, and the
+   * representations of negative numbers are larger than positive numbers.
+   */
   @inline
-  def toBase64(builder: StringBuilder, n: Long, alphabet: Int => Char = StandardBase64Alphabet): Unit = {
+  private def setBase64(builder: StringBuilder, n: Long, alphabet: Int => Char = standardBase64Alphabet): Unit = {
     if (n == 0) {
       // 0 은 특수 문자
       builder append alphabet(0)
     } else {
-      var bitPosition = StartingBitPosition
+      var bitPosition = startingBitPosition
       while ((n >>> bitPosition) == 0) {
-        bitPosition -= DigitWidth
+        bitPosition -= digitWidth
       }
       // Copy in the 6-bit segments, one at a time.
       while (bitPosition >= 0) {
         val shifted = n >>> bitPosition
-        val digitValue = (shifted & DigitMask).toInt
+        val digitValue = (shifted & digitMask).toInt
         builder.append(alphabet(digitValue))
-        bitPosition -= DigitWidth
+        bitPosition -= digitWidth
       }
     }
   }

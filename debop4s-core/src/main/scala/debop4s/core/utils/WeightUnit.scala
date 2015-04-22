@@ -14,16 +14,16 @@ import scala.util.control.NonFatal
 class WeightUnit(val gram: Double) extends Ordered[WeightUnit] {
 
   // mm 까지만 비교할 수 있도록 한다.
-  implicit val dblEquality = tolerantDoubleEquality(0.001)
+  private[this] implicit val dblEquality = tolerantDoubleEquality(0.001)
 
-  def inMilligram = gram * 1000
-  def inGram = gram
-  def inKilogram = gram / 1000
-  def inTon = gram / 1000000
+  def inMilligram: Double = gram * 1000
+  def inGram: Double = gram
+  def inKilogram: Double = gram / 1000
+  def inTon: Double = gram / 1000000
 
-  def inGrain = gram * 15.432
-  def inOnce = gram / 28.3495
-  def inFound = gram / 453.592
+  def inGrain: Double = gram * 15.432
+  def inOnce: Double = gram / 28.3495
+  def inFound: Double = gram / 453.592
 
   def +(that: WeightUnit): WeightUnit = new WeightUnit(this.gram + that.gram)
   def -(that: WeightUnit): WeightUnit = new WeightUnit(this.gram - that.gram)
@@ -71,7 +71,7 @@ class WeightUnit(val gram: Double) extends Ordered[WeightUnit] {
 
 object WeightUnit {
 
-  private val log = LoggerFactory.getLogger(getClass)
+  private[this] val log = LoggerFactory.getLogger(getClass)
 
   lazy val positiveInfinite = new WeightUnit(Double.PositiveInfinity)
   lazy val negativeInfinite = new WeightUnit(Double.NegativeInfinity)

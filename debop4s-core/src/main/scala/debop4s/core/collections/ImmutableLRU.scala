@@ -6,7 +6,7 @@ import scala.collection.SortedMap
  * 변경이 불가능한 LRU cache
  */
 object ImmutableLRU {
-  def apply[K, V](maxSize: Int) = {
+  def apply[K, V](maxSize: Int): ImmutableLRU[K, V] = {
     new ImmutableLRU(maxSize, 0, Map.empty[K, (Long, V)], SortedMap.empty[Long, K])
   }
 }
@@ -21,8 +21,8 @@ class ImmutableLRU[K, V] private(maxSize: Int, idx: Long, map: Map[K, (Long, V)]
 
   // Scala's SortedMap requires a key ordering; ImmutableLRU doesn't
   // care about pulling a minimum value out of the SortedMap, so the
-  // following kOrd treats every value as equal.
-  protected implicit val kOrd = new Ordering[K] {def compare(l: K, r: K) = 0 }
+  // following keyOrd treats every value as equal.
+  protected implicit val keyOrd = new Ordering[K] {def compare(l: K, r: K) = 0 }
 
   def size: Int = map.size
   def keySet: Set[K] = map.keySet
@@ -69,5 +69,5 @@ class ImmutableLRU[K, V] private(maxSize: Int, idx: Long, map: Map[K, (Long, V)]
     }.getOrElse((None, this))
   }
 
-  override def toString = s"ImmutableLRU(${ map.toList.mkString(",") })"
+  override def toString: String = s"ImmutableLRU(${ map.toList.mkString(",") })"
 }

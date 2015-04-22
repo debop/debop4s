@@ -5,8 +5,9 @@ import java.nio.charset.Charset
 import java.util
 import java.util.{Collection => JCollection, List => JList, Map => JMap}
 
-import debop4s.core.{BinaryStringFormat, Logging}
+import debop4s.core.BinaryStringFormat
 import org.apache.commons.codec.binary.{Base64, Hex}
+import org.slf4j.LoggerFactory
 
 import scala.annotation.varargs
 import scala.collection.JavaConverters._
@@ -19,11 +20,13 @@ import scala.util.matching.Regex.MatchData
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 9. 오후 10:06
  */
-object Strings extends Logging {
+object Strings {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
   /**
    * 한국어 등 Multi byte 문자열임을 나타내는 접두사입니다.
    */
-  lazy val MULTI_BYTES_PREFIX: Array[Byte] = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
+  private[this] lazy val MULTI_BYTES_PREFIX: Array[Byte] = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
 
   lazy val TRIMMING_STR = "..."
   lazy val NULL_STR = "<null>"
@@ -31,10 +34,10 @@ object Strings extends Logging {
   lazy val COMMA_STR = ","
 
   /** 시스템의 Line 구분자 : LF | CRLF | CR */
-  lazy val LINE_SEPARATOR = System.getProperty("line.separator")
+  private[this] lazy val LINE_SEPARATOR = System.getProperty("line.separator")
 
   /** 빈 공간을 찾는 RegEx */
-  val WHITESPACE_BLOCK = "\\s+".r
+  private[this] lazy val WHITESPACE_BLOCK = "\\s+".r
 
   val UTF8: Charset = Charsets.UTF_8
 
@@ -148,17 +151,13 @@ object Strings extends Logging {
     else -1
   }
 
-  /**
-   * 바이트 배열을 문자열로 표현합니다.
-   */
+  /** 바이트 배열을 문자열로 표현합니다. */
   def toHexString(bytes: Array[Byte]): String = {
     if (bytes == null || bytes.length == 0) EMPTY_STR
     else toHexString(bytes, 0, bytes.length)
   }
 
-  /**
-   * 바이트 배열을 문자열로 표현합니다.
-   */
+  /** 바이트 배열을 문자열로 표현합니다. */
   def toHexString(bytes: Array[Byte], from: Int, to: Int): String = {
     val sb = new StringBuilder((to - from) * 2)
 
@@ -182,15 +181,14 @@ object Strings extends Logging {
 
     (str.grouped(2).toSeq zipWithIndex) foreach {
       case (substr, i) =>
-        buffer(i) = java.lang.Integer.parseInt(substr, 16).toByte
+        buffer(i) = Integer.parseInt(substr, 16).toByte
     }
     buffer
   }
 
-  def getBytesFromHexString(hexString: String): Array[Byte] = {
+  def getBytesFromHexString(hexString: String): Array[Byte] =
     if (isEmpty(hexString)) Array.emptyByteArray
     else Hex.decodeHex(hexString.toCharArray)
-  }
 
   def getHexString(bytes: Array[Byte]): String =
     Hex.encodeHexString(bytes)
@@ -216,32 +214,31 @@ object Strings extends Logging {
   def decodeBase64String(base64String: String): String =
     getUtf8String(decodeBase64(base64String))
 
-  def getUtf8Bytes(str: String): Array[Byte] = {
+  def getUtf8Bytes(str: String): Array[Byte] =
     if (isEmpty(str)) Arrays.EMPTY_BYTE_ARRAY
     else str.getBytes(Charsets.UTF_8)
-  }
 
-  def getUtf8String(bytes: Array[Byte]) = {
+  def getUtf8String(bytes: Array[Byte]) =
     if (Arrays.isEmpty(bytes)) EMPTY_STR
     else new String(bytes, Charsets.UTF_8)
-  }
 
-  def getString(bytes: Array[Byte], charsetName: String = "UTF-8"): String = {
+  def getString(bytes: Array[Byte], charsetName: String = "UTF-8"): String =
     if (Arrays.isEmpty(bytes)) EMPTY_STR
     else new String(bytes, Charset.forName(charsetName))
-  }
 
   def getStringFromBytes(bytes: Array[Byte],
-                         format: BinaryStringFormat = BinaryStringFormat.HexDecimal): String = {
-    if (format == BinaryStringFormat.HexDecimal) getHexString(bytes)
-    else encodeBase64String(bytes)
-  }
+                         format: BinaryStringFormat = BinaryStringFormat.HexDecimal): String =
+    format match {
+      case BinaryStringFormat.HexDecimal => getHexString(bytes)
+      case _ => encodeBase64String(bytes)
+    }
 
   def getBytesFromString(str: String,
-                         format: BinaryStringFormat = BinaryStringFormat.HexDecimal): Array[Byte] = {
-    if (format == BinaryStringFormat.HexDecimal) getBytesFromHexString(str)
-    else decodeBase64(str)
-  }
+                         format: BinaryStringFormat = BinaryStringFormat.HexDecimal): Array[Byte] =
+    format match {
+      case BinaryStringFormat.HexDecimal => getBytesFromHexString(str)
+      case _ => decodeBase64(str)
+    }
 
 
   def deleteCharAny(cs: CharSequence, chars: Char*): String = {
@@ -407,17 +404,6 @@ object Strings extends Logging {
         sp = separator
       }
     }
-    //    val iter = items.iterator()
-    //    var sp = ""
-    //    var first = true
-    //
-    //    while (iter.hasNext) {
-    //      sb.append(sp).append(iter.next())
-    //      if (first) {
-    //        first = false
-    //        sp = separator
-    //      }
-    //    }
   }
 
   def mkString(items: Map[_, _], separator: String): String = {
@@ -427,7 +413,6 @@ object Strings extends Logging {
   }
 
   def mkString(sb: StringBuilder, items: Map[_, _], separator: String): Unit = {
-
     var sp = ""
     var first = true
 
@@ -438,33 +423,14 @@ object Strings extends Logging {
         sp = separator
       }
     }
-    //    val keys = items.keySet().iterator()
-    //    var sp = ""
-    //    var first = true
-    //
-    //    while (keys.hasNext) {
-    //      val key = keys.next()
-    //      val value = items.get(key)
-    //      sb.append(sp).append(key).append("=").append(value)
-    //      if (first) {
-    //        first = false
-    //        sp = separator
-    //      }
-    //    }
   }
 
   def join(items: java.lang.Iterable[_]): String = mkString(items.asScala, COMMA_STR)
-
   def join(items: java.lang.Iterable[_], separator: String): String = mkString(items.asScala, separator)
-
   def join(items: Iterable[_]): String = mkString(items, COMMA_STR)
-
   def join(items: Iterable[_], separator: String): String = mkString(items, separator)
-
   def join(items: Array[String]): String = mkString(items, COMMA_STR)
-
   def join(items: Array[String], separator: String): String = mkString(items, separator)
-
 
   def quotedStr(str: String): String =
     if (isNull(str)) NULL_STR
@@ -480,9 +446,8 @@ object Strings extends Logging {
   def replicate(str: String, n: Int): String = str * n
 
   @varargs
-  def split(str: String, separators: String*): Array[String] = {
+  def split(str: String, separators: String*): Array[String] =
     split(str, ignoreCase = true, removeEmptyEntries = true, separators: _*)
-  }
 
   @varargs
   def split(str: String, ignoreCase: Boolean, removeEmptyEntries: Boolean, separators: String*): Array[String] = {
@@ -594,32 +559,27 @@ object Strings extends Logging {
   }
 
 
-  def objectToString(obj: Any): String = {
+  def objectToString(obj: Any): String =
     asString(obj)
-  }
 
   @varargs
-  def listToString(item: Any, items: Any*): String = {
+  def listToString(item: Any, items: Any*): String =
     join((Seq(item) ++ items).toIterable)
-  }
 
 
-  def listToString(items: java.lang.Iterable[_]): String = {
+  def listToString(items: java.lang.Iterable[_]): String =
     if (items == null) NULL_STR
     else join(items)
-  }
 
 
-  def listToString(items: Array[_]): String = {
+  def listToString(items: Array[_]): String =
     if (items == null) NULL_STR
     else join(items.toList)
-  }
 
 
-  def mapToString(map: util.Map[_, _], openStr: String = "{", delimeter: String = ",", closeStr: String = "}"): String = {
+  def mapToString(map: util.Map[_, _], openStr: String = "{", delimeter: String = ",", closeStr: String = "}"): String =
     if (map == null) NULL_STR
     else openStr + join(mapToEntityList(map), delimeter) + closeStr
-  }
 
 
   def mapToEntityList(map: util.Map[_, _]): util.List[String] = {
@@ -655,7 +615,7 @@ object Strings extends Logging {
   /**
    * quote 를 구분할 RegEx
    */
-  val QUOTE_RE = "[\u0000-\u001f\u007f-\uffff\\\\\"]".r
+  private[this] lazy val QUOTE_RE = "[\u0000-\u001f\u007f-\uffff\\\\\"]".r
 
   /**
    * 프린트 불가한 char 를 c 스타일로 quote 해 준다.
@@ -677,7 +637,7 @@ object Strings extends Logging {
   }
 
   // we intentionally don't unquote "\$" here, so it can be used to escape interpolation later.
-  val UNQUOTE_RE = """\\(u[\dA-Fa-f]{4}|x[\dA-Fa-f]{2}|[/rnt\"\\])""".r
+  private[this] lazy val UNQUOTE_RE = """\\(u[\dA-Fa-f]{4}|x[\dA-Fa-f]{2}|[/rnt\"\\])""".r
 
   /**
    * Unquote an ASCII string that has been quoted in a style like

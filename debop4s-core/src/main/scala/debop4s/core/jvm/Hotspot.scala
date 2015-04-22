@@ -1,6 +1,7 @@
 package debop4s.core.jvm
 
 import java.lang.management.ManagementFactory
+import java.util
 import javax.management.openmbean.CompositeDataSupport
 import javax.management.{ObjectName, RuntimeMBeanException}
 
@@ -9,6 +10,7 @@ import debop4s.core.conversions.time._
 import debop4s.core.utils.Time
 
 import scala.collection.JavaConverters._
+import scala.concurrent.duration.Duration
 
 
 /**
@@ -17,7 +19,8 @@ import scala.collection.JavaConverters._
  */
 class Hotspot extends Jvm {
 
-  private[this] val epoch = Time.fromMilliseconds(ManagementFactory.getRuntimeMXBean.getStartTime)
+  private[this] val epoch: Time =
+    Time.fromMilliseconds(ManagementFactory.getRuntimeMXBean.getStartTime)
 
   private[this] type Counter = {
     def getName: String
@@ -26,10 +29,11 @@ class Hotspot extends Jvm {
   }
 
   private[this] type VMManagement = {
-    def getInternalCounters(pat: String): java.util.List[Counter]
+    def getInternalCounters(pat: String): util.List[Counter]
   }
 
-  private[this] val DiagnosticBean = ObjectName.getInstance("com.sun.management:type=HotSpotDiagnostic")
+  private[this] val diagnosticBean: ObjectName =
+    ObjectName.getInstance("com.sun.management:type=HotSpotDiagnostic")
 
   private[this] val jvm: VMManagement = {
     val fld = try {
@@ -46,11 +50,10 @@ class Hotspot extends Jvm {
 
   private[this] def opt(name: String): Option[String] = {
     try {
-      val o = ManagementFactory.getPlatformMBeanServer.invoke(
-        DiagnosticBean,
-        "getVMOption",
-        Array(name),
-        Array("java.lang.String")
+      val o = ManagementFactory.getPlatformMBeanServer.invoke(diagnosticBean,
+                                                              "getVMOption",
+                                                              Array(name),
+                                                              Array("java.lang.String")
       )
       Some(o.asInstanceOf[CompositeDataSupport].get("value").asInstanceOf[String])
     } catch {
@@ -59,7 +62,8 @@ class Hotspot extends Jvm {
     }
   }
 
-  private[this] def long(c: Counter) = c.getValue.asInstanceOf[Long]
+  private[this] def long(c: Counter): Long = c.getValue.asInstanceOf[Long]
+
   private[this] def counters(pat: String): Map[String, Counter] = {
     val cs = jvm.getInternalCounters(pat).asScala
     cs.map(c => c.getName -> c).toMap
@@ -69,13 +73,13 @@ class Hotspot extends Jvm {
     counters(name).get(name)
 
   object opts extends Opts {
-    def compileThresh = opt("CompileThreshold") map (_.toInt)
+    def compileThresh: Option[Int] = opt("CompileThreshold") map (_.toInt)
   }
 
-  private[this] def ticksToDuration(ticks: Long, freq: Long) =
+  private[this] def ticksToDuration(ticks: Long, freq: Long): Duration =
     (1000000 * ticks / freq).microseconds
 
-  private[this] def getGc(which: Int, cs: Map[String, Counter]) = {
+  private[this] def getGc(which: Int, cs: Map[String, Counter]): Option[Gc] = {
     def get(what: String) = cs.get(s"sun.gc.collector.$which.$what")
 
     for {
@@ -93,8 +97,9 @@ class Hotspot extends Jvm {
   }
 
   def snap: Snapshot = {
-    val cs = counters("")
-    val heap = for {
+    val cs: Map[String, Counter] = counters("")
+
+    val heap: Option[Heap] = for {
       invocations <- cs.get("sun.gc.collector.0.invocations") map long
       capacity <- cs.get("sun.gc.generation.0.space.0.capacity") map long
       used <- cs.get("sun.gc.generation.0.space.0.used") map long
@@ -111,25 +116,27 @@ class Hotspot extends Jvm {
         Heap(allocated, tenuringThreshold getOrElse -1, ageHisto)
       }
 
-    val timestamp = for {
+    val timestamp: Option[Time] = for {
       freq <- cs.get("sun.os.hrt.frequency") map long
       ticks <- cs.get("sun.os.hrt.ticks") map long
     } yield epoch + ticksToDuration(ticks, freq)
 
-    Snapshot(
-      timestamp getOrElse Time.epoch,
-      heap getOrElse Heap(0, 0, Seq()),
-      getGc(0, cs).toSeq ++ getGc(1, cs).toSeq)
+    Snapshot(timestamp getOrElse Time.epoch,
+             heap getOrElse Heap(0, 0, Seq()),
+             getGc(0, cs).toSeq ++ getGc(1, cs).toSeq)
   }
 
   val edenPool: Pool = new Pool {
-    def state() = {
+    def state(): PoolState = {
       val cs = counters("")
-      val state = for {
-        invocations <- cs.get("sun.gc.collector.0.invocations") map long
-        capacity <- cs.get("sun.gc.generation.0.space.0.capacity") map long
-        used <- cs.get("sun.gc.generation.0.space.0.used") map long
-      } yield PoolState(invocations, capacity.bytes, used.bytes)
+      val state =
+        for {
+          invocations <- cs.get("sun.gc.collector.0.invocations") map long
+          capacity <- cs.get("sun.gc.generation.0.space.0.capacity") map long
+          used <- cs.get("sun.gc.generation.0.space.0.used") map long
+        } yield {
+          PoolState(invocations, capacity.bytes, used.bytes)
+        }
 
       state getOrElse NilJvm.edenPool.state()
     }
@@ -138,7 +145,7 @@ class Hotspot extends Jvm {
   def snapCounters: Map[String, String] =
     counters("") mapValues (_.getValue.toString)
 
-  def forceGc() = System.gc()
+  def forceGc(): Unit = System.gc()
 }
 
 
@@ -165,7 +172,7 @@ java.property.java.vm.specification.vendor = Sun Microsystems Inc.
 java.property.java.vm.specification.version = 1.0
 java.property.java.vm.vendor = Apple Inc.
 java.property.java.vm.version = 20.4-b02-402
-java.rt.vmArgs = -Xserver -Djava.net.preferIPv4Stack=true -Dsbt.LOG.noformat=true -Xmx2G -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:MaxTenuringThreshold=3 -Xbootclasspath/a:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/jline.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-compiler.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-dbc.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-library.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-swing.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scalap.jar -Dscala.usejavacp=true -Dscala.home=/Users/marius/t/src/.scala/scala-2.8.1.final -Denv.emacs=
+java.rt.vmArgs = -Xserver -Djava.net.preferIPv4Stack=true -Dsbt.log.noformat=true -Xmx2G -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:MaxTenuringThreshold=3 -Xbootclasspath/a:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/jline.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-compiler.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-dbc.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-library.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scala-swing.jar:/Users/marius/t/src/.scala/scala-2.8.1.final/lib/scalap.jar -Dscala.usejavacp=true -Dscala.home=/Users/marius/t/src/.scala/scala-2.8.1.final -Denv.emacs=
 java.rt.vmFlags =
 java.threads.daemon = 3
 java.threads.live = 4

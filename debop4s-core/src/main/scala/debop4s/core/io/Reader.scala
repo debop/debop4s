@@ -20,7 +20,7 @@ trait Reader {
   /**
    * 이 reader 를 버립니다. 더 이상 읽기 작업을 하지 않도록 합니다.
    */
-  def discard()
+  def discard(): Unit
 
 }
 
@@ -37,7 +37,7 @@ trait Writer {
   /**
    * 바이트 스트림에 예외가 발생했을 때 호출합니다. 이 호출 이후로는 쓰기 작업을 할 수 없습니다.
    */
-  def fail(cause: Throwable)
+  def fail(cause: Throwable): Unit
 }
 
 object Reader {
@@ -115,7 +115,7 @@ object Reader {
       }
     }
 
-    def discard() = fail(new ReaderDiscarded)
+    def discard(): Unit = fail(new ReaderDiscarded)
 
     def fail(cause: Throwable): Unit = synchronized {
       state match {

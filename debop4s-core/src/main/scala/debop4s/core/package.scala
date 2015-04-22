@@ -2,16 +2,12 @@ package debop4s
 
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.concurrent.{Callable, TimeUnit}
+import java.util.concurrent.Callable
 
-import debop4s.core.concurrent.Asyncs
 import debop4s.core.utils.Strings
 import org.joda.time.{DateTime, Duration => JDuration}
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
-import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.util.Try
 import scala.util.control.NonFatal
 
@@ -23,7 +19,7 @@ import scala.util.control.NonFatal
  */
 package object core {
 
-  private lazy val log = LoggerFactory.getLogger("debop4s.core")
+  private[this] lazy val log = LoggerFactory.getLogger("debop4s.core")
 
   val TimeConversions = debop4s.core.conversions.time
   val StorageConversions = debop4s.core.conversions.storage
@@ -54,21 +50,17 @@ package object core {
 
   implicit class StringExtensions(s: String) {
 
-    def words: Array[String] = s split " "
-
+    def words: Array[String] = s.split(" ")
     def isWhitespace: Boolean = Strings.isWhitespace(s)
 
-    def ellipseChar(maxLength: Int = ElipsisLength) = Strings.ellipsisChar(s, maxLength)
-
-    def ellipseFirst(maxLength: Int = ElipsisLength) = Strings.ellipsisFirst(s, maxLength)
-
-    def ellipsePath(maxLength: Int = ElipsisLength) = Strings.ellipsisPath(s, maxLength)
-
-    def toUtf8Bytes = Strings.getUtf8Bytes(s)
+    def ellipseChar(maxLength: Int = ElipsisLength): String = Strings.ellipsisChar(s, maxLength)
+    def ellipseFirst(maxLength: Int = ElipsisLength): String = Strings.ellipsisFirst(s, maxLength)
+    def ellipsePath(maxLength: Int = ElipsisLength): String = Strings.ellipsisPath(s, maxLength)
+    def toUtf8Bytes: Array[Byte] = Strings.getUtf8Bytes(s)
   }
 
   implicit class ByteExtensions(bytes: Array[Byte]) {
-    def toUtf8String = Strings.getUtf8String(bytes)
+    def toUtf8String: String = Strings.getUtf8String(bytes)
   }
 
   // NOTE: using import debop4s.core.concurrent._
@@ -110,7 +102,7 @@ package object core {
    */
   implicit def runnable(action: => Unit): Runnable = {
     new Runnable {
-      def run() { action }
+      override def run(): Unit = action
     }
   }
 
@@ -122,7 +114,7 @@ package object core {
    */
   implicit def callable[T](func: => T): Callable[T] = {
     new Callable[T] {
-      def call() = func
+      override def call(): T = func
     }
   }
 
@@ -131,9 +123,8 @@ package object core {
    * @param block  수행할 코드 블럭
    * @return
    */
-  implicit def createThread(block: => Unit): Thread = {
+  implicit def createThread(block: => Unit): Thread =
     new Thread(runnable { block })
-  }
 
   /**
    * 지정한 메소드 `action` 을 수행하는 `Thread` 를 생성하고, 시작합니다.
@@ -163,12 +154,13 @@ package object core {
   /**
    * 인스턴스가 null이면 None을 반환하고, 값이 있으면 Some(v)를 반환합니다.
    */
-  def toOption[T](v: T): Option[T] = v match {
-    case null => None
-    case None => None
-    case x: Option[Any] => x.asInstanceOf[Option[T]]
-    case _ => Some(v)
-  }
+  def toOption[T](v: T): Option[T] =
+    v match {
+      case null => None
+      case None => None
+      case x: Option[Any] => x.asInstanceOf[Option[T]]
+      case _ => Some(v)
+    }
 
   /**
    * 지정한 객체를 암묵적으로 변환하는 클래스입니다.
@@ -176,18 +168,10 @@ package object core {
    */
   implicit class NumberExtensions(val x: Any) {
 
-    /**
-     * 객체를 `Char` 수형으로 변환합니다.
-     */
-    @inline
-    def asChar: Char = {
-      x.asByte.toChar
-    }
+    /** 객체를 `Char` 수형으로 변환합니다. */
+    def asChar: Char = x.asByte.toChar
 
-    /**
-     * 객체를 `Byte` 수형으로 변환합니다.
-     */
-    @inline
+    /** 객체를 `Byte` 수형으로 변환합니다. */
     def asByte: Byte = {
       try {
         x match {
@@ -209,10 +193,7 @@ package object core {
       }
     }
 
-    /**
-     * 객체를 short 수형으로 변환합니다.
-     */
-    @inline
+    /** 객체를 short 수형으로 변환합니다. */
     def asShort: Short = {
       try {
         x match {
@@ -234,10 +215,7 @@ package object core {
       }
     }
 
-    /**
-     * 객체를 `Int` 수형으로 변환합니다.
-     */
-    @inline
+    /** 객체를 `Int` 수형으로 변환합니다. */
     def asInt: Int = {
       try {
         x match {
@@ -259,10 +237,7 @@ package object core {
       }
     }
 
-    /**
-     * 객체를 `Long` 수형으로 변환합니다.
-     */
-    @inline
+    /** 객체를 `Long` 수형으로 변환합니다. */
     def asLong: Long = {
       try {
         x match {
@@ -284,10 +259,7 @@ package object core {
       }
     }
 
-    /**
-     * 객체를 `Float` 수형으로 변환합니다.
-     */
-    @inline
+    /** 객체를 `Float` 수형으로 변환합니다. */
     def asFloat: Float = {
       try {
         x match {
@@ -308,10 +280,7 @@ package object core {
         case NonFatal(e) => 0F
       }
     }
-    /**
-     * 객체를 `Double` 수형으로 변환합니다.
-     */
-    @inline
+    /** 객체를 `Double` 수형으로 변환합니다. */
     def asDouble: Double = {
       try {
         x match {
@@ -333,9 +302,7 @@ package object core {
       }
     }
 
-    /**
-     * 객체를 `String` 수형으로 변환합니다.
-     */
+    /** 객체를 `String` 수형으로 변환합니다. */
     def asString: String =
       x match {
         case Some(a: Any) => a.toString
@@ -344,9 +311,7 @@ package object core {
         case _ => x.toString
       }
 
-    /**
-     * 객체를 `DateTime` 수형으로 변환합니다.
-     */
+    /** 객체를 `DateTime` 수형으로 변환합니다. */
     def asDateTime(defaultValue: DateTime = null): DateTime = {
       try {
         x match {
@@ -369,10 +334,9 @@ package object core {
       }
     }
 
-    lazy val sdf = new SimpleDateFormat()
-    /**
-     * 객체를 `Date` 수형으로 변환합니다.
-     */
+    private[this] lazy val sdf = new SimpleDateFormat()
+
+    /** 객체를 `Date` 수형으로 변환합니다. */
     def asDate(defaultValue: Date = null): Date = {
       try {
         x match {
@@ -395,10 +359,7 @@ package object core {
       }
     }
 
-    /**
-     * 객체를 `Class` 수형으로 변환합니다.
-     */
-    @inline
+    /** 객체를 `Class` 수형으로 변환합니다. */
     def asJavaClass: Class[_] = x match {
       case null => throw new NullPointerException()
       case None => None.getClass

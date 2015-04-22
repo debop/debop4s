@@ -6,7 +6,7 @@ package debop4s.core
  */
 object Unsafe {
 
-  private lazy val instance: sun.misc.Unsafe = {
+  private[this] lazy val instance: sun.misc.Unsafe = {
     val fld = classOf[sun.misc.Unsafe].getDeclaredField("theUnsafe")
     fld.setAccessible(true)
     fld.get(null).asInstanceOf[sun.misc.Unsafe]

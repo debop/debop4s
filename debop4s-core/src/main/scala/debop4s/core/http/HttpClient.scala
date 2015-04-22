@@ -4,7 +4,7 @@ import java.net.URI
 import java.nio.charset.Charset
 import java.util.{List => JList}
 
-import debop4s.core.json.JacksonSerializer
+import debop4s.core.json.{JacksonSerializer, JsonSerializer}
 import debop4s.core.utils.Charsets
 import debop4s.core.utils.Closer._
 import org.apache.http._
@@ -29,11 +29,11 @@ import scala.util.control.NonFatal
  */
 class HttpClient extends AutoCloseable {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  private lazy val connectionManager = new PoolingHttpClientConnectionManager()
+  private[this] lazy val connectionManager = new PoolingHttpClientConnectionManager()
 
-  lazy val serializer = JacksonSerializer()
+  private[this] lazy val serializer: JsonSerializer = JacksonSerializer()
 
   var proxy: HttpHost = null
 
@@ -85,7 +85,7 @@ class HttpClient extends AutoCloseable {
 
   @varargs
   def post(uri: URI, nvps: Seq[NameValuePair], cs: Charset, headers: Header*): Try[String] = Try {
-    assert(uri != null)
+    require(uri != null)
 
     using(createHttpClient()) { client =>
       val httppost = new HttpPost(uri)
@@ -108,7 +108,7 @@ class HttpClient extends AutoCloseable {
 
   @varargs
   def postJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): Try[String] = Try {
-    assert(uri != null)
+    require(uri != null)
 
     using(createHttpClient()) { client =>
       val httppost = new HttpPost(uri)
@@ -126,7 +126,7 @@ class HttpClient extends AutoCloseable {
     }
   }
 
-  def close() {
+  def close(): Unit = {
     try {
       connectionManager.shutdown()
     } catch {

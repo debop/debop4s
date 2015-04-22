@@ -15,14 +15,13 @@ import scala.util.control.NonFatal
  */
 object Springs {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  private var globalContext: ApplicationContext = null
-  private val NOT_INITIALIZED_MSG = "Springs의 ApplicationContext가 초기화되지 않았습니다. Springs를 ComponentScan 해주셔야합니다!!!"
+  private[this] var globalContext: ApplicationContext = null
+  private[this] val NOT_INITIALIZED_MSG = "Springs의 ApplicationContext가 초기화되지 않았습니다. Springs를 ComponentScan 해주셔야합니다!!!"
 
-  private def assertInitialized() {
+  private def assertInitialized(): Unit =
     assert(isInitialized, NOT_INITIALIZED_MSG)
-  }
 
   def getContext: ApplicationContext = {
     assertInitialized()
@@ -33,14 +32,13 @@ object Springs {
     globalContext != null
   }
 
-  def initialize(ctx: ApplicationContext) {
+  def initialize(ctx: ApplicationContext): Unit = {
     require(ctx != null, "application context is null")
     log.info("Spring ApplicationContext를 지정합니다.")
 
-    if (globalContext != null)
-      log.warn("ApplicationContext가 이미 지정되었으므로, 무시합니다. reset 후 initialize를 호출하세요.")
-
     synchronized {
+      if (globalContext != null)
+        log.warn("ApplicationContext가 이미 지정되었으므로, 무시합니다. reset 후 initialize를 호출하세요.")
       globalContext = ctx
     }
     log.info("Spring ApplicationContext를 지정했습니다.")
@@ -61,13 +59,11 @@ object Springs {
   }
 
   @varargs
-  def getBean[T](name: String, args: Any*): T = {
+  def getBean[T](name: String, args: Any*): T =
     getContext.getBean(name, args.map(_.asInstanceOf[AnyRef]): _*).asInstanceOf[T]
-  }
 
   def getBean[T](requiredType: Class[T]): T =
     getContext.getBean[T](requiredType)
-
 
   @varargs
   def tryGetBean[T](name: String, args: Any*): T = {

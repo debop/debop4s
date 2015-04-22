@@ -5,7 +5,7 @@ import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 import debop4s.core.concurrent.NamedPoolThreadFactory
 import debop4s.core.conversions.time._
 import debop4s.core.utils.{Stopwatch, StorageUnit, Time, Timer}
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -28,11 +28,11 @@ case class PoolState(numCollections: Long,
                      capacity: StorageUnit,
                      used: StorageUnit) {
 
-  def -(other: PoolState) = PoolState(
-    numCollections = this.numCollections - other.numCollections,
-    capacity = other.capacity,
-    used = this.used + other.capacity - other.used + other.capacity * (this.numCollections - other.numCollections - 1)
-  )
+  def -(other: PoolState): PoolState =
+    PoolState(numCollections = this.numCollections - other.numCollections,
+              capacity = other.capacity,
+              used = this.used + other.capacity - other.used + other.capacity * (this.numCollections - other.numCollections - 1)
+    )
   override def toString: String =
     s"PoolState(n=$numCollections, remaining=${ capacity - used }[$used of $capacity])"
 }
@@ -104,16 +104,17 @@ trait Jvm {
    * same is true of the internal datastructures used by foreachGc,
    * but they are svelte.
    */
-  def foreachGc(f: Gc => Unit) {
-    val period = 1.seconds
-    val logPeriod = 30.minutes
-    val log = LoggerFactory.getLogger(getClass)
-    @volatile var missedCollections = 0L
-    @volatile var lastLog = Time.epoch
+  def foreachGc(f: Gc => Unit): Unit = {
+    val period: Duration = 1.seconds
+    val logPeriod: Duration = 30.minutes
+    val log: Logger = LoggerFactory.getLogger(getClass)
+
+    @volatile var missedCollections: Long = 0L
+    @volatile var lastLog: Time = Time.epoch
 
     val lastByName = mutable.HashMap[String, Long]()
 
-    def sample() {
+    def sample(): Unit = {
       val Snapshot(timestamp, _, gcs) = snap
       for (gc @ Gc(count, name, _, _) <- gcs) {
         lastByName.get(name) match {
@@ -131,12 +132,10 @@ trait Jvm {
       }
     }
 
-    executor.scheduleAtFixedRate(
-      new Runnable {def run() = sample() },
-      0,
-      period.toMillis,
-      TimeUnit.MILLISECONDS
-    )
+    executor.scheduleAtFixedRate(new Runnable {def run() = sample() },
+                                 0,
+                                 period.toMillis,
+                                 TimeUnit.MILLISECONDS)
   }
 
   /**
@@ -147,7 +146,7 @@ trait Jvm {
    */
   def monitorGcs(bufferFor: Duration): Time => Seq[Gc] = {
     require(bufferFor > 0.seconds)
-    @volatile var buffer = Nil: List[Gc]
+    @volatile var buffer: List[Gc] = Nil: List[Gc]
 
     // We assume that timestamps from foreachGc are monotonic.
     foreachGc {
@@ -158,7 +157,7 @@ trait Jvm {
     (since: Time) => buffer takeWhile (_.timestamp > since)
   }
 
-  def forceGc()
+  def forceGc(): Unit
 
   /**
    * Get the main class name for the currently running application.
@@ -168,24 +167,27 @@ trait Jvm {
    * invocations better.
    */
   def mainClassName: String = {
-    val mainClass = for {
-      (_, stack) <- Thread.getAllStackTraces.asScala find { case (t, s) => t.getName == "main" }
-      frame <- stack.reverse find { elem => !(elem.getClassName startsWith "scala.tools.nsc.MainGenericRunner") }
-    } yield frame.getClassName
+    val mainClass =
+      for {
+        (_, stack) <- Thread.getAllStackTraces.asScala find { case (t, s) => t.getName == "main" }
+        frame <- stack.reverse find { elem => !(elem.getClassName startsWith "scala.tools.nsc.MainGenericRunner") }
+      } yield frame.getClassName
 
     mainClass getOrElse "unknown"
   }
 }
 
 object Jvm {
-  private lazy val executor =
+
+  private lazy val executor: ScheduledExecutorService =
     Executors.newScheduledThreadPool(1, new NamedPoolThreadFactory("core-jvm-timer", true))
 
-  private lazy val _jvm =
+  private[this] lazy val jvm: Jvm = {
     try new Hotspot catch {
       case NonFatal(_) => NilJvm
     }
+  }
 
-  def apply(): Jvm = _jvm
+  def apply(): Jvm = jvm
 
 }

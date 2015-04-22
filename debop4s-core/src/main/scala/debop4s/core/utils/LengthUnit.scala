@@ -1,5 +1,6 @@
 package debop4s.core.utils
 
+import org.scalactic.Equality
 import org.scalactic.TolerantNumerics._
 import org.scalactic.TripleEquals._
 import org.slf4j.LoggerFactory
@@ -14,17 +15,17 @@ import scala.util.control.NonFatal
 class LengthUnit(val meter: Double) extends Ordered[LengthUnit] {
 
   // mm 까지만 비교할 수 있도록 한다.
-  implicit val dblEquality = tolerantDoubleEquality(0.001)
+  implicit val dblEquality: Equality[Double] = tolerantDoubleEquality(0.001)
 
-  def inMilliMeters = meter * 1000
-  def inCentiMeters = meter * 10
-  def inMeters = meter
-  def inKiloMeters = inMeters / 1000
+  def inMilliMeters: Double = meter * 1000
+  def inCentiMeters: Double = meter * 10
+  def inMeters: Double = meter
+  def inKiloMeters: Double = inMeters / 1000
 
-  def inInch = meter * 39.37
-  def inFeet = meter * 1.0936
-  def inYard = meter * 1.0936
-  def inMile = meter / 1609.3
+  def inInch: Double = meter * 39.37
+  def inFeet: Double = meter * 1.0936
+  def inYard: Double = meter * 1.0936
+  def inMile: Double = meter / 1609.3
 
   def +(that: LengthUnit): LengthUnit = new LengthUnit(this.meter + that.meter)
   def -(that: LengthUnit): LengthUnit = new LengthUnit(this.meter - that.meter)

@@ -3,7 +3,7 @@ package debop4s.core.compress
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.util.zip.{DeflaterOutputStream, InflaterInputStream}
 
-import debop4s.core.utils.Closer._
+import debop4s.core._
 
 
 object DeflateCompressor {

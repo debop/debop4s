@@ -19,7 +19,7 @@ import scala.util.control.NonFatal
  * Created by debop on 2014. 4. 6.
  */
 trait Closable {
-  self =>
+  //self =>
 
   final def close(): Future[Unit] = close(Time.MinusInf)
 
@@ -31,7 +31,7 @@ trait Closable {
 
 object Closable {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   /**
    * Concurrent composition: creates a new closable which, when
@@ -61,7 +61,7 @@ object Closable {
       }
     }
 
-    def close(deadline: Time) = closeSeq(deadline, closables)
+    def close(deadline: Time): Future[Unit] = closeSeq(deadline, closables)
   }
 
   /** A Closable that does nothing immediately. */
@@ -78,11 +78,11 @@ object Closable {
     def close(deadline: Time) = r.getAndSet(nop).close(deadline)
   }
 
-  private val refs = new util.HashMap[Reference[Object], Closable]
-  private val refq = new ReferenceQueue[Object]
+  private[this] val refs = new util.HashMap[Reference[Object], Closable]
+  private[this] val refq = new ReferenceQueue[Object]
 
   private val collectorThread = new Thread("CollectClosables") {
-    override def run() {
+    override def run(): Unit = {
       while (true) {
         try {
           val ref = refq.remove()
@@ -109,7 +109,7 @@ object Closable {
   /**
    * Close the given closable when `obj` is collected.
    */
-  def closeOnCollect(closable: Closable, obj: Object) = refs.synchronized {
+  def closeOnCollect(closable: Closable, obj: Object): Closable = refs.synchronized {
     refs.put(new PhantomReference(obj, refq), closable)
   }
 }

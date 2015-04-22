@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory
  */
 object Cryptos {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  // private lazy val log = LoggerFactory.getLogger(getClass)
 
-  val RANDOM_NUMBER_GENERATION = "SHA1PRNG"
+  val RANDOM_NUMBER_GENERATION: String = "SHA1PRNG"
 
   /**
    * 난수 발생기

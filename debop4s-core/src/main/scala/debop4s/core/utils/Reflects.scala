@@ -1,6 +1,9 @@
 package debop4s.core.utils
 
+import java.lang.reflect.Constructor
+
 import debop4s.core.Logging
+import org.slf4j.LoggerFactory
 
 import scala.reflect._
 
@@ -10,7 +13,9 @@ import scala.reflect._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 12. 오후 5:23
  */
-object Reflects extends Logging {
+object Reflects {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   /**
    * Java의 Primitive 수형에 대한 Box된 Scala 클래스를 Unbox한 Java Primitive 수형 타입을 구합니다.
@@ -19,21 +24,21 @@ object Reflects extends Logging {
    * @return  Java의 Primitive Type
    */
   @inline
-  def asJavaClass(x: Any): Class[_] = x match {
-    case x: scala.Boolean => java.lang.Boolean.TYPE
-    case x: scala.Char => java.lang.Character.TYPE
-    case x: scala.Byte => java.lang.Byte.TYPE
-    case x: scala.Short => java.lang.Short.TYPE
-    case x: scala.Int => java.lang.Integer.TYPE
-    case x: scala.Long => java.lang.Long.TYPE
-    case x: scala.Float => java.lang.Float.TYPE
-    case x: scala.Double => java.lang.Double.TYPE
-    case _ => x.getClass
-  }
+  def asJavaClass(x: Any): Class[_] =
+    x match {
+      case x: scala.Boolean => java.lang.Boolean.TYPE
+      case x: scala.Char => java.lang.Character.TYPE
+      case x: scala.Byte => java.lang.Byte.TYPE
+      case x: scala.Short => java.lang.Short.TYPE
+      case x: scala.Int => java.lang.Integer.TYPE
+      case x: scala.Long => java.lang.Long.TYPE
+      case x: scala.Float => java.lang.Float.TYPE
+      case x: scala.Double => java.lang.Double.TYPE
+      case _ => x.getClass
+    }
 
-  def tagToClass[T](tag: ClassTag[T]): Class[T] = {
+  def tagToClass[T](tag: ClassTag[T]): Class[T] =
     tag.runtimeClass.asInstanceOf[Class[T]]
-  }
 
   /**
    * Generic 수형에 대해 Runtime 의 수형을 구합니다.
@@ -42,7 +47,7 @@ object Reflects extends Logging {
    *     val clazz = getRuntimeClass[classTag[T]]
    * }}}
    */
-  def getRuntimeClass[T](implicit tag: ClassTag[T]) =
+  def getRuntimeClass[T](implicit tag: ClassTag[T]): Class[T] =
     tag.runtimeClass.asInstanceOf[Class[T]]
 
   def newInstance[T](implicit tag: ClassTag[T]): T =
@@ -66,8 +71,8 @@ object Reflects extends Logging {
       return newInstance[T]
     // classTag[T].runtimeClass.newInstance().asInstanceOf[T]
 
-    val parameterTypes = initArgs.map(x => asJavaClass(x)).toArray
-    val constructor = getRuntimeClass[T].getConstructor(parameterTypes: _*)
+    val parameterTypes: Array[Class[_]] = initArgs.map(x => asJavaClass(x)).toArray
+    val constructor: Constructor[T] = getRuntimeClass[T].getConstructor(parameterTypes: _*)
 
     constructor.newInstance(initArgs.map(_.asInstanceOf[AnyRef]): _*)
   }
@@ -85,11 +90,11 @@ object Reflects extends Logging {
 
     log.trace(s"인스턴스를 생성합니다. kind=[${ classTag[T].runtimeClass.getName }]")
 
-    val parameterTypes =
+    val parameterTypes: Array[Class[_]] =
       if (initArgsTypes != null) initArgsTypes.toArray
       else initArgs.map(asJavaClass).toArray
 
-    val constructor = classTag[T].runtimeClass.getConstructor(parameterTypes: _*)
+    val constructor: Constructor[_] = classTag[T].runtimeClass.getConstructor(parameterTypes: _*)
 
     constructor.newInstance(initArgs.map(_.asInstanceOf[AnyRef]): _*).asInstanceOf[T]
   }

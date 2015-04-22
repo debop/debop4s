@@ -4,7 +4,7 @@ import java.net.URI
 import java.nio.charset.Charset
 import java.util.{List => JList}
 
-import debop4s.core.json.JacksonSerializer
+import debop4s.core.json.{JsonSerializer, JacksonSerializer}
 import debop4s.core.utils.Charsets
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.{HttpDelete, HttpGet, HttpPost, HttpUriRequest}
@@ -28,10 +28,10 @@ import scala.util.{Failure, Success, Try}
  */
 object HttpAsyncs {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  lazy val client = new AsyncHttpClient()
-  lazy val serializer = JacksonSerializer()
+  private[this] lazy val client: AsyncHttpClient = new AsyncHttpClient()
+  private[this] lazy val serializer: JsonSerializer = JacksonSerializer()
 
   def execute(request: HttpUriRequest): Try[HttpResponse] =
     client.execute(request)
@@ -51,22 +51,19 @@ object HttpAsyncs {
   }
 
   @varargs
-  def get(uriString: String, headers: Header*): Try[HttpResponse] = {
+  def get(uriString: String, headers: Header*): Try[HttpResponse] =
     client.get(buildHttpGet(uriString, headers: _*))
-  }
 
   @varargs
-  def get(uriString: String, cs: Charset, headers: Header*): String = {
+  def get(uriString: String, cs: Charset, headers: Header*): String =
     getContent(get(uriString, headers: _*), cs)
-  }
 
   @varargs
   def get(uri: URI, headers: Header*): Try[HttpResponse] =
     client.get(buildHttpGet(uri, headers: _*))
 
-  def get(uri: URI, cs: Charset, headers: Header*): String = {
+  def get(uri: URI, cs: Charset, headers: Header*): String =
     getContent(get(uri, headers: _*), cs)
-  }
 
   def get(httpget: HttpGet): Try[HttpResponse] = client.get(httpget)
 
@@ -77,14 +74,12 @@ object HttpAsyncs {
   }
 
   @varargs
-  def getAsParallel(httpgets: HttpGet*): Seq[Try[HttpResponse]] = {
+  def getAsParallel(httpgets: HttpGet*): Seq[Try[HttpResponse]] =
     client.getAsParallel(httpgets: _*)
-  }
 
   @varargs
-  def buildHttpPost(uri: URI, nvps: Seq[NameValuePair], headers: Header*): HttpPost = {
+  def buildHttpPost(uri: URI, nvps: Seq[NameValuePair], headers: Header*): HttpPost =
     buildHttpPost(uri, nvps, Charsets.UTF_8, headers: _*)
-  }
 
   @varargs
   def buildHttpPost(uri: URI, nvps: Seq[NameValuePair], cs: Charset, headers: Header*): HttpPost = {
@@ -106,12 +101,12 @@ object HttpAsyncs {
     client.post(buildHttpPost(uri, nvps, cs, headers: _*))
 
 
-  def post(httpPost: HttpPost): Try[HttpResponse] = client.post(httpPost)
+  def post(httpPost: HttpPost): Try[HttpResponse] =
+    client.post(httpPost)
 
   @varargs
-  def postAsParallel(posts: HttpPost*): Seq[Try[HttpResponse]] = {
+  def postAsParallel(posts: HttpPost*): Seq[Try[HttpResponse]] =
     client.postAsParallel(posts: _*)
-  }
 
   @varargs
   def buildHttpPostByJson[T](uri: URI, entity: T, cs: Charset, headers: Header*): HttpPost = {

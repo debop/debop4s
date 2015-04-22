@@ -35,16 +35,17 @@ class DatabaseElement(override val config: Config) extends CredentialElementSupp
   val url: String = config.getString("url")
 
   /** maximum pool size (default = processCount * 16) */
-  val maxPoolSize = config.tryGetInt("maxPoolSize", MAX_POOL_SIZE)
+  val maxPoolSize: Int = config.tryGetInt("maxPoolSize", MAX_POOL_SIZE)
 
   /** mininum idle size (default = 2) */
-  val minIdleSize = config.tryGetInt("minIdleSize", MIN_IDLE_SIZE)
+  val minIdleSize: Int = config.tryGetInt("minIdleSize", MIN_IDLE_SIZE)
 
   /** Database 부가 설정 정보 */
   lazy val properties: Properties = config.asProperties()
 
   /** Database 설정 정보를 나타내는 DTO */
-  lazy val dbSetting = DatabaseSetting(driverClass, url, username, password, maxPoolSize, minIdleSize, properties)
+  lazy val dbSetting: DatabaseSetting =
+    DatabaseSetting(driverClass, url, username, password, maxPoolSize, minIdleSize, properties)
 }
 
 case class DatabaseSetting(driverClass: String,

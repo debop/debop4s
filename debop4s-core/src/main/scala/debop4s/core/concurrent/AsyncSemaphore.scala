@@ -18,14 +18,13 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
 
-
   def this(initialPermits: Int = 0) = this(initialPermits, None)
   def this(initialPermits: Int, maxWaiters: Int) = this(initialPermits, Some(maxWaiters))
 
   require(maxWaiters.getOrElse(0) >= 0)
 
-  private[this] val waitq = new util.ArrayDeque[Promise[Permit]]
-  private[this] var availablePermits = initialPermits
+  private[this] val waitq: util.ArrayDeque[Promise[Permit]] = new util.ArrayDeque[Promise[Permit]]
+  private[this] var availablePermits: Int = initialPermits
 
   private[this] class SemaphorePermit extends Permit {
     override def release() {
@@ -54,7 +53,7 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
    *         would be exceeded.
    */
   def acquire(): Future[Permit] = synchronized {
-    // LOG.debug(s"acquire... availablePermits=$availablePermits")
+    // log.debug(s"acquire... availablePermits=$availablePermits")
     if (availablePermits > 0) {
       availablePermits -= 1
       Future.successful(new SemaphorePermit)
@@ -66,9 +65,7 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
         case _ =>
           promise.future onFailure {
             case t: Throwable =>
-              AsyncSemaphore.this.synchronized {
-                waitq.remove(promise)
-              }
+              synchronized(waitq.remove(promise))
           }
           waitq.addLast(promise)
       }
@@ -99,7 +96,6 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
             throw e
         }
       f onComplete { case _ => permit.release() }
-
       f
     }
   }
@@ -124,6 +120,6 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
 }
 
 object AsyncSemaphore {
-  private val MaxWaitersExceededException =
+  private val MaxWaitersExceededException: RejectedExecutionException =
     new RejectedExecutionException("Max waiters exceeded")
 }

@@ -1,6 +1,7 @@
 package debop4s.core.utils
 
-import debop4s.core.Logging
+import debop4s.core._
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -9,7 +10,9 @@ import debop4s.core.Logging
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 13. 오전 9:33
  */
-object With extends Logging {
+object With {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   def stopwatch(action: => Unit): Unit = {
     val sw = new ClosableStopwatch()
@@ -21,11 +24,8 @@ object With extends Logging {
   }
 
   def stopwatch(msg: String)(action: => Unit): Unit = {
-    val sw = new ClosableStopwatch("msg")
-    try {
+    using(new ClosableStopwatch("msg")) { sw =>
       action
-    } finally {
-      sw.close()
     }
   }
 

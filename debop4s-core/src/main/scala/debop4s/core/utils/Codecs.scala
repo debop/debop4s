@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
  */
 object Codecs {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   def encodeBase64(input: Array[Byte]): Array[Byte] = {
     encodeBase64(input, isChucked = false, urlSafe = true)
@@ -27,9 +27,8 @@ object Codecs {
     Base64.encodeBase64(input, isChucked, urlSafe)
   }
 
-  def encodeBase64String(str: String): String = {
+  def encodeBase64String(str: String): String =
     encodeBase64String(str, Charsets.UTF_8, isChunked = false, urlSafe = true)
-  }
 
   /**
    * 입력 데이터를 base64 방식으로 인코딩합니다.
@@ -46,13 +45,11 @@ object Codecs {
   /**
    * base64 방식으로 인코딩된 데이터를 디코딩합니다.
    */
-  def decodeBase64(input: Array[Byte]): Array[Byte] = {
+  def decodeBase64(input: Array[Byte]): Array[Byte] =
     Base64.decodeBase64(input)
-  }
 
-  def decodeBase64String(str: String): String = {
+  def decodeBase64String(str: String): String =
     decodeBase64String(str, Charsets.UTF_8)
-  }
 
   /**
    * base64 방식으로 인코딩된 문자열을 디코딩하여 plain text로 반환합니다.
@@ -70,6 +67,7 @@ trait StringEncoder {
     if (bytes != null) new String(bytes)
     else null: String
   }
+
   def decode(str: String): Array[Byte] = {
     if (str != null) str.getBytes
     else Array.emptyByteArray
@@ -79,15 +77,14 @@ trait StringEncoder {
 object StringEncoder extends StringEncoder
 
 trait Base64StringEncoder extends StringEncoder {
+
   private[this] def codec: Base64 = new Base64()
 
-  override def encode(bytes: Array[Byte]): String = {
+  override def encode(bytes: Array[Byte]): String =
     codec.encodeAsString(bytes)
-  }
 
-  override def decode(str: String): Array[Byte] = {
+  override def decode(str: String): Array[Byte] =
     codec.decode(str)
-  }
 }
 
 object Base64StringEncoder extends Base64StringEncoder

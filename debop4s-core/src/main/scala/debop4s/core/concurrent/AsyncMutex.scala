@@ -12,5 +12,6 @@ class AsyncMutex private(maxWaiters: Option[Int]) extends AsyncSemaphore(1, maxW
 
 object AsyncMutex {
 
-  def apply(maxWaiters: Option[Int] = Some(16)) = new AsyncMutex(maxWaiters)
+  def apply(maxWaiters: Option[Int] = Some(16)): AsyncMutex =
+    new AsyncMutex(maxWaiters)
 }

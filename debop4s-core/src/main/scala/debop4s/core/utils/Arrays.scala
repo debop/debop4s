@@ -13,10 +13,10 @@ import scala.util.Random
  */
 object Arrays {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
-  private lazy val RANDOM: Random = new Random(System.currentTimeMillis())
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val RANDOM: Random = new Random(System.currentTimeMillis())
 
-  val EMPTY_BYTE_ARRAY = Array[Byte]()
+  val EMPTY_BYTE_ARRAY: Array[Byte] = Array[Byte]()
 
   def isEmpty[T](array: Array[T]): Boolean =
     (array eq null) || (array.length == 0)
@@ -24,15 +24,13 @@ object Arrays {
   def isEmpty[T](iterable: Iterable[T]): Boolean =
     (iterable eq null) || (!iterable.iterator.hasNext)
 
-  def contains[T](array: Array[T], target: T): Boolean = {
+  def contains[T](array: Array[T], target: T): Boolean =
     if (isEmpty(array)) false
     else array.contains(target)
-  }
 
-  def indexOf[T](array: Array[T], target: T): Int = {
+  def indexOf[T](array: Array[T], target: T): Int =
     if (isEmpty(array)) -1
     else array.indexOf(target)
-  }
 
   def lastIndexOf[T](array: Array[T], target: T): Int =
     array.lastIndexOf(target)
@@ -41,7 +39,7 @@ object Arrays {
 
   def asString[T](iterable: Iterable[T]): String = iterable.mkString(",")
 
-  def mkArray[T: ClassTag](elems: T*) = Array[T](elems: _*)
+  def mkArray[T: ClassTag](elems: T*): Array[T] = Array[T](elems: _*)
 
 
   def getRandomBytes(numBytes: Int): Array[Byte] = {
@@ -50,25 +48,22 @@ object Arrays {
     bytes
   }
 
-  def fill[T](a: Array[T], value: T) {
-    var i = 0
-    while (i < a.length) {
+  def fill[T](a: Array[T], value: T): Unit = {
+    for (i <- 0 until a.length) {
       a(i) = value
-      i += 1
     }
   }
 
-  def fill[T](a: Array[T], fromInclude: Int, toExclude: Int, value: T) {
+  def fill[T](a: Array[T], fromInclude: Int, toExclude: Int, value: T): Unit = {
     rangeCheck(a.length, fromInclude, toExclude)
-    var i = fromInclude
-    while (i < toExclude) {
+    for (i <- fromInclude until toExclude) {
       a(i) = value
-      i += 1
     }
   }
 
   def copyOf[T: ClassTag](original: Array[T], newLength: Int): Array[T] = {
-    assert(original != null)
+    require(original != null)
+
     val copy = new Array[T](newLength)
     Array.copy(original, 0, copy, 0, math.min(original.length, newLength))
     copy
@@ -81,19 +76,19 @@ object Arrays {
     copy
   }
 
-  private def rangeCheck(length: Int, fromIndex: Int, toIndex: Int) {
+  private def rangeCheck(length: Int, fromIndex: Int, toIndex: Int): Unit = {
     if (fromIndex > toIndex)
-      throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")")
+      throw new IllegalArgumentException(s"fromIndex($fromIndex) > toIndex($toIndex)")
     if (fromIndex < 0)
       throw new ArrayIndexOutOfBoundsException(fromIndex)
     if (toIndex > length)
       throw new ArrayIndexOutOfBoundsException(toIndex)
   }
 
-  def toSeq[T](iterable: java.lang.Iterable[_ <: T]): collection.IndexedSeq[T] =
+  def toSeq[T](iterable: java.lang.Iterable[_ <: T]): IndexedSeq[T] =
     iterable.asScala.toIndexedSeq
 
-  def toSet[T](iterable: java.lang.Iterable[_ <: T]): collection.Set[T] =
+  def toSet[T](iterable: java.lang.Iterable[_ <: T]): Set[T] =
     iterable.asScala.toSet
 
 
@@ -106,12 +101,11 @@ object Arrays {
 
     if (a == null || b == null)
       return false
-
-    val length = a.length
-    if (b.length != length)
+    if (b.length != a.length)
       return false
 
     // while 구문이 for, foreach보다 훨씬 빠르다.
+    val length = a.length
     var i = 0
     while (i < length) {
       val o1 = a(i)

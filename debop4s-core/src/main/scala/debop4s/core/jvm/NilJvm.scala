@@ -14,9 +14,14 @@ object NilJvm extends Jvm {
     def compileThresh = None
   }
 
-  def forceGc() = System.gc()
+  def forceGc(): Unit = System.gc()
+
   val snapCounters: Map[String, String] = Map()
+
   val snap: Snapshot = Snapshot(Time.epoch, Heap(0, 0, Seq()), Seq())
-  val edenPool = new Pool {def state() = PoolState(0, 0.bytes, 0.bytes) }
+
+  val edenPool = new Pool {
+    def state(): PoolState = PoolState(0, 0.bytes, 0.bytes)
+  }
 
 }

@@ -18,9 +18,9 @@ import scala.util.control.NonFatal
  */
 package object config {
 
-  private lazy val LOG = LoggerFactory.getLogger(getClass)
+  private lazy val log = LoggerFactory.getLogger(getClass)
 
-  private lazy val processCount = sys.runtime.availableProcessors()
+  private lazy val processCount: Int = sys.runtime.availableProcessors()
 
   /** Database Connection Pool 의 최대 크기 */
   lazy val MAX_POOL_SIZE: Int = processCount * 16
@@ -134,7 +134,7 @@ package object config {
       Try { block } match {
         case Success(v) => v
         case Failure(e) =>
-          LOG.warn(s"환경설정에 정의되지 않아 기본값을 반환합니다. resourceBasename=$path, defaultValue=$defaultValue")
+          log.info(s"환경설정에 정의되지 않아 기본값을 반환합니다. resourceBasename=$path, defaultValue=$defaultValue")
           defaultValue
       }
     }

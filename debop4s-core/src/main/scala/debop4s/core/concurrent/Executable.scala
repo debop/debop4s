@@ -13,10 +13,10 @@ import scala.util.{Failure, Success, Try}
 trait Executable {
 
   /** 수행할 코드 블럭 */
-  def execute()
+  def execute(): Unit
 
   /** 설정한 타임와웃이 되었을 때 호출되는 메소드 */
-  def timeout()
+  def timeout(): Unit
 }
 
 /**

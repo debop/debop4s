@@ -27,7 +27,7 @@ object FuturePool {
    * for using FuturePool.apply.  However, you can directly construct
    * an ExecutorServiceFuturePool without problems.
    */
-  def apply(executor: ExecutorService) =
+  def apply(executor: ExecutorService): ExecutorServiceFuturePool =
     new ExecutorServiceFuturePool(executor)
 
   /**
@@ -44,7 +44,7 @@ object FuturePool {
     }
   }
 
-  private lazy val defaultExecutor =
+  private lazy val defaultExecutor: ExecutorService =
     Executors.newCachedThreadPool(NamedPoolThreadFactory("UnboundedFuturePool", makeDaemons = true))
 
   /**
@@ -55,7 +55,8 @@ object FuturePool {
    * is raised on a returned Future and the work has started, the worker
    * thread will not be interrupted.
    */
-  lazy val unboundedPool = new ExecutorServiceFuturePool(defaultExecutor)
+  lazy val unboundedPool: ExecutorServiceFuturePool =
+    new ExecutorServiceFuturePool(defaultExecutor)
 
   /**
    * The default future pool, using a cached threadpool, provided by
@@ -65,7 +66,7 @@ object FuturePool {
    * is raised on a returned Future and the work has started, an attempt
    * will will be made to interrupt the worker thread.
    */
-  lazy val interruptibleUnboundedPool =
+  lazy val interruptibleUnboundedPool: InterruptibleExecutorServiceFuturePool =
     new InterruptibleExecutorServiceFuturePool(defaultExecutor)
 }
 
@@ -82,8 +83,7 @@ class InterruptibleExecutorServiceFuturePool(executor: ExecutorService)
  * If you want to propagate cancellation, use
  */
 class ExecutorServiceFuturePool protected[this](val executor: ExecutorService,
-                                                val interruptible: Boolean)
-  extends FuturePool {
+                                                val interruptible: Boolean) extends FuturePool {
 
   def this(executor: ExecutorService) = this(executor, false)
 

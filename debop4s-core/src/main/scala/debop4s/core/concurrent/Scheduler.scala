@@ -1,6 +1,6 @@
 package debop4s.core.concurrent
 
-import java.lang.management.ManagementFactory
+import java.lang.management.{ManagementFactory, ThreadMXBean}
 import java.util
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.{ExecutorService, Executors, RejectedExecutionException, ThreadFactory}
@@ -20,12 +20,12 @@ trait Scheduler {
   /**
    * Schedule `r` to be run at some time in the future
    */
-  def submit(r: Runnable)
+  def submit(r: Runnable): Unit
 
   /**
    * Flush the schedule. Return when there is no more work to do.
    */
-  def flush()
+  def flush(): Unit
 
   /** The amount of User time that's been scheduled as per ThreadMXBean. */
   def usrTime: Long
@@ -58,19 +58,19 @@ object Scheduler extends Scheduler {
     self = sched
   }
 
-  def submit(r: Runnable) = self.submit(r)
-  def flush() = self.flush()
-  def usrTime = self.usrTime
-  def cpuTime = self.cpuTime
-  def numDispatches = self.numDispatches
+  def submit(r: Runnable): Unit = self.submit(r)
+  def flush(): Unit = self.flush()
+  def usrTime: Long = self.usrTime
+  def cpuTime: Long = self.cpuTime
+  def numDispatches: Long = self.numDispatches
 
-  def blocking[T](f: => T)(implicit perm: CanAwait) = self.blocking(f)
+  def blocking[T](f: => T)(implicit perm: CanAwait): T = self.blocking(f)
 }
 
 private class LocalScheduler extends Scheduler {
-  private[this] val SampleScale = 1000
-  private[this] val bean = ManagementFactory.getThreadMXBean
-  private[this] val cpuTimeSupported = bean.isCurrentThreadCpuTimeSupported
+  private[this] val sampleScale: Int = 1000
+  private[this] val bean: ThreadMXBean = ManagementFactory.getThreadMXBean
+  private[this] val cpuTimeSupported: Boolean = bean.isCurrentThreadCpuTimeSupported
 
   @volatile private[this] var activations = Set[Activation]()
 
@@ -80,16 +80,16 @@ private class LocalScheduler extends Scheduler {
 
   private class Activation extends Scheduler {
     private[this] var r0, r1, r2: Runnable = null
-    private[this] val rs = new util.ArrayDeque[Runnable]
-    private[this] var running = false
-    private[this] val rnd = new Random(System.currentTimeMillis())
+    private[this] val rs: util.ArrayDeque[Runnable] = new util.ArrayDeque[Runnable]
+    private[this] var running: Boolean = false
+    private[this] val rnd: Random = new Random(System.currentTimeMillis())
 
     // This is safe: there's only one updater
-    @volatile var usrTime = 0L
-    @volatile var cpuTime = 0L
-    @volatile var numDispatches = 0L
+    @volatile var usrTime: Long = 0L
+    @volatile var cpuTime: Long = 0L
+    @volatile var numDispatches: Long = 0L
 
-    def submit(r: Runnable) {
+    def submit(r: Runnable): Unit = {
       require(r != null)
       if (r0 == null) r0 = r
       else if (r1 == null) r1 = r
@@ -97,24 +97,24 @@ private class LocalScheduler extends Scheduler {
       else rs.addLast(r)
 
       if (!running) {
-        if (cpuTimeSupported && rnd.nextInt(SampleScale) == 0) {
-          numDispatches += SampleScale
+        if (cpuTimeSupported && rnd.nextInt(sampleScale) == 0) {
+          numDispatches += sampleScale
           val cpu0 = bean.getCurrentThreadCpuTime
           val usr0 = bean.getCurrentThreadUserTime
           run()
-          cpuTime += (bean.getCurrentThreadCpuTime - cpu0) * SampleScale
-          usrTime += (bean.getCurrentThreadUserTime - usr0) * SampleScale
+          cpuTime += (bean.getCurrentThreadCpuTime - cpu0) * sampleScale
+          usrTime += (bean.getCurrentThreadUserTime - usr0) * sampleScale
         } else {
           run()
         }
       }
     }
 
-    def flush() {
+    def flush(): Unit = {
       if (running) run()
     }
 
-    private[this] def run() {
+    private[this] def run(): Unit = {
       val save = running
       running = true
 
@@ -146,24 +146,25 @@ private class LocalScheduler extends Scheduler {
   }
 
   // Scheduler implementation:
-  def submit(r: Runnable) = get().submit(r)
-  def flush() = get().flush()
+  def submit(r: Runnable): Unit = get().submit(r)
+  def flush(): Unit = get().flush()
 
-  def usrTime = (activations.iterator map (_.usrTime)).sum
-  def cpuTime = (activations.iterator map (_.cpuTime)).sum
-  def numDispatches = (activations.iterator map (_.numDispatches)).sum
+  def usrTime: Long = (activations.iterator map (_.usrTime)).sum
+  def cpuTime: Long = (activations.iterator map (_.cpuTime)).sum
+  def numDispatches: Long = (activations.iterator map (_.numDispatches)).sum
 
-  def blocking[T](f: => T)(implicit perm: CanAwait) = f
+  def blocking[T](f: => T)(implicit perm: CanAwait): T = f
 }
 
 trait ExecutorScheduler {
   self: Scheduler =>
+
   val name: String
   val executorFactory: ThreadFactory => ExecutorService
 
-  protected[this] val bean = ManagementFactory.getThreadMXBean
+  protected[this] val bean: ThreadMXBean = ManagementFactory.getThreadMXBean
   protected val threadGroup: ThreadGroup = new ThreadGroup(name)
-  @volatile private[this] var _threads = Set[Thread]()
+  // @volatile private[this] var _threads = Set[Thread]()
 
   protected val threadFactory = new ThreadFactory {
     private val n = new AtomicInteger(1)
@@ -174,7 +175,7 @@ trait ExecutorScheduler {
     }
   }
 
-  protected def threads() = {
+  protected def threads(): Array[Thread] = {
     // We add 2x slop here because it's inherently racy to enumerate threads.
     // Since this is used only for monitoring purposes, we don't try too hard.
     val threadArray = new Array[Thread](threadGroup.activeCount() * 2)
@@ -182,23 +183,24 @@ trait ExecutorScheduler {
     threadArray take n
   }
 
-  protected[this] val executor = executorFactory(threadFactory)
+  protected[this] val executor: ExecutorService = executorFactory(threadFactory)
 
-  def shutdown() { executor.shutdown() }
-  def submit(r: Runnable) { executor.execute(r) }
-  def flush() = ()
-  def usrTime = {
+  def shutdown(): Unit = { executor.shutdown() }
+  def submit(r: Runnable): Unit = { executor.execute(r) }
+  def flush(): Unit = ()
+
+  def usrTime: Long =
     threads().map(t => bean.getThreadUserTime(t.getId)).filter(_ > 0).sum
-  }
-  def cpuTime = {
+
+  def cpuTime: Long =
     threads().map(t => bean.getThreadCpuTime(t.getId)).filter(_ > 0).sum
-  }
 
-  def numDispatches = -1L // Unsupported
 
-  def getExecutor = executor
+  def numDispatches: Long = -1L // Unsupported
 
-  def blocking[T](f: => T)(implicit perm: CanAwait) = f
+  def getExecutor: ExecutorService = executor
+
+  def blocking[T](f: => T)(implicit perm: CanAwait): T = f
 }
 
 /**
@@ -223,11 +225,12 @@ class ThreadPoolScheduler(val name: String,
 class BridgeThreadPoolScheduler(val name: String,
                                 val executorFactory: ThreadFactory => ExecutorService)
   extends Scheduler with ExecutorScheduler {
-  private[this] val local = new LocalScheduler()
 
   def this(name: String) = this(name, Executors.newCachedThreadPool)
 
-  override def submit(r: Runnable) {
+  private[this] val local: LocalScheduler = new LocalScheduler()
+
+  override def submit(r: Runnable): Unit = {
     if (Thread.currentThread().getThreadGroup == threadGroup) {
       local.submit(r)
     } else {

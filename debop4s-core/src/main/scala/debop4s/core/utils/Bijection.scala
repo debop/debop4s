@@ -4,13 +4,14 @@ import scala.util.Try
 
 
 object Bijection {
+
   implicit def identity[A]: Bijection[A, A] = new Bijection[A, A] {
     def apply(a: A) = a
     def invert(a: A) = a
 
     override def inverse = this
-    override def andThen[T](g: Bijection[A, T]) = g
-    override def compose[T](g: Bijection[T, A]) = g
+    override def andThen[T](g: Bijection[A, T]): Bijection[A, T] = g
+    override def compose[T](g: Bijection[T, A]): Bijection[T, A] = g
   }
 }
 
@@ -23,8 +24,7 @@ object Bijection {
  * can convert to and from a set of objects and their serialized form
  * is an example of a bijection.
  */
-trait Bijection[A, B] extends (A => B) {
-  self =>
+trait Bijection[A, B] extends (A => B) {self =>
 
   def apply(a: A): B
   def invert(b: B): A
@@ -35,11 +35,11 @@ trait Bijection[A, B] extends (A => B) {
    */
   def inverse: Bijection[B, A] = _inverse
 
-  private lazy val _inverse = {
+  private[this] lazy val _inverse = {
     new Bijection[B, A] {
-      override def apply(b: B) = self.invert(b)
+      override def apply(b: B): A = self.invert(b)
       def invert(a: A): B = self.apply(a)
-      override def inverse = self
+      override def inverse: Bijection[A, B] = self
     }
   }
 

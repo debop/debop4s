@@ -8,37 +8,29 @@ import scala.annotation.switch
  */
 class StorageUnit(val bytes: Long) extends Ordered[StorageUnit] {
 
-  def inBytes = bytes
-
-  def inKiloBytes = bytes / 1024L
-
-  def inMegaBytes = inKiloBytes / 1024L
-
-  def inGigaBytes = inMegaBytes / 1024L
-
-  def inTeraBytes = inGigaBytes / 1024L
-
-  def inPetaBytes = inTeraBytes / 1024L
-
-  def inExaBytes = inPetaBytes / 1024L
+  def inBytes: Long = bytes
+  def inKiloBytes: Long = bytes / 1024L
+  def inMegaBytes: Long = inKiloBytes / 1024L
+  def inGigaBytes: Long = inMegaBytes / 1024L
+  def inTeraBytes: Long = inGigaBytes / 1024L
+  def inPetaBytes: Long = inTeraBytes / 1024L
+  def inExaBytes: Long = inPetaBytes / 1024L
 
   def +(that: StorageUnit): StorageUnit = new StorageUnit(this.bytes + that.bytes)
-
   def -(that: StorageUnit): StorageUnit = new StorageUnit(this.bytes - that.bytes)
-
   def *(scala: Double): StorageUnit = new StorageUnit((this.bytes * scala).toLong)
 
   @inline
   override def equals(obj: Any): Boolean = {
     (obj: @switch) match {
-      case other: StorageUnit => bytes == other.bytes
+      case that: StorageUnit => bytes == that.bytes
       case _ => false
     }
   }
 
   override def hashCode(): Int = bytes.hashCode()
 
-  override def toString: String = bytes + ".bytes"
+  override def toString: String = bytes.toString + ".bytes"
 
   override def compare(that: StorageUnit): Int =
     if (bytes < that.bytes) -1
@@ -87,12 +79,16 @@ object StorageUnit {
     }
   }
 
-  def parse(s: String): StorageUnit = s.split("\\.") match {
-    case Array(v, u) =>
-      val vv = v.toInt
-      val uu = factor(u)
-      new StorageUnit(vv * uu)
-    case _ =>
-      throw new NumberFormatException("invalid storage unit string")
+  def parse(s: String): StorageUnit = {
+    require(s != null)
+
+    s.split("\\.") match {
+      case Array(v, u) =>
+        val vv = v.toInt
+        val uu = factor(u)
+        new StorageUnit(vv * uu)
+      case _ =>
+        throw new NumberFormatException("invalid storage unit string")
+    }
   }
 }
