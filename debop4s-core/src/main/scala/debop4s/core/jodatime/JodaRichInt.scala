@@ -4,28 +4,28 @@ import org.joda.time.Period
 
 class JodaRichInt(val self: Int) extends AnyVal {
 
-  def milli = millis
-  def millis = new DurationBuilder(Period.millis(self))
+  def milli: DurationBuilder = millis
+  def millis: DurationBuilder = new DurationBuilder(Period.millis(self))
 
-  def second = seconds
-  def seconds = new DurationBuilder(Period.seconds(self))
+  def second: DurationBuilder = seconds
+  def seconds: DurationBuilder = new DurationBuilder(Period.seconds(self))
 
-  def minute = minutes
-  def minutes = new DurationBuilder(Period.minutes(self))
+  def minute: DurationBuilder = minutes
+  def minutes: DurationBuilder = new DurationBuilder(Period.minutes(self))
 
-  def hour = hours
-  def hours = new DurationBuilder(Period.hours(self))
+  def hour: DurationBuilder = hours
+  def hours: DurationBuilder = new DurationBuilder(Period.hours(self))
 
-  def day = days
-  def days = Period.days(self)
+  def day: Period = days
+  def days: Period = Period.days(self)
 
-  def week = weeks
-  def weeks = Period.weeks(self)
+  def week: Period = weeks
+  def weeks: Period = Period.weeks(self)
 
-  def month = months
-  def months = Period.months(self)
+  def month: Period = months
+  def months: Period = Period.months(self)
 
-  def year = years
-  def years = Period.years(self)
+  def year: Period = years
+  def years: Period = Period.years(self)
 
 }

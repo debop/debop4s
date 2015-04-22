@@ -29,6 +29,7 @@ class ImmutableLRU[K, V] private(maxSize: Int, idx: Long, map: Map[K, (Long, V)]
 
   // Put in and return the Key it evicts and the new LRU
   def +(kv: (K, V)): (Option[K], ImmutableLRU[K, V]) = {
+    require(kv != null)
     val (key, value) = kv
     val newIdx = idx + 1
     val newMap = map + (key ->(newIdx, value))

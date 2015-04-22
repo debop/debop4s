@@ -23,7 +23,7 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
   case class Device(name: String, osType: Option[OSType] = None, var id: Option[Int] = None) extends IntEntity
   case class Device2(name: String, osType: OSType = Unknown, var id: Option[Int] = None) extends IntEntity
 
-  class Devices(tag: Tag) extends IdTable[Device, Int](tag, "enum_device_option") {
+  class Devices(tag: Tag) extends EntityTable[Device](tag, "enum_device_option") {
     def id = column[Int]("device_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("device_name", O.Length(128))
 
@@ -35,7 +35,7 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
   //  implicit class DeviceQueryExt(query: TableQuery[Devices]) extends IdTableExtensions[Device, Int](query)
   lazy val devices = EntityTableQuery[Device, Devices](cons = tag => new Devices(tag), lens[Device] >> 'id)
 
-  class Device2s(tag: Tag) extends IdTable[Device2, Int](tag, "enum_device2") {
+  class Device2s(tag: Tag) extends EntityTable[Device2](tag, "enum_device2") {
     def id = column[Int]("device_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("device_name", O.Length(128))
     def osType = column[OSType]("osType", O.Length(32))

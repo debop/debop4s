@@ -14,24 +14,15 @@ trait JodaLocalTime {
   final val Midnight = LocalTime.MIDNIGHT
 
   def fromCalendarFields(calendar: Calendar): LocalTime = LocalTime.fromCalendarFields(calendar)
+  def fromDateFields(date: Date): LocalTime = LocalTime.fromDateFields(date)
+  def fromMillisOfDay(millis: Long): LocalTime = LocalTime.fromMillisOfDay(millis)
+  def fromMillisOfDay(millis: Long, chrono: Chronology): LocalTime = LocalTime.fromMillisOfDay(millis, chrono)
 
-  def fromDateFields(date: Date) = LocalTime.fromDateFields(date)
-
-  def fromMillisOfDay(millis: Long) = LocalTime.fromMillisOfDay(millis)
-
-  def fromMillisOfDay(millis: Long, chrono: Chronology) = LocalTime.fromMillisOfDay(millis, chrono)
-
-  def now = new LocalTime
-
-  def nextSecond = now + 1.second
-
-  def nextMinute = now + 1.minute
-
-  def nextHour = now + 1.hour
-
-  def lastSecond = now - 1.second
-
-  def lastMinute = now - 1.minute
-
-  def lastHour = now - 1.hour
+  def now: LocalTime = new LocalTime
+  def nextSecond: LocalTime = now + 1.second
+  def nextMinute: LocalTime = now + 1.minute
+  def nextHour: LocalTime = now + 1.hour
+  def lastSecond: LocalTime = now - 1.second
+  def lastMinute: LocalTime = now - 1.minute
+  def lastHour: LocalTime = now - 1.hour
 }

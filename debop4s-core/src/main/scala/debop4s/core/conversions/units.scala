@@ -28,15 +28,15 @@ object units {
    * `DistanceUnit` 을 사용합니다.
    */
   class RichLength(val distance: Double) {
-    def millimeter = new LengthUnit(distance / 1000.0)
-    def centimeter = new LengthUnit(distance / 10.0)
-    def meter = new LengthUnit(distance)
-    def kilometer = new LengthUnit(distance * 1000.0)
+    def millimeter: LengthUnit = new LengthUnit(distance / 1000.0)
+    def centimeter: LengthUnit = new LengthUnit(distance / 10.0)
+    def meter: LengthUnit = new LengthUnit(distance)
+    def kilometer: LengthUnit = new LengthUnit(distance * 1000.0)
 
-    def inch = new LengthUnit(distance / 39.37)
-    def feet = new LengthUnit(distance / 3.2809)
-    def yard = new LengthUnit(distance / 1.0936)
-    def mile = new LengthUnit(distance * 1609.3)
+    def inch: LengthUnit = new LengthUnit(distance / 39.37)
+    def feet: LengthUnit = new LengthUnit(distance / 3.2809)
+    def yard: LengthUnit = new LengthUnit(distance / 1.0936)
+    def mile: LengthUnit = new LengthUnit(distance * 1609.3)
   }
 
   implicit def intToRichDistance(i: Int): RichLength = new RichLength(i.toDouble)
@@ -49,14 +49,14 @@ object units {
    * `WeightUnit` 을 사용합니다.
    */
   class RichWeight(val weight: Double) {
-    def milligram = new WeightUnit(weight / 1000.0)
-    def gram = new WeightUnit(weight)
-    def kilogram = new WeightUnit(weight * 1000.0)
-    def ton = new WeightUnit(weight * 1000000.0)
+    def milligram: WeightUnit = new WeightUnit(weight / 1000.0)
+    def gram: WeightUnit = new WeightUnit(weight)
+    def kilogram: WeightUnit = new WeightUnit(weight * 1000.0)
+    def ton: WeightUnit = new WeightUnit(weight * 1000000.0)
 
-    def grain = new WeightUnit(weight / 15.432)
-    def once = new WeightUnit(weight * 28.3495)
-    def found = new WeightUnit(weight * 453.592)
+    def grain: WeightUnit = new WeightUnit(weight / 15.432)
+    def once: WeightUnit = new WeightUnit(weight * 28.3495)
+    def found: WeightUnit = new WeightUnit(weight * 453.592)
   }
 
   implicit def intToRichWeight(i: Int): RichWeight = new RichWeight(i.toDouble)

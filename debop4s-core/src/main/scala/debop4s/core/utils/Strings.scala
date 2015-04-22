@@ -338,7 +338,6 @@ object Strings extends Logging {
           i += 1
         }
         -1
-
     }
   }
 
@@ -392,59 +391,79 @@ object Strings extends Logging {
     }
   }
 
-  def mkString(items: JIterable[_], separator: String): String = {
+  def mkString(items: Iterable[_], separator: String): String = {
     val sb = new StringBuilder()
     mkString(sb, items, separator)
     sb.toString()
   }
 
-  def mkString(sb: StringBuilder, items: JIterable[_], separator: String): Unit = {
-    val iter = items.iterator()
+  def mkString(sb: StringBuilder, items: Iterable[_], separator: String): Unit = {
     var sp = ""
     var first = true
-
-    while (iter.hasNext) {
-      sb.append(sp).append(iter.next())
+    items.foreach { item =>
+      sb.append(sp).append(item)
       if (first) {
         first = false
         sp = separator
       }
     }
+    //    val iter = items.iterator()
+    //    var sp = ""
+    //    var first = true
+    //
+    //    while (iter.hasNext) {
+    //      sb.append(sp).append(iter.next())
+    //      if (first) {
+    //        first = false
+    //        sp = separator
+    //      }
+    //    }
   }
 
-  def mkString(items: JMap[_, _], separator: String): String = {
+  def mkString(items: Map[_, _], separator: String): String = {
     val sb = new StringBuilder()
     mkString(sb, items, separator)
     sb.toString()
   }
 
-  def mkString(sb: StringBuilder, items: JMap[_, _], separator: String): Unit = {
-    val keys = items.keySet().iterator()
+  def mkString(sb: StringBuilder, items: Map[_, _], separator: String): Unit = {
+
     var sp = ""
     var first = true
 
-    while (keys.hasNext) {
-      val key = keys.next()
-      val value = items.get(key)
-      sb.append(sp).append(key).append("=").append(value)
+    items.foreach { item =>
+      sb.append(sp).append(item._1).append("=").append(item._2)
       if (first) {
         first = false
         sp = separator
       }
     }
+    //    val keys = items.keySet().iterator()
+    //    var sp = ""
+    //    var first = true
+    //
+    //    while (keys.hasNext) {
+    //      val key = keys.next()
+    //      val value = items.get(key)
+    //      sb.append(sp).append(key).append("=").append(value)
+    //      if (first) {
+    //        first = false
+    //        sp = separator
+    //      }
+    //    }
   }
 
-  def join(items: java.lang.Iterable[_]): String = mkString(items, COMMA_STR)
+  def join(items: java.lang.Iterable[_]): String = mkString(items.asScala, COMMA_STR)
 
-  def join(items: java.lang.Iterable[_], separator: String): String = mkString(items, separator)
+  def join(items: java.lang.Iterable[_], separator: String): String = mkString(items.asScala, separator)
 
-  def join(items: Iterable[_]): String = mkString(items.asJava, COMMA_STR)
+  def join(items: Iterable[_]): String = mkString(items, COMMA_STR)
 
-  def join(items: Iterable[_], separator: String): String = mkString(items.asJava, separator)
+  def join(items: Iterable[_], separator: String): String = mkString(items, separator)
 
-  def join(items: Array[String]): String = mkString(items.toSeq.asJava, COMMA_STR)
+  def join(items: Array[String]): String = mkString(items, COMMA_STR)
 
-  def join(items: Array[String], separator: String): String = mkString(items.toSeq.asJava, separator)
+  def join(items: Array[String], separator: String): String = mkString(items, separator)
 
 
   def quotedStr(str: String): String =

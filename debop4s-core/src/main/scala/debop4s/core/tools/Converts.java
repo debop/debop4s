@@ -159,7 +159,8 @@ public final class Converts {
      * @return int 값의 문자열
      */
     public static String toString(final int v) {
-        return Integer.valueOf(v).toString();
+        return Integer.toString(v);
+        // return Integer.valueOf(v).toString();
     }
 
     /**
@@ -169,7 +170,8 @@ public final class Converts {
      * @return long 값의 문자열
      */
     public static String toString(final long v) {
-        return Long.valueOf(v).toString();
+        return Long.toString(v);
+        // return Long.valueOf(v).toString();
     }
 
     /**

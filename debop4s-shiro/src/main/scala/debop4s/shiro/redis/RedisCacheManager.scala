@@ -30,7 +30,8 @@ class RedisCacheManager extends CacheManager {
     if (cache == null) {
       log.trace(s"create cache. name=$name")
       cache = new RedisCache[K, V](redis, keyPrefix).asInstanceOf[Cache[K, V]]
-      caches.put(name, cache)
+      caches.putIfAbsent(name, cache)
+      // caches.put(name, cache)
     }
     cache
   }

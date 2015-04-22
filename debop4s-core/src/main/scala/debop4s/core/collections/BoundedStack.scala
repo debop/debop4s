@@ -23,7 +23,7 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
   def length = _count
   override def size = _count
 
-  def clear() {
+  def clear(): Unit = {
     top = 0
     _count = 0
   }
@@ -34,13 +34,13 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
     else array((top + index) % maxSize)
   }
 
-  def +=(elem: A) {
+  def +=(elem: A): Unit = {
     top = if (top == 0) maxSize - 1 else top - 1
     array(top) = elem
     if (_count < maxSize) _count += 1
   }
 
-  def insert(index: Int, elem: A) {
+  def insert(index: Int, elem: A): Unit = {
     if (index == 0) this += elem
     else if (index > _count) throw new IndexOutOfBoundsException(index.toString)
     else if (index == _count) {
@@ -56,11 +56,11 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
   /**
    * 해당 인덱스의 요소를 `elem` 으로 변경한다.
    */
-  def update(index: Int, elem: A) {
+  def update(index: Int, elem: A): Unit = {
     array((top + index) % maxSize) = elem
   }
 
-  def ++=(iter: Iterable[A]) {
+  def ++=(iter: Iterable[A]): Unit = {
     val it = iter.iterator
     while (it.hasNext) {
       this += it.next()
@@ -79,7 +79,7 @@ class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
   }
 
   /** 요소를 추가합니다. */
-  def push(elem: A) {
+  def push(elem: A): Unit = {
     this += elem
   }
 

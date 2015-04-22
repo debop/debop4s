@@ -9,7 +9,7 @@ import scala.concurrent.ExecutionContext
  * @author sunghyouk.bae@gmail.com
  */
 trait ActiveRecordExtensions {
-  this: SlickQueryExtensions with SlickProfile =>
+  self: SlickQueryExtensions with SlickProfile =>
 
   trait ActiveRecord[M] {
 

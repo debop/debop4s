@@ -55,7 +55,8 @@ class MongoCacheManager(val mongo: MongoTemplate,
       val prefix = if (usePrefix) cachePrefix.prefix(name) else ""
 
       val newCache = MongoCache(name, prefix, mongo, expiration)
-      caches.put(name, newCache)
+      caches.putIfAbsent(name, newCache)
+      // caches.put(name, newCache)
       newCache
     }
   }

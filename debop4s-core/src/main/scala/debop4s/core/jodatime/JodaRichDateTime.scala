@@ -24,7 +24,7 @@ class JodaRichDateTime(val self: DateTime) extends AnyVal with Ordered[DateTime]
 
   def +(builder: DurationBuilder): DateTime = self.plus(builder.underlying)
 
-  def min(that: DateTime) = {
+  def min(that: DateTime): DateTime = {
     if (self != null && that != null) {
       if (self.compareTo(that) < 0) self else that
     }
@@ -33,7 +33,7 @@ class JodaRichDateTime(val self: DateTime) extends AnyVal with Ordered[DateTime]
     else null
   }
 
-  def max(that: DateTime) = {
+  def max(that: DateTime): DateTime = {
     if (self != null && that != null) {
       if (self.compareTo(that) > 0) self else that
     }

@@ -5,7 +5,7 @@ import java.util.{Calendar, Locale}
 import org.joda.time.base.AbstractDateTime
 import org.joda.time.{Chronology, DateTimeZone}
 
-class JodaRichAbstractDateTime(val self: AbstractDateTime) extends AnyVal with Ordered[AbstractDateTime] {
+class JodaRichAbstractDateTime(val self: AbstractDateTime) extends Ordered[AbstractDateTime] {
 
   def chronology: Chronology = self.getChronology
 

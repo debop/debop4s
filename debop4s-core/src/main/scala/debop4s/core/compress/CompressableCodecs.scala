@@ -10,7 +10,7 @@ trait GZipStringEncoder extends StringEncoder {
     Base64StringEncoder.encode(gzip.compress(bytes))
   }
 
-  def encodeString(str: String) = encode(str.getBytes("UTF-8"))
+  def encodeString(str: String): String = encode(str.getBytes("UTF-8"))
 
   override def decode(str: String): Array[Byte] = {
     gzip.decompress(Base64StringEncoder.decode(str))

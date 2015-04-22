@@ -3,21 +3,21 @@ package debop4s.core.concurrent
 import java.util.concurrent.ConcurrentHashMap
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{Map => MMap}
+import scala.collection.mutable
 
 /*
  * A bijection that may be modified and accessed simultaneously.
  * Note that we can allow only one modification at a time.
  * Updates need to be serialized to ensure that the bijective property is maintained.
  */
-class ConcurrentBijection[A, B] extends MMap[A, B] {
+class ConcurrentBijection[A, B] extends mutable.Map[A, B] {
 
   val forward = new ConcurrentHashMap[A, B]()
   val reverse = new ConcurrentHashMap[B, A]()
 
   def toOpt[T](x: T) = if (x == null) None else Some(x)
 
-  def -=(key: A) = {
+  def -=(key: A): this.type = {
     synchronized {
       val value = forward.remove(key)
       if (value != null)
@@ -26,14 +26,14 @@ class ConcurrentBijection[A, B] extends MMap[A, B] {
     this
   }
 
-  def +=(elem: (A, B)) = {
+  def +=(elem: (A, B)): this.type = {
     elem match {
       case (key, value) => update(key, value)
     }
     this
   }
 
-  override def update(key: A, value: B) = synchronized {
+  override def update(key: A, value: B): Unit = synchronized {
     // We need to update:
     //
     //    a -> b
@@ -65,11 +65,11 @@ class ConcurrentBijection[A, B] extends MMap[A, B] {
     }
   }
 
-  override def size = forward.size()
+  override def size: Int = forward.size()
 
-  def get(key: A) = toOpt(forward.get(key))
+  def get(key: A): Option[B] = toOpt(forward.get(key))
 
-  def getReverse(value: B) = toOpt(reverse.get(value))
+  def getReverse(value: B): Option[A] = toOpt(reverse.get(value))
 
-  def iterator = forward.entrySet.iterator.map(e => (e.getKey, e.getValue))
+  def iterator: Iterator[(A, B)] = forward.entrySet.iterator.map(e => (e.getKey, e.getValue))
 }

@@ -1,6 +1,7 @@
 package debop4s.core.compress
 
-import net.jpountz.lz4.LZ4Factory
+import net.jpountz.lz4
+import net.jpountz.lz4.{LZ4SafeDecompressor, LZ4Factory}
 
 /**
  * companion object for [[LZ4Compressor]]
@@ -15,9 +16,9 @@ object LZ4Compressor {
  */
 class LZ4Compressor extends Compressor {
 
-  private lazy val factory = LZ4Factory.fastestInstance()
-  private lazy val compressor = factory.fastCompressor()
-  private lazy val decompressor = factory.safeDecompressor()
+  private lazy val factory: LZ4Factory = LZ4Factory.fastestInstance()
+  private lazy val compressor: lz4.LZ4Compressor = factory.fastCompressor()
+  private lazy val decompressor: LZ4SafeDecompressor = factory.safeDecompressor()
 
   /**
    * 데이터를 압축합니다.

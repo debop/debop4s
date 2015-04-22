@@ -34,7 +34,11 @@ trait ActiveQueryExtensions {
 
     override def tableQuery = beers
 
-    def supplier(): DBIO[Option[Supplier]] = suppliers.findOptionById(model.supplierId)
+    def supplier: DBIO[Option[Supplier]] = suppliers.findOptionById(model.supplierId)
+
+    def friendBeers: DBIO[Seq[Beer]] = {
+      beers.filter(b => b.supplierId === model.supplierId.bind && b.id =!= model.id.bind).result
+    }
 
     //    def save: Beer = beers.save(self)
     //    def delete: Boolean = beers.deleteEntity(self)

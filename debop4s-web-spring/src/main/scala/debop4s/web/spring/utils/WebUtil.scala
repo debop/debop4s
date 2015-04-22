@@ -8,6 +8,8 @@ import debop4s.core.utils.Strings
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 
+import scala.collection.JavaConverters._
+
 /**
  * Spring MVC 를 이용하는 Web Application 을 위한 Helper class 입니다.
  * @author Sunghyouk Bae
@@ -38,19 +40,13 @@ object WebUtil {
    */
   def convertObjectToFormUrlEncodedBytes(obj: Any): Array[Byte] = {
 
+    val formUrlEncoded = new StringBuilder()
     val mapper = JacksonSerializer.defaultObjectMapper
 
     val props = mapper.convertValue(obj, classOf[JMap[_, _]]).asInstanceOf[JMap[String, Any]]
-    val nameIter = props.keySet().iterator()
-
-    val formUrlEncoded = new StringBuilder()
-
-    while (nameIter.hasNext) {
-      val key = nameIter.next()
-      val value = props.get(key)
+    props.asScala.foreach { case (key, value) =>
       formUrlEncoded.append(key).append("=").append(value)
-      if (nameIter.hasNext)
-        formUrlEncoded.append("&")
+      formUrlEncoded.append("&")
     }
 
     Strings.getUtf8Bytes(formUrlEncoded.toString())
@@ -62,7 +58,11 @@ object WebUtil {
   }
 
   def getPageSize(size: Integer, defaultSize: Int): Int = {
-    if (size <= 0) defaultSize
-    else size.toInt
+    size.toInt match {
+      case n: Int if n <= 0 => defaultSize
+      case _ => size.toInt
+    }
+    //    if (size <= 0) defaultSize
+    //    else size.toInt
   }
 }

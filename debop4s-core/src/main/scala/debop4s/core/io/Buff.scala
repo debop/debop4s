@@ -34,8 +34,10 @@ trait Buff {
    * @return
    */
   def concat(right: Buff): Buff = {
-    if (right == Buff.Empty) outer
-    else new Buff {
+    if (right == Buff.Empty)
+      return outer
+
+    new Buff {
       private[this] val left = outer
 
       def slice(start: Int, end: Int): Buff = {
@@ -105,6 +107,7 @@ object Buff {
         if other.start == 0 && other.end == other.bytes.length && start == 0 && end == bytes.length =>
         util.Arrays.equals(bytes, other.bytes)
       case x => super.equals(x)
+      case _ => false
     }
   }
 

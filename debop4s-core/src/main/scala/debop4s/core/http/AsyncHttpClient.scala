@@ -129,11 +129,13 @@ class AsyncHttpClient {
 
   @varargs
   def headAsParallel(heads: HttpHead*): Seq[Try[HttpResponse]] = {
+    require(heads != null)
     heads.par.map(execute).seq
   }
 
   @varargs
   def headSSLAsParallel(heads: HttpHead*): Seq[Try[HttpResponse]] = {
+    require(heads != null)
     heads.par.map(executeSSL).seq
   }
 

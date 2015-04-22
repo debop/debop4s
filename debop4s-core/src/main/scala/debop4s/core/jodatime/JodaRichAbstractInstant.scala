@@ -17,7 +17,7 @@ class JodaRichAbstractInstant(val self: AbstractInstant) extends AnyVal with Ord
 
   def dateTimeISO: DateTime = self.toDateTimeISO
 
-  def dateTimeUTC = dateTime(DateTimeZone.UTC)
+  def dateTimeUTC: DateTime = dateTime(DateTimeZone.UTC)
 
   def instance: Instant = self.toInstant
 

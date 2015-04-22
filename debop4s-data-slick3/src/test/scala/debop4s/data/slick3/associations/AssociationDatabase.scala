@@ -19,7 +19,7 @@ trait AssociationSchema {
 
   import driver.api._
 
-  class Employees(tag: Tag) extends IdTable[Employee, Int](tag, "ass_employee") {
+  class Employees(tag: Tag) extends EntityTable[Employee](tag, "ass_employee") {
     def id = column[Int]("emp_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("emp_name", O.Length(64))
     def empNo = column[String]("emp_no", O.Length(24))
@@ -38,7 +38,7 @@ trait AssociationSchema {
     idLens = lens[Employee] >> 'id
   )
 
-  class Sites(tag: Tag) extends IdTable[Site, Int](tag, "ass_site") {
+  class Sites(tag: Tag) extends EntityTable[Site](tag, "ass_site") {
     def id = column[Int]("site_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("site_name", O.Length(255))
     def * = (name, id.?) <>(Site.tupled, Site.unapply)
@@ -71,7 +71,7 @@ trait AssociationSchema {
     }
   }
 
-  class Orders(tag: Tag) extends IdTable[Order, Int](tag, "ass_order") {
+  class Orders(tag: Tag) extends EntityTable[Order](tag, "ass_order") {
     def id = column[Int]("order_id", O.PrimaryKey, O.AutoInc)
     def no = column[String]("order_no", O.Length(64))
     def date = column[DateTime]("order_date")
@@ -90,7 +90,7 @@ trait AssociationSchema {
     idLens = lens[Order] >> 'id
   )
 
-  class OrderItems(tag: Tag) extends IdTable[OrderItem, Int](tag, "ass_orderitem") {
+  class OrderItems(tag: Tag) extends EntityTable[OrderItem](tag, "ass_orderitem") {
     def id = column[Int]("item_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("item_name", O.Length(254))
     def price = column[Double]("item_price")
@@ -109,7 +109,7 @@ trait AssociationSchema {
     idLens = lens[OrderItem] >> 'id
   )
 
-  class Addresses(tag: Tag) extends IdTable[Address, Int](tag, "ass_address") {
+  class Addresses(tag: Tag) extends EntityTable[Address](tag, "ass_address") {
     def id = column[Int]("addr_id", O.PrimaryKey, O.AutoInc)
     def street = column[String]("street", O.Length(1024))
     def city = column[String]("city", O.Length(255))
@@ -123,7 +123,7 @@ trait AssociationSchema {
     idLens = lens[Address] >> 'id
   )
 
-  class Persons(tag: Tag) extends IdTable[Person, Int](tag, "ass_person") {
+  class Persons(tag: Tag) extends EntityTable[Person](tag, "ass_person") {
     def id = column[Int]("person_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("person_name", O.Length(254))
     def age = column[Int]("person_age")
@@ -149,7 +149,7 @@ trait AssociationSchema {
     def findByAddress(addrId: Int) = this.filter(_.addressId === addrId.bind)
   }
 
-  class Tasks(tag: Tag) extends IdTable[Task, Int](tag, "ass_task") {
+  class Tasks(tag: Tag) extends EntityTable[Task](tag, "ass_task") {
     def id = column[Int]("task_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("task_name", O.Length(254))
 
@@ -173,7 +173,7 @@ trait AssociationSchema {
   lazy val personTasks = TableQuery[PersonTasks]
 
 
-  class BankAccounts(tag: Tag) extends IdTable[BankAccount, Int](tag, "ass_bankaccount") {
+  class BankAccounts(tag: Tag) extends EntityTable[BankAccount](tag, "ass_bankaccount") {
     def id = column[Int]("account_id", O.PrimaryKey, O.AutoInc)
     def number = column[String]("account_num", O.Length(64))
 
@@ -193,7 +193,7 @@ trait AssociationSchema {
     idLens = lens[BankAccount] >> 'id
   )
 
-  class AccountOwners(tag: Tag) extends IdTable[AccountOwner, Int](tag, "ass_bankowner") {
+  class AccountOwners(tag: Tag) extends EntityTable[AccountOwner](tag, "ass_bankowner") {
     def id = column[Int]("owner_id", O.PrimaryKey, O.AutoInc)
     def ssn = column[String]("owner_ssn", O.Length(64))
 

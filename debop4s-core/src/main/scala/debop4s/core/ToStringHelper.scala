@@ -3,6 +3,7 @@ package debop4s.core
 import java.util
 
 import debop4s.core.utils.Strings
+import scala.collection.JavaConverters._
 
 object ToStringHelper {
   def apply(obj: Any) = new ToStringHelper(obj.getClass.getSimpleName)
@@ -30,15 +31,15 @@ class ToStringHelper(val className: String) extends Serializable {
 
     builder.append(className)
     builder.append("{")
-    Strings.mkString(builder, map, ",")
+    Strings.mkString(builder, map.asScala, ",")
     builder.append("}")
     builder.toString()
   }
 
-  @inline
-  private def addMap(name: String, value: Any) {
-    map.put(name, value)
-  }
+  //  @inline
+  //  private def addMap(name: String, value: Any) {
+  //    map.put(name, value)
+  //  }
 }
 
 

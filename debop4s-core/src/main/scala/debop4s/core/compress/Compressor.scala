@@ -10,7 +10,7 @@ abstract class AbstractCompressor extends Compressor {}
  */
 trait Compressor {
 
-  val BUFFER_SIZE = 1024
+  val BUFFER_SIZE: Int = 1024
 
   /**
    * 데이터를 압축합니다.

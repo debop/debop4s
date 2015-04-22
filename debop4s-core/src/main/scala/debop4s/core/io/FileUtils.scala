@@ -67,10 +67,11 @@ object FileUtils {
    */
   def createTempDirectory(deleteAtExit: Boolean = true): File = {
     val file = File.createTempFile("temp", "dir")
-    file.delete()
+    Try { file.delete() }
     file.mkdir()
 
     if (deleteAtExit) {
+      // HINT: shutdown hook 를 추가한다
       Runtime.getRuntime.addShutdownHook(new Thread {
         override def run() {
           Files.delete(file.toPath)
@@ -108,10 +109,8 @@ object FileUtils {
    * @return the temp File object
    */
   def createTempFile(clazz: Class[_], path: Path): File = {
-    clazz.getResourceAsStream(path.toString) match {
-      case null =>
-        throw new FileNotFoundException(path.toString)
-      case stream =>
+    Try(clazz.getResourceAsStream(path.toString)) match {
+      case Success(stream) =>
         val tempPath = Files.createTempFile(path, "temp", "file", Seq[FileAttribute[_]](): _*)
         val file = tempPath.toFile
         file.deleteOnExit()
@@ -121,7 +120,24 @@ object FileUtils {
         }
         stream.close()
         file
+      case Failure(ex) =>
+        throw new FileNotFoundException(path.toString)
     }
+
+    //    clazz.getResourceAsStream(path.toString) match {
+    //      case null =>
+    //        throw new FileNotFoundException(path.toString)
+    //      case stream =>
+    //        val tempPath = Files.createTempFile(path, "temp", "file", Seq[FileAttribute[_]](): _*)
+    //        val file = tempPath.toFile
+    //        file.deleteOnExit()
+    //        using(new BufferedOutputStream(new FileOutputStream(file), 1 << 20)) { fos =>
+    //          Streams.copy(stream, fos)
+    //          fos.flush()
+    //        }
+    //        stream.close()
+    //        file
+    //    }
   }
 
   /**

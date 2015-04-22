@@ -11,31 +11,19 @@ trait JodaLocalDate {
 
   type Property = LocalDate.Property
 
-  def fromCalendarFields(calendar: Calendar) = LocalDate.fromCalendarFields(calendar)
+  def fromCalendarFields(calendar: Calendar): LocalDate = LocalDate.fromCalendarFields(calendar)
+  def fromDateFields(date: Date): LocalDate = LocalDate.fromDateFields(date)
 
-  def fromDateFields(date: Date) = LocalDate.fromDateFields(date)
-
-  def now = new LocalDate
-
-  def today = new LocalDate
-
-  def nextDay = now + 1.day
-
-  def tomorrow = now + 1.day
-
-  def nextWeek = now + 1.week
-
-  def nextMonth = now + 1.month
-
-  def nextYear = now + 1.year
-
-  def lastDay = now - 1.day
-
-  def yesterday = now - 1.day
-
-  def lastWeek = now - 1.week
-
-  def lastMonth = now - 1.month
-
-  def lastYear = now - 1.year
+  def now: LocalDate = new LocalDate
+  def today: LocalDate = new LocalDate
+  def nextDay: LocalDate = now + 1.day
+  def tomorrow: LocalDate = now + 1.day
+  def nextWeek: LocalDate = now + 1.week
+  def nextMonth: LocalDate = now + 1.month
+  def nextYear: LocalDate = now + 1.year
+  def lastDay: LocalDate = now - 1.day
+  def yesterday: LocalDate = now - 1.day
+  def lastWeek: LocalDate = now - 1.week
+  def lastMonth: LocalDate = now - 1.month
+  def lastYear: LocalDate = now - 1.year
 }

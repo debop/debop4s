@@ -1,6 +1,7 @@
 package debop4s.data.slick3.schema
 
 import debop4s.data.slick3._
+import debop4s.data.slick3.model.Identifiable
 import shapeless.Lens
 import slick.ast.BaseTypedType
 import slick.dbio.{FailureAction, SuccessAction}
@@ -41,13 +42,12 @@ trait SlickQueryExtensions {
   /**
    * Id를 가지는 정보 (Entity) 를 위한 쿼리 확장 메소드를 제공합니다.
    * @tparam M  Entity 수형
-   * @tparam Id Entity Identifier 의 수형
    */
-  abstract class TableWithIdQuery[M, Id, T <: IdTable[M, Id]](cons: Tag => T, idLens: Lens[M, Option[Id]])
-                                                             (implicit ev: BaseTypedType[Id])
+  abstract class TableWithIdQuery[M <: Identifiable, T <: EntityTable[M]](cons: Tag => T, idLens: Lens[M, Option[M#Id]])
+                                                                         (implicit ev: BaseTypedType[M#Id])
     extends ActiveTableQuery[M, T](cons) {
 
-    private def tryExtractId(model: M): DBIO[Id] = {
+    private def tryExtractId(model: M): DBIO[M#Id] = {
       idLens.get(model) match {
         case Some(id) => SuccessAction(id)
         case None => FailureAction(new RowNotFoundException(model))
@@ -56,11 +56,11 @@ trait SlickQueryExtensions {
 
     val filterById = this.findBy(x => x.id)
 
-    def findById(id: Id): DBIO[M] = filterById(id).result.head
+    def findById(id: M#Id): DBIO[M] = filterById(id).result.head
 
-    def findOptionById(id: Id): DBIO[Option[M]] = filterById(id).result.headOption
+    def findOptionById(id: M#Id): DBIO[Option[M]] = filterById(id).result.headOption
 
-    def add(model: M): DBIO[Id] = {
+    def add(model: M): DBIO[M#Id] = {
       this.returning(this.map(_.id)) += model
     }
 
@@ -75,7 +75,7 @@ trait SlickQueryExtensions {
       tryExtractId(model).flatMap { id => update(id, model) }
     }
 
-    protected def update(id: Id, model: M)(implicit ec: ExecutionContext): DBIO[M] = {
+    protected def update(id: M#Id, model: M)(implicit ec: ExecutionContext): DBIO[M] = {
       val triedUpdate = filterById(id).update(model).mustAffectOneSingleRow.asTry
 
       triedUpdate.map {
@@ -91,7 +91,7 @@ trait SlickQueryExtensions {
       }
     }
 
-    def deleteById(id: Id)(implicit ec: ExecutionContext): DBIO[Unit] = {
+    def deleteById(id: M#Id)(implicit ec: ExecutionContext): DBIO[Unit] = {
       filterById(id).delete.mustAffectOneSingleRow.map(_ => Unit)
     }
 

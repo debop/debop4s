@@ -16,34 +16,26 @@ trait JodaDateTimeFormat {
   //    @deprecated(message = "use StaticISODateTimeFormat")
   //    val jsonFormat: DateTimeFormatter = forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-  def forPattern(pattern: String) = DateTimeFormat.forPattern(pattern)
-
-  def forStyle(style: String) = DateTimeFormat.forStyle(style)
+  def forPattern(pattern: String): DateTimeFormatter = DateTimeFormat.forPattern(pattern)
+  def forStyle(style: String): DateTimeFormatter = DateTimeFormat.forStyle(style)
 
   def fullDate(): DateTimeFormatter = DateTimeFormat.fullDate()
-
   def fullDateTime(): DateTimeFormatter = DateTimeFormat.fullDateTime()
-
   def fullTime(): DateTimeFormatter = DateTimeFormat.fullTime()
 
   def longDate(): DateTimeFormatter = DateTimeFormat.longDate()
-
   def longDateTime(): DateTimeFormatter = DateTimeFormat.longDateTime()
-
   def longTime(): DateTimeFormatter = DateTimeFormat.longTime()
 
   def mediumDate(): DateTimeFormatter = DateTimeFormat.mediumDate()
-
   def mediumDateTime(): DateTimeFormatter = DateTimeFormat.mediumDateTime()
-
   def mediumTime(): DateTimeFormatter = DateTimeFormat.mediumTime()
 
   def shortDate(): DateTimeFormatter = DateTimeFormat.shortDate()
-
   def shortDateTime(): DateTimeFormatter = DateTimeFormat.shortDateTime()
-
   def shortTime(): DateTimeFormatter = DateTimeFormat.shortTime()
 
-  def patternForStyle(style: String, locale: Locale) = DateTimeFormat.patternForStyle(style, locale)
+  def patternForStyle(style: String, locale: Locale): String =
+    DateTimeFormat.patternForStyle(style, locale)
 }
 

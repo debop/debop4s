@@ -14,7 +14,7 @@ object thread {
    * @return  `Runnable` 인스턴스
    */
   implicit def makeRunnable(block: => Unit): Runnable = new Runnable() {
-    def run() = block
+    def run(): Unit = block
   }
 
   /**
@@ -24,7 +24,7 @@ object thread {
    * @return `Callable` 인스턴스
    */
   implicit def makeCallabke[T](func: => T): Callable[T] = new Callable[T]() {
-    def call() = func
+    def call(): T = func
   }
 
   /**

@@ -13,13 +13,13 @@ import scala.util.{Failure, Success}
  * @author sunghyouk.bae@gmail.com
  */
 trait EntityTableQueries {
-  this: SlickProfile with SlickSchema with SlickQueryExtensions =>
+  self: SlickProfile with SlickSchema with SlickQueryExtensions =>
 
   import driver.api._
 
   class EntityTableQuery[M <: Identifiable, T <: EntityTable[M]](cons: Tag => T, idLens: Lens[M, Option[M#Id]])
                                                                 (implicit ev: BaseTypedType[M#Id])
-    extends TableWithIdQuery[M, M#Id, T](cons, idLens)
+    extends TableWithIdQuery[M, T](cons, idLens)
 
 
   object EntityTableQuery {

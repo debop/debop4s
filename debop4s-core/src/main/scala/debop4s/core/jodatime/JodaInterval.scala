@@ -8,8 +8,6 @@ object JodaInterval extends JodaInterval
 trait JodaInterval {
 
   def thisSecond: Interval = DateTime.now.secondOfMinute.interval
-
-  def thisMinute = DateTime.now.minuteOfHour.interval
-
-  def thisHour = DateTime.now.hourOfDay.interval
+  def thisMinute: Interval = DateTime.now.minuteOfHour.interval
+  def thisHour: Interval = DateTime.now.hourOfDay.interval
 }

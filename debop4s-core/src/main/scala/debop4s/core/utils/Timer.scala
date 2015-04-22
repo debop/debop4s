@@ -175,11 +175,11 @@ class ReferenceCountingTimer(factory: () => Timer) extends ReferenceCountedTimer
     }
   }
   override def schedule(when: Time)(block: => Unit): TimerTask = {
-    require(underlying != null)
+    assert(underlying != null)
     underlying.schedule(when)(block)
   }
   override def schedule(when: Time, period: Duration)(block: => Unit): TimerTask = {
-    require(underlying != null)
+    assert(underlying != null)
     underlying.schedule(when, period)(block)
   }
 }

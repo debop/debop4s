@@ -65,14 +65,21 @@ object Codecs {
 }
 
 trait StringEncoder {
-  def encode(bytes: Array[Byte]): String = new String(bytes)
-  def decode(str: String): Array[Byte] = str.getBytes
+
+  def encode(bytes: Array[Byte]): String = {
+    if (bytes != null) new String(bytes)
+    else null: String
+  }
+  def decode(str: String): Array[Byte] = {
+    if (str != null) str.getBytes
+    else Array.emptyByteArray
+  }
 }
 
 object StringEncoder extends StringEncoder
 
 trait Base64StringEncoder extends StringEncoder {
-  private[this] def codec = new Base64()
+  private[this] def codec: Base64 = new Base64()
 
   override def encode(bytes: Array[Byte]): String = {
     codec.encodeAsString(bytes)

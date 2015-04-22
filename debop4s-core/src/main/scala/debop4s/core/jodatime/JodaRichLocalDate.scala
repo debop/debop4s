@@ -27,23 +27,23 @@ class JodaRichLocalDate(val self: LocalDate) extends AnyVal with Ordered[LocalDa
 
   def era: Property = self.era
 
-  def withDay(day: Int) = self.withDayOfMonth(day)
+  def withDay(day: Int): LocalDate = self.withDayOfMonth(day)
 
-  def withWeek(week: Int) = self.withWeekOfWeekyear(week)
+  def withWeek(week: Int): LocalDate = self.withWeekOfWeekyear(week)
 
-  def withWeekyear(weekyear: Int) = self.withWeekyear(weekyear)
+  def withWeekyear(weekyear: Int): LocalDate = self.withWeekyear(weekyear)
 
-  def withMonth(month: Int) = self.withMonthOfYear(month)
+  def withMonth(month: Int): LocalDate = self.withMonthOfYear(month)
 
-  def withYear(year: Int) = self.withYear(year)
+  def withYear(year: Int): LocalDate = self.withYear(year)
 
-  def withCentury(century: Int) = self.withCenturyOfEra(century)
+  def withCentury(century: Int): LocalDate = self.withCenturyOfEra(century)
 
-  def withEra(era: Int) = self.withEra(era)
+  def withEra(era: Int): LocalDate = self.withEra(era)
 
-  def compare(that: LocalDate) = self.compareTo(that)
+  def compare(that: LocalDate): Int = self.compareTo(that)
 
-  def interval = self.toInterval
+  def interval: Interval = self.toInterval
 
-  def interval(zone: DateTimeZone) = self.toInterval(zone)
+  def interval(zone: DateTimeZone): Interval = self.toInterval(zone)
 }

@@ -8,6 +8,7 @@ class JodaRichTimestamp(val self: Timestamp) extends AnyVal with Ordered[Timesta
 
   def toDateTime: DateTime = new DateTime(self)
 
-  def compare(that: Timestamp): Int =
+  def compare(that: Timestamp): Int = {
     self.getNanos - that.getNanos
+  }
 }

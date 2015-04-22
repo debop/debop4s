@@ -51,8 +51,8 @@ class ActiveDatabaseFunSuite extends AbstractSlickFunSuite {
       val beer2 = Beer(name = "Kass", supplierId = sid, price = 8.8).save.commit
       beer2.supplier.commit.get shouldEqual supplier
 
-      //      beer1.friendBeers.size shouldBe 1
-      //      beer2.friendBeers.size shouldBe 1
+      beer1.friendBeers.commit.size shouldEqual 1
+      beer2.friendBeers.commit.size shouldEqual 1
     }
   }
 }

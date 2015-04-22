@@ -5,21 +5,21 @@ import org.joda.time._
 
 class JodaRichPeriod(val self: Period) extends AnyVal {
 
-  def millis = self.getMillis
+  def millis: Int = self.getMillis
 
-  def seconds = self.getSeconds
+  def seconds: Int = self.getSeconds
 
-  def minutes = self.getMinutes
+  def minutes: Int = self.getMinutes
 
-  def hours = self.getHours
+  def hours: Int = self.getHours
 
-  def days = self.getDays
+  def days: Int = self.getDays
 
-  def weeks = self.getWeeks
+  def weeks: Int = self.getWeeks
 
-  def months = self.getMonths
+  def months: Int = self.getMonths
 
-  def years = self.getYears
+  def years: Int = self.getYears
 
   def -(period: ReadablePeriod): Period = self.minus(period)
 

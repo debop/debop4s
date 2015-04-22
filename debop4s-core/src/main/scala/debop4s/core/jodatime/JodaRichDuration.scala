@@ -26,7 +26,7 @@ class JodaRichDuration(val self: Duration) extends AnyVal with Ordered[Duration]
 
   def compare(that: Duration): Int = self.compareTo(that)
 
-  def min(that: Duration) = {
+  def min(that: Duration): Duration = {
     if (self != null && that != null) {
       if (compare(that) < 0) self else that
     }
@@ -36,7 +36,7 @@ class JodaRichDuration(val self: Duration) extends AnyVal with Ordered[Duration]
 
   }
 
-  def max(that: Duration) = {
+  def max(that: Duration): Duration = {
     if (self != null && that != null) {
       if (compare(that) > 0) self else that
     }

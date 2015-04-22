@@ -14,5 +14,5 @@ class JodaRichReadableInstant(val self: ReadableInstant) extends AnyVal with Ord
 
   def instant: Instant = self.toInstant
 
-  def compare(that: ReadableInstant) = self.compareTo(that)
+  def compare(that: ReadableInstant): Int = self.compareTo(that)
 }

@@ -11,7 +11,7 @@ import org.joda.time.DateTime
  * @author sunghyouk.bae@gmail.com 15. 3. 22.
  */
 trait SlickColumnMapper {
-  this: SlickProfile =>
+  self: SlickProfile =>
 
   import driver.api._
 

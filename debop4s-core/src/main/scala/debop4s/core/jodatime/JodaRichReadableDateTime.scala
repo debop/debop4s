@@ -5,7 +5,7 @@ import org.joda.time.{Chronology, DateTime, MutableDateTime, ReadableDateTime}
 
 class JodaRichReadableDateTime(val self: ReadableDateTime) extends AnyVal with Ordered[ReadableDateTime] {
 
-  def millis = self.getMillis
+  def millis: Long = self.getMillis
 
   def second: Int = self.getSecondOfMinute
 

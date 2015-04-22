@@ -15,39 +15,39 @@ object time {
 
   class RichWholeNumber(wrapped: Long) {
 
-    def nanoseconds = Duration(wrapped, TimeUnit.NANOSECONDS)
-    def nanosecond = nanoseconds
-    def nanos = nanoseconds
+    def nanoseconds: Duration = Duration(wrapped, TimeUnit.NANOSECONDS)
+    def nanosecond: Duration = nanoseconds
+    def nanos: Duration = nanoseconds
 
-    def microseconds = Duration(wrapped, TimeUnit.MICROSECONDS)
-    def microsecond = microseconds
-    def micros = microseconds
+    def microseconds: Duration = Duration(wrapped, TimeUnit.MICROSECONDS)
+    def microsecond: Duration = microseconds
+    def micros: Duration = microseconds
 
-    def milliseconds = Duration(wrapped, TimeUnit.MILLISECONDS)
-    def millisecond = milliseconds
-    def millis = milliseconds
+    def milliseconds: Duration = Duration(wrapped, TimeUnit.MILLISECONDS)
+    def millisecond: Duration = milliseconds
+    def millis: Duration = milliseconds
 
-    def seconds = Duration(wrapped, TimeUnit.SECONDS)
-    def second = seconds
+    def seconds: Duration = Duration(wrapped, TimeUnit.SECONDS)
+    def second: Duration = seconds
 
-    def minutes = Duration(wrapped, TimeUnit.MINUTES)
-    def minute = minutes
+    def minutes: Duration = Duration(wrapped, TimeUnit.MINUTES)
+    def minute: Duration = minutes
 
-    def hours = Duration(wrapped, TimeUnit.HOURS)
-    def hour = hours
+    def hours: Duration = Duration(wrapped, TimeUnit.HOURS)
+    def hour: Duration = hours
 
-    def days = Duration(wrapped, TimeUnit.DAYS)
-    def day = days
+    def days: Duration = Duration(wrapped, TimeUnit.DAYS)
+    def day: Duration = days
   }
 
   private val ZeroRichWholeNumber = new RichWholeNumber(0L) {
-    override def nanoseconds = Duration.Zero
-    override def microseconds = Duration.Zero
-    override def milliseconds = Duration.Zero
-    override def seconds = Duration.Zero
-    override def minutes = Duration.Zero
-    override def hours = Duration.Zero
-    override def days = Duration.Zero
+    override def nanoseconds: Duration = Duration.Zero
+    override def microseconds: Duration = Duration.Zero
+    override def milliseconds: Duration = Duration.Zero
+    override def seconds: Duration = Duration.Zero
+    override def minutes: Duration = Duration.Zero
+    override def hours: Duration = Duration.Zero
+    override def days: Duration = Duration.Zero
   }
 
   implicit def intToRichWholeNumber(i: Int): RichWholeNumber = {
@@ -69,7 +69,7 @@ object time {
     /**
      * Duration 값의 절대값을 반환합니다.
      */
-    def abs = self match {
+    def abs: Duration = self match {
       case Duration.Inf => Duration.Inf
       case Duration.MinusInf => Duration.Inf
       case Duration.Undefined => Duration.Undefined
@@ -79,15 +79,15 @@ object time {
     /**
      * 현재 시각 (`Time.now`) 이후의 값을 반환합니다.
      */
-    def fromNow = Time.now + self
+    def fromNow: Time = Time.now + self
     /**
      * 현재 시각 (`Time.now`) 이전의 값을 반환합니다.
      */
-    def ago = Time.now - self
+    def ago: Time = Time.now - self
     /**
      * Unix Epoch 이후의 값을 반환합니다.
      */
-    def afterEpoch = Time.epoch + self
+    def afterEpoch: Time = Time.epoch + self
 
     /**
      * `self` 와 지정된 `that`의 차이를 반환합니다.
