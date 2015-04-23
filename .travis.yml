@@ -5,6 +5,7 @@ script:
 before_script:
   - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - mysql -e 'create database hibernate'
+  - mysql -e 'create database slick'
 
 scala:
   - 2.10.4
@@ -17,7 +18,7 @@ services:
   - mongodb
 
 env:
-  - MAVEN_OPTS="-ea -server -Xmx2G -XX:PermSize=256M -XX:MaxPermSize=512M -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
+  - MAVEN_OPTS="-ea -server -Xmx8G -XX:PermSize=256M -XX:MaxPermSize=512M -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
 
 # whitelist
 branches:

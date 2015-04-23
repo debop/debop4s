@@ -22,6 +22,10 @@ import scala.util.{Failure, Success}
  */
 package object slick3 {
 
+  //  implicit def commit[T](dbAction:DBIO[T])(implicit timeout:Duration = 5 minute): T = {
+  //    dbAction.commit(timeout)
+  //  }
+
   implicit class DBIOExtensions[T](dbAction: DBIO[T]) {
 
     def query(implicit timeout: Duration = 30 seconds): T = {

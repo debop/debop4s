@@ -38,6 +38,26 @@ class ActiveDatabaseFunSuite extends AbstractSlickFunSuite {
     suppliers.deleteAll().commit
   }
 
+  //  test("Supplier 저장하기 2") {
+  //
+  //    val (initialCount, persisted) = commit {
+  //      for {
+  //        count <- suppliers.length.result
+  //        p <- Supplier(name = "Acme, Inc").save()
+  //      } yield (count, p)
+  //    }
+  //
+  //    persisted.id shouldBe defined
+  //
+  //    persisted.copy(name = "Updated Name").save
+  //
+  //    suppliers.count.commit shouldEqual (initialCount + 1)
+  //    persisted.delete().commit
+  //    suppliers.count.commit shouldEqual initialCount
+  //
+  //    suppliers.deleteAll().commit
+  //  }
+
   test("Beer 저장하기") {
     val supplier = suppliers.save(Supplier(name = "Acme, Inc.")).commit
     supplier.id shouldBe defined
