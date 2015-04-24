@@ -44,7 +44,6 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
     val devicesByPrice = devices.filter(_.price > 1000.0.bind)
 
     val qJoin = sitesById join devicesByPrice on sitesToDevices
-
     qJoin.exec foreach println
     qJoin.map(_._1.name).exec.toSet shouldEqual Set("SKT")
   }

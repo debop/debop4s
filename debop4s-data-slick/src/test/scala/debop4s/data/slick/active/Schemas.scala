@@ -12,8 +12,7 @@ object ActiveDatabase extends SlickComponent with QueryExtensions with Schema
 /**
  *
  */
-trait QueryExtensions {
-  this: SlickComponent with Schema =>
+trait QueryExtensions {self: SlickComponent with Schema =>
 
   import driver.simple._
 
@@ -24,7 +23,7 @@ trait QueryExtensions {
     def delete(implicit sess: Session): Boolean = {
       val beerIds: Seq[Int] = beers.filter(_.supplierId === self.id.bind).map(_.id).list
       beerIds.foreach { id => beers.deleteById(id) }
-      suppliers.deleteEntity(self)
+      suppliers.remove(self)
     }
   }
 
@@ -35,7 +34,7 @@ trait QueryExtensions {
   implicit class BeerExtensions(self: Beer) {
 
     def save(implicit sess: Session): Beer = beers.save(self)
-    def delete(implicit sess: Session): Boolean = beers.deleteEntity(self)
+    def delete(implicit sess: Session): Boolean = beers.remove(self)
 
     def supplier(implicit sess: Session): Option[Supplier] = {
       suppliers.findOptionById(self.supplierId)
@@ -52,8 +51,7 @@ trait QueryExtensions {
 
 }
 
-trait Schema {
-  this: SlickComponent =>
+trait Schema {self: SlickComponent =>
 
   import driver.simple._
 

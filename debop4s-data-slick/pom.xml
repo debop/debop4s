@@ -29,6 +29,12 @@
             <artifactId>debop4s-data-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.debop4s</groupId>
+            <artifactId>debop4s-timeperiod</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Slick -->
         <dependency>

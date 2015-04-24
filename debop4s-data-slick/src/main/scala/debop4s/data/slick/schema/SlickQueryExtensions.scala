@@ -26,7 +26,7 @@ trait SlickQueryExtensions {
 
     def save(model: M)(implicit session: Session): M
     def saveAll(models: M*)(implicit session: Session): List[M]
-    def deleteEntity(model: M)(implicit session: Session): Boolean
+    def remove(model: M)(implicit session: Session): Boolean
   }
 
 
@@ -62,7 +62,7 @@ trait SlickQueryExtensions {
     override def saveAll(entities: E*)(implicit session: Session): List[E] =
       entities.map(save).toList
 
-    override def deleteEntity(entity: E)(implicit session: Session): Boolean =
+    override def remove(entity: E)(implicit session: Session): Boolean =
       extractId(entity).exists(id => deleteById(id))
 
     def deleteById(id: Id)(implicit session: Session): Boolean =
