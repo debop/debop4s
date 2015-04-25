@@ -2,7 +2,10 @@ package debop4s.data.slick.northwind.schema
 
 import java.sql.Blob
 
+import debop4s.data.slick.northwind.model._
 import debop4s.data.slick.schema.SlickComponent
+import debop4s.data.slick.SlickContext._
+import debop4s.data.slick.SlickContext.driver.simple._
 import org.joda.time.DateTime
 
 /**
@@ -10,8 +13,6 @@ import org.joda.time.DateTime
  * @author sunghyouk.bae@gmail.com
  */
 trait NorthwindTables {self: SlickComponent =>
-
-  import driver.simple._
 
   private def addressUnapply(addr: AddressComponent) = AddressComponent.unapply(addr).get
 

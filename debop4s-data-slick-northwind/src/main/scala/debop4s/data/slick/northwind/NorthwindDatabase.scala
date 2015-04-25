@@ -1,5 +1,6 @@
-package debop4s.data.slick.northwind.schema
+package debop4s.data.slick.northwind
 
+import debop4s.data.slick.northwind.schema.{NorthwindTables, NorthwindViews}
 import debop4s.data.slick.schema.SlickComponent
 
 /**

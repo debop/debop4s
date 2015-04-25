@@ -1,8 +1,8 @@
-package debop4s.data.slick.northwind.schema
+package debop4s.data.slick.northwind.model
 
 import java.sql.Blob
 
-import debop4s.data.slick.model._
+import debop4s.data.slick.model.{IntEntity, StringEntity}
 import org.joda.time.DateTime
 
 

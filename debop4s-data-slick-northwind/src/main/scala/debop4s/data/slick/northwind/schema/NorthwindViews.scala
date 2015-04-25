@@ -1,6 +1,9 @@
 package debop4s.data.slick.northwind.schema
 
+import debop4s.data.slick.northwind.model._
 import debop4s.data.slick.schema.SlickComponent
+import debop4s.data.slick.SlickContext._
+import debop4s.data.slick.SlickContext.driver.simple._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
@@ -9,9 +12,6 @@ import org.joda.time.DateTime
  * @author sunghyouk.bae@gmail.com
  */
 trait NorthwindViews {self: SlickComponent with NorthwindTables =>
-
-  import driver.simple._
-
 
   lazy val alphabeticalListOfProducts: Query[(Products, Column[String]), (Product, String), Seq] = {
     val q = for {

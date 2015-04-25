@@ -21,8 +21,12 @@
         <module>debop4s-rediscala</module>
 
         <module>debop4s-data-common</module>
+
         <module>debop4s-data-slick</module>
+        <module>debop4s-data-slick-northwind</module>
+
         <module>debop4s-data-slick3</module>
+
         <module>debop4s-data-orm</module>
 
         <module>debop4s-shiro</module>
@@ -30,6 +34,7 @@
         <module>debop4s-web-scalatra</module>
 
         <module>debop4s-benchmark</module>
+
     </modules>
 
     <properties>

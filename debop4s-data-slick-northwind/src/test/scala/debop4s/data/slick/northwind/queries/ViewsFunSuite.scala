@@ -1,8 +1,8 @@
 package debop4s.data.slick.northwind.queries
 
 import debop4s.data.slick.northwind.AbstractNorthwindFunSuite
-import debop4s.data.slick.northwind.schema.NorthwindDatabase._
-import debop4s.data.slick.northwind.schema.NorthwindDatabase.driver.simple._
+import debop4s.data.slick.northwind.NorthwindDatabase._
+import debop4s.data.slick.northwind.NorthwindDatabase.driver.simple._
 import debop4s.timeperiod.utils.Times
 
 import scala.slick.jdbc.{StaticQuery => Q}
