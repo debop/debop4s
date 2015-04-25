@@ -1,7 +1,6 @@
 package debop4s.data.slick3.associations
 
-import debop4s.data.slick3._
-import debop4s.data.slick3.AbstractSlickFunSuite
+import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 import debop4s.data.slick3.associations.AssociationDatabase._
 import debop4s.data.slick3.associations.AssociationDatabase.driver.api._
 import org.joda.time.DateTime
@@ -56,7 +55,7 @@ class OrderFunSuite extends AbstractSlickFunSuite {
     q.exec foreach println
 
     val innerJoin2 = orders join orderItems on (_.id === _.orderId)
-    innerJoin2.length.result.commit shouldEqual orderItems.count.commit
+    commit { innerJoin2.length.result } shouldEqual commit { orderItems.count() }
 
     // group by
     val joinQuery = for {

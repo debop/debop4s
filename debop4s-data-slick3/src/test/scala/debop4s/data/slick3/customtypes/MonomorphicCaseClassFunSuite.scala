@@ -30,16 +30,16 @@ class MonomorphicCaseClassFunSuite extends AbstractSlickFunSuite {
   lazy val userAddresses = TableQuery[UserAddresses]
 
   test("case class mapping") {
-    {
+    commit {
       userAddresses.schema.drop.asTry >>
       userAddresses.schema.create
-    }.exec
+    }
 
-    Seq(
-      userAddresses += UserAddress("a", Address("aaaa", "seoul", "11111")),
-      userAddresses += UserAddress("b", Address("bbbb", "seoul", "22222")),
-      userAddresses += UserAddress("c", Address("cccc", "seoul", "33333"))
-    ).exec
+    commit {
+      (userAddresses += UserAddress("a", Address("aaaa", "seoul", "11111"))) >>
+      (userAddresses += UserAddress("b", Address("bbbb", "seoul", "22222"))) >>
+      (userAddresses += UserAddress("c", Address("cccc", "seoul", "33333")))
+    }
 
     userAddresses.exec foreach println
 

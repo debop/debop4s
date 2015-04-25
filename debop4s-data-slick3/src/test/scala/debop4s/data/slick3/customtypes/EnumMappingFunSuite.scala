@@ -1,9 +1,8 @@
 package debop4s.data.slick3.customtypes
 
-import debop4s.data.slick3.customtypes.EnumMapStringSupport
-import debop4s.data.slick3._
 import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
+import debop4s.data.slick3._
 import debop4s.data.slick3.model.IntEntity
 import shapeless._
 
@@ -31,8 +30,6 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
 
     def * = (name, osType, id.?) <>(Device.tupled, Device.unapply)
   }
-  //  lazy val devices = TableQuery[Devices]
-  //  implicit class DeviceQueryExt(query: TableQuery[Devices]) extends IdTableExtensions[Device, Int](query)
   lazy val devices = EntityTableQuery[Device, Devices](cons = tag => new Devices(tag), lens[Device] >> 'id)
 
   class Device2s(tag: Tag) extends EntityTable[Device2](tag, "enum_device2") {
@@ -42,30 +39,28 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
 
     def * = (name, osType, id.?) <>(Device2.tupled, Device2.unapply)
   }
-  //  lazy val device2s = TableQuery[Device2s]
-  //  implicit class Device2QueryExt(query: TableQuery[Device2s]) extends IdTableExtensions[Device2, Int](query)
   lazy val device2s = EntityTableQuery[Device2, Device2s](cons = tag => new Device2s(tag), lens[Device2] >> 'id)
 
   lazy val schema = devices.schema ++ device2s.schema
 
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-
-    {
+  before {
+    commit {
       schema.drop.asTry >>
       schema.create
-    }.commit
+    }
   }
-
-  override def afterAll(): Unit = {
-    schema.drop.asTry.commit
-    super.afterAll()
+  after {
+    commit { schema.drop.asTry }
   }
 
   test("Device with Optional Enum <-> String") {
-    val nexus = devices.save(Device("Nexus", Some(OSType.Android))).commit
-    val iphone5 = devices.save(Device("iPhone5", Some(OSType.iOS))).commit
-    val noneType = devices.save(Device("None", None)).commit
+    val (nexus, iphone5, noneType) = commit {
+      for {
+        nexus <- devices.save(Device("Nexus", Some(OSType.Android)))
+        iphone5 <- devices.save(Device("iPhone5", Some(OSType.iOS)))
+        none <- devices.save(Device("None", None))
+      } yield (nexus, iphone5, none)
+    }
 
     /*
     ┇ select x2."device_id", x2."device_name", x2."osType"
@@ -91,9 +86,13 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
   }
 
   test("Device with Enum <-> String") {
-    val nexus = device2s.save(Device2("Nexus", OSType.Android)).commit
-    val iphone5 = device2s.save(Device2("iPhone5", OSType.iOS)).commit
-    val noneType = device2s.save(Device2("None")).commit
+    val (nexus, iphone5, noneType) = commit {
+      for {
+        nexus <- device2s.save(Device2("Nexus", OSType.Android))
+        iphone5 <- device2s.save(Device2("iPhone5", OSType.iOS))
+        none <- device2s.save(Device2("None", OSType.Unknown))
+      } yield (nexus, iphone5, none)
+    }
 
     /*
     ┇ select x2."device_id", x2."device_name", x2."osType"

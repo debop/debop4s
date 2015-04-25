@@ -31,7 +31,7 @@ trait SlickQueryExtensions {
    * Query method 를 제공하는 Extensions 입니다.
    */
   abstract class ActiveTableQuery[M, T <: Table[M]](cons: Tag => T) extends TableQuery(cons) {
-    def count: DBIO[Int] = this.size.result
+    def count(): DBIO[Int] = this.size.result
 
     def save(model: M)(implicit ec: ExecutionContext): DBIO[M]
     def update(model: M)(implicit ec: ExecutionContext): DBIO[M]

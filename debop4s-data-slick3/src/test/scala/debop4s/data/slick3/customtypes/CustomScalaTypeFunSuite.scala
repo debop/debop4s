@@ -29,13 +29,13 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
   lazy val as = TableQuery[A]
 
   before {
-    db.exec {
+    commit {
       as.schema.drop.asTry >>
       as.schema.create
     }
   }
   after {
-    as.schema.drop.asTry.exec
+    commit { as.schema.drop.asTry }
   }
 
   test("custom scala type - Bool") {

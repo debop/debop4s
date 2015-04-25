@@ -1,8 +1,10 @@
 package debop4s.data.slick3.active
 
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 import debop4s.data.slick3.active.ActiveDatabase._
 import debop4s.data.slick3.active.ActiveDatabase.driver.api._
+import debop4s.data.slick3.{AbstractSlickFunSuite, _}
+
+import scala.util.Try
 
 /**
  * ActiveDatabaseFunSuite
@@ -12,33 +14,15 @@ class ActiveDatabaseFunSuite extends AbstractSlickFunSuite {
 
   override protected def beforeAll() = {
     super.beforeAll()
-    createSchema().commit
+    commit { createSchema() }
   }
 
   override protected def afterAll() = {
-    dropSchema().commit
+    commit { dropSchema() }
     super.afterAll()
   }
 
   test("Supplier 저장하기") {
-    val initialCount = db.exec(suppliers.length.result)
-
-    val supplier = Supplier(name = "Acme, Inc")
-    supplier.id should not be defined
-
-    val persisted = supplier.save.commit
-    persisted.id shouldBe defined
-
-    persisted.copy(name = "Updated Name").save.commit
-
-    suppliers.count.commit shouldEqual (initialCount + 1)
-    persisted.delete().commit
-    suppliers.count.commit shouldEqual initialCount
-
-    suppliers.deleteAll().commit
-  }
-
-  test("Supplier 저장하기 2") {
 
     val (initialCount, persisted) = commit {
       for {
@@ -60,20 +44,45 @@ class ActiveDatabaseFunSuite extends AbstractSlickFunSuite {
   }
 
   test("Beer 저장하기") {
-    val supplier = suppliers.save(Supplier(name = "Acme, Inc.")).commit
-    supplier.id shouldBe defined
 
-    LOG.debug(s"Saved Supplier=$supplier")
+    commit {
+      for {
+        supplier <- Supplier(name = "Acme, Inc.").save()
+        beer1 <- Beer("OB", 3.2, supplier.id.get).save()
+        beer2 <- Beer("Kass", 8.8, supplier.id.get).save()
 
-    supplier.id.foreach { sid =>
-      val beer1 = Beer(name = "OB", supplierId = sid, price = 3.2).save.commit
-      beer1.supplier.commit.get shouldEqual supplier
-
-      val beer2 = Beer(name = "Kass", supplierId = sid, price = 8.8).save.commit
-      beer2.supplier.commit.get shouldEqual supplier
-
-      beer1.friendBeers.commit.size shouldEqual 1
-      beer2.friendBeers.commit.size shouldEqual 1
+        _ <- beer1.supplier().map { case Some(x) => x shouldEqual supplier }
+        _ <- beer2.supplier().map { case Some(x) => x shouldEqual supplier }
+        _ <- beer1.friendBeers().map(_.size shouldEqual 1)
+        _ <- beer2.friendBeers().map(_.size shouldEqual 1)
+      } yield ()
     }
+  }
+
+  test("save supplier and beer") {
+    val (supplier, beer) = commit {
+      for {
+        supplier <- Supplier("Acme, Inc").save()
+        beer <- Beer("Abc", 3.2, supplier.id.get).save()
+        beerSupplier <- beer.supplier()
+      } yield {
+        beerSupplier.value shouldEqual supplier
+        (supplier, beer)
+      }
+    }
+    supplier.id shouldBe defined
+  }
+
+  test("사용자가 지정한 Id 값으로 저장하기는 실패한다") {
+    val (supplier, triedBeer) = commit {
+      for {
+        supplier <- Supplier("Acme, Inc.").save()
+        beer: Try[Beer] <- Beer("Abc", 3.2, supplier.id.get, Some(10)).save().asTry
+      } yield (supplier, beer)
+    }
+
+    supplier.id shouldBe defined
+    triedBeer.isFailure shouldBe true
+    triedBeer.failed.map(_ shouldBe a[RowNotFoundException[_]])
   }
 }

@@ -104,7 +104,7 @@ object SlickContext {
       synchronized {
         val index = slaveIndex.getAndIncrement
         slaveIndex.compareAndSet(slaveSettings.length, 0)
-        slaveDBs(index % masterSettings.length)
+        slaveDBs(index % slaveSettings.length)
       }
     }
   }

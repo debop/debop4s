@@ -1,8 +1,7 @@
 package debop4s.data.slick3.customtypes
 
+import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3._
-import TestDatabase._
-import TestDatabase.driver.api._
 import slick.lifted
 
 import scala.reflect.ClassTag
@@ -38,10 +37,13 @@ class CustomRecordTypeFunSuite extends AbstractSlickFunSuite {
   lazy val pairShapes = TableQuery[PairShapes]
 
   before {
-    pairShapes.schema.create.exec
+    commit {
+      pairShapes.schema.drop.asTry >>
+      pairShapes.schema.create
+    }
   }
   after {
-    pairShapes.schema.drop.exec
+    commit { pairShapes.schema.drop }
   }
 
   test("custom record type") {

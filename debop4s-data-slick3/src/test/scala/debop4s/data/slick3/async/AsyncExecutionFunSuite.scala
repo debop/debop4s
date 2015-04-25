@@ -34,7 +34,7 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
     }
     saveActions.exec
 
-    employees.count.commit shouldEqual EMP_COUNT
+    commit { employees.count() } shouldEqual EMP_COUNT
     employees.exec foreach { emp => LOG.debug(emp.toString) }
   }
 }

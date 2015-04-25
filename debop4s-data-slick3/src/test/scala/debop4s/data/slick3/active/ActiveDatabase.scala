@@ -34,9 +34,9 @@ trait ActiveQueryExtensions {
 
     override def tableQuery = beers
 
-    def supplier: DBIO[Option[Supplier]] = suppliers.findOptionById(model.supplierId)
+    def supplier(): DBIO[Option[Supplier]] = suppliers.findOptionById(model.supplierId)
 
-    def friendBeers: DBIO[Seq[Beer]] = {
+    def friendBeers(): DBIO[Seq[Beer]] = {
       beers.filter(b => b.supplierId === model.supplierId.bind && b.id =!= model.id.bind).result
     }
 
@@ -100,7 +100,7 @@ trait ActiveSchema {
 
     def * = (name, price, supplierId, id.?) <>(Beer.tupled, Beer.unapply)
 
-    def supplierFK = foreignKey("fk_beers_suppliers", supplierId, suppliers)(_.id)
+    def supplier = foreignKey("fk_beers_suppliers", supplierId, suppliers)(_.id)
   }
 
   val idFunc = (beer: Beer) => beer.id
