@@ -29,7 +29,7 @@ class ActiveDatabaseFunSuite extends AbstractSlickFunSuite {
     val persisted = supplier.save.commit
     persisted.id shouldBe defined
 
-    persisted.copy(name = "Updated Name").save
+    persisted.copy(name = "Updated Name").save.commit
 
     suppliers.count.commit shouldEqual (initialCount + 1)
     persisted.delete().commit
@@ -38,25 +38,26 @@ class ActiveDatabaseFunSuite extends AbstractSlickFunSuite {
     suppliers.deleteAll().commit
   }
 
-  //  test("Supplier 저장하기 2") {
-  //
-  //    val (initialCount, persisted) = commit {
-  //      for {
-  //        count <- suppliers.length.result
-  //        p <- Supplier(name = "Acme, Inc").save()
-  //      } yield (count, p)
-  //    }
-  //
-  //    persisted.id shouldBe defined
-  //
-  //    persisted.copy(name = "Updated Name").save
-  //
-  //    suppliers.count.commit shouldEqual (initialCount + 1)
-  //    persisted.delete().commit
-  //    suppliers.count.commit shouldEqual initialCount
-  //
-  //    suppliers.deleteAll().commit
-  //  }
+  test("Supplier 저장하기 2") {
+
+    val (initialCount, persisted) = commit {
+      for {
+        count <- suppliers.length.result
+        p <- Supplier(name = "Acme, Inc").save()
+      } yield (count, p)
+    }
+    persisted.id shouldBe defined
+
+    commit {
+      for {
+        _ <- persisted.copy(name = "Updated Name").save()
+        _ <- suppliers.count.map(_ shouldEqual (initialCount + 1))
+        _ <- persisted.delete()
+        _ <- suppliers.count.map(_ shouldEqual initialCount)
+        _ <- suppliers.deleteAll()
+      } yield ()
+    }
+  }
 
   test("Beer 저장하기") {
     val supplier = suppliers.save(Supplier(name = "Acme, Inc.")).commit

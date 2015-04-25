@@ -46,6 +46,28 @@ object SlickContext {
   def forDataSource(ds: DataSource = defaultDataSource): driver.backend.DatabaseDef =
     driver.api.Database.forDataSource(ds)
 
+  def createDefaultDB() = forDataSource(defaultDataSource)
+  def createMasterDB() = {
+    if (masterSettings.isEmpty) createDefaultDB()
+    else {
+      synchronized {
+        val index = masterIndex.getAndIncrement
+        masterIndex.compareAndSet(masterDataSources.length, 0)
+        forDataSource(masterDataSources(index % masterDataSources.length))
+      }
+    }
+  }
+  def createSlaveDB() = {
+    if (masterSettings.isEmpty) createDefaultDB()
+    else {
+      synchronized {
+        val index = slaveIndex.getAndIncrement
+        slaveIndex.compareAndSet(slaveDataSources.length, 0)
+        forDataSource(slaveDataSources(index % slaveDataSources.length))
+      }
+    }
+  }
+
   lazy val driver: JdbcDriver = defaultDriver
   lazy val jdbcDriver: String = defaultSetting.driverClass
 

@@ -34,13 +34,14 @@ class MutateFunSuite extends AbstractSlickFunSuite {
     val data = TableQuery[Data]
 
     var seenEndMarker = false
-    db.seq(
-      data.schema.drop.asTry,
-      data.schema.create,
-      data ++= Seq((1, "a"), (2, "b"), (3, "c"), (4, "d"))
-    )
+    commit {
+      data.schema.drop.asTry >>
+      data.schema.create >>
+      (data ++= Seq((1, "a"), (2, "b"), (3, "c"), (4, "d")))
+    }
 
-    val publisher = data.mutate.transactionally.stream
+    // BUG: DBIOStreamActionExtensions 에 대한 인자가 모호하다는 버그 (commit 함수가 새로 추가된 후에)
+    val publisher = db.stream(data.mutate /*.transactionally*/)
 
     foreach(publisher) { m =>
       if (!m.end) {
@@ -70,13 +71,15 @@ class MutateFunSuite extends AbstractSlickFunSuite {
     val ts = TableQuery[T]
     def tsByA = ts.findBy(_.a)
 
+    // BUG: DBIOStreamActionExtensions 에 대한 인자가 모호하다는 버그 (commit 함수가 새로 추가된 후에)
+
     var seenEndMarker = false
     val a = {
       ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq((1, 1), (1, 2), (1, 3), (1, 4))) >>
       (ts ++= Seq((2, 5), (2, 6), (2, 7), (2, 8))) >>
-      runnableStreamableCompiledQueryActionExtensionMethods(tsByA(1)).mutate(sendEndMarker = true).transactionally
+      runnableStreamableCompiledQueryActionExtensionMethods(tsByA(1)).mutate(sendEndMarker = true) /*.transactionally*/
     }
 
     foreach(db.stream(a)) { m =>
