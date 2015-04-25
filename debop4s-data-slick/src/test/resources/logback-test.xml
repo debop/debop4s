@@ -10,10 +10,11 @@
         </encoder>
     </appender>
 
-    <logger name="slick" level="INFO"/>
-    <logger name="slick.jdbc" level="INFO"/>
+    <logger name="scala.slick" level="INFO"/>
+    <logger name="scala.slick.compiler" level="INFO"/>
+    <logger name="scala.slick.jdbc" level="INFO"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="console"/>
     </root>
 </configuration>

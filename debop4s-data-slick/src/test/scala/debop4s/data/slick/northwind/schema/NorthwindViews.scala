@@ -13,7 +13,7 @@ trait NorthwindViews {self: SlickComponent with NorthwindTables =>
   import driver.simple._
 
 
-  lazy val aplhabeticalListOfProducts: Query[(Products, Column[String]), (Product, String), Seq] = {
+  lazy val alphabeticalListOfProducts: Query[(Products, Column[String]), (Product, String), Seq] = {
     val q = for {
       (c, p) <- categories innerJoin products on (_.id === _.categoryId) if p.discontinued === false.bind
     } yield (p, c.name)
@@ -129,8 +129,16 @@ trait NorthwindViews {self: SlickComponent with NorthwindTables =>
 
   lazy val productUnitAveragePrice = products.map(_.unitPrice).avg
 
-  lazy val productsAboveAveragePrice =
+  lazy val productsAboveAveragePrice = {
+    for {
+      product <- products if product.unitPrice > productUnitAveragePrice
+    } yield (product.name, product.unitPrice)
+  }
+
+  lazy val productsAboveAveragePrice2 = {
     products.filter(_.unitPrice > productUnitAveragePrice).map(x => (x.name, x.unitPrice))
+  }
+
 
   lazy val productByCategoryWithInnerJoin = {
     for {
@@ -196,7 +204,7 @@ trait NorthwindViews {self: SlickComponent with NorthwindTables =>
       (o, (oId, subtotal)) <- orders join orderSubtotals on (_.id === _._1) if o.shippedDate.isNotNull
     } yield (o.shippedDate, oId, subtotal)
 
-  lazy val summaryOfSalesByYears =
+  lazy val summaryOfSalesByYear =
     for {
       (o, (oId, subtotal)) <- orders join orderSubtotals on (_.id === _._1) if o.shippedDate.isNotNull
     } yield (o.shippedDate, o.id, subtotal)
