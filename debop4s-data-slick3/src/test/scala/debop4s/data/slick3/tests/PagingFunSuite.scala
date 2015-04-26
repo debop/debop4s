@@ -1,15 +1,8 @@
 package debop4s.data.slick3.tests
 
-import debop4s.core.concurrent._
 import debop4s.data.slick3.AbstractSlickFunSuite
-
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3._
-import debop4s.data.slick3.SlickContext._
-import slick.backend.DatabasePublisher
-import slick.util.TupleMethods._
-
-import scala.concurrent.Future
 
 /**
  * PagingFunSuite
@@ -31,21 +24,22 @@ class PagingFunSuite extends AbstractSlickFunSuite {
     val q5 = q1 take 5 drop 3
     val q6 = q1 take 0
 
-    db.seq(
-      ids.schema.drop.asTry,
-      ids.schema.create,
-      ids ++= (1 to 10),
-      q1.result.map(_ shouldEqual (1 to 10).toSeq),
-      q2.result.map(_ shouldEqual (1 to 5).toSeq),
-      ifCap(rcap.pagingDrop) {
-        DBIO.seq(
-          q3.result.map(_ shouldEqual (6 to 10).toSeq),
-          q4.result.map(_ shouldEqual (6 to 8).toSeq),
-          q5.result.map(_ shouldEqual (4 to 5).toSeq)
-        )
-      },
-      ids.schema.drop
-    )
+    commit {
+      DBIO.seq(ids.schema.drop.asTry,
+               ids.schema.create,
+               ids ++= (1 to 10),
+               q1.result.map(_ shouldEqual (1 to 10).toSeq),
+               q2.result.map(_ shouldEqual (1 to 5).toSeq),
+               ifCap(rcap.pagingDrop) {
+                 DBIO.seq(
+                   q3.result.map(_ shouldEqual (6 to 10).toSeq),
+                   q4.result.map(_ shouldEqual (6 to 8).toSeq),
+                   q5.result.map(_ shouldEqual (4 to 5).toSeq)
+                 )
+               },
+               ids.schema.drop
+      )
+    }
   }
 
   test("compiled pagination") {
@@ -54,19 +48,20 @@ class PagingFunSuite extends AbstractSlickFunSuite {
       ids.sortBy(_.id).drop(offset).take(fetch)
     }
 
-    db.seq(
-      ids.schema.drop.asTry,
-      ids.schema.create,
-      ids ++= (1 to 10),
-      q(0, 5).result.map(_ shouldEqual (1 to 5).toSeq),
-      ifCap(rcap.pagingDrop) {
-        DBIO.seq(
-          q(5, 1000).result.map(_ shouldEqual (6 to 10).toSeq),
-          q(5, 3).result.map(_ shouldEqual (6 to 8).toSeq)
-        )
-      },
-      ids.schema.drop
-    )
+    commit {
+      DBIO.seq(ids.schema.drop.asTry,
+               ids.schema.create,
+               ids ++= (1 to 10),
+               q(0, 5).result.map(_ shouldEqual (1 to 5).toSeq),
+               ifCap(rcap.pagingDrop) {
+                 DBIO.seq(
+                   q(5, 1000).result.map(_ shouldEqual (6 to 10).toSeq),
+                   q(5, 3).result.map(_ shouldEqual (6 to 8).toSeq)
+                 )
+               },
+               ids.schema.drop
+      )
+    }
   }
 
 }

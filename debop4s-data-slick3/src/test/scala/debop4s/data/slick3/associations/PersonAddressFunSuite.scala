@@ -1,6 +1,5 @@
 package debop4s.data.slick3.associations
 
-import debop4s.data.slick3._
 import debop4s.data.slick3.AbstractSlickFunSuite
 import debop4s.data.slick3.associations.AssociationDatabase._
 import debop4s.data.slick3.associations.AssociationDatabase.driver.api._
@@ -43,31 +42,42 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    Seq(
-      schema.drop.asTry,
-      schema.create,
-      addresses ++= addressData,
-      persons ++= personData,
-      tasks ++= taskData,
-      personTasks ++= personTaskData
-    ).exec
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
+               addresses ++= addressData,
+               persons ++= personData,
+               tasks ++= taskData,
+               personTasks ++= personTaskData)
+    }
   }
 
   override def afterAll(): Unit = {
-    schema.drop.exec
+    commit { schema.drop.asTry }
     super.afterAll()
   }
 
   test("many-to-one 테스트") {
-    addresses.exec foreach println
-    persons.exec foreach println
-
-    addressPersons.exec foreach println
-
-    addresses.exec foreach { addr =>
-      println("\t" + addr)
-      persons.findByAddress(addr.id.get).exec foreach { person => println("\t\t" + person) }
+    val (addrs, ps, addrps) = readonly {
+      for {
+        addrs <- addresses.result
+        ps <- persons.result
+        addrps <- addressPersons.result
+      } yield (addrs, ps, addrps)
     }
+    addrs foreach { addr => log.debug(addr.toString) }
+    ps foreach { p => log.debug(p.toString) }
+    addrps foreach { ap => log.debug(ap.toString) }
+
+
+    addrs foreach { addr =>
+      log.debug(s"\t$addr")
+      readonly { persons.findByAddress(addr.id.get).result } foreach { p => log.debug(s"\t\t$p") }
+    }
+    //    addresses.exec foreach { addr =>
+    //      println("\t" + addr)
+    //      persons.findByAddress(addr.id.get).exec foreach { person => println("\t\t" + person) }
+    //    }
   }
 
   test("many-to-many : people vs tasks") {
@@ -76,8 +86,9 @@ class PersonAddressFunSuite extends AbstractSlickFunSuite {
       task <- person.tasks
     } yield task
 
-    allTasks.exec foreach println
-    allTasks.sortBy(_.id).exec shouldEqual Seq(
+    readonly { allTasks.result } foreach { t => log.debug(t.toString) }
+
+    readonly { allTasks.sortBy(_.id).result } shouldEqual Seq(
       Task("analysis", Some(1)),
       Task("design", Some(2)),
       Task("development", Some(3)),

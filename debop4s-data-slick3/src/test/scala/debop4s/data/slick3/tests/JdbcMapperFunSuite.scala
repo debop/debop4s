@@ -1,11 +1,8 @@
 package debop4s.data.slick3.tests
 
-import debop4s.data.slick3._
 import debop4s.data.slick3.AbstractSlickFunSuite
-
 import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import slick.lifted.CompiledFunction
 
 import scala.reflect.ClassTag
 
@@ -47,24 +44,29 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
       u2 <- users
     } yield u2
 
-    db.seq(
-      users.schema.drop.asTry,
-      users.schema.create,
-      users.map(_.baseProjection) +=("Homer", "Simpson"),
-      users ++= Seq(
-        User(None, "Marge", "Bovier"),
-        User(None, "Carl", "Carlson")
-      ),
-      users.map(_.asFoo) += Foo(User(None, "Lenny", "Leonard"))
-    )
-    users.filter(_.last inSet Set("Bovier", "Ferdinand")).size.exec shouldEqual 1
-    updateQ.update(User(None, "Marge", "Simpson")).exec
-    Query(users.filter(_.id === 1).exists).exec.head shouldEqual true
-    users.filter(_.id between(1, 2)).to[Set].exec shouldEqual Set(User(Some(1), "Homer", "Simpson"), User(Some(2), "Marge", "Simpson"))
-    users.filter(_.id between(1, 2)).map(_.asFoo).to[Set].exec shouldEqual Set(Foo(User(None, "Homer", "Simpson")), Foo(User(None, "Marge", "Simpson")))
-    db.exec(users.byID(3).result).head shouldBe User(Some(3), "Carl", "Carlson")
+    commit {
+      DBIO.seq(
+        users.schema.drop.asTry,
+        users.schema.create,
+        users.map(_.baseProjection) +=("Homer", "Simpson"),
+        users ++= Seq(
+          User(None, "Marge", "Bovier"),
+          User(None, "Carl", "Carlson")
+        ),
+        users.map(_.asFoo) += Foo(User(None, "Lenny", "Leonard"))
+      )
+    }
+    readonly { users.filter(_.last inSet Set("Bovier", "Ferdinand")).length.result } shouldEqual 1
+    commit { updateQ.update(User(None, "Marge", "Simpson")) }
+    readonly(Query(users.filter(_.id === 1).exists).result).head shouldEqual true
 
-    users.schema.drop.exec
+    readonly(users.filter(_.id between(1, 2)).to[Set].result) shouldEqual Set(User(Some(1), "Homer", "Simpson"),
+                                                                              User(Some(2), "Marge", "Simpson"))
+    readonly(users.filter(_.id between(1, 2)).map(_.asFoo).to[Set].result) shouldEqual Set(Foo(User(None, "Homer", "Simpson")),
+                                                                                           Foo(User(None, "Marge", "Simpson")))
+    readonly(users.byID(3).result).head shouldBe User(Some(3), "Carl", "Carlson")
+
+    commit { users.schema.drop }
   }
 
   test("update") {
@@ -79,16 +81,18 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
     val updateQ = ts.filter(_.a === 1)
     val updateQ2 = ts.filter(_.a === 3).map(identity)
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts ++= Seq(Data(1, 2), Data(3, 4), Data(5, 6)),
-      updateQ.update(Data(7, 8)),
-      updateQ2.update(Data(9, 10))
-    )
-    ts.to[Set].exec shouldEqual Set(Data(7, 8), Data(9, 10), Data(5, 6))
+    commit {
+      DBIO.seq(
+        ts.schema.drop.asTry,
+        ts.schema.create,
+        ts ++= Seq(Data(1, 2), Data(3, 4), Data(5, 6)),
+        updateQ.update(Data(7, 8)),
+        updateQ2.update(Data(9, 10))
+      )
+    }
+    readonly { ts.to[Set].result } shouldEqual Set(Data(7, 8), Data(9, 10), Data(5, 6))
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   test("wide mapped entity") {
@@ -144,19 +148,21 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
     val ts = TableQuery[T]
 
     val oData = Whole(0,
-      Part(11, 12, 13, 14, 15, 16),
-      Part(21, 22, 23, 24, 25, 26),
-      Part(31, 32, 33, 34, 35, 36),
-      Part(41, 42, 43, 44, 45, 46)
+                      Part(11, 12, 13, 14, 15, 16),
+                      Part(21, 22, 23, 24, 25, 26),
+                      Part(31, 32, 33, 34, 35, 36),
+                      Part(41, 42, 43, 44, 45, 46)
     )
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts += oData,
-      ts.result.head.map(_ shouldEqual oData),
-      ts.schema.drop
-    )
+    commit {
+      DBIO.seq(
+        ts.schema.drop.asTry,
+        ts.schema.create,
+        ts += oData,
+        ts.result.head.map(_ shouldEqual oData),
+        ts.schema.drop
+      )
+    }
   }
 
   test("entity 에 여러 개의 component - embeddable 처럼") {
@@ -178,7 +184,7 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
 
     val data = Seq(Whole(1, Part1(1, "2"), Part2("3", 4)))
 
-    db.exec {
+    commit {
       ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= data) >>
@@ -213,7 +219,7 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
 
     val q2 = as joinLeft bs
 
-    db.exec {
+    commit {
       (as.schema ++ bs.schema).create >>
       (as.map(_.data) ++= Seq(1, 2)) >>
       (bs.map(_.data) ++= Seq("a", "b"))
@@ -230,15 +236,15 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
     ┇   from "mapped_join_b" x10
     ┇ ) x5
     */
-    q1.to[Set].exec shouldEqual Set((A(2, 2), B(2, Some("b"))))
-    q2.to[Set].exec shouldEqual Set(
+    readonly(q1.to[Set].result) shouldEqual Set((A(2, 2), B(2, Some("b"))))
+    readonly(q2.to[Set].result) shouldEqual Set(
       (A(1, 1), Some(B(1, Some("a")))),
       (A(1, 1), Some(B(2, Some("b")))),
       (A(2, 2), Some(B(1, Some("a")))),
       (A(2, 2), Some(B(2, Some("b"))))
     )
 
-    (as.schema ++ bs.schema).drop.exec
+    commit { (as.schema ++ bs.schema).drop }
   }
 
   test("case class shape") {
@@ -254,13 +260,14 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
     lazy val as = TableQuery[A]
     val data = Seq(C(1, "a"), C(2, "b"))
 
-    db.seq(
-      as.schema.drop.asTry,
-      as.schema.create,
-      as ++= data,
-      as.sortBy(_.id).result.map { _ shouldEqual data },
-      as.schema.drop
-    )
+    commit {
+      DBIO.seq(as.schema.drop.asTry,
+               as.schema.create,
+               as ++= data,
+               as.sortBy(_.id).result.map { _ shouldEqual data },
+               as.schema.drop
+      )
+    }
   }
 
   test("product class shape") {
@@ -297,7 +304,7 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
     val as = TableQuery[A]
     val data = Seq(new C(1, Some("a")), new C(2, Some("b")))
 
-    db.exec {
+    commit {
       as.schema.drop.asTry >>
       as.schema.create >>
       (as ++= data) >>
@@ -332,13 +339,15 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
              .sortBy { case Pair(_, ss) => ss }
              .map { case Pair(id, ss) => Pair(id, Pair(42, ss)) }
 
-    db.seq(
-      as.schema.drop.asTry,
-      as.schema.create,
-      as ++= Seq(Pair(1, "a"), Pair(2, "c"), Pair(3, "b")),
-      q2.result.map(_ shouldEqual Seq(Pair(3, Pair(42, "bb")), Pair(2, Pair(42, "cc")))),
-      as.schema.drop
-    )
+    commit {
+      DBIO.seq(
+        as.schema.drop.asTry,
+        as.schema.create,
+        as ++= Seq(Pair(1, "a"), Pair(2, "c"), Pair(3, "b")),
+        q2.result.map(_ shouldEqual Seq(Pair(3, Pair(42, "bb")), Pair(2, Pair(42, "cc")))),
+        as.schema.drop
+      )
+    }
   }
 
   test("HList") {
@@ -366,18 +375,20 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
              .sortBy { case _ :: _ :: ss :: HNil => ss }
              .map { case id :: b :: ss :: HNil => id :: ss :: (42 :: HNil) :: HNil }
 
-    db.seq(
-      bs.schema.drop.asTry,
-      bs.schema.create,
-      bs += (1 :: true :: "a" :: HNil),
-      bs += (2 :: false :: "c" :: HNil),
-      bs += (3 :: false :: "b" :: HNil),
+    commit {
+      DBIO.seq(
+        bs.schema.drop.asTry,
+        bs.schema.create,
+        bs += (1 :: true :: "a" :: HNil),
+        bs += (2 :: false :: "c" :: HNil),
+        bs += (3 :: false :: "b" :: HNil),
 
-      q1.result.map(_ shouldEqual Seq(3 :: "bb" :: (42 :: HNil) :: HNil, 2 :: "cc" :: (42 :: HNil) :: HNil)),
-      q2.result.map(_ shouldEqual Seq(3 :: "bb" :: (42 :: HNil) :: HNil, 2 :: "cc" :: (42 :: HNil) :: HNil)),
+        q1.result.map(_ shouldEqual Seq(3 :: "bb" :: (42 :: HNil) :: HNil, 2 :: "cc" :: (42 :: HNil) :: HNil)),
+        q2.result.map(_ shouldEqual Seq(3 :: "bb" :: (42 :: HNil) :: HNil, 2 :: "cc" :: (42 :: HNil) :: HNil)),
 
-      bs.schema.drop
-    )
+        bs.schema.drop
+      )
+    }
   }
 
   test("single element") {
@@ -402,26 +413,28 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
     }
     lazy val cs = TableQuery[C]
 
-    lazy val schema = as.schema ++ bs.schema ++ cs.schema
+    val schema = as.schema ++ bs.schema ++ cs.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
+    commit {
+      DBIO.seq(
+        schema.drop.asTry,
+        schema.create,
 
-      as += "Foo",
-      as.result.head.map { _ shouldEqual "Foo" },
-      as.map(a => a :: a :: HNil).result.head.map { _ shouldEqual "Foo" :: "Foo" :: HNil },
+        as += "Foo",
+        as.result.head.map { _ shouldEqual "Foo" },
+        as.map(a => a :: a :: HNil).result.head.map { _ shouldEqual "Foo" :: "Foo" :: HNil },
 
-      bs += Tuple1("Foo"),
-      bs.update(Tuple1("Foo")),
-      bs.result.head.map { _ shouldEqual Tuple1("Foo") },
+        bs += Tuple1("Foo"),
+        bs.update(Tuple1("Foo")),
+        bs.result.head.map { _ shouldEqual Tuple1("Foo") },
 
-      cs += ("Foo" :: HNil),
-      cs.update("Foo" :: HNil),
-      cs.result.head map { _ shouldEqual "Foo" :: HNil },
+        cs += ("Foo" :: HNil),
+        cs.update("Foo" :: HNil),
+        cs.result.head map { _ shouldEqual "Foo" :: HNil },
 
-      schema.drop
-    )
+        schema.drop
+      )
+    }
   }
 
   /**
@@ -441,17 +454,19 @@ class JdbcMapperFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T]
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts ++= Seq(Data(1, 2), Data(3, 4), Data(5, 6)),
+    commit {
+      DBIO.seq(
+        ts.schema.drop.asTry,
+        ts.schema.create,
+        ts ++= Seq(Data(1, 2), Data(3, 4), Data(5, 6)),
 
-      ts.filter(_.a === 1).update(Data(7, 8)),
-      ts.filter(_.a === 3).map(identity).update(Data(9, 10)),
-      ts.to[Set].result.map { _ shouldEqual Set(Data(7, 8), Data(9, 10), Data(5, 6)) },
+        ts.filter(_.a === 1).update(Data(7, 8)),
+        ts.filter(_.a === 3).map(identity).update(Data(9, 10)),
+        ts.to[Set].result.map { _ shouldEqual Set(Data(7, 8), Data(9, 10), Data(5, 6)) },
 
-      ts.schema.drop
-    )
+        ts.schema.drop
+      )
+    }
   }
 
 }

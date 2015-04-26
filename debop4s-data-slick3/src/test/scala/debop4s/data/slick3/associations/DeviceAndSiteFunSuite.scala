@@ -20,11 +20,15 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
   override protected def beforeAll(): Unit = {
     super.beforeAll()
 
-    { schema.drop.asTry >> schema.create >> insertSampleData() }.exec
+    commit {
+      schema.drop.asTry >>
+      schema.create >>
+      insertSampleData()
+    }
   }
 
   override protected def afterAll(): Unit = {
-    schema.drop.exec
+    commit { schema.drop }
     super.afterAll()
   }
 
@@ -44,8 +48,19 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
     val devicesByPrice = devices.filter(_.price > 1000.0.bind)
 
     val qJoin = sitesById join devicesByPrice on sitesToDevices
-    qJoin.exec foreach println
-    qJoin.map(_._1.name).exec.toSet shouldEqual Set("SKT")
+
+    commit {
+      for {
+        sd <- qJoin.result
+        names <- qJoin.map(_._1.name).groupBy(identity).map(_._1).result
+      } yield {
+        sd foreach { x => log.debug(s"$x") }
+        names shouldEqual Seq("SKT")
+        // ()
+      }
+    }
+    //    qJoin.exec foreach println
+    //    qJoin.map(_._1.name).exec.toSet shouldEqual Set("SKT")
   }
 
   implicit def joinCondition1: (Sites, Devices) => Rep[Boolean] =
@@ -54,8 +69,16 @@ class DeviceAndSiteFunSuite extends AbstractSlickFunSuite {
   test("inner join with implicit join condition") {
     val query = sites join devices on joinCondition1
 
-    query.exec foreach println
-    query.length.exec shouldBe 4
+    commit {
+      for {
+        _ <- query.result.map(rs => rs.foreach { r => log.debug(r.toString) })
+        _ <- query.length.result.map(_ shouldEqual 4)
+      } yield {
+        //        rs foreach { r => log.debug(r.toString) }
+        //        count shouldEqual 4
+        ()
+      }
+    }
   }
 
 }

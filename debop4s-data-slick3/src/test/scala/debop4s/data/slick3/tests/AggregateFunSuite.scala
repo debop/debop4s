@@ -1,9 +1,8 @@
 package debop4s.data.slick3.tests
 
-import debop4s.core.concurrent._
-import debop4s.data.slick3._
-import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3.AbstractSlickFunSuite
+import debop4s.data.slick3.TestDatabase._
+import debop4s.data.slick3.TestDatabase.driver.api._
 
 /**
  * AggregateFunSuite
@@ -23,14 +22,14 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     val q2_0 = q2(0).shaped
     val q2_1 = q2(1).shaped
 
-    {
-      ts.schema.drop.asTry >>
-      ts.schema.create >>
-      (ts ++= Seq((1, Some(1)), (1, Some(2)), (1, Some(3)))) >>
-      q2_0.result.map(_ shouldEqual(0, None, None, None)) >>
-      q2_1.result.map(_ shouldEqual(3, Some(3), Some(6), Some(2))) >>
-      ts.schema.drop
-    }.exec
+    commit {
+      DBIO.seq(ts.schema.drop.asTry,
+               ts.schema.create,
+               ts ++= Seq((1, Some(1)), (1, Some(2)), (1, Some(3))),
+               q2_0.result.map(_ shouldEqual(0, None, None, None)),
+               q2_1.result.map(_ shouldEqual(3, Some(3), Some(6), Some(2))),
+               ts.schema.drop)
+    }
   }
 
   test("group by") {
@@ -46,9 +45,11 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     }
     lazy val us = TableQuery[U]
 
-    db.exec {
-      ts.schema.drop.asTry >>
-      ts.schema.create >>
+    lazy val schema = ts.schema ++ us.schema
+
+    commit {
+      schema.drop.asTry >>
+      schema.create >>
       (ts ++= Seq(
         (1, Some(1)), (1, Some(2)), (1, Some(3)),
         (2, Some(1)), (2, Some(2)), (2, Some(5)),
@@ -57,15 +58,15 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     }
     val q0 = ts.groupBy(_.a)
     val q1 = q0.map(_._2.length).sortBy(identity)
-    q1.exec shouldEqual Vector(2, 3, 3)
+    readonly { q1.result } shouldEqual Seq(2, 3, 3)
 
     val q = (for {
       (k, v) <- ts.groupBy(_.a)
     } yield (k, v.length, v.map(_.a).sum, v.map(_.b).sum)).sortBy(_._1)
-    q.exec shouldEqual Seq((1, 3, Some(3), Some(6)), (2, 3, Some(6), Some(8)), (3, 2, Some(6), Some(10)))
+    readonly { q.result } shouldEqual Seq((1, 3, Some(3), Some(6)), (2, 3, Some(6), Some(8)), (3, 2, Some(6), Some(10)))
 
-    db.exec {
-      us.schema.create >> (us ++= Seq(1, 2, 3))
+    commit {
+      us ++= Seq(1, 2, 3)
     }
     val q2 = (for {
       u <- us
@@ -73,62 +74,30 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     } yield (u, t))
              .groupBy(_._1.id)
              .map { case (id, q) => (id, q.length, q.map(_._2.a).sum, q.map(_._2.b).sum) }
-    q2.to[Set].exec shouldEqual Set((1, 3, Some(3), Some(6)), (2, 3, Some(6), Some(8)), (3, 2, Some(6), Some(10)))
+    readonly { q2.to[Set].result } shouldEqual Set((1, 3, Some(3), Some(6)), (2, 3, Some(6), Some(8)), (3, 2, Some(6), Some(10)))
 
-    /*
-      ┇ select x2.x3, x2.x4
-      ┇ from (
-      ┇   select x5.x6 as x3, sum(x5.x7) as x4
-      ┇   from (
-      ┇     select x8."a" + 10 as x6, x8."b" as x7
-      ┇     from "aggregate_t3" x8
-      ┇   ) x5
-      ┇   group by x5.x6
-      ┇ ) x2
-      ┇ order by x2.x3
-     */
     val q3 =
       (for {
         (x, q) <- ts.map(t => (t.a + 10, t.b)).groupBy(_._1)
       } yield (x, q.map(_._2).sum))
       .sortBy(_._1)
-    q3.exec shouldEqual Seq((11, Some(6)), (12, Some(8)), (13, Some(10)))
+    readonly { q3.result } shouldEqual Seq((11, Some(6)), (12, Some(8)), (13, Some(10)))
 
-    /*
-    ┇ select x2.x3, x2.x4, x2.x5
-    ┇ from (
-    ┇   select x6."a" as x3, x6."b" as x4, count(1) as x5
-    ┇   from "aggregate_t3" x6
-    ┇   group by x6."a", x6."b"
-    ┇ ) x2
-    ┇ order by x2.x3, x2.x4
-     */
     val q4 = (for {
       (x, q) <- ts.groupBy(t => (t.a, t.b))
     } yield (x, q.length)).sortBy(_._1)
 
-    q4.exec shouldEqual Seq(
-      ((1, Some(1)), 1), ((1, Some(2)), 1), ((1, Some(3)), 1),
-      ((2, Some(1)), 1), ((2, Some(2)), 1), ((2, Some(5)), 1),
-      ((3, Some(1)), 1), ((3, Some(9)), 1)
+    readonly { q4.result } shouldEqual Seq(((1, Some(1)), 1), ((1, Some(2)), 1), ((1, Some(3)), 1),
+                                           ((2, Some(1)), 1), ((2, Some(2)), 1), ((2, Some(5)), 1),
+                                           ((3, Some(1)), 1), ((3, Some(9)), 1)
     )
-    /*
-    ┇ select x2.x3, x2.x4
-    ┇ from (
-    ┇   select x5.x6 as x3, x5.x7 as x4
-    ┇   from (
-    ┇     select x8."a" as x6, x8."b" as x7
-    ┇     from "aggregate_t3" x8
-    ┇     where x8."a" = 1
-    ┇     order by x8."b"
-    ┇   ) x5
-    ┇   group by x5.x6, x5.x7
-    ┇ ) x2
-     */
-    val q5 = ts.filter(_.a === 1).map(t => (t.a, t.b)).sortBy(_._2).groupBy(x => (x._1, x._2)).map { case (a, _) => (a._1, a._2) }.to[Set]
-    q5.exec shouldEqual Set((1, Some(1)), (1, Some(2)), (1, Some(3)))
 
-    (us += 4).exec
+    val q5 = ts.filter(_.a === 1).map(t => (t.a, t.b)).sortBy(_._2).groupBy(x => (x._1, x._2)).map { case (a, _) => (a._1, a._2) }.to[Set]
+    readonly { q5.result } shouldEqual Set((1, Some(1)), (1, Some(2)), (1, Some(3)))
+
+    commit {
+      us += 4
+    }
 
     val q6 =
       (for {
@@ -138,20 +107,18 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       .map {
         case (id, q) => (id, q.length, q.map(_._1).length, q.map(_._2).length)
       }
-    q6.to[Set].exec shouldEqual Set(
-      (1, 3, 3, 3),
-      (2, 3, 3, 3),
-      (3, 2, 2, 2),
-      (4, 1, 1, 0)
+    readonly { q6.to[Set].result } shouldEqual Set((1, 3, 3, 3),
+                                                   (2, 3, 3, 3),
+                                                   (3, 2, 2, 2),
+                                                   (4, 1, 1, 0)
     )
 
     val q7 = ts.groupBy(_.a).map { case (a, ts) =>
       (a, ts.map(_.b).sum, ts.map(_.b).min, ts.map(_.b).max, ts.map(_.b).avg)
     }
-    q7.to[Set].exec shouldEqual Set(
-      (1, Some(6), Some(1), Some(3), Some(2)),
-      (2, Some(8), Some(1), Some(5), Some(2)),
-      (3, Some(10), Some(1), Some(9), Some(5))
+    readonly { q7.to[Set].result } shouldEqual Set((1, Some(6), Some(1), Some(3), Some(2)),
+                                                   (2, Some(8), Some(1), Some(5), Some(2)),
+                                                   (3, Some(10), Some(1), Some(9), Some(5))
     )
 
     val q8 = us.map(_ => "test").groupBy(x => x).map(_._2.max)
@@ -164,7 +131,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       _ <- q8c.result.map(_ shouldEqual Seq((5, Some(4 * 10))))
     } yield ()
 
-    db.exec { f8 }
+    readonly { f8 }
 
     val res9 = Set(
       (1, Some(1)), (1, Some(2)), (1, Some(3)),
@@ -176,16 +143,21 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     val q9b = ts.map(x => x).groupBy(_.*).map(_._1).to[Set]
     val q9c = ts.map(x => x).groupBy(x => x).map(_._1).to[Set]
 
-    q9.exec shouldEqual res9
-    q9b.exec shouldEqual res9
-    q9c.exec shouldEqual res9
+    readonly {
+      q9.result.map(_ shouldEqual res9) >>
+      q9b.result.map(_ shouldEqual res9) >>
+      q9c.result.map(_ shouldEqual res9)
+    }
+    //    q9.exec shouldEqual res9
+    //    q9b.exec shouldEqual res9
+    //    q9c.exec shouldEqual res9
 
     val q10 =
       (for {m <- ts} yield m)
       .groupBy(_.a)
       .map { case (id, data) => (id, data.map(_.b.asColumnOf[Option[Double]]).max) } // cast double
       .to[Set]
-    q10.exec shouldEqual Set((1, Some(3.0)), (2, Some(5.0)), (3, Some(9.0)))
+    readonly { q10.result } shouldEqual Set((1, Some(3.0)), (2, Some(5.0)), (3, Some(9.0)))
 
 
     case class Pair(a: Int, b: Option[Int])
@@ -196,7 +168,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     }
     val t4s = TableQuery[T4]
 
-    db.exec {
+    commit {
       t4s.schema.create >>
       (t4s ++= Seq(Pair(1, Some(1)), Pair(1, Some(2)))) >>
       (t4s ++= Seq(Pair(1, Some(1)), Pair(1, Some(2)))) >>
@@ -207,15 +179,17 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     val q13 = t4s.map(identity)
     val q11 = t4s.groupBy(identity).map(_._1)
 
-    q12.exec.size shouldEqual 6
-    val res13 = q13.exec
+    readonly(q12.result).size shouldEqual 6
+    val res13 = readonly(q13.result)
     res13.size shouldEqual 6
     res13.toSet shouldEqual expected11
-    val res11 = q11.exec
+    val res11 = readonly(q11.result)
     res11.size shouldEqual 2
     res11.toSet shouldEqual expected11
 
-    (ts.schema ++ us.schema ++ t4s.schema).drop.exec
+    commit {
+      (ts.schema ++ us.schema ++ t4s.schema).drop
+    }
   }
 
   test("Int Length") {
@@ -224,14 +198,14 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
       def * = id
     }
     lazy val as = TableQuery[A]
-    db.exec {
+    commit {
       as.schema.create >>
       (as += 1)
     }
     val q1 = as.groupBy(_.id).map { case (_, q) => (q.map(_.id).min, q.length) }
-    q1.exec shouldEqual Seq((Some(1), 1))
+    readonly(q1.result) shouldEqual Seq((Some(1), 1))
 
-    as.schema.drop.exec
+    commit { as.schema.drop }
   }
 
   test("group 3") {
@@ -247,7 +221,7 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
     }
     lazy val tabs = TableQuery[Tabs]
 
-    db.exec {
+    commit {
       tabs.schema.create >>
       (tabs ++= Seq(
         Tab("foo", "bar", "bat", 1, 5),
@@ -261,24 +235,22 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
              .map { case (grp, t) => (grp._1, grp._2, t.map(_.c4).sum) }
              .to[Set]
 
-    q1.exec shouldEqual Set(
-      ("baz", "quux", Some(4)),
-      ("foo", "quux", Some(3)),
-      ("foo", "bar", Some(3)))
+    readonly(q1.result) shouldEqual Set(("baz", "quux", Some(4)),
+                                        ("foo", "quux", Some(3)),
+                                        ("foo", "bar", Some(3)))
 
     val q2 = tabs
              .groupBy(t => ((t.c1, t.c2), t.c3))
              .map { case (grp, t) => (grp._1._1, grp._1._2, t.map(_.c4).sum) }
              .to[Set]
-    q2.exec shouldEqual Set(
-      ("baz", "quux", Some(4)),
-      ("foo", "quux", Some(3)),
-      ("foo", "bar", Some(3)))
+    readonly(q2.result) shouldEqual Set(("baz", "quux", Some(4)),
+                                        ("foo", "quux", Some(3)),
+                                        ("foo", "bar", Some(3)))
 
     val q3 = tabs.groupBy(_.c1).map { case (grp, t) => (grp, t.map(x => x.c4 + x.c5).sum) }.to[Set]
-    q3.exec shouldEqual Set(("baz", Some(12)), ("foo", Some(24)))
+    readonly(q3.result) shouldEqual Set(("baz", Some(12)), ("foo", Some(24)))
 
-    tabs.schema.drop.exec
+    commit { tabs.schema.drop }
   }
 
   test("multi map aggregates") {
@@ -300,32 +272,14 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
 
     val schema = bs.schema ++ as.schema
 
-    db.exec { schema.create }
+    commit {
+      schema.drop.asTry >>
+      schema.create
+    }
 
-    /*
-    ┇ select min(x2."a")
-    ┇ from "agg_multimap_a" x2
-    ┇ group by x2."id"
-     */
     val q1 = as.groupBy(_.id).map { case (g, a) => a.map(identity).map(_.a).min }
-    q1.exec shouldEqual Nil
+    readonly { q1.result } shouldEqual Nil
 
-    /*
-    ┇ select min(x2.x3), min((case when (x2.x4 = 1) then x2.x5 else null end)), (case when (x2.x4 = 1) then x2.x6 else null end), count(x2.x7)
-    ┇ from (
-    ┇   select x8.x9 as x7, x8.x10 as x11, x8.x12 as x13, x8.x14 as x15, x16.x17 as x4, x16.x18 as x6, x16.x19 as x5, x16.x20 as x21, (case when (x16.x17 = 1) then x16.x19 else null end) as x3
-    ┇   from (
-    ┇     select x22."id" as x9, x22."a" as x10, x22."c" as x12, x22."fkId" as x14
-    ┇     from "agg_multimap_a" x22
-    ┇   ) x8
-    ┇   left outer join (
-    ┇     select 1 as x17, x23."id" as x18, x23."b" as x19, x23."d" as x20
-    ┇     from "agg_multimap_b" x23
-    ┇   ) x16
-    ┇   on x8.x9 = x16.x18
-    ┇ ) x2
-    ┇ group by (case when (x2.x4 = 1) then x2.x6 else null end)
-     */
     val q2 =
       (as joinLeft bs on (_.id === _.id))
       .map { case (c, so) =>
@@ -339,14 +293,8 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
         val name = prop.map(x => x._3)
         (name.min, s.map(_.map(_.b)).min, supId, c.length)
       }
-    q2.exec shouldEqual Nil
+    readonly { q2.result } shouldEqual Nil
 
-    /*
-    ┇ select x2."a", x3."b", max(x2."c")
-    ┇ from "agg_multimap_a" x2, "agg_multimap_b" x3
-    ┇ where (x2."fkId" = x3."id") and (x3."d" = '')
-    ┇ group by x2."a", x3."b"
-     */
     val q4 =
       as
       .flatMap { t1 => bs.filter { t2 => t1.fkId === t2.id && t2.d === "" } map { t2 => (t1, t2) } }
@@ -363,8 +311,8 @@ class AggregateFunSuite extends AbstractSlickFunSuite {
         (a, b, c3)
       }
 
-    q4.exec shouldEqual Nil
+    readonly { q4.result } shouldEqual Nil
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 }

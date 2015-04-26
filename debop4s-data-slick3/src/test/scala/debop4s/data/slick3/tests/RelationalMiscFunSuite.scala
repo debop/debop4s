@@ -1,8 +1,8 @@
 package debop4s.data.slick3.tests
 
-import debop4s.data.slick3.SlickContext._
-import debop4s.data.slick3._
+import debop4s.data.slick3.SlickContext
 import debop4s.data.slick3.AbstractSlickFunSuite
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 
 /**
@@ -19,25 +19,26 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     lazy val ts = TableQuery[T]
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts ++= Seq(("1", "a"), ("2", "a"), ("3", "b"))
-    )
+    commit {
+      DBIO.seq(ts.schema.drop.asTry,
+               ts.schema.create,
+               ts ++= Seq(("1", "a"), ("2", "a"), ("3", "b"))
+      )
+    }
 
     val q1 = for (t <- ts if t.a === "1" || t.a === "2") yield t
-    q1.to[Set].exec shouldEqual Set(("1", "a"), ("2", "a"))
+    readonly { q1.to[Set].result } shouldEqual Set(("1", "a"), ("2", "a"))
 
     val q2 = for (t <- ts if (t.a =!= "1") || (t.b =!= "a")) yield t
-    q2.to[Set].exec shouldEqual Set(("2", "a"), ("3", "b"))
+    readonly { q2.to[Set].result } shouldEqual Set(("2", "a"), ("3", "b"))
 
     // No need to test that the unexpected result is actually unexpected
     // now that the compiler prints a warning about it
 
     val q4 = for (t <- ts if t.a =!= "1" || t.b =!= "a") yield t
-    q4.to[Set].exec shouldEqual Set(("2", "a"), ("3", "b"))
+    readonly { q4.to[Set].result } shouldEqual Set(("2", "a"), ("3", "b"))
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   test("like") {
@@ -47,26 +48,27 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     lazy val t1s = TableQuery[T1]
 
-    db.seq(
-      t1s.schema.drop.asTry,
-      t1s.schema.create,
-      t1s ++= Seq("foo", "bar", "foobar", "foo%")
-    )
+    commit {
+      DBIO.seq(t1s.schema.drop.asTry,
+               t1s.schema.create,
+               t1s ++= Seq("foo", "bar", "foobar", "foo%")
+      )
+    }
 
     val q1 = for {t1 <- t1s if t1.a like "foo"} yield t1.a
-    q1.exec shouldEqual Seq("foo")
+    readonly(q1.result) shouldEqual Seq("foo")
 
     val q2 = for {t1 <- t1s if t1.a like "foo%"} yield t1.a
-    q2.exec shouldEqual Seq("foo", "foobar", "foo%")
+    readonly(q2.result) shouldEqual Seq("foo", "foobar", "foo%")
 
-    db.exec {
+    readonly {
       ifCap(rcap.likeEscape) {
         val q3 = for {t1 <- t1s if t1.a.like("foo^%", '^')} yield t1.a
         q3.result.map(_ shouldEqual Seq("foo%"))
       }
     }
 
-    t1s.schema.drop.exec
+    commit { t1s.schema.drop }
   }
 
   test("sorting") {
@@ -86,11 +88,12 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
         q.sortBy(_._1).map(_._2)
     }
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts ++= Seq(("a2", "b2", "c2"), ("a1", "b1", "c1"))
-    )
+    commit {
+      DBIO.seq(ts.schema.drop.asTry,
+               ts.schema.create,
+               ts ++= Seq(("a2", "b2", "c2"), ("a1", "b1", "c1"))
+      )
+    }
 
     val q1 = (
              for {
@@ -98,9 +101,9 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
              } yield t1.c ->(t1.a, t1.b)
              ).sortedValues
     // val q1 = ts.map(x => (x.c, (x.a, x.b))).sortBy(_._1).map(_._2)
-    q1.exec shouldEqual Seq(("a1", "b1"), ("a2", "b2"))
+    readonly { q1.result } shouldEqual Seq(("a1", "b1"), ("a2", "b2"))
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   test("conditional") {
@@ -110,22 +113,22 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T1]
 
-    db.exec {
+    commit {
       ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(1, 2, 3, 4))
     }
 
     val q1 = ts.map { t => (t.a, Case If (t.a < 3) Then 1 Else 0) }
-    q1.to[Set].exec shouldEqual Set((1, 1), (2, 1), (3, 0), (4, 0))
+    readonly { q1.to[Set].result } shouldEqual Set((1, 1), (2, 1), (3, 0), (4, 0))
 
     val q2 = ts.map { t => (t.a, Case If (t.a < 3) Then 1) }
-    q2.to[Set].exec shouldEqual Set((1, Some(1)), (2, Some(1)), (3, None), (4, None))
+    readonly { q2.to[Set].result } shouldEqual Set((1, Some(1)), (2, Some(1)), (3, None), (4, None))
 
     val q3 = ts.map { t => (t.a, Case If (t.a < 3) Then 1 If (t.a < 4) Then 2 Else 0) }
-    q3.to[Set].exec shouldEqual Set((1, 1), (2, 1), (3, 2), (4, 0))
+    readonly { q3.to[Set].result } shouldEqual Set((1, 1), (2, 1), (3, 2), (4, 0))
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   test("cast") {
@@ -136,21 +139,17 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T1]
 
-    db.exec {
+    commit {
       ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq(("foo", 1), ("bar", 2)))
     }
 
-    /*
-    ┇ select x2."a"||cast(x2."b" as VARCHAR)
-    ┇ from "cast_t" x2
-     */
     // HINT: MariaDB에서는 VARCHAR(255) 도 안되고, CHAR(255) 형식으로 해야 합니다.
-    val q1 = ts.map(t => t.a ++ (if (isMySQL) t.b.asColumnOfType[String]("CHAR(255)") else t.b.asColumnOf[String]))
-    q1.to[Set].exec shouldEqual Set("foo1", "bar2")
+    val q1 = ts.map(t => t.a ++ (if (SlickContext.isMySQL) t.b.asColumnOfType[String]("CHAR(255)") else t.b.asColumnOf[String]))
+    readonly { q1.to[Set].result } shouldEqual Set("foo1", "bar2")
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   test("option conversions") {
@@ -161,36 +160,24 @@ class RelationalMiscFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T1]
 
-    db.exec {
+    commit {
       ts.schema.drop.asTry >>
       ts.schema.create >>
       (ts ++= Seq((1, Some(10)), (2, None)))
     }
 
     // GetOrElse in ResultSetMapping on client side ( 아닌데??? )
-    /*
-    ┇ select x2.x3, x2.x4
-    ┇ from (
-    ┇   select x5."a" as x3, (case when (x5."b" is null) then 0 else x5."b" end) as x4
-    ┇   from "t1_optconv" x5
-    ┇ ) x2
-     */
     val q1 = ts.map(t => (t.a, t.b.getOrElse(0)))
 
     // GetOrElse in query on the DB side
-    /*
-    ┇ select x2.x3, x2.x4
-    ┇ from (
-    ┇   select x5."a" as x3, (case when (x5."b" is null) then 0 else x5."b" end) + 1 as x4
-    ┇   from "t1_optconv" x5
-    ┇ ) x2
-     */
     val q2 = ts.map(t => (t.a, t.b.getOrElse(0) + 1))
 
-    q1.to[Set].exec shouldEqual Set((1, 10), (2, 0))
-    q2.to[Set].exec shouldEqual Set((1, 11), (2, 1))
+    readonly {
+      q1.to[Set].result.map { _ shouldEqual Set((1, 10), (2, 0)) } >>
+      q2.to[Set].result.map { _ shouldEqual Set((1, 11), (2, 1)) }
+    }
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   test("init errors") {

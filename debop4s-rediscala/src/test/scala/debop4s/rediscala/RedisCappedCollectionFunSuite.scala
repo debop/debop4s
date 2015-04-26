@@ -11,7 +11,7 @@ class RedisCappedCollectionFunSuite extends AbstractRedisFunSuite {
 
   test("크기가 제한된 List") {
     val name = "col-10"
-    redis.del(name).hold
+    redis.del(name).stay
 
     val coll = RedisCappedCollection[Int](name, 10)
 

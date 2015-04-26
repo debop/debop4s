@@ -19,12 +19,14 @@ class ConfigFunSuite extends AbstractSlickFunSuite {
   private def assertDatabaseSettings(conf: String): Unit = {
     val slickConfig = loadSlickConfig(conf)
     val dbSetting = slickConfig.database.dbSetting
-    LOG.debug(s"db setting=$dbSetting")
+    log.debug(s"db setting=$dbSetting")
 
     dbSetting should not be null
 
     val ds = DataSources.getDataSource(dbSetting)
-    db should not be null
+    using(SlickContext.forDataSource(ds)) { db =>
+      db should not be null
+    }
 
     slickConfig.masters.size shouldBe 0
     slickConfig.slaves.size shouldBe 0
@@ -34,7 +36,7 @@ class ConfigFunSuite extends AbstractSlickFunSuite {
     val confs = Seq("slick-h2", "slick-mariadb", "slick-mysql")
 
     confs foreach { conf =>
-      LOG.debug(s"conf=conf")
+      log.debug(s"conf=conf")
       assertDatabaseSettings(conf)
     }
   }
@@ -49,14 +51,14 @@ class ConfigFunSuite extends AbstractSlickFunSuite {
 
     slickConfig.masterSettings.length should be > 0
     slickConfig.masterSettings foreach { setting =>
-      LOG.debug(s"Master setting=$setting")
+      log.debug(s"Master setting=$setting")
       val ds = DataSources.getDataSource(setting)
       ds should not be null
     }
 
     slickConfig.slaveSettings.length should be > 0
     slickConfig.slaveSettings foreach { setting =>
-      LOG.debug(s"Slave setting=$setting")
+      log.debug(s"Slave setting=$setting")
       val ds = DataSources.getDataSource(setting)
       ds should not be null
     }
@@ -76,14 +78,14 @@ class ConfigFunSuite extends AbstractSlickFunSuite {
 
     (0 until 100).par.foreach { x =>
       using(SlickContext.masterDB.createSession()) { session =>
-        LOG.debug(s"Master index = ${ SlickContext.getMasterIndex }")
+        log.debug(s"Master index = ${ SlickContext.getMasterIndex }")
         session should not be null
       }
     }
 
     (0 until 100).par.foreach { x =>
       using(SlickContext.slaveDB.createSession()) { session =>
-        LOG.debug(s"Slave index = ${ SlickContext.getSlaveIndex }")
+        log.debug(s"Slave index = ${ SlickContext.getSlaveIndex }")
         session should not be null
       }
     }

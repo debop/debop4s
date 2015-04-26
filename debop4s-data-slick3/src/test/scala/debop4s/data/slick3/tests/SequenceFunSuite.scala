@@ -20,8 +20,8 @@ class SequenceFunSuite extends AbstractSlickFunSuite {
     if (SlickContext.isMySQL) {
       cancel("MySQL은 지원하지 않습니다.")
     }
-    if (SlickContext.isHqlDB) {
-      cancel("HqlDB를 지원하지 않습니다.")
+    if (SlickContext.isHsqlDB) {
+      cancel("HsqlDB를 지원하지 않습니다.")
     }
     case class User(id: Int, first: String, last: String)
 

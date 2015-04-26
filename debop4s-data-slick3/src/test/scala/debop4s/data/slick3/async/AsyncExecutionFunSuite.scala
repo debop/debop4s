@@ -1,13 +1,11 @@
 package debop4s.data.slick3.async
 
-import debop4s.data.slick3._
 import debop4s.data.slick3.AbstractSlickFunSuite
-import debop4s.data.slick3.associations._
 import debop4s.data.slick3.associations.AssociationDatabase._
 import debop4s.data.slick3.associations.AssociationDatabase.driver.api._
+import debop4s.data.slick3.associations._
 import debop4s.data.slick3.customtypes.EncryptedString
 import org.joda.time.DateTime
-import scala.async.Async._
 
 /**
  * AsyncExecutionFunSuite
@@ -20,21 +18,26 @@ class AsyncExecutionFunSuite extends AbstractSlickFunSuite {
   lazy val schema = employees.schema
 
   before {
-    { schema.drop.asTry >> schema.create }.exec
+    commit {
+      schema.drop.asTry >>
+      schema.create
+    }
   }
   after {
-    schema.drop.exec
+    commit { schema.drop }
   }
 
   test("employee 병렬 저장") {
-    val saveActions = (0 until EMP_COUNT) map { x =>
+    val saveActions = (1 to EMP_COUNT).par.map { x =>
       val empNo = x.toString
       val hireDate = DateTime.now
       employees += Employee(s"name=$empNo", s"no-$empNo", EncryptedString(s"pwd-$empNo"), hireDate)
-    }
-    saveActions.exec
+    }.seq
 
-    commit { employees.count() } shouldEqual EMP_COUNT
-    employees.exec foreach { emp => LOG.debug(emp.toString) }
+    commit { DBIO.seq(saveActions: _*) }
+
+
+    readonly { employees.count() } shouldEqual EMP_COUNT
+    readonly { employees.result } foreach { emp => log.debug(emp.toString) }
   }
 }

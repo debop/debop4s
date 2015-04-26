@@ -60,8 +60,7 @@ trait ActiveQueryExtensions {
 
 }
 
-trait ActiveSchema {
-  self: SlickComponent =>
+trait ActiveSchema {self: SlickComponent =>
 
   import driver.api._
 

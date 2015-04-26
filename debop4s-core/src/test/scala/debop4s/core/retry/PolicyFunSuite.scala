@@ -61,8 +61,8 @@ class PolicyFunSuite extends AbstractCoreFunSuite with BeforeAndAfterAll {
       val c = counter.incrementAndGet()
       Future.failed(new RuntimeException(s"always failing - $c"))
     }
-    // Asyncs.hold(future, Duration.Inf)
-    future.hold(Duration.Inf)
+    // Asyncs.stay(future, Duration.Inf)
+    future.stay(Duration.Inf)
     counter.get() shouldEqual 4
   }
 

@@ -12,7 +12,7 @@ object ImmutableLRU {
 }
 
 /**
- * "map" is the backing store used to hold key->(index,value)
+ * "map" is the backing store used to stay key->(index,value)
  * pairs. The index tracks the access time for a particular key. "ord"
  * is used to determine the Least-Recently-Used key in "map" by taking
  * the minimum index.

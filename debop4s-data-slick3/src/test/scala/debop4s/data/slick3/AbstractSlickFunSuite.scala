@@ -16,7 +16,7 @@ import scala.concurrent.Future
 abstract class AbstractSlickFunSuite
   extends FunSuite with Matchers with OptionValues with BeforeAndAfter with BeforeAndAfterAll {
 
-  protected lazy val LOG = LoggerFactory.getLogger(getClass)
+  protected lazy val log = LoggerFactory.getLogger(getClass)
 
   implicit val executionContext = scala.concurrent.ExecutionContext.global
 
@@ -41,14 +41,14 @@ abstract class AbstractSlickFunSuite
   }
 
   private def initialize(): Unit = synchronized {
-    SlickContext.init("slick-h2", "slick")
+    // SlickContext.init("slick-h2", "slick")
     // SlickContext.init("slick-hsqldb", "slick")
     // SlickContext.init("slick-mysql", "slick")
-    // SlickContext.init("slick-mariadb", "slick")
+    SlickContext.init("slick-mariadb", "slick")
     // SlickContext.init("slick-postgres", "slick")
     // SlickContext.init("slick-mariadb-master-slaves", "slick")
 
-    LOG.info(s"Slick Driver = ${ SlickContext.driver.getClass.getSimpleName }")
+    log.info(s"Slick Driver = ${ SlickContext.driver.getClass.getSimpleName }")
   }
 
   private def shutdown() = synchronized {

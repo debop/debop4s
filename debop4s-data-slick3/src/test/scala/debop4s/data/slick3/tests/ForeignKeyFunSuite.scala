@@ -1,6 +1,7 @@
 package debop4s.data.slick3.tests
 
-import debop4s.data.slick3._
+import debop4s.data.slick3.AbstractSlickFunSuite
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 
 /**
@@ -29,34 +30,36 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
 
     val schema = categories.schema ++ posts.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      categories ++= Seq((1, "Scala"), (2, "ScalaQuery"), (3, "Windows"), (4, "Software")),
-      posts.map(p => (p.title, p.category)) ++= Seq(
-        ("Test Post", None),
-        ("Formal Language Processing in Scala, Part 5", Some(1)),
-        ("Efficient Parameterized Queries in ScalaQuery", Some(2)),
-        ("Removing Libraries and HomeGroup icons from the Windows 7 desktop", Some(3)),
-        ("A ScalaQuery Update", Some(2))
+    commit {
+      DBIO.seq(
+        schema.drop.asTry,
+        schema.create,
+        categories ++= Seq((1, "Scala"), (2, "ScalaQuery"), (3, "Windows"), (4, "Software")),
+        posts.map(p => (p.title, p.category)) ++= Seq(
+          ("Test Post", None),
+          ("Formal Language Processing in Scala, Part 5", Some(1)),
+          ("Efficient Parameterized Queries in ScalaQuery", Some(2)),
+          ("Removing Libraries and HomeGroup icons from the Windows 7 desktop", Some(3)),
+          ("A ScalaQuery Update", Some(2))
+        )
       )
-    )
+    }
 
     val q1 = (for {
       p <- posts
       c <- p.categoryJoin
     } yield (p.id, c.id, c.name, p.title)).sortBy(_._1)
 
-    q1.map(p => (p._1, p._2)).exec shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
+    readonly { q1.map(p => (p._1, p._2)).result } shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
     val q2 = (for {
       p <- posts
       c <- p.categoryFK
     } yield (p.id, c.id, c.name, p.title)).sortBy(_._1)
 
-    q2.map(p => (p._1, p._2)).exec shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
+    readonly { q2.map(p => (p._1, p._2)).result } shouldEqual Seq((2, 1), (3, 2), (4, 3), (5, 2))
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 
   test("multi column foreign key") {
@@ -82,7 +85,7 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
 
     lazy val schema = as.schema ++ bs.schema
 
-    db.exec {
+    commit {
       schema.drop.asTry >>
       schema.create >>
       (bs ++= Seq((1, 2, "b12"), (3, 4, "b34"), (5, 6, "b56"))) >>
@@ -94,9 +97,9 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
       b <- a.bFK
     } yield (a.s, b.s)
 
-    q1.to[Set].exec shouldEqual Set(("a12", "b12"), ("a34", "b34"))
+    readonly { q1.to[Set].result } shouldEqual Set(("a12", "b12"), ("a34", "b34"))
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 
   test("combine join") {
@@ -118,34 +121,34 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
 
     lazy val schema = as.schema ++ bs.schema ++ cs.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      as ++= Seq((1, "a"), (2, "b"), (3, "c"), (4, "d")),
-      bs ++= Seq((1, 1), (2, 1), (3, 2)),
-      cs ++= Seq((1, 1), (2, 3))
-    )
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
+               as ++= Seq((1, "a"), (2, "b"), (3, "c"), (4, "d")),
+               bs ++= Seq((1, 1), (2, 1), (3, 2)),
+               cs ++= Seq((1, 1), (2, 3)))
+    }
 
     val q1 = (for {
       b <- bs
       a <- b.a
     } yield a.s).sorted
-    q1.exec shouldEqual List("a", "a", "b")
+    readonly { q1.result } shouldEqual List("a", "a", "b")
 
     val q2 = (for {
       c <- cs
       a <- c.a
     } yield a.s).sorted
-    q2.exec shouldBe List("a", "c")
+    readonly { q2.result } shouldBe List("a", "c")
 
     val q3 = (for {
       b <- bs
       c <- cs
       a <- b.a & c.a
     } yield a.s).sorted
-    q3.exec shouldBe List("a", "a")
+    readonly { q3.result } shouldBe List("a", "a")
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 
   test("many to many") {
@@ -176,21 +179,22 @@ class ForeignKeyFunSuite extends AbstractSlickFunSuite {
 
     lazy val schema = as.schema ++ bs.schema ++ aToB.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
 
-      as ++= Seq(1 -> "a", 2 -> "b", 3 -> "c"),
-      bs ++= Seq(1 -> "x", 2 -> "y", 3 -> "z"),
-      aToB ++= Seq(1 -> 1, 1 -> 2, 2 -> 2, 2 -> 3)
-    )
+               as ++= Seq(1 -> "a", 2 -> "b", 3 -> "c"),
+               bs ++= Seq(1 -> "x", 2 -> "y", 3 -> "z"),
+               aToB ++= Seq(1 -> 1, 1 -> 2, 2 -> 2, 2 -> 3)
+      )
+    }
 
     val q1 = for {
       a <- as if a.id >= 2
       b <- a.bs
     } yield (a.s, b.s)
-    q1.to[Set].exec shouldEqual Set(("b", "y"), ("b", "z"))
+    readonly { q1.to[Set].result } shouldEqual Set(("b", "y"), ("b", "z"))
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 }

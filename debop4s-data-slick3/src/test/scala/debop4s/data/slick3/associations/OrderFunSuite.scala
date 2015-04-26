@@ -1,6 +1,6 @@
 package debop4s.data.slick3.associations
 
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
+import debop4s.data.slick3.AbstractSlickFunSuite
 import debop4s.data.slick3.associations.AssociationDatabase._
 import debop4s.data.slick3.associations.AssociationDatabase.driver.api._
 import org.joda.time.DateTime
@@ -29,33 +29,51 @@ class OrderFunSuite extends AbstractSlickFunSuite {
   override def beforeAll(): Unit = {
     super.beforeAll()
 
-    {
+    commit {
       schema.drop.asTry >>
-      schema.create
-    }.exec
-
-    Seq(
-      orders ++= orderData,
-      orderItems ++= orderItemData
-    ).exec
+      schema.create >>
+      (orders ++= orderData) >>
+      (orderItems ++= orderItemData)
+    }
   }
 
   override def afterAll(): Unit = {
-    schema.drop.exec
+    commit { schema.drop }
     super.afterAll()
   }
 
   test("one-to-many : Order and OrderItems") {
-    orders.exec foreach println
-    orderItems.exec foreach println
+    val (ods, items) = readonly {
+      for {
+        ods <- orders.result
+        items <- orderItems.result
+      } yield (ods, items)
+    }
+    ods foreach { order => log.debug(s"order=$order") }
+    items foreach { item => log.debug(s"orderItem=$item") }
 
     val innerJoin = orders join orderItems on { (o, i) => o.id === i.orderId }
     val q = innerJoin.filter(_._1.no === "A-128")
-    q.length.exec shouldEqual 2
-    q.exec foreach println
+
+    val rs = readonly {
+      for {
+        _ <- q.length.result map (_ shouldEqual 2)
+        rs <- q.result
+      } yield rs
+    }
+    rs foreach { r => log.debug(r.toString) }
+    //    q.length.exec shouldEqual 2
+    //    q.exec foreach println
+
 
     val innerJoin2 = orders join orderItems on (_.id === _.orderId)
-    commit { innerJoin2.length.result } shouldEqual commit { orderItems.count() }
+    val (length1, length2) = readonly {
+      for {
+        l1 <- innerJoin2.length.result
+        l2 <- orderItems.count()
+      } yield (l1, l2)
+    }
+    length1 shouldEqual length2
 
     // group by
     val joinQuery = for {
@@ -64,12 +82,12 @@ class OrderFunSuite extends AbstractSlickFunSuite {
 
     val groupQuery = joinQuery.groupBy(_._1.id)
     val itemAvg = groupQuery.map { case (id, ois) => (id, ois.length, ois.map(_._2.price).avg) }
-    val res = itemAvg.exec
-    res foreach println
-    res.toSet shouldEqual Set(
-      (1, 2, Some(150.0)),
-      (2, 2, Some(150.0)),
-      (3, 2, Some(150.0))
+
+    val res = readonly { itemAvg.to[Set].result }
+    res foreach { r => log.debug(r.toString) }
+    res shouldEqual Set((1, 2, Some(150.0)),
+                        (2, 2, Some(150.0)),
+                        (3, 2, Some(150.0))
     )
   }
 

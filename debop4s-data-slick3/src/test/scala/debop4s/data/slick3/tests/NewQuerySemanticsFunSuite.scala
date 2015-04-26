@@ -1,15 +1,9 @@
 package debop4s.data.slick3.tests
 
-import debop4s.core.concurrent._
 import debop4s.data.slick3.AbstractSlickFunSuite
-
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3._
-import debop4s.data.slick3.SlickContext._
-import slick.backend.DatabasePublisher
 import slick.util.TupleMethods._
-
-import scala.concurrent.Future
 
 /**
  * NewQuerySemanticsFunSuite
@@ -123,42 +117,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
 
     // Explicit join with condition
     val q1b_0 = coffees.sortBy(_.price).take(3) join suppliers on (_.supId === _.id)
-    /*
-    ┇ select x2.x3, x2.x4, x5.x6
-    ┇ from (
-    ┇   select x7.x8 as x9, x7.x10 as x3, x11.x12 as x4
-    ┇   from (
-    ┇     select x13."sales" as x14, x13."total" as x15, x13."price" as x8, x13."sup_id" as x16, x13."cof_name" as x10
-    ┇     from (
-    ┇       select x17."sales" as "sales", x17."total" as "total", x17."price" as "price", x17."sup_id" as "sup_id", x17."cof_name" as "cof_name"
-    ┇       from "coffees" x17
-    ┇       order by x17."price"
-    ┇       limit 3
-    ┇     ) x13
-    ┇   ) x7
-    ┇   inner join (
-    ┇     select x18."sup_id" as x19, x18."sup_name" as x20, x18."street" as x21, x18."city" as x12
-    ┇     from "suppliers" x18
-    ┇   ) x11
-    ┇   on x7.x16 = x11.x19
-    ┇   order by x7.x8
-    ┇   limit 2
-    ┇ ) x2, (
-    ┇   select x22."sup_id" as x23, x22."cof_name" as x6
-    ┇   from (
-    ┇     select x24."sales" as "sales", x24."total" as "total", x24."price" as "price", x24."sup_id" as "sup_id", x24."cof_name" as "cof_name"
-    ┇     from "coffees" x24
-    ┇     order by x24."price"
-    ┇     limit 3
-    ┇   ) x22
-    ┇ ) x5
-    ┇ inner join (
-    ┇   select x25."sup_id" as x26
-    ┇   from "suppliers" x25
-    ┇ ) x27
-    ┇ on x5.x23 = x27.x26
-    ┇ where not (x2.x3 = 'Colombian')
-     */
+
     def q1b = for {
       (c, s) <- q1b_0.sortBy(_._1.price).take(2).filter(_._1.name =!= "Colombian")
       (c2, s2) <- q1b_0
@@ -386,16 +345,16 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
       }
     )
 
-    db.seq(
-      setup,
-      a1,
-      a2,
-      a3,
-      a4,
-      a5,
-      a6,
-      schema.drop
-    )
+    commit {
+      DBIO.seq(setup,
+               a1,
+               a2,
+               a3,
+               a4,
+               a5,
+               a6,
+               schema.drop)
+    }
   }
 
   test("old composition") {
@@ -439,16 +398,17 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
 
     val schema = users.schema ++ orders.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      q3.result,
-      q4.result,
-      q6a.result,
-      q6b.result,
-      q6c.result,
-      schema.drop
-    )
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
+               q3.result,
+               q4.result,
+               q6a.result,
+               q6b.result,
+               q6c.result,
+               schema.drop
+      )
+    }
   }
 
   test("advanced fusion") {
@@ -471,11 +431,6 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     }
     lazy val tableC = TableQuery[TableC]
 
-    /*
-    ┇ select x2."id", x2."start", x3."start"
-    ┇ from "TableA" x4, "TableB" x2, "TableC" x3
-    ┇ where (x2."id" = x4."id") and (x3."start" <= (x4."id" + 1))
-     */
     val queryErr2 = for {
       a <- tableA
       b <- tableB if b.id === a.id
@@ -485,14 +440,15 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
 
     val schema = tableA.schema ++ tableB.schema ++ tableC.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
 
-      queryErr2.result,
+               queryErr2.result,
 
-      schema.drop
-    )
+               schema.drop
+      )
+    }
   }
 
   test("subquery") {
@@ -502,7 +458,7 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     }
     lazy val as = TableQuery[A]
 
-    db.exec(
+    commit {
       as.schema.drop.asTry >>
       as.schema.create >>
       (as += 42) >>
@@ -514,10 +470,8 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
       } >> {
         val q2 = as.filter(_.id in as.sortBy(_.id).map(_.id))
         q2.result.map(_ shouldEqual Seq(42))
-      } >>
-
-      as.schema.drop
-    )
+      } >> as.schema.drop
+    }
   }
 
   test("expansion") {
@@ -531,18 +485,19 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
     }
     lazy val as = TableQuery[A]
 
-    db.seq(
-      as.schema.drop.asTry,
-      as.schema.create,
-      as.map(a => (a.id, a.a, a.b)) ++= Seq(
-        (1, "a1", "b1"),
-        (2, "a2", "b2"),
-        (3, "a3", "b3")
+    commit {
+      DBIO.seq(
+        as.schema.drop.asTry,
+        as.schema.create,
+        as.map(a => (a.id, a.a, a.b)) ++= Seq((1, "a1", "b1"),
+                                              (2, "a2", "b2"),
+                                              (3, "a3", "b3")
+        )
       )
-    )
+    }
 
     val q1 = as.map(identity).filter(_.b === "b3")
-    q1.exec.toSet shouldEqual Set((3, "a3"))
+    readonly { q1.to[Set].result } shouldEqual Set((3, "a3"))
 
     /*
     ┇ select x2.x3, x4."a"
@@ -563,9 +518,9 @@ class NewQuerySemanticsFunSuite extends AbstractSlickFunSuite {
       c2 <- as
     } yield (c.id, c2.a)
 
-    q2.exec.toSet shouldEqual Set((1, "a1"), (1, "a2"), (1, "a3"), (2, "a1"), (2, "a2"), (2, "a3"), (3, "a1"), (3, "a2"), (3, "a3"))
+    readonly { q2.to[Set].result } shouldEqual Set((1, "a1"), (1, "a2"), (1, "a3"), (2, "a1"), (2, "a2"), (2, "a3"), (3, "a1"), (3, "a2"), (3, "a3"))
 
-    as.schema.drop.exec
+    commit { as.schema.drop }
   }
 
 }

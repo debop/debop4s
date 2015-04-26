@@ -1,7 +1,8 @@
 package debop4s.data.slick3.tests
 
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
+import debop4s.data.slick3.AbstractSlickFunSuite
 
 /**
  * UnionFunSuite
@@ -39,47 +40,50 @@ class UnionFunSuite extends AbstractSlickFunSuite {
 
     val schema = managers.schema ++ employees.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      managers ++= Seq(
-        (1, "Peter", "HR"),
-        (2, "Amy", "IT"),
-        (3, "Steve", "IT")
-      ),
-      employees ++= Seq(
-        (4, "Jennifer", 1),
-        (5, "Tom", 1),
-        (6, "Leonard", 2),
-        (7, "Ben", 2),
-        (8, "Greg", 3)
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
+               managers ++= Seq(
+                 (1, "Peter", "HR"),
+                 (2, "Amy", "IT"),
+                 (3, "Steve", "IT")
+               ),
+               employees ++= Seq(
+                 (4, "Jennifer", 1),
+                 (5, "Tom", 1),
+                 (6, "Leonard", 2),
+                 (7, "Ben", 2),
+                 (8, "Greg", 3)
+               )
       )
-    )
-    q1.to[Set].exec shouldEqual Set((2, "Amy"), (3, "Steve"))
-    q2.to[Set].exec shouldEqual Set((7, "Ben"), (8, "Greg"), (6, "Leonard"))
-    q3.exec shouldEqual Seq((2, "Amy"), (7, "Ben"), (8, "Greg"), (6, "Leonard"), (3, "Steve"))
-    q4b.to[Set].exec shouldEqual Set(1, 2, 3)
-    q4c.to[Set].exec shouldEqual Set(1, 2, 3)
+    }
+    readonly {
+      q1.to[Set].result.map { _ shouldEqual Set((2, "Amy"), (3, "Steve")) } >>
+      q2.to[Set].result.map { _ shouldEqual Set((7, "Ben"), (8, "Greg"), (6, "Leonard")) } >>
+      q3.result.map { _ shouldEqual Seq((2, "Amy"), (7, "Ben"), (8, "Greg"), (6, "Leonard"), (3, "Steve")) } >>
+      q4b.to[Set].result.map { _ shouldEqual Set(1, 2, 3) } >>
+      q4c.to[Set].result.map { _ shouldEqual Set(1, 2, 3) }
+    }
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 
   test("union without projection") {
     def f(s: String) = managers filter { _.name === s }
     val q = f("Peter") union f("Amy")
 
-    db.seq(
-      managers.schema.drop.asTry,
-      managers.schema.create,
-      managers ++= Seq(
-        (1, "Peter", "HR"),
-        (2, "Amy", "IT"),
-        (3, "Steve", "IT")
+    commit {
+      DBIO.seq(managers.schema.drop.asTry,
+               managers.schema.create,
+               managers ++= Seq((1, "Peter", "HR"),
+                                (2, "Amy", "IT"),
+                                (3, "Steve", "IT")
+               )
       )
-    )
-    q.to[Set].exec shouldEqual Set((1, "Peter", "HR"), (2, "Amy", "IT"))
+    }
+    readonly { q.to[Set].result } shouldEqual Set((1, "Peter", "HR"), (2, "Amy", "IT"))
 
-    managers.schema.drop.exec
+    commit { managers.schema.drop }
   }
 
   test("union of joins") {
@@ -106,17 +110,20 @@ class UnionFunSuite extends AbstractSlickFunSuite {
 
     val schema = coffees.schema ++ teas.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      coffees ++= Seq((10L, 1L), (20L, 2L), (30L, 3L)),
-      teas ++= Seq((100L, 1L), (200L, 2L), (300L, 3L))
-    )
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
+               coffees ++= Seq((10L, 1L), (20L, 2L), (30L, 3L)),
+               teas ++= Seq((100L, 1L), (200L, 2L), (300L, 3L))
+      )
+    }
 
-    q1.to[Set].exec shouldEqual Set((10L, 1L), (20L, 2L), (30L, 3L))
-    q2.to[Set].exec shouldEqual Set((100L, 1L), (200L, 2L), (300L, 3L))
-    q3.to[Set].exec shouldEqual Set((10L, 1L), (20L, 2L), (30L, 3L), (100L, 1L), (200L, 2L), (300L, 3L))
+    readonly {
+      q1.to[Set].result.map { _ shouldEqual Set((10L, 1L), (20L, 2L), (30L, 3L)) } >>
+      q2.to[Set].result.map { _ shouldEqual Set((100L, 1L), (200L, 2L), (300L, 3L)) } >>
+      q3.to[Set].result.map { _ shouldEqual Set((10L, 1L), (20L, 2L), (30L, 3L), (100L, 1L), (200L, 2L), (300L, 3L)) }
+    }
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 }

@@ -1,7 +1,6 @@
 package debop4s.data.slick3.customtypes
 
 import debop4s.data.slick3.AbstractSlickFunSuite
-import debop4s.data.slick3._
 import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 
@@ -39,59 +38,22 @@ class CustomScalaTypeFunSuite extends AbstractSlickFunSuite {
   }
 
   test("custom scala type - Bool") {
-    (as ++= Seq(("A", True), ("B", False))).exec
+    commit { as ++= Seq(("A", True), ("B", False)) }
 
-    as.length.exec shouldBe 2
+    readonly { as.length.result } shouldBe 2
+    readonly {
+      as.filter(_.name === "A".bind).map(_.isActive).take(1).result
+    }.head shouldEqual True
 
-    /*
-    ┇ select x2.x3
-    ┇ from (
-    ┇   select x4."isActive" as x3
-    ┇   from "custom_scala_type" x4
-    ┇   where x4."name" = ?
-    ┇   limit 1
-    ┇ ) x2
-     */
-    as.filter(_.name === "A".bind).map(_.isActive).take(1).exec.head shouldEqual True
-    /*
-    ┇ select x2.x3
-    ┇ from (
-    ┇   select x4."isActive" as x3
-    ┇   from "custom_scala_type" x4
-    ┇   where x4."name" = ?
-    ┇   limit 1
-    ┇ ) x2
-     */
-    as.filter(_.name === "B".bind).map(_.isActive).take(1).exec.head shouldEqual False
+    readonly {
+      as.filter(_.name === "B".bind).map(_.isActive).take(1).result
+    }.head shouldEqual False
 
     // NOTE: Custom Type 을 WHERE 절에 넣으려면 컬럼 수형과 같은 수형으로 type casting 을 해야 합니다.
     // NOTE: 그럼 EncryptedString 은 Casting 보다 실제 값을 지정하면 된다.
 
-    /*
-    ┇ select x2.x3
-    ┇ from (
-    ┇   select count(1) as x3
-    ┇   from (
-    ┇     select x4."name" as x5, x4."isActive" as x6
-    ┇     from "custom_scala_type" x4
-    ┇     where x4."isActive" = 1
-    ┇   ) x7
-    ┇ ) x2
-     */
-    as.filter(_.isActive === True.asInstanceOf[Bool]).length.exec shouldBe 1
-
-    /*
-    ┇ select x2.x3
-    ┇ from (
-    ┇   select count(1) as x3
-    ┇   from (
-    ┇     select x4."name" as x5, x4."isActive" as x6
-    ┇     from "custom_scala_type" x4
-    ┇     where x4."isActive" = 0
-    ┇   ) x7
-    ┇ ) x2
-     */
-    as.filter(_.isActive === False.asInstanceOf[Bool]).length.exec shouldBe 1
+    readonly { as.filter(_.isActive === True.asInstanceOf[Bool]).length.result } shouldBe 1
+    readonly { as.filter(_.isActive === False.asInstanceOf[Bool]).length.result } shouldBe 1
   }
 
 }

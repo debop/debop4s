@@ -1,7 +1,7 @@
 package debop4s.data.slick3
 
 import debop4s.core.concurrent._
-import debop4s.data.slick3._
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 import slick.backend.DatabasePublisher
 
@@ -30,39 +30,44 @@ class TestDatabaseFunSuite extends AbstractSlickFunSuite {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    Codes.schema.create.exec
+    commit {
+      Codes.schema.drop.asTry >>
+      Codes.schema.create
+    }
   }
   override def afterAll(): Unit = {
-    Codes.schema.drop.exec
+    commit { Codes.schema.drop }
     super.beforeAll()
   }
 
   private def insertSampleData(): Unit = {
-    ranges.grouped(100).toSeq.par.foreach { is =>
-      (Codes.map(c => (c.name, c.value)) ++= is.map(i => (s"name=$i", s"value=$i")).toSet).exec
-    }
+    val actions = ranges.grouped(100).toSeq.par.map { is =>
+      Codes.map(c => (c.name, c.value)) ++= is.map(i => (s"name=$i", s"value=$i")).toSet
+    }.seq.toSeq
+    commit { DBIO.seq(actions: _*) }
   }
 
   test("insert by grouped as parallel") {
-    ranges.grouped(100).toSeq.par.foreach { is =>
+    val actions = ranges.grouped(100).toSeq.par.map { is =>
       val samples = is.map(i => (s"name=$i", s"value=$i")).toSet
-      Codes.map(c => (c.name, c.value)).forceInsertAll(samples).exec
-    }
+      Codes.map(c => (c.name, c.value)).forceInsertAll(samples)
+    }.seq.toSeq
+    commit { DBIO.seq(actions: _*) }
   }
 
   test("read all data as parallel") {
     insertSampleData()
 
     ranges.grouped(100).toSeq.par.foreach { is =>
-      val codes = Codes.filter(_.id inSet is.toSet).exec.toSet
-      codes.foreach { x => LOG.debug(x.toString()) }
+      val codes = readonly { Codes.filter(_.id inSet is.toSet).to[Set].result }
+      codes.foreach { x => log.debug(x.toString) }
     }
   }
 
   test("read all data by streaming") {
     insertSampleData()
 
-    val iter: DatabasePublisher[Code] = Codes.result.stream
-    iter.foreach { c => LOG.debug(c.toString()) }.await
+    val iter: DatabasePublisher[Code] = db.stream(Codes.result)
+    iter.foreach { c => log.debug(c.toString()) }.stay
   }
 }

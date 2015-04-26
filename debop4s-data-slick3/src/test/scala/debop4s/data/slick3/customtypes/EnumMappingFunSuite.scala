@@ -54,7 +54,7 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
   }
 
   test("Device with Optional Enum <-> String") {
-    val (nexus, iphone5, noneType) = commit {
+    val (nexus, iphone5, noneType) = readonly {
       for {
         nexus <- devices.save(Device("Nexus", Some(OSType.Android)))
         iphone5 <- devices.save(Device("iPhone5", Some(OSType.iOS)))
@@ -62,18 +62,9 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
       } yield (nexus, iphone5, none)
     }
 
-    /*
-    ┇ select x2."device_id", x2."device_name", x2."osType"
-    ┇ from (
-    ┇   select x3."device_id" as "device_id", x3."device_name" as "device_name", x3."osType" as "osType"
-    ┇   from "enum_device_option" x3
-    ┇   where x3."device_name" = ?
-    ┇   limit 1
-    ┇ ) x2
-     */
-    val nexusLoaded = devices.filter(_.name === "Nexus".bind).take(1).exec.headOption
-    val iphone5Loaded = devices.filter(_.name === "iPhone5".bind).take(1).exec.headOption
-    val noneTypeLoaded = devices.filter(_.name === "None".bind).take(1).exec.headOption
+    val nexusLoaded = readonly { devices.filter(_.name === "Nexus".bind).take(1).result }.headOption
+    val iphone5Loaded = readonly { devices.filter(_.name === "iPhone5".bind).take(1).result }.headOption
+    val noneTypeLoaded = readonly { devices.filter(_.name === "None".bind).take(1).result }.headOption
 
     nexusLoaded shouldBe defined
     nexusLoaded.get shouldEqual nexus
@@ -86,7 +77,7 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
   }
 
   test("Device with Enum <-> String") {
-    val (nexus, iphone5, noneType) = commit {
+    val (nexus, iphone5, noneType) = readonly {
       for {
         nexus <- device2s.save(Device2("Nexus", OSType.Android))
         iphone5 <- device2s.save(Device2("iPhone5", OSType.iOS))
@@ -94,18 +85,9 @@ class EnumMappingFunSuite extends AbstractSlickFunSuite {
       } yield (nexus, iphone5, none)
     }
 
-    /*
-    ┇ select x2."device_id", x2."device_name", x2."osType"
-    ┇ from (
-    ┇   select x3."device_id" as "device_id", x3."device_name" as "device_name", x3."osType" as "osType"
-    ┇   from "enum_device_option" x3
-    ┇   where x3."device_name" = ?
-    ┇   limit 1
-    ┇ ) x2
-     */
-    val nexusLoaded = device2s.filter(_.name === "Nexus".bind).take(1).exec.headOption
-    val iphone5Loaded = device2s.filter(_.name === "iPhone5".bind).take(1).exec.headOption
-    val noneTypeLoaded = device2s.filter(_.name === "None".bind).take(1).exec.headOption
+    val nexusLoaded = readonly { device2s.filter(_.name === "Nexus".bind).take(1).result }.headOption
+    val iphone5Loaded = readonly { device2s.filter(_.name === "iPhone5".bind).take(1).result }.headOption
+    val noneTypeLoaded = readonly { device2s.filter(_.name === "None".bind).take(1).result }.headOption
 
     nexusLoaded shouldBe defined
     nexusLoaded.get shouldEqual nexus

@@ -6,7 +6,7 @@ import javax.sql.DataSource
 
 import com.typesafe.config.ConfigFactory
 import debop4s.config.server.DatabaseSetting
-import debop4s.data.common.DataSources
+import debop4s.data.common.{JdbcDrivers, DataSources}
 import debop4s.data.slick3.config.SlickConfig
 import org.reactivestreams.{Publisher, Subscription, Subscriber}
 import org.slf4j.LoggerFactory
@@ -25,7 +25,7 @@ import scala.util.control.NonFatal
  */
 object SlickContext {
 
-  lazy val LOG = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   private[this] val masterIndex = new AtomicInteger(0)
   private[this] val slaveIndex = new AtomicInteger(0)
@@ -114,7 +114,7 @@ object SlickContext {
    * Database 환경설정 정보를 이용하여 SlickContext를 초기화합니다.
    */
   def init(config: SlickConfig): Unit = {
-    LOG.info(s"Slick 환경설정을 통해 Driver 등을 정의합니다.")
+    log.info(s"Slick 환경설정을 통해 Driver 등을 정의합니다.")
     require(config != null)
     this.slickConfig = config
   }
@@ -123,111 +123,19 @@ object SlickContext {
    * Database 환경설정 정보를 이용하여 SlickContext를 초기화합니다.
    */
   def init(configPath: String, rootConfig: String = "slick"): Unit = {
-    LOG.info(s"Slick 환경설정을 읽습니다. configPath=$configPath, rootConfig=$rootConfig")
+    log.info(s"Slick 환경설정을 읽습니다. configPath=$configPath, rootConfig=$rootConfig")
     val config = SlickConfig(ConfigFactory.load(configPath).getConfig(rootConfig))
     this.slickConfig = config
   }
 
   def isInitialized: Boolean = this.slickConfig != null
 
+  def isMySQL: Boolean = (driver == MySQLDriver) || isMariaDB
+  def isMariaDB: Boolean = jdbcDriver == JdbcDrivers.DRIVER_CLASS_MARIADB
   def isH2: Boolean = driver == H2Driver
-  def isHqlDB: Boolean = driver == HsqldbDriver
-  def isMariaDB: Boolean = jdbcDriver == "org.mariadb.jdbc.Driver"
-  def isMySQL: Boolean = driver == MySQLDriver
+  def isHsqlDB: Boolean = driver == HsqldbDriver
   def isPostgres: Boolean = driver == PostgresDriver
   def isSQLite: Boolean = driver == SQLiteDriver
-
-
-  /**
-   * reactive stream 을 읽어 각 row 를 처리합니다.
-   */
-  def foreach[T](p: Publisher[T])(f: T => Any): Future[Unit] = {
-    val pr = Promise[Unit]()
-
-    try {
-      p.subscribe(new Subscriber[T] {
-        override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
-        override def onComplete(): Unit = pr.success(())
-        override def onError(throwable: Throwable): Unit = pr.failure(throwable)
-        override def onNext(t: T): Unit = f(t)
-      })
-    } catch {
-      case NonFatal(e) => pr.failure(e)
-    }
-
-    pr.future
-  }
-
-  /**
-   * 동기 방식으로 reactive stream 을 읽어드여 Vector 로 빌드합니다.
-   */
-  def materialize[T](p: Publisher[T]): Future[Vector[T]] = {
-    val builder = Vector.newBuilder[T]
-    val pr = Promise[Vector[T]]()
-    try p.subscribe(new Subscriber[T] {
-      override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
-      override def onComplete(): Unit = pr.success(builder.result())
-      override def onError(throwable: Throwable): Unit = pr.failure(throwable)
-      override def onNext(t: T): Unit = builder += t
-    }) catch { case NonFatal(e) => pr.failure(e) }
-
-    pr.future
-  }
-
-  /**
-   * Asynchronously consume a Reactive Stream and materialize it as a Vector, requesting new
-   * elements one by one and transforming them after the specified delay. This ensures that the
-   * transformation does not run in the synchronous database context but still preserves
-   * proper sequencing.
-   **/
-  def materializeAsync[T, R](p: Publisher[T])
-                            (tr: T => Future[R],
-                             delay: Duration = Duration(100L, TimeUnit.MILLISECONDS)): Future[Vector[R]] = {
-    val exe = new ThreadPoolExecutor(1, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable]())
-    val ec = ExecutionContext.fromExecutor(exe)
-    val builder = Vector.newBuilder[R]
-    val pr = Promise[Vector[R]]()
-    var sub: Subscription = null
-
-    def async[T](thunk: => T): Future[T] = {
-      val f = Future {
-        Thread.sleep(delay.toMillis)
-        thunk
-      }(ec)
-      f.onFailure { case t =>
-        pr.tryFailure(t)
-        sub.cancel()
-      }(ec)
-      f
-    }
-
-    try {
-      p.subscribe(new Subscriber[T] {
-        def onSubscribe(s: Subscription): Unit = async {
-          sub = s
-          sub.request(1L)
-        }
-        def onComplete(): Unit = async(pr.trySuccess(builder.result()))
-        def onError(t: Throwable): Unit = async(pr.tryFailure(t))
-        def onNext(t: T): Unit = async {
-          tr(t).onComplete {
-            case Success(r) =>
-              builder += r
-              sub.request(1L)
-            case Failure(t) =>
-              pr.tryFailure(t)
-              sub.cancel()
-          }(ec)
-        }
-      })
-    } catch {
-      case NonFatal(ex) => pr.tryFailure(ex)
-    }
-
-    val f = pr.future
-    f.onComplete(_ => exe.shutdown())(ec)
-    f
-  }
-
+  def isOracle: Boolean = driver.profile.toString.contains("OracleDriver")
 
 }

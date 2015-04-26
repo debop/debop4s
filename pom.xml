@@ -34,6 +34,7 @@
         <module>debop4s-web-scalatra</module>
 
         <module>debop4s-benchmark</module>
+        <module>debop4s-data-slick3-northwind</module>
 
     </modules>
 

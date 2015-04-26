@@ -1,7 +1,8 @@
 package debop4s.data.slick3.tests
 
+import debop4s.data.slick3.AbstractSlickFunSuite
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
 import slick.ast.NumericTypedType
 
 /**
@@ -30,17 +31,19 @@ class RelationalTypeFunSuite extends AbstractSlickFunSuite {
       )
     }
 
-    db.seq(
-      store[Int](-1, 0, 1, Int.MinValue, Int.MaxValue),
-      ifCap(rcap.typeLong) { store[Long](-1L, 0L, 1L, Long.MinValue, Long.MaxValue) },
-      store[Short](-1, 0, 1, Short.MinValue, Short.MaxValue),
-      store[Byte](-1, 0, 1, Byte.MinValue, Byte.MaxValue),
-      store[Double](-1.0, 0.0, 1.0),
-      store[Float](-1.0f, 0.0f, 1.0f),
-      ifCap(rcap.typeBigDecimal) {
-        store[BigDecimal](BigDecimal(-1), BigDecimal(0), BigDecimal(1), BigDecimal(Long.MinValue), BigDecimal(Long.MaxValue))
-      }
-    )
+    commit {
+      DBIO.seq(
+        store[Int](-1, 0, 1, Int.MinValue, Int.MaxValue),
+        ifCap(rcap.typeLong) { store[Long](-1L, 0L, 1L, Long.MinValue, Long.MaxValue) },
+        store[Short](-1, 0, 1, Short.MinValue, Short.MaxValue),
+        store[Byte](-1, 0, 1, Byte.MinValue, Byte.MaxValue),
+        store[Double](-1.0, 0.0, 1.0),
+        store[Float](-1.0f, 0.0f, 1.0f),
+        ifCap(rcap.typeBigDecimal) {
+          store[BigDecimal](BigDecimal(-1), BigDecimal(0), BigDecimal(1), BigDecimal(Long.MinValue), BigDecimal(Long.MaxValue))
+        }
+      )
+    }
   }
 
   private def roundtrip[T: BaseColumnType](tn: String, v: T) = {
@@ -51,17 +54,19 @@ class RelationalTypeFunSuite extends AbstractSlickFunSuite {
     }
     lazy val as = TableQuery[A]
 
-    db.seq(
-      as.schema.drop.asTry,
-      as.schema.create,
-      as +=(1, v),
-      as.map(_.data).result.map(_ shouldEqual Seq(v)),
-      as.filter(_.data === v).map(_.id).result.map(_ shouldEqual Seq(1)),
-      as.filter(_.data =!= v).map(_.id).result.map(_ shouldEqual Nil),
-      as.filter(_.data === v.bind).map(_.id).result.map(_ shouldEqual Seq(1)),
-      as.filter(_.data =!= v.bind).map(_.id).result.map(_ shouldEqual Nil),
-      as.schema.drop
-    )
+    commit {
+      DBIO.seq(
+        as.schema.drop.asTry,
+        as.schema.create,
+        as +=(1, v),
+        as.map(_.data).result.map(_ shouldEqual Seq(v)),
+        as.filter(_.data === v).map(_.id).result.map(_ shouldEqual Seq(1)),
+        as.filter(_.data =!= v).map(_.id).result.map(_ shouldEqual Nil),
+        as.filter(_.data === v.bind).map(_.id).result.map(_ shouldEqual Seq(1)),
+        as.filter(_.data =!= v.bind).map(_.id).result.map(_ shouldEqual Nil),
+        as.schema.drop
+      )
+    }
   }
 
   test("boolean") {
@@ -79,14 +84,16 @@ class RelationalTypeFunSuite extends AbstractSlickFunSuite {
     }
     val ts = TableQuery[T]
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts += 42,
-      ts.map(_ => ()).result.map(_ shouldEqual Seq(())),
-      ts.map(a => ((), a)).result.map(_ shouldEqual Seq(((), 42))),
-      ts.map(a => (a, ())).result.map(_ shouldEqual Seq((42, ()))),
-      ts.schema.drop
-    )
+    commit {
+      DBIO.seq(
+        ts.schema.drop.asTry,
+        ts.schema.create,
+        ts += 42,
+        ts.map(_ => ()).result.map(_ shouldEqual Seq(())),
+        ts.map(a => ((), a)).result.map(_ shouldEqual Seq(((), 42))),
+        ts.map(a => (a, ())).result.map(_ shouldEqual Seq((42, ()))),
+        ts.schema.drop
+      )
+    }
   }
 }

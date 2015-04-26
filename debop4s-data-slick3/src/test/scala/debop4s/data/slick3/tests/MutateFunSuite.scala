@@ -1,9 +1,10 @@
 package debop4s.data.slick3.tests
 
 import debop4s.core.concurrent._
+import debop4s.data.slick3.{AbstractSlickFunSuite, SlickContext}
 
-import debop4s.data.slick3._
-import debop4s.data.slick3.SlickContext._
+import debop4s.data.slick3.SlickContext
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 
 import slick.backend.DatabasePublisher
@@ -22,7 +23,7 @@ class MutateFunSuite extends AbstractSlickFunSuite {
       cancel("not support mutate")
       Future()
     }
-    if (isMySQL) {
+    if (SlickContext.isMySQL) {
       cancel("MySQL은 update mutate 를 지원하지 않습니다.")
     }
 
@@ -51,16 +52,16 @@ class MutateFunSuite extends AbstractSlickFunSuite {
       } else {
         seenEndMarker = true
       }
-    }.await
+    }.stay
 
     seenEndMarker shouldBe false
-    data.sortBy(_.id).exec shouldEqual Seq((1, "aa"), (3, "c"), (4, "d"), (5, "ee"))
+    readonly { data.sortBy(_.id).result } shouldEqual Seq((1, "aa"), (3, "c"), (4, "d"), (5, "ee"))
 
-    data.schema.drop.exec
+    commit { data.schema.drop }
   }
 
   test("delete mutate") {
-    if (isMySQL) {
+    if (SlickContext.isMySQL) {
       cancel("MySQL은 delete mutate 를 지원하지 않습니다.")
     }
     class T(tag: Tag) extends Table[(Int, Int)](tag, "del_mutate_t") {
@@ -88,12 +89,12 @@ class MutateFunSuite extends AbstractSlickFunSuite {
         seenEndMarker = true
         m += ((3, 9))
       }
-    }.await
+    }.stay
 
     seenEndMarker shouldBe true
-    ts.to[Set].exec shouldBe Set((2, 5), (2, 6), (2, 7), (2, 8), (3, 9))
+    readonly { ts.to[Set].result } shouldBe Set((2, 5), (2, 6), (2, 7), (2, 8), (3, 9))
 
-    ts.schema.drop.exec
+    readonly { ts.schema.drop }
   }
 
 }

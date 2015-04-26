@@ -33,8 +33,8 @@ class JdbcMetaFunSuite extends AbstractSlickFunSuite {
 
   test("meta sync operation") {
     val schema = users.schema ++ orders.schema
-    LOG.info("Schema used to create tables:")
-    schema.createStatements.foreach { s => LOG.debug("\t" + s) }
+    log.info("Schema used to create tables:")
+    schema.createStatements.foreach { s => log.debug("\t" + s) }
 
     db.exec {
       schema.drop.asTry >>
@@ -42,71 +42,71 @@ class JdbcMetaFunSuite extends AbstractSlickFunSuite {
     }
 
     // TODO: Action 과 ResultSetAction 에 대한 Extensions 를 추가해야 겠다.
-    LOG.info("Type info from Database Meta Data: ")
-    MTypeInfo.getTypeInfo.exec foreach { typ => LOG.debug("\t" + typ) }
+    log.info("Type info from Database Meta Data: ")
+    MTypeInfo.getTypeInfo.exec foreach { typ => log.debug("\t" + typ) }
 
     db.exec {
       ifCap(tcap.jdbcMetaGetFunctions) {
-        LOG.info("Functions from Database Meta Data: ")
+        log.info("Functions from Database Meta Data: ")
         MFunction.getFunctions(MQName.local("%")).flatMap { (fs: Vector[MFunction]) =>
           DBIO.sequence(fs.map(_.getFunctionColumns()))
         }
       }
     }
 
-    LOG.info("Functions from Database Meta Data: ")
+    log.info("Functions from Database Meta Data: ")
     ifCap(tcap.jdbcMetaGetFunctions) {
       val getFunctionsAction = MFunction.getFunctions(MQName.local("%"))
       val fs = getFunctionsAction.exec
       fs.foreach { f =>
-        LOG.debug("\t" + f)
+        log.debug("\t" + f)
         val cs = f.getFunctionColumns().exec
-        cs.foreach { c => LOG.debug("\t\t" + c) }
+        cs.foreach { c => log.debug("\t\t" + c) }
       }
       getFunctionsAction
     }
 
 
-    LOG.info("UDTs from Database Meta Data: ")
-    MUDT.getUDTs(MQName.local("%")).exec foreach { u => LOG.debug("\t" + u) }
+    log.info("UDTs from Database Meta Data: ")
+    MUDT.getUDTs(MQName.local("%")).exec foreach { u => log.debug("\t" + u) }
 
-    LOG.info("Procedures from Database Meta Data:")
+    log.info("Procedures from Database Meta Data:")
     MProcedure.getProcedures(MQName.local("%")).exec foreach { p =>
-      LOG.debug("\t" + p)
-      p.getProcedureColumns().exec.foreach { c => LOG.debug("\t\t" + c) }
+      log.debug("\t" + p)
+      p.getProcedureColumns().exec.foreach { c => log.debug("\t\t" + c) }
     }
 
-    LOG.info("Association Schema from Database Meta Data:")
+    log.info("Association Schema from Database Meta Data:")
     MTable.getTables(None, None, None, None)
     .exec
     .filter(t => Set("users_xx", "orders_xx") contains t.name.name)
     .foreach { t =>
-      LOG.debug("\t" + t)
+      log.debug("\t" + t)
       t.getColumns.exec.foreach { c =>
-        LOG.debug("\t\t" + c)
-        c.getColumnPrivileges.exec foreach { p => LOG.debug("\t\t\t" + p) }
+        log.debug("\t\t" + c)
+        c.getColumnPrivileges.exec foreach { p => log.debug("\t\t\t" + p) }
       }
 
-      t.getVersionColumns.exec foreach { v => LOG.debug("\t\t\t" + v) }
-      t.getPrimaryKeys.exec foreach { pk => LOG.debug("\t\t\t" + pk) }
-      t.getImportedKeys.exec foreach { ik => LOG.debug("\t\t\t" + ik) }
-      t.getExportedKeys.exec foreach { ek => LOG.debug("\t\t\t" + ek) }
+      t.getVersionColumns.exec foreach { v => log.debug("\t\t\t" + v) }
+      t.getPrimaryKeys.exec foreach { pk => log.debug("\t\t\t" + pk) }
+      t.getImportedKeys.exec foreach { ik => log.debug("\t\t\t" + ik) }
+      t.getExportedKeys.exec foreach { ek => log.debug("\t\t\t" + ek) }
 
       Try {
-        t.getIndexInfo().exec foreach { ii => LOG.debug("\t\t\t" + ii) }
+        t.getIndexInfo().exec foreach { ii => log.debug("\t\t\t" + ii) }
       }
-      t.getTablePrivileges.exec foreach { p => LOG.debug("\t\t\t" + p) }
+      t.getTablePrivileges.exec foreach { p => log.debug("\t\t\t" + p) }
 
       t.getBestRowIdentifier(MBestRowIdentifierColumn.Scope.Session).exec foreach { c =>
-        LOG.debug("\t\t\t Row identifier for session: " + c)
+        log.debug("\t\t\t Row identifier for session: " + c)
       }
     }
 
-    LOG.info("Schema from Database Meta Data:")
-    MSchema.getSchemas.exec foreach { s => LOG.debug("\t" + s) }
+    log.info("Schema from Database Meta Data:")
+    MSchema.getSchemas.exec foreach { s => log.debug("\t" + s) }
 
-    LOG.info("Client Info Properties from Database Meta Data:")
-    MClientInfoProperty.getClientInfoProperties.exec.foreach { c => LOG.debug("\t" + c) }
+    log.info("Client Info Properties from Database Meta Data:")
+    MClientInfoProperty.getClientInfoProperties.exec.foreach { c => log.debug("\t" + c) }
 
     MTable.getTables(None, None, None, None).exec.map(_.name.name) should contain allOf("users_xx", "orders_xx")
 

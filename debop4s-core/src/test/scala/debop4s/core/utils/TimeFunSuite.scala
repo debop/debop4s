@@ -33,7 +33,7 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
   }
 
   test("complementary diff") {
-    // Note that this doesn't always hold because of two's complement arithmetic.
+    // Note that this doesn't always stay because of two's complement arithmetic.
     for (a <- easyVs; b <- easyVs) {
       a diff b shouldEqual (-(b diff a))
     }

@@ -12,35 +12,30 @@ import org.joda.time.DateTime
  */
 class EmployeeFunSuite extends AbstractSlickFunSuite {
 
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    employees.schema.create.exec
+  before {
+    commit {
+      employees.schema.drop.asTry
+      employees.schema.create
+    }
+  }
+  after {
+    commit { employees.schema.drop }
   }
 
-  override def afterAll(): Unit = {
-    employees.schema.drop.exec
-    super.afterAll()
-  }
-
-  test("save and load Employee") {
-    val initialCount = commit { employees.count }
+  test("save and load employees") {
 
     val emp = Employee("Sunghyouk Bae", "11111", EncryptedString("debop"), new DateTime(2015, 4, 9, 0, 0))
     emp.id should not be defined
-    // emp.isPersisted shouldBe false
 
-    val persistedEmp = commit { employees.save(emp) }
-    persistedEmp.id shouldBe defined
-    persistedEmp.isPersisted shouldBe true
-    persistedEmp.password.text shouldEqual "debop"
-
-    val emps = readonly { employees.result }
-    emps foreach { emp => LOG.debug(s"\t$emp") }
-
-    // EncryptedString 처럼 Mapping 하는 것도 가능하다.
-    employees.filter(_.password === EncryptedString("debop")).length.exec should be > 0
-
-    commit { employees.count } shouldBe (initialCount + 1)
+    commit {
+      for {
+        initialCount <- employees.count()
+        persistedEmp <- employees.save(emp)
+        emps <- employees.result
+        _ <- employees.filter(_.password === EncryptedString("debop")).length.result.map(_ should be > 0)
+        _ <- employees.count().map(_ shouldEqual (initialCount + 1))
+      } yield ()
+    }
   }
 
 }

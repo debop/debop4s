@@ -1,10 +1,9 @@
 package debop4s.data.slick3.tests
 
-import debop4s.core.concurrent._
 import debop4s.data.slick3.AbstractSlickFunSuite
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 
-import debop4s.data.slick3._
 
 /**
  * CountFunSuite
@@ -18,17 +17,24 @@ class CountFunSuite extends AbstractSlickFunSuite {
       def * = id
     }
     val ts = TableQuery[T]
-    db.exec {
+    commit {
       ts.schema.create >>
       (ts ++= Seq(1, 2, 3, 4, 5))
     }
 
-    Query(ts.length).exec shouldBe Vector(5)
-    ts.length.exec shouldBe 5
-    ts.filter(_.id < 3).length.exec shouldBe 2
-    ts.take(2).length.exec shouldBe 2
+    readonly { Query(ts.length).result } shouldBe Vector(5)
+    readonly { ts.length.result } shouldBe 5
+    readonly { ts.filter(_.id < 3).length.result } shouldBe 2
+    readonly { ts.take(2).length.result } shouldBe 2
 
-    ts.schema.drop.exec
+    readonly {
+      DBIO.seq(Query(ts.length).result.map(_ shouldEqual Seq(5)),
+               ts.length.result.map(_ shouldEqual 5),
+               ts.filter(_.id < 3).length.result.map(_ shouldEqual 2),
+               ts.take(2).length.result.map(_ shouldEqual 2))
+    }
+
+    commit { ts.schema.drop }
   }
 
   test("count - join") {
@@ -48,12 +54,12 @@ class CountFunSuite extends AbstractSlickFunSuite {
     val posts = TableQuery[Posts]
 
     val schema = categories.schema ++ posts.schema
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      categories ++= Seq((1, "Scala"), (2, "JVM"), (3, "Java"), (4, "Erlang"), (5, "Haskell")),
-      posts ++= Seq((1, "Shiny features", 1), (2, "HotSopt", 2))
-    )
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
+               categories ++= Seq((1, "Scala"), (2, "JVM"), (3, "Java"), (4, "Erlang"), (5, "Haskell")),
+               posts ++= Seq((1, "Shiny features", 1), (2, "HotSopt", 2)))
+    }
 
     val joinedQuery = for {
       c <- categories
@@ -63,12 +69,12 @@ class CountFunSuite extends AbstractSlickFunSuite {
     val q1 = joinedQuery.length
     val q2 = Query(joinedQuery.length)
 
-    {
+    readonly {
       q1.result.map(_ shouldEqual 2) >>
       q2.result.map(_ shouldEqual Vector(2))
-    }.exec
+    }
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 
   test("count - join 2") {
@@ -85,12 +91,14 @@ class CountFunSuite extends AbstractSlickFunSuite {
     lazy val bs = TableQuery[B]
 
     lazy val schema = as.schema ++ bs.schema
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      as ++= Seq(1L, 2L),
-      bs ++= Seq((1L, "1a"), (1L, "1b"), (2L, "2"))
-    )
+
+    commit {
+      DBIO.seq(schema.drop.asTry,
+               schema.create,
+               as ++= Seq(1L, 2L),
+               bs ++= Seq((1L, "1a"), (1L, "1b"), (2L, "2"))
+      )
+    }
 
     val qDirectLength =
       for {
@@ -111,10 +119,12 @@ class CountFunSuite extends AbstractSlickFunSuite {
       } yield (a.id, b.map(_.data))
       ).length
 
-    qDirectLength.exec shouldEqual Seq((1L, 2))
-    qJoinLength.exec shouldEqual Seq((1L, 2))
-    qOuterJoinLength.exec shouldBe 3
+    readonly {
+      qDirectLength.result.map(_ shouldEqual Seq((1L, 2))) >>
+      qJoinLength.result.map(_ shouldEqual Seq((1L, 2))) >>
+      qOuterJoinLength.result.map(_ shouldBe 3)
+    }
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 }

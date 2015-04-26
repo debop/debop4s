@@ -1,7 +1,8 @@
 package debop4s.data.slick3.tests
 
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
+import debop4s.data.slick3.AbstractSlickFunSuite
 
 /**
  * TemplateFunSuite
@@ -53,26 +54,32 @@ class TemplateFunSuite extends AbstractSlickFunSuite {
 
     val schema = users.schema ++ orders.schema
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      users.map(_.first) ++= Seq("Homer", "Marge", "Apu", "Carl", "Lenny")
-    )
+    commit {
+      DBIO.seq(
+        schema.drop.asTry,
+        schema.create,
+        users.map(_.first) ++= Seq("Homer", "Marge", "Apu", "Carl", "Lenny")
+      )
+    }
 
-    val uids = users.map(_.id).exec
+    val uids = readonly { users.map(_.id).result }
 
-    db.seq(uids.map(uid => orders.map(o => (o.userId, o.product)) +=(uid, if (uid < 4) "Product A" else "Product B")): _*)
+    commit {
+      DBIO.seq(uids.map(uid => orders.map(o => (o.userId, o.product)) +=(uid, if (uid < 4) "Product A" else "Product B")): _*)
+    }
 
-    db.seq(
-      q1.result.map(_ shouldEqual Seq("Apu")),
-      q2.result.map(_ shouldEqual Seq("Apu")),
-      q3.result.map(_.toSet shouldEqual Set("Marge", "Apu", "Carl", "Lenny")),
-      q4.result.map(_.toSet shouldEqual Set("Marge", "Apu")),
-      q5a.result.map(_ shouldEqual Seq("Apu")),
-      q5b.result.map(_.toSet shouldEqual Set("Homer", "Marge", "Apu", "Carl", "Lenny"))
-    )
+    readonly {
+      DBIO.seq(
+        q1.result.map(_ shouldEqual Seq("Apu")),
+        q2.result.map(_ shouldEqual Seq("Apu")),
+        q3.result.map(_.toSet shouldEqual Set("Marge", "Apu", "Carl", "Lenny")),
+        q4.result.map(_.toSet shouldEqual Set("Marge", "Apu")),
+        q5a.result.map(_ shouldEqual Seq("Apu")),
+        q5b.result.map(_.toSet shouldEqual Set("Homer", "Marge", "Apu", "Carl", "Lenny"))
+      )
+    }
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 
   test("compiled") {
@@ -96,16 +103,6 @@ class TemplateFunSuite extends AbstractSlickFunSuite {
 
     // implicitly 는 implicit 로 전달받는 인자를 정의한 함수를 implicit 변수를 다른 방법으로 표현하는 것입니다.
     //
-    /*
-    class Pair[T: Ordering](val first: T, val second: T) {
-      def smaller(implicit ord:Ordering[T]) =
-        if(ord.compare(first, second) < 0) first else second
-
-      def smaller2 =
-        if(implicitly[Ordering[T]].compare(first, second) < 0) first else second
-    }
-    */
-
     implicitly[slick.lifted.Executable[(Rep[Int], Rep[Int]), _]]
     implicitly[slick.lifted.Compilable[(Rep[Int], Rep[Int]), _]]
     val impShaped = (ts.length, ts.length)
@@ -116,28 +113,29 @@ class TemplateFunSuite extends AbstractSlickFunSuite {
     val expShaped = impShaped.shaped
     val expShapedC = Compiled(expShaped)
 
-    db.seq(
-      ts.schema.drop.asTry,
+    commit {
+      ts.schema.drop.asTry >>
       ts.schema.create
-    )
+    }
 
-    db.seq(
-      Compiled(ts.map(identity)) +=(1, "a"),
-      Compiled(ts) ++= Seq((2, "b"), (3, "c")),
-      byIdAndS(1, "a").result.map(_.toSet shouldEqual Set((1, "a"))),
-      byIdAndSC(1, "a").result.map(_.toSet shouldEqual Set((1, "a"))),
-      byIdAndFixedSC(2).result.map(_.toSet shouldEqual Set((2, "b"))),
-      byIdC3.result.map(_.toSet shouldEqual Set((3, "c"))),
-      byId3.result.map(_.toSet shouldEqual Set((3, "c"))),
-      countBelow(3).result.map(_ shouldEqual 2),
-      countBelowC(3).result.map(_ shouldEqual 2),
-      joinC(1).result.map(_ shouldEqual Seq(((1, "a"), (1, "a")))),
-      impShapedC.result.map(_ shouldEqual(3, 3)),
-      expShapedC.result.map(_ shouldEqual(3, 3))
-    )
+    readonly {
+      DBIO.seq(
+        Compiled(ts.map(identity)) +=(1, "a"),
+        Compiled(ts) ++= Seq((2, "b"), (3, "c")),
+        byIdAndS(1, "a").result.map(_.toSet shouldEqual Set((1, "a"))),
+        byIdAndSC(1, "a").result.map(_.toSet shouldEqual Set((1, "a"))),
+        byIdAndFixedSC(2).result.map(_.toSet shouldEqual Set((2, "b"))),
+        byIdC3.result.map(_.toSet shouldEqual Set((3, "c"))),
+        byId3.result.map(_.toSet shouldEqual Set((3, "c"))),
+        countBelow(3).result.map(_ shouldEqual 2),
+        countBelowC(3).result.map(_ shouldEqual 2),
+        joinC(1).result.map(_ shouldEqual Seq(((1, "a"), (1, "a")))),
+        impShapedC.result.map(_ shouldEqual(3, 3)),
+        expShapedC.result.map(_ shouldEqual(3, 3))
+      )
+    }
 
-    ts.schema.drop.exec
-
+    commit { ts.schema.drop }
   }
 
 }

@@ -1,8 +1,9 @@
 package debop4s.data.slick3.tests
 
 import debop4s.core.concurrent._
+import debop4s.data.slick3.AbstractSlickFunSuite
 
-import debop4s.data.slick3._
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 
 import slick.backend.DatabasePublisher
@@ -61,53 +62,48 @@ class MainFunSuite extends AbstractSlickFunSuite {
       (7, "Snowball", None)
     )
 
-    db.seq(
-      schema.drop.asTry,
-      schema.create,
-      users.map(_.ins) +=("Homer", Some("Simpson")),
-      users.map(_.ins) ++= Seq(
-        ("Marge", Some("Simpson")),
-        ("Apu", Some("Nahasapeemapetilon")),
-        ("Carl", Some("Carlson")),
-        ("Lenny", Some("Leonard"))
-      ),
-      users.map(_.first) ++= Seq("Santa's Little Helper", "Snowball")
-    )
-    users.length.exec shouldBe 7
+    commit {
+      DBIO.seq(
+        schema.drop.asTry,
+        schema.create,
+        users.map(_.ins) +=("Homer", Some("Simpson")),
+        users.map(_.ins) ++= Seq(
+          ("Marge", Some("Simpson")),
+          ("Apu", Some("Nahasapeemapetilon")),
+          ("Carl", Some("Carlson")),
+          ("Lenny", Some("Leonard"))
+        ),
+        users.map(_.first) ++= Seq("Santa's Little Helper", "Snowball")
+      )
+    }
+    readonly { users.length.result } shouldBe 7
 
-    q1.exec shouldEqual expectedUserTuples
+    readonly { q1.result } shouldEqual expectedUserTuples
 
-    val p1 = q1.result.stream
-    val allUsers = p1.mapResult { case (id, f, l) => User(id, f, l.orNull) }.materialize.await
+    val p1 = db.stream(q1.result)
+    val allUsers = materialize(p1.mapResult { case (id, f, l) => User(id, f, l.orNull) }).await
     allUsers shouldEqual expectedUserTuples.map { case (id, f, l) => User(id, f, l.orNull) }
 
-    q1b.exec shouldEqual expectedUserTuples.map {
+    readonly { q1b.result } shouldEqual expectedUserTuples.map {
       case (id, f, l) => (id, Some(f), l, if (id < 3) "low" else if (id < 6) "medium" else "high")
     }
-    q2.exec.head shouldEqual(Some("Nahasapeemapetilon"), 3)
+    readonly { q2.result }.head shouldEqual(Some("Nahasapeemapetilon"), 3)
 
     val ordersInserts =
       for (u <- allUsers if u.first != "Apu" && u.first != "Snowball"; i <- 1 to 2)
         yield orders.map(o => (o.userId, o.product, o.shipped, o.rebate)) +=
               (u.id, "Gizmo " + ((scala.math.random * 10) + 1).toInt, i == 2, Some(u.first == "Marge"))
 
-    db.seq(ordersInserts: _*)
+    commit {
+      DBIO.seq(ordersInserts: _*)
+    }
 
-    /*
-    ┇ select x2."first", x2."last", x3."orderId", x3."product", x3."shipped", x3."rebate"
-    ┇ from (
-    ┇   select x4."id" as "id", x4."first" as "first", x4."last" as "last"
-    ┇   from "main_users" x4
-    ┇   order by x4."first"
-    ┇ ) x2, "main_orders" x3
-    ┇ where (x2."last" is not null) and (x3."userId" = x2."id")
-     */
     val q3 = for {
       u <- users.sortBy(_.first) if u.last.isDefined
       o <- u.getOrders
     } yield (u.first, u.last, o.orderId, o.product, o.shipped, o.rebate)
 
-    q3.result.stream.materialize.map(s => s.length shouldBe 8)
+    materialize(db.stream(q3.result)).map(s => s.length shouldBe 8)
 
     val q4 = for {
       u <- users
@@ -131,8 +127,8 @@ class MainFunSuite extends AbstractSlickFunSuite {
       o <- orders if o.userId === u.id
     } yield (u.first, (LiteralColumn(1) + o.orderId, 1), o.product)
 
-    q4.to[Set].exec shouldBe Set(("Homer", 2), ("Marge", 4), ("Carl", 6), ("Lenny", 8), ("Santa's Little Helper", 10))
-    q4b.to[Set].exec shouldBe Set(("Homer", 2), ("Marge", 4), ("Carl", 6), ("Lenny", 8), ("Santa's Little Helper", 10))
+    readonly { q4.to[Set].result } shouldBe Set(("Homer", 2), ("Marge", 4), ("Carl", 6), ("Lenny", 8), ("Santa's Little Helper", 10))
+    readonly { q4b.to[Set].result } shouldBe Set(("Homer", 2), ("Marge", 4), ("Carl", 6), ("Lenny", 8), ("Santa's Little Helper", 10))
 
     val b1 = orders.filter(o => o.shipped && o.shipped).map(o => o.shipped && o.shipped)
     val b2 = orders.filter(o => o.shipped && o.rebate).map(o => o.shipped && o.rebate)
@@ -164,15 +160,15 @@ class MainFunSuite extends AbstractSlickFunSuite {
     q6.result.statements.toSeq.length should be >= 1
 
     q5.to[Set].exec shouldBe Set((3, "Apu", Some("Nahasapeemapetilon")), (7, "Snowball", None))
-    q5.delete.exec shouldBe 2
-    q6.exec.head shouldBe 0
+    commit { q5.delete } shouldBe 2
+    readonly { q6.result }.head shouldBe 0
 
     val q7 = Compiled { (s: Rep[String]) => users.filter(_.first === s).map(_.first) }
     println(q7("Homer").updateStatement)
     val q7b = Compiled { users.filter(_.first === "Homer Jay").map(_.first) }
     println(q7b.updateStatement)
 
-    db.exec {
+    commit {
       q7("Homer").update("Homer Jay").map(_ shouldBe 1) >>
       q7b.update("Homer").map(_ shouldBe 1) >>
       q7("Marge").map(_.length).result.map(_ shouldBe 1) >>
@@ -186,12 +182,12 @@ class MainFunSuite extends AbstractSlickFunSuite {
     q9.result.statements.toSeq.length should be >= 1
     val q10 = users.filter(_.last inSetBind Seq()).map(u => (u.first, u.last))
 
-    db.exec {
+    commit {
       q8.update("n/a", Some("n/a")).map(_ shouldBe 1) >>
       q9.result.map(_ shouldBe 4) >>
       q10.result.map(_ shouldBe Nil)
     }
 
-    schema.drop.exec
+    commit { schema.drop }
   }
 }

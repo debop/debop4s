@@ -1,9 +1,10 @@
 package debop4s.data.slick3.tests
 
-import debop4s.data.slick3._
+import debop4s.data.slick3.AbstractSlickFunSuite
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-
 import slick.util.TupleMethods._
+
 import scala.concurrent.Future
 
 /**
@@ -57,18 +58,19 @@ class NestingFunSuite extends AbstractSlickFunSuite {
       (a, b, c) <- ts.filter(_.a === 1).map(t => (t.a, t.b, 4)) unionAll ts.filter(_.a === 2).map(t => (t.a, t.b, 5))
     } yield a ~ b ~ (c * 2)
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts ++= Seq((1, "1", "a"), (2, "2", "b"), (3, "3", "c")),
-      q1a.result.map(_ shouldBe res1),
-      q1c.result.map(_ shouldBe res1),
-      q1d.result.map(_ shouldBe res1b),
-      q2a.result.map(v => v.toSet shouldBe res2),
-      q2b.result.map(v => v.toSet shouldBe res2),
-      q2c.result.map(v => v.toSet shouldBe res2),
-      ts.schema.drop
-    )
+    commit {
+      DBIO.seq(ts.schema.drop.asTry,
+               ts.schema.create,
+               ts ++= Seq((1, "1", "a"), (2, "2", "b"), (3, "3", "c")),
+               q1a.result.map(_ shouldBe res1),
+               q1c.result.map(_ shouldBe res1),
+               q1d.result.map(_ shouldBe res1b),
+               q2a.result.map(v => v.toSet shouldBe res2),
+               q2b.result.map(v => v.toSet shouldBe res2),
+               q2c.result.map(v => v.toSet shouldBe res2),
+               ts.schema.drop
+      )
+    }
   }
 
   test("nested options") {
@@ -226,7 +228,7 @@ class NestingFunSuite extends AbstractSlickFunSuite {
       q2f3.result.map(_ shouldBe r.map(t => Some(t._1)).map { io => Some(io) }.map(_.flatten))
     )
 
-    db.exec {
+    commit {
       setup >>
       t1 >> t2 >> t3 >> t4 >> t5 >> t6 >>
       xs.schema.drop

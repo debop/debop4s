@@ -72,8 +72,8 @@ package object core {
   //    def await(timeout: Long): T = Await.result(underlying, Duration(timeout, TimeUnit.MILLISECONDS))
   //    def await(implicit atMost: Duration = defaultDuration) = Await.result(underlying, atMost)
   //
-  //    def hold(timeout: Long): Unit = Asyncs.ready(underlying, timeout)
-  //    def hold(implicit atMost: Duration = defaultDuration): Unit = Await.ready(underlying, atMost)
+  //    def stay(timeout: Long): Unit = Asyncs.ready(underlying, timeout)
+  //    def stay(implicit atMost: Duration = defaultDuration): Unit = Await.ready(underlying, atMost)
   //  }
   //
   //  implicit class AwaitableSequenceExtensions[A](underlying: Iterable[scala.concurrent.Future[A]]) {

@@ -25,35 +25,36 @@ package object slick3 {
 
   private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  implicit val defaultTimeout: Duration = FiniteDuration(5, TimeUnit.MINUTES)
-
-  implicit def query[T](dbAction: DBIO[T])(implicit timeout: Duration = 30 seconds): T = {
-    runAction(dbAction)(timeout)
-  }
-
-  def commit[T](dbAction: DBIO[T])(implicit timeout: Duration = 5 minutes): T = {
-    runAction(dbAction.transactionally)(timeout)
-  }
-
-  def readonly[T](dbAction: DBIO[T])(implicit timeout: Duration = 1 minutes): T = {
-    runReadOnly(dbAction)(timeout)
-  }
-
-  private def runAction[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
-    using(SlickContext.createMasterDB()) { db =>
-      // keey the database in memory with an extra connection
-      db.createSession().force()
-      db.run(dbAction).await(timeout)
-    }
-  }
-
-  private def runReadOnly[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
-    using(SlickContext.createSlaveDB()) { db =>
-      // keey the database in memory with an extra connection
-      db.createSession().force()
-      db.run(dbAction).await(timeout)
-    }
-  }
+  // Move to SlickComponent
+  //  implicit val defaultTimeout: Duration = FiniteDuration(5, TimeUnit.MINUTES)
+  //
+  //  implicit def query[T](dbAction: DBIO[T])(implicit timeout: Duration = 30 seconds): T = {
+  //    runAction(dbAction)(timeout)
+  //  }
+  //
+  //  implicit def commit[T](dbAction: DBIO[T])(implicit timeout: Duration = 5 minutes): T = {
+  //    runAction(dbAction.transactionally)(timeout)
+  //  }
+  //
+  //  implicit def readonly[T](dbAction: DBIO[T])(implicit timeout: Duration = 1 minutes): T = {
+  //    runReadOnly(dbAction)(timeout)
+  //  }
+  //
+  //  private def runAction[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
+  //    using(SlickContext.createMasterDB()) { db =>
+  //      // keey the database in memory with an extra connection
+  //      db.createSession().force()
+  //      db.run(dbAction).await(timeout)
+  //    }
+  //  }
+  //
+  //  private def runReadOnly[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
+  //    using(SlickContext.createSlaveDB()) { db =>
+  //      // keey the database in memory with an extra connection
+  //      db.createSession().force()
+  //      db.run(dbAction).await(timeout)
+  //    }
+  //  }
 
   //  implicit class DBIOExtensions[T](dbAction: DBIO[T]) {
   //
@@ -202,7 +203,7 @@ package object slick3 {
      * @return
      */
     def exec(implicit db: SlickContext.driver.backend.DatabaseDef = defaultDB) = {
-      db.run(DBIO.seq(actions: _*)).await
+      db.run(DBIO.seq(actions: _*)).stay
     }
   }
 

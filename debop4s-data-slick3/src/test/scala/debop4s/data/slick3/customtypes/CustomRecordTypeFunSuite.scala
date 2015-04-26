@@ -1,5 +1,6 @@
 package debop4s.data.slick3.customtypes
 
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
 import debop4s.data.slick3._
 import slick.lifted
@@ -47,23 +48,15 @@ class CustomRecordTypeFunSuite extends AbstractSlickFunSuite {
   }
 
   test("custom record type") {
-    Seq(
-      pairShapes +=("triangle", Pair(1, "a")),
-      pairShapes +=("circle", Pair(2, "b")),
-      pairShapes +=("rectangle", Pair(3, "c"))
-    ).exec
+    commit {
+      DBIO.seq(pairShapes +=("triangle", Pair(1, "a")),
+               pairShapes +=("circle", Pair(2, "b")),
+               pairShapes +=("rectangle", Pair(3, "c"))
+      )
+    }
 
-    pairShapes.filter(_.name === "rectangle".bind).map(_.pair.a).exec shouldBe Vector(3)
+    readonly { pairShapes.filter(_.name === "rectangle".bind).map(_.pair.a).result } shouldEqual Seq(3)
 
-    /*
-    ┇ select x2.x3, 42, x2.x4
-    ┇ from (
-    ┇   select x5."shape_no" as x3, x5."shape_desc"||x5."shape_desc" as x4
-    ┇   from "pair_shape" x5
-    ┇ ) x2
-    ┇ where not (x2.x3 = 1)
-    ┇ order by x2.x4
-     */
     val q = pairShapes
             .map(_.pair)
             .map { case p => Pair(p.a, p.b ++ p.b) }
@@ -71,6 +64,6 @@ class CustomRecordTypeFunSuite extends AbstractSlickFunSuite {
             .sortBy { case Pair(_, ss) => ss }
             .map { case Pair(id, ss) => Pair(id, Pair(42, ss)) }
 
-    q.exec shouldEqual Seq(Pair(2, Pair(42, "bb")), Pair(3, Pair(42, "cc")))
+    readonly { q.result } shouldEqual Seq(Pair(2, Pair(42, "bb")), Pair(3, Pair(42, "cc")))
   }
 }

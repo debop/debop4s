@@ -1,7 +1,8 @@
 package debop4s.data.slick3.tests
 
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
+import debop4s.data.slick3.AbstractSlickFunSuite
 
 import scala.language.existentials
 
@@ -34,18 +35,19 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     }
     lazy val ts = TableQuery[T]
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts.map(t => (t.b, t.c)) ++= Seq((False, None), (True, Some(True)))
-    )
+    commit {
+      DBIO.seq(
+        ts.schema.drop.asTry,
+        ts.schema.create,
+        ts.map(t => (t.b, t.c)) ++= Seq((False, None), (True, Some(True)))
+      )
+    }
 
-    ts.to[Set].exec shouldEqual Set((1, False, None), (2, True, Some(True)))
-    ts.filter(_.b === (True: Bool)).to[Set].exec shouldEqual Set((2, True, Some(True)))
-    ts.filter(_.b === (False: Bool)).to[Set].exec shouldEqual Set((1, False, None))
+    readonly { ts.to[Set].result } shouldEqual Set((1, False, None), (2, True, Some(True)))
+    readonly { ts.filter(_.b === (True: Bool)).to[Set].result } shouldEqual Set((2, True, Some(True)))
+    readonly { ts.filter(_.b === (False: Bool)).to[Set].result } shouldEqual Set((1, False, None))
 
-    ts.schema.drop.exec
-
+    commit { ts.schema.drop }
   }
 
   test("mapped type - char") {
@@ -73,17 +75,19 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     }
     lazy val ts = TableQuery[T]
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts.map(t => (t.b, t.c)) ++= Seq((EnumValue1, None), (EnumValue1, Some(EnumValue2)), (EnumValue2, Some(EnumValue3)))
-    )
+    commit {
+      DBIO.seq(
+        ts.schema.drop.asTry,
+        ts.schema.create,
+        ts.map(t => (t.b, t.c)) ++= Seq((EnumValue1, None), (EnumValue1, Some(EnumValue2)), (EnumValue2, Some(EnumValue3)))
+      )
+    }
 
-    ts.to[Set].exec shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)), (3, EnumValue2, Some(EnumValue3)))
-    ts.filter(_.b === (EnumValue1: EnumType)).to[Set].exec shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)))
-    ts.filter(_.b === (EnumValue2: EnumType)).to[Set].exec shouldEqual Set((3, EnumValue2, Some(EnumValue3)))
+    readonly { ts.to[Set].result } shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)), (3, EnumValue2, Some(EnumValue3)))
+    readonly { ts.filter(_.b === (EnumValue1: EnumType)).to[Set].result } shouldEqual Set((1, EnumValue1, None), (2, EnumValue1, Some(EnumValue2)))
+    readonly { ts.filter(_.b === (EnumValue2: EnumType)).to[Set].result } shouldEqual Set((3, EnumValue2, Some(EnumValue3)))
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   test("mapped ref") {
@@ -107,17 +111,18 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     }
     lazy val ts = TableQuery[T]
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts.map(t => (t.b, t.c)) ++= Seq((False, None), (True, Some(True)))
-    )
+    commit {
+      DBIO.seq(ts.schema.drop.asTry,
+               ts.schema.create,
+               ts.map(t => (t.b, t.c)) ++= Seq((False, None), (True, Some(True)))
+      )
+    }
 
-    ts.to[Set].exec shouldEqual Set((1, False, None), (2, True, Some(True)))
-    ts.filter(_.b === (True: Bool)).to[Set].exec shouldEqual Set((2, True, Some(True)))
-    ts.filter(_.b === (False: Bool)).to[Set].exec shouldEqual Set((1, False, None))
+    readonly { ts.to[Set].result } shouldEqual Set((1, False, None), (2, True, Some(True)))
+    readonly { ts.filter(_.b === (True: Bool)).to[Set].result } shouldEqual Set((2, True, Some(True)))
+    readonly { ts.filter(_.b === (False: Bool)).to[Set].result } shouldEqual Set((1, False, None))
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   test("auto mapped") {
@@ -128,15 +133,16 @@ class RelationalMapperFunSuite extends AbstractSlickFunSuite {
     }
     lazy val ts = TableQuery[T]
 
-    db.seq(
-      ts.schema.drop.asTry,
-      ts.schema.create,
-      ts ++= Seq((MyMappedID(1), 2), (MyMappedID(3), 4))
-    )
-    ts.to[Set].exec shouldEqual Set((MyMappedID(1), 2), (MyMappedID(3), 4))
-    ts.filter(_.id === MyMappedID(1)).to[Set].exec shouldEqual Set((MyMappedID(1), 2))
+    commit {
+      DBIO.seq(ts.schema.drop.asTry,
+               ts.schema.create,
+               ts ++= Seq((MyMappedID(1), 2), (MyMappedID(3), 4))
+      )
+    }
+    readonly { ts.to[Set].result } shouldEqual Set((MyMappedID(1), 2), (MyMappedID(3), 4))
+    readonly { ts.filter(_.id === MyMappedID(1)).to[Set].result } shouldEqual Set((MyMappedID(1), 2))
 
-    ts.schema.drop.exec
+    commit { ts.schema.drop }
   }
 
   def mappedToMacroCompilerBug = {

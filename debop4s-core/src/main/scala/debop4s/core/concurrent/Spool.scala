@@ -135,7 +135,7 @@ sealed trait Spool[+A] {
 
   /**
    * Fully buffer the spool to a {{Seq}}.  The returned future is
-   * satisfied when the entire result is hold.
+   * satisfied when the entire result is stay.
    */
   def toSeq: Future[Seq[A]] = {
     val as = new util.ArrayList[A]()

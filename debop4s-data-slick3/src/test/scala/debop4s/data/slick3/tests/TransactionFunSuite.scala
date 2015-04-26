@@ -1,8 +1,9 @@
 package debop4s.data.slick3.tests
 
 import debop4s.core.concurrent._
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
+import debop4s.data.slick3.{SlickContext, AbstractSlickFunSuite}
 import slick.dbio.{Effect, NoStream, SynchronousDatabaseAction}
 import slick.jdbc.{JdbcBackend, TransactionIsolation}
 import slick.util.DumpInfo
@@ -28,7 +29,7 @@ class TransactionFunSuite extends AbstractSlickFunSuite {
 
     class ExpectedException extends RuntimeException
 
-    db.exec {
+    autoCommit {
       ts.schema.drop.asTry andThen
       ts.schema.create andThen {
         (for {

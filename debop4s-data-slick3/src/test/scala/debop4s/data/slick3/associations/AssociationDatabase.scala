@@ -14,8 +14,7 @@ object AssociationDatabase extends SlickComponent with AssociationSchema
 /**
  * Association DB Schema
  */
-trait AssociationSchema {
-  self: SlickComponent =>
+trait AssociationSchema {self: SlickComponent =>
 
   import driver.api._
 

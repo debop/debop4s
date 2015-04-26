@@ -1,12 +1,8 @@
 package debop4s.data.slick3.tests
 
 import debop4s.data.slick3.AbstractSlickFunSuite
-
-import debop4s.core.concurrent._
+import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import debop4s.data.slick3.{AbstractSlickFunSuite, _}
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * ColumnDefaultFunSuite
@@ -23,14 +19,15 @@ class ColumnDefaultFunSuite extends AbstractSlickFunSuite {
   lazy val as = TableQuery[A]
 
   test("column default") {
-    db.exec {
+    commit {
       as.schema.drop.asTry >>
       as.schema.create >>
       (as.map(_.id) += 42)
     }
-    as.exec shouldEqual Seq((42, "foo", Some(true)))
 
-    as.schema.drop.exec
+    readonly { as.result } shouldEqual Seq((42, "foo", Some(true)))
+
+    commit { as.schema.drop }
   }
 
 }
