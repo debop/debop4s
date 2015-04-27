@@ -92,16 +92,110 @@ trait SlickComponent
   private def runAction[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
     using(SlickContext.createMasterDB()) { db =>
       // keey the database in memory with an extra connection
-      db.createSession().force()
-      db.run(dbAction).await(timeout)
+      using(db.createSession()) { session =>
+        session.force()
+        db.run(dbAction).await(timeout)
+      }
     }
   }
 
   private def runReadOnly[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
     using(SlickContext.createSlaveDB()) { db =>
       // keey the database in memory with an extra connection
-      // db.createSession().force()
-      db.run(dbAction).await(timeout)
+      using(db.createSession()) { session =>
+        session.force()
+        db.run(dbAction).await(timeout)
+      }
+    }
+  }
+
+  implicit class PublisherExtensions[T](p: Publisher[T]) {
+
+    /**
+     * 동기 방식으로 reactive stream 을 읽어드여 Vector 로 빌드합니다.
+     */
+    def materialize: Future[Vector[T]] = {
+      val builder = Vector.newBuilder[T]
+      val pr = Promise[Vector[T]]()
+      try p.subscribe(new Subscriber[T] {
+        override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
+        override def onComplete(): Unit = pr.success(builder.result())
+        override def onError(throwable: Throwable): Unit = pr.failure(throwable)
+        override def onNext(t: T): Unit = builder += t
+      }) catch { case NonFatal(e) => pr.failure(e) }
+
+      pr.future
+    }
+
+    /** Asynchronously consume a Reactive Stream and materialize it as a Vector, requesting new
+      * elements one by one and transforming them after the specified delay. This ensures that the
+      * transformation does not run in the synchronous database context but still preserves
+      * proper sequencing. */
+    def materializeAsync[R](tr: T => Future[R],
+                            delay: Duration = Duration(100L, TimeUnit.MILLISECONDS)): Future[Vector[R]] = {
+      val exe = new ThreadPoolExecutor(1, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable]())
+      val ec = ExecutionContext.fromExecutor(exe)
+      val builder = Vector.newBuilder[R]
+      val pr = Promise[Vector[R]]()
+      var sub: Subscription = null
+
+      def async[A](thunk: => A): Future[A] = {
+        val f = Future {
+          Thread.sleep(delay.toMillis)
+          thunk
+        }(ec)
+        f.onFailure { case t =>
+          pr.tryFailure(t)
+          sub.cancel()
+        }(ec)
+        f
+      }
+      try
+        p.subscribe(new Subscriber[T] {
+          def onSubscribe(s: Subscription): Unit = async {
+            sub = s
+            sub.request(1L)
+          }
+          def onComplete(): Unit = async(pr.trySuccess(builder.result()))
+          def onError(t: Throwable): Unit = async(pr.tryFailure(t))
+          def onNext(t: T): Unit = async {
+            tr(t).onComplete {
+              case Success(r) =>
+                builder += r
+                sub.request(1L)
+              case Failure(ex) =>
+                pr.tryFailure(ex)
+                sub.cancel()
+            }
+          }
+        }) catch {
+        case NonFatal(ex) => pr.tryFailure(ex)
+      }
+      val f = pr.future
+      f.onComplete(_ => exe.shutdown())
+      f
+    }
+
+    /**
+     * reactive stream 을 읽어 각 row 를 처리합니다.
+     * @param f 각 row를 처리할 함수
+     * @return Future[Unit]
+     */
+    def foreach(f: T => Any): Future[Unit] = {
+      val pr = Promise[Unit]()
+
+      try {
+        p.subscribe(new Subscriber[T] {
+          override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
+          override def onComplete(): Unit = pr.success(())
+          override def onError(throwable: Throwable): Unit = pr.failure(throwable)
+          override def onNext(t: T): Unit = f(t)
+        })
+      } catch {
+        case NonFatal(e) => pr.failure(e)
+      }
+
+      pr.future
     }
   }
 
