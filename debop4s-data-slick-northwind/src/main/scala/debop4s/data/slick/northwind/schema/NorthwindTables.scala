@@ -197,7 +197,7 @@ trait NorthwindTables {self: SlickComponent =>
 
   class Orders(tag: Tag) extends IdTable[Order, Int](tag, "Orders") {
     def id = column[Int]("orderID", O.PrimaryKey, O.AutoInc)
-    def customerId = column[String]("CustomerID")
+    def customerId = column[Option[String]]("CustomerID")
     def employeeId = column[Option[Int]]("EmployeeID")
     def orderDate = column[DateTime]("OrderDate")
     def requiredDate = column[DateTime]("RequiredDate")
@@ -212,7 +212,7 @@ trait NorthwindTables {self: SlickComponent =>
     def postalCode = column[Option[String]]("ShipPostalCode", O.Length(10, true))
     def country = column[Option[String]]("ShipCountry", O.Length(15, true))
 
-    def * = (customerId.?, employeeId, orderDate.?, requiredDate.?, shippedDate.?, shipVia, freight.?, shipName,
+    def * = (customerId, employeeId, orderDate.?, requiredDate.?, shippedDate.?, shipVia, freight, shipName,
               (address, city, region, postalCode, country), id.?).shaped <>( {
       case (customerId, employeeId, orderDate, requiredDate, shippedDate, shipVia, freight, shipName, shipAddr, id) =>
         Order(customerId, employeeId, orderDate, requiredDate, shippedDate, shipVia, freight, shipName, Some(AddressComponent.tupled.apply(shipAddr)), id)

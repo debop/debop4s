@@ -1,10 +1,9 @@
-package debop4s.data.slick.northwind.model
+package debop4s.data.slick3.northwind.model
 
 import java.sql.Blob
 
-import debop4s.data.slick.model.{IntEntity, StringEntity}
+import debop4s.data.slick3.model._
 import org.joda.time.DateTime
-
 
 case class AddressComponent(address: Option[String] = None,
                             city: Option[String] = None,
@@ -64,7 +63,7 @@ case class Order(customerId: Option[String] = None,
                  requiredDate: Option[DateTime] = None,
                  shippedDate: Option[DateTime] = None,
                  shipVia: Option[Int] = None,
-                 freight: BigDecimal = 0.0,
+                 freight: BigDecimal = BigDecimal(0.0),
                  shipName: Option[String] = None,
                  shipAddress: Option[AddressComponent] = None,
                  var id: Option[Int]) extends IntEntity

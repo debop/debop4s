@@ -112,17 +112,17 @@ trait ActiveSchema {self: SlickComponent =>
   lazy val schema = suppliers.schema ++ beers.schema
 
   def createSchema(): DBIO[Unit] = {
-    LOG.info(s"Create Active Database schema...")
+    log.info(s"Create Active Database schema...")
 
-    LOG.debug(s"Schema Drop:\n${ schema.dropStatements.mkString("\n") }")
-    LOG.debug(s"Schema Create:\n${ schema.createStatements.mkString("\n") }")
+    log.debug(s"Schema Drop:\n${ schema.dropStatements.mkString("\n") }")
+    log.debug(s"Schema Create:\n${ schema.createStatements.mkString("\n") }")
 
     schema.drop.asTry >> schema.create
   }
 
   def dropSchema(): DBIO[Unit] = {
-    LOG.info(s"Drop Active Database schema...")
-    LOG.debug(s"Schema Drop:\n${ schema.dropStatements.mkString("\n") }")
+    log.info(s"Drop Active Database schema...")
+    log.debug(s"Schema Drop:\n${ schema.dropStatements.mkString("\n") }")
 
     schema.drop
   }

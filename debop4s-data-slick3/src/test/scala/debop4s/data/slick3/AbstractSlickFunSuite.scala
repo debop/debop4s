@@ -26,7 +26,7 @@ abstract class AbstractSlickFunSuite
   private[this] var _db: SlickContext.driver.backend.DatabaseDef = _
 
   implicit lazy val db = {
-    if (_db == null) {
+    if (_db == null) synchronized {
       _db = SlickContext.forDataSource()
     }
     _db
@@ -41,9 +41,9 @@ abstract class AbstractSlickFunSuite
   }
 
   private def initialize(): Unit = synchronized {
-    SlickContext.init("slick-h2", "slick")
+    // SlickContext.init("slick-h2", "slick")
     // SlickContext.init("slick-hsqldb", "slick")
-    // SlickContext.init("slick-mysql", "slick")
+    SlickContext.init("slick-mysql", "slick")
     // SlickContext.init("slick-mariadb", "slick")
     // SlickContext.init("slick-postgres", "slick")
     // SlickContext.init("slick-mariadb-master-slaves", "slick")

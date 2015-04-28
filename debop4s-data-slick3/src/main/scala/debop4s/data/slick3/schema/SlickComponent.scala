@@ -4,20 +4,17 @@ import java.util.concurrent.{LinkedBlockingQueue, ThreadPoolExecutor, TimeUnit}
 
 import debop4s.core._
 import debop4s.core.concurrent._
-import debop4s.data.common.JdbcDrivers
 import debop4s.data.slick3.SlickContext
-import debop4s.data.slick3.SlickContext._
 import debop4s.data.slick3.SlickContext.driver.api._
-import org.reactivestreams.{Subscription, Subscriber, Publisher}
+import org.reactivestreams.{Publisher, Subscriber, Subscription}
 import org.slf4j.LoggerFactory
-import slick.backend.DatabasePublisher
-import slick.driver._
 
-import scala.concurrent.{ExecutionContext, Promise, Future}
-import scala.concurrent.duration.{Duration, FiniteDuration, _}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
+import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.util.control.NonFatal
+import scala.util.{Failure, Success}
+import scala.async.Async._
 
 
 /**
@@ -49,15 +46,7 @@ trait SlickComponent
   with SlickProfile
   with SlickColumnMapper {
 
-  protected val LOG = LoggerFactory.getLogger(getClass)
-
-  //  def isMySQL: Boolean = (driver == MySQLDriver) || isMariaDB
-  //  def isMariaDB: Boolean = jdbcDriver == JdbcDrivers.DRIVER_CLASS_MARIADB
-  //  def isH2: Boolean = driver == H2Driver
-  //  def isHsqlDB: Boolean = driver == HsqldbDriver
-  //  def isPostgres: Boolean = driver == PostgresDriver
-  //  def isSQLite: Boolean = driver == SQLiteDriver
-  //  def isOracle: Boolean = driver.profile.toString.contains("OracleDriver")
+  protected val log = LoggerFactory.getLogger(getClass)
 
   private[this] var _db: SlickContext.driver.backend.DatabaseDef = _
 
@@ -75,39 +64,90 @@ trait SlickComponent
     }
   }
 
-  val defaultTimeout: Duration = FiniteDuration(5, TimeUnit.MINUTES)
+  /**
+   * 마스터 DB를 이용하여 DB에 쓰기 작업을 처리합니다.
+   */
+  implicit def runCommit[T](dbAction: DBIO[T]): Future[T] = {
+    using(SlickContext.createMasterDB()) { db =>
+      db.run(dbAction)
+    }
+  }
+  /**
+   * 읽기 전용의 DB 작업을 수행합니다.
+   */
+  implicit def runRead[T](dbAction: DBIO[T]): Future[T] = {
+    using(SlickContext.createSlaveDB()) { db =>
+      db.run(dbAction)
+    }
+  }
 
-  implicit def autoCommit[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
+  implicit val defaultTimeout: Duration = FiniteDuration(5, TimeUnit.MINUTES)
+
+  implicit def autoCommit[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     runAction(dbAction)(timeout)
   }
 
-  implicit def commit[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
+  implicit def commit[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     runAction(dbAction.transactionally)(timeout)
   }
 
-  implicit def readonly[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
+  implicit def readonly[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     runReadOnly(dbAction)(timeout)
   }
 
-  private def runAction[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
+  implicit def readonly[A, B](a: DBIO[A], b: DBIO[B])(implicit timeout: Duration): (A, B) = {
+    async {
+      val fa = await(runRead(a))
+      val fb = await(runRead(b))
+      (fa, fb)
+    }.await(timeout)
+  }
+  implicit def readonly[A, B, C](a: DBIO[A], b: DBIO[B], c: DBIO[C])(implicit timeout: Duration): (A, B, C) = {
+    async {
+      val fa = await(runRead(a))
+      val fb = await(runRead(b))
+      val fc = await(runRead(c))
+      (fa, fb, fc)
+    }.await(timeout)
+  }
+
+  private def runAction[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     using(SlickContext.createMasterDB()) { db =>
-      // keey the database in memory with an extra connection
       using(db.createSession()) { session =>
+        // keey the database in memory with an extra connection
         session.force()
         db.run(dbAction).await(timeout)
       }
     }
   }
 
-  private def runReadOnly[T](dbAction: DBIO[T])(implicit timeout: Duration = defaultTimeout): T = {
+  private def runReadOnly[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     using(SlickContext.createSlaveDB()) { db =>
-      // keey the database in memory with an extra connection
       using(db.createSession()) { session =>
-        session.force()
+        // keey the database in memory with an extra connection
+        // session.force()
         db.run(dbAction).await(timeout)
       }
     }
   }
+
+  implicit def commitAsParallel(dbActions: DBIO[_]*)(implicit timeout: Duration): Seq[_] = {
+    dbActions.par.map { dbAction =>
+      using(SlickContext.createMasterDB()) { db =>
+        db.run(dbAction)
+      }
+    }.seq.awaitAll(timeout).toSeq
+  }
+
+  // return 수형이 지정되지 않는다면, 제대로 작동할 수 없다.
+  //  implicit def readAsParallel(dbActions: DBIO[_]*)(implicit timeout: Duration = defaultTimeout): Seq[_] = {
+  //    using(SlickContext.createSlaveDB()) { db =>
+  //      dbActions.par.map { dbAction =>
+  //        db.run(dbAction)
+  //      }.seq.awaitAll(timeout).toSeq
+  //    }
+  //  }
+
 
   implicit class PublisherExtensions[T](p: Publisher[T]) {
 
@@ -127,10 +167,12 @@ trait SlickComponent
       pr.future
     }
 
-    /** Asynchronously consume a Reactive Stream and materialize it as a Vector, requesting new
-      * elements one by one and transforming them after the specified delay. This ensures that the
-      * transformation does not run in the synchronous database context but still preserves
-      * proper sequencing. */
+    /**
+     * Asynchronously consume a Reactive Stream and materialize it as a Vector, requesting new
+     * elements one by one and transforming them after the specified delay. This ensures that the
+     * transformation does not run in the synchronous database context but still preserves
+     * proper sequencing.
+     */
     def materializeAsync[R](tr: T => Future[R],
                             delay: Duration = Duration(100L, TimeUnit.MILLISECONDS)): Future[Vector[R]] = {
       val exe = new ThreadPoolExecutor(1, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable]())
