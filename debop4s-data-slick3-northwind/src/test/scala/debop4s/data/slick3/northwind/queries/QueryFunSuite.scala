@@ -112,14 +112,10 @@ class QueryFunSuite extends AbstractNorthwindFunSuite {
                                   } yield (titleOfCourtesy, emps.length)
                                   ).sortBy(_._1)
 
-    val rss = readonly {
-      DBIO.sequence(Seq(qCountByCountry.result,
+    val (countByCountry, groupByCountry, groupByTitleOfCourtesy) =
+      readonly(qCountByCountry.result,
                         qGroupByCountry.result,
-                        qGroupByTitleOfCourtesy.result))
-    }
-    val countByCountry = rss(0)
-    val groupByCountry = rss(1)
-    val groupByTitleOfCourtesy = rss(2)
+               qGroupByTitleOfCourtesy.result)
 
     countByCountry foreach { c => log.debug(s"count by country=$c") }
     countByCountry.size shouldBe 2
@@ -138,12 +134,14 @@ class QueryFunSuite extends AbstractNorthwindFunSuite {
 
   test("load order details") {
     val q = orderDetails.sortBy(_.orderId)
-    val ods = readonly { q.take(10).result }
+    val q2 = orderDetails.filter(_.discount > 0.0.bind)
+
+    val (ods, ods2) = readonly(q.take(10).result, q2.result)
+
     ods foreach { od => log.debug(s"order details=$od") }
     ods.size shouldBe 10
 
-    val q2 = orderDetails.filter(_.discount > 0.0.bind)
-    val ods2 = readonly { q2.result }
+    ods2 foreach { od => log.debug(s"order details=$od") }
     ods2.size shouldBe 0
   }
 
@@ -161,24 +159,24 @@ class QueryFunSuite extends AbstractNorthwindFunSuite {
 
     val implicitJoin = q.sortBy(_._1.name) // order by product.name
 
-    val rs = readonly { implicitJoin.result }
-    rs foreach {
-      case (product, categoryName) => log.debug(s"product=$product, category name=$categoryName")
-    }
-    rs.size should be > 0
-
     val q2 = for {
       (p, c) <- products join categories on (_.categoryId === _.id)
     } yield (p, c.name)
 
     val explicitJoin = q.sortBy(_._1.name) // order by product.name
 
-    val rs2 = readonly { explicitJoin.result }
-    rs2 foreach {
-      case (product, categoryName) => log.debug(s"product=$product, category name=$categoryName")
+    val (rs1, rs2) = readonly(implicitJoin.result, explicitJoin.result)
+
+    rs1 foreach { case (product, categoryName) =>
+      log.debug(s"product=$product, category name=$categoryName")
+    }
+    rs1.size should be > 0
+
+    rs2 foreach { case (product, categoryName) =>
+      log.debug(s"product=$product, category name=$categoryName")
     }
     rs2.size should be > 0
 
-    rs.size shouldEqual rs2.size
+    rs1 shouldEqual rs2
   }
 }

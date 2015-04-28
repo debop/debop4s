@@ -1,13 +1,9 @@
 package debop4s.data.slick3.northwind.queries
 
-import debop4s.core.concurrent._
 import debop4s.data.slick3.northwind.AbstractNorthwindFunSuite
 import debop4s.data.slick3.northwind.NorthwindDatabase._
 import debop4s.data.slick3.northwind.NorthwindDatabase.driver.api._
 import slick.jdbc.{StaticQuery => Q}
-
-import scala.async.Async._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Northwind DB에 정의된 View 를 쿼리로 구현한 내용을 테스트합니다.
@@ -97,15 +93,14 @@ class ViewsFunSuite extends AbstractNorthwindFunSuite {
   }
 
   test("products above average price") {
-    val rs1 = readonly { productsAboveAveragePrice.result }
-    val rs2 = readonly { productsAboveAveragePrice2.result }
-
+    val (rs1, rs2) = readonly(productsAboveAveragePrice.result,
+                              productsAboveAveragePrice2.result)
     rs1 shouldEqual rs2
   }
 
   test("product by category") {
-    val rs1 = readonly { productByCategoryWithInnerJoin.result }
-    val rs2 = readonly { productByCategoryWithImplicitJoin.result }
+    val (rs1, rs2) = readonly(productByCategoryWithInnerJoin.result,
+                              productByCategoryWithImplicitJoin.result)
 
     rs1 foreach { case (cname, pname, quantityPerUnit, unitsInStock, _) =>
       log.debug(s"category=$cname, product=pname, quantityPerUnit=$quantityPerUnit, unitsInStock=$unitsInStock")
