@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 2:20
  */
-class TimeGapCalculator[T <: ITimePeriod](val mapper: Option[ITimeCalendar] = None) {
+class TimeGapCalculator[@miniboxed T <: ITimePeriod](val mapper: Option[ITimeCalendar] = None) {
 
   def this() = this(None)
   def this(mapper: ITimeCalendar) = this(Some(mapper))

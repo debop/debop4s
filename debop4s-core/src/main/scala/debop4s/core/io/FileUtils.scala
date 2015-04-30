@@ -126,21 +126,6 @@ object FileUtils {
       case Failure(ex) =>
         throw new FileNotFoundException(path.toString)
     }
-
-    //    clazz.getResourceAsStream(path.toString) match {
-    //      case null =>
-    //        throw new FileNotFoundException(path.toString)
-    //      case stream =>
-    //        val tempPath = Files.createTempFile(path, "temp", "file", Seq[FileAttribute[_]](): _*)
-    //        val file = tempPath.toFile
-    //        file.deleteOnExit()
-    //        using(new BufferedOutputStream(new FileOutputStream(file), 1 << 20)) { fos =>
-    //          Streams.copy(stream, fos)
-    //          fos.flush()
-    //        }
-    //        stream.close()
-    //        file
-    //    }
   }
 
   /**

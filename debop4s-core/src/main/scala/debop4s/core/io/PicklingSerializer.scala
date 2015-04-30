@@ -13,7 +13,7 @@ class PicklingSerializer extends Serializer {
    * @param graph 직렬화할 객체
    * @return 직렬화된 정보를 가진 바이트 배열
    */
-  override def serialize[T](graph: T): Array[Byte] = {
+  override def serialize[@miniboxed T](graph: T): Array[Byte] = {
     if (graph == null) Array.emptyByteArray
     else graph.asInstanceOf[Any].pickle.value
   }
@@ -22,7 +22,7 @@ class PicklingSerializer extends Serializer {
    * @param bytes 직렬화된 바이트 배열
    * @return 역직렬화된 객체 정보
    */
-  override def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T = {
+  override def deserialize[@miniboxed T](bytes: Array[Byte], clazz: Class[T]): T = {
     if (bytes == null || bytes.length == 0) null.asInstanceOf[T]
     else toBinaryPickle(bytes).unpickle[Any].asInstanceOf[T]
   }

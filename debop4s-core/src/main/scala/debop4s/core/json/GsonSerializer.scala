@@ -16,9 +16,7 @@ object GsonSerializer {
  * Gson Library 를 사용하는 Serializer
  * Created by debop on 2014. 4. 18.
  */
-class GsonSerializer(val gson: Gson) extends AbstractJsonSerializer {
-
-  def this() = this(new Gson())
+class GsonSerializer(val gson: Gson = new Gson()) extends AbstractJsonSerializer {
 
   /**
    * JSON 포맷으로 직렬화하여 Json Text 형식의 문자열로 반환합니다.
@@ -26,7 +24,7 @@ class GsonSerializer(val gson: Gson) extends AbstractJsonSerializer {
    * @param graph 직렬화할 객체
    * @return JSON으로 직렬화한 문자열, 객체가 Null이면 null 반환
    */
-  override def serializeToText[T](graph: T): String =
+  override def serializeToText[@miniboxed T](graph: T): String =
     gson.toJson(graph)
 
   /**
@@ -35,7 +33,7 @@ class GsonSerializer(val gson: Gson) extends AbstractJsonSerializer {
    * @param text    JSON으로 직렬화한 문자열
    * @return 역직렬화 한 객체
    */
-  override def deserializeFromText[T: Manifest](text: String): T =
+  override def deserializeFromText[@miniboxed T: Manifest](text: String): T =
     gson.fromJson[T](text, manifest[T].runtimeClass)
 
   /**
@@ -44,6 +42,6 @@ class GsonSerializer(val gson: Gson) extends AbstractJsonSerializer {
    * @param text    JSON으로 직렬화한 문자열
    * @return 역직렬화 한 객체
    */
-  override def deserializeFromText[T](text: String, clazz: Class[T]): T =
+  override def deserializeFromText[@miniboxed T](text: String, clazz: Class[T]): T =
     gson.fromJson[T](text, clazz)
 }

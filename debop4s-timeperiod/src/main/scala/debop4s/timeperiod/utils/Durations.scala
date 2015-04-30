@@ -5,6 +5,7 @@ import java.util.Locale
 import debop4s.core.Logging
 import debop4s.timeperiod._
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 
 /**
  * Joda Time의 [[Duration]] 을 위한 Helper Class 입니다.
@@ -12,7 +13,7 @@ import org.joda.time.{DateTime, Duration}
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 10:49
  */
-object Durations extends Logging {
+object Durations {
 
   val Zero = Duration.ZERO
 

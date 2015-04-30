@@ -37,7 +37,7 @@ object Reflects {
       case _ => x.getClass
     }
 
-  def tagToClass[T](tag: ClassTag[T]): Class[T] =
+  def tagToClass[@miniboxed T](tag: ClassTag[T]): Class[T] =
     tag.runtimeClass.asInstanceOf[Class[T]]
 
   /**
@@ -47,10 +47,10 @@ object Reflects {
    *     val clazz = getRuntimeClass[classTag[T]]
    * }}}
    */
-  def getRuntimeClass[T](implicit tag: ClassTag[T]): Class[T] =
+  def getRuntimeClass[@miniboxed T](implicit tag: ClassTag[T]): Class[T] =
     tag.runtimeClass.asInstanceOf[Class[T]]
 
-  def newInstance[T](implicit tag: ClassTag[T]): T =
+  def newInstance[@miniboxed T](implicit tag: ClassTag[T]): T =
     tag.runtimeClass.newInstance().asInstanceOf[T]
 
   /**
@@ -64,7 +64,7 @@ object Reflects {
    * @tparam T 인스턴스 수형
    * @return 생성된 인스턴스
    */
-  def newInstance[T](initArgs: Any*)(implicit tag: ClassTag[T]): T = {
+  def newInstance[@miniboxed T](initArgs: Any*)(implicit tag: ClassTag[T]): T = {
     log.trace(s"인스턴스를 생성합니다. kind=[${ tag.runtimeClass.getName }]")
 
     if (initArgs == null || initArgs.length == 0)
@@ -84,7 +84,7 @@ object Reflects {
    * @tparam T 인스턴스 수형
    * @return 생성된 인스턴스
    */
-  def newInstanceWithTypes[T](initArgs: Any*)(initArgsTypes: Class[_]*)(implicit tag: ClassTag[T]): T = {
+  def newInstanceWithTypes[@miniboxed T](initArgs: Any*)(initArgsTypes: Class[_]*)(implicit tag: ClassTag[T]): T = {
     if (initArgs == null || initArgs.length == 0)
       return newInstance[T]
 

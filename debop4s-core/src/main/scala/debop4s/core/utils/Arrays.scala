@@ -18,28 +18,28 @@ object Arrays {
 
   val EMPTY_BYTE_ARRAY: Array[Byte] = Array[Byte]()
 
-  def isEmpty[T](array: Array[T]): Boolean =
+  def isEmpty[@miniboxed T](array: Array[T]): Boolean =
     (array eq null) || (array.length == 0)
 
-  def isEmpty[T](iterable: Iterable[T]): Boolean =
+  def isEmpty[@miniboxed T](iterable: Iterable[T]): Boolean =
     (iterable eq null) || (!iterable.iterator.hasNext)
 
-  def contains[T](array: Array[T], target: T): Boolean =
+  def contains[@miniboxed T](array: Array[T], target: T): Boolean =
     if (isEmpty(array)) false
     else array.contains(target)
 
-  def indexOf[T](array: Array[T], target: T): Int =
+  def indexOf[@miniboxed T](array: Array[T], target: T): Int =
     if (isEmpty(array)) -1
     else array.indexOf(target)
 
-  def lastIndexOf[T](array: Array[T], target: T): Int =
+  def lastIndexOf[@miniboxed T](array: Array[T], target: T): Int =
     array.lastIndexOf(target)
 
-  def asArray[T: ClassTag](iterable: Iterable[T]): Array[T] = iterable.toArray
+  def asArray[@miniboxed T: ClassTag](iterable: Iterable[T]): Array[T] = iterable.toArray
 
-  def asString[T](iterable: Iterable[T]): String = iterable.mkString(",")
+  def asString[@miniboxed T](iterable: Iterable[T]): String = iterable.mkString(",")
 
-  def mkArray[T: ClassTag](elems: T*): Array[T] = Array[T](elems: _*)
+  def mkArray[@miniboxed T: ClassTag](elems: T*): Array[T] = Array[T](elems: _*)
 
 
   def getRandomBytes(numBytes: Int): Array[Byte] = {
@@ -48,20 +48,20 @@ object Arrays {
     bytes
   }
 
-  def fill[T](a: Array[T], value: T): Unit = {
+  def fill[@miniboxed T](a: Array[T], value: T): Unit = {
     for (i <- 0 until a.length) {
       a(i) = value
     }
   }
 
-  def fill[T](a: Array[T], fromInclude: Int, toExclude: Int, value: T): Unit = {
+  def fill[@miniboxed T](a: Array[T], fromInclude: Int, toExclude: Int, value: T): Unit = {
     rangeCheck(a.length, fromInclude, toExclude)
     for (i <- fromInclude until toExclude) {
       a(i) = value
     }
   }
 
-  def copyOf[T: ClassTag](original: Array[T], newLength: Int): Array[T] = {
+  def copyOf[@miniboxed T: ClassTag](original: Array[T], newLength: Int): Array[T] = {
     require(original != null)
 
     val copy = new Array[T](newLength)
@@ -69,7 +69,7 @@ object Arrays {
     copy
   }
 
-  def copyOfRange[T: ClassTag](src: Array[T], fromInclude: Int, toExclude: Int): Array[T] = {
+  def copyOfRange[@miniboxed T: ClassTag](src: Array[T], fromInclude: Int, toExclude: Int): Array[T] = {
     val newLength = toExclude - fromInclude
     val copy = new Array[T](newLength)
     System.arraycopy(src, fromInclude, copy, 0, newLength min src.length - fromInclude)
@@ -85,17 +85,17 @@ object Arrays {
       throw new ArrayIndexOutOfBoundsException(toIndex)
   }
 
-  def toSeq[T](iterable: java.lang.Iterable[_ <: T]): IndexedSeq[T] =
+  def toSeq[@miniboxed T](iterable: java.lang.Iterable[_ <: T]): IndexedSeq[T] =
     iterable.asScala.toIndexedSeq
 
-  def toSet[T](iterable: java.lang.Iterable[_ <: T]): Set[T] =
+  def toSet[@miniboxed T](iterable: java.lang.Iterable[_ <: T]): Set[T] =
     iterable.asScala.toSet
 
 
   def hashCode(a: Array[Any]): Int = Hashs.compute(a: _*)
 
   @inline
-  def equals[T](a: Array[T], b: Array[T]): Boolean = {
+  def equals[@miniboxed T](a: Array[T], b: Array[T]): Boolean = {
     if (a == b)
       return true
 

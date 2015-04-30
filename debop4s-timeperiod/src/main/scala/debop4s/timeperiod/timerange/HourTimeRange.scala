@@ -24,19 +24,22 @@ class HourTimeRange(private[this] val _moment: DateTime,
   val endHour: Int = start.plusHours(hourCount).getHourOfDay
   def getEndHour = endHour
 
-  def minutes: SeqView[MinuteRange, Seq[_]] = {
+  def minutesView: SeqView[MinuteRange, Seq[_]] = {
     val count = hourCount * MinutesPerHour
     (0 until count).view.map { m =>
       MinuteRange(start.plusMinutes(m), calendar)
     }
   }
 
+  @inline
   def getMinutes: util.List[MinuteRange] = {
     val count = hourCount * MinutesPerHour
 
     val results = new util.ArrayList[MinuteRange](count)
-    (0 until count) foreach { m =>
+    var m = 0
+    while (m < count) {
       results add MinuteRange(start.plusMinutes(m), calendar)
+      m += 1
     }
     results
   }

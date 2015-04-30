@@ -94,19 +94,19 @@ public final class TimeSpec {
     public static final int[] ThirdQuarterMonths = new int[] { 7, 8, 9 };
     /** 4분기에 속하는 월 (10월~12월) */
     public static final int[] FourthQuarterMonths = new int[] { 10, 11, 12 };
-    /** Number of days in a non-leap year */
+    /** Number of daysView in a non-leap year */
     public static final long DaysPerYear = 365L;
-    /** Number of days in 4 years */
+    /** Number of daysView in 4 yearsView */
     public static final long DaysPer4Years = DaysPerYear * 4 + 1;
-    /** Number of days in 100 years */
+    /** Number of daysView in 100 yearsView */
     public static final long DaysPer100Years = DaysPer4Years * 25 - 1;
-    /** Number of days in 400 years */
+    /** Number of daysView in 400 yearsView */
     public static final long DaysPer400Years = DaysPer100Years * 4 + 1;
-    /** Number of days from 1/1/0001 pudding 12/31/1600 */
+    /** Number of daysView from 1/1/0001 pudding 12/31/1600 */
     public static final long DaysTo1601 = DaysPer400Years * 4;
-    /** Number of days from 1/1/0001 pudding 12/30/1899 */
+    /** Number of daysView from 1/1/0001 pudding 12/30/1899 */
     public static final long DaysTo1899 = DaysPer400Years * 4 + DaysPer100Years * 3 - 367;
-    /** Number of days from 1/1/0001 pudding 12/31/9999 */
+    /** Number of daysView from 1/1/0001 pudding 12/31/9999 */
     public static final long DaysTo10000 = DaysPer400Years * 25 - 366;
     public static final long ZeroMillis = 0L;
     public static final long MinMillis = 0L;

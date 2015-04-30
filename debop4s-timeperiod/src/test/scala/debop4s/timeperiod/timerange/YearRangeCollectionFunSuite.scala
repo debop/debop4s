@@ -7,7 +7,7 @@ import debop4s.timeperiod.utils.Times
 
 class YearRangeCollectionFunSuite extends AbstractTimeFunSuite {
 
-  test("single years") {
+  test("single yearsView") {
     val startYear = 2014
 
     val yrs = YearRangeCollection(startYear, 1)
@@ -15,12 +15,12 @@ class YearRangeCollectionFunSuite extends AbstractTimeFunSuite {
     yrs.startYear should equal(startYear)
     yrs.endYear should equal(startYear)
 
-    val years = yrs.years
+    val years = yrs.yearsView
     years.size should equal(1)
     years(0).isSamePeriod(YearRange(startYear)) should equal(true)
   }
 
-  test("calendar months") {
+  test("calendar monthsView") {
     val startYear = 2014
     val yearCount = 5
 
@@ -44,7 +44,7 @@ class YearRangeCollectionFunSuite extends AbstractTimeFunSuite {
         yearRanges.start should equal(startTime)
         yearRanges.end should equal(endTime)
 
-        val items = yearRanges.years
+        val items = yearRanges.yearsView
 
         (0 until yearCount).par.foreach {
           y =>

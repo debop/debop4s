@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 11. 오후 4:35
  */
-abstract class AbstractObjectPool[T <: AnyRef](val config: GenericObjectPoolConfig,
-                                               val factory: PooledObjectFactory[T]) extends AutoCloseable {
+abstract class AbstractObjectPool[@miniboxed T <: AnyRef](val config: GenericObjectPoolConfig,
+                                                          val factory: PooledObjectFactory[T]) extends AutoCloseable {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
 

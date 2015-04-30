@@ -8,7 +8,7 @@ import debop4s.timeperiod.utils.Times._
 
 class CalendarPeriodCollectorFunSuite extends AbstractTimeFunSuite {
 
-  test("collect years") {
+  test("collect yearsView") {
     val filter = new CalendarPeriodCollectorFilter()
 
     filter.years ++= List(2006, 2007, 2012)
@@ -17,7 +17,7 @@ class CalendarPeriodCollectorFunSuite extends AbstractTimeFunSuite {
 
     collector.collectYears()
 
-    log.trace(s"Collect years... periods=${ collector.periods }")
+    log.trace(s"Collect yearsView... periods=${ collector.periods }")
 
     var i = 0
     collector.periods.foreach { period =>
@@ -27,7 +27,7 @@ class CalendarPeriodCollectorFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("collect months") {
+  test("collect monthsView") {
     val filter = new CalendarPeriodCollectorFilter()
 
     filter.monthOfYears += Month.January.getValue
@@ -35,14 +35,14 @@ class CalendarPeriodCollectorFunSuite extends AbstractTimeFunSuite {
     val collector = new CalendarPeriodCollector(filter, limits)
 
     collector.collectMonths()
-    log.trace(s"Collect months... periods=${ collector.periods }")
+    log.trace(s"Collect monthsView... periods=${ collector.periods }")
 
     collector.periods.size shouldEqual 2
     collector.periods(0).isSamePeriod(MonthRange(2010, 1)) should equal(true)
     collector.periods(1).isSamePeriod(MonthRange(2011, 1)) should equal(true)
   }
 
-  test("collect days") {
+  test("collect daysView") {
     val filter = new CalendarPeriodCollectorFilter()
 
     // 1월의 금요일만 추출
@@ -70,7 +70,7 @@ class CalendarPeriodCollectorFunSuite extends AbstractTimeFunSuite {
     collector.periods(8).isSamePeriod(DayRange(2011, 1, 28)) should equal(true)
   }
 
-  test("collect hours") {
+  test("collect hoursView") {
     val filter = new CalendarPeriodCollectorFilter()
 
     // 1월의 금요일의 08:00~18:00 추출
@@ -99,7 +99,7 @@ class CalendarPeriodCollectorFunSuite extends AbstractTimeFunSuite {
     collector.periods(8).isSamePeriod(HourRangeCollection(2011, 1, 28, 8, 10)) should equal(true)
   }
 
-  test("collect minutes") {
+  test("collect minutesView") {
     val filter = new CalendarPeriodCollectorFilter()
 
     // 1월의 금요일의 08:00~18:00 추출

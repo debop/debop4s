@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 object TimeLines {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   @inline
   def combinePeriods(moments: ITimeLineMomentCollection): ITimePeriodCollection = {

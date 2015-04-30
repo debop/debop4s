@@ -2,18 +2,18 @@ package debop4s.timeperiod.utils
 
 import java.util.Locale
 
-import debop4s.core._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timerange.WeekRange
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 
 /**
  * Weeks
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 2. 오후 9:23
  */
-object Weeks extends Logging {
+object Weeks {
 
   def firstDayOfWeek: DayOfWeek = FirstDayOfWeek
 

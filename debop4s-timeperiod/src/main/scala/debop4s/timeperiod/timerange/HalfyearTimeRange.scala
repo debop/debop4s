@@ -30,7 +30,7 @@ class HalfyearTimeRange(@BeanProperty val year: Int,
 
   def isMultipleCalendarYears: Boolean = startYear != endYear
 
-  def quarters: SeqView[QuarterRange, Seq[_]] = {
+  def quartersView: SeqView[QuarterRange, Seq[_]] = {
     val quarterCount = halfyearCount * QuartersPerHalfyear
     val startQuarter = Times.quarterOf(startMonthOfYear)
 
@@ -54,7 +54,7 @@ class HalfyearTimeRange(@BeanProperty val year: Int,
     results
   }
 
-  def months = {
+  def monthsView: SeqView[MonthRange, Seq[_]] = {
     val monthCount = halfyearCount * MonthsPerHalfyear
 
     (0 until monthCount).view.map { m =>

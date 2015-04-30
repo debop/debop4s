@@ -4,6 +4,7 @@ import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 
 /**
  * TimeBlock
@@ -39,6 +40,8 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
                 private[this] val _end: DateTime = MaxPeriodTime,
                 private[this] val _readonly: Boolean = false)
   extends TimePeriod(_start, _end, _readonly) with ITimeBlock {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   def this() = this(MinPeriodTime, MaxPeriodTime, false)
   def this(readonly: Boolean) = this(MinPeriodTime, MaxPeriodTime, readonly)
@@ -145,7 +148,7 @@ class TimeBlock(private[this] val _start: DateTime = MinPeriodTime,
 
 object TimeBlock {
 
-  val Anytime: TimeBlock = TimeBlock(readonly = true)
+  lazy val Anytime: TimeBlock = TimeBlock(readonly = true)
 
   def apply(): TimeBlock = new TimeBlock(MinPeriodTime, MaxPeriodTime, false)
   def apply(readonly: Boolean) = new TimeBlock(MinPeriodTime, MaxPeriodTime, readonly)

@@ -19,7 +19,7 @@ import scala.util.control.NonFatal
  */
 package object core {
 
-  private[this] lazy val log = LoggerFactory.getLogger("debop4s.core")
+  // private[this] lazy val log = LoggerFactory.getLogger("debop4s.core")
 
   val TimeConversions = debop4s.core.conversions.time
   val StorageConversions = debop4s.core.conversions.storage
@@ -63,31 +63,6 @@ package object core {
     def toUtf8String: String = Strings.getUtf8String(bytes)
   }
 
-  // NOTE: using import debop4s.core.concurrent._
-  //
-  //   implicit val defaultDuration = Asyncs.defaultDuration
-
-  //  implicit class AwaitableExtensions[+T](underlying: Awaitable[T]) {
-  //
-  //    def await(timeout: Long): T = Await.result(underlying, Duration(timeout, TimeUnit.MILLISECONDS))
-  //    def await(implicit atMost: Duration = defaultDuration) = Await.result(underlying, atMost)
-  //
-  //    def stay(timeout: Long): Unit = Asyncs.ready(underlying, timeout)
-  //    def stay(implicit atMost: Duration = defaultDuration): Unit = Await.ready(underlying, atMost)
-  //  }
-  //
-  //  implicit class AwaitableSequenceExtensions[A](underlying: Iterable[scala.concurrent.Future[A]]) {
-  //    lazy val timeout = FiniteDuration(15, TimeUnit.MINUTES)
-  //
-  //    def awaitAll(implicit timeout: Duration = timeout): Iterable[A] = {
-  //      Await.result(Future.sequence(underlying), timeout)
-  //    }
-  //
-  //    def holdAll(implicit timeout: Duration = timeout): Unit = {
-  //      Await.ready(Future.sequence(underlying), timeout)
-  //    }
-  //  }
-
   /**
    * 지정한 코드 블럭을 `Runnable` 인스턴스로 빌드합니다.
    * {{{
@@ -112,7 +87,7 @@ package object core {
    * @tparam T 함수가 반환할 값의 수형
    * @return 함수 실행 반환 값
    */
-  implicit def callable[T](func: => T): Callable[T] = {
+  implicit def callable[@miniboxed T](func: => T): Callable[T] = {
     new Callable[T] {
       override def call(): T = func
     }
@@ -141,7 +116,7 @@ package object core {
   /**
    * `close` 메소드를 가진 객체에 대해 메소드 `func` 를 실행한 후 `close` 메소드를 호출합니다.
    */
-  implicit def using[A <: {def close() : Unit}, B](closable: A)(func: A => B): B = {
+  implicit def using[@miniboxed A <: {def close() : Unit}, @miniboxed B](closable: A)(func: A => B): B = {
     require(closable != null)
     require(func != null)
     try {
@@ -154,7 +129,7 @@ package object core {
   /**
    * 인스턴스가 null이면 None을 반환하고, 값이 있으면 Some(v)를 반환합니다.
    */
-  def toOption[T](v: T): Option[T] =
+  def toOption[@miniboxed T](v: T): Option[T] =
     v match {
       case null => None
       case None => None

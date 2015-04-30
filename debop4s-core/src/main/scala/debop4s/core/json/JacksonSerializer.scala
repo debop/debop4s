@@ -18,22 +18,22 @@ class JacksonSerializer(val mapper: ObjectMapper) extends AbstractJsonSerializer
 
   def this() = this(JacksonSerializer.defaultObjectMapper)
 
-  override def serialize[T](graph: T): Array[Byte] =
+  override def serialize[@miniboxed T](graph: T): Array[Byte] =
     mapper.writeValueAsBytes(graph)
 
-  override def serializeToText[T](graph: T): String =
+  override def serializeToText[@miniboxed T](graph: T): String =
     mapper.writeValueAsString(graph)
 
-  override def deserialize[T: Manifest](data: Array[Byte]): T =
+  override def deserialize[@miniboxed T: Manifest](data: Array[Byte]): T =
     mapper.readValue(data, JacksonSerializer.typeReference[T])
 
-  override def deserializeFromText[T: Manifest](text: String): T =
+  override def deserializeFromText[@miniboxed T: Manifest](text: String): T =
     mapper.readValue(text, JacksonSerializer.typeReference[T])
 
-  override def deserialize[T](data: Array[Byte], clazz: Class[T]): T =
+  override def deserialize[@miniboxed T](data: Array[Byte], clazz: Class[T]): T =
     mapper.readValue(data, clazz)
 
-  override def deserializeFromText[T](text: String, clazz: Class[T]): T =
+  override def deserializeFromText[@miniboxed T](text: String, clazz: Class[T]): T =
     mapper.readValue(text, clazz)
 }
 
@@ -62,7 +62,7 @@ object JacksonSerializer {
     mapper
   }
 
-  private[json] def typeReference[T: Manifest] = new TypeReference[T] {
+  private[json] def typeReference[@miniboxed T: Manifest] = new TypeReference[T] {
     override def getType = typeFromManifest(manifest[T])
   }
 

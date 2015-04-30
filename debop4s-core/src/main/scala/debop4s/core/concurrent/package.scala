@@ -14,7 +14,7 @@ import scala.concurrent.{Await, Future, Promise}
  */
 package object concurrent {
 
-  implicit class FutureExtensions[+A](underlying: Future[A]) {
+  implicit class FutureExtensions[@miniboxed +A](underlying: Future[A]) {
 
     implicit val timeout: Duration = FiniteDuration(5, TimeUnit.MINUTES)
 
@@ -53,7 +53,7 @@ package object concurrent {
     }
   }
 
-  implicit class FutureListExtensions[+A](underlying: Iterable[Future[A]]) {
+  implicit class FutureListExtensions[@miniboxed +A](underlying: Iterable[Future[A]]) {
 
     implicit val timeout: Duration = FiniteDuration(15, TimeUnit.MINUTES)
 

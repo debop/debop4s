@@ -129,7 +129,7 @@ public class WeeksTest extends TimePeriodTestBase {
                 assertThat(endDayWeekRange.hasPeriod()).isTrue();
                 assertThat(startDayWeekRange.hasPeriod()).isTrue();
 
-                log.trace("start day weeks=[{}]", startDayWeekRange);
+                log.trace("start day weeksView=[{}]", startDayWeekRange);
 
                 if (endDayYearWeek.equals(startDayYearWeek)) {
                     assertThat(startDayWeekRange).isEqualTo(endDayWeekRange);

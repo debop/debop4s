@@ -1,12 +1,12 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.core.Logging
 import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timeline.TimeGapCalculator
 import debop4s.timeperiod.utils.{Durations, Times}
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 
 import scala.annotation.varargs
 import scala.collection.mutable
@@ -27,9 +27,11 @@ object CalendarDateDiff {
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오후 7:55
  */
-class CalendarDateDiff(val calendar: ITimeCalendar) extends Logging {
+class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset) {
 
-  def this() = this(TimeCalendar.getEmptyOffset)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
+
+  // def this() = this(TimeCalendar.getEmptyOffset)
 
   require(calendar != null)
   assert(calendar.startOffset.isEqual(Duration.ZERO), "startOffset은 0 이여야 합니다.")
@@ -43,16 +45,16 @@ class CalendarDateDiff(val calendar: ITimeCalendar) extends Logging {
 
   def workingDayHours: ArrayBuffer[DayHourRange] = collectorFilter.collectingDayHours
 
-  def addWokringDays() {
+  def addWokringDays(): Unit = {
     addWeekDays(Weekdays: _*)
   }
 
-  def addWeekendDays() {
+  def addWeekendDays(): Unit = {
     addWeekDays(Weekends: _*)
   }
 
   @varargs
-  def addWeekDays(dayOfWeeks: DayOfWeek*) {
+  def addWeekDays(dayOfWeeks: DayOfWeek*): Unit = {
     if (weekDays != null) {
       weekDays ++= dayOfWeeks
     }

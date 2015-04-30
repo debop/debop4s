@@ -14,10 +14,10 @@ import scala.collection.mutable.ArrayBuffer
 @SerialVersionUID(-8493624843659994378L)
 class CalendarPeriodCollectorFilter extends CalendarVisitorFilter with ICalendarPeriodCollectorFilter {
 
-  @BeanProperty lazy val collectingMonths = ArrayBuffer[MonthRangeInYear]()
-  @BeanProperty lazy val collectingDays = ArrayBuffer[DayRangeInMonth]()
-  @BeanProperty lazy val collectingHours = ArrayBuffer[HourRangeInDay]()
-  @BeanProperty lazy val collectingDayHours = ArrayBuffer[DayHourRange]()
+  lazy val collectingMonths = ArrayBuffer[MonthRangeInYear]()
+  lazy val collectingDays = ArrayBuffer[DayRangeInMonth]()
+  lazy val collectingHours = ArrayBuffer[HourRangeInDay]()
+  lazy val collectingDayHours = ArrayBuffer[DayHourRange]()
 
   override def clear() {
     super.clear()

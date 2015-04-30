@@ -22,8 +22,7 @@ object InputStreamReader {
  * @author Sunghyouk Bae
  */
 class InputStreamReader(inputStream: InputStream,
-                        maxBufferSize: Int)
-  extends Reader with Closable with CloseAwaitably {
+                        maxBufferSize: Int) extends Reader with Closable with CloseAwaitably {
 
   @volatile private[this] var discarded = false
   private[this] val lock: ReentrantReadWriteLock = new ReentrantReadWriteLock()

@@ -93,9 +93,9 @@ class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCa
   require(cfg.startOffset != null && cfg.startOffset.millis >= 0, "startOffset must be greater than or equal zero.")
   require(cfg.endOffset != null && cfg.startOffset.millis <= 0, "startOffset must be less than or equal zero.")
 
-  val locale: Locale = Options.toOption(cfg.locale).getOrElse(Locale.getDefault)
-  val _startOffset: Duration = Options.toOption(cfg.startOffset).getOrElse(DefaultStartOffset)
-  val _endOffset: Duration = Options.toOption(cfg.endOffset).getOrElse(DefaultEndOffset)
+  val locale: Locale = Option(cfg.locale).getOrElse(Locale.getDefault)
+  val _startOffset: Duration = Option(cfg.startOffset).getOrElse(DefaultStartOffset)
+  val _endOffset: Duration = Option(cfg.endOffset).getOrElse(DefaultEndOffset)
   override val firstDayOfWeek: DayOfWeek = cfg.firstDayOfWeek
 
   def getLocale: Locale = locale

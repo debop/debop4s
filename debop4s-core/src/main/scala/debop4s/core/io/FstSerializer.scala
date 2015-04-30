@@ -30,7 +30,7 @@ class FstSerializer(val conf: FSTConfiguration) extends Serializer {
    * @return 직렬화된 정보를 가진 바이트 배열
    */
   @inline
-  def serialize[T](graph: T): Array[Byte] = {
+  def serialize[@miniboxed T](graph: T): Array[Byte] = {
     if (graph == null || graph == None)
       return Array.emptyByteArray
 
@@ -53,7 +53,7 @@ class FstSerializer(val conf: FSTConfiguration) extends Serializer {
    * @return 역직렬화된 객체 정보
    */
   @inline
-  def deserialize[T](bytes: Array[Byte], clazz: Class[T] = classOf[Any]): T = {
+  def deserialize[@miniboxed T](bytes: Array[Byte], clazz: Class[T] = classOf[Any]): T = {
     if (bytes == null || bytes.length == 0)
       return null.asInstanceOf[T]
 

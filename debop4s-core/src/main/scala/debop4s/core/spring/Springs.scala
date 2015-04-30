@@ -59,14 +59,14 @@ object Springs {
   }
 
   @varargs
-  def getBean[T](name: String, args: Any*): T =
+  def getBean[@miniboxed T](name: String, args: Any*): T =
     getContext.getBean(name, args.map(_.asInstanceOf[AnyRef]): _*).asInstanceOf[T]
 
-  def getBean[T](requiredType: Class[T]): T =
+  def getBean[@miniboxed T](requiredType: Class[T]): T =
     getContext.getBean[T](requiredType)
 
   @varargs
-  def tryGetBean[T](name: String, args: Any*): T = {
+  def tryGetBean[@miniboxed T](name: String, args: Any*): T = {
     try {
       return getContext.getBean(name, args.map(_.asInstanceOf[AnyRef]): _*).asInstanceOf[T]
     } catch {
@@ -76,7 +76,7 @@ object Springs {
     null.asInstanceOf[T]
   }
 
-  def tryGetBean[T <: AnyRef](requiredType: Class[T]): T = {
+  def tryGetBean[@miniboxed T <: AnyRef](requiredType: Class[T]): T = {
     try {
       return getContext.getBean[T](requiredType)
     } catch {

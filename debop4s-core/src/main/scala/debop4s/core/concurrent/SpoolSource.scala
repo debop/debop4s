@@ -10,7 +10,7 @@ import scala.concurrent.{Future, Promise}
  * A SpoolSource is a simple object for creating and populating a Spool-chain.  apply()
  * returns a Future[Spool] that is populated by calls to offer().  This class is thread-safe.
  */
-class SpoolSource[A] {
+class SpoolSource[@miniboxed A] {
 
   // a reference to the current outstanding promise for the next Future[Spool[A]] result
   private val promiseRef = new AtomicReference[Promise[Spool[A]]]

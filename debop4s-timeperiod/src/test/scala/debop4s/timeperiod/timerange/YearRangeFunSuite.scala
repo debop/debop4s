@@ -37,7 +37,7 @@ class YearRangeFunSuite extends AbstractTimeFunSuite {
     yr.end should equal(Times.startTimeOfYear(yearIndex + 1))
   }
 
-  test("add years") {
+  test("add yearsView") {
     val now = Times.now
     val startYear = Times.startTimeOfYear(now)
     val yr = YearRange(now)

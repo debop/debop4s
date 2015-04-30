@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicReference
  *
  * Created by debop on 2014. 4. 13.
  */
-class LastWriteWinsQueue[A] extends java.util.Queue[A] {
+class LastWriteWinsQueue[@miniboxed A] extends java.util.Queue[A] {
 
   val item = new AtomicReference[Option[A]](None)
 

@@ -14,7 +14,7 @@ import scala.util.Try
  */
 trait FuturePool {
 
-  def apply[T](f: => T): Future[T]
+  def apply[@miniboxed T](f: => T): Future[T]
 
 }
 

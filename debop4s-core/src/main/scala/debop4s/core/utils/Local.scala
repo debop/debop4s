@@ -43,7 +43,7 @@ object Local {
   def put(key: Any, value: Any): Unit =
     getStorage.update(key, value)
 
-  def put[T](key: Any, optValue: Option[T]): Unit =
+  def put[@miniboxed T](key: Any, optValue: Option[T]): Unit =
     getStorage(key) = optValue
 
   def clearAll(): Unit = {
@@ -51,18 +51,18 @@ object Local {
     getStorage.clear()
   }
 
-  def getOrCreate[T](key: Any, factory: => T): Option[T] = {
+  def getOrCreate[@miniboxed T](key: Any, factory: => T): Option[T] = {
     getStorage.getOrElseUpdate(key, factory)
     get[T](key)
   }
 
-  def getOrCreate[T](key: Any, factory: Callable[T]): Option[T] = synchronized {
+  def getOrCreate[@miniboxed T](key: Any, factory: Callable[T]): Option[T] = synchronized {
     getStorage.getOrElseUpdate(key, factory.call())
     get[T](key)
   }
 }
 
-final class Local[T] {
+final class Local[@miniboxed T] {
 
   private[this] val key = UUID.randomUUID()
 

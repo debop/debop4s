@@ -30,13 +30,13 @@ class MonthRangeCollection(private[this] val _year: Int,
     this(moment.getYear, moment.getMonthOfYear, monthCount, calendar)
 
 
-  @inline
-  def months: SeqView[MonthRange, Seq[_]] = {
+  def monthsView: SeqView[MonthRange, Seq[_]] = {
     (0 until monthCount).view.map { m =>
       MonthRange(start.plusMonths(m), calendar)
     }
   }
 
+  @inline
   def getMonths: util.List[MonthRange] = {
     val results = Lists.newArrayListWithCapacity[MonthRange](monthCount)
     var m = 0

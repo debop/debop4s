@@ -16,17 +16,17 @@ object Promises {
 
   implicit val executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
 
-  def exec[@specialized(Boolean, Int, Long, Unit) V](block: => V): Future[V] = Future {
+  def exec[@miniboxed V](block: => V): Future[V] = Future {
     require(block != null)
     block
   }
 
-  def exec[@specialized(Boolean, Int, Long, Unit) T, V](input: T)(func: T => V): Future[V] = Future {
+  def exec[@miniboxed T, V](input: T)(func: T => V): Future[V] = Future {
     require(func != null)
     func(input)
   }
 
-  def exec[@specialized(Boolean, Int, Long, Unit) T, S, V](input1: T, input2: S)(func: (T, S) => V): Future[V] = Future {
+  def exec[@miniboxed T, S, V](input1: T, input2: S)(func: (T, S) => V): Future[V] = Future {
     require(func != null)
     func(input1, input2)
   }
@@ -34,19 +34,19 @@ object Promises {
   /**
    * Future 값을 가져옵니다. 최대 5초 동안 기다립니다.
    */
-  def await[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T]): T =
+  def await[@miniboxed T](awaitable: Awaitable[T]): T =
     Await.result(awaitable, 15 seconds)
 
   /**
    * 주어진 timeout 을 가다리다가 작업이 완료되면 값을 반환합니다.
    */
-  def await[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T], timeoutMillis: Long): T =
+  def await[@miniboxed T](awaitable: Awaitable[T], timeoutMillis: Long): T =
     Await.result(awaitable, timeoutMillis millis)
 
   /**
    * 주어진 timeout 을 가다리다가 작업이 완료되면 값을 반환합니다.
    */
-  def await[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T], atMost: Duration): T =
+  def await[@miniboxed T](awaitable: Awaitable[T], atMost: Duration): T =
     Await.result(awaitable, atMost)
 
   /**
@@ -58,7 +58,7 @@ object Promises {
   }
 
   @deprecated("use awaitAll", "0.5.0")
-  def resultAll[@specialized(Boolean, Int, Long, Unit) A](in: Future[A]*): Future[Seq[A]] = {
+  def resultAll[@miniboxed A](in: Future[A]*): Future[Seq[A]] = {
     Future.sequence(in)
   }
 }

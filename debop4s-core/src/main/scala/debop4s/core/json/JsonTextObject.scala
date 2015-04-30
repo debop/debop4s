@@ -34,7 +34,7 @@ object JsonTextObject {
   def apply(graph: Any): JsonTextObject = {
     graph match {
       case null => Empty
-      case src: JsonTextObject => apply(src)
+      case x: JsonTextObject => x
       case _ => new JsonTextObject(graph.getClass.getName, serializer.serializeToText(graph))
     }
   }
@@ -46,4 +46,7 @@ object JsonTextObject {
     require(src != null)
     new JsonTextObject(src.className, src.jsonText)
   }
+
+  def unapply(jto: JsonTextObject): (String, String) =
+    (jto.className, jto.jsonText)
 }

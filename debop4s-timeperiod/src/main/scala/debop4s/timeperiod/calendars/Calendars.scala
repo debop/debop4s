@@ -10,12 +10,12 @@ object Calendars {
 
   def asString(filter: ICalendarVisitorFilter): String = {
     if (filter == null)
-      "Filter is null."
+      return "Filter is null."
 
     val builder = new StringBuilder()
     builder.append("CalendarVisitorFilter#\n")
     builder.append("----------------------")
-    builder.append("\n\t years=").append(filter.years.mkString)
+    builder.append("\n\t yearsView=").append(filter.years.mkString)
     builder.append("\n\t monthOfYears=").append(filter.monthOfYears.mkString)
     builder.append("\n\t monthOfYears=").append(filter.monthOfYears.mkString)
     builder.append("\n\t dayOfMonths=").append(filter.dayOfMonths.mkString)

@@ -30,9 +30,9 @@ class MonthRangeFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("get days") {
+  test("get daysView") {
     val mr = MonthRange()
-    val days = mr.days
+    val days = mr.daysView
 
     var index = 0
 
@@ -44,7 +44,7 @@ class MonthRangeFunSuite extends AbstractTimeFunSuite {
     index shouldEqual Times.daysInMonth(mr.year, mr.monthOfYear)
   }
 
-  test("add months") {
+  test("add monthsView") {
     val now = Times.now
     val startMonth = Times.startTimeOfMonth(now)
     val mr = MonthRange(now)

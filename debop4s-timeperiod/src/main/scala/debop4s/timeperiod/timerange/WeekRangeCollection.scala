@@ -26,13 +26,13 @@ class WeekRangeCollection(private[this] val year: Int,
   def this(moment: DateTime, weekCount: Int, calendar: ITimeCalendar) =
     this(moment.getYear, moment.getWeekOfWeekyear, weekCount, calendar)
 
-  @inline
-  def weeks: SeqView[WeekRange, Seq[_]] = {
+  def weeksView: SeqView[WeekRange, Seq[_]] = {
     (0 until weekCount).view.map { w =>
       WeekRange(start.plusWeeks(w), calendar)
     }
   }
 
+  @inline
   def getWeeks: util.List[WeekRange] = {
     val weeks = Lists.newArrayListWithCapacity[WeekRange](weekCount)
     var w = 0

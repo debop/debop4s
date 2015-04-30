@@ -27,12 +27,12 @@ class QuarterRangeCollectionFunSuite extends AbstractTimeFunSuite {
     qr.endYear should equal(startYear)
     qr.endQuarter should equal(startQuarter)
 
-    val quarters = qr.quarters
+    val quarters = qr.quartersView
     quarters.size should equal(1)
     quarters(0).isSamePeriod(QuarterRange(startYear, startQuarter)) should equal(true)
   }
 
-  test("first calendar halfyears") {
+  test("first calendar halfyearsView") {
     val startYear = 2004
     val startQuarter = Quarter.First
     val quarterCount = 5
@@ -45,7 +45,7 @@ class QuarterRangeCollectionFunSuite extends AbstractTimeFunSuite {
     qrs.endYear should equal(startYear + 1)
     qrs.endQuarter should equal(Quarter.First)
 
-    val quarters = qrs.quarters
+    val quarters = qrs.quartersView
 
     quarters.size should equal(quarterCount)
     quarters(0).isSamePeriod(QuarterRange(startYear, Quarter.First)) should equal(true)
@@ -55,7 +55,7 @@ class QuarterRangeCollectionFunSuite extends AbstractTimeFunSuite {
     quarters(4).isSamePeriod(QuarterRange(startYear + 1, Quarter.First)) should equal(true)
   }
 
-  test("second calendar halfyears") {
+  test("second calendar halfyearsView") {
     val startYear = 2004
     val startQuarter = Quarter.Second
     val quarterCount = 5
@@ -68,7 +68,7 @@ class QuarterRangeCollectionFunSuite extends AbstractTimeFunSuite {
     qrs.endYear should equal(startYear + 1)
     qrs.endQuarter should equal(Quarter.Second)
 
-    val quarters = qrs.quarters
+    val quarters = qrs.quartersView
 
     quarters.size should equal(quarterCount)
     quarters(0).isSamePeriod(QuarterRange(startYear, Quarter.Second)) should equal(true)

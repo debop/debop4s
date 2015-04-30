@@ -35,7 +35,7 @@ class WeekRangeFunSuite extends AbstractTimeFunSuite {
     val now = Times.now
     val wr = WeekRange()
 
-    val days = wr.days
+    val days = wr.daysView
     var index = 0
     days.foreach {
       day =>
@@ -46,7 +46,7 @@ class WeekRangeFunSuite extends AbstractTimeFunSuite {
     index should equal(DaysPerWeek)
   }
 
-  test("add months") {
+  test("add monthsView") {
     val now = Times.now
     val startWeek = Times.startTimeOfWeek(now)
     val wr = WeekRange(now)

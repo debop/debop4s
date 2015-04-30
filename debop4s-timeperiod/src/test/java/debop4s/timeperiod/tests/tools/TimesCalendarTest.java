@@ -42,32 +42,32 @@ public class TimesCalendarTest extends TimePeriodTestBase {
 
     @Test
     public void addHalfyear() {
-        assertThat(Times.addHalfyear(2000, Halfyear.First, 1).getHalfyear()).isEqualTo(Halfyear.Second);
-        assertThat(Times.addHalfyear(2000, Halfyear.Second, 1).getHalfyear()).isEqualTo(Halfyear.First);
-        assertThat(Times.addHalfyear(2000, Halfyear.First, -1).getHalfyear()).isEqualTo(Halfyear.Second);
-        assertThat(Times.addHalfyear(2000, Halfyear.Second, -1).getHalfyear()).isEqualTo(Halfyear.First);
+        assertThat(Times.addHalfyear(2000, Halfyear.First, 1).halfyear()).isEqualTo(Halfyear.Second);
+        assertThat(Times.addHalfyear(2000, Halfyear.Second, 1).halfyear()).isEqualTo(Halfyear.First);
+        assertThat(Times.addHalfyear(2000, Halfyear.First, -1).halfyear()).isEqualTo(Halfyear.Second);
+        assertThat(Times.addHalfyear(2000, Halfyear.Second, -1).halfyear()).isEqualTo(Halfyear.First);
 
-        assertThat(Times.addHalfyear(2000, Halfyear.First, 2).getHalfyear()).isEqualTo(Halfyear.First);
-        assertThat(Times.addHalfyear(2000, Halfyear.Second, 2).getHalfyear()).isEqualTo(Halfyear.Second);
-        assertThat(Times.addHalfyear(2000, Halfyear.First, -2).getHalfyear()).isEqualTo(Halfyear.First);
-        assertThat(Times.addHalfyear(2000, Halfyear.Second, -2).getHalfyear()).isEqualTo(Halfyear.Second);
+        assertThat(Times.addHalfyear(2000, Halfyear.First, 2).halfyear()).isEqualTo(Halfyear.First);
+        assertThat(Times.addHalfyear(2000, Halfyear.Second, 2).halfyear()).isEqualTo(Halfyear.Second);
+        assertThat(Times.addHalfyear(2000, Halfyear.First, -2).halfyear()).isEqualTo(Halfyear.First);
+        assertThat(Times.addHalfyear(2000, Halfyear.Second, -2).halfyear()).isEqualTo(Halfyear.Second);
 
-        assertThat(Times.addHalfyear(2000, Halfyear.First, 5).getHalfyear()).isEqualTo(Halfyear.Second);
-        assertThat(Times.addHalfyear(2000, Halfyear.Second, 5).getHalfyear()).isEqualTo(Halfyear.First);
-        assertThat(Times.addHalfyear(2000, Halfyear.First, -5).getHalfyear()).isEqualTo(Halfyear.Second);
-        assertThat(Times.addHalfyear(2000, Halfyear.Second, -5).getHalfyear()).isEqualTo(Halfyear.First);
+        assertThat(Times.addHalfyear(2000, Halfyear.First, 5).halfyear()).isEqualTo(Halfyear.Second);
+        assertThat(Times.addHalfyear(2000, Halfyear.Second, 5).halfyear()).isEqualTo(Halfyear.First);
+        assertThat(Times.addHalfyear(2000, Halfyear.First, -5).halfyear()).isEqualTo(Halfyear.Second);
+        assertThat(Times.addHalfyear(2000, Halfyear.Second, -5).halfyear()).isEqualTo(Halfyear.First);
 
-        assertThat(Times.addHalfyear(2008, Halfyear.First, 1).getYear()).isEqualTo(2008);
-        assertThat(Times.addHalfyear(2008, Halfyear.Second, 1).getYear()).isEqualTo(2009);
+        assertThat(Times.addHalfyear(2008, Halfyear.First, 1).year()).isEqualTo(2008);
+        assertThat(Times.addHalfyear(2008, Halfyear.Second, 1).year()).isEqualTo(2009);
 
-        assertThat(Times.addHalfyear(2008, Halfyear.First, -1).getYear()).isEqualTo(2007);
-        assertThat(Times.addHalfyear(2008, Halfyear.Second, -1).getYear()).isEqualTo(2008);
+        assertThat(Times.addHalfyear(2008, Halfyear.First, -1).year()).isEqualTo(2007);
+        assertThat(Times.addHalfyear(2008, Halfyear.Second, -1).year()).isEqualTo(2008);
 
-        assertThat(Times.addHalfyear(2008, Halfyear.First, 2).getYear()).isEqualTo(2009);
-        assertThat(Times.addHalfyear(2008, Halfyear.Second, 2).getYear()).isEqualTo(2009);
+        assertThat(Times.addHalfyear(2008, Halfyear.First, 2).year()).isEqualTo(2009);
+        assertThat(Times.addHalfyear(2008, Halfyear.Second, 2).year()).isEqualTo(2009);
 
-        assertThat(Times.addHalfyear(2008, Halfyear.First, 3).getYear()).isEqualTo(2009);
-        assertThat(Times.addHalfyear(2008, Halfyear.Second, 3).getYear()).isEqualTo(2010);
+        assertThat(Times.addHalfyear(2008, Halfyear.First, 3).year()).isEqualTo(2009);
+        assertThat(Times.addHalfyear(2008, Halfyear.Second, 3).year()).isEqualTo(2010);
     }
 
     @Test
@@ -87,42 +87,42 @@ public class TimesCalendarTest extends TimePeriodTestBase {
 
     @Test
     public void nextQuarterTest() {
-        assertThat(Times.nextQuarter(2000, Quarter.First).getQuarter()).isEqualTo(Quarter.Second);
-        assertThat(Times.nextQuarter(2000, Quarter.Second).getQuarter()).isEqualTo(Quarter.Third);
-        assertThat(Times.nextQuarter(2000, Quarter.Third).getQuarter()).isEqualTo(Quarter.Fourth);
-        assertThat(Times.nextQuarter(2000, Quarter.Fourth).getQuarter()).isEqualTo(Quarter.First);
+        assertThat(Times.nextQuarter(2000, Quarter.First).quarter()).isEqualTo(Quarter.Second);
+        assertThat(Times.nextQuarter(2000, Quarter.Second).quarter()).isEqualTo(Quarter.Third);
+        assertThat(Times.nextQuarter(2000, Quarter.Third).quarter()).isEqualTo(Quarter.Fourth);
+        assertThat(Times.nextQuarter(2000, Quarter.Fourth).quarter()).isEqualTo(Quarter.First);
     }
 
     @Test
     public void previousQuarterTest() {
-        assertThat(Times.prevQuarter(2000, Quarter.First).getQuarter()).isEqualTo(Quarter.Fourth);
-        assertThat(Times.prevQuarter(2000, Quarter.Second).getQuarter()).isEqualTo(Quarter.First);
-        assertThat(Times.prevQuarter(2000, Quarter.Third).getQuarter()).isEqualTo(Quarter.Second);
-        assertThat(Times.prevQuarter(2000, Quarter.Fourth).getQuarter()).isEqualTo(Quarter.Third);
+        assertThat(Times.prevQuarter(2000, Quarter.First).quarter()).isEqualTo(Quarter.Fourth);
+        assertThat(Times.prevQuarter(2000, Quarter.Second).quarter()).isEqualTo(Quarter.First);
+        assertThat(Times.prevQuarter(2000, Quarter.Third).quarter()).isEqualTo(Quarter.Second);
+        assertThat(Times.prevQuarter(2000, Quarter.Fourth).quarter()).isEqualTo(Quarter.Third);
     }
 
     @Test
     public void addQuarterTest() {
 
-        assertThat(Times.addQuarter(2000, Quarter.First, 1).getQuarter()).isEqualTo(Quarter.Second);
-        assertThat(Times.addQuarter(2000, Quarter.Second, 1).getQuarter()).isEqualTo(Quarter.Third);
-        assertThat(Times.addQuarter(2000, Quarter.Third, 1).getQuarter()).isEqualTo(Quarter.Fourth);
-        assertThat(Times.addQuarter(2000, Quarter.Fourth, 1).getQuarter()).isEqualTo(Quarter.First);
+        assertThat(Times.addQuarter(2000, Quarter.First, 1).quarter()).isEqualTo(Quarter.Second);
+        assertThat(Times.addQuarter(2000, Quarter.Second, 1).quarter()).isEqualTo(Quarter.Third);
+        assertThat(Times.addQuarter(2000, Quarter.Third, 1).quarter()).isEqualTo(Quarter.Fourth);
+        assertThat(Times.addQuarter(2000, Quarter.Fourth, 1).quarter()).isEqualTo(Quarter.First);
 
-        assertThat(Times.addQuarter(2000, Quarter.First, -1).getQuarter()).isEqualTo(Quarter.Fourth);
-        assertThat(Times.addQuarter(2000, Quarter.Second, -1).getQuarter()).isEqualTo(Quarter.First);
-        assertThat(Times.addQuarter(2000, Quarter.Third, -1).getQuarter()).isEqualTo(Quarter.Second);
-        assertThat(Times.addQuarter(2000, Quarter.Fourth, -1).getQuarter()).isEqualTo(Quarter.Third);
+        assertThat(Times.addQuarter(2000, Quarter.First, -1).quarter()).isEqualTo(Quarter.Fourth);
+        assertThat(Times.addQuarter(2000, Quarter.Second, -1).quarter()).isEqualTo(Quarter.First);
+        assertThat(Times.addQuarter(2000, Quarter.Third, -1).quarter()).isEqualTo(Quarter.Second);
+        assertThat(Times.addQuarter(2000, Quarter.Fourth, -1).quarter()).isEqualTo(Quarter.Third);
 
-        assertThat(Times.addQuarter(2000, Quarter.First, 2).getQuarter()).isEqualTo(Quarter.Third);
-        assertThat(Times.addQuarter(2000, Quarter.Second, 2).getQuarter()).isEqualTo(Quarter.Fourth);
-        assertThat(Times.addQuarter(2000, Quarter.Third, 2).getQuarter()).isEqualTo(Quarter.First);
-        assertThat(Times.addQuarter(2000, Quarter.Fourth, 2).getQuarter()).isEqualTo(Quarter.Second);
+        assertThat(Times.addQuarter(2000, Quarter.First, 2).quarter()).isEqualTo(Quarter.Third);
+        assertThat(Times.addQuarter(2000, Quarter.Second, 2).quarter()).isEqualTo(Quarter.Fourth);
+        assertThat(Times.addQuarter(2000, Quarter.Third, 2).quarter()).isEqualTo(Quarter.First);
+        assertThat(Times.addQuarter(2000, Quarter.Fourth, 2).quarter()).isEqualTo(Quarter.Second);
 
-        assertThat(Times.addQuarter(2000, Quarter.First, -2).getQuarter()).isEqualTo(Quarter.Third);
-        assertThat(Times.addQuarter(2000, Quarter.Second, -2).getQuarter()).isEqualTo(Quarter.Fourth);
-        assertThat(Times.addQuarter(2000, Quarter.Third, -2).getQuarter()).isEqualTo(Quarter.First);
-        assertThat(Times.addQuarter(2000, Quarter.Fourth, -2).getQuarter()).isEqualTo(Quarter.Second);
+        assertThat(Times.addQuarter(2000, Quarter.First, -2).quarter()).isEqualTo(Quarter.Third);
+        assertThat(Times.addQuarter(2000, Quarter.Second, -2).quarter()).isEqualTo(Quarter.Fourth);
+        assertThat(Times.addQuarter(2000, Quarter.Third, -2).quarter()).isEqualTo(Quarter.First);
+        assertThat(Times.addQuarter(2000, Quarter.Fourth, -2).quarter()).isEqualTo(Quarter.Second);
     }
 
     @Test
@@ -151,13 +151,13 @@ public class TimesCalendarTest extends TimePeriodTestBase {
     @Test
     public void nextMonthTest() {
         for (int i = 1; i <= TimeSpec.MonthsPerYear; i++)
-            assertThat(Times.nextMonth(2000, i).getMonthOfYear()).isEqualTo(i % TimeSpec.MonthsPerYear + 1);
+            assertThat(Times.nextMonth(2000, i).monthOfYear()).isEqualTo(i % TimeSpec.MonthsPerYear + 1);
     }
 
     @Test
     public void prevMonthTest() {
         for (int i = 1; i <= TimeSpec.MonthsPerYear; i++)
-            assertThat(Times.prevMonth(2000, i).getMonthOfYear()).isEqualTo(
+            assertThat(Times.prevMonth(2000, i).monthOfYear()).isEqualTo(
                     (i - 1) <= 0 ? TimeSpec.MonthsPerYear + i - 1 : i - 1);
     }
 
@@ -165,18 +165,18 @@ public class TimesCalendarTest extends TimePeriodTestBase {
     public void addMonthTest() {
 
         for (int i = 1; i <= TimeSpec.MonthsPerYear; i++)
-            assertThat(Times.addMonth(2000, i, 1).getMonthOfYear()).isEqualTo(i % TimeSpec.MonthsPerYear + 1);
+            assertThat(Times.addMonth(2000, i, 1).monthOfYear()).isEqualTo(i % TimeSpec.MonthsPerYear + 1);
 
         for (int i = 1; i <= TimeSpec.MonthsPerYear; i++)
-            assertThat(Times.addMonth(2000, i, -1).getMonthOfYear()).isEqualTo(
+            assertThat(Times.addMonth(2000, i, -1).monthOfYear()).isEqualTo(
                     (i - 1) <= 0 ? TimeSpec.MonthsPerYear + i - 1 : i - 1);
 
         final int threeYears = 3 * TimeSpec.MonthsPerYear;
 
         for (int i = 1; i <= threeYears; i++) {
             YearMonth ym = Times.addMonth(2013, 1, i);
-            assertThat(ym.getYear()).isEqualTo(2013 + i / TimeSpec.MonthsPerYear);
-            assertThat(ym.getMonthOfYear()).isEqualTo(i % TimeSpec.MonthsPerYear + 1);
+            assertThat(ym.year()).isEqualTo(2013 + i / TimeSpec.MonthsPerYear);
+            assertThat(ym.monthOfYear()).isEqualTo(i % TimeSpec.MonthsPerYear + 1);
         }
     }
 

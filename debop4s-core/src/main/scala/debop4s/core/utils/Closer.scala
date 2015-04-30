@@ -13,7 +13,7 @@ object Closer {
   private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   /** `close` 메소드를 가진 객체에 대해 메소드 `func` 를 실행한 후 `close` 메소드를 호출합니다. */
-  def using[A <: {def close() : Unit}, B](closable: A)(func: A => B): B = {
+  def using[@miniboxed A <: {def close() : Unit}, @miniboxed B](closable: A)(func: A => B): B = {
     require(closable != null)
     require(func != null)
 

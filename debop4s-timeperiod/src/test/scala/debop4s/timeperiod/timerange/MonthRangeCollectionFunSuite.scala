@@ -13,7 +13,7 @@ class MonthRangeCollectionFunSuite extends AbstractTimeFunSuite {
     val mrs = MonthRangeCollection(startYear, startMonth, 1)
     mrs.monthCount should equal(1)
 
-    val months = mrs.months
+    val months = mrs.monthsView
     months.size should equal(1)
     months(0).isSamePeriod(new MonthRange(startYear, startMonth)) should equal(true)
 
@@ -23,7 +23,7 @@ class MonthRangeCollectionFunSuite extends AbstractTimeFunSuite {
     mrs.endMonthOfYear should equal(startMonth)
   }
 
-  test("calendar months") {
+  test("calendar monthsView") {
     val startYear = 2004
     val startMonth = 11
     val monthCount = 5
@@ -48,7 +48,7 @@ class MonthRangeCollectionFunSuite extends AbstractTimeFunSuite {
       mrs.start shouldEqual startTime
       mrs.end shouldEqual endTime
 
-      val items = mrs.months
+      val items = mrs.monthsView
 
       (0 until m).par.foreach { i =>
         val item = items(i)

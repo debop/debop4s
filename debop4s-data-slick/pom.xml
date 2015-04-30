@@ -12,6 +12,10 @@
     <name>data-slick</name>
     <artifactId>debop4s-data-slick</artifactId>
 
+    <properties>
+        <slick2.version>2.1.0</slick2.version>
+    </properties>
+
     <dependencies>
         <!-- debop4s -->
         <dependency>
@@ -39,11 +43,18 @@
         <!-- Slick -->
         <dependency>
             <groupId>com.typesafe.slick</groupId>
-            <artifactId>slick_2.11</artifactId>
+            <artifactId>slick_${scala.main.version}</artifactId>
+            <version>${slick2.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.slick</groupId>
-            <artifactId>slick-testkit_2.11</artifactId>
+            <artifactId>slick-codegen_${scala.main.version}</artifactId>
+            <version>${slick2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.slick</groupId>
+            <artifactId>slick-testkit_${scala.main.version}</artifactId>
+            <version>${slick2.version}</version>
             <scope>test</scope>
         </dependency>
 

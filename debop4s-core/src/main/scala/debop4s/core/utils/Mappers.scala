@@ -30,34 +30,34 @@ object Mappers {
   }
 
 
-  def map[T <: AnyRef](src: Any, dest: T): Unit =
+  def map[@miniboxed T <: AnyRef](src: Any, dest: T): Unit =
     mapper.map(src, dest)
 
-  def map[T: ClassTag](src: Any): T =
+  def map[@miniboxed T: ClassTag](src: Any): T =
     mapper.map[T](src, classTag[T].runtimeClass)
 
-  def mapAll[T: ClassTag](srcs: Iterable[_]): Seq[T] = {
+  def mapAll[@miniboxed T: ClassTag](srcs: Iterable[_]): Seq[T] = {
     val targetClass = classTag[T].runtimeClass
     srcs.toSeq.map(src => mapper.map(src, targetClass).asInstanceOf[T])
   }
 
-  def mapAsync[T <: AnyRef](src: Any, dest: T): Future[Unit] = Future {
+  def mapAsync[@miniboxed T <: AnyRef](src: Any, dest: T): Future[Unit] = Future {
     map[T](src, dest)
   }
 
-  def mapAsync[T: ClassTag](src: Any): Future[T] = Future {
+  def mapAsync[@miniboxed T: ClassTag](src: Any): Future[T] = Future {
     map[T](src)
   }
 
-  def mapAllAsync[T: ClassTag](srcs: Iterable[_]): Future[Seq[T]] = Future {
+  def mapAllAsync[@miniboxed T: ClassTag](srcs: Iterable[_]): Future[Seq[T]] = Future {
     mapAll(srcs)
   }
 
-  def mapAllAsParallel[T: ClassTag](srcs: Iterable[_]): Iterable[T] = {
+  def mapAllAsParallel[@miniboxed T: ClassTag](srcs: Iterable[_]): Iterable[T] = {
     val targetClass = classTag[T].runtimeClass
     srcs.par.map(src => mapper.map[T](src, targetClass).asInstanceOf[T]).seq
   }
 
-  def tryMap[T: ClassTag](src: Any): Try[T] =
+  def tryMap[@miniboxed T: ClassTag](src: Any): Try[T] =
     Try { map[T](src) }
 }

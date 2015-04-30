@@ -8,8 +8,7 @@ import java.util
  * 고정된 크기의 바이트 버퍼를 표현합니다.
  * @author Sunghyouk Bae
  */
-trait Buff {
-  outer =>
+trait Buff {outer =>
 
   /**
    * `Buffer` 정보를 `output` 바이트 배열에 씁니다.

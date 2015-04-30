@@ -4,7 +4,7 @@ import java.lang.{Iterable => JIterable}
 
 import debop4s.timeperiod.timeline.TimeLine
 
-class TimePeriodCombiner[@specialized(Specializable.BestOfBreed) T <: ITimePeriod](val mapper: Option[ITimePeriodMapper] = None) {
+class TimePeriodCombiner[@miniboxed T <: ITimePeriod](val mapper: Option[ITimePeriodMapper] = None) {
 
   def this() = this(None)
   def this(mapper: ITimePeriodMapper) = this(Some(mapper))

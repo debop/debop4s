@@ -2,6 +2,7 @@ package debop4s.timeperiod.calendars
 
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
+import org.slf4j.LoggerFactory
 
 import scala.annotation.varargs
 import scala.collection.mutable

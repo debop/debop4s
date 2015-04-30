@@ -1,14 +1,13 @@
 package debop4s.timeperiod.calendars
 
+import debop4s.core.ToStringHelper
 import debop4s.core.conversions.jodatime._
 import debop4s.core.utils.Hashs
-import debop4s.core.{Logging, ToStringHelper}
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
-
-import scala.beans.BeanProperty
+import org.slf4j.LoggerFactory
 
 /**
  * debop4s.timeperiod.calendars.DateDiff
@@ -17,52 +16,54 @@ import scala.beans.BeanProperty
  */
 class DateDiff(val start: DateTime,
                val end: DateTime,
-               val calendar: ITimeCalendar) extends Logging {
+               val calendar: ITimeCalendar) {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   def this(start: DateTime) = this(start, Times.now, DefaultTimeCalendar)
   def this(start: DateTime, end: DateTime) = this(start, end, DefaultTimeCalendar)
 
-  @BeanProperty val difference = new Duration(start, end)
+  val difference = new Duration(start, end)
 
-  @BeanProperty lazy val years = calcYears()
-  @BeanProperty lazy val quarters = calcQuarters()
-  @BeanProperty lazy val months = calcMonths()
-  @BeanProperty lazy val weeks = calcWeeks()
-  @BeanProperty lazy val days = difference.getStandardDays
-  @BeanProperty lazy val hours = difference.getStandardHours
-  @BeanProperty lazy val minutes = difference.getStandardMinutes
-  @BeanProperty lazy val seconds = difference.getStandardSeconds
+  lazy val years = calcYears()
+  lazy val quarters = calcQuarters()
+  lazy val months = calcMonths()
+  lazy val weeks = calcWeeks()
+  lazy val days = difference.getStandardDays
+  lazy val hours = difference.getStandardHours
+  lazy val minutes = difference.getStandardMinutes
+  lazy val seconds = difference.getStandardSeconds
 
-  @BeanProperty lazy val elapsedYears = years
-  @BeanProperty lazy val elapsedQuarters = quarters
-  @BeanProperty lazy val elapsedMonths = months - elapsedYears * MonthsPerYear
+  lazy val elapsedYears = years
+  lazy val elapsedQuarters = quarters
+  lazy val elapsedMonths = months - elapsedYears * MonthsPerYear
 
-  @BeanProperty lazy val elapsedStartDays = start.plusYears(elapsedYears.toInt).plusMonths(elapsedMonths.toInt)
-  @BeanProperty lazy val elapsedDays = new Duration(elapsedStartDays, end).getStandardDays.toLong
+  lazy val elapsedStartDays = start.plusYears(elapsedYears.toInt).plusMonths(elapsedMonths.toInt)
+  lazy val elapsedDays = new Duration(elapsedStartDays, end).getStandardDays.toLong
 
-  @BeanProperty lazy val elapsedStartHours =
+  lazy val elapsedStartHours =
     start.plusYears(elapsedYears.toInt)
     .plusMonths(elapsedMonths.toInt)
     .plusDays(elapsedDays.toInt)
 
-  @BeanProperty lazy val elapsedHours = new Duration(elapsedStartHours, end).getStandardHours.toLong
+  lazy val elapsedHours = new Duration(elapsedStartHours, end).getStandardHours.toLong
 
-  @BeanProperty lazy val elapsedStartMinutes =
+  lazy val elapsedStartMinutes =
     start.plusYears(elapsedYears.toInt)
     .plusMonths(elapsedMonths.toInt)
     .plusDays(elapsedDays.toInt)
     .plusHours(elapsedHours.toInt)
 
-  @BeanProperty lazy val elapsedMinutes = new Duration(elapsedStartMinutes, end).getStandardMinutes.toLong
+  lazy val elapsedMinutes = new Duration(elapsedStartMinutes, end).getStandardMinutes.toLong
 
-  @BeanProperty lazy val elapsedStartSeconds =
+  lazy val elapsedStartSeconds =
     start.plusYears(elapsedYears.toInt)
     .plusMonths(elapsedMonths.toInt)
     .plusDays(elapsedDays.toInt)
     .plusHours(elapsedHours.toInt)
     .plusMinutes(elapsedMinutes.toInt)
 
-  @BeanProperty lazy val elapsedSeconds = new Duration(elapsedStartSeconds, end).getStandardSeconds.toLong
+  lazy val elapsedSeconds = new Duration(elapsedStartSeconds, end).getStandardSeconds.toLong
 
   def isEmpty = difference.isEqual(Duration.ZERO)
 

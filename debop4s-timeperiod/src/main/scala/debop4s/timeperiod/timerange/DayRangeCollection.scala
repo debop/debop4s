@@ -30,8 +30,7 @@ class DayRangeCollection(private[this] val _moment: DateTime,
     this(Times.asDate(year, monthOfYear, dayOfMonth), dayCount, calendar)
 
 
-  @inline
-  def days: SeqView[DayRange, Seq[_]] = {
+  def daysView: SeqView[DayRange, Seq[_]] = {
     val startDay = Times.asDate(start)
 
     (0 until dayCount).view.map { d =>

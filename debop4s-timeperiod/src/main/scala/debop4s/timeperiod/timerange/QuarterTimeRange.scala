@@ -31,18 +31,22 @@ abstract class QuarterTimeRange(private[this] val _year: Int,
 
   def isMultipleCalendarYears: Boolean = startYear != endYear
 
-  def months: SeqView[MonthRange, Seq[_]] = {
+  def monthsView: SeqView[MonthRange, Seq[_]] = {
     val monthCount = quarterCount * MonthsPerQuarter
     (0 until monthCount).view.map { m =>
       MonthRange(start.plusMonths(m), calendar)
     }
   }
 
+  @inline
   def getMonths: util.List[MonthRange] = {
     val monthCount = quarterCount * MonthsPerQuarter
     val mrs = Lists.newArrayListWithCapacity[MonthRange](monthCount)
-    (0 until monthCount) foreach { m =>
+
+    var m = 0
+    while (m < monthCount) {
       mrs add MonthRange(start.plusMonths(m), calendar)
+      m += 1
     }
     mrs
   }

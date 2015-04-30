@@ -11,7 +11,7 @@ import scala.util.{Failure, Success}
  * twitter/util 에 있는 pool 을 porting 했습니다.
  * 기존 apache common 과는 달리 `Future` 를 사용합니다.
  */
-trait Pool[A] {
+trait Pool[@miniboxed A] {
   /**
    * 객체를 생성하는 `Future` 를 `Pool`에서 꺼냅니다.
    */
@@ -22,7 +22,7 @@ trait Pool[A] {
   def release(a: A): Unit
 }
 
-class SimplePool[A](items: mutable.Queue[Future[A]]) extends Pool[A] {
+class SimplePool[@miniboxed A](items: mutable.Queue[Future[A]]) extends Pool[A] {
 
   def this(items: Seq[A]) = this {
     val queue = new mutable.Queue[Future[A]]
@@ -58,7 +58,7 @@ class SimplePool[A](items: mutable.Queue[Future[A]]) extends Pool[A] {
   }
 }
 
-abstract class FactoryPool[A](numItems: Int) extends Pool[A] {
+abstract class FactoryPool[@miniboxed A](numItems: Int) extends Pool[A] {
 
   private[this] val healthyQueue = new HealthyQueue[A](makeItem, numItems, isHealthy)
   private[this] val simplePool = new SimplePool[A](healthyQueue)
@@ -72,24 +72,22 @@ abstract class FactoryPool[A](numItems: Int) extends Pool[A] {
   protected def isHealthy(a: A): Boolean
 }
 
-private class HealthyQueue[A](makeItem: () => Future[A],
+private class HealthyQueue[@miniboxed A](makeItem: () => Future[A],
                               numItems: Int,
                               isHealthy: A => Boolean) extends mutable.QueueProxy[Future[A]] {
 
-  override val self = new mutable.SynchronizedQueue[Future[A]]
+  override val self = new mutable.Queue[Future[A]]
 
   synchronized {
     (0 until numItems).foreach(_ => self += makeItem())
   }
-
-  // private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   override def +=(item: Future[A]): this.type = {
     synchronized { self += item }
     this
   }
 
-  override def enqueue(elems: Future[A]*): Unit = {
+  override def enqueue(elems: Future[A]*): Unit = synchronized {
     this ++= elems
   }
 

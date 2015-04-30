@@ -6,9 +6,9 @@ import debop4s.timeperiod.utils.Times
 import org.joda.time.DateTime
 
 @SerialVersionUID(-2730296141281632596L)
-class Datepart(val value: DateTime) extends ValueObject with Ordered[Datepart] {
+class Datepart(val value: DateTime = Times.today) extends ValueObject with Ordered[Datepart] {
 
-  def this() = this(Times.today)
+  // def this() = this(Times.today)
 
   def year = value.getYear
   def monthOfYear = value.getMonthOfYear

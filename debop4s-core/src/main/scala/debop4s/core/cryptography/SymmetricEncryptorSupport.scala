@@ -6,6 +6,7 @@ import org.jasypt.encryption.pbe.StandardPBEByteEncryptor
 import org.jasypt.salt.ZeroSaltGenerator
 import org.slf4j.LoggerFactory
 
+import scala.util.{Failure, Success, Try}
 import scala.util.control.NonFatal
 
 /**
@@ -16,10 +17,9 @@ import scala.util.control.NonFatal
  */
 trait SymmetricEncryptorSupport {
 
-  protected lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   private[this] val DEFAULT_PASSWORD: String = "debop@hconnect.co.kr-21011"
-
   private[this] var password: String = DEFAULT_PASSWORD
 
   /**
@@ -71,11 +71,12 @@ trait SymmetricEncryptorSupport {
     if (input == null || input.length == 0)
       return Array.emptyByteArray
 
-    try {
+    Try {
       encryptor.encrypt(input)
-    } catch {
-      case NonFatal(e) =>
-        log.warn(s"암호화에 실패했습니다. 지정된 값을 반환합니다.", e)
+    } match {
+      case Success(x) => x
+      case Failure(ex) =>
+        log.warn(s"암호화에 실패했습니다. 지정된 값을 반환합니다.", ex)
         input
     }
   }
@@ -105,16 +106,17 @@ trait SymmetricEncryptorSupport {
     if (input == null || input.length == 0)
       return Array.emptyByteArray
 
-    try {
-      // salt 값이 포함 안된 암호화 데이터를 복원합니다.
+    Try {
       encryptor.decrypt(input)
-    } catch {
-      case NonFatal(e) =>
-        try {
-          // salt 값이 포함된 암호화 데이터를 복원합니다.
+    } match {
+      case Success(x) => x
+      case Failure(e) =>
+        log.debug(s"복원에 실패했습니다. salt 값 없이 복원을 시도합니다.")
+        Try {
           encryptorWithoutSalt.decrypt(input)
-        } catch {
-          case NonFatal(es) =>
+        } match {
+          case Success(x) => x
+          case Failure(es) =>
             log.warn(s"복원에 실패했습니다. algorithm=$algorithm, input=$input", es)
             input
         }

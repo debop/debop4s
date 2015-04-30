@@ -56,7 +56,7 @@ class HalfyearRangeFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("multiple calendar years") {
+  test("multiple calendar yearsView") {
     val currentYear = now.getYear
     HalfyearRange(currentYear, Halfyear.First).isMultipleCalendarYears shouldEqual false
   }
@@ -81,7 +81,7 @@ class HalfyearRangeFunSuite extends AbstractTimeFunSuite {
   test("halfyear quaters") {
 
     val h1 = HalfyearRange(currentYear, Halfyear.First, calendar)
-    val h1quarters = h1.quarters
+    val h1quarters = h1.quartersView
 
     var h1index = 0
     h1quarters.foreach { qr =>
@@ -93,7 +93,7 @@ class HalfyearRangeFunSuite extends AbstractTimeFunSuite {
     }
 
     val h2 = HalfyearRange(currentYear, Halfyear.Second, calendar)
-    val h2quarters = h2.quarters
+    val h2quarters = h2.quartersView
 
     var h2index = 0
     h2quarters.foreach { qr =>
@@ -108,7 +108,7 @@ class HalfyearRangeFunSuite extends AbstractTimeFunSuite {
   test("halfyear getMonths") {
 
     val h1 = HalfyearRange(currentYear, Halfyear.First, calendar)
-    val months = h1.months
+    val months = h1.monthsView
     months.size shouldEqual TimeSpec.MonthsPerHalfyear
 
     var index = 0
@@ -119,7 +119,7 @@ class HalfyearRangeFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("add halfyears") {
+  test("add halfyearsView") {
 
     val h1 = HalfyearRange(currentYear, Halfyear.First, calendar)
 

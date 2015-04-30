@@ -112,7 +112,7 @@ class QuarterRangeFunSuite extends AbstractTimeFunSuite {
     q4.end should equal(asDate(currentYear + 1, 1, 1))
   }
 
-  test("add quarters") {
+  test("add quartersView") {
     val now = Times.now
     val currentYear = now.getYear
     val calendar = EmptyOffsetTimeCalendar

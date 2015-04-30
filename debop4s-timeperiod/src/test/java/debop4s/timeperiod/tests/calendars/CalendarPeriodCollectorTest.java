@@ -29,10 +29,10 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
 
         collector.collectYears();
 
-        log.trace("Collect years... periods=[{}]", collector.getPeriods());
+        log.trace("Collect yearsView... periods=[{}]", collector.periods());
 
-        for (int i = 0; i < collector.getPeriods().size(); i++) {
-            ITimePeriod period = collector.getPeriods().get(i);
+        for (int i = 0; i < collector.periods().size(); i++) {
+            ITimePeriod period = collector.periods().get(i);
             log.trace("period=[{}]", period);
             assertThat(period.isSamePeriod(new YearRange((int) filter.years().apply(i)))).isTrue();
         }
@@ -49,11 +49,11 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
 
         collector.collectMonths();
 
-        log.trace("Collect months... periods=[{}]", collector.getPeriods());
+        log.trace("Collect monthsView... periods=[{}]", collector.periods());
 
-        assertThat(collector.getPeriods().size()).isEqualTo(2);
-        assertThat(collector.getPeriods().get(0).isSamePeriod(new MonthRange(2010, 1))).isTrue();
-        assertThat(collector.getPeriods().get(1).isSamePeriod(new MonthRange(2011, 1))).isTrue();
+        assertThat(collector.periods().size()).isEqualTo(2);
+        assertThat(collector.periods().get(0).isSamePeriod(new MonthRange(2010, 1))).isTrue();
+        assertThat(collector.periods().get(1).isSamePeriod(new MonthRange(2011, 1))).isTrue();
     }
 
     @Test
@@ -69,22 +69,22 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
 
         collector.collectDays();
 
-        for (ITimePeriod period : seqAsJavaList(collector.getPeriods())) {
+        for (ITimePeriod period : seqAsJavaList(collector.periods())) {
             log.trace("Day=[{}]", period);
         }
 
-        assertThat(collector.getPeriods().size()).isEqualTo(9);
+        assertThat(collector.periods().size()).isEqualTo(9);
 
-        assertThat(collector.getPeriods().get(0).isSamePeriod(new DayRange(2010, 1, 1))).isTrue();
-        assertThat(collector.getPeriods().get(1).isSamePeriod(new DayRange(2010, 1, 8))).isTrue();
-        assertThat(collector.getPeriods().get(2).isSamePeriod(new DayRange(2010, 1, 15))).isTrue();
-        assertThat(collector.getPeriods().get(3).isSamePeriod(new DayRange(2010, 1, 22))).isTrue();
-        assertThat(collector.getPeriods().get(4).isSamePeriod(new DayRange(2010, 1, 29))).isTrue();
+        assertThat(collector.periods().get(0).isSamePeriod(new DayRange(2010, 1, 1))).isTrue();
+        assertThat(collector.periods().get(1).isSamePeriod(new DayRange(2010, 1, 8))).isTrue();
+        assertThat(collector.periods().get(2).isSamePeriod(new DayRange(2010, 1, 15))).isTrue();
+        assertThat(collector.periods().get(3).isSamePeriod(new DayRange(2010, 1, 22))).isTrue();
+        assertThat(collector.periods().get(4).isSamePeriod(new DayRange(2010, 1, 29))).isTrue();
 
-        assertThat(collector.getPeriods().get(5).isSamePeriod(new DayRange(2011, 1, 7))).isTrue();
-        assertThat(collector.getPeriods().get(6).isSamePeriod(new DayRange(2011, 1, 14))).isTrue();
-        assertThat(collector.getPeriods().get(7).isSamePeriod(new DayRange(2011, 1, 21))).isTrue();
-        assertThat(collector.getPeriods().get(8).isSamePeriod(new DayRange(2011, 1, 28))).isTrue();
+        assertThat(collector.periods().get(5).isSamePeriod(new DayRange(2011, 1, 7))).isTrue();
+        assertThat(collector.periods().get(6).isSamePeriod(new DayRange(2011, 1, 14))).isTrue();
+        assertThat(collector.periods().get(7).isSamePeriod(new DayRange(2011, 1, 21))).isTrue();
+        assertThat(collector.periods().get(8).isSamePeriod(new DayRange(2011, 1, 28))).isTrue();
     }
 
     @Test
@@ -101,22 +101,22 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
 
         collector.collectHours();
 
-        for (ITimePeriod period : seqAsJavaList(collector.getPeriods())) {
+        for (ITimePeriod period : seqAsJavaList(collector.periods())) {
             log.trace("Hours=[{}]", period);
         }
 
-        assertThat(collector.getPeriods().size()).isEqualTo(9);
+        assertThat(collector.periods().size()).isEqualTo(9);
 
-        assertThat(collector.getPeriods().get(0).isSamePeriod(new HourRangeCollection(2010, 1, 1, 8, 10))).isTrue();
-        assertThat(collector.getPeriods().get(1).isSamePeriod(new HourRangeCollection(2010, 1, 8, 8, 10))).isTrue();
-        assertThat(collector.getPeriods().get(2).isSamePeriod(new HourRangeCollection(2010, 1, 15, 8, 10))).isTrue();
-        assertThat(collector.getPeriods().get(3).isSamePeriod(new HourRangeCollection(2010, 1, 22, 8, 10))).isTrue();
-        assertThat(collector.getPeriods().get(4).isSamePeriod(new HourRangeCollection(2010, 1, 29, 8, 10))).isTrue();
+        assertThat(collector.periods().get(0).isSamePeriod(new HourRangeCollection(2010, 1, 1, 8, 10))).isTrue();
+        assertThat(collector.periods().get(1).isSamePeriod(new HourRangeCollection(2010, 1, 8, 8, 10))).isTrue();
+        assertThat(collector.periods().get(2).isSamePeriod(new HourRangeCollection(2010, 1, 15, 8, 10))).isTrue();
+        assertThat(collector.periods().get(3).isSamePeriod(new HourRangeCollection(2010, 1, 22, 8, 10))).isTrue();
+        assertThat(collector.periods().get(4).isSamePeriod(new HourRangeCollection(2010, 1, 29, 8, 10))).isTrue();
 
-        assertThat(collector.getPeriods().get(5).isSamePeriod(new HourRangeCollection(2011, 1, 7, 8, 10))).isTrue();
-        assertThat(collector.getPeriods().get(6).isSamePeriod(new HourRangeCollection(2011, 1, 14, 8, 10))).isTrue();
-        assertThat(collector.getPeriods().get(7).isSamePeriod(new HourRangeCollection(2011, 1, 21, 8, 10))).isTrue();
-        assertThat(collector.getPeriods().get(8).isSamePeriod(new HourRangeCollection(2011, 1, 28, 8, 10))).isTrue();
+        assertThat(collector.periods().get(5).isSamePeriod(new HourRangeCollection(2011, 1, 7, 8, 10))).isTrue();
+        assertThat(collector.periods().get(6).isSamePeriod(new HourRangeCollection(2011, 1, 14, 8, 10))).isTrue();
+        assertThat(collector.periods().get(7).isSamePeriod(new HourRangeCollection(2011, 1, 21, 8, 10))).isTrue();
+        assertThat(collector.periods().get(8).isSamePeriod(new HourRangeCollection(2011, 1, 28, 8, 10))).isTrue();
     }
 
     @Test
@@ -133,22 +133,22 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
 
         collector.collectHours();
 
-        for (ITimePeriod period : seqAsJavaList(collector.getPeriods())) {
+        for (ITimePeriod period : seqAsJavaList(collector.periods())) {
             log.trace("Hours=[{}]", period);
         }
 
-        assertThat(collector.getPeriods().size()).isEqualTo(9);
+        assertThat(collector.periods().size()).isEqualTo(9);
 
-        assertThat(collector.getPeriods().get(0).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 1, 8, 30), new DateTime(2010, 1, 1, 18, 50)))).isTrue();
-        assertThat(collector.getPeriods().get(1).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 8, 8, 30), new DateTime(2010, 1, 8, 18, 50)))).isTrue();
-        assertThat(collector.getPeriods().get(2).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 15, 8, 30), new DateTime(2010, 1, 15, 18, 50)))).isTrue();
-        assertThat(collector.getPeriods().get(3).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 22, 8, 30), new DateTime(2010, 1, 22, 18, 50)))).isTrue();
-        assertThat(collector.getPeriods().get(4).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 29, 8, 30), new DateTime(2010, 1, 29, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(0).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 1, 8, 30), new DateTime(2010, 1, 1, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(1).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 8, 8, 30), new DateTime(2010, 1, 8, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(2).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 15, 8, 30), new DateTime(2010, 1, 15, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(3).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 22, 8, 30), new DateTime(2010, 1, 22, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(4).isSamePeriod(new CalendarTimeRange(new DateTime(2010, 1, 29, 8, 30), new DateTime(2010, 1, 29, 18, 50)))).isTrue();
 
-        assertThat(collector.getPeriods().get(5).isSamePeriod(new CalendarTimeRange(new DateTime(2011, 1, 7, 8, 30), new DateTime(2011, 1, 7, 18, 50)))).isTrue();
-        assertThat(collector.getPeriods().get(6).isSamePeriod(new CalendarTimeRange(new DateTime(2011, 1, 14, 8, 30), new DateTime(2011, 1, 14, 18, 50)))).isTrue();
-        assertThat(collector.getPeriods().get(7).isSamePeriod(new CalendarTimeRange(new DateTime(2011, 1, 21, 8, 30), new DateTime(2011, 1, 21, 18, 50)))).isTrue();
-        assertThat(collector.getPeriods().get(8).isSamePeriod(new CalendarTimeRange(new DateTime(2011, 1, 28, 8, 30), new DateTime(2011, 1, 28, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(5).isSamePeriod(new CalendarTimeRange(new DateTime(2011, 1, 7, 8, 30), new DateTime(2011, 1, 7, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(6).isSamePeriod(new CalendarTimeRange(new DateTime(2011, 1, 14, 8, 30), new DateTime(2011, 1, 14, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(7).isSamePeriod(new CalendarTimeRange(new DateTime(2011, 1, 21, 8, 30), new DateTime(2011, 1, 21, 18, 50)))).isTrue();
+        assertThat(collector.periods().get(8).isSamePeriod(new CalendarTimeRange(new DateTime(2011, 1, 28, 8, 30), new DateTime(2011, 1, 28, 18, 50)))).isTrue();
     }
 
     @Test
@@ -156,7 +156,7 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
     public void collectExcludePeriod() {
 
         final int workingDays2011 = 365 - 2 - (51 * 2) - 1;
-        final int workingDaysMarch2011 = 31 - 8; // total days - weekend days
+        final int workingDaysMarch2011 = 31 - 8; // total daysView - weekend daysView
 
         YearRange year2011 = new YearRange(2011);
 
@@ -166,7 +166,7 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
         // FIXME: 여기서 예외가 부정기적으로 발생한다. 아마 CalendarPeriodCollector가 병렬로 작업해서 그런 것 같다.
         CalendarPeriodCollector collector1 = new CalendarPeriodCollector(filter1, year2011);
         collector1.collectDays();
-        assertThat(collector1.getPeriods().size()).isEqualTo(workingDays2011);
+        assertThat(collector1.periods().size()).isEqualTo(workingDays2011);
 
         // 3월 제외 (23일 제외)
         CalendarPeriodCollectorFilter filter2 = new CalendarPeriodCollectorFilter();
@@ -175,7 +175,7 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
 
         CalendarPeriodCollector collector2 = new CalendarPeriodCollector(filter2, year2011);
         collector2.collectDays();
-        assertThat(collector2.getPeriods().size()).isEqualTo(workingDays2011 - workingDaysMarch2011);
+        assertThat(collector2.periods().size()).isEqualTo(workingDays2011 - workingDaysMarch2011);
 
 
         // 2011 년 26주차 ~ 27주차 (여름휴가)
@@ -186,6 +186,6 @@ public class CalendarPeriodCollectorTest extends TimePeriodTestBase {
 
         CalendarPeriodCollector collector3 = new CalendarPeriodCollector(filter3, year2011);
         collector3.collectDays();
-        assertThat(collector3.getPeriods().size()).isEqualTo(workingDays2011 - workingDaysMarch2011 - 2 * TimeSpec.WeekDaysPerWeek);
+        assertThat(collector3.periods().size()).isEqualTo(workingDays2011 - workingDaysMarch2011 - 2 * TimeSpec.WeekDaysPerWeek);
     }
 }

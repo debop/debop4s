@@ -18,12 +18,12 @@ import scala.collection.JavaConverters._
  */
 object DataSources {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   lazy val processCount = sys.runtime.availableProcessors()
-  val MAX_POOL_SIZE = processCount * 16: Int
-  val MIN_POOL_SIZE = processCount: Int
-  val MIN_IDLE_SIZE = processCount
+  lazy val MAX_POOL_SIZE = processCount * 16: Int
+  lazy val MIN_POOL_SIZE = processCount: Int
+  lazy val MIN_IDLE_SIZE = processCount
 
   def getDataSource(database: DatabaseSetting): DataSource = {
     getDataSource(database.driverClass,

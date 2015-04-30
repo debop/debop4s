@@ -13,9 +13,6 @@ import org.apache.tomcat.jdbc.pool.PoolProperties
  */
 class TomcatDataSourceFactory extends AbstractDataSourceFactory {
 
-  private lazy val processCount = sys.runtime.availableProcessors()
-
-
   /**
    * Tomcat DataSource를 생성합니다.
    * @param dataSourceClassName dataSourceClassName

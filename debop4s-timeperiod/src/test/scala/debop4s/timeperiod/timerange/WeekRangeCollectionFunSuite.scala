@@ -6,7 +6,7 @@ import debop4s.timeperiod.utils.{Times, Weeks}
 
 class WeekRangeCollectionFunSuite extends AbstractTimeFunSuite {
 
-  test("single months") {
+  test("single monthsView") {
     val startYear = 2004
     val startWeek = 22
 
@@ -18,12 +18,12 @@ class WeekRangeCollectionFunSuite extends AbstractTimeFunSuite {
     wrs.startWeekOfYear should equal(startWeek)
     wrs.endWeekOfYear should equal(startWeek)
 
-    val weeks = wrs.weeks
+    val weeks = wrs.weeksView
     weeks should have size 1
     weeks(0).isSamePeriod(WeekRange(startYear, startWeek)) should equal(true)
   }
 
-  test("calendar weeks") {
+  test("calendar weeksView") {
     val startYear = 2004
     val startWeek = 22
     val weekCount = 5
@@ -53,7 +53,7 @@ class WeekRangeCollectionFunSuite extends AbstractTimeFunSuite {
         wrs.start should equal(startTime)
         wrs.end should equal(endTime)
 
-        val items = wrs.weeks
+        val items = wrs.weeksView
 
         (0 until weekCount).par.foreach {
           w =>

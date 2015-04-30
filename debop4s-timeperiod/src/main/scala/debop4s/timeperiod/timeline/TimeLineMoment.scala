@@ -41,7 +41,7 @@ class TimeLineMoment(private[this] val _moment: DateTime) extends ValueObject wi
 
   def endCount: Int = _periods.count(x => x.end.equals(_moment))
 
-  override def hashCode() = Hashs.compute(_moment)
+  override def hashCode = Hashs.compute(_moment)
 
   override protected def buildStringHelper =
     super.buildStringHelper

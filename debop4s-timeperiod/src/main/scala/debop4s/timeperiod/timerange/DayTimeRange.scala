@@ -34,7 +34,7 @@ class DayTimeRange(private[this] val _start: DateTime,
   def getStartDayOfWeek = startDayOfWeek
   def getEndDayOfWeek = endDayOfWeek
 
-  def hours: SeqView[HourRange, Seq[_]] = {
+  def hoursView: SeqView[HourRange, Seq[_]] = {
     val day = startDayStart
     val hours = dayCount * HoursPerDay
     (0 until hours).view.map { h => HourRange(day.plusHours(h), calendar) }

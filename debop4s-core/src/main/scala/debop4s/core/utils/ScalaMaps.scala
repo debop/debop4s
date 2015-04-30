@@ -8,18 +8,18 @@ import debop4s.core.Logging
  */
 object ScalaMaps extends Logging {
 
-  def sortByKey[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
+  def sortByKey[@miniboxed K <: Ordered[K], @miniboxed V](m: Map[K, V]): Map[K, V] =
     m.toList.sortBy(_._1).toMap
   // m.toList.sortWith(_._1 < _._1).toMap
 
-  def sortByKeyDescending[K <: Ordered[K], V](m: Map[K, V]): Map[K, V] =
+  def sortByKeyDescending[@miniboxed K <: Ordered[K], @miniboxed V](m: Map[K, V]): Map[K, V] =
     m.toList.sortWith(_._1 > _._1).toMap
 
 
-  def sortByValue[K, V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
+  def sortByValue[@miniboxed K, @miniboxed V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
     m.toList.sortBy(_._2).toMap
   // m.toList.sortWith(_._2 < _._2).toMap
 
-  def sortByValueDescending[K, V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
+  def sortByValueDescending[@miniboxed K, @miniboxed V <: Ordered[V]](m: Map[K, V]): Map[K, V] =
     m.toList.sortWith(_._2 > _._2).toMap
 }

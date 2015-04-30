@@ -21,7 +21,7 @@ class ToStringHelper(val className: String) extends Serializable {
 
   private[this] val map = new util.LinkedHashMap[String, Any]()
 
-  def add(name: String, value: Any): ToStringHelper = {
+  def add(name: String, value: Any): this.type = {
     map.put(name, value)
     this
   }

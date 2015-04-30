@@ -10,8 +10,8 @@ import scala.util.control.NonFatal
 case class PromiseWrapper[T](promise: () => Future[T])
 
 object PromiseWrapper {
-  implicit def fromFuture[T](promise: () => Future[T]): PromiseWrapper[T] = PromiseWrapper(promise)
-  implicit def toFuture[T](pw: PromiseWrapper[T]): () => Future[T] = pw.promise
+  implicit def fromFuture[@miniboxed T](promise: () => Future[T]): PromiseWrapper[T] = PromiseWrapper(promise)
+  implicit def toFuture[@miniboxed T](pw: PromiseWrapper[T]): () => Future[T] = pw.promise
 }
 
 object Directly {
@@ -52,7 +52,7 @@ object Pause {
   def forever(delay: FiniteDuration = DEFAULT_DELAY)(implicit timer: Timer): Policy =
     new Policy {
       self =>
-      override def apply[T](promise: PromiseWrapper[T])
+      override def apply[@miniboxed T](promise: PromiseWrapper[T])
                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
         val orElse = () => timer.doLater(delay) { self(promise) }.flatMap(identity)
         retry(promise, orElse)
@@ -64,7 +64,7 @@ object Pause {
    */
   def apply(max: Int = 4, delay: FiniteDuration = DEFAULT_DELAY)(implicit timer: Timer): Policy =
     new CountingPolicy {
-      override def apply[T](promise: PromiseWrapper[T])
+      override def apply[@miniboxed T](promise: PromiseWrapper[T])
                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
 
         def run(max: Int): Future[T] = {
@@ -84,7 +84,7 @@ object Backoff {
    */
   def forever(delay: FiniteDuration = DEFAULT_DELAY, base: Int = 2)(implicit timer: Timer): Policy =
     new Policy {
-      override def apply[T](promise: PromiseWrapper[T])
+      override def apply[@miniboxed T](promise: PromiseWrapper[T])
                            (implicit success: Successful[T], executor: ExecutionContext): Future[T] = {
         def run(delay: FiniteDuration): Future[T] = {
           val orElse = () => timer.doLater(delay)(run(Duration(delay.length * base, delay.unit))).flatMap(identity)
@@ -102,7 +102,7 @@ object Backoff {
             base: Int = 2)
            (implicit timer: Timer): Policy =
     new CountingPolicy {
-      override def apply[T](promise: PromiseWrapper[T])
+      override def apply[@miniboxed T](promise: PromiseWrapper[T])
                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
         def run(max: Int, delay: FiniteDuration): Future[T] = {
           countdown(
@@ -135,7 +135,7 @@ object When {
 
   def apply(depends: Depends): Policy =
     new Policy {
-      override def apply[T](promise: PromiseWrapper[T])
+      override def apply[@miniboxed T](promise: PromiseWrapper[T])
                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
         val future = promise()
         future.flatMap { result =>
@@ -165,17 +165,17 @@ trait Policy {
 
   protected val log = LoggerFactory.getLogger(getClass)
 
-  def apply[T](pw: PromiseWrapper[T])
+  def apply[@miniboxed T](pw: PromiseWrapper[T])
               (implicit successful: Successful[T], executionContext: ExecutionContext): Future[T]
 
-  def apply[T](promise: => Future[T])
+  def apply[@miniboxed T](promise: => Future[T])
               (implicit successful: Successful[T], executor: ExecutionContext): Future[T] =
     apply { () => promise }
 
   /**
    * `promise` 를 작업하고, 실패 시에는 `orElse` 를 수행하고, 예외가 발생한 경우는 `recovery` 로 복원합니다.
    */
-  protected def retry[T](promise: () => Future[T],
+  protected def retry[@miniboxed T](promise: () => Future[T],
                          orElse: () => Future[T],
                          recovery: Future[T] => Future[T] = identity(_: Future[T]))
                         (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {

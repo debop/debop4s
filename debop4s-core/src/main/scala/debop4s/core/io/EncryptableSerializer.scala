@@ -11,14 +11,12 @@ import org.slf4j.LoggerFactory
 class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncryptorSupport = new RC2Encryptor())
   extends SerializerDecorator(serializer) {
 
-  private lazy val log = LoggerFactory.getLogger(classOf[EncryptableSerializer])
-
   /**
    * 객체를 직렬화 합니다.
    * @param graph 직렬화할 객체
    * @return 직렬화된 정보를 가진 바이트 배열
    */
-  override def serialize[T](graph: T) =
+  override def serialize[@miniboxed T](graph: T) =
     encryptor.encrypt(super.serialize(graph))
 
   /**
@@ -26,6 +24,6 @@ class EncryptableSerializer(serializer: Serializer, val encryptor: SymmetricEncr
    * @param bytes 직렬화된 바이트 배열
    * @return 역직렬화된 객체 정보
    */
-  override def deserialize[T](bytes: Array[Byte], clazz: Class[T]) =
+  override def deserialize[@miniboxed T](bytes: Array[Byte], clazz: Class[T]) =
     super.deserialize(encryptor.decrypt(bytes), clazz)
 }

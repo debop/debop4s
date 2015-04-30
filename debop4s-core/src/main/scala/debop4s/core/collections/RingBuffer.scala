@@ -11,7 +11,7 @@ object RingBuffer {
  * 제한된 요소 수를 가지는 고리 모양의 버퍼를 표현합니다.
  * @author Sunghyouk Bae
  */
-class RingBuffer[A: ClassTag](val maxSize: Int) extends Seq[A] {
+class RingBuffer[@miniboxed A: ClassTag](val maxSize: Int) extends Seq[A] {
 
   def this() = this(16)
 

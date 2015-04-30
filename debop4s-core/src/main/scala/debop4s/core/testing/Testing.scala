@@ -67,7 +67,7 @@ object Testing {
     log.debug(s"멀티스레드로 지정한 코드를 $count 번 수행했습니다.")
   }
 
-  def call[T](count: Int)(callable: Callable[T]): Seq[T] = {
+  def call[@miniboxed T](count: Int)(callable: Callable[T]): Seq[T] = {
     try {
       return Range(0, count).par.map(_ => callable.call()).toList
     } catch {
@@ -77,7 +77,7 @@ object Testing {
     Seq.empty[T]
   }
 
-  def runFunc[T](count: Int)(func: Int => T): Seq[T] = {
+  def runFunc[@miniboxed T](count: Int)(func: Int => T): Seq[T] = {
     try {
       return Range(0, count).par.map(x => func(x)).toList
     } catch {

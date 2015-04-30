@@ -10,7 +10,7 @@ import org.joda.time.DateTime
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 31. 오후 8:16
  */
-trait ITimeLine extends Serializable with Logging {
+trait ITimeLine extends Serializable {
 
   def periods: ITimePeriodContainer
 

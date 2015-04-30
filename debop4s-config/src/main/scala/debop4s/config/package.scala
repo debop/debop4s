@@ -18,9 +18,9 @@ import scala.util.control.NonFatal
  */
 package object config {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  private lazy val processCount: Int = sys.runtime.availableProcessors()
+  private[this] lazy val processCount: Int = sys.runtime.availableProcessors()
 
   /** Database Connection Pool 의 최대 크기 */
   lazy val MAX_POOL_SIZE: Int = processCount * 16
@@ -130,7 +130,7 @@ package object config {
       }
 
 
-    def tryGet[T](path: String, defaultValue: T)(block: => T): T = {
+    def tryGet[@miniboxed T](path: String, defaultValue: T)(block: => T): T = {
       Try { block } match {
         case Success(v) => v
         case Failure(e) =>

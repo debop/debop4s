@@ -22,7 +22,7 @@ class DayRangeInMonth(val startDayOfMonth: Int,
   def compare(x: DayRangeInMonth, y: DayRangeInMonth) =
     x.startDayOfMonth.compareTo(endDayOfMonth)
 
-  override def hashCode() = Hashs.compute(startDayOfMonth, endDayOfMonth)
+  override def hashCode = Hashs.compute(startDayOfMonth, endDayOfMonth)
 
   override protected def buildStringHelper =
     super.buildStringHelper

@@ -16,7 +16,7 @@ import scala.util.control.NonFatal
  */
 class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   def this(initialPermits: Int = 0) = this(initialPermits, None)
   def this(initialPermits: Int, maxWaiters: Int) = this(initialPermits, Some(maxWaiters))

@@ -88,7 +88,7 @@ class WeeksFunSuite extends AbstractTimeFunSuite {
         val endDayWeekRange = Weeks.weekRange(endDayYearWeek)
         val startDayWeekRange = Weeks.weekRange(startDayYearWeek)
 
-        log.trace(s"start day weeks=$startDayWeekRange")
+        log.trace(s"start day weeksView=$startDayWeekRange")
 
         if (endDayYearWeek == startDayYearWeek)
           startDayWeekRange should equal(endDayWeekRange)

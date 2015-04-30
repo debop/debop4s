@@ -69,7 +69,7 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
                    private[this] val _readonly: Boolean = false)
   extends TimePeriod(_start, _end, _readonly) with ITimeInterval {
 
-  def this() = this(MinPeriodTime, MaxPeriodTime, IntervalEdge.Closed, IntervalEdge.Closed, true, false)
+  // def this() = this(MinPeriodTime, MaxPeriodTime, IntervalEdge.Closed, IntervalEdge.Closed, true, false)
   def this(start: DateTime, end: DateTime) = this(start, end, IntervalEdge.Closed, IntervalEdge.Closed, true, false)
   def this(period: ITimePeriod) = this(period.start, period.end, IntervalEdge.Closed, IntervalEdge.Closed, true, false)
 
@@ -234,7 +234,7 @@ class TimeInterval(private[this] val _start: DateTime = MinPeriodTime,
 
 object TimeInterval {
 
-  val Anytime: TimeInterval = apply(readonly = true)
+  lazy val Anytime: TimeInterval = apply(readonly = true)
 
   def apply(): TimeInterval = new TimeInterval()
 

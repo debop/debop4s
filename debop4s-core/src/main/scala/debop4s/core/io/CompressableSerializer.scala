@@ -12,8 +12,6 @@ class CompressableSerializer(private[this] val _serializer: Serializer,
                              val compressor: Compressor)
   extends SerializerDecorator(_serializer) {
 
-  // private[this] lazy val log = LoggerFactory.getLogger(getClass)
-
   def this(serializer: Serializer) = this(serializer, new GZipCompressor())
 
 
@@ -22,7 +20,7 @@ class CompressableSerializer(private[this] val _serializer: Serializer,
    * @param graph 직렬화할 객체
    * @return 직렬화된 정보를 가진 바이트 배열
    */
-  override def serialize[T](graph: T): Array[Byte] =
+  override def serialize[@miniboxed T](graph: T): Array[Byte] =
     compressor.compress(super.serialize(graph))
 
   /**
@@ -30,6 +28,6 @@ class CompressableSerializer(private[this] val _serializer: Serializer,
    * @param bytes 직렬화된 바이트 배열
    * @return 역직렬화된 객체 정보
    */
-  override def deserialize[T](bytes: Array[Byte], clazz: Class[T]): T =
+  override def deserialize[@miniboxed T](bytes: Array[Byte], clazz: Class[T]): T =
     super.deserialize(compressor.decompress(bytes), clazz)
 }

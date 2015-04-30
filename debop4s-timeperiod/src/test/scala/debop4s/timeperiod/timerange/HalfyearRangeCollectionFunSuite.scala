@@ -27,12 +27,12 @@ class HalfyearRangeCollectionFunSuite extends AbstractTimeFunSuite {
     halfyears.endYear should equal(startYear)
     halfyears.endHalfyear should equal(startHalfyear)
 
-    val halfyearList = halfyears.halfyears
+    val halfyearList = halfyears.halfyearsView
     halfyearList.size should equal(1)
     halfyearList.head.isSamePeriod(new HalfyearRange(startYear, startHalfyear)) shouldEqual true
   }
 
-  test("first calendar halfyears") {
+  test("first calendar halfyearsView") {
     val startYear = 2004
     val startHalfyear = Halfyear.First
     val halfyearCount = 3
@@ -44,7 +44,7 @@ class HalfyearRangeCollectionFunSuite extends AbstractTimeFunSuite {
     halfyears.endYear should equal(startYear + 1)
     halfyears.endHalfyear should equal(Halfyear.First)
 
-    val halfyearList = halfyears.halfyears
+    val halfyearList = halfyears.halfyearsView
 
     halfyearList.size should equal(halfyearCount)
     halfyearList(0).isSamePeriod(HalfyearRange(startYear, Halfyear.First)) should equal(true)
@@ -64,7 +64,7 @@ class HalfyearRangeCollectionFunSuite extends AbstractTimeFunSuite {
     halfyears.endYear should equal(startYear + 1)
     halfyears.endHalfyear should equal(Halfyear.Second)
 
-    val halfyearList = halfyears.halfyears
+    val halfyearList = halfyears.halfyearsView
 
     halfyearList.size should equal(halfyearCount)
     halfyearList(0).isSamePeriod(HalfyearRange(startYear, Halfyear.Second)) should equal(true)

@@ -6,7 +6,7 @@ import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
 
 @SerialVersionUID(-4029003873537088627L)
-class Timepart(val value: DateTime) extends ValueObject with Ordered[Timepart] {
+class Timepart(val value: DateTime = Times.zero) extends ValueObject with Ordered[Timepart] {
 
   require(value != null)
 

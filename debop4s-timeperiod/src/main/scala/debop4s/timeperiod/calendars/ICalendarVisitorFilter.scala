@@ -5,7 +5,7 @@ import debop4s.timeperiod._
 
 import scala.collection.mutable
 
-trait ICalendarVisitorFilter extends Serializable with Logging {
+trait ICalendarVisitorFilter extends Serializable {
 
   def excludePeriods: ITimePeriodCollection
 

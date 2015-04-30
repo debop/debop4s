@@ -21,9 +21,9 @@ object Asyncs {
     def run() { /* nothing to do. */ }
   }
 
-  def run[@specialized(Boolean, Int, Long, Unit) V](callable: Callable[V]): Future[V] = Future { callable.call() }
+  def run[@miniboxed V](callable: Callable[V]): Future[V] = Future { callable.call() }
 
-  def run[@specialized(Boolean, Int, Long, Unit) V](block: => V): Future[V] = Future { block }
+  def run[@miniboxed V](block: => V): Future[V] = Future { block }
 
   def continueTask[T, V](prevTask: Future[T])(block: T => V): Future[V] =
     prevTask.map(v => block(v))
@@ -32,48 +32,48 @@ object Asyncs {
     Future.sequence(elements.map(x => Future { function(x) }))
   }
 
-  def invokeAll[@specialized(Boolean, Int, Long, Unit) T](tasks: Iterable[_ <: Callable[T]]): Iterable[T] =
+  def invokeAll[@miniboxed T](tasks: Iterable[_ <: Callable[T]]): Iterable[T] =
     resultAll(tasks.map { x => Future { x.call() } })
 
-  def invokeAll[@specialized(Boolean, Int, Long, Unit) T](tasks: Iterable[_ <: Callable[T]], timeout: Long, unit: TimeUnit): Iterable[T] =
+  def invokeAll[@miniboxed T](tasks: Iterable[_ <: Callable[T]], timeout: Long, unit: TimeUnit): Iterable[T] =
     resultAll(tasks.map { x => Future { x.call() } }, timeout, unit)
 
-  def ready[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T]): Unit =
+  def ready[@miniboxed T](awaitable: Awaitable[T]): Unit =
     ready(awaitable, defaultDuration)
 
-  def ready[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T], timeoutMillis: Long): Unit =
+  def ready[@miniboxed T](awaitable: Awaitable[T], timeoutMillis: Long): Unit =
     ready(awaitable, timeoutMillis millis)
 
-  def ready[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T], atMost: Duration): Unit = {
+  def ready[@miniboxed T](awaitable: Awaitable[T], atMost: Duration): Unit = {
     Await.ready[T](awaitable, atMost)
   }
 
-  def readyAll[@specialized(Boolean, Int, Long, Unit) T](tasks: Iterable[_ <: Future[T]]): Unit = {
+  def readyAll[@miniboxed T](tasks: Iterable[_ <: Future[T]]): Unit = {
     ready(Future.sequence(tasks.toSeq))
   }
 
-  def readyAll[@specialized(Boolean, Int, Long, Unit) T](tasks: JIterable[_ <: Future[T]]): Unit = {
+  def readyAll[@miniboxed T](tasks: JIterable[_ <: Future[T]]): Unit = {
     readyAll(tasks.asScala)
   }
 
-  def result[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T]): T =
+  def result[@miniboxed T](awaitable: Awaitable[T]): T =
     Await.result(awaitable, defaultDuration)
 
-  def result[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T], timeoutMillis: Long): T =
+  def result[@miniboxed T](awaitable: Awaitable[T], timeoutMillis: Long): T =
     Await.result(awaitable, timeoutMillis millis)
 
-  def result[@specialized(Boolean, Int, Long, Unit) T](awaitable: Awaitable[T], atMost: Duration): T =
+  def result[@miniboxed T](awaitable: Awaitable[T], atMost: Duration): T =
     Await.result(awaitable, atMost)
 
-  def resultAll[@specialized(Boolean, Int, Long, Unit) T](tasks: Iterable[_ <: Future[T]]): Iterable[T] =
+  def resultAll[@miniboxed T](tasks: Iterable[_ <: Future[T]]): Iterable[T] =
     result(Future.sequence(tasks.toSeq), defaultDuration)
 
-  def resultAll[@specialized(Boolean, Int, Long, Unit) T](tasks: JIterable[_ <: Future[T]]): Iterable[T] =
+  def resultAll[@miniboxed T](tasks: JIterable[_ <: Future[T]]): Iterable[T] =
     resultAll(tasks.asScala)
 
-  def resultAll[@specialized(Boolean, Int, Long, Unit) T](tasks: Iterable[_ <: Future[T]], timeout: Long, unit: TimeUnit): Iterable[T] =
+  def resultAll[@miniboxed T](tasks: Iterable[_ <: Future[T]], timeout: Long, unit: TimeUnit): Iterable[T] =
     result(Future.sequence(tasks.toSeq), Duration(timeout, unit))
 
-  def resultAll[@specialized(Boolean, Int, Long, Unit) T](tasks: JIterable[_ <: Future[T]], timeout: Long, unit: TimeUnit): Iterable[T] =
+  def resultAll[@miniboxed T](tasks: JIterable[_ <: Future[T]], timeout: Long, unit: TimeUnit): Iterable[T] =
     resultAll(tasks.asScala, timeout, unit)
 }

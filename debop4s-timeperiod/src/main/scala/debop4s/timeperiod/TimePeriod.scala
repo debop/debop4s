@@ -6,6 +6,7 @@ import debop4s.core.{Logging, ValueObject}
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 
 import scala.beans.BeanProperty
 
@@ -14,7 +15,9 @@ import scala.beans.BeanProperty
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 8:15
  */
-trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializable with Logging {
+trait ITimePeriod extends ValueObject with Ordered[ITimePeriod] with Serializable {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   def compare(that: ITimePeriod): Int = if (that != null) start.compareTo(that.start) else 1
 
@@ -102,7 +105,9 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
                           private[this] val _end: DateTime = MaxPeriodTime,
                           var readonly: Boolean = false) extends ITimePeriod {
 
-  def this() = this(MinPeriodTime, MaxPeriodTime, false)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
+
+  // def this() = this(MinPeriodTime, MaxPeriodTime, false)
   def this(readonly: Boolean) = this(MinPeriodTime, MaxPeriodTime, readonly)
   def this(moment: DateTime) = this(moment, moment, false)
   def this(moment: DateTime, readonly: Boolean) = this(moment, moment, false)
@@ -112,8 +117,8 @@ abstract class TimePeriod(private[this] val _start: DateTime = MinPeriodTime,
 
   private val (_newStart, _newEnd) =
     Times.adjustPeriod(
-      Options.toOption(_start).getOrElse(MinPeriodTime),
-      Options.toOption(_end).getOrElse(MaxPeriodTime)
+      Option(_start).getOrElse(MinPeriodTime),
+      Option(_end).getOrElse(MaxPeriodTime)
     )
 
   @BeanProperty

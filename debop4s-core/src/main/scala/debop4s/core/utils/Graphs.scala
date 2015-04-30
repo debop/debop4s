@@ -26,7 +26,7 @@ object Graphs {
    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
    */
   @inline
-  def breadthFirstScan[T](source: T, getAdjacent: T => JIterable[T]): JIterable[T] = {
+  def breadthFirstScan[@miniboxed T](source: T, getAdjacent: T => JIterable[T]): JIterable[T] = {
     require(source != null)
     require(getAdjacent != null)
 
@@ -36,7 +36,7 @@ object Graphs {
 
     while (toScan.size > 0) {
       val current = toScan.poll()
-      // log.trace(s"scanned $current")
+      log.trace(s"scanned $current")
       scanned.add(current)
 
       val it = getAdjacent(current).iterator()
@@ -50,7 +50,7 @@ object Graphs {
     scanned
   }
 
-  def breadthFirstScanJava[T](source: T, getAdjacent: Func1[T, JIterable[T]]): JIterable[T] =
+  def breadthFirstScanJava[@miniboxed T](source: T, getAdjacent: Func1[T, JIterable[T]]): JIterable[T] =
     breadthFirstScan[T](source, (x: T) => getAdjacent.execute(x))
 
   /**
@@ -58,7 +58,7 @@ object Graphs {
    * @param source 시작 노드
    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
    */
-  def breathFirstScanAsync[T](source: T, getAdjacent: T => JIterable[T]): Future[JIterable[T]] =
+  def breathFirstScanAsync[@miniboxed T](source: T, getAdjacent: T => JIterable[T]): Future[JIterable[T]] =
     Future {
       breadthFirstScan(source, getAdjacent)
     }
@@ -69,7 +69,7 @@ object Graphs {
    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
    */
   @inline
-  def depthFirstScan[T](source: T, getAdjacent: T => JIterable[T]): JIterable[T] = {
+  def depthFirstScan[@miniboxed T](source: T, getAdjacent: T => JIterable[T]): JIterable[T] = {
     require(source != null)
     require(getAdjacent != null)
 
@@ -80,7 +80,7 @@ object Graphs {
 
     while (toScan.size > 0) {
       val current = toScan.pop()
-      // log.trace(s"scanned $current")
+      log.trace(s"scanned $current")
       scanned.add(current)
 
       val it = getAdjacent(current).iterator()
@@ -99,7 +99,7 @@ object Graphs {
    * @param source 시작 노드
    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
    */
-  def depthFirstScanJava[T](source: T, getAdjacent: Func1[T, JIterable[T]]): JIterable[T] =
+  def depthFirstScanJava[@miniboxed T](source: T, getAdjacent: Func1[T, JIterable[T]]): JIterable[T] =
     depthFirstScan[T](source, (x: T) => getAdjacent.execute(x))
 
   /**
@@ -107,7 +107,7 @@ object Graphs {
    * @param source 시작 노드
    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
    */
-  def depthFirstScanAsync[T](source: T, getAdjacent: T => JIterable[T]): Future[JIterable[T]] =
+  def depthFirstScanAsync[@miniboxed T](source: T, getAdjacent: T => JIterable[T]): Future[JIterable[T]] =
     Future {
       depthFirstScan(source, getAdjacent)
     }

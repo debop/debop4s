@@ -44,7 +44,7 @@
         <scala.main.version>2.11</scala.main.version>
         <akka.version>2.3.9</akka.version>
         <scalatra.version>2.3.1</scalatra.version>
-        <slick.version>2.1.0</slick.version>
+        <slick.version>3.0.0</slick.version>
 
         <springframework.version>4.1.6.RELEASE</springframework.version>
         <hibernate.version>4.3.7.Final</hibernate.version>
@@ -145,6 +145,13 @@
                 <groupId>org.scalactic</groupId>
                 <artifactId>scalactic_2.11</artifactId>
                 <version>2.2.4</version>
+            </dependency>
+
+            <!-- generic 최적화 -->
+            <dependency>
+                <groupId>org.scala-miniboxing.plugins</groupId>
+                <artifactId>miniboxing-runtime_2.11</artifactId>
+                <version>0.4-M2</version>
             </dependency>
 
             <!-- Shapeless -->
@@ -525,7 +532,7 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.14.4</version>
+                <version>1.16.4</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -935,9 +942,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>com.github.axel22</groupId>
+                <groupId>com.storm-enroute</groupId>
                 <artifactId>scalameter_2.11</artifactId>
-                <version>0.5-M2</version>
+                <version>0.6</version>
                 <scope>test</scope>
             </dependency>
 
@@ -949,27 +956,13 @@
         <!-- Scala -->
         <dependency>
             <groupId>org.scala-lang</groupId>
-            <artifactId>scala-compiler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-reflect</artifactId>
-        </dependency>
 
-        <!-- ScalaTest -->
+        <!-- generic 최적화 -->
         <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.axel22</groupId>
-            <artifactId>scalameter_2.11</artifactId>
-            <scope>test</scope>
+            <groupId>org.scala-miniboxing.plugins</groupId>
+            <artifactId>miniboxing-runtime_2.11</artifactId>
         </dependency>
 
         <!-- project lombok -->
@@ -979,6 +972,17 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- ScalaTest -->
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.storm-enroute</groupId>
+            <artifactId>scalameter_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Logging -->
         <dependency>

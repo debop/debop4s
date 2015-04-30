@@ -8,13 +8,13 @@ import scala.util.Try
  * @author sunghyouk.bae@gmail.com
  */
 @implicitNotFound("Cannot find an implicit retry.Success for the given type of Future, either require one yourself or import retry.Success._")
-class Successful[-T](val predicate: T => Boolean) {
+class Successful[@miniboxed -T](val predicate: T => Boolean) {
 
-  def or[R <: T](that: Successful[R]): Successful[R] = Successful[R](v => predicate(v) || that.predicate(v))
-  def or[R <: T](that: => Boolean): Successful[R] = or(Successful[R](_ => that))
+  def or[@miniboxed R <: T](that: Successful[R]): Successful[R] = Successful[R](v => predicate(v) || that.predicate(v))
+  def or[@miniboxed R <: T](that: => Boolean): Successful[R] = or(Successful[R](_ => that))
 
-  def and[R <: T](that: Successful[R]): Successful[R] = Successful[R](v => predicate(v) && that.predicate(v))
-  def and[R <: T](that: => Boolean): Successful[R] = and(Successful[R](_ => that))
+  def and[@miniboxed R <: T](that: Successful[R]): Successful[R] = Successful[R](v => predicate(v) && that.predicate(v))
+  def and[@miniboxed R <: T](that: => Boolean): Successful[R] = and(Successful[R](_ => that))
 }
 
 object Successful {

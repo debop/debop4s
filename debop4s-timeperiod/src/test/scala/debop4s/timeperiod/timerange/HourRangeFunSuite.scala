@@ -100,12 +100,12 @@ class HourRangeFunSuite extends AbstractTimeFunSuite {
 
   test("getMinutes") {
     val hr = HourRange()
-    val minutes = hr.minutes
+    val minutes = hr.minutesView
 
     minutes.size shouldEqual MinutesPerHour
 
     // for (i <- 0 until MinutesPerHour) {
-    hr.minutes.take(MinutesPerHour) foreach { mr =>
+    hr.minutesView.take(MinutesPerHour) foreach { mr =>
       debug(s"mr=$mr")
       mr.start shouldEqual hr.start + mr.minuteOfHour.minute
       mr.unmappedStart shouldEqual (hr.start + mr.minuteOfHour.minute)

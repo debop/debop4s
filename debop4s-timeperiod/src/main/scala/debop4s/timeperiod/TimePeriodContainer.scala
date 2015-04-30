@@ -7,6 +7,7 @@ import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 
 import scala.annotation.varargs
 import scala.collection.JavaConverters._
@@ -183,6 +184,8 @@ trait ITimePeriodContainer extends mutable.Buffer[ITimePeriod] with ITimePeriod 
 
 @SerialVersionUID(-7112720659283751048L)
 class TimePeriodContainer extends ITimePeriodContainer {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   implicit val dateTimeOrdering = new DateTimeOrdering()
 

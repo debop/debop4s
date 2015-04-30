@@ -10,7 +10,7 @@ import scala.collection.mutable
  * Note that we can allow only one modification at a time.
  * Updates need to be serialized to ensure that the bijective property is maintained.
  */
-class ConcurrentBijection[A, B] extends mutable.Map[A, B] {
+class ConcurrentBijection[@miniboxed A, @miniboxed B] extends mutable.Map[A, B] {
 
   val forward: ConcurrentHashMap[A, B] = new ConcurrentHashMap[A, B]()
   val reverse: ConcurrentHashMap[B, A] = new ConcurrentHashMap[B, A]()

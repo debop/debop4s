@@ -22,7 +22,7 @@ object AsyncQueue {
  * 비동기 방식의 FIFO 큐.
  * 부가적으로 {{offer()}} 와 {{poll()}} 메소드를 제공합니다.
  */
-class AsyncQueue[T] {
+class AsyncQueue[@miniboxed T] {
 
   import AsyncQueue._
 

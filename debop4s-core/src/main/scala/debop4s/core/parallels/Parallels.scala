@@ -3,7 +3,6 @@ package debop4s.core.parallels
 import java.util.concurrent.{Callable, ThreadLocalRandom}
 
 import debop4s.core.JAction1
-import org.slf4j.LoggerFactory
 
 import scala.collection.Seq
 
@@ -16,22 +15,19 @@ import scala.collection.Seq
  */
 object Parallels {
 
-  private[this] lazy val LOG = LoggerFactory.getLogger(getClass)
-
   private[this] lazy val random: ThreadLocalRandom = ThreadLocalRandom.current()
   private[this] lazy val processCount: Int = Runtime.getRuntime.availableProcessors()
   private[this] lazy val workerCount: Int = processCount * 2
 
-  def mapAsOrdered[T <: Ordered[T], V](items: Iterable[T], mapper: T => V): Seq[V] = {
+  def mapAsOrdered[@miniboxed T <: Ordered[T], @miniboxed V](items: Iterable[T], mapper: T => V): Seq[V] = {
     items.par
     .map(x => (x, mapper(x)))
     .toList
     .sortBy(_._1)
-    // .sortWith(_._1 < _._1)
     .map(_._2)
   }
 
-  def mapAsParallel[T, V](items: Iterable[T], mapper: T => V): Iterable[V] =
+  def mapAsParallel[@miniboxed T, @miniboxed V](items: Iterable[T], mapper: T => V): Iterable[V] =
     items.par.map(item => mapper(item)).toList
 
 
@@ -100,7 +96,7 @@ object Parallels {
     }
   }
 
-  def runEach[V](elements: Iterable[V])(block: V => Unit): Unit = {
+  def runEach[@miniboxed V](elements: Iterable[V])(block: V => Unit): Unit = {
     require(elements != null)
     elements.par.foreach(block)
   }
@@ -108,61 +104,61 @@ object Parallels {
   /**
    * 컬렉션을 지정된 갯수로 나누어서 작업합니다.
    */
-  def runEach[V](elements: Iterable[V], size: Int = workerCount)(block: V => Unit) {
+  def runEach[@miniboxed V](elements: Iterable[V], size: Int = workerCount)(block: V => Unit) {
     require(elements != null)
     elements.grouped(size).foreach(_.foreach(block))
   }
 
-  def call[V](count: Int)(callable: Callable[V]): Seq[V] = {
+  def call[@miniboxed V](count: Int)(callable: Callable[V]): Seq[V] = {
     require(callable != null)
     call[V](Range(0, count))(callable)
   }
-  def call[V](start: Int, end: Int, step: Int)(callable: Callable[V]): Seq[V] = {
+  def call[@miniboxed V](start: Int, end: Int, step: Int)(callable: Callable[V]): Seq[V] = {
     require(callable != null)
     call[V](Range(start, end, step))(callable)
   }
 
-  def call[V](range: Seq[Int])(callable: Callable[V]): Seq[V] = {
+  def call[@miniboxed V](range: Seq[Int])(callable: Callable[V]): Seq[V] = {
     require(range != null)
     range.par.map(_ => callable.call()).seq
   }
 
-  def callFunction[V](count: Int)(func: () => V): Seq[V] = {
+  def callFunction[@miniboxed V](count: Int)(func: () => V): Seq[V] = {
     require(func != null)
     callFunction(Range(0, count))(func)
   }
 
-  def callFunction[V](start: Int, end: Int, step: Int)(func: () => V): Seq[V] = {
+  def callFunction[@miniboxed V](start: Int, end: Int, step: Int)(func: () => V): Seq[V] = {
     require(func != null)
     callFunction(Range(start, end, step))(func)
   }
 
-  def callFunction[V](range: Seq[Int])(func: () => V): Seq[V] = {
+  def callFunction[@miniboxed V](range: Seq[Int])(func: () => V): Seq[V] = {
     require(func != null)
     range.par.map(_ => func()).seq
   }
 
-  def callFunction1[V](count: Int)(func: Int => V): Seq[V] = {
+  def callFunction1[@miniboxed V](count: Int)(func: Int => V): Seq[V] = {
     require(func != null)
     callFunction1(Range(0, count))(func).toSeq
   }
 
-  def callFunction1[V](start: Int, end: Int, step: Int)(func: Int => V): Seq[V] = {
+  def callFunction1[@miniboxed V](start: Int, end: Int, step: Int)(func: Int => V): Seq[V] = {
     require(func != null)
     callFunction1(Range(start, end, step))(func).toSeq
   }
 
-  def callFunction1[V](range: Seq[Int])(func: Int => V): Seq[V] = {
+  def callFunction1[@miniboxed V](range: Seq[Int])(func: Int => V): Seq[V] = {
     require(func != null)
     range.par.map(i => func(i)).seq.toSeq
   }
 
-  def callEach[S, T](elements: Iterable[S])(func: S => T): Seq[T] = {
+  def callEach[@miniboxed S, @miniboxed T](elements: Iterable[S])(func: S => T): Seq[T] = {
     require(func != null)
     elements.par.map(x => func(x)).seq.toSeq
   }
 
-  def callEach[S, T](elements: Iterable[S], size: Int)(func: S => T): Seq[(S, T)] = {
+  def callEach[@miniboxed S, @miniboxed T](elements: Iterable[S], size: Int)(func: S => T): Seq[(S, T)] = {
     elements.grouped(size).map(_.map(s => (s, func(s)))).flatten.toSeq
   }
 }

@@ -158,7 +158,7 @@ class TimeRange(private[this] val _start: DateTime = MinPeriodTime,
 
 object TimeRange {
 
-  val Anytime = apply(readonly = true)
+  lazy val Anytime = apply(readonly = true)
 
   def apply(): TimeRange =
     new TimeRange(MinPeriodTime, MaxPeriodTime, false)

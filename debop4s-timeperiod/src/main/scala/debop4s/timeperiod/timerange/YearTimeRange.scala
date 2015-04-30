@@ -28,7 +28,7 @@ class YearTimeRange(private[this] val _year: Int,
   def this(moment: DateTime, yearCount: Int) = this(moment.getYear, yearCount, DefaultTimeCalendar)
   def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) = this(moment.getYear, yearCount, calendar)
 
-  def halfyears: SeqView[HalfyearRange, Seq[_]] = {
+  def halfyearsView: SeqView[HalfyearRange, Seq[_]] = {
     for {
       y <- (0 until yearCount).view
       hy <- Halfyear.values.view
@@ -37,6 +37,7 @@ class YearTimeRange(private[this] val _year: Int,
     }
   }
 
+  @inline
   def getHalfyears: util.List[HalfyearRange] = {
     val halfyears = Lists.newArrayListWithCapacity[HalfyearRange](yearCount * 2)
     var y = 0
@@ -48,7 +49,7 @@ class YearTimeRange(private[this] val _year: Int,
     halfyears
   }
 
-  def quarters = {
+  def quartersView: SeqView[QuarterRange, Seq[_]] = {
     for {
       y <- (0 until yearCount).view
       q <- Quarter.values.view
@@ -57,18 +58,22 @@ class YearTimeRange(private[this] val _year: Int,
     }
   }
 
+  @inline
   def getQuarters: util.List[QuarterRange] = {
     val quarters = Lists.newArrayListWithCapacity[QuarterRange](yearCount * 4)
-    (0 until yearCount) foreach { y =>
-      quarters.add(QuarterRange(startYear + y, Quarter.First, calendar))
-      quarters.add(QuarterRange(startYear + y, Quarter.Second, calendar))
-      quarters.add(QuarterRange(startYear + y, Quarter.Third, calendar))
-      quarters.add(QuarterRange(startYear + y, Quarter.Fourth, calendar))
+    var y = 0
+    while (y < yearCount) {
+      val syear = startYear + y
+      quarters.add(QuarterRange(syear, Quarter.First, calendar))
+      quarters.add(QuarterRange(syear, Quarter.Second, calendar))
+      quarters.add(QuarterRange(syear, Quarter.Third, calendar))
+      quarters.add(QuarterRange(syear, Quarter.Fourth, calendar))
+      y += 1
     }
     quarters
   }
 
-  def months = {
+  def monthsView: SeqView[MonthRange, Seq[_]] = {
     for {
       y <- (0 until yearCount).view
       baseTime = start + y.years
@@ -76,13 +81,18 @@ class YearTimeRange(private[this] val _year: Int,
     } yield MonthRange(baseTime.plusMonths(m), calendar)
   }
 
+  @inline
   def getMonths: util.List[MonthRange] = {
     val months = new util.ArrayList[MonthRange](yearCount * MonthsPerYear)
-    (0 until yearCount) foreach { y =>
+    var y = 0
+    while (y < yearCount) {
       val baseTime = start.plusYears(y)
-      (0 until MonthsPerYear) foreach { m =>
+      var m = 0
+      while (m < MonthsPerYear) {
         months.add(MonthRange(baseTime.plusMonths(m), calendar))
+        m += 1
       }
+      y += 1
     }
     months
   }

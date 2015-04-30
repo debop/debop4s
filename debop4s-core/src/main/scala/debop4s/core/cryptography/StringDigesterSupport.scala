@@ -2,7 +2,6 @@ package debop4s.core.cryptography
 
 import org.jasypt.digest.StandardStringDigester
 import org.jasypt.salt.ZeroSaltGenerator
-import org.slf4j.LoggerFactory
 
 /**
  * 문자열을 Hash 알고리즘으로 암호화를 수행을 지원하는 Trait 입니다.
@@ -11,8 +10,6 @@ import org.slf4j.LoggerFactory
  * @since  2013. 12. 9. 오후 11:08
  */
 trait StringDigesterSupport {
-
-  protected lazy val log = LoggerFactory.getLogger(getClass)
 
   protected def iterations: Option[Int] = None
 
@@ -45,14 +42,14 @@ trait StringDigesterSupport {
     standardStringDigester.matches(message, digest)
 }
 
-abstract class AbstractStringDigester(private val _iterations: Option[Int] = Some(5))
+abstract class AbstractStringDigester(private[this] val _iterations: Option[Int] = Some(5))
   extends StringDigesterSupport {
 
   override protected def iterations = _iterations
 }
 
 /** MD5 String Digester */
-class MD5StringDigester(private val _iterations: Option[Int] = Some(5))
+class MD5StringDigester(private[this] val _iterations: Option[Int] = Some(5))
   extends AbstractStringDigester(_iterations) {
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
@@ -60,7 +57,7 @@ class MD5StringDigester(private val _iterations: Option[Int] = Some(5))
 }
 
 /** SHA1 String Digester */
-class SHA1StringDigester(private val _iterations: Option[Int] = Some(5))
+class SHA1StringDigester(private[this] val _iterations: Option[Int] = Some(5))
   extends AbstractStringDigester(_iterations) {
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
@@ -68,7 +65,7 @@ class SHA1StringDigester(private val _iterations: Option[Int] = Some(5))
 }
 
 /** SHA256 String Digester */
-class SHA256StringDigester(private val _iterations: Option[Int] = Some(5))
+class SHA256StringDigester(private[this] val _iterations: Option[Int] = Some(5))
   extends AbstractStringDigester(_iterations) {
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
@@ -76,7 +73,7 @@ class SHA256StringDigester(private val _iterations: Option[Int] = Some(5))
 }
 
 /** SHA384 String Digester */
-class SHA384StringDigester(private val _iterations: Option[Int] = None)
+class SHA384StringDigester(private[this] val _iterations: Option[Int] = None)
   extends AbstractStringDigester(_iterations) {
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */
@@ -84,7 +81,7 @@ class SHA384StringDigester(private val _iterations: Option[Int] = None)
 }
 
 /** SHA512 String Digester */
-class SHA512StringDigester(private val _iterations: Option[Int] = None)
+class SHA512StringDigester(private[this] val _iterations: Option[Int] = None)
   extends AbstractStringDigester(_iterations) {
 
   /** Digester 알고리즘 ( MD5, SHA-1, SHA-256, SHA-384, SHA-512 ) */

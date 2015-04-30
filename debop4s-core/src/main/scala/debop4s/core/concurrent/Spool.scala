@@ -38,7 +38,7 @@ import scala.concurrent._
  *   firstElem *:: rest
  * }}}
  */
-sealed trait Spool[+A] {
+sealed trait Spool[@miniboxed +A] {
 
   def isEmpty: Boolean
 
@@ -52,13 +52,13 @@ sealed trait Spool[+A] {
    * Apply {{f}} for each item in the spool, until the end.  {{f}} is
    * applied as the items become available.
    */
-  def foreach[B](f: A => B): Future[Unit] = foreachElem { _ foreach f }
+  def foreach[@miniboxed B](f: A => B): Future[Unit] = foreachElem { _ foreach f }
 
   /**
    * A version of {{foreach}} that wraps each element in an {{Option}},
    * terminating the stream (EOF) with {{None}}.
    */
-  def foreachElem[B](f: Option[A] => B): Future[B] = {
+  def foreachElem[@miniboxed B](f: Option[A] => B): Future[B] = {
     if (!isEmpty) {
       Future(f(Some(head))) flatMap { _ =>
         tail onFailure {
@@ -73,7 +73,7 @@ sealed trait Spool[+A] {
     }
   }
 
-  def foldLeft[B](z: B)(f: (B, A) => B): Future[B] = {
+  def foldLeft[@miniboxed B](z: B)(f: (B, A) => B): Future[B] = {
     if (isEmpty) {
       Future { z }
     } else {
@@ -81,7 +81,7 @@ sealed trait Spool[+A] {
     }
   }
 
-  def reduceLeft[B >: A](f: (B, A) => B): Future[B] = {
+  def reduceLeft[@miniboxed B >: A](f: (B, A) => B): Future[B] = {
     if (isEmpty) {
       Future.failed(new UnsupportedOperationException("empty.reduceLeft"))
     } else {
@@ -96,9 +96,9 @@ sealed trait Spool[+A] {
    * know whether the first element exists until we have applied its
    * filter.
    */
-  def collect[B](f: PartialFunction[A, B]): Future[Spool[B]]
+  def collect[@miniboxed B](f: PartialFunction[A, B]): Future[Spool[B]]
 
-  def map[B](f: A => B): Spool[B] = {
+  def map[@miniboxed B](f: A => B): Spool[B] = {
     val s = collect { case x => f(x) }
     // Await.result(s, Duration.Zero)
     Asyncs.result(s, 15.minutes)
@@ -109,7 +109,7 @@ sealed trait Spool[+A] {
   }
 
   /** Concatenates two spools */
-  def ++[B >: A](that: Spool[B]): Spool[B] = {
+  def ++[@miniboxed B >: A](that: Spool[B]): Spool[B] = {
     if (isEmpty) that
     else {
       cons[B](head: B, tail map { _ ++ that })
@@ -117,7 +117,7 @@ sealed trait Spool[+A] {
   }
 
   /** Concatenates two spools */
-  def ++#[B >: A](that: Future[Spool[B]]): Future[Spool[B]] = {
+  def ++#[@miniboxed B >: A](that: Future[Spool[B]]): Future[Spool[B]] = {
     if (isEmpty) that
     else Future { cons[B](head: B, tail flatMap { _ ++# that }) }
   }
@@ -126,7 +126,7 @@ sealed trait Spool[+A] {
    * Applies a function that generates a spool to each element in this spool,
    * flattening the result into a single spool.
    */
-  def flatMap[B](f: A => Future[Spool[B]]): Future[Spool[B]] = {
+  def flatMap[@miniboxed B](f: A => Future[Spool[B]]): Future[Spool[B]] = {
     if (isEmpty) Future(empty[B])
     else f(head) flatMap {
       _ ++# (tail flatMap { _ flatMap f })
@@ -145,7 +145,7 @@ sealed trait Spool[+A] {
 
 object Spool {
 
-  case class Cons[A](value: A, next: Future[Spool[A]]) extends Spool[A] {
+  case class Cons[@miniboxed A](value: A, next: Future[Spool[A]]) extends Spool[A] {
     def isEmpty: Boolean = false
     def head: A = value
     def tail: Future[Spool[A]] = next
@@ -158,11 +158,11 @@ object Spool {
       s"Cons($head, ${ if (tail.value.isDefined) '*' else '?' })"
   }
 
-  private class LazyCons[A](val head: A, next: => Future[Spool[A]]) extends Spool[A] {
+  private class LazyCons[@miniboxed A](val head: A, next: => Future[Spool[A]]) extends Spool[A] {
     def isEmpty: Boolean = false
     lazy val tail: Future[Spool[A]] = next
 
-    def collect[B](f: PartialFunction[A, B]): Future[Spool[B]] = {
+    def collect[@miniboxed B](f: PartialFunction[A, B]): Future[Spool[B]] = {
       val _next = tail flatMap { _.collect(f) }
       if (f.isDefinedAt(head)) Future(Cons(f(head), _next))
       else _next
@@ -175,7 +175,7 @@ object Spool {
     def isEmpty: Boolean = true
     def head: Nothing = throw new NoSuchElementException("spool is empty")
     def tail: Future[Nothing] = Future.failed(new NoSuchElementException("spool is empty"))
-    def collect[B](f: PartialFunction[Nothing, B]): Future[Empty.type] = Future(this)
+    def collect[@miniboxed B](f: PartialFunction[Nothing, B]): Future[Empty.type] = Future(this)
     override def toString: String = "Empty"
   }
 
@@ -183,16 +183,16 @@ object Spool {
    * Cons a value & tail to a new {{Spool}}. To defer the tail of the Spool, use
    * the {{*::}} operator instead.
    */
-  def cons[A](value: A, next: Future[Spool[A]]): Spool[A] = Cons[A](value, next)
-  def cons[A](value: A, nextSpool: Spool[A]): Spool[A] = Cons[A](value, Future(nextSpool))
+  def cons[@miniboxed A](value: A, next: Future[Spool[A]]): Spool[A] = Cons[A](value, next)
+  def cons[@miniboxed A](value: A, nextSpool: Spool[A]): Spool[A] = Cons[A](value, Future(nextSpool))
 
   /** The empty spool. */
-  def empty[A]: Spool[A] = Empty
+  def empty[@miniboxed A]: Spool[A] = Empty
 
   /**
    * Adds an implicit method to efficiently convert a Seq[A] to a Spool[A]
    */
-  class ToSpool[A](s: Seq[A]) {
+  class ToSpool[@miniboxed A](s: Seq[A]) {
     def toSpool: Spool[A] = {
       s.reverse.foldLeft(Spool.empty: Spool[A]) {
         case (tail, head) => cons(head, tail)
@@ -200,13 +200,13 @@ object Spool {
     }
   }
 
-  implicit def seqToSpool[A](s: Seq[A]): ToSpool[A] = new ToSpool(s)
+  implicit def seqToSpool[@miniboxed A](s: Seq[A]): ToSpool[A] = new ToSpool(s)
 
   class Syntax[A](tail: => Future[Spool[A]]) {
     def *::(head: A): Spool[A] = new LazyCons(head, tail)
   }
 
-  implicit def syntax[A](s: => Future[Spool[A]]): Syntax[A] = new Syntax(s)
+  implicit def syntax[@miniboxed A](s: => Future[Spool[A]]): Syntax[A] = new Syntax(s)
 
   object *:: {
     def unapply[A](s: Spool[A]): Option[(A, Future[Spool[A]])] = {
@@ -215,14 +215,14 @@ object Spool {
     }
   }
 
-  class Syntax1[A](tail: Spool[A]) {
+  class Syntax1[@miniboxed A](tail: Spool[A]) {
     def **::(head: A) = cons(head, tail)
   }
 
-  implicit def syntax1[A](s: Spool[A]): Syntax1[A] = new Syntax1(s)
+  implicit def syntax1[@miniboxed A](s: Spool[A]): Syntax1[A] = new Syntax1(s)
 
   object **:: {
-    def unapply[A](s: Spool[A]): Option[(A, Spool[A])] = {
+    def unapply[@miniboxed A](s: Spool[A]): Option[(A, Spool[A])] = {
       if (s.isEmpty) None
       else Some(s.head, Asyncs.result(s.tail))
     }

@@ -23,8 +23,7 @@ class MinuteRangeCollection(private[this] val _moment: DateTime,
 
   def this(moment: DateTime, minuteCount: Int) = this(moment, minuteCount, DefaultTimeCalendar)
 
-  @inline
-  def minutes: SeqView[MinuteRange, Seq[_]] = {
+  def minutesView: SeqView[MinuteRange, Seq[_]] = {
     val startMin = Times.trimToSecond(start)
 
     (0 until minuteCount).view.map { m =>
@@ -32,6 +31,7 @@ class MinuteRangeCollection(private[this] val _moment: DateTime,
     }
   }
 
+  @inline
   def getMinutes: util.List[MinuteRange] = {
     val startMin = Times.trimToSecond(start)
 
@@ -72,8 +72,8 @@ object MinuteRangeCollection {
             minuteCount: Int,
             calendar: ITimeCalendar): MinuteRangeCollection = {
     new MinuteRangeCollection(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour),
-                               minuteCount,
-                               calendar)
+                              minuteCount,
+                              calendar)
   }
 
 

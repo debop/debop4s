@@ -24,13 +24,13 @@ class YearRangeCollection(private[this] val _year: Int,
   def this(moment: DateTime, yearCount: Int, calendar: ITimeCalendar) =
     this(moment.getYear, yearCount, calendar)
 
-  @inline
-  def years: SeqView[YearRange, Seq[_]] = {
+  def yearsView: SeqView[YearRange, Seq[_]] = {
     (0 until yearCount).view.map { y =>
       YearRange(startYear + y, calendar)
     }
   }
 
+  @inline
   def getYears: util.List[YearRange] = {
     val years = Lists.newArrayListWithCapacity[YearRange](yearCount)
     var i = 0

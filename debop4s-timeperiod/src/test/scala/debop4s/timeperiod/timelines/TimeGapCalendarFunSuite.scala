@@ -221,7 +221,7 @@ class TimeGapCalendarFunSuite extends AbstractTimeFunSuite {
         val days = DayRangeCollection(limits.start, limits.duration.getStandardDays.toInt + 1, calendar)
 
         // limits의 내부이고, 주말인 DayRange를 제외목록에 추가합니다.
-        days.days.foreach {
+        days.daysView.foreach {
           day =>
             if (limits.hasInside(day) && Times.isWeekend(day.dayOfWeek)) {
               excludePeriods.add(day)

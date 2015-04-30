@@ -27,8 +27,7 @@ class HourRangeCollection(private[this] val _moment: DateTime,
   def this(year: Int, monthOfYear: Int, dayOfMonth: Int, hourOfDay: Int, hourCount: Int, calendar: ITimeCalendar) =
     this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, 0), hourCount, calendar)
 
-  @inline
-  def hours: SeqView[HourRange, Seq[_]] = {
+  def hoursView: SeqView[HourRange, Seq[_]] = {
     val startHour = Times.trimToMinute(start)
 
     (0 until hourCount).view.map { h =>
@@ -36,6 +35,7 @@ class HourRangeCollection(private[this] val _moment: DateTime,
     }
   }
 
+  @inline
   def getHours: util.List[HourRange] = {
     val startHour = Times.trimToMinute(start)
 

@@ -12,7 +12,7 @@ object BoundedStack {
 /**
  * 제한된 크기를 가지는 `stack` 입니다. 제한된 크기보다 더 많은 요소를 추가 시, 가장 아래에 있는 요소를 제거합니다.
  */
-class BoundedStack[A: ClassTag](val maxSize: Int) extends Seq[A] {
+class BoundedStack[@miniboxed A: ClassTag](val maxSize: Int) extends Seq[A] {
 
   require(maxSize > 0, s"maxSize should greater than 0")
 

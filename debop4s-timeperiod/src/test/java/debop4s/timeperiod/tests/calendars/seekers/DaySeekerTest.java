@@ -115,7 +115,7 @@ public class DaySeekerTest extends TimePeriodTestBase {
 
         CalendarVisitorFilter filter = new CalendarVisitorFilter();
         filter.addWorkingWeekdays();
-        filter.getExcludePeriods().add(new DayRangeCollection(2011, 2, 27, 14)); // 14 days -> week 9 and week 10
+        filter.getExcludePeriods().add(new DayRangeCollection(2011, 2, 27, 14)); // 14 daysView -> week 9 and week 10
 
         DaySeeker daySeeker = new DaySeeker(filter);
 

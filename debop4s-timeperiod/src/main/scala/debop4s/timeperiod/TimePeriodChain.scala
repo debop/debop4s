@@ -6,6 +6,7 @@ import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
+import org.slf4j.LoggerFactory
 
 import scala.annotation.varargs
 
@@ -18,8 +19,9 @@ import scala.annotation.varargs
 @SerialVersionUID(1838724440389574448L)
 trait ITimePeriodChain extends ITimePeriodContainer {
 
-  override def head: ITimePeriod = periods.headOption.orNull
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
+  override def head: ITimePeriod = periods.headOption.orNull
   override def last: ITimePeriod = periods.lastOption.orNull
 
   override def set(index: Int, elem: ITimePeriod): ITimePeriod = {
@@ -36,7 +38,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
       assertSpaceAfter(alast.end, period.duration)
       period.setup(alast.end, alast.end.plus(period.duration))
     }
-    trace(s"Period chain 끝에 period=[$period]를 추가합니다.")
+    log.trace(s"Period chain 끝에 period=[$period]를 추가합니다.")
     periods += period
   }
 
@@ -49,14 +51,14 @@ trait ITimePeriodChain extends ITimePeriodContainer {
    */
   def add(index: Int, item: ITimePeriod) {
     Times.assertMutable(item)
-    trace(s"Chain의 인덱스[$index]에 새로운 요소[$item]를 삽입합니다...")
+    log.trace(s"Chain의 인덱스[$index]에 새로운 요소[$item]를 삽입합니다...")
 
     val itemDuration = item.duration
     var prevItem: ITimePeriod = null
     var nextItem: ITimePeriod = null
 
     if (size > 0) {
-      trace("시간적 삽입 공간이 존재하는지 검사합니다...")
+      log.trace("시간적 삽입 공간이 존재하는지 검사합니다...")
       if (index > 0) {
         prevItem = get(index - 1)
         assertSpaceAfter(end, itemDuration)
@@ -70,7 +72,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
     periods.insert(index, item)
 
     if (prevItem != null) {
-      trace("선행 period에 기초하여 삽입한 period와 후행 period들의 시간을 조정합니다...")
+      log.trace("선행 period에 기초하여 삽입한 period와 후행 period들의 시간을 조정합니다...")
       item.setup(prevItem.end, prevItem.end.plus(itemDuration))
 
       var i = index + 1
@@ -83,7 +85,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
     }
 
     if (nextItem != null) {
-      trace("후행 period에 기초하여 삽입한 period와 선행 period들의 시간을 조정합니다...")
+      log.trace("후행 period에 기초하여 삽입한 period와 선행 period들의 시간을 조정합니다...")
       var nextStart = nextItem.start.minus(itemDuration)
       item.setup(nextStart, nextStart.plus(itemDuration))
 
@@ -124,7 +126,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
     }
 
     if (removed && next != null) {
-      trace(s"요소[$item]를 제거하고, chain의 후속 periods 들의 기간을 조정합니다...")
+      log.trace(s"요소[$item]를 제거하고, chain의 후속 periods 들의 기간을 조정합니다...")
 
       var x = index
       while (x < size) {
@@ -134,7 +136,7 @@ trait ITimePeriodChain extends ITimePeriodContainer {
         x += 1
       }
     }
-    trace(s"요소[$item]를 제거했습니다. removed=[$removed]")
+    log.trace(s"요소[$item]를 제거했습니다. removed=[$removed]")
     removed
   }
 

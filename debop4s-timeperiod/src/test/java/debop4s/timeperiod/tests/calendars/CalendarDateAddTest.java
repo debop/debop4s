@@ -124,8 +124,8 @@ public class CalendarDateAddTest extends TimePeriodTestBase {
         CalendarDateAdd dateAdd = new CalendarDateAdd();
 
         dateAdd.addWorkingWeekDays();
-        dateAdd.getExcludePeriods().add(new DayRange(2011, 4, 4, dateAdd.getCalendar()));
-        dateAdd.getWorkingHours().$plus$eq(new HourRangeInDay(8, 18));
+        dateAdd.getExcludePeriods().add(new DayRange(2011, 4, 4, dateAdd.calendar()));
+        dateAdd.workingHours().$plus$eq(new HourRangeInDay(8, 18));
 
         DateTime start = new DateTime(2011, 4, 1, 9, 0);
 
@@ -139,8 +139,8 @@ public class CalendarDateAddTest extends TimePeriodTestBase {
         CalendarDateAdd dateAdd = new CalendarDateAdd();
 
         dateAdd.addWorkingWeekDays();
-        dateAdd.getExcludePeriods().add(new DayRange(2011, 4, 4, dateAdd.getCalendar()));
-        dateAdd.getWorkingHours().$plus$eq(new HourRangeInDay(8, 18));
+        dateAdd.getExcludePeriods().add(new DayRange(2011, 4, 4, dateAdd.calendar()));
+        dateAdd.workingHours().$plus$eq(new HourRangeInDay(8, 18));
 
         DateTime start = new DateTime(2011, 4, 1, 9, 0);
 
@@ -156,9 +156,9 @@ public class CalendarDateAddTest extends TimePeriodTestBase {
         CalendarDateAdd dateAdd = new CalendarDateAdd();
 
         dateAdd.addWorkingWeekDays();
-        dateAdd.getExcludePeriods().add(new DayRange(2011, 4, 4, dateAdd.getCalendar()));
-        dateAdd.getWorkingHours().$plus$eq(new HourRangeInDay(8, 12));
-        dateAdd.getWorkingHours().$plus$eq(new HourRangeInDay(13, 18));
+        dateAdd.getExcludePeriods().add(new DayRange(2011, 4, 4, dateAdd.calendar()));
+        dateAdd.workingHours().$plus$eq(new HourRangeInDay(8, 12));
+        dateAdd.workingHours().$plus$eq(new HourRangeInDay(13, 18));
 
         DateTime start = new DateTime(2011, 4, 1, 9, 0);
 
@@ -172,9 +172,9 @@ public class CalendarDateAddTest extends TimePeriodTestBase {
         CalendarDateAdd dateAdd = new CalendarDateAdd();
 
         dateAdd.addWorkingWeekDays();
-        dateAdd.getExcludePeriods().add(new DayRange(2011, 4, 4, dateAdd.getCalendar()));
-        dateAdd.getWorkingHours().$plus$eq(new HourRangeInDay(new Timepart(8, 30), new Timepart(12)));
-        dateAdd.getWorkingHours().$plus$eq(new HourRangeInDay(new Timepart(13, 30), new Timepart(18)));
+        dateAdd.getExcludePeriods().add(new DayRange(2011, 4, 4, dateAdd.calendar()));
+        dateAdd.workingHours().$plus$eq(new HourRangeInDay(new Timepart(8, 30), new Timepart(12)));
+        dateAdd.workingHours().$plus$eq(new HourRangeInDay(new Timepart(13, 30), new Timepart(18)));
 
         DateTime start = new DateTime(2011, 4, 1, 9, 0);
 

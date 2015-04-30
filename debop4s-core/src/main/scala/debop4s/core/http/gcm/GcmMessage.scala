@@ -15,7 +15,6 @@ import scala.collection.JavaConverters._
  * @since 2013. 12. 15. 오후 2:18
  */
 @SerialVersionUID(-8489854059420880664L)
-@deprecated(message = "hconnect-backend-messaging 이로 이관합니다.", since = "2.0.0")
 class GcmMessage extends ValueObject {
 
   /** 등록된 디바이스의 Id (스마트 폰의 고유 Device Id) */
@@ -44,7 +43,6 @@ class GcmMessage extends ValueObject {
     .add("data", data)
 }
 
-@deprecated(message = "hconnect-backend-messaging 이로 이관합니다.", since = "2.0.0")
 class GcmMessageBuilder {
   val registrationIds = new util.HashSet[String]()
   var collapseKey: String = _

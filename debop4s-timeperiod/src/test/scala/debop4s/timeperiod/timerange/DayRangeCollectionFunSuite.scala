@@ -8,7 +8,7 @@ import debop4s.timeperiod.utils.Times._
 
 class DayRangeCollectionFunSuite extends AbstractTimeFunSuite {
 
-  test("single days") {
+  test("single daysView") {
     val start = asDate(2004, 2, 22)
     val days = new DayRangeCollection(start, 1)
 
@@ -19,7 +19,7 @@ class DayRangeCollectionFunSuite extends AbstractTimeFunSuite {
     days.startDayOfMonth should equal(start.getDayOfMonth)
   }
 
-  test("calendar days") {
+  test("calendar daysView") {
     val dayCount = 3
 
     val start = asDate(2004, 2, 22)
@@ -35,7 +35,7 @@ class DayRangeCollectionFunSuite extends AbstractTimeFunSuite {
     assert(days.endMonthOfYear == end.getMonthOfYear)
     assert(days.endDayOfMonth == end.getDayOfMonth)
 
-    val dayList = days.days
+    val dayList = days.daysView
     assert(dayList.size == dayCount)
 
     (0 until dayCount).foreach {
@@ -44,7 +44,7 @@ class DayRangeCollectionFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("calendar hours") {
+  test("calendar hoursView") {
     val dayCounts = Array(1, 6, 48, 180, 480)
 
     dayCounts.par.foreach { dayCount =>
@@ -58,7 +58,7 @@ class DayRangeCollectionFunSuite extends AbstractTimeFunSuite {
       assert(days.end == end)
       assert(days.dayCount == dayCount)
 
-      val items = days.hours
+      val items = days.hoursView
       assert(items.size == dayCount * HoursPerDay)
       var i = 0
       while (i < items.size) {

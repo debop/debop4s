@@ -12,7 +12,7 @@ object Options {
   /**
    * 인스턴스가 null이면 None을 반환하고, 값이 있으면 Some(v)를 반환합니다.
    */
-  def toOption[T](v: T): Option[T] = v match {
+  def toOption[@miniboxed T](v: T): Option[T] = v match {
     case null => None
     case None => None
     case x: Option[Any] => x.asInstanceOf[Option[T]]

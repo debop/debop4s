@@ -41,7 +41,7 @@ class DateDiffFunSuite extends AbstractTimeFunSuite {
     dateDiff.difference should equal(new Duration(date1, date2))
   }
 
-  test("years difference") {
+  test("yearsView difference") {
     val years = Array(1, 3, 15, 30, 60, 120)
 
     years.par.foreach { year =>
@@ -95,7 +95,7 @@ class DateDiffFunSuite extends AbstractTimeFunSuite {
   }
 
 
-  test("quarters difference") {
+  test("quartersView difference") {
     val date1 = new DateTime(2011, 5, 15, 15, 32, 44, 245)
     val date2 = date1.plusMonths(TimeSpec.MonthsPerQuarter)
     val date3 = date1.plusMonths(-TimeSpec.MonthsPerQuarter)
@@ -139,7 +139,7 @@ class DateDiffFunSuite extends AbstractTimeFunSuite {
     dateDiff13.seconds should equal(days13 * TimeSpec.HoursPerDay * TimeSpec.MinutesPerHour * TimeSpec.SecondsPerMinute)
   }
 
-  test("months difference") {
+  test("monthsView difference") {
     val date1 = new DateTime(2011, 5, 15, 15, 32, 44, 245)
     val date2 = date1 + 1.month
     val date3 = date1 - 1.month
@@ -215,7 +215,7 @@ class DateDiffFunSuite extends AbstractTimeFunSuite {
     dateDiff13.seconds should equal(days13 * TimeSpec.HoursPerDay * TimeSpec.MinutesPerHour * TimeSpec.SecondsPerMinute)
   }
 
-  test("days difference") {
+  test("daysView difference") {
 
     val days = Array(1, 3)
 
@@ -267,7 +267,7 @@ class DateDiffFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("hours difference") {
+  test("hoursView difference") {
 
     val hours = Array(1, 3, 5)
 
@@ -319,7 +319,7 @@ class DateDiffFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("minutes difference") {
+  test("minutesView difference") {
 
     val minutes = Array(1, 3, 5)
 

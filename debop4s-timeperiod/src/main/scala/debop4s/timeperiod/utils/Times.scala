@@ -10,7 +10,9 @@ import debop4s.core.utils.Strings
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timerange._
+import debop4s.timeperiod.utils.Weeks._
 import org.joda.time.{DateTime, DateTimeZone, Duration}
+import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 import scala.util.control.NonFatal
@@ -20,7 +22,9 @@ import scala.util.control.NonFatal
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 9:09
  */
-object Times extends Logging {
+object Times {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   lazy val NullString = "<null>"
   lazy val UnixEpoch = new DateTime(0, DateTimeZone.UTC)

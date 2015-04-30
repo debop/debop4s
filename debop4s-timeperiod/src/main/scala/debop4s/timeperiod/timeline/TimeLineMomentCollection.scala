@@ -52,7 +52,7 @@ object TimeLineMomentCollection {
 @SerialVersionUID(-5739605965754152358L)
 class TimeLineMomentCollection extends ITimeLineMomentCollection {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   // minBy, maxBy에서 DateTime으로 정렬하기 위해 사용합니다.
   implicit val dateTimeOrdering = new DateTimeOrdering()

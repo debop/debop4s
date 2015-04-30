@@ -19,13 +19,13 @@ class MinuteRangeCollectionFunSuite extends AbstractTimeFunSuite {
     minutes.start shouldEqual startTime
     minutes.end shouldEqual endTime
 
-    val mins = minutes.minutes
+    val mins = minutes.minutesView
     mins.size shouldEqual 1
     mins(0).start shouldEqual startTime
     mins(0).end shouldEqual endTime
   }
 
-  test("calendar minutes") {
+  test("calendar minutesView") {
     val now = Times.now
 
     (1 until 100).par.foreach { m =>
@@ -38,7 +38,7 @@ class MinuteRangeCollectionFunSuite extends AbstractTimeFunSuite {
       minutes.start shouldEqual startTime
       minutes.end shouldEqual endTime
 
-      val items = minutes.minutes
+      val items = minutes.minutesView
 
       for (i <- 0 until m) {
         items(i).start shouldEqual (startTime + i.minute)
@@ -63,7 +63,7 @@ class MinuteRangeCollectionFunSuite extends AbstractTimeFunSuite {
       minuteRanges.end shouldEqual endTime
       minuteRanges.minuteCount shouldEqual minuteCount
 
-      val items = minuteRanges.minutes
+      val items = minuteRanges.minutesView
       items.size shouldEqual minuteCount
 
       (0 until minuteCount).par.foreach { m =>

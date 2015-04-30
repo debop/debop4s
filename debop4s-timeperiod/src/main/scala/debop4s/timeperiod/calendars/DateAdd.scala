@@ -16,7 +16,9 @@ import scala.collection.JavaConverters._
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 5. 오전 1:51
  */
-class DateAdd extends Logging {
+class DateAdd {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   protected val _includePeriods = TimePeriodCollection()
   protected val _excludePeriods = TimePeriodCollection()
@@ -195,7 +197,7 @@ object DateAdd {
 
   def apply(): DateAdd = new DateAdd()
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   @inline
   private def findNextPeriod(start: DateTime, periods: Iterable[_ <: ITimePeriod]): (ITimePeriod, DateTime) = {

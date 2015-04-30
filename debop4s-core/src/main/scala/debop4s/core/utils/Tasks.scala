@@ -29,16 +29,6 @@ object Tasks {
     spawn("backgraound-" + sequenceId.incrementAndGet, action)
 
   /**
-   * 지정된 action을 background thread 를 만들어서 실행하고, 스레드를 반환합니다.
-   *
-   * @param threadName thread name
-   * @param action     background thread에서 실행할 코드 블럭
-   * @return thread
-   */
-  def spawn(threadName: String, action: Runnable): Thread =
-    spawn(threadName, action, daemon = false)
-
-  /**
    * 지정된 action을 새로운 스레드를 만들어 실행하고, 스레드를 반환합니다.
    *
    * @param threadName thread name
@@ -46,7 +36,7 @@ object Tasks {
    * @param action     background thread에서 실행할 코드 블럭
    * @return thread
    */
-  def spawn(threadName: String, action: Runnable, daemon: Boolean): Thread = {
+  def spawn(threadName: String, action: Runnable, daemon: Boolean = false): Thread = {
     require(action != null)
     val thread: Thread = new Thread(action, threadName)
     thread.setDaemon(daemon)
@@ -82,7 +72,7 @@ object Tasks {
    * @param waitTime 실패 시 재시도하기 전에 idle time in millis
    */
   @deprecated("제대로 작동하지 않네요. 더 테스트해야 합니다.", "2.0.0")
-  def callWithRetry[T](attempts: Int, waitTime: Long = 1)(func: => T): Try[T] = Try {
+  def callWithRetry[@miniboxed T](attempts: Int, waitTime: Long = 1)(func: => T): Try[T] = Try {
     var remains = attempts
     var result: T = null.asInstanceOf[T]
     while (remains > 0) {

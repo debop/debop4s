@@ -37,7 +37,8 @@ object Memorize {
    * inputs, are expensive compared to a hash lookup and the memory
    * overhead, and will be called repeatedly.
    */
-  def apply[A, B](f: A => B): A => B = new Function1[A, B] {
+  def apply[@miniboxed A, @miniboxed B](f: A => B): A => B = new ((A) => B) {
+
     private[this] var memo = Map.empty[A, Either[JCountDownLatch, B]]
 
     /**

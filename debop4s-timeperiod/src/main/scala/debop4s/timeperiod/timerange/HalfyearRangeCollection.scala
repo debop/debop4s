@@ -28,8 +28,7 @@ class HalfyearRangeCollection(private[this] val _year: Int,
   def this(moment: DateTime, halfyearCount: Int, calendar: ITimeCalendar) =
     this(moment.getYear, Times.halfyearOf(moment), halfyearCount, calendar)
 
-  @inline
-  def halfyears: SeqView[HalfyearRange, Seq[_]] = {
+  def halfyearsView: SeqView[HalfyearRange, Seq[_]] = {
     (0 until halfyearCount).view.map { x =>
       val v = Times.addHalfyear(startYear, startHalfyear, x)
       HalfyearRange(v.year, v.halfyear, calendar)

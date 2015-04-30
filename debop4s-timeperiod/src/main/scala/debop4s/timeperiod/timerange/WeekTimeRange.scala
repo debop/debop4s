@@ -33,7 +33,7 @@ class WeekTimeRange(private[this] val _moment: DateTime,
   def endWeekOfYear: Int = Times.weekOfYear(end).weekOfWeekyear
   def getEndWeekOfYear = endWeekOfYear
 
-  def days: SeqView[DayRange, Seq[_]] = {
+  def daysView: SeqView[DayRange, Seq[_]] = {
     val startDay = startDayStart
     val dayCount = weekCount * DaysPerWeek
 
@@ -42,13 +42,16 @@ class WeekTimeRange(private[this] val _moment: DateTime,
     }
   }
 
+  @inline
   def getDays: util.List[DayRange] = {
     val startDay = startDayStart
     val dayCount = weekCount * DaysPerWeek
 
     val results = Lists.newArrayListWithCapacity[DayRange](dayCount)
-    (0 until dayCount) foreach { d =>
+    var d = 0
+    while (d < dayCount) {
       results add DayRange(startDay.plusDays(d), calendar)
+      d += 1
     }
     results
   }
@@ -74,7 +77,7 @@ object WeekTimeRange {
     TimeRange(startWeek, startWeek.plusWeeks(weekCount))
   }
 
-  def getPeriodOf(year: Int, weekOfYear: Int, weekCount: Int) {
+  def getPeriodOf(year: Int, weekOfYear: Int, weekCount: Int): TimeRange = {
     require(weekCount > 0)
     val startWeek = Times.startTimeOfWeek(year, weekOfYear)
     TimeRange(startWeek, startWeek.plusWeeks(weekCount))

@@ -4,6 +4,7 @@ import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.calendars._
 import debop4s.timeperiod.timerange.{DayRange, MonthRange, YearRange, YearRangeCollection}
+import org.slf4j.LoggerFactory
 
 
 object DaySeeker {
@@ -35,6 +36,8 @@ class DaySeeker(private[this] val _filter: CalendarVisitorFilter,
   def this(filter: CalendarVisitorFilter) = this(filter, SeekDirection.Forward, DefaultTimeCalendar)
   def this(seekDir: SeekDirection) = this(new CalendarVisitorFilter(), seekDir, DefaultTimeCalendar)
   def this(seekDir: SeekDirection, calendar: ITimeCalendar) = this(new CalendarVisitorFilter(), seekDir, calendar)
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   @inline
   def findDay(startDay: DayRange, dayCount: Int): DayRange = {

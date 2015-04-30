@@ -21,8 +21,7 @@ class MonthTimeRange(private[this] val _year: Int,
                      private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
   extends CalendarTimeRange(Times.relativeMonthPeriod(Times.startTimeOfMonth(_year, _monthOfYear), monthCount), _calendar) {
 
-  @inline
-  def days: SeqView[DayRange, Seq[_]] = {
+  def daysView: SeqView[DayRange, Seq[_]] = {
     val startMonth = Times.startTimeOfMonth(start)
 
     for {
@@ -35,16 +34,22 @@ class MonthTimeRange(private[this] val _year: Int,
     }
   }
 
+  @inline
   def getDays: util.List[DayRange] = {
     val startMonth = Times.startTimeOfMonth(start)
     val days = new util.ArrayList[DayRange](monthCount * 31)
 
-    (0 until monthCount).foreach { m =>
+    var m = 0
+    while (m < monthCount) {
       val month = startMonth.plusMonths(m)
       val dayOfMonth = Times.daysInMonth(month.getYear, month.getMonthOfYear)
-      (0 until dayOfMonth).foreach { d =>
+
+      var d = 0
+      while (d < dayOfMonth) {
         days add new DayRange(month.plusDays(d), calendar)
+        d += 1
       }
+      m += 1
     }
     days
   }

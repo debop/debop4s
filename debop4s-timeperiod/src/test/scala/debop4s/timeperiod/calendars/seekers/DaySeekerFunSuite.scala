@@ -83,7 +83,7 @@ class DaySeekerFunSuite extends AbstractTimeFunSuite {
 
     val filter = new CalendarVisitorFilter()
     filter.addWorkingWeekdays()
-    filter.excludePeriods.add(DayRangeCollection(2011, 2, 27, 14)) // 14 days => week 9 and week 10
+    filter.excludePeriods.add(DayRangeCollection(2011, 2, 27, 14)) // 14 daysView => week 9 and week 10
 
     val daySeeker = new DaySeeker(filter)
 

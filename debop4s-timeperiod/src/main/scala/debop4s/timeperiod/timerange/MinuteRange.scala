@@ -27,6 +27,7 @@ class MinuteRange(private[this] val _moment: DateTime,
            hourOfDay: Int,
            minuteOfHour: Int) =
     this(new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour), DefaultTimeCalendar)
+
   def this(year: Int,
            monthOfYear: Int,
            dayOfMonth: Int,

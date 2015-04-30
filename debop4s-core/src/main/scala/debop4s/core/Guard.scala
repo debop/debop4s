@@ -14,13 +14,13 @@ import scala.annotation.varargs
  */
 object Guard {
 
-  def firstNotNull[T](first: T, second: T): T = {
+  def firstNotNull[@miniboxed T](first: T, second: T): T = {
     if (!Objects.equals(first, null)) first
     else if (!Objects.equals(second, null)) second
     else throw new IllegalArgumentException("all parameter is null.")
   }
 
-  def toOption[T <: AnyRef](v: T): Option[T] =
+  def toOption[@miniboxed T <: AnyRef](v: T): Option[T] =
     if (v == null) None else Some(v)
 
   def shouldBe(cond: Boolean): Unit = assert(cond)

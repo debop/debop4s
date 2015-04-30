@@ -61,7 +61,7 @@ class MinuteRangeFunSuite extends AbstractTimeFunSuite {
     mr2.minuteOfHour shouldEqual now.getMinuteOfHour
   }
 
-  test("add minutes") {
+  test("add minutesView") {
     val mr = MinuteRange()
 
     mr.previousMinute.minuteOfHour shouldEqual mr.start.plusMinutes(-1).getMinuteOfHour
@@ -99,7 +99,7 @@ class MinuteRangeFunSuite extends AbstractTimeFunSuite {
 
   test("getMinutes") {
     val hr = HourRange()
-    val minutes = hr.minutes
+    val minutes = hr.minutesView
 
     minutes.size shouldEqual MinutesPerHour
 

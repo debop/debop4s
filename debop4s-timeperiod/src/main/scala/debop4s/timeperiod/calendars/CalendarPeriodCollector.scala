@@ -5,6 +5,7 @@ import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.calendars.CollectKind.CollectKind
 import debop4s.timeperiod.timerange._
+import org.slf4j.LoggerFactory
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
@@ -37,8 +38,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                               private[this] val _limits: ITimePeriod,
                               private[this] val _seekDir: SeekDirection = SeekDirection.Forward,
                               private[this] val _calendar: ITimeCalendar = DefaultTimeCalendar)
-  extends CalendarVisitor[CalendarPeriodCollectorFilter, CalendarPeriodCollectorContext](_filter, _limits, _seekDir, _calendar)
-  with Logging {
+  extends CalendarVisitor[CalendarPeriodCollectorFilter, CalendarPeriodCollectorContext](_filter, _limits, _seekDir, _calendar) {
 
   def this(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod) =
     this(filter, limits, SeekDirection.Forward, DefaultTimeCalendar)
@@ -47,7 +47,9 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
   def this(filter: CalendarPeriodCollectorFilter, limits: ITimePeriod, calendar: ITimeCalendar) =
     this(filter, limits, SeekDirection.Forward, calendar)
 
-  @BeanProperty val periods: ITimePeriodCollection = TimePeriodCollection()
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
+
+  val periods: ITimePeriodCollection = TimePeriodCollection()
 
   def collectYears() {
     collectInternal(CollectKind.Year)
@@ -92,13 +94,13 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
 
   @inline
   override protected def onVisitYears(years: YearRangeCollection, context: CalendarPeriodCollectorContext): Boolean = {
-    log.trace(s"visit years... years=[$years]")
+    log.trace(s"visit yearsView... yearsView=[$years]")
 
     if (context.scope != CollectKind.Year) {
       return true
     }
 
-    years.years
+    years.yearsView
     .filter(y => isMatchingYear(y, context) && checkLimits(y))
     .foreach(y => periods.add(y))
 
@@ -113,7 +115,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     val monthFilter = (m: MonthRange) => isMatchingMonth(m, context) && checkLimits(m)
 
     if (filter.collectingMonths.size == 0) {
-      year.months
+      year.monthsView
       .filter(monthFilter)
       .foreach(m => periods.add(m))
     } else {
@@ -129,9 +131,9 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
               m.startMonthOfYear,
               m.endMonthOfYear - m.startMonthOfYear,
               year.calendar)
-          val isMatching = months.months.forall(m => isMatchingMonth(m, context))
+          val isMatching = months.monthsView.forall(m => isMatchingMonth(m, context))
           if (isMatching && checkLimits(months)) {
-            periods.addAll(months.months.asJava)
+            periods.addAll(months.monthsView.asJava)
           }
         }
       }
@@ -145,7 +147,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
       return true
 
     if (filter.collectingDays.size == 0) {
-      month.days
+      month.daysView
       .filter(d => isMatchingDay(d, context) && checkLimits(d))
       .foreach(d => periods.add(d))
     } else {
@@ -168,9 +170,9 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
                                   day.startDayOfMonth,
                                   day.endDayOfMonth - day.startDayOfMonth,
                                   month.calendar)
-            val isMatching = days.days.forall(d => isMatchingDay(d, context))
+            val isMatching = days.daysView.forall(d => isMatchingDay(d, context))
             if (isMatching && checkLimits(days)) {
-              periods.addAll(days.days.asJava)
+              periods.addAll(days.daysView.asJava)
             }
           }
       }
@@ -185,7 +187,7 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     }
 
     if (filter.collectingHours.size == 0) {
-      day.hours
+      day.hoursView
       .filter(h => isMatchingHour(h, context) && checkLimits(h))
       .foreach(h => periods.add(h))
     } else if (isMatchingDay(day, context)) {

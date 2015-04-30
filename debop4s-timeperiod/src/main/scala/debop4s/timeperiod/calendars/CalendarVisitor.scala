@@ -5,6 +5,7 @@ import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timerange._
+import org.slf4j.LoggerFactory
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
@@ -19,7 +20,9 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 (@BeanProperty val filter: F,
  @BeanProperty val limits: ITimePeriod,
  @BeanProperty val seekDirection: SeekDirection = SeekDirection.Forward,
- @BeanProperty val calendar: ITimeCalendar = DefaultTimeCalendar) extends Logging {
+ @BeanProperty val calendar: ITimeCalendar = DefaultTimeCalendar) {
+
+  private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   protected def startPeriodVisit(context: C) {
     startPeriodVisit(limits, context)
@@ -43,7 +46,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
       val yearsToVisit =
         if (isForward) years.getYears
         else years.getYears.asScala.sortBy(y => -y.end.getMillis).asJava
-      // else years.getYears.asScala.sortWith(_.end > _.end).asJava
+      // else yearsView.getYears.asScala.sortWith(_.end > _.end).asJava
 
 
       var yearIdx = 0
@@ -61,7 +64,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
           val monthsToVisit =
             if (isForward) years.getMonths
             else years.getMonths.asScala.sortBy(m => -m.end.getMillis).asJava
-          //else years.getMonths.asScala.sortWith(_.end > _.end).asJava
+          //else yearsView.getMonths.asScala.sortWith(_.end > _.end).asJava
 
           var mIdx = 0
           while (mIdx < monthsToVisit.size()) {

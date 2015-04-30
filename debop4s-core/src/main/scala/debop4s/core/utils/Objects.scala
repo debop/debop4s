@@ -32,17 +32,17 @@ object Objects {
 
   def toString(o: Any, nullDefault: String): String = o.asString
 
-  def compare[T](a: T, b: T, c: Comparator[_ >: T]): Int =
+  def compare[@miniboxed T](a: T, b: T, c: Comparator[_ >: T]): Int =
     if (a == b) 0
     else c.compare(a, b)
 
-  def requireNonNull[T](obj: T): T =
+  def requireNonNull[@miniboxed T](obj: T): T =
     obj match {
       case null => throw new NullPointerException
       case _ => obj
     }
 
-  def requireNonNull[T](obj: T, message: String): T =
+  def requireNonNull[@miniboxed T](obj: T, message: String): T =
     obj match {
       case null => throw new NullPointerException(message)
       case _ => obj

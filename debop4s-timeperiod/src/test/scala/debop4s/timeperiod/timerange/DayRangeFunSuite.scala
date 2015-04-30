@@ -61,9 +61,9 @@ class DayRangeFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("get hours") {
+  test("get hoursView") {
     val dayRange = DayRange()
-    val hours = dayRange.hours
+    val hours = dayRange.hoursView
 
     var index = 0
     hours.foreach { h =>

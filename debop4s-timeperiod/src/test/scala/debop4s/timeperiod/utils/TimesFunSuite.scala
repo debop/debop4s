@@ -66,7 +66,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     SecondHalfyearMonths.par.foreach(m => halfyearOfMonth(m) should equal(Halfyear.Second))
   }
 
-  test("months of halfyear") {
+  test("monthsView of halfyear") {
     monthsOfHalfyear(Halfyear.First) should equal(FirstHalfyearMonths)
     monthsOfHalfyear(Halfyear.Second) should equal(SecondHalfyearMonths)
   }
@@ -114,7 +114,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     FourthQuarterMonths.foreach(m => quarterOfMonth(m) should equal(Quarter.Fourth))
   }
 
-  test("months of quarter") {
+  test("monthsView of quarter") {
     monthsOfQuarter(Quarter.First) should equal(FirstQuarterMonths)
     monthsOfQuarter(Quarter.Second) should equal(SecondQuarterMonths)
     monthsOfQuarter(Quarter.Third) should equal(ThirdQuarterMonths)
@@ -133,7 +133,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("add months") {
+  test("add monthsView") {
     (1 to MonthsPerYear).par.foreach {
       m =>
         addMonth(2000, m, 1).monthOfYear should equal(m % MonthsPerYear + 1)
@@ -325,7 +325,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
 
   val period = TimeRange(startTime, endTime)
 
-  test("foreach years") {
+  test("foreach yearsView") {
     var count = 0
     Times.foreachYears(period).asScala.foreach { p =>
       log.trace(s"year($count)= ${ p.start.getYear }")
@@ -334,13 +334,13 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     count should equal(period.end.getYear - period.start.getYear + 1)
   }
 
-  test("foreach years in same year") {
+  test("foreach yearsView in same year") {
     val period = Times.relativeWeekPeriod(startTime, 1)
     val years = Times.foreachYears(period)
     years should have size 1
   }
 
-  test("foreach months") {
+  test("foreach monthsView") {
     var count = 0
     Times.foreachMonths(period).asScala.foreach { p =>
       log.trace(s"month($count)=${ p.start.getMonthOfYear }")
@@ -350,7 +350,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     count should equal(months)
   }
 
-  test("foreach weeks") {
+  test("foreach weeksView") {
     var count = 0
     val weeks = Times.foreachWeeks(period)
     weeks.asScala.foreach { p =>
@@ -362,7 +362,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     weeks.asScala.last.end should equal(period.end)
   }
 
-  test("foreach days") {
+  test("foreach daysView") {
     val days = Times.foreachDays(period).asScala
     val count = days.size
 
@@ -373,7 +373,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     log.trace(s"last = ${ days.last }")
   }
 
-  test("foreach hours") {
+  test("foreach hoursView") {
     val hours = Times.foreachHours(period).asScala
 
     hours.head.start should equal(period.start)
@@ -381,7 +381,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     hours.last.start.getMillis should be > hours(hours.size - 2).end.getMillis
   }
 
-  test("foreach minutes") {
+  test("foreach minutesView") {
     val minutes = Times.foreachMinutes(period).asScala
 
     minutes.head.start should equal(period.start)
@@ -389,7 +389,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     minutes.last.start.getMillis should be > minutes(minutes.size - 2).end.getMillis
   }
 
-  test("hours stream") {
+  test("hoursView stream") {
     val hours = Times.hoursStream(period)
 
     hours.head.start should equal(period.start)
@@ -397,7 +397,7 @@ class TimesFunSuite extends AbstractTimeFunSuite {
     hours.last.start.getMillis should be > hours(hours.size - 2).end.getMillis
   }
 
-  test("minutes stream") {
+  test("minutesView stream") {
     val minutes: Stream[ITimePeriod] = Times.minutesStream(period)
     minutes.head.start should equal(period.start)
     minutes.last.end should equal(period.end)
@@ -905,7 +905,7 @@ class TimesPeriodFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("trim to minutes") {
+  test("trim to minutesView") {
     Times.trimToMinute(testDate) should equal(asDate(testDate).plusHours(testDate.getHourOfDay))
 
     (0 until MinutesPerHour).par.foreach {
