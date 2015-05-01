@@ -35,6 +35,7 @@
 
         <module>debop4s-benchmark</module>
         <module>debop4s-data-slick3-northwind</module>
+        <module>debop4s-reactive</module>
 
     </modules>
 
