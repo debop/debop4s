@@ -8,7 +8,7 @@ import scala.concurrent._
  * Redis 의 Hash Set을 이용한 작업을 수행합니다.
  * @author Sunghyouk Bae
  */
-abstract class AbstractRedisSet[T <: java.io.Serializable] extends AbstractRedis[T] {
+abstract class AbstractRedisSet[@miniboxed T <: java.io.Serializable] extends AbstractRedis[T] {
 
   def get(key: String, field: String, clazz: Class[T]): Future[Option[T]] = {
     redis.hget[T](key, field)

@@ -9,7 +9,7 @@ import org.nustaq.serialization.FSTConfiguration
  * FstRedisSerializer
  * Created by debop on 2014. 3. 20.
  */
-class FstRedisSerializer[T] extends RedisSerializer[T] {
+class FstRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
 
   lazy val conf = FSTConfiguration.createDefaultConfiguration()
 

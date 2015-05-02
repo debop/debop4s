@@ -14,7 +14,7 @@ import redis.ByteStringFormatter
  *
  * @author sunghyouk.bae@gmail.com
  */
-class BinaryHexStringValueFormatter[T] extends ByteStringFormatter[T] {
+class BinaryHexStringValueFormatter[@miniboxed T] extends ByteStringFormatter[T] {
 
   val serializer = new BinaryRedisSerializer[T]()
 

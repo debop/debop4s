@@ -6,7 +6,7 @@ package org.hibernate.cache.rediscala.serializer
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오전 11:21
  */
-private[rediscala] trait RedisSerializer[T] {
+private[rediscala] trait RedisSerializer[@miniboxed T] {
 
   val EMPTY_BYTES = Array[Byte]()
 

@@ -8,7 +8,7 @@ import debop4s.core._
  * BinaryRedisSerializer
  * @author Sunghyouk Bae
  */
-class BinaryRedisSerializer[T] extends RedisSerializer[T] {
+class BinaryRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
 
   override def serialize(graph: T): Array[Byte] = {
     if (graph == null)

@@ -20,7 +20,7 @@ object Guard {
     else throw new IllegalArgumentException("all parameter is null.")
   }
 
-  def toOption[@miniboxed T <: AnyRef](v: T): Option[T] =
+  def toOption[@miniboxed T](v: T): Option[T] =
     if (v == null) None else Some(v)
 
   def shouldBe(cond: Boolean): Unit = assert(cond)

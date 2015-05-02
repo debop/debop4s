@@ -4,7 +4,7 @@ package debop4s.rediscala.serializer
  * Redis 데이터를 직렬화 합니다.
  * @author Sunghyouk Bae
  */
-trait RedisSerializer[T] {
+trait RedisSerializer[@miniboxed T] {
 
   val EMPTY_BYTES = Array[Byte]()
 

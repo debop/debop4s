@@ -21,7 +21,7 @@ import scala.util.{Failure, Success, Try}
  *
  * Created by debop on 2014. 4. 13.
  */
-trait Event[+T] {self =>
+trait Event[@miniboxed +T] {self =>
 
   /**
    * Register the given [[debop4s.core.Witness]] to this Event.
@@ -48,7 +48,7 @@ trait Event[+T] {self =>
   /**
    * Build a new Event by transforming each new event value with `f`.
    */
-  def map[U](func: T => U): Event[U] =
+  def map[@miniboxed U](func: T => U): Event[U] =
     collect { case t => func(t) }
 
   /**
@@ -56,7 +56,7 @@ trait Event[+T] {self =>
    * starting with value `z`. Each intermediate aggregate is notified
    * to the derived event.
    */
-  def foldLeft[U](z: U)(func: (U, T) => U): Event[U] = new Event[U] {
+  def foldLeft[@miniboxed U](z: U)(func: (U, T) => U): Event[U] = new Event[U] {
     def register(s: Witness[U]) = {
       var a = z
       val mu = new {}
@@ -91,7 +91,7 @@ trait Event[+T] {self =>
     }
   }
 
-  def mergeMap[U](func: T => Event[U]): Event[U] = new Event[U] {
+  def mergeMap[@miniboxed U](func: T => Event[U]): Event[U] = new Event[U] {
     override def register(s: Witness[U]): Closable = {
       @volatile var inners = Nil: List[Closable]
       val outer = self respond { el =>
@@ -107,7 +107,7 @@ trait Event[+T] {self =>
   /**
    * Merge two Events of different types.
    */
-  def select[U](other: Event[U]): Event[Either[T, U]] = new Event[Either[T, U]] {
+  def select[@miniboxed U](other: Event[U]): Event[Either[T, U]] = new Event[Either[T, U]] {
     override def register(s: Witness[Either[T, U]]): Closable = {
       Closable.all {
         self.register(s comap { t => Left(t) })
@@ -125,7 +125,7 @@ trait Event[+T] {self =>
    *       Event outpaces another, this queue can grow in an unbounded
    *       fashion.
    */
-  def zip[U](other: Event[U]): Event[(T, U)] = new Event[(T, U)] {
+  def zip[@miniboxed U](other: Event[U]): Event[(T, U)] = new Event[(T, U)] {
     override def register(s: Witness[(T, U)]): Closable = {
       val mu = new {}
       var state: Option[Either[Queue[T], Queue[U]]] = None
@@ -156,7 +156,7 @@ trait Event[+T] {self =>
     }
   }
 
-  def joinLast[U](other: Event[U]): Event[(T, U)] = new Event[(T, U)] {
+  def joinLast[@miniboxed U](other: Event[U]): Event[(T, U)] = new Event[(T, U)] {
     override def register(s: Witness[(T, U)]): Closable = {
       import Event.JoinState
       import JoinState._
@@ -216,7 +216,7 @@ trait Event[+T] {self =>
   /**
    * Merge two events; the resulting event interleaves events from this and `other`
    */
-  def merge[U >: T](other: Event[U]): Event[U] = new Event[U] {
+  def merge[@miniboxed U >: T](other: Event[U]): Event[U] = new Event[U] {
     override def register(s: Witness[U]): Closable = {
       val c1 = self.register(s)
       val c2 = other.register(s)
@@ -229,7 +229,7 @@ trait Event[+T] {self =>
    * A value containing the current version of the collection
    * is notified for each incoming event.
    */
-  def build[U >: T, That](implicit cbf: CanBuild[U, That]) = new Event[That] {
+  def build[@miniboxed U >: T, @miniboxed That](implicit cbf: CanBuild[U, That]) = new Event[That] {
     override def register(s: Witness[That]): Closable = {
       val b = cbf()
       self respond { t =>
@@ -255,15 +255,15 @@ trait Event[+T] {self =>
 
 
 object Event {
-  private sealed trait JoinState[+T, +U]
+  private sealed trait JoinState[@miniboxed +T, @miniboxed +U]
   private object JoinState {
     object Empty extends JoinState[Nothing, Nothing]
-    case class LeftHalf[T](t: T) extends JoinState[T, Nothing]
-    case class RightHalf[U](u: U) extends JoinState[Nothing, U]
-    case class Full[T, U](t: T, u: U) extends JoinState[T, U]
+    case class LeftHalf[@miniboxed T](t: T) extends JoinState[T, Nothing]
+    case class RightHalf[@miniboxed U](u: U) extends JoinState[Nothing, U]
+    case class Full[@miniboxed T, @miniboxed U](t: T, u: U) extends JoinState[T, U]
   }
 
-  def apply[T](): Event[T] with Witness[T] = new Event[T] with Witness[T] {
+  def apply[@miniboxed T](): Event[T] with Witness[T] = new Event[T] with Witness[T] {
     @volatile var registers: List[Witness[T]] = Nil
 
     override def register(s: Witness[T]): Closable = {
@@ -281,29 +281,29 @@ object Event {
 }
 
 /** A witness is the recipient of [[debop4s.core.Event]] */
-trait Witness[-N] {self =>
+trait Witness[@miniboxed -N] {self =>
 
   /** Notify this witness with the given note. */
   def notify(note: N)
 
-  def comap[M](f: M => N): Witness[M] = new Witness[M] {
+  def comap[@miniboxed M](f: M => N): Witness[M] = new Witness[M] {
     def notify(m: M) = self.notify(f(m))
   }
 }
 
 object Witness {
 
-  def apply[T](ref: AtomicReference[T]): Witness[T] = new Witness[T] {
+  def apply[@miniboxed T](ref: AtomicReference[T]): Witness[T] = new Witness[T] {
     def notify(t: T) { ref.set(t) }
   }
 
-  def apply[T](p: Promise[T]): Witness[T] = new Witness[T] {
+  def apply[@miniboxed T](p: Promise[T]): Witness[T] = new Witness[T] {
     def notify(t: T) {
       p complete Try { t }
     }
   }
 
-  def apply[T](f: T => Unit): Witness[T] = new Witness[T] {
+  def apply[@miniboxed T](f: T => Unit): Witness[T] = new Witness[T] {
     def notify(t: T) { f(t) }
   }
 
@@ -311,5 +311,5 @@ object Witness {
   //        def notify(t: T) = { u() = t }
   //    }
 
-  val printer: Witness[Any] = Witness(println(_))
+  val printer: Witness[Any] = Witness(x => println(x))
 }

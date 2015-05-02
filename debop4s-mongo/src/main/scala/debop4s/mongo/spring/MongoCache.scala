@@ -55,7 +55,7 @@ class MongoCache(val name: String,
 
   // override for Spring 4.0.x
   // override
-  def get[T](key: Any, clazz: Class[T]): T = {
+  def get[@miniboxed T](key: Any, clazz: Class[T]): T = {
     log.trace(s"캐시를 로드합니다... key=[$key]")
     var value: T = null.asInstanceOf[T]
 

@@ -37,7 +37,7 @@ object FuturePool {
     new InterruptibleExecutorServiceFuturePool(executor)
 
   val immediatePool = new FuturePool {
-    def apply[T](f: => T): Future[T] = {
+    def apply[@miniboxed T](f: => T): Future[T] = {
       val p = Promise[T]()
       p complete Try { f }
       p.future
@@ -87,7 +87,7 @@ class ExecutorServiceFuturePool protected[this](val executor: ExecutorService,
 
   def this(executor: ExecutorService) = this(executor, false)
 
-  override def apply[T](f: => T): Future[T] = {
+  override def apply[@miniboxed T](f: => T): Future[T] = {
     val runOk = new AtomicBoolean(true)
     val p = Promise[T]()
 

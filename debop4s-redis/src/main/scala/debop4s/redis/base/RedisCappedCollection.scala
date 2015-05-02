@@ -3,6 +3,7 @@ package debop4s.redis.base
 import akka.util.ByteString
 import debop4s.redis.serializer.SnappyRedisSerializer
 import redis.RedisClient
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -10,9 +11,9 @@ import scala.concurrent.Future
  * 크기가 제한된 컬력센입니다.
  * @author Sunghyouk Bae
  */
-class RedisCappedCollection[T](val name: String,
-                               val size: Long = Long.MaxValue,
-                               val redis: RedisClient = RedisCappedCollection.defaultRedis) {
+class RedisCappedCollection[@miniboxed T](val name: String,
+                                          val size: Long = Long.MaxValue,
+                                          val redis: RedisClient = RedisCappedCollection.defaultRedis) {
 
   lazy private val serializer = SnappyRedisSerializer[T]()
 

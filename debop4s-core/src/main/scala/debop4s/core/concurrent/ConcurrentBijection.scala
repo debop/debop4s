@@ -15,7 +15,7 @@ class ConcurrentBijection[@miniboxed A, @miniboxed B] extends mutable.Map[A, B] 
   val forward: ConcurrentHashMap[A, B] = new ConcurrentHashMap[A, B]()
   val reverse: ConcurrentHashMap[B, A] = new ConcurrentHashMap[B, A]()
 
-  def toOpt[T](x: T): Option[T] = if (x == null) None else Some(x)
+  def toOpt[@miniboxed T](x: T): Option[T] = if (x == null) None else Some(x)
 
   def -=(key: A): this.type = {
     synchronized {

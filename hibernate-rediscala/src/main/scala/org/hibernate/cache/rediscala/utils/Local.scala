@@ -26,7 +26,7 @@ object Local {
 
   def get(key: Any): Any = getStorage.getOrElse(key, null)
 
-  def get[T](key: Any, clazz: Class[T]): T = get(key).asInstanceOf[T]
+  def get[@miniboxed T](key: Any, clazz: Class[T]): T = get(key).asInstanceOf[T]
 
   def put(key: Any, value: Any) {
     assert(key != null)
@@ -39,7 +39,7 @@ object Local {
     getStorage.clear()
   }
 
-  def getOrCreate[T](key: Any, factory: => T): T = {
+  def getOrCreate[@miniboxed T](key: Any, factory: => T): T = {
     if (!getStorage.contains(key)) {
       assert(factory != null)
       val result: T = factory
@@ -48,7 +48,7 @@ object Local {
     get(key).asInstanceOf[T]
   }
 
-  def getOrCreate[T](key: Any, factory: Callable[T]): T = synchronized {
+  def getOrCreate[@miniboxed T](key: Any, factory: Callable[T]): T = synchronized {
     if (!getStorage.contains(key)) {
       assert(factory != null)
       put(key, factory.call())

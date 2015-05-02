@@ -41,7 +41,7 @@ object With {
     }
   }
 
-  def tryFunction[T](func: () => T)(catchAction: => Unit = ())(finallyAction: => Unit = ()): T = {
+  def tryFunction[@miniboxed T](func: () => T)(catchAction: => Unit = ())(finallyAction: => Unit = ()): T = {
     try {
       func()
     } catch {

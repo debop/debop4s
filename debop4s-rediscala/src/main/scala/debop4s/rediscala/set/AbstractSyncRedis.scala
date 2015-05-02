@@ -9,8 +9,8 @@ import redis.ByteStringFormatter
  * AbstractSyncRedis
  * @author debop created at 2014. 5. 2.
  */
-@deprecated(message = "동기방식은 삭제할 것임", since = "2.0.0")
-abstract class AbstractSyncRedis[T] {
+@deprecated(message = "동기방식은 삭제할 것임", since = "0.5.0")
+abstract class AbstractSyncRedis[@miniboxed T] {
 
   @Autowired val redis: RedisSyncClient = null
 

@@ -13,7 +13,7 @@ private[rediscala] object BinaryRedisSerializer {
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2014. 2. 21. 오전 11:20
  */
-private[rediscala] class BinaryRedisSerializer[T] extends RedisSerializer[T] {
+private[rediscala] class BinaryRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
 
   override def serialize(graph: T): Array[Byte] = {
     if (graph == null)

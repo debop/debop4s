@@ -69,7 +69,7 @@ class RedisCache(val name: String,
   /**
    * redis hash set에 저장된 캐시 항목을 조회합니다.
    */
-  def get[T](key: Any, clazz: Class[T]): T = {
+  def get[@miniboxed T](key: Any, clazz: Class[T]): T = {
     val keyStr = computeKey(key)
     log.trace(s"캐시 조회. redis hashset=$itemName, field=$keyStr, clazz=${ clazz.getSimpleName }")
 

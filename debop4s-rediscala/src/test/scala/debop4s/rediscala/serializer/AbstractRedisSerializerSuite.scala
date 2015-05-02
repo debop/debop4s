@@ -11,7 +11,7 @@ import redis.{ByteStringFormatter, RedisClient}
  * AbstractRedisSerializerSuite
  * @author Sunghyouk Bae
  */
-abstract class AbstractRedisSerializerSuite[T] extends AbstractRedisFunSuite {
+abstract class AbstractRedisSerializerSuite[@miniboxed T] extends AbstractRedisFunSuite {
 
   val serializer: RedisSerializer[T]
 

@@ -67,7 +67,7 @@ trait SlickComponent
   /**
    * 마스터 DB를 이용하여 DB에 쓰기 작업을 처리합니다.
    */
-  implicit def runCommit[T](dbAction: DBIO[T]): Future[T] = {
+  implicit def runCommit[@miniboxed T](dbAction: DBIO[T]): Future[T] = {
     using(SlickContext.createMasterDB()) { db =>
       db.run(dbAction)
     }
@@ -75,7 +75,7 @@ trait SlickComponent
   /**
    * 읽기 전용의 DB 작업을 수행합니다.
    */
-  implicit def runRead[T](dbAction: DBIO[T]): Future[T] = {
+  implicit def runRead[@miniboxed T](dbAction: DBIO[T]): Future[T] = {
     using(SlickContext.createSlaveDB()) { db =>
       db.run(dbAction)
     }
@@ -83,26 +83,26 @@ trait SlickComponent
 
   implicit val defaultTimeout: Duration = FiniteDuration(5, TimeUnit.MINUTES)
 
-  implicit def autoCommit[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
+  implicit def autoCommit[@miniboxed T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     runAction(dbAction)(timeout)
   }
 
-  implicit def commit[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
+  implicit def commit[@miniboxed T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     runAction(dbAction.transactionally)(timeout)
   }
 
-  implicit def readonly[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
+  implicit def readonly[@miniboxed T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     runReadOnly(dbAction)(timeout)
   }
 
-  implicit def readonly[A, B](a: DBIO[A], b: DBIO[B])(implicit timeout: Duration): (A, B) = {
+  implicit def readonly[@miniboxed A, @miniboxed B](a: DBIO[A], b: DBIO[B])(implicit timeout: Duration): (A, B) = {
     async {
       val fa = await(runRead(a))
       val fb = await(runRead(b))
       (fa, fb)
     }.await(timeout)
   }
-  implicit def readonly[A, B, C](a: DBIO[A], b: DBIO[B], c: DBIO[C])(implicit timeout: Duration): (A, B, C) = {
+  implicit def readonly[@miniboxed A, @miniboxed B, @miniboxed C](a: DBIO[A], b: DBIO[B], c: DBIO[C])(implicit timeout: Duration): (A, B, C) = {
     async {
       val fa = await(runRead(a))
       val fb = await(runRead(b))
@@ -111,7 +111,7 @@ trait SlickComponent
     }.await(timeout)
   }
 
-  private def runAction[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
+  private def runAction[@miniboxed T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     using(SlickContext.createMasterDB()) { db =>
       using(db.createSession()) { session =>
         // keey the database in memory with an extra connection
@@ -121,7 +121,7 @@ trait SlickComponent
     }
   }
 
-  private def runReadOnly[T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
+  private def runReadOnly[@miniboxed T](dbAction: DBIO[T])(implicit timeout: Duration): T = {
     using(SlickContext.createSlaveDB()) { db =>
       using(db.createSession()) { session =>
         // keey the database in memory with an extra connection
@@ -149,7 +149,7 @@ trait SlickComponent
   //  }
 
 
-  implicit class PublisherExtensions[T](p: Publisher[T]) {
+  implicit class PublisherExtensions[@miniboxed T](p: Publisher[T]) {
 
     /**
      * 동기 방식으로 reactive stream 을 읽어드여 Vector 로 빌드합니다.
@@ -284,7 +284,7 @@ trait SlickComponent
    * transformation does not run in the synchronous database context but still preserves
    * proper sequencing.
    **/
-  def materializeAsync[T, R](p: Publisher[T])
+  def materializeAsync[@miniboxed T, @miniboxed R](p: Publisher[T])
                             (tr: T => Future[R], delay: Duration = Duration(100L, TimeUnit.MILLISECONDS)): Future[Vector[R]] = {
     val exe = new ThreadPoolExecutor(1, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable]())
     val ec = ExecutionContext.fromExecutor(exe)

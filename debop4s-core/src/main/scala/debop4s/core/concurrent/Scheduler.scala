@@ -37,7 +37,7 @@ trait Scheduler {
   def numDispatches: Long
 
   /** The permit may be removed in the future */
-  def blocking[T](f: => T)(implicit perm: CanAwait): T
+  def blocking[@miniboxed T](f: => T)(implicit perm: CanAwait): T
 }
 
 /**
@@ -64,7 +64,7 @@ object Scheduler extends Scheduler {
   def cpuTime: Long = self.cpuTime
   def numDispatches: Long = self.numDispatches
 
-  def blocking[T](f: => T)(implicit perm: CanAwait): T = self.blocking(f)
+  def blocking[@miniboxed T](f: => T)(implicit perm: CanAwait): T = self.blocking(f)
 }
 
 private class LocalScheduler extends Scheduler {
@@ -133,7 +133,7 @@ private class LocalScheduler extends Scheduler {
       }
     }
 
-    def blocking[T](f: => T)(implicit perm: CanAwait): T = f
+    def blocking[@miniboxed T](f: => T)(implicit perm: CanAwait): T = f
   }
 
   private[this] def get(): Activation = {
@@ -153,11 +153,10 @@ private class LocalScheduler extends Scheduler {
   def cpuTime: Long = (activations.iterator map (_.cpuTime)).sum
   def numDispatches: Long = (activations.iterator map (_.numDispatches)).sum
 
-  def blocking[T](f: => T)(implicit perm: CanAwait): T = f
+  def blocking[@miniboxed T](f: => T)(implicit perm: CanAwait): T = f
 }
 
-trait ExecutorScheduler {
-  self: Scheduler =>
+trait ExecutorScheduler {self: Scheduler =>
 
   val name: String
   val executorFactory: ThreadFactory => ExecutorService
@@ -200,7 +199,7 @@ trait ExecutorScheduler {
 
   def getExecutor: ExecutorService = executor
 
-  def blocking[T](f: => T)(implicit perm: CanAwait): T = f
+  def blocking[@miniboxed T](f: => T)(implicit perm: CanAwait): T = f
 }
 
 /**

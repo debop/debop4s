@@ -6,7 +6,7 @@ import org.xerial.snappy.Snappy
  * SnappyRedisSerializer
  * @author Sunghyouk Bae
  */
-class SnappyRedisSerializer[T](val inner: RedisSerializer[T]) extends RedisSerializer[T] {
+class SnappyRedisSerializer[@miniboxed T](val inner: RedisSerializer[T]) extends RedisSerializer[T] {
 
   override def serialize(graph: T): Array[Byte] = {
     if (graph == null)

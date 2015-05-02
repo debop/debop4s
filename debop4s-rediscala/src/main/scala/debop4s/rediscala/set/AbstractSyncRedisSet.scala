@@ -6,8 +6,8 @@ import scala.annotation.varargs
  * AbstractSyncRedisSet
  * @author debop created at 2014. 5. 2.
  */
-@deprecated(message = "동기방식은 삭제할 것임", since = "2.0.0")
-abstract class AbstractSyncRedisSet[T] extends AbstractSyncRedis[T] {
+@deprecated(message = "동기방식은 삭제할 것임", since = "0.5.0")
+abstract class AbstractSyncRedisSet[@miniboxed T] extends AbstractSyncRedis[T] {
 
   def get(key: String, field: String): Option[T] = {
     redis.hget[T](key, field)

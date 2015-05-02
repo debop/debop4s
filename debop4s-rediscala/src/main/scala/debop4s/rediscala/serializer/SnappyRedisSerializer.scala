@@ -13,7 +13,7 @@ object SnappyRedisSerializer {
  * Snappy 압축 알고리즘을 이용하여 serialized 된 데이터를 압축합니다.
  * @author Sunghyouk Bae
  */
-class SnappyRedisSerializer[T](val inner: RedisSerializer[T] = new BinaryRedisSerializer[T])
+class SnappyRedisSerializer[@miniboxed T](val inner: RedisSerializer[T] = new BinaryRedisSerializer[T])
   extends RedisSerializer[T] {
 
   /**

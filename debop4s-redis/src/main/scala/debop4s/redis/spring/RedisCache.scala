@@ -1,6 +1,6 @@
 package debop4s.redis.spring
 
-import debop4s.core.concurrent.Promises
+import debop4s.core.concurrent._
 import debop4s.core.io.BinarySerializer
 import org.slf4j.LoggerFactory
 import org.springframework.cache.Cache
@@ -45,21 +45,21 @@ class RedisCache(val name: String,
   def get(key: Any): ValueWrapper = {
     log.trace(s"캐시 조회. key=$key")
 
-    Promises.await(redis.get(computeKey(key)))
+    redis.get(computeKey(key)).await
     .map(bs => new SimpleValueWrapper(serializer.deserialize(bs.toArray, classOf[AnyRef])))
-    .getOrElse(null)
+    .orNull
   }
 
   /**
    * 캐시 항목을 조회합니다.
    * Spring 4.0 이상에서 지원합니다.
    */
-  def get[T](key: Any, clazz: Class[T]): T = {
+  def get[@miniboxed T](key: Any, clazz: Class[T]): T = {
     log.trace(s"캐시 조회. key=$key, clazz=$clazz")
 
     waitForLock(redis)
 
-    Promises.await(redis.get(computeKey(key)))
+    redis.get(computeKey(key)).await
     .map(bs => serializer.deserialize(bs.toArray, clazz))
     .getOrElse(null.asInstanceOf[T])
   }
@@ -131,7 +131,7 @@ class RedisCache(val name: String,
   private def doClear() {
     log.trace(s"Spring cache를 모두 제거합니다... name=$name")
 
-    if (Promises.await(redis.exists(cacheLockName))) {
+    if (redis.exists(cacheLockName).await) {
       return
     }
 
@@ -151,7 +151,7 @@ class RedisCache(val name: String,
 
         // 캐시 삭제
         if (keys.nonEmpty) {
-          Promises.await(redis.del(keys.map(key => computeKey(key)): _*))
+          redis.del(keys.map(key => computeKey(key)): _*).await
         }
       } while (!finished)
 
@@ -174,7 +174,7 @@ class RedisCache(val name: String,
     var foundLock = false
     do {
       retry = false
-      if (Promises.await(redis.exists(cacheLockName))) {
+      if (redis.exists(cacheLockName).await) {
         foundLock = true
         try {
           Thread.sleep(waitTimeoutForLock)

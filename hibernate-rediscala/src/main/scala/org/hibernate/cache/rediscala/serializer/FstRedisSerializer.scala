@@ -19,7 +19,7 @@ private[rediscala] object FstRedisSerializer {
  * FstRedisSerializer
  * Created by debop on 2014. 3. 18.
  */
-class FstRedisSerializer[T] extends RedisSerializer[T] {
+class FstRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
 
   private lazy val log = LoggerFactory.getLogger(getClass)
 

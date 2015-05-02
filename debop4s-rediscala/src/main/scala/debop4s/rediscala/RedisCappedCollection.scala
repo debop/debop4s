@@ -28,7 +28,7 @@ object RedisCappedCollection {
  * 크기가 제한된 컬력센입니다.
  * @author Sunghyouk Bae
  */
-class RedisCappedCollection[T](val name: String,
+class RedisCappedCollection[@miniboxed T](val name: String,
                                val size: Long = Long.MaxValue,
                                val redis: RedisClient = RedisCappedCollection.defaultRedis) {
 

@@ -6,7 +6,7 @@ import scala.util.Random
  * An estimator for values of type T.
  * Created by debop on 2014. 4. 14.
  */
-trait Estimator[T] {
+trait Estimator[@miniboxed T] {
   /** A scalar measurement `m` was taken */
   def measure(m: T): Unit
 

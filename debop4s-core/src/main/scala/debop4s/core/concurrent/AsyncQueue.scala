@@ -11,11 +11,11 @@ import scala.concurrent._
  * Created by debop on 2014. 4. 9.
  */
 object AsyncQueue {
-  private sealed trait State[+T]
+  private sealed trait State[@miniboxed +T]
   private case object Idle extends State[Nothing]
-  private case class Offering[T](q: Queue[T]) extends State[T]
-  private case class Polling[T](q: Queue[Promise[T]]) extends State[T]
-  private case class Excepting[T](exc: Throwable) extends State[T]
+  private case class Offering[@miniboxed T](q: Queue[T]) extends State[T]
+  private case class Polling[@miniboxed T](q: Queue[Promise[T]]) extends State[T]
+  private case class Excepting[@miniboxed T](exc: Throwable) extends State[T]
 }
 
 /**

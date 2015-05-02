@@ -83,7 +83,7 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
    *         maximum value of waitq is reached, Future.Exception[RejectedExecutionException] is
    *         returned.
    */
-  def acquireAndRun[T](func: => Future[T]): Future[T] = {
+  def acquireAndRun[@miniboxed T](func: => Future[T]): Future[T] = {
     acquire() flatMap { permit =>
       val f =
         try {
@@ -110,7 +110,7 @@ class AsyncSemaphore protected(initialPermits: Int, maxWaiters: Option[Int]) {
    *         maximum value of waitq is reached, Future.Exception[RejectedExecutionException] is
    *         returned.
    */
-  def acquireAndRunSync[T](func: => T): Future[T] = {
+  def acquireAndRunSync[@miniboxed T](func: => T): Future[T] = {
     acquire() flatMap { permit =>
       val result = Future { func }
       result onComplete { _ => permit.release() }

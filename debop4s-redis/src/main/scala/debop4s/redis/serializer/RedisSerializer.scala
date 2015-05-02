@@ -4,7 +4,7 @@ package debop4s.redis.serializer
  * RedisSerializer
  * @author Sunghyouk Bae
  */
-trait RedisSerializer[T] {
+trait RedisSerializer[@miniboxed T] {
 
   val EMPTY_BYTES = Array[Byte]()
 

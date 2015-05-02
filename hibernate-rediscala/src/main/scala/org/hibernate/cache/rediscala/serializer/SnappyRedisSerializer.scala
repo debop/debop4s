@@ -14,7 +14,7 @@ private[rediscala] object SnappyRedisSerializer {
  * Snappy 압축 알고리즘을 이용하여 객체를 직렬화 한 후 압축을 수행합니다.
  * Created by debop on 2014. 3. 14.
  */
-private[rediscala] class SnappyRedisSerializer[T](val innerSerializer: RedisSerializer[T])
+private[rediscala] class SnappyRedisSerializer[@miniboxed T](val innerSerializer: RedisSerializer[T])
   extends RedisSerializer[T] {
 
   override def serialize(graph: T): Array[Byte] = {

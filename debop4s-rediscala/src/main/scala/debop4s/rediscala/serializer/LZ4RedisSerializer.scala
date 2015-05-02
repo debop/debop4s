@@ -16,7 +16,7 @@ object LZ4RedisSerializer {
  * @param inner 실제 직렬화를 수행하는 serializer
  * @tparam T 직렬화할 대상 객체의 수형 (`Any`, `Object` 를 사용하면 모든 객체가 된다)
  */
-class LZ4RedisSerializer[T](val inner: RedisSerializer[T] = new FstRedisSerializer[T])
+class LZ4RedisSerializer[@miniboxed T](val inner: RedisSerializer[T] = new FstRedisSerializer[T])
   extends RedisSerializer[T] {
 
   require(inner != null)

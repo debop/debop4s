@@ -9,7 +9,7 @@ import redis.ByteStringFormatter
  * @param serializer [[org.hibernate.cache.spi.entry.CacheEntry]] 정보를 직렬화/역직렬화 합니다.
  * @tparam T  Redis Value 의 수형
  */
-abstract class CacheEntryFormatter[T](val serializer: RedisSerializer[T]) extends ByteStringFormatter[T] {
+abstract class CacheEntryFormatter[@miniboxed T](val serializer: RedisSerializer[T]) extends ByteStringFormatter[T] {
 
   override def serialize(data: T): ByteString = {
     data match {
@@ -27,20 +27,20 @@ abstract class CacheEntryFormatter[T](val serializer: RedisSerializer[T]) extend
   }
 }
 
-class BinaryCacheEntryFormatter[T]
+class BinaryCacheEntryFormatter[@miniboxed T]
   extends CacheEntryFormatter[T](BinaryRedisSerializer[T]()) {}
 
-class FstCacheEntryFormatter[T]
+class FstCacheEntryFormatter[@miniboxed T]
   extends CacheEntryFormatter[T](FstRedisSerializer[T]()) {}
 
-class SnappyBinaryCacheEntryFormatter[T]
+class SnappyBinaryCacheEntryFormatter[@miniboxed T]
   extends CacheEntryFormatter[T](SnappyRedisSerializer[T](BinaryRedisSerializer[T]())) {}
 
-class SnappyFstCacheEntryFormatter[T]
+class SnappyFstCacheEntryFormatter[@miniboxed T]
   extends CacheEntryFormatter[T](SnappyRedisSerializer[T](FstRedisSerializer[T]())) {}
 
-class LZ4BinaryCacheEntryFormatter[T]
+class LZ4BinaryCacheEntryFormatter[@miniboxed T]
   extends CacheEntryFormatter[T](LZ4RedisSerializer[T](BinaryRedisSerializer[T]()))
 
-class LZ4FstCacheEntryFormatter[T]
+class LZ4FstCacheEntryFormatter[@miniboxed T]
   extends CacheEntryFormatter[T](LZ4RedisSerializer[T](FstRedisSerializer[T]()))

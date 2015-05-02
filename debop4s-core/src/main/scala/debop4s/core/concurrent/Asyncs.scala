@@ -25,10 +25,10 @@ object Asyncs {
 
   def run[@miniboxed V](block: => V): Future[V] = Future { block }
 
-  def continueTask[T, V](prevTask: Future[T])(block: T => V): Future[V] =
+  def continueTask[@miniboxed T, @miniboxed V](prevTask: Future[T])(block: T => V): Future[V] =
     prevTask.map(v => block(v))
 
-  def runAll[T, R](elements: Iterable[T], function: T => R): Future[Iterable[R]] = {
+  def runAll[@miniboxed T, @miniboxed R](elements: Iterable[T], function: T => R): Future[Iterable[R]] = {
     Future.sequence(elements.map(x => Future { function(x) }))
   }
 

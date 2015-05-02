@@ -9,7 +9,7 @@ import redis.{ByteStringFormatter, RedisClient}
  *
  * @author Sunghyouk Bae
  */
-abstract class AbstractRedis[T] {
+abstract class AbstractRedis[@miniboxed T] {
 
   @Autowired val redis: RedisClient = null
 

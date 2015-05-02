@@ -11,7 +11,7 @@ object LZ4RedisSerializer {
     new LZ4RedisSerializer[T](inner)
 }
 
-class LZ4RedisSerializer[T](val inner: RedisSerializer[T] = new FstRedisSerializer[T])
+class LZ4RedisSerializer[@miniboxed T](val inner: RedisSerializer[T] = new FstRedisSerializer[T])
   extends RedisSerializer[T] {
 
   private lazy val factory = LZ4Factory.fastestInstance()

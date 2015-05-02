@@ -10,7 +10,7 @@ import scala.util.{Failure, Success}
  * 리소스 관리를 위한 Trait
  * Created by debop on 2014. 4. 5.
  */
-trait Disposable[+T] {
+trait Disposable[@miniboxed +T] {
 
   def get: T
 
@@ -26,7 +26,7 @@ object Disposable {
   }
 }
 
-trait Managed[+T] {selfT =>
+trait Managed[@miniboxed +T] {selfT =>
 
   def foreach(action: T => Unit): Unit = {
     val r = this.make()

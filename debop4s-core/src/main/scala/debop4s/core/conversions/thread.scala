@@ -23,7 +23,7 @@ object thread {
    * @tparam T  `func`의 반환 값의 수형
    * @return `Callable` 인스턴스
    */
-  implicit def makeCallabke[T](func: => T): Callable[T] = new Callable[T]() {
+  implicit def makeCallable[@miniboxed T](func: => T): Callable[T] = new Callable[T]() {
     def call(): T = func
   }
 

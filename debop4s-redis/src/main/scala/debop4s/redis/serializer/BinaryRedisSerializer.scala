@@ -7,7 +7,7 @@ import java.io.{ ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, By
  * BinaryRedisSerializer
  * @author Sunghyouk Bae
  */
-class BinaryRedisSerializer[T] extends RedisSerializer[T] {
+class BinaryRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
 
   override def serialize(graph: T): Array[Byte] = {
     if (graph == null)

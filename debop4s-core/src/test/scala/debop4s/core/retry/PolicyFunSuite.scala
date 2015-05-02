@@ -31,7 +31,7 @@ class PolicyFunSuite extends AbstractCoreFunSuite with BeforeAndAfterAll {
     else Future(value) #:: backwardCountingFutureStream(value - 1)
   }
 
-  def time[T](f: => T): Duration = {
+  def time[@miniboxed T](f: => T): Duration = {
     val before = System.currentTimeMillis()
     f
     Duration(System.currentTimeMillis() - before, MILLISECONDS)

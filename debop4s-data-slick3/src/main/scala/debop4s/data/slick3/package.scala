@@ -28,7 +28,7 @@ package object slick3 {
   implicit class DatabaseExtensions(db: SlickContext.driver.backend.DatabaseDef) {
 
     /** 동기 방식으로 action 을 수행합니다. */
-    def exec[R](action: DBIOAction[R, NoStream, Nothing]): R = {
+    def exec[@miniboxed R](action: DBIOAction[R, NoStream, Nothing]): R = {
       action.exec(db)
       // db.run(action).await
     }
@@ -37,7 +37,7 @@ package object slick3 {
       query.exec(db)
     }
 
-    def result[T](query: Rep[T]): T = {
+    def result[@miniboxed T](query: Rep[T]): T = {
       query.exec(db)
       //db.run(query.result).await
     }
@@ -64,7 +64,7 @@ package object slick3 {
       DBIO.seq(actions: _*).transactionally.exec(db)
     }
 
-    def withTransaction[R](block: Session => R) = {
+    def withTransaction[@miniboxed R](block: Session => R) = {
       using(db.createSession()) { s =>
         s.withTransaction { block(s) }
       }
@@ -82,7 +82,7 @@ package object slick3 {
      *   // returns Seq(Unit, q1.result, q2.result)
      * }}}
      */
-    def sequence[R, E <: Effect](in: DBIOAction[R, NoStream, E]*)
+    def sequence[@miniboxed R, E <: Effect](in: DBIOAction[R, NoStream, E]*)
                                 (implicit cbf: CanBuildFrom[Seq[DBIOAction[R, NoStream, E]], R, Seq[R]]): Seq[R] = {
       DBIO.sequence(in).exec(db)
       // db.run(DBIO.sequence(in)).await

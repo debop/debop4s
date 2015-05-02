@@ -3,7 +3,7 @@ package debop4s.data.orm.hibernate.usertype.cryptography
 import java.io.Serializable
 import java.sql.{PreparedStatement, ResultSet}
 
-import debop4s.core.cryptography.{DESEncryptor, RC2Encryptor, SymmetricEncryptorSupport, TripleDESEncryptor}
+import debop4s.core.cryptography._
 import org.hibernate.`type`.StringType
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 
 abstract class AbstractEncryptedStringUserType extends UserType {
 
-  private lazy val log = LoggerFactory.getLogger(getClass)
+  // private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   protected def encryptor: SymmetricEncryptorSupport
 

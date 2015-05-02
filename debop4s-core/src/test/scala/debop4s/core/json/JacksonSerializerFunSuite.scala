@@ -13,9 +13,9 @@ class JacksonSerializerFunSuite extends AbstractCoreFunSuite {
 
   val serializer = JacksonSerializer()
 
-  def serialize[T](graph: T) = serializer.serializeToText(graph)
+  def serialize[@miniboxed T](graph: T) = serializer.serializeToText(graph)
 
-  def deserialize[T: Manifest](text: String) = serializer.deserializeFromText[T](text)
+  def deserialize[@miniboxed T: Manifest](text: String) = serializer.deserializeFromText[T](text)
 
   test("user serialize") {
     val user = User(10)

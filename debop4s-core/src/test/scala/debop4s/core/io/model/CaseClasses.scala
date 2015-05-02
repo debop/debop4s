@@ -2,8 +2,10 @@ package debop4s.core.io.model
 
 import debop4s.core.utils.Hashs
 
-trait Entity[T] {
+trait Entity[@miniboxed T] {
+
   def id: T
+
   override def equals(obj: Any): Boolean = {
     obj != null &&
     getClass == obj.getClass &&

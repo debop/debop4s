@@ -7,7 +7,8 @@ import redis.ByteStringFormatter
  * Redis 에 Value 를 저장할 때 사용할 Formatter 의 기본 클래스입니다.
  * @author Sunghyouk Bae
  */
-abstract class AbstractRedisValueFormatter[T](val serializer: RedisSerializer[T]) extends ByteStringFormatter[T] {
+abstract class AbstractRedisValueFormatter[@miniboxed T](val serializer: RedisSerializer[T])
+  extends ByteStringFormatter[T] {
 
   require(serializer != null)
 
@@ -40,40 +41,40 @@ abstract class AbstractRedisValueFormatter[T](val serializer: RedisSerializer[T]
  * Value 를 Binary Serialization 하는 Formatter 입니다.
  * @tparam T Value 수형
  */
-class BinaryValueFormatter[T]
+class BinaryValueFormatter[@miniboxed T]
   extends AbstractRedisValueFormatter[T](new BinaryRedisSerializer[T])
 
 /**
  * Value 를 FST Serialization 하는 Formatter 입니다.
  * @tparam T Value 수형
  */
-class FstValueFormatter[T]
+class FstValueFormatter[@miniboxed T]
   extends AbstractRedisValueFormatter[T](new FstRedisSerializer[T])
 
 /**
  * Value 를 Binary Serialization 수행 후 Snappy 로 압축하는 Formatter 입니다.
  * @tparam T Value 수형
  */
-class SnappyBinaryValueFormatter[T]
+class SnappyBinaryValueFormatter[@miniboxed T]
   extends AbstractRedisValueFormatter[T](new SnappyRedisSerializer[T](new BinaryRedisSerializer[T]))
 
 /**
  * Value 를 FST Serialization 수행 후 Snappy 로 압축하는 Formatter 입니다.
  * @tparam T Value 수형
  */
-class SnappyFstValueFormatter[T]
+class SnappyFstValueFormatter[@miniboxed T]
   extends AbstractRedisValueFormatter[T](new SnappyRedisSerializer[T](new FstRedisSerializer[T]))
 
 /**
  * Value 를 Binary Serialization 수행 후 LZ4 로 압축하는 Formatter 입니다.
  * @tparam T Value 수형
  */
-class LZ4BinaryValueFormatter[T]
+class LZ4BinaryValueFormatter[@miniboxed T]
   extends AbstractRedisValueFormatter[T](new LZ4RedisSerializer[T](new BinaryRedisSerializer[T]))
 
 /**
  * Value 를 FST Serialization 수행 후 LZ4 로 압축하는 Formatter 입니다.
  * @tparam T Value 수형
  */
-class LZ4FstValueFormatter[T]
+class LZ4FstValueFormatter[@miniboxed T]
   extends AbstractRedisValueFormatter[T](new LZ4RedisSerializer[T](new FstRedisSerializer[T]))

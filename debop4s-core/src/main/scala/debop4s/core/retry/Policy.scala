@@ -7,7 +7,7 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-case class PromiseWrapper[T](promise: () => Future[T])
+case class PromiseWrapper[@miniboxed T](promise: () => Future[T])
 
 object PromiseWrapper {
   implicit def fromFuture[@miniboxed T](promise: () => Future[T]): PromiseWrapper[T] = PromiseWrapper(promise)
@@ -21,8 +21,8 @@ object Directly {
    */
   def forever: Policy =
     new Policy {
-      override def apply[T](promise: PromiseWrapper[T])
-                           (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+      override def apply[@miniboxed T](promise: PromiseWrapper[T])
+                                      (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
         retry(promise, promise)
       }
     }
@@ -32,8 +32,8 @@ object Directly {
    */
   def apply(max: Int = 3): Policy =
     new CountingPolicy {
-      override def apply[T](promise: PromiseWrapper[T])
-                           (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+      override def apply[@miniboxed T](promise: PromiseWrapper[T])
+                                      (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
         def run(max: Int): Future[T] = {
           log.trace(s"작업 실패 시 바로 재실행. 최대 시도 횟수=$max")
           countdown(max, promise, run)
@@ -50,10 +50,9 @@ object Pause {
    * 실패시에 delay 시간 후에 영원히 재시도 합니다.
    */
   def forever(delay: FiniteDuration = DEFAULT_DELAY)(implicit timer: Timer): Policy =
-    new Policy {
-      self =>
+    new Policy {self =>
       override def apply[@miniboxed T](promise: PromiseWrapper[T])
-                           (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+                                      (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
         val orElse = () => timer.doLater(delay) { self(promise) }.flatMap(identity)
         retry(promise, orElse)
       }
@@ -65,7 +64,7 @@ object Pause {
   def apply(max: Int = 4, delay: FiniteDuration = DEFAULT_DELAY)(implicit timer: Timer): Policy =
     new CountingPolicy {
       override def apply[@miniboxed T](promise: PromiseWrapper[T])
-                           (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+                                      (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
 
         def run(max: Int): Future[T] = {
           log.trace(s"지연시간을 두고 재실행합니다. 최대 시도 횟수=$max, 지연시간=$delay")
@@ -85,7 +84,7 @@ object Backoff {
   def forever(delay: FiniteDuration = DEFAULT_DELAY, base: Int = 2)(implicit timer: Timer): Policy =
     new Policy {
       override def apply[@miniboxed T](promise: PromiseWrapper[T])
-                           (implicit success: Successful[T], executor: ExecutionContext): Future[T] = {
+                                      (implicit success: Successful[T], executor: ExecutionContext): Future[T] = {
         def run(delay: FiniteDuration): Future[T] = {
           val orElse = () => timer.doLater(delay)(run(Duration(delay.length * base, delay.unit))).flatMap(identity)
           retry(promise, orElse)
@@ -103,7 +102,7 @@ object Backoff {
            (implicit timer: Timer): Policy =
     new CountingPolicy {
       override def apply[@miniboxed T](promise: PromiseWrapper[T])
-                           (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+                                      (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
         def run(max: Int, delay: FiniteDuration): Future[T] = {
           countdown(
             max,
@@ -136,7 +135,7 @@ object When {
   def apply(depends: Depends): Policy =
     new Policy {
       override def apply[@miniboxed T](promise: PromiseWrapper[T])
-                           (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+                                      (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
         val future = promise()
         future.flatMap { result =>
           if (successful.predicate(result) || !depends.isDefinedAt(result)) future
@@ -166,19 +165,19 @@ trait Policy {
   protected val log = LoggerFactory.getLogger(getClass)
 
   def apply[@miniboxed T](pw: PromiseWrapper[T])
-              (implicit successful: Successful[T], executionContext: ExecutionContext): Future[T]
+                         (implicit successful: Successful[T], executionContext: ExecutionContext): Future[T]
 
   def apply[@miniboxed T](promise: => Future[T])
-              (implicit successful: Successful[T], executor: ExecutionContext): Future[T] =
+                         (implicit successful: Successful[T], executor: ExecutionContext): Future[T] =
     apply { () => promise }
 
   /**
    * `promise` 를 작업하고, 실패 시에는 `orElse` 를 수행하고, 예외가 발생한 경우는 `recovery` 로 복원합니다.
    */
   protected def retry[@miniboxed T](promise: () => Future[T],
-                         orElse: () => Future[T],
-                         recovery: Future[T] => Future[T] = identity(_: Future[T]))
-                        (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+                                    orElse: () => Future[T],
+                                    recovery: Future[T] => Future[T] = identity(_: Future[T]))
+                                   (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
 
     val future = promise()
 
@@ -195,10 +194,10 @@ trait Policy {
 
 trait CountingPolicy extends Policy {
 
-  protected def countdown[T](max: Int,
-                             promise: () => Future[T],
-                             orElse: Int => Future[T])
-                            (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
+  protected def countdown[@miniboxed T](max: Int,
+                                        promise: () => Future[T],
+                                        orElse: Int => Future[T])
+                                       (implicit successful: Successful[T], executor: ExecutionContext): Future[T] = {
 
     log.debug(s"작업을 시도합니다. 남은 재시도 횟수=$max")
 
