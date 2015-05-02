@@ -38,7 +38,7 @@ public class WeekRangeCollectionTest extends TimePeriodTestBase {
         assertThat(weekRanges.getStartWeekOfYear()).isEqualTo(startWeek);
         assertThat(weekRanges.getEndWeekOfYear()).isEqualTo(startWeek);
 
-        List<WeekRange> weeks = weekRanges.getWeeks();
+        List<WeekRange> weeks = weekRanges.weeks();
         assertThat(weeks.size()).isEqualTo(1);
         assertThat(weeks.get(0).isSamePeriod(new WeekRange(startYear, startWeek))).isTrue();
     }
@@ -74,7 +74,7 @@ public class WeekRangeCollectionTest extends TimePeriodTestBase {
             assertThat(weekRanges.getStart()).isEqualTo(startTime);
             assertThat(weekRanges.getEnd()).isEqualTo(endTime);
 
-            final List<WeekRange> items = weekRanges.getWeeks();
+            final List<WeekRange> items = weekRanges.weeks();
 
             JParallels.run(weekCount, new JAction1<Integer>() {
                 @Override

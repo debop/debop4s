@@ -40,7 +40,7 @@ class DayTimeRange(private[this] val _start: DateTime,
     (0 until hours).view.map { h => HourRange(day.plusHours(h), calendar) }
   }
 
-  def getHours: util.List[HourRange] = {
+  def hours: util.List[HourRange] = {
     val day = startDayStart
     val hours = dayCount * HoursPerDay
 

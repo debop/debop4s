@@ -44,9 +44,9 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
     if (onVisitYears(years, context) && enterYears(years, context)) {
       val yearsToVisit =
-        if (isForward) years.getYears
-        else years.getYears.asScala.sortBy(y => -y.end.getMillis).asJava
-      // else yearsView.getYears.asScala.sortWith(_.end > _.end).asJava
+        if (isForward) years.years
+        else years.years.asScala.sortBy(y => -y.end.getMillis).asJava
+      // else yearsView.years.asScala.sortWith(_.end > _.end).asJava
 
 
       var yearIdx = 0
@@ -62,9 +62,9 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
         if (canVisitMonth) {
           val monthsToVisit =
-            if (isForward) years.getMonths
-            else years.getMonths.asScala.sortBy(m => -m.end.getMillis).asJava
-          //else yearsView.getMonths.asScala.sortWith(_.end > _.end).asJava
+            if (isForward) years.months
+            else years.months.asScala.sortBy(m => -m.end.getMillis).asJava
+          //else yearsView.months.asScala.sortWith(_.end > _.end).asJava
 
           var mIdx = 0
           while (mIdx < monthsToVisit.size()) {
@@ -79,9 +79,9 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
             if (canVisitDay) {
               val daysToVisit =
-                if (isForward) month.getDays
-                else month.getDays.asScala.sortBy(d => -d.end.getMillis).asJava
-              //else month.getDays.asScala.sortWith(_.end > _.end).asJava
+                if (isForward) month.days
+                else month.days.asScala.sortBy(d => -d.end.getMillis).asJava
+              //else month.days.asScala.sortWith(_.end > _.end).asJava
 
               var dIdx = 0
               while (dIdx < daysToVisit.size()) {
@@ -96,9 +96,9 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
                 if (canVisitHour) {
                   val hoursToVisit =
-                    if (isForward) day.getHours
-                    else day.getHours.asScala.sortBy(h => -h.end.getMillis).asJava
-                  // day.getHours.asScala.sortWith(_.end > _.end).asJava
+                    if (isForward) day.hours
+                    else day.hours.asScala.sortBy(h => -h.end.getMillis).asJava
+                  // day.hours.asScala.sortWith(_.end > _.end).asJava
 
                   var hIdx = 0
                   while (hIdx < hoursToVisit.size) {

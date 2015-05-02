@@ -21,7 +21,7 @@ class MinuteTimeRange(private[this] val _start: DateTime,
 
   assert(minuteCount >= 0)
 
-  val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
+  lazy val endMinute = start.plusMinutes(minuteCount).getMinuteOfHour
 
   def getEndMinite = endMinute
 }

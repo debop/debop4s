@@ -57,7 +57,7 @@ public class WeekRangeTest extends TimePeriodTestBase {
     public void getDaysTest() {
         final DateTime now = Times.now();
         final WeekRange weekRange = new WeekRange();
-        List<DayRange> days = weekRange.getDays();
+        List<DayRange> days = weekRange.days();
 
         int index = 0;
         for (DayRange day : days) {

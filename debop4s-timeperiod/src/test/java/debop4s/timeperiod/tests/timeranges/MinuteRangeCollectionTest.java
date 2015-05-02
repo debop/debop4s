@@ -31,7 +31,7 @@ public class MinuteRangeCollectionTest extends TimePeriodTestBase {
         assertThat(minutes.getStart()).isEqualTo(startTime);
         assertThat(minutes.getEnd()).isEqualTo(endTime);
 
-        List<MinuteRange> mins = minutes.getMinutes();
+        List<MinuteRange> mins = minutes.minutes();
 
         assertThat(mins.size()).isEqualTo(1);
         assertThat(mins.get(0).getStart()).isEqualTo(startTime);
@@ -52,7 +52,7 @@ public class MinuteRangeCollectionTest extends TimePeriodTestBase {
             assertThat(minutes.getStart()).isEqualTo(startTime);
             assertThat(minutes.getEnd()).isEqualTo(endTime);
 
-            List<MinuteRange> items = minutes.getMinutes();
+            List<MinuteRange> items = minutes.minutes();
 
             for (int i = 0; i < m; i++) {
                 assertThat(items.get(i).getStart()).isEqualTo(startTime.plusMinutes(i));
@@ -80,7 +80,7 @@ public class MinuteRangeCollectionTest extends TimePeriodTestBase {
             assertThat(minuteRanges.getEnd()).isEqualTo(endTime);
             assertThat(minuteRanges.getMinuteCount()).isEqualTo(minuteCount);
 
-            final List<MinuteRange> items = minuteRanges.getMinutes();
+            final List<MinuteRange> items = minuteRanges.minutes();
             assertThat(items.size()).isEqualTo(minuteCount);
 
             JParallels.run(minuteCount, new JAction1<Integer>() {

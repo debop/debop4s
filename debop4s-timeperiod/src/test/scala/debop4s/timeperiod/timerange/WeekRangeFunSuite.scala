@@ -31,7 +31,7 @@ class WeekRangeFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("getDays") {
+  test("days") {
     val now = Times.now
     val wr = WeekRange()
 

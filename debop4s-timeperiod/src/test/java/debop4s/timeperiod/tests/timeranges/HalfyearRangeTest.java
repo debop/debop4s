@@ -127,7 +127,7 @@ public class HalfyearRangeTest extends TimePeriodTestBase {
         final TimeCalendar calendar = TimeCalendar.getEmptyOffset();
 
         HalfyearRange h1 = new HalfyearRange(currentYear, Halfyear.First, calendar);
-        List<QuarterRange> h1Quarters = h1.getQuarters();
+        List<QuarterRange> h1Quarters = h1.quarters();
 
         int h1Index = 0;
         for (QuarterRange h1Quarter : h1Quarters) {
@@ -139,7 +139,7 @@ public class HalfyearRangeTest extends TimePeriodTestBase {
         }
 
         HalfyearRange h2 = new HalfyearRange(currentYear, Halfyear.Second, calendar);
-        List<QuarterRange> h2Quarters = h2.getQuarters();
+        List<QuarterRange> h2Quarters = h2.quarters();
 
         int h2Index = 0;
         for (QuarterRange h2Quarter : h2Quarters) {
@@ -158,7 +158,7 @@ public class HalfyearRangeTest extends TimePeriodTestBase {
         final TimeCalendar calendar = TimeCalendar.getEmptyOffset();
 
         HalfyearRange h1 = new HalfyearRange(currentYear, Halfyear.First, calendar);
-        List<MonthRange> months = h1.getMonths();
+        List<MonthRange> months = h1.months();
         assertThat(months.size()).isEqualTo(TimeSpec.MonthsPerHalfyear);
 
         int index = 0;

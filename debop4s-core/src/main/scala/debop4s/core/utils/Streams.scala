@@ -84,7 +84,4 @@ object Streams {
     if (is == null) ""
     else new String(toByteArray(is), cs)
   }
-
-
-  // TODO: Scala 고유의 Stream 처리 기능을 제공하자.
 }

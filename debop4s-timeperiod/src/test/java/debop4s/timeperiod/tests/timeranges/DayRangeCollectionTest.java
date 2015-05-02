@@ -38,7 +38,7 @@ public class DayRangeCollectionTest extends TimePeriodTestBase {
         assertThat(days.getEndMonthOfYear()).isEqualTo(start.getMonthOfYear());
         assertThat(days.getEndDayOfMonth()).isEqualTo(start.getDayOfMonth());
 
-        List<DayRange> dayList = days.getDays();
+        List<DayRange> dayList = days.days();
         assertThat(dayList.size()).isEqualTo(1);
         assertThat(dayList.get(0).isSamePeriod(new DayRange(start))).isTrue();
     }
@@ -61,7 +61,7 @@ public class DayRangeCollectionTest extends TimePeriodTestBase {
         assertThat(days.getEndMonthOfYear()).isEqualTo(end.getMonthOfYear());
         assertThat(days.getEndDayOfMonth()).isEqualTo(end.getDayOfMonth());
 
-        List<DayRange> dayList = days.getDays();
+        List<DayRange> dayList = days.days();
         assertThat(dayList.size()).isEqualTo(dayCount);
 
         for (int i = 0; i < dayCount; i++) {
@@ -86,7 +86,7 @@ public class DayRangeCollectionTest extends TimePeriodTestBase {
 
             assertThat(days.getDayCount()).isEqualTo(dayCount);
 
-            List<HourRange> items = days.getHours();
+            List<HourRange> items = days.hours();
             assertThat(items.size()).isEqualTo(dayCount * TimeSpec.HoursPerDay);
 
             for (int i = 0; i < items.size(); i++) {

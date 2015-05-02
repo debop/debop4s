@@ -40,7 +40,7 @@ class HalfyearTimeRange(@BeanProperty val year: Int,
     }
   }
 
-  def getQuarters: util.List[QuarterRange] = {
+  def quarters: util.List[QuarterRange] = {
     val quarterCount = halfyearCount * QuartersPerHalfyear
     val startQuarter = Times.quarterOf(startMonthOfYear)
 
@@ -63,7 +63,7 @@ class HalfyearTimeRange(@BeanProperty val year: Int,
     }
   }
 
-  def getMonths: util.List[MonthRange] = {
+  def months: util.List[MonthRange] = {
     val monthCount = halfyearCount * MonthsPerHalfyear
     val results = new util.ArrayList[MonthRange](monthCount)
     var m = 0

@@ -98,7 +98,7 @@ public class DayRangeTest extends TimePeriodTestBase {
     @Test
     public void getHoursTest() {
         DayRange dr = new DayRange();
-        List<HourRange> hours = dr.getHours();
+        List<HourRange> hours = dr.hours();
 
         int index = 0;
         for (HourRange hour : hours) {

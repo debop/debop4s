@@ -44,7 +44,7 @@ public class HalfyearRangeCollectionTest extends TimePeriodTestBase {
         assertThat(halfyears.getEndYear()).isEqualTo(startYear);
         assertThat(halfyears.getEndHalfyear()).isEqualTo(startHalfyear);
 
-        List<HalfyearRange> halfyearList = halfyears.getHalfyears();
+        List<HalfyearRange> halfyearList = halfyears.halfyears();
         assertThat(halfyearList.size()).isEqualTo(1);
         assertThat(halfyearList.get(0).isSamePeriod(new HalfyearRange(2004, Halfyear.Second))).isTrue();
     }
@@ -62,7 +62,7 @@ public class HalfyearRangeCollectionTest extends TimePeriodTestBase {
         assertThat(halfyears.getEndYear()).isEqualTo(startYear + 1);
         assertThat(halfyears.getEndHalfyear()).isEqualTo(Halfyear.First);
 
-        List<HalfyearRange> halfyearList = halfyears.getHalfyears();
+        List<HalfyearRange> halfyearList = halfyears.halfyears();
 
         assertThat(halfyearList.size()).isEqualTo(halfyearCount);
         assertThat(halfyearList.get(0).isSamePeriod(new HalfyearRange(2004, Halfyear.First))).isTrue();
@@ -83,7 +83,7 @@ public class HalfyearRangeCollectionTest extends TimePeriodTestBase {
         assertThat(halfyears.getEndYear()).isEqualTo(startYear + 1);
         assertThat(halfyears.getEndHalfyear()).isEqualTo(Halfyear.Second);
 
-        List<HalfyearRange> halfyearList = halfyears.getHalfyears();
+        List<HalfyearRange> halfyearList = halfyears.halfyears();
 
         assertThat(halfyearList.size()).isEqualTo(halfyearCount);
         assertThat(halfyearList.get(0).isSamePeriod(new HalfyearRange(2004, Halfyear.Second))).isTrue();

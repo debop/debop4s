@@ -40,7 +40,7 @@ public class HourRangeCollectionTest extends TimePeriodTestBase {
         assertThat(hours.getEndDayOfMonth()).isEqualTo(startTime.getDayOfMonth());
         assertThat(hours.getEndHourOfDay()).isEqualTo(startTime.getHourOfDay() + 1);
 
-        final List<HourRange> items = hours.getHours();
+        final List<HourRange> items = hours.hours();
         assertThat(items.size()).isEqualTo(1);
         assertThat(items.get(0).isSamePeriod(new HourRange(startTime, TimeCalendar.getEmptyOffset()))).isTrue();
     }
@@ -62,7 +62,7 @@ public class HourRangeCollectionTest extends TimePeriodTestBase {
         assertThat(hours.getEndDayOfMonth()).isEqualTo(startTime.getDayOfMonth() + 1);
         assertThat(hours.getEndHourOfDay()).isEqualTo((startTime.getHourOfDay() + hourCount) % 24);
 
-        final List<HourRange> items = hours.getHours();
+        final List<HourRange> items = hours.hours();
         assertThat(items.size()).isEqualTo(hourCount);
         for (int h = 0; h < hourCount; h++) {
             assertThat(items.get(h).isSamePeriod(new HourRange(startTime.plusHours(h), TimeCalendar.getEmptyOffset()))).isTrue();
@@ -85,7 +85,7 @@ public class HourRangeCollectionTest extends TimePeriodTestBase {
             assertThat(hours.getEnd()).isEqualTo(endTime);
             assertThat(hours.getHourCount()).isEqualTo(hourCount);
 
-            final List<HourRange> items = hours.getHours();
+            final List<HourRange> items = hours.hours();
             assertThat(items.size()).isEqualTo(hourCount);
 
             JParallels.run(hourCount, new JAction1<Integer>() {

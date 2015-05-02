@@ -57,7 +57,7 @@ public class MonthRangeTest extends TimePeriodTestBase {
     public void getDaysTest() {
         final DateTime now = Times.now();
         final MonthRange monthRange = new MonthRange();
-        List<DayRange> days = monthRange.getDays();
+        List<DayRange> days = monthRange.days();
 
         int index = 0;
         for (DayRange day : days) {

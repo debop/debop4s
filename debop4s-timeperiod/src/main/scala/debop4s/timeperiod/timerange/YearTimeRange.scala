@@ -38,7 +38,7 @@ class YearTimeRange(private[this] val _year: Int,
   }
 
   @inline
-  def getHalfyears: util.List[HalfyearRange] = {
+  def halfyears: util.List[HalfyearRange] = {
     val halfyears = Lists.newArrayListWithCapacity[HalfyearRange](yearCount * 2)
     var y = 0
     while (y < yearCount) {
@@ -59,7 +59,7 @@ class YearTimeRange(private[this] val _year: Int,
   }
 
   @inline
-  def getQuarters: util.List[QuarterRange] = {
+  def quarters: util.List[QuarterRange] = {
     val quarters = Lists.newArrayListWithCapacity[QuarterRange](yearCount * 4)
     var y = 0
     while (y < yearCount) {
@@ -82,7 +82,7 @@ class YearTimeRange(private[this] val _year: Int,
   }
 
   @inline
-  def getMonths: util.List[MonthRange] = {
+  def months: util.List[MonthRange] = {
     val months = new util.ArrayList[MonthRange](yearCount * MonthsPerYear)
     var y = 0
     while (y < yearCount) {

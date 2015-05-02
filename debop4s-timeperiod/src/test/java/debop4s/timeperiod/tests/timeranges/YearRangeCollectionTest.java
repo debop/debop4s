@@ -33,7 +33,7 @@ public class YearRangeCollectionTest extends TimePeriodTestBase {
         assertThat(yearRanges.getStartYear()).isEqualTo(startYear);
         assertThat(yearRanges.getEndYear()).isEqualTo(startYear);
 
-        List<YearRange> years = yearRanges.getYears();
+        List<YearRange> years = yearRanges.years();
         assertThat(years.size()).isEqualTo(1);
         assertThat(years.get(0).isSamePeriod(new YearRange(startYear))).isTrue();
     }
@@ -66,7 +66,7 @@ public class YearRangeCollectionTest extends TimePeriodTestBase {
             assertThat(yearRanges.getStart()).isEqualTo(startTime);
             assertThat(yearRanges.getEnd()).isEqualTo(endTime);
 
-            final List<YearRange> items = yearRanges.getYears();
+            final List<YearRange> items = yearRanges.years();
 
             JParallels.run(yearCount, new JAction1<Integer>() {
                 @Override

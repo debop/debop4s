@@ -35,7 +35,7 @@ class MonthTimeRange(private[this] val _year: Int,
   }
 
   @inline
-  def getDays: util.List[DayRange] = {
+  def days: util.List[DayRange] = {
     val startMonth = Times.startTimeOfMonth(start)
     val days = new util.ArrayList[DayRange](monthCount * 31)
 

@@ -28,7 +28,7 @@ public class MonthRangeCollectionTest extends TimePeriodTestBase {
         MonthRangeCollection monthRanges = new MonthRangeCollection(startYear, startMonth, 1);
         assertThat(monthRanges.getMonthCount()).isEqualTo(1);
 
-        List<MonthRange> months = monthRanges.getMonths();
+        List<MonthRange> months = monthRanges.months();
         assertThat(months.size()).isEqualTo(1);
         assertThat(months.get(0).isSamePeriod(new MonthRange(startYear, startMonth))).isTrue();
 
@@ -69,7 +69,7 @@ public class MonthRangeCollectionTest extends TimePeriodTestBase {
             assertThat(monthRanges.getStart()).isEqualTo(startTime);
             assertThat(monthRanges.getEnd()).isEqualTo(endTime);
 
-            final List<MonthRange> items = monthRanges.getMonths();
+            final List<MonthRange> items = monthRanges.months();
 
             JParallels.run(monthCount, new JAction1<Integer>() {
                 @Override

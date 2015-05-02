@@ -38,7 +38,7 @@ class DayRangeCollection(private[this] val _moment: DateTime,
     }
   }
 
-  def getDays: util.List[DayRange] = {
+  def days: util.List[DayRange] = {
     val startDay = Times.asDate(start)
     val results = new util.ArrayList[DayRange](dayCount)
     var d = 0

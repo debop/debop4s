@@ -43,7 +43,7 @@ class WeekTimeRange(private[this] val _moment: DateTime,
   }
 
   @inline
-  def getDays: util.List[DayRange] = {
+  def days: util.List[DayRange] = {
     val startDay = startDayStart
     val dayCount = weekCount * DaysPerWeek
 

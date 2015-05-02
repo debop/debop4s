@@ -277,7 +277,7 @@ public class TimeGapCalculatorTest extends TimePeriodTestBase {
             DayRangeCollection days = new DayRangeCollection(limits.getStart(), (int) limits.getDuration().getStandardDays() + 1, timeCalendar);
 
             // limits 의 내부이고, 주말인 DayRange를 제외목록에 추가합니다.
-            for (DayRange day : days.getDays()) {
+            for (DayRange day : days.days()) {
                 if (limits.hasInside(day) && Times.isWeekend(day.getDayOfWeek()))
                     excludePeriods.add(day);
             }

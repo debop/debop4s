@@ -34,7 +34,7 @@ class QuarterRangeCollection(private[this] val _year: Int,
   }
 
   @inline
-  def getQuarters: util.List[QuarterRange] = {
+  def quarters: util.List[QuarterRange] = {
     val results = Lists.newArrayListWithCapacity[QuarterRange](quarterCount)
     var q = 0
     while (q < quarterCount) {

@@ -32,7 +32,7 @@ class MinuteRangeCollection(private[this] val _moment: DateTime,
   }
 
   @inline
-  def getMinutes: util.List[MinuteRange] = {
+  def minutes: util.List[MinuteRange] = {
     val startMin = Times.trimToSecond(start)
 
     val results = new util.ArrayList[MinuteRange](minuteCount)

@@ -97,7 +97,7 @@ class MinuteRangeFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("getMinutes") {
+  test("minutes") {
     val hr = HourRange()
     val minutes = hr.minutesView
 

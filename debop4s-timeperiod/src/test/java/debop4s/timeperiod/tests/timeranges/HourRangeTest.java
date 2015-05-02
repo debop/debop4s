@@ -110,7 +110,7 @@ public class HourRangeTest extends TimePeriodTestBase {
     @Test
     public void getMinutesTest() {
         HourRange hourRange = new HourRange();
-        List<MinuteRange> minutes = hourRange.getMinutes();
+        List<MinuteRange> minutes = hourRange.minutes();
 
         assertThat(minutes.size()).isEqualTo(TimeSpec.MinutesPerHour);
 

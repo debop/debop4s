@@ -30,8 +30,20 @@ class YearRangeCollection(private[this] val _year: Int,
     }
   }
 
+  def yearsStream: Stream[YearRange] = {
+    def tails(year: Int): Stream[YearRange] = {
+      if (year < yearCount)
+        YearRange(year, calendar) #:: tails(year + 1)
+      else
+        Stream.empty[YearRange]
+    }
+    val sy = startYear
+    val head = YearRange(sy, calendar)
+    head #:: tails(sy + 1)
+  }
+
   @inline
-  def getYears: util.List[YearRange] = {
+  def years: util.List[YearRange] = {
     val years = Lists.newArrayListWithCapacity[YearRange](yearCount)
     var i = 0
     while (i < yearCount) {

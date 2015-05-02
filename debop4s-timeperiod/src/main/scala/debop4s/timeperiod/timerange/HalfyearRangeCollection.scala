@@ -35,7 +35,7 @@ class HalfyearRangeCollection(private[this] val _year: Int,
     }
   }
 
-  def getHalfyears: util.List[HalfyearRange] = {
+  def halfyears: util.List[HalfyearRange] = {
     val results = new util.ArrayList[HalfyearRange](halfyearCount)
     var x = 0
     while (x < halfyearCount) {

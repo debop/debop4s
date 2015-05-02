@@ -39,7 +39,7 @@ abstract class QuarterTimeRange(private[this] val _year: Int,
   }
 
   @inline
-  def getMonths: util.List[MonthRange] = {
+  def months: util.List[MonthRange] = {
     val monthCount = quarterCount * MonthsPerQuarter
     val mrs = Lists.newArrayListWithCapacity[MonthRange](monthCount)
 

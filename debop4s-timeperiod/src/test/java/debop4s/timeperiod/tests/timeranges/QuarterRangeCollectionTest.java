@@ -44,7 +44,7 @@ public class QuarterRangeCollectionTest extends TimePeriodTestBase {
         assertThat(quarterRanges.getEndYear()).isEqualTo(startYear);
         assertThat(quarterRanges.getEndQuarter()).isEqualTo(startQuarter);
 
-        List<QuarterRange> quarters = quarterRanges.getQuarters();
+        List<QuarterRange> quarters = quarterRanges.quarters();
         assertThat(quarters.size()).isEqualTo(1);
         assertThat(quarters.get(0).isSamePeriod(new QuarterRange(2004, Quarter.Second))).isTrue();
     }
@@ -63,7 +63,7 @@ public class QuarterRangeCollectionTest extends TimePeriodTestBase {
         assertThat(quarterRanges.getEndYear()).isEqualTo(startYear + 1);
         assertThat(quarterRanges.getEndQuarter()).isEqualTo(Quarter.First);
 
-        List<QuarterRange> quarters = quarterRanges.getQuarters();
+        List<QuarterRange> quarters = quarterRanges.quarters();
 
         assertThat(quarters.size()).isEqualTo(quarterCount);
         assertThat(quarters.get(0).isSamePeriod(new QuarterRange(2004, Quarter.First))).isTrue();
@@ -86,7 +86,7 @@ public class QuarterRangeCollectionTest extends TimePeriodTestBase {
         assertThat(quarterRanges.getEndYear()).isEqualTo(startYear + 1);
         assertThat(quarterRanges.getEndQuarter()).isEqualTo(Quarter.Second);
 
-        List<QuarterRange> quarters = quarterRanges.getQuarters();
+        List<QuarterRange> quarters = quarterRanges.quarters();
 
         assertThat(quarters.size()).isEqualTo(quarterCount);
         assertThat(quarters.get(0).isSamePeriod(new QuarterRange(2004, Quarter.Second))).isTrue();

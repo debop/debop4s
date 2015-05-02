@@ -146,7 +146,7 @@ public class QuarterRangeTest extends TimePeriodTestBase {
         final TimeCalendar calendar = TimeCalendar.getEmptyOffset();
 
         QuarterRange q1 = new QuarterRange(currentYear, Quarter.First, calendar);
-        List<MonthRange> months = q1.getMonths();
+        List<MonthRange> months = q1.months();
         assertThat(months.size()).isEqualTo(TimeSpec.MonthsPerQuarter);
 
         int index = 0;

@@ -105,7 +105,7 @@ class HalfyearRangeFunSuite extends AbstractTimeFunSuite {
     }
   }
 
-  test("halfyear getMonths") {
+  test("halfyear months") {
 
     val h1 = HalfyearRange(currentYear, Halfyear.First, calendar)
     val months = h1.monthsView
