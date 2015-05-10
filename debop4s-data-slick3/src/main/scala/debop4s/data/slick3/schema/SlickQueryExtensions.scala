@@ -54,7 +54,7 @@ trait SlickQueryExtensions {
       }
     }
 
-    val filterById = this.findBy(x => x.id)
+    def filterById = this.findBy(x => x.id)
 
     def findById(id: M#Id): DBIO[M] = filterById(id).result.head
 
@@ -75,7 +75,7 @@ trait SlickQueryExtensions {
       tryExtractId(model).flatMap { id => update(id, model) }
     }
 
-    protected def update(id: M#Id, model: M)(implicit ec: ExecutionContext): DBIO[M] = {
+    def update(id: M#Id, model: M)(implicit ec: ExecutionContext): DBIO[M] = {
       val triedUpdate = filterById(id).update(model).mustAffectOneSingleRow.asTry
 
       triedUpdate.map {

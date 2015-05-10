@@ -34,7 +34,7 @@ trait EntityTableQueries {
   (implicit ev: BaseTypedType[M#Id])
     extends EntityTableQuery[M, T](cons, idLens) {
 
-    override protected def update(id: M#Id, versionable: M)(implicit ec: ExecutionContext): DBIO[M] = {
+    override def update(id: M#Id, versionable: M)(implicit ec: ExecutionContext): DBIO[M] = {
 
       // extract current version
       val currentVersion = versionLens.get(versionable)
