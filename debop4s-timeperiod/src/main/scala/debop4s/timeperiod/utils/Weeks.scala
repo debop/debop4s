@@ -9,7 +9,8 @@ import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 
 /**
- * Weeks
+ * 주 (Week) 와 관련된 Helper class
+ *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2014. 1. 2. 오후 9:23
  */
@@ -45,7 +46,6 @@ object Weeks {
     else minusWeeks(yw, weeks)
   }
 
-  @inline
   private def plusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
     var newWeeks = weeks + yw.weekOfWeekyear
 
@@ -65,7 +65,6 @@ object Weeks {
     YearWeek(weekyear, newWeeks max 1)
   }
 
-  @inline
   private def minusWeeks(yw: YearWeek, weeks: Int): YearWeek = {
     var week = weeks + yw.weekOfWeekyear
 

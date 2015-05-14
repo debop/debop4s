@@ -33,7 +33,6 @@ trait Log extends Serializable {
 
   lazy val log = LoggerFactory.getLogger(getClass.getName.replace("$", "#").stripSuffix("#"))
 
-  @inline
   private def withThrowable(e: Throwable)(block: => Unit): Unit = {
     if (e != null) {
       val stackRef: Option[String] =
@@ -56,7 +55,6 @@ trait Log extends Serializable {
     }
   }
 
-  @inline
   private def format(message: String, args: Seq[Any]): String = {
     if (args.isEmpty) message
     else message.format(args.map(_.asInstanceOf[AnyRef]): _*)

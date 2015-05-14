@@ -3,7 +3,8 @@ package debop4s.core.collections;
 import com.google.common.collect.Lists;
 import debop4s.core.ToStringHelper;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
@@ -14,10 +15,11 @@ import java.util.List;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 13. 1. 11
  */
-@Slf4j
 public abstract class NumberRange<T extends Number> implements Iterable<T> {
 
     private NumberRange() { }
+
+    private static final Logger log = LoggerFactory.getLogger(NumberRange.class);
 
     /**
      * getMulti int range.

@@ -83,7 +83,7 @@ class HikariDataSourceFactory extends AbstractDataSourceFactory {
     // Timeout 설정
     config.setMaxLifetime(600000) // 10 minutes
     config.setIdleTimeout(300000) // 5 minutes
-    config.setJdbc4ConnectionTest(false)
+    // config.setJdbc4ConnectionTest(false)
 
     new HikariDataSource(config)
   }

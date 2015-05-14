@@ -1,8 +1,8 @@
 package debop4s.timeperiod.utils
 
-import java.lang.{Iterable => JIterable}
+import java.lang.{ Iterable => JIterable }
 import java.util
-import java.util.{Calendar, Date, List => JList, Set => JSet}
+import java.util.{ Calendar, Date, List => JList, Set => JSet }
 
 import debop4s.core._
 import debop4s.core.conversions.jodatime._
@@ -10,15 +10,15 @@ import debop4s.core.utils.Strings
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timerange._
-import debop4s.timeperiod.utils.Weeks._
-import org.joda.time.{DateTime, DateTimeZone, Duration}
+import org.joda.time.{ DateTime, DateTimeZone, Duration }
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 import scala.util.control.NonFatal
 
 /**
- * Times
+ * Time 과 관련된 Helper class 입니다.
+ *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since  2013. 12. 14. 오후 9:09
  */
@@ -222,7 +222,7 @@ object Times {
   def daysInMonth(year: Int, month: Int): Int =
     asDate(year, month).plusMonths(1).minusDays(1).getDayOfMonth
 
-  @inline
+
   def startOfWeek(moment: DateTime): DateTime = {
     val day = asDate(moment)
     val dow = day.getDayOfWeek
@@ -252,7 +252,6 @@ object Times {
     weeksOfYear(year, DefaultTimeCalendar)
 
   /** 해당 년도의 주차 수 */
-  @inline
   def weeksOfYear(year: Int, calendar: ITimeCalendar): Int = {
     var lastDay = asDate(year, 12, 31)
     while (lastDay.getWeekyear > year) {
@@ -272,7 +271,7 @@ object Times {
 
   def prevDayOfWeek(day: DayOfWeek): DayOfWeek = addDayOfWeek(day, -1)
 
-  @inline
+
   def addDayOfWeek(day: DayOfWeek, days: Int): DayOfWeek = {
     if (days == 0) return day
 
@@ -281,7 +280,7 @@ object Times {
     DayOfWeek.valueOf((offset % DaysPerWeek) + 1)
   }
 
-  @inline
+
   def isSameTime(left: DateTime, right: DateTime, unit: PeriodUnit): Boolean = {
     unit match {
       case PeriodUnit.Year => isSameYear(left, right)
@@ -503,7 +502,6 @@ object Times {
   def nextDayOfWeek(moment: DateTime): DateTime =
     nextDayOfWeek(moment, DayOfWeek.valueOf(moment.getDayOfWeek))
 
-  @inline
   def nextDayOfWeek(moment: DateTime, dayOfWeek: DayOfWeek): DateTime = {
     val dow = dayOfWeek.getValue
     var next = moment.plusDays(1)
@@ -516,7 +514,6 @@ object Times {
   def prevDayOfWeek(moment: DateTime): DateTime =
     prevDayOfWeek(moment, DayOfWeek.valueOf(moment.getDayOfWeek))
 
-  @inline
   def prevDayOfWeek(moment: DateTime, dayOfWeek: DayOfWeek): DateTime = {
     val dow = dayOfWeek
     var previous = moment.minusDays(1)
@@ -619,7 +616,7 @@ object Times {
     //        else null
   }
 
-  @inline
+
   def max(a: Duration, b: Duration): Duration = {
     a max b
     //        if (a != null && b != null) {
@@ -673,12 +670,12 @@ object Times {
   def relativeSecondPeriod(start: DateTime, seconds: Int): TimeRange =
     TimeRange(trimToMillis(start), trimToMillis(start).plusSeconds(seconds))
 
-  @inline
+
   def periodOf(moment: DateTime,
                unit: PeriodUnit): ITimePeriod =
     periodOf(moment, unit, DefaultTimeCalendar)
 
-  @inline
+
   def periodOf(moment: DateTime,
                unit: PeriodUnit,
                calendar: ITimeCalendar): ITimePeriod = {
@@ -698,7 +695,7 @@ object Times {
     }
   }
 
-  @inline
+
   def periodsOf(moment: DateTime,
                 unit: PeriodUnit,
                 periodCount: Int,
@@ -714,8 +711,8 @@ object Times {
       case PeriodUnit.Minute => minuteRanges(moment, periodCount, calendar)
       case PeriodUnit.Second =>
         CalendarTimeRange(trimToMillis(moment),
-          trimToMillis(moment).plusSeconds(periodCount),
-          calendar)
+                           trimToMillis(moment).plusSeconds(periodCount),
+                           calendar)
 
       case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
     }
@@ -770,12 +767,12 @@ object Times {
   def minuteRanges(moment: DateTime, minuteCount: Int, calendar: ITimeCalendar = DefaultTimeCalendar) =
     MinuteRangeCollection(moment, minuteCount, calendar)
 
-  @inline
+
   def hasInside(period: ITimePeriod, target: DateTime): Boolean = {
     (target >= period.start) && (target <= period.end)
   }
 
-  @inline
+
   def hasInside(period: ITimePeriod, target: ITimePeriod): Boolean = {
     hasInside(period, target.start) && hasInside(period, target.end)
   }
@@ -792,7 +789,7 @@ object Times {
 
   def isNotAnyTime(period: ITimePeriod) = period != null && !period.isAnytime
 
-  @inline
+
   def relation(period: ITimePeriod, target: ITimePeriod): PeriodRelation = {
     require(period != null)
     require(target != null)
@@ -839,7 +836,7 @@ object Times {
     relation
   }
 
-  @inline
+
   def intersectWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
     val isIntersect =
       hasInside(period, target.start) ||
@@ -852,11 +849,11 @@ object Times {
   }
 
   lazy val NotOverlapedRelations = Array(PeriodRelation.After,
-    PeriodRelation.StartTouching,
-    PeriodRelation.EndTouching,
-    PeriodRelation.Before)
+                                          PeriodRelation.StartTouching,
+                                          PeriodRelation.EndTouching,
+                                          PeriodRelation.Before)
 
-  @inline
+
   def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
     val r = relation(period, target)
     val isOverlaps = !NotOverlapedRelations.contains(r)
@@ -865,7 +862,7 @@ object Times {
     isOverlaps
   }
 
-  @inline
+
   def intersectBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
     var intersection: TimeBlock = null
     if (intersectWith(period, target)) {
@@ -879,7 +876,7 @@ object Times {
     intersection
   }
 
-  @inline
+
   def unionBlock(period: ITimePeriod, target: ITimePeriod): TimeBlock = {
     val start = min(period.start, target.start)
     val end = max(period.end, target.end)
@@ -887,7 +884,7 @@ object Times {
     TimeBlock(start, end, period.isReadonly)
   }
 
-  @inline
+
   def intersectRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
     require(period != null)
     require(target != null)
@@ -904,7 +901,7 @@ object Times {
     intersection
   }
 
-  @inline
+
   def unionRange(period: ITimePeriod, target: ITimePeriod): TimeRange = {
     val start = min(period.start, target.start)
     val end = max(period.end, target.end)
@@ -978,7 +975,7 @@ object Times {
     }
   }
 
-  @inline
+
   def foreachYears(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
@@ -1009,7 +1006,7 @@ object Times {
     years
   }
 
-  @inline
+
   def foreachHalfyears(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
@@ -1043,7 +1040,7 @@ object Times {
     halfyears
   }
 
-  @inline
+
   def foreachQuarters(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
@@ -1077,7 +1074,7 @@ object Times {
     quarters
   }
 
-  @inline
+
   def foreachMonths(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
@@ -1111,7 +1108,7 @@ object Times {
     months
   }
 
-  @inline
+
   def foreachWeeks(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
@@ -1149,7 +1146,7 @@ object Times {
     weeks
   }
 
-  @inline
+
   def foreachDays(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
@@ -1179,7 +1176,7 @@ object Times {
     days
   }
 
-  @inline
+
   def foreachHours(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
@@ -1211,7 +1208,7 @@ object Times {
     hours
   }
 
-  @inline
+
   def foreachMinutes(period: ITimePeriod): JList[ITimePeriod] = {
     require(period != null)
 
@@ -1258,7 +1255,7 @@ object Times {
     }
   }
 
-  @inline
+
   def yearsStream(period: ITimePeriod): Stream[ITimePeriod] = {
     require(period != null)
 
@@ -1288,7 +1285,7 @@ object Times {
     head #:: nextYears(current)
   }
 
-  @inline
+
   def halfyearsStream(period: ITimePeriod): Stream[ITimePeriod] = {
     require(period != null)
 
@@ -1321,7 +1318,7 @@ object Times {
     head #:: nextHalfyears(current)
   }
 
-  @inline
+
   def quartersStream(period: ITimePeriod): Stream[ITimePeriod] = {
     require(period != null)
 
@@ -1354,7 +1351,7 @@ object Times {
     head #:: nextQuarters(current)
   }
 
-  @inline
+
   def monthsStream(period: ITimePeriod): Stream[ITimePeriod] = {
     require(period != null)
 
@@ -1390,7 +1387,7 @@ object Times {
     head #:: nextMonth(current)
   }
 
-  @inline
+
   def weeksStream(period: ITimePeriod): Stream[ITimePeriod] = {
     require(period != null)
 
@@ -1431,7 +1428,7 @@ object Times {
   /**
    * 배열로 전체 정보를 가지는 게 아니라 Stream 을 이용하여 지연된 작업을 수행합니다.
    */
-  @inline
+
   def daysStream(period: ITimePeriod): Stream[ITimePeriod] = {
     require(period != null)
 
@@ -1465,7 +1462,7 @@ object Times {
   /**
    * 배열로 전체 정보를 가지는 게 아니라 Stream 을 이용하여 지연된 작업을 수행합니다.
    */
-  @inline
+
   def hoursStream(period: ITimePeriod): Stream[ITimePeriod] = {
     require(period != null)
 
@@ -1501,7 +1498,7 @@ object Times {
   /**
    * 배열로 전체 정보를 가지는 게 아니라 Stream 을 이용하여 지연된 작업을 수행합니다.
    */
-  @inline
+
   def minutesStream(period: ITimePeriod): Stream[ITimePeriod] = {
     require(period != null)
 
@@ -1602,7 +1599,7 @@ object Times {
     else MonthWeek(moment.plusMonths(1).getMonthOfYear, result)
   }
 
-  @inline
+
   def minusDate(moment: DateTime, unit: PeriodUnit, dates: Int): DateTime = {
     unit match {
       case PeriodUnit.Year => moment.minusYears(dates)
@@ -1620,7 +1617,7 @@ object Times {
     }
   }
 
-  @inline
+
   def plusDate(moment: DateTime, unit: PeriodUnit, dates: Int): DateTime = {
     unit match {
       case PeriodUnit.Year => moment.plusYears(dates)

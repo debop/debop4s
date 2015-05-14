@@ -17,12 +17,6 @@ import org.apache.http.util.EntityUtils
 
 import scala.util.control.NonFatal
 
-/**
- * debop4s.core.tests.http.HttpClientTest
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2013. 12. 15. 오후 2:42
- */
 class HttpClientTest extends AbstractCoreFunSuite {
 
   val URI_STRING: String = "https://api.duckduckgo.com/"
@@ -47,7 +41,7 @@ class HttpClientTest extends AbstractCoreFunSuite {
   }
 
   test("http get with parameters") {
-    val uri = searchURI("scala")
+    // val uri = searchURI("scala")
     val httpClient = new HttpClient()
     try {
       val responseStr = httpClient.get(URI_STRING)

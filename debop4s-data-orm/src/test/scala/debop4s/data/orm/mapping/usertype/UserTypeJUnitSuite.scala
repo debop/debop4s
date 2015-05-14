@@ -227,7 +227,6 @@ class JodaDateTimeEntity extends LongEntity {
   @hba.Type(`type` = "debop4s.data.orm.hibernate.usertype.jodatime.DateTimeAsIsoFormatString")
   var timeAsString: DateTime = _
 
-  @inline
   override def hashCode(): Int = Hashs.compute(start, end, startTZ, endTZ, range1, range2)
 }
 
@@ -248,7 +247,6 @@ class CompressedDataEntity extends LongEntity {
   @hba.Type(`type` = "debop4s.data.orm.hibernate.usertype.compress.GZipBinaryUserType")
   var binaryData: Array[Byte] = _
 
-  @inline
   override def hashCode(): Int = Hashs.compute(stringData, binaryData)
 }
 
@@ -263,7 +261,6 @@ class JsonEntity extends LongEntity {
   @hba.Type(`type` = "debop4s.data.orm.hibernate.usertype.JacksonUserType")
   var employee: ScalaEmployee = _
 
-  @inline
   override def hashCode(): Int = Hashs.compute(employee)
 }
 

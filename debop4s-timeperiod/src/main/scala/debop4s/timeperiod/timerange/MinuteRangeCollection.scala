@@ -31,7 +31,6 @@ class MinuteRangeCollection(private[this] val _moment: DateTime,
     }
   }
 
-  @inline
   def minutes: util.List[MinuteRange] = {
     val startMin = Times.trimToSecond(start)
 

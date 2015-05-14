@@ -3,7 +3,8 @@ package debop4s.core.reflect;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutionException;
 
@@ -13,8 +14,9 @@ import java.util.concurrent.ExecutionException;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 13. 1. 21
  */
-@Slf4j
 public class DynamicAccessorFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(DynamicAccessorFactory.class);
 
     private static final CacheLoader<Class<?>, DynamicAccessor> loader;
     private static final LoadingCache<Class<?>, DynamicAccessor> cache;

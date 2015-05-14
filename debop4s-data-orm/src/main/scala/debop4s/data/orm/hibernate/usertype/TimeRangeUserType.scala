@@ -10,7 +10,7 @@ import org.hibernate.usertype.CompositeUserType
 import org.joda.time.DateTime
 
 /**
- * [[ITimePeriod]] 정보중 시작일자와 완료일자를 DB에 저장합니다.
+ * [[debop4s.timeperiod.ITimePeriod]] 정보중 시작일자와 완료일자를 DB에 저장합니다.
  *
  * {{{
  * @Columns( columns = Array(new Column(name = "rangeStart1"), new Column(name = "rangeEnd1")))

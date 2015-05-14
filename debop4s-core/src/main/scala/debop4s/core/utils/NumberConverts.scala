@@ -38,7 +38,6 @@ object NumberConverts extends Logging {
   def getShort(x: Object) = toShort(x)
 
 
-  @inline
   def toByte(x: Any): Byte = {
     try {
       x match {
@@ -59,7 +58,6 @@ object NumberConverts extends Logging {
     }
   }
 
-  @inline
   def toShort(x: Any): Short = {
     try {
       x match {
@@ -80,7 +78,6 @@ object NumberConverts extends Logging {
     }
   }
 
-  @inline
   def toInt(x: Any): Int = {
     try {
       x match {
@@ -101,7 +98,6 @@ object NumberConverts extends Logging {
     }
   }
 
-  @inline
   def toLong(x: Any): Long = {
     try {
       x match {
@@ -122,7 +118,6 @@ object NumberConverts extends Logging {
     }
   }
 
-  @inline
   def toFloat(v: Any): Float = {
     try {
       v match {
@@ -143,7 +138,6 @@ object NumberConverts extends Logging {
     }
   }
 
-  @inline
   def toDouble(v: Any): Double = {
     try {
       v match {

@@ -80,15 +80,10 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
     TimeLines.intersectPeriods(moments)
   }
 
-  @inline
   def calculateGaps: ITimePeriodCollection = {
     val tpc = TimePeriodCollection()
 
-    _periods
-    .filter(x => limits.intersectsWith(x))
-    .foreach {
-      x => tpc.add(TimeRange(x))
-    }
+    _periods.filter(x => limits.intersectsWith(x)).foreach { x => tpc.add(TimeRange(x)) }
 
     val moments = timeLineMoments(tpc)
     if (moments == null || moments.size == 0)
@@ -101,7 +96,6 @@ class TimeLine[T <: ITimePeriod](private[this] val _periods: ITimePeriodContaine
   private def timeLineMoments: ITimeLineMomentCollection =
     timeLineMoments(_periods)
 
-  @inline
   private def timeLineMoments(periods: Iterable[ITimePeriod]): ITimeLineMomentCollection = {
     val moments = TimeLineMomentCollection()
     if (periods == null || periods.size == 0)

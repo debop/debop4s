@@ -35,7 +35,6 @@ class HourRangeCollection(private[this] val _moment: DateTime,
     }
   }
 
-  @inline
   def hours: util.List[HourRange] = {
     val startHour = Times.trimToMinute(start)
 

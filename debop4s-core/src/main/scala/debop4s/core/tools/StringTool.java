@@ -5,11 +5,12 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Chars;
 import debop4s.core.BinaryStringFormat;
 import debop4s.core.utils.Codecs;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -26,11 +27,11 @@ import static java.lang.String.format;
  * @deprecated use {@link debop4s.core.utils.Strings}
  */
 @Deprecated
-@Slf4j
 public abstract class StringTool {
 
-    private StringTool() {
-    }
+    private StringTool() {}
+
+    private static final Logger log = LoggerFactory.getLogger(StringTool.class);
 
     /**
      * 멀티바이트 문자열을 바이트 배열로 변환 시에 선두번지에 접두사로 넣는 값입니다.

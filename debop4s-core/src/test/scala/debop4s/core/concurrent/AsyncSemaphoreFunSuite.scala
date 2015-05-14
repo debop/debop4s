@@ -31,7 +31,6 @@ class AsyncSemaphoreFunSuite extends AbstractCoreFunSuite {
     helper = new AsyncSemaphoreHelper(sem, 0, new ConcurrentLinkedQueue[Permit])
   }
 
-  @inline
   private def acquire(s: AsyncSemaphoreHelper): Future[Permit] = {
     val fPermit = s.sem.acquire()
 

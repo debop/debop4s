@@ -2,7 +2,8 @@ package debop4s.core.reflect;
 
 import com.google.common.collect.Lists;
 import debop4s.core.Guard;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -13,8 +14,9 @@ import java.util.List;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 13. 1. 21
  */
-@Slf4j
 class AccessClassLoader extends ClassLoader {
+
+    private static final Logger log = LoggerFactory.getLogger(AccessClassLoader.class);
 
     private static final List<AccessClassLoader> accessClassLoaders = Lists.newArrayList();
 

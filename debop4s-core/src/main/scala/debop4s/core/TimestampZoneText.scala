@@ -14,15 +14,15 @@ class TimestampZoneText(val datetime: DateTime) extends ValueObject {
   def this(timestamp: Long, zone: DateTimeZone) = this(new DateTime(timestamp, zone))
   def this(timestamp: Long, zoneId: String) = this(new DateTime(timestamp, DateTimeZone.forID(zoneId)))
 
+  var timestamp: Long   = _
+  var zoneId   : String = _
+  var timetext : String = _
+
   if (datetime != null) {
     this.timestamp = datetime.getMillis
     this.zoneId = datetime.getZone.getID
     this.timetext = datetime.asIsoFormatDateHMS
   }
-
-  var timestamp: Long = _
-  var zoneId: String = _
-  var timetext: String = _
 
   override def hashCode: Int = Hashs.compute(timestamp, zoneId)
 

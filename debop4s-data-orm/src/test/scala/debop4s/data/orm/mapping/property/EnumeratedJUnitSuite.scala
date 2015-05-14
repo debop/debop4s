@@ -68,7 +68,6 @@ class EnumeratedEntity extends IntEntity {
     _stringValue = x.toString
   }
 
-  @inline
   override def hashCode(): Int = Hashs.compute(intValue, stringValue)
 
 }

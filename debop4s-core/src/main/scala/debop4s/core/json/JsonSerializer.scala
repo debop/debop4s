@@ -19,7 +19,6 @@ trait JsonSerializer {
    * @param graph 직렬화할 객체
    * @return JSON으로 직렬화한 바이트 배열, 객체가 Null이면 null 반환
    */
-  @inline
   def serialize[@miniboxed T](graph: T): Array[Byte] = Strings.getUtf8Bytes(serializeToText(graph))
 
   /**
@@ -28,7 +27,6 @@ trait JsonSerializer {
    * @param graph 직렬화할 객체
    * @return JSON으로 직렬화한 문자열, 객체가 Null이면 null 반환
    */
-  @inline
   def serializeToText[@miniboxed T](graph: T): String
 
   /**
@@ -37,7 +35,6 @@ trait JsonSerializer {
    * @param data    JSON으로 직렬화한 바이트 배열
    * @return 역직렬화 한 객체
    */
-  @inline
   def deserialize[@miniboxed T: Manifest](data: Array[Byte]): T =
     deserializeFromText[T](Strings.getUtf8String(data))
 
@@ -48,7 +45,6 @@ trait JsonSerializer {
    * @param text    JSON으로 직렬화한 문자열
    * @return 역직렬화 한 객체
    */
-  @inline
   def deserializeFromText[@miniboxed T: Manifest](text: String): T
 
   /**
@@ -57,7 +53,6 @@ trait JsonSerializer {
    * @param data    JSON으로 직렬화한 바이트 배열
    * @return 역직렬화 한 객체
    */
-  @inline
   def deserialize[@miniboxed T](data: Array[Byte], clazz: Class[T]): T =
     deserializeFromText[T](Strings.getUtf8String(data), clazz)
 
@@ -68,7 +63,6 @@ trait JsonSerializer {
    * @param text    JSON으로 직렬화한 문자열
    * @return 역직렬화 한 객체
    */
-  @inline
   def deserializeFromText[@miniboxed T](text: String, clazz: Class[T]): T
 
 }

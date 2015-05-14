@@ -28,10 +28,8 @@ class MySqlOrder extends HibernateEntityBase[Integer] {
   @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
   val items: util.List[MySqlOrderItem] = new util.ArrayList[MySqlOrderItem]
 
-  @inline
   override def hashCode(): Int = Hashs.compute(no)
 
-  @inline
   override protected def buildStringHelper =
     super.buildStringHelper
     .add("no", no)

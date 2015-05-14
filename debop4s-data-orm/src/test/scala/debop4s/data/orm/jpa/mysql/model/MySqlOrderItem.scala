@@ -29,7 +29,6 @@ class MySqlOrderItem extends HibernateEntityBase[Integer] {
 
   var name: String = _
 
-  @inline
   override def hashCode(): Int = Hashs.compute(name)
 
   override protected def buildStringHelper(): ToStringHelper =

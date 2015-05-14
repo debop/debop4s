@@ -143,7 +143,8 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
 
     val xs = new ArrayBuffer[Option[Int]]
     s foreachElem { xs += _ }
-    xs should contain allOf(Some(1), Some(2), None)
+    xs.toSeq shouldEqual Seq(Some(1), Some(2), None)
+    // xs should contain allOf(Some(1), Some(2), None)
 
     val f = s foreach { _ => throw new Exception("sad panda") }
     intercept[Exception] {

@@ -1,7 +1,8 @@
 package debop4s.core.tools;
 
 import debop4s.core.Guard;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
@@ -13,11 +14,11 @@ import java.io.InputStream;
  * @deprecated {@link debop4s.core.utils.Resources} 를 사용하세요.
  */
 @Deprecated
-@Slf4j
 public final class ResourceTool {
 
-    private ResourceTool() {
-    }
+    private ResourceTool() {}
+
+    private static final Logger log = LoggerFactory.getLogger(ResourceTool.class);
 
     /**
      * 지정한 경로의 리소스를 읽기위한 InputStream 을 반환합니다.

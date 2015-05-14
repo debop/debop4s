@@ -31,7 +31,6 @@ class HourTimeRange(private[this] val _moment: DateTime,
     }
   }
 
-  @inline
   def minutes: util.List[MinuteRange] = {
     val count = hourCount * MinutesPerHour
 

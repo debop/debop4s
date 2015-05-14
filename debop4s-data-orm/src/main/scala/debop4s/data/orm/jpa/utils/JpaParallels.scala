@@ -66,7 +66,6 @@ object JpaParallels {
     }
   }
 
-  @inline
   private def runUnit[T](em: EntityManager, elem: T)
                         (action: (EntityManager, T) => Unit) {
     val tx = em.getTransaction
@@ -107,7 +106,6 @@ object JpaParallels {
     .asJava
   }
 
-  @inline
   private def callUnit[T, V](em: EntityManager, elem: T)
                             (func: (EntityManager, T) => V): V = {
     val tx = em.getTransaction

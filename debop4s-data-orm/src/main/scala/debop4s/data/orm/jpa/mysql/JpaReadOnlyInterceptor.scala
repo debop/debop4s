@@ -42,7 +42,6 @@ class JpaReadOnlyInterceptor {
       pjp.proceed()
   }
 
-  @inline
   private def proceedByReadOnly(pjp: ProceedingJoinPoint): AnyRef = {
     val conn = JpaUtils.currentConnection(em)
     val readOnly = conn.isReadOnly

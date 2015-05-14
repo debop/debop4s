@@ -46,6 +46,5 @@ class PropertyEntity extends LongEntity {
   @Lob
   var data: String = _
 
-  @inline
   override def hashCode(): Int = Hashs.compute(name)
 }

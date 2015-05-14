@@ -1,7 +1,8 @@
 package debop4s.core.tools;
 
 import debop4s.core.Guard;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -13,10 +14,11 @@ import java.lang.reflect.Type;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 12. 9. 12
  */
-@Slf4j
 public final class JavaReflects {
 
     private JavaReflects() {}
+
+    private static final Logger log = LoggerFactory.getLogger(JavaReflects.class);
 
     /**
      * 객체가 Generic 형식일 경우, 형식인자(kind parameter)들을 가져옵니다.

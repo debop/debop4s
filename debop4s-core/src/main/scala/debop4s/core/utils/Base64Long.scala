@@ -49,7 +49,6 @@ object Base64Long {
    * The number is treated as unsigned, so there is never a leading negative sign, and the
    * representations of negative numbers are larger than positive numbers.
    */
-  @inline
   private def setBase64(builder: StringBuilder, n: Long, alphabet: Int => Char = standardBase64Alphabet): Unit = {
     if (n == 0) {
       // 0 은 특수 문자

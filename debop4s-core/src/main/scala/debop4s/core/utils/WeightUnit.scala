@@ -30,9 +30,8 @@ class WeightUnit(val gram: Double) extends Ordered[WeightUnit] {
   def *(scala: Double): WeightUnit = new WeightUnit(this.gram * scala)
   def /(scala: Double): WeightUnit = new WeightUnit(this.gram / scala)
 
-  @inline
   override def equals(obj: Any): Boolean = {
-    (obj: @switch) match {
+    obj match {
       case other: WeightUnit => gram === other.gram
       case _ => false
     }

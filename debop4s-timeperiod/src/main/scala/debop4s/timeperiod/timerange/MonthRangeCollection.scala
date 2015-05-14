@@ -36,7 +36,6 @@ class MonthRangeCollection(private[this] val _year: Int,
     }
   }
 
-  @inline
   def months: util.List[MonthRange] = {
     val results = Lists.newArrayListWithCapacity[MonthRange](monthCount)
     var m = 0

@@ -22,20 +22,20 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
   test("Inf, MinusInf, Undefined, Nanoseconds(_), Finite(_)") {
     Inf compare Undefined should be < 0
     MinusInf compare Inf should be < 0
-    Undefined compare Undefined shouldEqual 0
-    Inf compare Inf shouldEqual 0
-    MinusInf compare MinusInf shouldEqual 0
+    Undefined compare Undefined shouldBe 0
+    Inf compare Inf shouldBe 0
+    MinusInf compare MinusInf shouldBe 0
 
-    Inf + Duration.Inf shouldEqual Inf
-    MinusInf - Duration.MinusInf shouldEqual Undefined
-    Inf - Duration.Inf shouldEqual Undefined
-    MinusInf + Duration.MinusInf shouldEqual MinusInf
+    Inf + Duration.Inf shouldBe Inf
+    MinusInf - Duration.MinusInf shouldBe Undefined
+    Inf - Duration.Inf shouldBe Undefined
+    MinusInf + Duration.MinusInf shouldBe MinusInf
   }
 
   test("complementary diff") {
     // Note that this doesn't always stay because of two's complement arithmetic.
     for (a <- easyVs; b <- easyVs) {
-      a diff b shouldEqual (-(b diff a))
+      a diff b shouldBe (-(b diff a))
     }
   }
 
@@ -43,27 +43,27 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
     for (a <- vs; b <- vs) {
       val x = a compare b
       val y = b compare a
-      (x == 0 && y == 0) || (x * y < 0) shouldEqual true
+      (x == 0 && y == 0) || (x * y < 0) shouldBe true
     }
   }
 
   test("commutative max") {
     for (a <- vs; b <- vs) {
-      a max b shouldEqual (b max a)
+      a max b shouldBe (b max a)
     }
   }
   test("commutative min") {
     for (a <- vs; b <- vs) {
-      a min b shouldEqual (b min a)
+      a min b shouldBe (b min a)
     }
   }
   test("handle underflows") {
-    fromNanoseconds(Long.MinValue) - 1.nanoseconds shouldEqual MinusInf
-    fromMicroseconds(Long.MinValue) - 1.nanoseconds shouldEqual MinusInf
+    fromNanoseconds(Long.MinValue) - 1.nanoseconds shouldBe MinusInf
+    fromMicroseconds(Long.MinValue) - 1.nanoseconds shouldBe MinusInf
   }
   test("handle overflows") {
-    fromNanoseconds(Long.MaxValue) + 1.nanoseconds shouldEqual Inf
-    fromMicroseconds(Long.MaxValue) + 1.nanoseconds shouldEqual Inf
+    fromNanoseconds(Long.MaxValue) + 1.nanoseconds shouldBe Inf
+    fromMicroseconds(Long.MaxValue) + 1.nanoseconds shouldBe Inf
   }
 
   test("Nanoseconds extracts only finite values, in nanoseconds") {
@@ -84,19 +84,19 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
 
   test("roundtrip through serialization") {
     for (v <- vs) {
-      Serializers.copyObject(v) shouldEqual v
+      Serializers.copyObject(v) shouldBe v
     }
   }
 
   test("Inf - be impermeable to finite arithmetic") {
-    Inf - 0L.seconds shouldEqual Inf
-    Inf - 100L.seconds shouldEqual Inf
-    Inf - Duration.fromNanos(Long.MaxValue) shouldEqual Inf
+    Inf - 0L.seconds shouldBe Inf
+    Inf - 100L.seconds shouldBe Inf
+    Inf - Duration.fromNanos(Long.MaxValue) shouldBe Inf
   }
 
   test("Inf - become undefined when subtracted from itself, or added to bottom") {
-    Inf - Duration.Inf shouldEqual Undefined
-    Inf + Duration.MinusInf shouldEqual Undefined
+    Inf - Duration.Inf shouldBe Undefined
+    Inf + Duration.MinusInf shouldBe Undefined
   }
 
   test("Inf - not be equal to the maximum value") {
@@ -104,9 +104,9 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
   }
 
   test("Inf - always be max") {
-    Inf max fromSeconds(1) shouldEqual Inf
-    Inf max fromNanoseconds(Long.MaxValue) shouldEqual Inf
-    Inf max MinusInf shouldEqual Inf
+    Inf max fromSeconds(1) shouldBe Inf
+    Inf max fromNanoseconds(Long.MaxValue) shouldBe Inf
+    Inf max MinusInf shouldBe Inf
   }
 
   test("Inf - greater than everything else") {
@@ -115,38 +115,38 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
   }
 
   test("Inf - equal to itself") {
-    Inf shouldEqual Inf
+    Inf shouldBe Inf
   }
 
   test("Inf - more or less equals only to itself") {
-    Inf.moreOrLessEquals(Inf, Duration.Inf) shouldEqual true
-    Inf.moreOrLessEquals(Inf, Duration.Zero) shouldEqual true
+    Inf.moreOrLessEquals(Inf, Duration.Inf) shouldBe true
+    Inf.moreOrLessEquals(Inf, Duration.Zero) shouldBe true
 
-    Inf.moreOrLessEquals(MinusInf, Duration.Inf) shouldEqual true
-    Inf.moreOrLessEquals(MinusInf, Duration.Zero) shouldEqual false
+    Inf.moreOrLessEquals(MinusInf, Duration.Inf) shouldBe true
+    Inf.moreOrLessEquals(MinusInf, Duration.Zero) shouldBe false
 
-    Inf.moreOrLessEquals(fromSeconds(0), Duration.Inf) shouldEqual true
-    Inf.moreOrLessEquals(fromSeconds(0), Duration.MinusInf) shouldEqual false
+    Inf.moreOrLessEquals(fromSeconds(0), Duration.Inf) shouldBe true
+    Inf.moreOrLessEquals(fromSeconds(0), Duration.MinusInf) shouldBe false
   }
 
   test("Inf - Undefined diff to Top") {
-    Inf diff Inf shouldEqual Duration.Undefined
+    Inf diff Inf shouldBe Duration.Undefined
   }
 
   test("MinusInf - be impermeable to finite arithmetic") {
-    MinusInf - 0L.seconds shouldEqual MinusInf
-    MinusInf - 100L.seconds shouldEqual MinusInf
-    MinusInf - Duration.fromNanos(Long.MaxValue) shouldEqual MinusInf
+    MinusInf - 0L.seconds shouldBe MinusInf
+    MinusInf - 100L.seconds shouldBe MinusInf
+    MinusInf - Duration.fromNanos(Long.MaxValue) shouldBe MinusInf
   }
 
   test("MinusInf - become undefined when added with Top or subtracted by bottom") {
-    MinusInf + Duration.Inf shouldEqual Undefined
-    MinusInf - Duration.MinusInf shouldEqual Undefined
+    MinusInf + Duration.Inf shouldBe Undefined
+    MinusInf - Duration.MinusInf shouldBe Undefined
   }
 
   test("MinusInf - always be min") {
-    MinusInf min Inf shouldEqual MinusInf
-    MinusInf min fromNanoseconds(0) shouldEqual MinusInf
+    MinusInf min Inf shouldBe MinusInf
+    MinusInf min fromNanoseconds(0) shouldBe MinusInf
   }
 
   test("MinusInf - less than everything else") {
@@ -159,40 +159,40 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
     MinusInf should be < Inf
   }
   test("MinusInf - equal to itself") {
-    MinusInf should be eq MinusInf
+    MinusInf shouldEqual MinusInf
   }
 
   test("MinusInf - more or less equals only to itself") {
-    MinusInf.moreOrLessEquals(MinusInf, Duration.Inf) shouldEqual true
-    MinusInf.moreOrLessEquals(MinusInf, Duration.Zero) shouldEqual true
+    MinusInf.moreOrLessEquals(MinusInf, Duration.Inf) shouldBe true
+    MinusInf.moreOrLessEquals(MinusInf, Duration.Zero) shouldBe true
 
-    MinusInf.moreOrLessEquals(Inf, Duration.MinusInf) shouldEqual false
-    MinusInf.moreOrLessEquals(Inf, Duration.Zero) shouldEqual false
+    MinusInf.moreOrLessEquals(Inf, Duration.MinusInf) shouldBe false
+    MinusInf.moreOrLessEquals(Inf, Duration.Zero) shouldBe false
 
-    MinusInf.moreOrLessEquals(fromSeconds(0), Duration.Inf) shouldEqual true
-    MinusInf.moreOrLessEquals(fromSeconds(0), Duration.MinusInf) shouldEqual false
+    MinusInf.moreOrLessEquals(fromSeconds(0), Duration.Inf) shouldBe true
+    MinusInf.moreOrLessEquals(fromSeconds(0), Duration.MinusInf) shouldBe false
   }
 
   test("MinusInf - Undefined diff to Bottom") {
-    MinusInf diff MinusInf shouldEqual Duration.Undefined
+    MinusInf diff MinusInf shouldBe Duration.Undefined
   }
 
   test("Undefined - be impermeable to any arithmetic") {
-    Undefined + 0L.seconds shouldEqual Undefined
-    Undefined + 100L.seconds shouldEqual Undefined
-    Undefined + Duration.fromNanos(Long.MaxValue) shouldEqual Undefined
+    Undefined + 0L.seconds shouldBe Undefined
+    Undefined + 100L.seconds shouldBe Undefined
+    Undefined + Duration.fromNanos(Long.MaxValue) shouldBe Undefined
   }
 
   test("Undefined - become undefined when added with Top or subtracted by bottom") {
-    Undefined + Duration.Inf shouldEqual Undefined
-    Undefined + Duration.MinusInf shouldEqual Undefined
-    Undefined - Duration.Undefined shouldEqual Undefined
+    Undefined + Duration.Inf shouldBe Undefined
+    Undefined + Duration.MinusInf shouldBe Undefined
+    Undefined - Duration.Undefined shouldBe Undefined
   }
 
   test("Undefined - always be max") {
-    Undefined max Inf shouldEqual Undefined
-    Undefined max MinusInf shouldEqual Undefined
-    Undefined max fromNanoseconds(0L) shouldEqual Undefined
+    Undefined max Inf shouldBe Undefined
+    Undefined max MinusInf shouldBe Undefined
+    Undefined max fromNanoseconds(0L) shouldBe Undefined
   }
 
   test("Undefined - greater than everything else") {
@@ -202,24 +202,24 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
   }
 
   test("Undefined - equal to itself") {
-    Undefined shouldEqual Undefined
+    Undefined shouldBe Undefined
   }
 
   test("Undefined - not more or less equal to anything") {
-    Undefined.moreOrLessEquals(Undefined, Duration.Inf) shouldEqual false
-    Undefined.moreOrLessEquals(Undefined, Duration.Zero) shouldEqual false
+    Undefined.moreOrLessEquals(Undefined, Duration.Inf) shouldBe false
+    Undefined.moreOrLessEquals(Undefined, Duration.Zero) shouldBe false
 
-    Undefined.moreOrLessEquals(Inf, Duration.Undefined) shouldEqual true
-    Undefined.moreOrLessEquals(Inf, Duration.Zero) shouldEqual false
+    Undefined.moreOrLessEquals(Inf, Duration.Undefined) shouldBe true
+    Undefined.moreOrLessEquals(Inf, Duration.Zero) shouldBe false
 
-    Undefined.moreOrLessEquals(fromSeconds(0), Duration.Inf) shouldEqual false
-    Undefined.moreOrLessEquals(fromSeconds(0), Duration.Undefined) shouldEqual true
+    Undefined.moreOrLessEquals(fromSeconds(0), Duration.Inf) shouldBe false
+    Undefined.moreOrLessEquals(fromSeconds(0), Duration.Undefined) shouldBe true
   }
 
   test("Undefined - on diff") {
-    Undefined diff Inf shouldEqual Duration.Undefined
-    Undefined diff MinusInf shouldEqual Duration.Undefined
-    Undefined diff fromNanoseconds(123) shouldEqual Duration.Undefined
+    Undefined diff Inf shouldBe Duration.Undefined
+    Undefined diff MinusInf shouldBe Duration.Undefined
+    Undefined diff fromNanoseconds(123) shouldBe Duration.Undefined
   }
 
   test("reflect their underlying value") {
@@ -231,13 +231,13 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
     )
     for (ns <- nss) {
       val t = fromNanoseconds(ns)
-      t.inNanoseconds shouldEqual ns
-      t.inMicroseconds shouldEqual (ns / 1000L)
-      t.inMilliseconds shouldEqual (ns / 1000L / 1000L)
-      t.inLongSeconds shouldEqual (ns / 1000L / 1000L / 1000L)
-      t.inMinutes shouldEqual (ns / 1000L / 1000L / 1000L / 60L)
-      t.inHours shouldEqual (ns / 1000L / 1000L / 1000L / 60L / 60L)
-      t.inDays shouldEqual (ns / 1000L / 1000L / 1000L / 60L / 60L / 24L)
+      t.inNanoseconds shouldBe ns
+      t.inMicroseconds shouldBe (ns / 1000L)
+      t.inMilliseconds shouldBe (ns / 1000L / 1000L)
+      t.inLongSeconds shouldBe (ns / 1000L / 1000L / 1000L)
+      t.inMinutes shouldBe (ns / 1000L / 1000L / 1000L / 60L)
+      t.inHours shouldBe (ns / 1000L / 1000L / 1000L / 60L / 60L)
+      t.inDays shouldBe (ns / 1000L / 1000L / 1000L / 60L / 60L / 24L)
     }
   }
 
@@ -249,45 +249,45 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
     )
     for (ns <- nss) {
       val t = fromNanoseconds(ns)
-      t.inLongSeconds shouldEqual t.inSeconds
+      t.inLongSeconds shouldBe t.inSeconds
     }
   }
   test("inSeconds clamp value to Int.MinValue or MaxValue when out of range") {
     val longNs = 2160000000000000000L // 25000.days
-    fromNanoseconds(longNs).inSeconds shouldEqual Int.MaxValue
-    fromNanoseconds(-longNs).inSeconds shouldEqual Int.MinValue
+    fromNanoseconds(longNs).inSeconds shouldBe Int.MaxValue
+    fromNanoseconds(-longNs).inSeconds shouldBe Int.MinValue
   }
 
   test("floor round down") {
-    fromSeconds(60).floor(1.minutes) shouldEqual fromSeconds(60)
-    fromSeconds(100).floor(1.minutes) shouldEqual fromSeconds(60)
-    fromSeconds(119).floor(1.minutes) shouldEqual fromSeconds(60)
-    fromSeconds(120).floor(1.minutes) shouldEqual fromSeconds(120)
+    fromSeconds(60).floor(1.minutes) shouldBe fromSeconds(60)
+    fromSeconds(100).floor(1.minutes) shouldBe fromSeconds(60)
+    fromSeconds(119).floor(1.minutes) shouldBe fromSeconds(60)
+    fromSeconds(120).floor(1.minutes) shouldBe fromSeconds(120)
   }
 
   test("floor maintain Inf and MinusInf") {
-    Inf.floor(1.hours) shouldEqual Inf
-    MinusInf.floor(1.hours) shouldEqual MinusInf
+    Inf.floor(1.hours) shouldBe Inf
+    MinusInf.floor(1.hours) shouldBe MinusInf
   }
 
   test("floor divide by zero") {
-    Zero.floor(Duration.Zero) shouldEqual Undefined
-    fromSeconds(1).floor(Duration.Zero) shouldEqual Inf
-    fromSeconds(-1).floor(Duration.Zero) shouldEqual MinusInf
+    Zero.floor(Duration.Zero) shouldBe Undefined
+    fromSeconds(1).floor(Duration.Zero) shouldBe Inf
+    fromSeconds(-1).floor(Duration.Zero) shouldBe MinusInf
   }
 
   test("floor deal with undefineds") {
-    MinusInf floor 1L.seconds shouldEqual MinusInf
-    Undefined floor 0L.seconds shouldEqual Undefined
-    Undefined floor Duration.Inf shouldEqual Undefined
-    Undefined floor Duration.MinusInf shouldEqual Undefined
-    Undefined floor Duration.Undefined shouldEqual Undefined
+    MinusInf floor 1L.seconds shouldBe MinusInf
+    Undefined floor 0L.seconds shouldBe Undefined
+    Undefined floor Duration.Inf shouldBe Undefined
+    Undefined floor Duration.MinusInf shouldBe Undefined
+    Undefined floor Duration.Undefined shouldBe Undefined
   }
 
   test("floor itself") {
     for (s <- Seq[Long](Long.MinValue, -1, 1, Long.MaxValue)) {
       val t = fromNanoseconds(s)
-      t floor TimeUtil.toDuration(t.inNanoseconds) shouldEqual t
+      t floor TimeUtil.toDuration(t.inNanoseconds) shouldBe t
     }
   }
 
@@ -304,7 +304,7 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
     fromMilliseconds(millis) match {
       case Nanoseconds(ns) => assert(ns == millis * 1e6)
     }
-    fromMilliseconds(millis + 1) shouldEqual Inf
+    fromMilliseconds(millis + 1) shouldBe Inf
   }
 
   test("from - underflow millis") {
@@ -312,7 +312,7 @@ trait TimeLikeFunSuite[T <: TimeLike[T]] extends AbstractCoreFunSuite {
     fromMilliseconds(millis) match {
       case Nanoseconds(ns) => assert(ns == millis * 1e6)
     }
-    fromMilliseconds(millis - 1) shouldEqual MinusInf
+    fromMilliseconds(millis - 1) shouldBe MinusInf
   }
 }
 
@@ -322,12 +322,12 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     val t0 = Time.fromSeconds(100)
     val t1 = Time.fromSeconds(100)
 
-    assert(t0 === t1)
-    assert(t0.hashCode == t1.hashCode)
+    t0 shouldBe t1
+    t0.hashCode shouldBe t1.hashCode
     val pairs = List((t0, "foo"), (t1, "bar"))
     pairs.groupBy {
       case (time: Time, value: String) => time
-    } shouldEqual Map(t0 -> pairs)
+    } shouldBe Map(t0 -> pairs)
   }
 
   test("now should be now") {
@@ -337,9 +337,9 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
   test("withTimeAt") {
     val t0 = new Time(123456789L)
     Time.withTimeAt(t0) { _ =>
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
       Thread.sleep(50)
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
     }
     println(s"Time.now.inMillis=${ Time.now }, currentTimeMillis=${ System.currentTimeMillis() }")
     (Time.now.inMillis - System.currentTimeMillis).abs should be < 20L
@@ -349,11 +349,11 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     val t0 = new Time(123456789L)
     val t1 = t0 + 10L.minutes
     Time.withTimeAt(t0) { _ =>
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
       Time.withTimeAt(t1) { _ =>
-        Time.now shouldEqual t1
+        Time.now shouldBe t1
       }
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
     }
     (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
   }
@@ -362,13 +362,13 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     val t0 = new Time(314159L)
     val t1 = new Time(314160L)
     Time.withTimeAt(t0) { tc =>
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
       Thread.sleep(50)
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
       tc.advance(Duration.fromNanos(1))
-      Time.now shouldEqual t1
+      Time.now shouldBe t1
       tc.set(t0)
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
 
       @volatile var threadTime: Option[Time] = None
       val thread = new Thread {
@@ -387,12 +387,12 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     val t0 = Time.now
     var t = t0
     Time.withTimeFunction(t) { _ =>
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
       Thread.sleep(50)
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
       val delta = 100.milliseconds
       t += delta
-      Time.now shouldEqual (t0 + delta)
+      Time.now shouldBe (t0 + delta)
     }
   }
 
@@ -401,7 +401,7 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     Time.withCurrentTimeFrozen { _ =>
       val t0 = Time.now
       Thread.sleep(50)
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
     }
     (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
   }
@@ -411,125 +411,125 @@ class TimeFunSuite extends {val ops = Time } with TimeLikeFunSuite[Time] {
     val delta = 5L.seconds
 
     Time.withTimeAt(t0) { tc =>
-      Time.now shouldEqual t0
+      Time.now shouldBe t0
       tc.advance(delta)
-      Time.now shouldEqual (t0 + delta)
+      Time.now shouldBe (t0 + delta)
     }
     (Time.now.inMillis - System.currentTimeMillis()).abs should be < 20L
   }
 
   test("compare") {
     10L.seconds.afterEpoch should be < 11L.seconds.afterEpoch
-    10L.seconds.afterEpoch shouldEqual 10L.seconds.afterEpoch
+    10L.seconds.afterEpoch shouldBe 10L.seconds.afterEpoch
     11L.seconds.afterEpoch should be > 10L.seconds.afterEpoch
     Time.fromMilliseconds(Long.MaxValue) should be > Time.now
   }
 
   test("+ delta") {
-    10L.seconds.afterEpoch + 5L.seconds shouldEqual 15L.seconds.afterEpoch
+    10L.seconds.afterEpoch + 5L.seconds shouldBe 15L.seconds.afterEpoch
   }
 
   test("- delta") {
-    10L.seconds.afterEpoch - 5L.seconds shouldEqual 5L.seconds.afterEpoch
+    10L.seconds.afterEpoch - 5L.seconds shouldBe 5L.seconds.afterEpoch
   }
 
   test("- time") {
-    10L.seconds.afterEpoch - 5L.seconds.afterEpoch shouldEqual 5L.seconds
+    10L.seconds.afterEpoch - 5L.seconds.afterEpoch shouldBe 5L.seconds
   }
 
   test("max") {
-    10L.seconds.afterEpoch max 5L.seconds.afterEpoch shouldEqual 10L.seconds.afterEpoch
-    5L.seconds.afterEpoch max 10L.seconds.afterEpoch shouldEqual 10L.seconds.afterEpoch
+    10L.seconds.afterEpoch max 5L.seconds.afterEpoch shouldBe 10L.seconds.afterEpoch
+    5L.seconds.afterEpoch max 10L.seconds.afterEpoch shouldBe 10L.seconds.afterEpoch
   }
 
   test("min") {
-    10L.seconds.afterEpoch min 5L.seconds.afterEpoch shouldEqual 5L.seconds.afterEpoch
-    5L.seconds.afterEpoch min 10L.seconds.afterEpoch shouldEqual 5L.seconds.afterEpoch
+    10L.seconds.afterEpoch min 5L.seconds.afterEpoch shouldBe 5L.seconds.afterEpoch
+    5L.seconds.afterEpoch min 10L.seconds.afterEpoch shouldBe 5L.seconds.afterEpoch
   }
 
   test("moreOrLessEquals") {
     val now = Time.now
-    now.moreOrLessEquals(now + 1.seconds, 1.seconds) shouldEqual true
-    now.moreOrLessEquals(now - 1.seconds, 1.seconds) shouldEqual true
-    now.moreOrLessEquals(now + 2.seconds, 1.seconds) shouldEqual false
-    now.moreOrLessEquals(now - 2.seconds, 1.seconds) shouldEqual false
+    now.moreOrLessEquals(now + 1.seconds, 1.seconds) shouldBe true
+    now.moreOrLessEquals(now - 1.seconds, 1.seconds) shouldBe true
+    now.moreOrLessEquals(now + 2.seconds, 1.seconds) shouldBe false
+    now.moreOrLessEquals(now - 2.seconds, 1.seconds) shouldBe false
   }
 
   test("floor - like trim") {
     val format = new TimeFormat("yyyy-MM-dd HH:mm:ss.SSS")
     val t0 = format.parse("2010-12-24 11:04:07.567")
 
-    t0.floor(1.milliseconds) shouldEqual t0
-    t0.floor(10.milliseconds) shouldEqual format.parse("2010-12-24 11:04:07.560")
-    t0.floor(1.seconds) shouldEqual format.parse("2010-12-24 11:04:07.000")
-    t0.floor(5.seconds) shouldEqual format.parse("2010-12-24 11:04:05.000")
-    t0.floor(1.minutes) shouldEqual format.parse("2010-12-24 11:04:00.000")
-    t0.floor(1.hours) shouldEqual format.parse("2010-12-24 11:00:00.000")
+    t0.floor(1.milliseconds) shouldBe t0
+    t0.floor(10.milliseconds) shouldBe format.parse("2010-12-24 11:04:07.560")
+    t0.floor(1.seconds) shouldBe format.parse("2010-12-24 11:04:07.000")
+    t0.floor(5.seconds) shouldBe format.parse("2010-12-24 11:04:05.000")
+    t0.floor(1.minutes) shouldBe format.parse("2010-12-24 11:04:00.000")
+    t0.floor(1.hours) shouldBe format.parse("2010-12-24 11:00:00.000")
   }
 
   test("since") {
     val t0 = Time.now
     val t1 = t0 + 10L.seconds
-    t1.since(t0) shouldEqual 10L.seconds
-    t0.since(t1) shouldEqual (-10L).seconds
+    t1.since(t0) shouldBe 10L.seconds
+    t0.since(t1) shouldBe (-10L).seconds
   }
 
   test("sinceEpoch") {
     val t0 = Time.epoch + 100L.hours
-    t0.sinceEpoch shouldEqual 100L.hours
+    t0.sinceEpoch shouldBe 100L.hours
   }
 
   test("sinceNow") {
     Time.withCurrentTimeFrozen { _ =>
       val t0 = Time.now + 100L.hours
-      t0.sinceNow shouldEqual 100L.hours
+      t0.sinceNow shouldBe 100L.hours
     }
   }
 
   test("fromMicroseconds") {
-    Time.fromMicroseconds(0).inNanoseconds shouldEqual 0L
-    Time.fromMicroseconds(-1).inNanoseconds shouldEqual (-1L * 1000L)
+    Time.fromMicroseconds(0).inNanoseconds shouldBe 0L
+    Time.fromMicroseconds(-1).inNanoseconds shouldBe (-1L * 1000L)
 
-    Time.fromMicroseconds(Long.MaxValue).inNanoseconds shouldEqual Long.MaxValue
-    Time.fromMicroseconds(Long.MaxValue - 1) shouldEqual Time.Inf
+    Time.fromMicroseconds(Long.MaxValue).inNanoseconds shouldBe Long.MaxValue
+    Time.fromMicroseconds(Long.MaxValue - 1) shouldBe Time.Inf
 
-    Time.fromMicroseconds(Long.MinValue) shouldEqual Time.MinusInf
-    Time.fromMicroseconds(Long.MinValue + 1) shouldEqual Time.MinusInf
+    Time.fromMicroseconds(Long.MinValue) shouldBe Time.MinusInf
+    Time.fromMicroseconds(Long.MinValue + 1) shouldBe Time.MinusInf
 
     val currentTimeMicro = System.currentTimeMillis() * 1000
-    Time.fromMicroseconds(currentTimeMicro).inNanoseconds shouldEqual currentTimeMicro.microseconds.toNanos
+    Time.fromMicroseconds(currentTimeMicro).inNanoseconds shouldBe currentTimeMicro.microseconds.toNanos
   }
 
   test("fromMillis") {
-    Time.fromMilliseconds(0).inNanoseconds shouldEqual 0L
-    Time.fromMilliseconds(-1).inNanoseconds shouldEqual (-1L * 1000000L)
+    Time.fromMilliseconds(0).inNanoseconds shouldBe 0L
+    Time.fromMilliseconds(-1).inNanoseconds shouldBe (-1L * 1000000L)
 
-    Time.fromMilliseconds(Long.MaxValue).inNanoseconds shouldEqual Long.MaxValue
-    Time.fromMilliseconds(Long.MaxValue - 1) shouldEqual Time.Inf
+    Time.fromMilliseconds(Long.MaxValue).inNanoseconds shouldBe Long.MaxValue
+    Time.fromMilliseconds(Long.MaxValue - 1) shouldBe Time.Inf
 
-    Time.fromMilliseconds(Long.MinValue) shouldEqual Time.MinusInf
-    Time.fromMilliseconds(Long.MinValue + 1) shouldEqual Time.MinusInf
+    Time.fromMilliseconds(Long.MinValue) shouldBe Time.MinusInf
+    Time.fromMilliseconds(Long.MinValue + 1) shouldBe Time.MinusInf
 
     val currentTimeMs = System.currentTimeMillis()
-    Time.fromMilliseconds(currentTimeMs).inNanoseconds shouldEqual currentTimeMs * 1000000L
+    Time.fromMilliseconds(currentTimeMs).inNanoseconds shouldBe currentTimeMs * 1000000L
   }
 
   test("util") {
     val t0 = Time.now
     val t1 = t0 + 10L.seconds
-    t0.until(t1) shouldEqual 10L.seconds
-    t1.until(t0) shouldEqual (-10L).seconds
+    t0.until(t1) shouldBe 10L.seconds
+    t1.until(t0) shouldBe (-10L).seconds
   }
 
   test("untilEpoch") {
     val t0 = Time.epoch - 100L.hours
-    t0.untilEpoch shouldEqual 100L.hours
+    t0.untilEpoch shouldBe 100L.hours
   }
 
   test("untilNow") {
     Time.withCurrentTimeFrozen { _ =>
       val t0 = Time.now - 100L.hours
-      t0.untilNow shouldEqual 100L.hours
+      t0.untilNow shouldBe 100L.hours
     }
   }
 }

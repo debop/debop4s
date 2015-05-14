@@ -23,7 +23,6 @@ object Reflects {
    * @param x 스칼라 수형
    * @return  Java의 Primitive Type
    */
-  @inline
   def asJavaClass(x: Any): Class[_] =
     x match {
       case x: scala.Boolean => java.lang.Boolean.TYPE

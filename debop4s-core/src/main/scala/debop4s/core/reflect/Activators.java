@@ -3,7 +3,8 @@ package debop4s.core.reflect;
 import debop4s.core.Guard;
 import debop4s.core.tools.ArrayTool;
 import debop4s.core.utils.Strings;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -15,10 +16,11 @@ import java.util.List;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 12. 9. 12
  */
-@Slf4j
 public final class Activators {
 
     private Activators() {}
+
+    private static final Logger log = LoggerFactory.getLogger(Activators.class);
 
     /**
      * className에 해당하는 클래스를 인스턴싱합니다.

@@ -39,7 +39,6 @@ class DaySeeker(private[this] val _filter: CalendarVisitorFilter,
 
   private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  @inline
   def findDay(startDay: DayRange, dayCount: Int): DayRange = {
     if (dayCount == 0)
       return startDay
@@ -71,9 +70,8 @@ class DaySeeker(private[this] val _filter: CalendarVisitorFilter,
 
   override protected def enterHours(day: DayRange, context: DaySeekerContext) = false
 
-  @inline
   override protected def onVisitDay(day: DayRange, context: DaySeekerContext): Boolean = {
-    assert(day != null)
+    require(day != null)
 
     if (context.isFinished) return false
     else if (day.isSamePeriod(context.startDay)) return true

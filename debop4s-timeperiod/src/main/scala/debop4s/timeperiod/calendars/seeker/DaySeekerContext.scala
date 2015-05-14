@@ -14,15 +14,13 @@ class DaySeekerContext(val startDay: DayRange,
 
   def isFinished: Boolean = remainingDays == 0
 
-  @inline
-  def processDay(day: DayRange) {
-    if (isFinished)
-      return
+  def processDay(day: DayRange): Unit = {
+    if (!isFinished) {
+      remainingDays -= 1
 
-    remainingDays -= 1
-
-    if (isFinished)
-      foundDay = day
+      if (isFinished)
+        foundDay = day
+    }
   }
 
 }

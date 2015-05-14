@@ -3,7 +3,8 @@ package debop4s.core.reflect;
 import com.google.common.collect.Lists;
 import debop4s.core.Guard;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -13,9 +14,10 @@ import java.util.List;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 13. 1. 21
  */
-@Slf4j
 @SuppressWarnings("all")
 public class DynamicAccessor<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(DynamicAccessor.class);
 
     @Getter
     private final Class<T> targetType;

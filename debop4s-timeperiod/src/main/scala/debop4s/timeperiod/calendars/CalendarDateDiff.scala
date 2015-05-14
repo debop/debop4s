@@ -62,7 +62,6 @@ class CalendarDateDiff(val calendar: ITimeCalendar = TimeCalendar.getEmptyOffset
 
   def difference(moment: DateTime): Duration = difference(moment, Times.now)
 
-  @inline
   def difference(fromTime: DateTime, toTime: DateTime): Duration = {
     if (fromTime.equals(toTime))
       return Duration.ZERO

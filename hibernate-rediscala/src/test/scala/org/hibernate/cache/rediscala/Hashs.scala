@@ -22,7 +22,6 @@ private[rediscala] object Hashs {
    * @param x 해시코드를 생성할 객체
    * @return 해시코드
    */
-  @inline
   private def computeInternal(x: Any) = if (x == null) NULL_VALUE else x.hashCode()
 
 
@@ -32,7 +31,6 @@ private[rediscala] object Hashs {
    * @param objs 해쉬코드를 생성할 객체 배열
    * @return 조합된 Hash code
    */
-  @inline
   @varargs
   def compute(objs: Any*): Int = {
     if (objs == null || objs.length == 0)

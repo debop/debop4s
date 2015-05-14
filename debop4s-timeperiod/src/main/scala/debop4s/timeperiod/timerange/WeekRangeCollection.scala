@@ -32,7 +32,6 @@ class WeekRangeCollection(private[this] val year: Int,
     }
   }
 
-  @inline
   def weeks: util.List[WeekRange] = {
     val weeks = Lists.newArrayListWithCapacity[WeekRange](weekCount)
     var w = 0

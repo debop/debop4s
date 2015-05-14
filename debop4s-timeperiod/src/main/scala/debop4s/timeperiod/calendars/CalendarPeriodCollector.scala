@@ -92,7 +92,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
   override protected def enterMinutes(hour: HourRange, context: CalendarPeriodCollectorContext) =
     context.scope.id > CollectKind.Minute.id
 
-  @inline
   override protected def onVisitYears(years: YearRangeCollection, context: CalendarPeriodCollectorContext): Boolean = {
     log.trace(s"visit yearsView... yearsView=[$years]")
 
@@ -107,7 +106,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     false
   }
 
-  @inline
   override protected def onVisitYear(year: YearRange, context: CalendarPeriodCollectorContext): Boolean = {
     if (context.scope != CollectKind.Month)
       return true
@@ -141,7 +139,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     false
   }
 
-  @inline
   override protected def onVisitMonth(month: MonthRange, context: CalendarPeriodCollectorContext): Boolean = {
     if (context.scope != CollectKind.Day)
       return true
@@ -180,7 +177,6 @@ class CalendarPeriodCollector(private[this] val _filter: CalendarPeriodCollector
     false
   }
 
-  @inline
   override protected def onVisitDay(day: DayRange, context: CalendarPeriodCollectorContext): Boolean = {
     if (context.scope != CollectKind.Hour) {
       return true

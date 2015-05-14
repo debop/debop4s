@@ -2,19 +2,20 @@ package debop4s.rediscala.spring
 
 import java.util.UUID
 
-import debop4s.core.Logging
 import org.scalatest._
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.support.AnnotationConfigContextLoader
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{ ContextConfiguration, TestContextManager }
 
-@ContextConfiguration(classes = Array(classOf[RedisCacheConfiguration]),
-  loader = classOf[AnnotationConfigContextLoader])
+@ContextConfiguration(classes = Array(classOf[RedisCacheConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class RedisCacheFunSuite
-  extends FunSuite with Matchers with OptionValues with BeforeAndAfterAll with BeforeAndAfter with Logging {
+  extends FunSuite with Matchers with OptionValues with BeforeAndAfterAll with BeforeAndAfter {
 
-  @Autowired private val cacheManager: RedisCacheManager = null
-  @Autowired private val userRepository: UserRepository = null
+  private lazy val log = LoggerFactory.getLogger(getClass)
+
+  @Autowired private val cacheManager  : RedisCacheManager = null
+  @Autowired private val userRepository: UserRepository    = null
 
   override def beforeAll() {
     // Spring Autowired 를 수행합니다.
@@ -37,8 +38,6 @@ class RedisCacheFunSuite
     user1.favoriteMovies.size should be > 0
     user1 shouldEqual user2
     user1.favoriteMovies.size shouldEqual user2.favoriteMovies.size
-
-    Thread.sleep(5000)
   }
 
   test("spring cache evict") {

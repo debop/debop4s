@@ -66,7 +66,6 @@ trait SymmetricEncryptorSupport {
    * @param input 암호화할 데이터
    * @return 암호화된 데이터
    */
-  @inline
   def encrypt(input: Array[Byte]): Array[Byte] = {
     if (input == null || input.length == 0)
       return Array.emptyByteArray
@@ -86,7 +85,6 @@ trait SymmetricEncryptorSupport {
    * @param plainText  암호화할 문자열
    * @return 암호화된 문자열
    */
-  @inline
   def encrypt(plainText: String): String = {
     if (Strings.isEmpty(plainText))
       return ""
@@ -101,7 +99,6 @@ trait SymmetricEncryptorSupport {
    * @param input 암호화된 정보
    * @return 복원된 데이터
    */
-  @inline
   def decrypt(input: Array[Byte]): Array[Byte] = {
     if (input == null || input.length == 0)
       return Array.emptyByteArray
@@ -128,7 +125,6 @@ trait SymmetricEncryptorSupport {
    * @param cipherText 암호화된 문자열
    * @return 복원된 데이터
    */
-  @inline
   def decrypt(cipherText: String): String = {
     if (Strings.isEmpty(cipherText))
       return ""

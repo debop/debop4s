@@ -94,7 +94,6 @@ object Arrays {
 
   def hashCode(a: Array[Any]): Int = Hashs.compute(a: _*)
 
-  @inline
   def equals[@miniboxed T](a: Array[T], b: Array[T]): Boolean = {
     if (a == b)
       return true

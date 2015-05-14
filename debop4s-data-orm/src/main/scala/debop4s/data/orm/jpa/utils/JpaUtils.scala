@@ -162,7 +162,6 @@ object JpaUtils {
    * @param em `EntityManager` instance.
    * @return database connection instance.
    */
-  @inline
   def currentConnection(em: EntityManager): Connection = {
     require(em != null, s"entity manager 가 null 입니다. @Transactional 을 지정해 주세요.")
 
@@ -182,7 +181,6 @@ object JpaUtils {
    * @tparam T    읽은 결과 값의 수형
    * @return 읽기 작업 결과
    */
-  @inline
   def withReadOnly[T](em: EntityManager)(block: => T): T = {
     require(em != null, "메소드나 Class 에 @Transactional 을 정의해 주세요.")
 

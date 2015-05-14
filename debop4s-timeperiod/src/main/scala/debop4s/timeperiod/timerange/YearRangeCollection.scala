@@ -42,7 +42,6 @@ class YearRangeCollection(private[this] val _year: Int,
     head #:: tails(sy + 1)
   }
 
-  @inline
   def years: util.List[YearRange] = {
     val years = Lists.newArrayListWithCapacity[YearRange](yearCount)
     var i = 0

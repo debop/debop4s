@@ -1,8 +1,9 @@
 package debop4s.core.utils
 
+
 import java.io.InputStream
 
-import debop4s.core.AbstractCoreFunSuite
+import debop4s.core.{ AbstractCoreFunSuite, _ }
 
 /**
  * ResourcesFunSuite
@@ -11,25 +12,33 @@ import debop4s.core.AbstractCoreFunSuite
 class ResourcesFunSuite extends AbstractCoreFunSuite {
 
   test("load resources") {
-    var is = None: Option[InputStream]
-    try {
-      is = Some(Resources.getClassPathResourceStream("globalization.xml"))
-      is shouldBe defined
-      println(Streams.toString(is.get))
-    } finally {
-      if (is.isDefined) is.get.close()
+    using(Resources.getClassPathResourceStream("globalization.xml")) { is =>
+      is should not be null
+      println(Streams.toString(is))
     }
+    //    var is = None: Option[InputStream]
+    //    try {
+    //      is = Some(Resources.getClassPathResourceStream("globalization.xml"))
+    //      is shouldBe defined
+    //      println(Streams.toString(is.get))
+    //    } finally {
+    //      if (is.isDefined) is.get.close()
+    //    }
   }
 
   test("load resources by classLoader") {
-    var is = None: Option[InputStream]
-    try {
-      is = Some(Resources.getClassPathResourceStream("globalization.xml", getClass.getClassLoader))
-      is shouldBe defined
-      println(Streams.toString(is.get))
-    } finally {
-      if (is.isDefined) is.get.close()
+    using(Resources.getClassPathResourceStream("globalization.xml", getClass.getClassLoader)) { is =>
+      is should not be null
+      println(Streams.toString(is))
     }
+    //    var is = None: Option[InputStream]
+    //    try {
+    //      is = Some(Resources.getClassPathResourceStream("globalization.xml", getClass.getClassLoader))
+    //      is shouldBe defined
+    //      println(Streams.toString(is.get))
+    //    } finally {
+    //      if (is.isDefined) is.get.close()
+    //    }
   }
 
 }

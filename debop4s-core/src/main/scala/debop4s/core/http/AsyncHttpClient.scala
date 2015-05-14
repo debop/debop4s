@@ -7,13 +7,13 @@ import java.util.concurrent.TimeUnit
 import debop4s.core.utils.Closer._
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods._
-import org.apache.http.conn.ssl.{SSLContexts, TrustSelfSignedStrategy}
-import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClients}
+import org.apache.http.conn.ssl.{ NoopHostnameVerifier, SSLContexts, TrustSelfSignedStrategy }
+import org.apache.http.impl.nio.client.{ CloseableHttpAsyncClient, HttpAsyncClients }
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
 import org.apache.http.nio.reactor.ConnectingIOReactor
-import org.apache.http.{HttpException, HttpResponse}
+import org.apache.http.{ HttpException, HttpResponse }
 import org.slf4j.LoggerFactory
 
 import scala.annotation.varargs
@@ -176,7 +176,7 @@ class AsyncHttpClient {
       new SSLIOSessionStrategy(sslcontext,
                                Array[String]("TLSv1"),
                                null,
-                               SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER)
+                                new NoopHostnameVerifier())
     }
     catch {
       case NonFatal(e) =>

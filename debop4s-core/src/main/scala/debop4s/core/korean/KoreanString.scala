@@ -29,7 +29,6 @@ object KoreanString {
   /**
    * 문자열 내에서 한글 자소를 분리하여 초/중/종성 순으로 제공합니다.
    */
-  @inline
   def getJasoLetter(target: String): String = {
     if (Strings.isEmpty(target))
       return ""
@@ -66,7 +65,6 @@ object KoreanString {
   /**
    * 한글 초성만 반환합니다.
    */
-  @inline
   def getChosung(str: String): util.List[Char] = {
     if (str == null || str.isEmpty)
       return new util.ArrayList[Char]()

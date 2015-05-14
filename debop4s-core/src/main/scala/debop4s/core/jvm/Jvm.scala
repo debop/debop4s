@@ -127,6 +127,7 @@ trait Jvm {
               missedCollections = 0
             }
             f(gc)
+          case _ =>
         }
         lastByName(name) = count
       }

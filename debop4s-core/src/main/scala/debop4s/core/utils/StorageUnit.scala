@@ -20,9 +20,8 @@ class StorageUnit(val bytes: Long) extends Ordered[StorageUnit] {
   def -(that: StorageUnit): StorageUnit = new StorageUnit(this.bytes - that.bytes)
   def *(scala: Double): StorageUnit = new StorageUnit((this.bytes * scala).toLong)
 
-  @inline
   override def equals(obj: Any): Boolean = {
-    (obj: @switch) match {
+    obj match {
       case that: StorageUnit => bytes == that.bytes
       case _ => false
     }

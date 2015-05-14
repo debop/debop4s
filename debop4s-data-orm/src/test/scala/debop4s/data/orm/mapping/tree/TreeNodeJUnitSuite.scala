@@ -94,8 +94,6 @@ class TreeNode extends LongEntity with TreeEntity[TreeNode] {
       child.setParent(null)
   }
 
-
-  @inline
   override def hashCode(): Int = Hashs.compute(title)
 }
 

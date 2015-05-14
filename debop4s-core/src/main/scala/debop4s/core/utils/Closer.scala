@@ -21,7 +21,7 @@ object Closer {
       func(closable)
     } finally {
       try {
-        closable close()
+        closable.close()
       } catch {
         case NonFatal(e) => log.warn("close 메소드에서 예외가 발생했습니다.", e)
       }

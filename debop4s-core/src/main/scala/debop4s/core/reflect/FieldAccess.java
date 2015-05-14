@@ -1,11 +1,12 @@
 package debop4s.core.reflect;
 
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -20,9 +21,10 @@ import static org.objectweb.asm.Opcodes.*;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 13. 1. 21
  */
-@Slf4j
 @SuppressWarnings("all")
 public abstract class FieldAccess {
+
+    private static final Logger log = LoggerFactory.getLogger(FieldAccess.class);
 
     private String[] fieldNames;
 

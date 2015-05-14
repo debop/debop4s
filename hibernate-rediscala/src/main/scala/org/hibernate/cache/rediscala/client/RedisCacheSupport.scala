@@ -56,7 +56,6 @@ trait RedisCacheSupport {
    * @param expireInSeconds  expiration timeout value
    * @return return cached entity, if not exists return null.
    */
-  @inline
   def get(region: String, key: String, expireInSeconds: Long = 0): Future[Any] = {
 
     // 값을 가져오고, 값이 있고, expiration이 설정되어 있다면 갱신합니다.
@@ -112,7 +111,6 @@ trait RedisCacheSupport {
    * @param unit time unit
    * @return if saved return true, else false
    */
-  @inline
   def set(region: String, key: String, value: Any, expiry: Long = 0, unit: TimeUnit = TimeUnit.SECONDS): Future[Boolean] = {
     async {
       val result = await(redis.hset(region, key, value))
@@ -129,7 +127,6 @@ trait RedisCacheSupport {
    * 지정한 영역의 캐시 항목 중 expire 된 것들을 모두 삭제한다.
    * @param region region name
    */
-  @inline
   def expire(region: String) {
     try {
       val regionExpire = regionExpireKey(region)

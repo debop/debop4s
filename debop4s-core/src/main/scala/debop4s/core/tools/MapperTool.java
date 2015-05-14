@@ -3,10 +3,11 @@ package debop4s.core.tools;
 import com.google.common.collect.Lists;
 import debop4s.core.Guard;
 import debop4s.core.concurrent.JAsyncs;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -18,12 +19,11 @@ import java.util.concurrent.Future;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 12. 9. 20.
  */
-@Slf4j
 public final class MapperTool {
 
-    private MapperTool() {
-    }
+    private MapperTool() {}
 
+    private static final Logger log = LoggerFactory.getLogger(MapperTool.class);
     private static final ModelMapper mapper;
 
     static {

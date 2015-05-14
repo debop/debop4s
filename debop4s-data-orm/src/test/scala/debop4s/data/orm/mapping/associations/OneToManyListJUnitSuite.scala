@@ -177,10 +177,8 @@ class OneToManyOrder extends HibernateEntityBase[lang.Long] {
   @hba.LazyCollection(hba.LazyCollectionOption.EXTRA)
   val items: util.List[OneToManyOrderItem] = new util.ArrayList[OneToManyOrderItem]
 
-  @inline
   override def hashCode(): Int = Hashs.compute(no)
 
-  @inline
   override protected def buildStringHelper =
     super.buildStringHelper
     .add("no", no)
@@ -206,7 +204,6 @@ class OneToManyOrderItem extends HibernateEntityBase[lang.Long] {
 
   var name: String = _
 
-  @inline
   override def hashCode(): Int = Hashs.compute(name)
 }
 

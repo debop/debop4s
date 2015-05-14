@@ -11,7 +11,7 @@
     </appender>
 
     <logger name="debop4s.data.jdbc" level="TRACE"/>
-    <logger name="com.zaxxer.hikari" level="DEBUG"/>
+    <logger name="com.zaxxer.hikari" level="WARN"/>
 
     <root level="INFO">
         <appender-ref ref="console"/>

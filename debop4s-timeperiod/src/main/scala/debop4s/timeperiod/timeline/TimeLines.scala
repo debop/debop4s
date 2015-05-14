@@ -13,7 +13,6 @@ object TimeLines {
 
   private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
-  @inline
   def combinePeriods(moments: ITimeLineMomentCollection): ITimePeriodCollection = {
     val periods = new TimePeriodCollection()
     if (moments.isEmpty)
@@ -50,7 +49,6 @@ object TimeLines {
     periods
   }
 
-  @inline
   def intersectPeriods(moments: ITimeLineMomentCollection): ITimePeriodCollection = {
     val periods: ITimePeriodCollection = new TimePeriodCollection()
     if (moments.isEmpty) return periods
@@ -79,7 +77,6 @@ object TimeLines {
     periods
   }
 
-  @inline
   def calculateGap(moments: ITimeLineMomentCollection, range: ITimePeriod): ITimePeriodCollection = {
     val gaps = new TimePeriodCollection
     if (moments.isEmpty) return gaps

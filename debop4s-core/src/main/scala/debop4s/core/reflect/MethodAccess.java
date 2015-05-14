@@ -1,8 +1,9 @@
 package debop4s.core.reflect;
 
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import org.objectweb.asm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -17,8 +18,9 @@ import static org.objectweb.asm.Opcodes.*;
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 13. 1. 21
  */
-@Slf4j
 public abstract class MethodAccess {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodAccess.class);
 
     private String[] methodNames;
     private Class[][] parameterTypes;

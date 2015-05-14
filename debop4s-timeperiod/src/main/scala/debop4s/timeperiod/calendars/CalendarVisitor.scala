@@ -122,7 +122,6 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     log.trace(s"기간에 대한 탐색을 완료했습니다. period=[$period], context=[$context], seekDirection=[$seekDirection]")
   }
 
-  @inline
   protected def startYearVisit(year: YearRange, context: C, direction: SeekDirection): YearRange = {
     var lastVisited: YearRange = null
 
@@ -147,7 +146,6 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     lastVisited
   }
 
-  @inline
   protected def startMonthVisit(month: MonthRange, context: C, direction: SeekDirection): MonthRange = {
     var lastVisited: MonthRange = null
     onVisitStart()
@@ -171,7 +169,6 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     lastVisited
   }
 
-  @inline
   protected def startDayVisit(day: DayRange, context: C, direction: SeekDirection): DayRange = {
     var lastVisited: DayRange = null
     onVisitStart()
@@ -195,7 +192,6 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     lastVisited
   }
 
-  @inline
   protected def startHourVisit(hour: HourRange, context: C, direction: SeekDirection): HourRange = {
     var lastVisited: HourRange = null
     onVisitStart()
@@ -252,13 +248,11 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
 
   protected def onVisitMinute(minute: MinuteRange, context: C) = true
 
-  @inline
   protected def isMatchingYear(yr: YearRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(yr.year)) false
     else checkExcludePeriods(yr)
   }
 
-  @inline
   protected def isMatchingMonth(mr: MonthRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(mr.year))
       false
@@ -268,7 +262,6 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
       checkExcludePeriods(mr)
   }
 
-  @inline
   protected def isMatchingDay(dr: DayRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(dr.year))
       false
@@ -282,7 +275,6 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
       checkExcludePeriods(dr)
   }
 
-  @inline
   protected def isMatchingHour(hr: HourRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(hr.year))
       false
@@ -298,7 +290,6 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
       checkExcludePeriods(hr)
   }
 
-  @inline
   protected def isMatchingMinute(mr: MinuteRange, context: C): Boolean = {
     if (filter.years.size > 0 && !filter.years.contains(mr.year))
       false

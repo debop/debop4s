@@ -59,7 +59,6 @@ class StatelessSessionFactoryBean @Autowired()(val emf: HibernateEntityManagerFa
       ReflectionUtils.invokeMethod(invocation.getMethod, stateless, invocation.getArguments: _*)
     }
 
-    @inline
     private def getCurrentStateless: StatelessSession = {
       if (!TransactionSynchronizationManager.isActualTransactionActive) {
         throw new IllegalStateException("현 스레드에 활성화된 트랜잭션이 없습니다.")

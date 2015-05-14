@@ -2,7 +2,6 @@ package debop4s.rediscala.spring
 
 import java.util.concurrent.TimeUnit
 
-import debop4s.core._
 import debop4s.core.concurrent._
 import debop4s.rediscala.serializer.SnappyFstValueFormatter
 import org.slf4j.LoggerFactory
@@ -14,6 +13,7 @@ import redis.api.Limit
 
 import scala.async.Async._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
 import scala.util.control.NonFatal
 
@@ -51,58 +51,62 @@ class RedisCache(val name: String,
 
   override def getName: String = name
 
-  /**
-   * redis hash set에 저장된 캐시 항목을 조회합니다.
-   */
+  /** redis hash set에 저장된 캐시 항목을 조회합니다. */
   def get(key: Any): ValueWrapper = {
     val keyStr = computeKey(key)
     log.trace(s"캐시 조회. redis hashset=$itemName, field=$keyStr")
 
     waitForLock(redis)
 
-    redis.hget[Any](itemName, keyStr).await
-    .fold(null.asInstanceOf[ValueWrapper]) {
-      value => new SimpleValueWrapper(value)
-    }
+    redis.hget[Any](itemName, keyStr).map(_.fold(null.asInstanceOf[ValueWrapper])(v => new SimpleValueWrapper(v))).await
+    //    redis.hget[Any](itemName, keyStr).await
+    //    .fold(null.asInstanceOf[ValueWrapper]) {
+    //      value => new SimpleValueWrapper(value)
+    //    }
   }
 
-  /**
-   * redis hash set에 저장된 캐시 항목을 조회합니다.
-   */
+  /** redis hash set에 저장된 캐시 항목을 조회합니다. */
   def get[@miniboxed T](key: Any, clazz: Class[T]): T = {
     val keyStr = computeKey(key)
     log.trace(s"캐시 조회. redis hashset=$itemName, field=$keyStr, clazz=${ clazz.getSimpleName }")
 
     waitForLock(redis)
-    redis.hget[Any](itemName, keyStr).await.orNull.asInstanceOf[T]
+    redis.hget[Any](itemName, keyStr).map(_.orNull.asInstanceOf[T]).await
   }
 
   /**
-   * 캐시 값을 hash set에 저장하고, 캐시 expiration 관리를 위해 expiration 정보를 sorted set에 따로 저장합니다.
+   * 캐시 값을 hash set에 저장하고,
+   * 캐시 expiration 관리를 위해 expiration 정보를 sorted set에 따로 저장합니다.
    */
-  override def put(key: Any, value: Any) {
+  private def putAsync(key: Any, value: Any): Future[Boolean] = {
     val keyStr = computeKey(key)
     log.trace(s"Spring Cache를 저장합니다. redis hashset=$itemName, field=$keyStr, value=$value")
 
     waitForLock(redis)
 
-    async {
+    val f: Future[Boolean] = async {
       // 캐시 값 저장
-      await(redis.hset(itemName, keyStr, value))
+      val r = await(redis.hset(itemName, keyStr, value))
       // 캐시 값의 Expiration 저장
       if (expiration > 0) {
         await(redis.zadd(setName, (System.currentTimeMillis() + expiration, keyStr)))
       }
-    }.await
+      r
+    }
+    f onFailure { case e => log.error(s"cannot put $key", e) }
+    f
   }
 
-  /**
-   * 해당 키에 캐시 값이 없으면 저장하고, 기존 캐시 값을 반환합니다.
-   */
+  override def put(key: Any, value: Any): Unit = {
+    putAsync(key, value).stay
+  }
+
+
+  /** 해당 키에 캐시 값이 없으면 저장하고, 기존 캐시 값을 반환합니다. */
   override def putIfAbsent(key: scala.Any, value: scala.Any): ValueWrapper = {
     val result = get(key)
     if (result == null) {
-      put(key, value)
+      putAsync(key, value)
     }
     result
   }
@@ -116,7 +120,7 @@ class RedisCache(val name: String,
     async {
       await(redis.hdel(itemName, keyStr))
       await(redis.zrem(setName, keyStr))
-    }.await
+    }.stay
   }
 
   /**
@@ -142,10 +146,10 @@ class RedisCache(val name: String,
 
         if (keys.nonEmpty) {
           log.trace(s"유효기간이 지난 캐시 키를 삭제합니다. keys=$keys")
-          await(redis.hdel(itemName, keys: _*))
-          await(redis.zrem(setName, keys: _*))
+          await { redis.hdel(itemName, keys: _*) }
+          await { redis.zrem(setName, keys: _*) }
         }
-      }.await
+      }.stay
     } catch {
       case NonFatal(e) =>
         log.warn(s"Expired cache item을 삭제하는데 실패했습니다.", e)
@@ -170,7 +174,7 @@ class RedisCache(val name: String,
         await(redis.del(itemName))
         await(redis.del(setName))
         log.debug(s"Spring cache를 모두 제거했습니다. name=$name, itemName=$itemName, setName=$setName")
-      }.await
+      }.stay
 
     } finally {
       log.trace(s"Lock을 제거합니다. lock=$cacheLockName")

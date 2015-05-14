@@ -13,7 +13,6 @@ class FstRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
 
   lazy val conf = FSTConfiguration.createDefaultConfiguration()
 
-  @inline
   override def serialize(graph: T): Array[Byte] = {
     if (graph == null)
       return EMPTY_BYTES
@@ -27,7 +26,6 @@ class FstRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
     }
   }
 
-  @inline
   override def deserialize(bytes: Array[Byte]): T = {
     if (bytes == null || bytes.length == 0)
       return null.asInstanceOf[T]

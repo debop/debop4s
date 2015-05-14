@@ -37,7 +37,6 @@ class YearTimeRange(private[this] val _year: Int,
     }
   }
 
-  @inline
   def halfyears: util.List[HalfyearRange] = {
     val halfyears = Lists.newArrayListWithCapacity[HalfyearRange](yearCount * 2)
     var y = 0
@@ -58,7 +57,6 @@ class YearTimeRange(private[this] val _year: Int,
     }
   }
 
-  @inline
   def quarters: util.List[QuarterRange] = {
     val quarters = Lists.newArrayListWithCapacity[QuarterRange](yearCount * 4)
     var y = 0
@@ -81,7 +79,6 @@ class YearTimeRange(private[this] val _year: Int,
     } yield MonthRange(baseTime.plusMonths(m), calendar)
   }
 
-  @inline
   def months: util.List[MonthRange] = {
     val months = new util.ArrayList[MonthRange](yearCount * MonthsPerYear)
     var y = 0

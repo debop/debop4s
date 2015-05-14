@@ -5,6 +5,8 @@ import debop4s.data.slick3.northwind.NorthwindDatabase._
 import debop4s.timeperiod.utils.Times
 import slick.jdbc.{GetResult, StaticQuery => Q}
 
+import scala.async.Async._
+
 /**
  * QueryFunSuite
  * @author sunghyouk.bae@gmail.com
@@ -97,6 +99,7 @@ class QueryFunSuite extends AbstractNorthwindFunSuite {
     val emps2 = readonly { employees.filter(_.region.isDefined).result }
     emps2 foreach { emp => log.debug(s"employee=$emp") }
     emps2.size shouldEqual 5
+
   }
 
   test("employee - group by") {

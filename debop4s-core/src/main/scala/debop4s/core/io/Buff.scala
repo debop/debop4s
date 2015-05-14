@@ -111,7 +111,7 @@ object Buff {
         if other.start == 0 && other.end == other.bytes.length && start == 0 && end == bytes.length =>
         util.Arrays.equals(bytes, other.bytes)
       case x => super.equals(x)
-      case _ => false
+      // case _ => false
     }
   }
 

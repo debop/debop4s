@@ -26,6 +26,7 @@
         <module>debop4s-data-slick-northwind</module>
 
         <module>debop4s-data-slick3</module>
+        <module>debop4s-data-slick3-northwind</module>
 
         <module>debop4s-data-orm</module>
 
@@ -34,7 +35,7 @@
         <module>debop4s-web-scalatra</module>
 
         <module>debop4s-benchmark</module>
-        <module>debop4s-data-slick3-northwind</module>
+
         <module>debop4s-reactive</module>
 
     </modules>
@@ -1059,7 +1060,7 @@
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>3.1.6</version>
                 <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
+                    <scalaBinaryVersion>${scala.version}</scalaBinaryVersion>
                     <analysisCacheFile>${project.build.outputDirectory}/analysis-cache-file</analysisCacheFile>
                     <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
                     </testAnalysisCacheFile>

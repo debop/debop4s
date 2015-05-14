@@ -21,7 +21,7 @@ abstract class ValueObjectBase extends ValueObject
 trait ValueObject extends Serializable {
 
   override def equals(obj: Any): Boolean = {
-    (obj: @switch) match {
+    obj match {
       case vo: ValueObject => (this.getClass == obj.getClass) && (hashCode() == obj.hashCode())
       case _ => false
     }

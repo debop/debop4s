@@ -51,7 +51,6 @@ object Hero {
 
   private val Tolerance = 1.0e-1
 
-  @inline
   def findRoot(number: Double): Double = {
     var guess = 1.0
     var error = 1.0

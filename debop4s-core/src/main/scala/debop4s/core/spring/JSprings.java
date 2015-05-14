@@ -3,7 +3,8 @@ package debop4s.core.spring;
 import debop4s.core.AutoCloseableAction;
 import debop4s.core.tools.ArrayTool;
 import debop4s.core.utils.Local;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -26,10 +27,11 @@ import static debop4s.core.Guard.*;
  *
  * @author sunghyouk.bae@gmail.com
  */
-@Slf4j
 public final class JSprings {
 
     private JSprings() {}
+
+    private static final Logger log = LoggerFactory.getLogger(JSprings.class);
 
     /**
      * Spring에서 Static 변수를 초기화하는데 사용됩니다.

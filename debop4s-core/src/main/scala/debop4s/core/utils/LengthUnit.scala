@@ -32,9 +32,8 @@ class LengthUnit(val meter: Double) extends Ordered[LengthUnit] {
   def *(scala: Double): LengthUnit = new LengthUnit(this.meter * scala)
   def /(scala: Double): LengthUnit = new LengthUnit(this.meter / scala)
 
-  @inline
   override def equals(obj: Any): Boolean = {
-    (obj: @switch) match {
+    obj match {
       case other: LengthUnit => meter === other.meter
       case _ => false
     }
