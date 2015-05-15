@@ -105,7 +105,7 @@ class PolicyFunSuite extends AbstractCoreFunSuite with BeforeAndAfterAll {
 
     log.debug(s"took = $took")
     (took >= 90.millis) shouldEqual true
-    (took <= 130.millis) shouldEqual true
+    (took <= 150.millis) shouldEqual true
   }
 
   test("When - 재시도 조건이 왔을 때") {

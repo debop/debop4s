@@ -7,7 +7,7 @@ import debop4s.core.concurrent.Spool._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ Future, Promise }
 
 /**
  * SpoolFunSuite
@@ -143,8 +143,8 @@ class SpoolFunSuite extends AbstractCoreFunSuite {
 
     val xs = new ArrayBuffer[Option[Int]]
     s foreachElem { xs += _ }
-    xs.toSeq shouldEqual Seq(Some(1), Some(2), None)
-    // xs should contain allOf(Some(1), Some(2), None)
+    // xs shouldBe ArrayBuffer(Some(1), Some(2), None)
+    xs should contain allOf(Some(1), Some(2), None)
 
     val f = s foreach { _ => throw new Exception("sad panda") }
     intercept[Exception] {

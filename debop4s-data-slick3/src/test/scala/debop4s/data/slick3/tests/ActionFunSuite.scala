@@ -31,11 +31,6 @@ class ActionFunSuite extends AbstractSlickFunSuite {
     val q1 = ts.sortBy(_.a).map(_.a)
     readonly { q1.result } shouldEqual Seq(1, 2, 3, 4, 5)
 
-    val r: Future[Unit] = for {
-      _ <- q1.result map { x => x shouldEqual Seq(1, 2, 3, 4, 5) }
-    } yield ()
-    r.await
-
     commit { ts.schema.drop }
   }
 

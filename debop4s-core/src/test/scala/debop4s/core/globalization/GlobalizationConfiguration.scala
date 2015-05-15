@@ -21,8 +21,10 @@ class GlobalizationConfiguration {
   def messageSource(): ReloadableResourceBundleMessageSource = {
     val rbms = new ReloadableResourceBundleMessageSource()
 
+    // 특정 파일에서 로드하려면 "file:xxxxx" 하면 됩니다. 단 resources path에 globalization.xml 파일이 있으면 안된다.
+    // rbms.setBasename("file:i18n/messages")
     // resources 에 있는 것은 classpath:i18n/messages 또는 i18n/messages 를 쓰면 된다.
-    rbms.setBasename("file:i18n/messages")
+    rbms.setBasename("classpath:i18n/messages")
     rbms.setDefaultEncoding("UTF-8")
     rbms.setCacheSeconds(60)
     rbms.setFallbackToSystemLocale(true)

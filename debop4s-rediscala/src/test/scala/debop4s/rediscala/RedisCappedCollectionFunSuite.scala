@@ -15,18 +15,14 @@ class RedisCappedCollectionFunSuite extends AbstractRedisFunSuite {
 
     val coll = RedisCappedCollection[Int](name, 10)
 
-    var i = 0
-    while (i < 100) {
-      coll.lpush(i)
-      i += 1
-    }
+    coll.lpushAll(0 until 100: _*).stay
 
     val list = coll.getRange(0, 100).await
-    println(list)
 
+    println(list)
     list.toList shouldEqual List.range(90, 100).reverse
 
-    redis.del(name)
+    redis.del(name).stay
   }
 
 }

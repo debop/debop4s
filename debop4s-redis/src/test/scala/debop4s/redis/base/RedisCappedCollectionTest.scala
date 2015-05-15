@@ -12,18 +12,17 @@ class RedisCappedCollectionTest extends AbstractRedisTest {
   test("크기가 제한된 List") {
 
     val name = "col-10"
-    redis.del(name).await
+    redis.del(name).stay
 
     val coll = RedisCappedCollection[Int](name, 10)
 
-    for (x <- 0 until 100) {
-      coll.lpush(x)
-    }
+    (0 until 100).map { x => coll.lpush(x) }.stayAll
+
     val list = coll.getRange(0, 100).await
     println(list)
-    assert(list === Array.range(90, 100).reverse)
+    list shouldEqual Array.range(90, 100).reverse
 
-    redis.del(name)
+    redis.del(name).stay
   }
 
 }

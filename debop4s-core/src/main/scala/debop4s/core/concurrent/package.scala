@@ -61,7 +61,7 @@ package object concurrent {
       Await.result(Future.sequence(underlying), timeout)
     }
 
-    def holdAll(implicit timeout: Duration = timeout): Future[Iterable[A]] = {
+    def stayAll(implicit timeout: Duration = timeout): Future[Iterable[A]] = {
       Await.ready(Future.sequence(underlying), timeout)
     }
   }

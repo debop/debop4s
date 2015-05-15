@@ -68,7 +68,7 @@ class MemorizeFunSuite extends AbstractCoreFunSuite {
     callCount.get() shouldEqual 1
   }
 
-  test("handles exceptios during computations") {
+  test("handles exceptions during computations") {
 
     val startUpLatch = new JavaCountDownLatch(1)
     val callCount = new AtomicInteger(0)
@@ -95,7 +95,7 @@ class MemorizeFunSuite extends AbstractCoreFunSuite {
     }
 
     startUpLatch.countDown()
-    Thread.sleep(2000)
+    Thread.sleep(1000)
     callCount.get() shouldEqual 2
   }
 

@@ -52,7 +52,7 @@ class PerformanceFunSuite extends FunSuite with Matchers with OptionValues {
           value.orNull shouldEqual s"value-$x"
         }
       }.seq
-      tasks.holdAll
+      tasks.stayAll
       log.debug("읽기 완료")
     }
 
@@ -74,7 +74,7 @@ class PerformanceFunSuite extends FunSuite with Matchers with OptionValues {
           value.orNull shouldEqual s"value-$x"
         }
       }.seq
-      tasks.holdAll
+      tasks.stayAll
     }
     log.debug("삭제 확인 완료")
   }

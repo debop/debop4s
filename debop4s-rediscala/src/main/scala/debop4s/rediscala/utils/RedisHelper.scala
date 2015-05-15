@@ -2,7 +2,6 @@ package debop4s.rediscala.utils
 
 import java.util.concurrent.TimeUnit
 
-import debop4s.core._
 import debop4s.core.concurrent._
 import debop4s.rediscala._
 import redis.RedisClient
@@ -15,6 +14,7 @@ object RedisHelper {
 
   def apply(): RedisHelper = new RedisHelper(createRedisClient())
 
+  // TODO: 환경 설정에 따라 DB 정보가 바뀌면 안되는 것이다.
   def createRedisClient(): RedisClient = RedisClient()
 }
 
@@ -30,9 +30,6 @@ class RedisHelper(val redis: RedisClient) {
    */
   def increseAndGet(key: String, increment: Long = 1): Future[Long] = {
     redis.incrby(key, increment)
-    .andThen {
-      case Success(x) => redis.get(key).map(x => x.getOrElse(0))
-    }
   }
 
   /**

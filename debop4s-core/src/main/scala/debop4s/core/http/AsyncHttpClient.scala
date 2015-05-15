@@ -3,11 +3,12 @@ package debop4s.core.http
 import java.net.URI
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.HostnameVerifier
 
 import debop4s.core.utils.Closer._
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods._
-import org.apache.http.conn.ssl.{ NoopHostnameVerifier, SSLContexts, TrustSelfSignedStrategy }
+import org.apache.http.conn.ssl.{ AllowAllHostnameVerifier, SSLContexts, TrustSelfSignedStrategy }
 import org.apache.http.impl.nio.client.{ CloseableHttpAsyncClient, HttpAsyncClients }
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
@@ -176,7 +177,7 @@ class AsyncHttpClient {
       new SSLIOSessionStrategy(sslcontext,
                                Array[String]("TLSv1"),
                                null,
-                                new NoopHostnameVerifier())
+                                new AllowAllHostnameVerifier().asInstanceOf[HostnameVerifier])
     }
     catch {
       case NonFatal(e) =>

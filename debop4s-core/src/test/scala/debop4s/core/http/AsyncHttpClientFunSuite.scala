@@ -3,14 +3,14 @@ package debop4s.core.http
 import java.net.URI
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.HostnameVerifier
 
 import debop4s.core.AbstractCoreFunSuite
 import org.apache.http.client.methods.{ HttpGet, HttpPost }
 import org.apache.http.client.utils.URIBuilder
-import org.apache.http.conn.ssl.{ NoopHostnameVerifier, TrustSelfSignedStrategy }
+import org.apache.http.conn.ssl.{ SSLContexts, AllowAllHostnameVerifier, TrustSelfSignedStrategy }
 import org.apache.http.impl.nio.client.{ CloseableHttpAsyncClient, HttpAsyncClients }
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
-import org.apache.http.ssl.SSLContexts
 import org.apache.http.util.EntityUtils
 import org.apache.http.{ HttpException, HttpStatus }
 
@@ -130,8 +130,16 @@ class AsyncHttpClientFunSuite extends AbstractCoreFunSuite {
       log.trace("SSLIOSessionStrategy를 생성합니다...")
       val trustStore: KeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
       trustStore.load(null, null)
-      val sslcontext = SSLContexts.custom.loadTrustMaterial(trustStore, new TrustSelfSignedStrategy).build
-      new SSLIOSessionStrategy(sslcontext, Array[String]("TLSv1"), null, new NoopHostnameVerifier()) // SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER)
+
+      // val sslcontext = SSLContexts.custom.loadTrustMaterial(trustStore, new TrustSelfSignedStrategy).build
+      // new SSLIOSessionStrategy(sslcontext, Array[String]("TLSv1"), null, new AllowAllHostnameVerifier())
+      val sslcontext = SSLContexts.custom
+                       .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy)
+                       .build
+      new SSLIOSessionStrategy(sslcontext,
+                                Array[String]("TLSv1"),
+                                null,
+                                new AllowAllHostnameVerifier().asInstanceOf[HostnameVerifier])
     }
     catch {
       case NonFatal(e) => throw new HttpException("SSLIOSessionStrategy 를 생성하는데 실패했습니다.", e)

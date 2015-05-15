@@ -25,8 +25,9 @@ class LastWriteWinsQueue[@miniboxed A] extends java.util.Queue[A] {
     p1.size == 1 && item.get == p1.iterator().next()
 
   def remove(candidate: AnyRef) = {
-    val contained = item.get()
-    val containsCandidate = contained.contains(candidate)
+    val contained: Option[A] = item.get()
+
+    val containsCandidate = contained.isDefined && contained.get != candidate // contained.contains(candidate)
     if (containsCandidate) {
       item.compareAndSet(contained, None)
     }

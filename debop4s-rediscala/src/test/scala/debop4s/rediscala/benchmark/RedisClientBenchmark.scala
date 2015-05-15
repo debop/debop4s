@@ -120,7 +120,7 @@ object RedisClientBenchmark extends PerformanceTest.Quickbenchmark {
       futures += block(i)
     }
 
-    futures.holdAll
+    futures.stayAll
     // Await.ready(Future.sequence(futures), 60 seconds)
   }
 }

@@ -5,9 +5,9 @@ import java.util.Locale
 import debop4s.core.AbstractCoreFunSuite
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
-import org.springframework.context.support.{MessageSourceAccessor, ReloadableResourceBundleMessageSource}
+import org.springframework.context.support.{ MessageSourceAccessor, ReloadableResourceBundleMessageSource }
 import org.springframework.test.context.support.AnnotationConfigContextLoader
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{ ContextConfiguration, TestContextManager }
 
 /**
  * GlobalizationTest
@@ -20,14 +20,13 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
  * MessageSource 를 얻을 때 꼭 `ReloadableResourceBundleMessageSource` 수형을 써줘야 제대로 작동합니다.
  * @author sunghyouk.bae@gmail.com
  */
-@ContextConfiguration(classes = Array(classOf[GlobalizationConfiguration]),
-  loader = classOf[AnnotationConfigContextLoader])
+@ContextConfiguration(classes = Array(classOf[GlobalizationConfiguration]), loader = classOf[AnnotationConfigContextLoader])
 class GlobalizationFunSuite extends AbstractCoreFunSuite {
 
   @Autowired val context: ApplicationContext = null
 
-  @Autowired val messageSource: ReloadableResourceBundleMessageSource = null
-  @Autowired val messageSourceAccessor: MessageSourceAccessor = null
+  @Autowired val messageSource        : ReloadableResourceBundleMessageSource = null
+  @Autowired val messageSourceAccessor: MessageSourceAccessor                 = null
 
   // NOTE: TestContextManager#prepareTestInstance 를 실행시켜야 제대로 Dependency Injection이 됩니다.
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -40,8 +39,9 @@ class GlobalizationFunSuite extends AbstractCoreFunSuite {
 
   test("load Locale message") {
 
-    val defaultText = messageSource.getMessage("intro", null, Locale.getDefault)
-    defaultText shouldEqual "안녕하세요."
+    // 한글 OS 가 아닌 경우에는 예외가 발생합니다.
+    //    val defaultText = messageSource.getMessage("intro", null, Locale.getDefault)
+    //    defaultText shouldEqual "안녕하세요."
 
     val englishText = messageSource.getMessage("intro", null, Locale.US) // en_US
     englishText shouldEqual "Hello."
@@ -57,7 +57,7 @@ class GlobalizationFunSuite extends AbstractCoreFunSuite {
   }
 
   test("load Locale Message by Context") {
-    val defaultText = context.getMessage("intro", null, "기본값", Locale.getDefault)
+    val defaultText = context.getMessage("intro", null, "기본값", Locale.KOREA)
     defaultText shouldEqual "안녕하세요."
   }
 

@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <logger name="debop4s.core" level="DEBUG"/>
+    <logger name="debop4s.core" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="console"/>

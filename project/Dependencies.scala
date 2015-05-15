@@ -1,6 +1,7 @@
+import sbt.Keys._
 import sbt._
 
-object Dependencies {
+trait Dependencies {self: Build =>
   val jdkVersion = "1.7"
 
   val akkaVersion = "2.3.9"
@@ -36,12 +37,18 @@ object Dependencies {
   val miniboxing     = "org.scala-miniboxing.plugins" %% "miniboxing-runtime" % "0.4-M2"
   val scalaxy_stream = "com.nativelibs4java" % "scalaxy-streams_2.11" % "0.3.4"
 
-  // val shapeless = "com.chuusai" %% "shapeless" % "2.1.0"
-  def shapeless(scalaBinaryVersion: String) = scalaBinaryVersion match {
-    case "2.10" => Seq("com.chuusai" % "shapeless_2.10.5" % "2.1.0",
-                        compilerPlugin("org.scalamacros" % "paradise_2.10.5" % "2.0.1"))
-    case _ => Seq("com.chuusai" %% "shapeless" % "2.1.0")
-  }
+  // scala version 에 따라 다른 dependency를 준다.
+  // libraryDependencies ++= shapeless.value
+  val shapeless = Def setting (
+    CrossVersion partialVersion scalaVersion.value match {
+      case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+        Seq("com.chuusai" %% "shapeless" % "2.1.0")
+
+      case Some((2, 10)) =>
+        Seq("com.chuusai" % "shapeless_2.10.5" % "2.1.0",
+             compilerPlugin("org.scalamacros" % "paradise_2.10.5" % "2.0.1"))
+    }
+    )
 
   val rxScala = "io.reactivex" %% "rxscala" % "0.24.1"
 
@@ -73,15 +80,13 @@ object Dependencies {
 
   val javaxMail = "javax.mail" % "mail" % "1.4.7"
 
-  val httpcore        = "org.apache.httpcomponents" % "httpcore" % "4.4.1"
-  val httpclient = "org.apache.httpcomponents" % "httpclient" % "4.3.6" excludeAll(
-    ExclusionRule("commons-logging", "commons-logging"),
-    ExclusionRule("org.apache.httpcomponents", "httpcore")
-    )
-  val httpcoreNIO     = "org.apache.httpcomponents" % "httpcore-nio" % "4.4.1"
-  val httpasyncclient = "org.apache.httpcomponents" % "httpasyncclient" % "4.1"
+  val apacheHttpVersion = "4.4.1"
+  val httpcore          = "org.apache.httpcomponents" % "httpcore" % apacheHttpVersion
+  val httpclient        = "org.apache.httpcomponents" % "httpclient" % apacheHttpVersion exclude("commons-logging", "commons-logging")
+  val httpcoreNIO       = "org.apache.httpcomponents" % "httpcore-nio" % apacheHttpVersion
+  val httpasyncclient   = "org.apache.httpcomponents" % "httpasyncclient" % "4.1"
 
-  val apacheHttpComponents = Seq(httpcore, httpclient, httpcoreNIO, httpasyncclient)
+  val apacheHttpComponentAll = Seq(httpcore, httpclient, httpcoreNIO, httpasyncclient)
 
   val asyncHttpClient = "com.ning" % "async-http-client" % "1.9.22"
 
@@ -240,9 +245,10 @@ object Dependencies {
   val h2         = "com.h2database" % "h2" % "1.4.187"
   val mysql      = "mysql" % "mysql-connector-java" % "5.1.35"
   val postgresql = "org.postgresql" % "postgresql" % "9.4-1201-jdbc41"
+  val mariadb = "org.mariadb.jdbc" % "mariadb-java-client" % "1.1.8"
 
-  val databaseDriverAll     = Seq(hsqldb, h2, mysql, postgresql)
-  val databaseDriverAllTest = Seq(hsqldb % "test", h2 % "test", mysql % "test", postgresql % "test")
+  val databaseDriverAll     = Seq(hsqldb, h2, mysql, postgresql, mariadb)
+  val databaseDriverAllTest = Seq(hsqldb % "test", h2 % "test", mysql % "test", postgresql % "test", mariadb % "test")
 
 
   // Jetty
@@ -292,15 +298,17 @@ object Dependencies {
   // Scala Check (automated property-based testing of Scala or Java)
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.12.2" % "test"
 
-  def scalaStyle(scalaBinaryVersion: String) = scalaBinaryVersion match {
-    case "2.11" => Seq()
-    case _ => Seq("org.scalastyle" %% "scalastyle" % "0.4.0" % "test")
-  }
+  val scalaStyle = Def setting (
+    CrossVersion partialVersion scalaVersion.value match {
+      case Some((2, scalaMajor)) if scalaMajor >= 11 => Seq()
+      case _ => Seq("org.scalastyle" %% "scalastyle" % "0.4.0" % "test")
+    }
+    )
 
   val commonDependencies = Seq(lombok, miniboxing, springTest) ++ slf4jSeq ++ testingJavaSeq ++ testingScalaSeq
 
   val coreDependencies = apacheCommons ++
-                         apacheHttpComponents ++
+                         apacheHttpComponentAll ++
                          joddAll ++
                          jacksonCoreAll ++
                          jacksonDatatypeAll ++

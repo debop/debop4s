@@ -1,30 +1,27 @@
-import Dependencies._
+import codetroopers.QueryDSLPlugin
 import sbt.Keys._
 import sbt._
 
-object BuildSettings {
+trait BuildSettings {self: Build with Dependencies =>
 
   /** Common Setting */
-  val scalaBuildOptions = Seq("-unchecked", "-deprecation", "-feature", "-explaintypes", "-Dfile.encinding=UTF-8",
-                               "-language:implicitConversions", "-language:postfixOps", "-language:dynamics", "-language:higherKinds",
-                               "-language:reflectiveCalls",
-                               "-Yconst-opt", "-Ydead-code", "-Yclosure-elim", "-Yinline", "-Yinline-warnings")
+  lazy val scalaBuildOptions =
+    Seq("-unchecked", "-deprecation", "-feature", "-Xlint", "-Dfile.encinding=UTF-8",
+         "-language:implicitConversions", "-language:postfixOps", "-language:dynamics", "-language:higherKinds",
+         "-language:reflectiveCalls",
+         "-Ydead-code", "-Yclosure-elim", "-Yinline", "-Yinline-warnings") // "-explaintypes", "-Yconst-opt",
 
-  def libraryOverrides = Set(
-                              slf4j,
-                              commonsLang3,
-                              commonsCodec,
-                              javassist,
-                              guava,
-                              httpcore,
-                              httpclient,
+  def libraryOverrides = Set(slf4j, commonsLang3, commonsCodec, javassist, guava, httpcore, httpclient, mongoJavaDriver,
                               "xml-apis" % "xml-apis" % "1.3.04",
-                              "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3"
-                            )
+                              "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3")
+
+  val scala210 = "2.10.5"
+  val scala211 = "2.11.6"
+
   def commonSettings = Seq(
                             organization := "debop4s",
                             version := "0.4.0-SNAPSHOT",
-                            scalaVersion := "2.11.6",
+                            scalaVersion in ThisBuild := scala211,
                             ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) },
                             libraryDependencies ++= commonDependencies,
                             libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-library" % _),
@@ -37,17 +34,17 @@ object BuildSettings {
                             publishArtifact in Test := false,
                             pomIncludeRepository := { x => false },
                             compileOrder := CompileOrder.Mixed,
-                            parallelExecution in Test := true,
-                            crossScalaVersions := Seq("2.10.5", "2.11.6"),
+                            parallelExecution in Test := false,
+                            crossScalaVersions := Seq(scala210, scala211),
+                            //scala version 별로 코드가 달라질 경우 /scala, /scala_2.11 등으로 구성하게 한다.
                             unmanagedSourceDirectories in Compile <+= (sourceDirectory in Compile, scalaBinaryVersion) {
                               (s, v) => s / ("scala_" + v)
-                            }
+                            },
+                            publishTo := Some(Resolver.mavenLocal) // > + publish 를 수행하면 ~/.m2/reposioty 에 publish 됩니다.
                           )
 }
 
-object Debop4sBuild extends Build {
-
-  import BuildSettings._
+object Debop4sBuild extends Build with BuildSettings with Dependencies {
 
   lazy val debop4s = Project("debop4s", file("."))
                      .settings(commonSettings)
@@ -95,7 +92,7 @@ object Debop4sBuild extends Build {
                                           Seq(rediscala, typesafeConfig, hikaricp) ++
                                           Seq(fst, snappy, lz4) ++
                                           databaseDriverAllTest ++
-                                          Seq(springOrm % "test", springDataJpa % "test")))
+                                          Seq(springContext % "test", springOrm % "test", springDataJpa % "test")))
 
   val debop4s_redis = Project("debop4s-redis", file("debop4s-redis"))
                       .settings(commonSettings ++
@@ -106,9 +103,7 @@ object Debop4sBuild extends Build {
 
   val debop4s_rediscala = Project("debop4s-rediscala", file("debop4s-rediscala"))
                           .settings(commonSettings ++
-                                    Seq(libraryDependencies ++=
-                                        Seq(rediscala, typesafeConfig, springContext) ++
-                                        Seq(springOrm % "test", springDataJpa % "test")))
+                                    Seq(libraryDependencies ++= Seq(rediscala, typesafeConfig, springContext)))
                           .dependsOn(debop4s_config, debop4s_core)
 
   val debop4s_data_common = Project("debop4s-data-common", file("debop4s-data-common"))
@@ -118,9 +113,10 @@ object Debop4sBuild extends Build {
                             .dependsOn(debop4s_config)
 
   val debop4s_data_slick2 = Project("debop4s-data-slick", file("debop4s-data-slick"))
-                            .settings(commonSettings ++ Seq(libraryDependencies ++= slick2All ++ databaseDriverAllTest,
-                                                             libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _), // for slick
-                                                             scalacOptions ++= Seq("-nowarn")))
+                            .settings(commonSettings ++
+                                      Seq(libraryDependencies ++= slick2All ++ databaseDriverAllTest,
+                                           libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _), // for slick
+                                           scalacOptions ++= Seq("-nowarn")))
                             .dependsOn(debop4s_config, debop4s_core, debop4s_timeperiod, debop4s_data_common)
 
   val debop4s_data_slick2_northwind =
@@ -130,18 +126,21 @@ object Debop4sBuild extends Build {
 
   val debop4s_data_slick3 = Project("debop4s-data-slick3", file("debop4s-data-slick3"))
                             .settings(commonSettings ++
-                                      Seq(libraryDependencies ++= slick3All ++ databaseDriverAllTest,
-                                           libraryDependencies <++= scalaBinaryVersion(sv => shapeless(sv)),
+                                      Seq(libraryDependencies ++= slick3All ++ databaseDriverAllTest ++ shapeless.value,
+                                           // libraryDependencies <++= scalaBinaryVersion(sv => shapeless(sv)),
                                            libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _), // for slick
                                            scalacOptions ++= Seq("-nowarn")))
                             .dependsOn(debop4s_config, debop4s_core, debop4s_timeperiod, debop4s_data_common)
 
   val debop4s_data_slick3_northwind =
     Project("debop4s-data-slick3-northwind", file("debop4s-data-slick3-northwind"))
-    .settings(commonSettings ++ Seq(libraryDependencies ++= slick3All ++ databaseDriverAllTest,
-                                     scalacOptions ++= Seq("-nowarn")))
+    .settings(commonSettings ++
+              Seq(libraryDependencies ++= slick3All ++ databaseDriverAllTest ++ shapeless.value,
+                   // libraryDependencies <++= scalaBinaryVersion(sv => shapeless(sv)),
+                   scalacOptions ++= Seq("-nowarn")))
     .dependsOn(debop4s_data_slick3)
 
+  // debop4s-data-orm 은 QueryDSL 을 사용해야 해서 sbt가 아닌 maven 으로 빌드해야 합니다.
   val debop4s_data_orm = Project("debop4s-data-orm", file("debop4s-data-orm"))
                          .settings(commonSettings ++
                                    Seq(libraryDependencies ++=
@@ -149,8 +148,7 @@ object Debop4sBuild extends Build {
                                        hibernateAll ++
                                        Seq(querydslJpa, querydslJpaCodegen) ++
                                        databaseDriverAllTest))
-                         .dependsOn(debop4s_config, debop4s_core, debop4s_timeperiod,
-                             debop4s_data_common, debop4s_rediscala, hibernate_rediscala)
+                         .dependsOn(debop4s_config, debop4s_core, debop4s_timeperiod, debop4s_data_common, debop4s_rediscala, hibernate_rediscala)
 
   val debop4s_shiro = Project("debop4s-shiro", file("debop4s-shiro"))
                       .settings(commonSettings ++ Seq(libraryDependencies ++= Seq(shiroCore, rediscala)))

@@ -12,19 +12,18 @@ import debop4s.rediscala.AbstractRedisFunSuite
 class RedisHelperFunSuite extends AbstractRedisFunSuite {
 
   test("increment and get") {
-    redis.set("inc", 0).await
+    redis.set("inc", 0).stay
 
     val helper = RedisHelper()
     helper.increseAndGet("inc").await shouldBe 1
     helper.increseAndGet("inc").await shouldBe 2
     helper.increseAndGet("inc").await shouldBe 3
 
-    redis.del("inc")
+    redis.del("inc").await
   }
 
   test("decrement and get") {
-
-    redis.set("dec", 100).await
+    redis.set("dec", 100).stay
 
     val helper = RedisHelper()
 
@@ -32,7 +31,7 @@ class RedisHelperFunSuite extends AbstractRedisFunSuite {
     helper.decreaseAndGet("dec").await shouldBe 98
     helper.decreaseAndGet("dec").await shouldBe 97
 
-    redis.del("dec")
+    redis.del("dec").stay
   }
 
 }

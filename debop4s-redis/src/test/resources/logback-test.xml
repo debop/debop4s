@@ -26,7 +26,7 @@
         <channel>channel:logback:logs</channel>
     </appender>
 
-    <logger name="debop4s.redis" level="TRACE"/>
+    <logger name="debop4s.redis" level="DEBUG"/>
 
     <logger name="org.hibernate.SQL" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
