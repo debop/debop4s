@@ -1,9 +1,53 @@
+import Dependencies._
 import sbt.Keys._
 import sbt._
 
+object BuildSettings {
+
+  /** Common Setting */
+  val scalaBuildOptions = Seq("-unchecked", "-deprecation", "-feature", "-explaintypes", "-Dfile.encinding=UTF-8",
+                               "-language:implicitConversions", "-language:postfixOps", "-language:dynamics", "-language:higherKinds",
+                               "-language:reflectiveCalls",
+                               "-Yconst-opt", "-Ydead-code", "-Yclosure-elim", "-Yinline", "-Yinline-warnings")
+
+  def libraryOverrides = Set(
+                              slf4j,
+                              commonsLang3,
+                              commonsCodec,
+                              javassist,
+                              guava,
+                              httpcore,
+                              httpclient,
+                              "xml-apis" % "xml-apis" % "1.3.04",
+                              "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3"
+                            )
+  def commonSettings = Seq(
+                            organization := "debop4s",
+                            version := "0.4.0-SNAPSHOT",
+                            scalaVersion := "2.11.6",
+                            ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) },
+                            libraryDependencies ++= commonDependencies,
+                            libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-library" % _),
+                            libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
+                            dependencyOverrides ++= libraryOverrides,
+                            javacOptions ++= Seq("-source", jdkVersion, "-target", jdkVersion),
+                            scalacOptions ++= scalaBuildOptions,
+                            resolvers ++= CustomResolvers.customResolvers,
+                            publishMavenStyle := true,
+                            publishArtifact in Test := false,
+                            pomIncludeRepository := { x => false },
+                            compileOrder := CompileOrder.Mixed,
+                            parallelExecution in Test := true,
+                            crossScalaVersions := Seq("2.10.5", "2.11.6"),
+                            unmanagedSourceDirectories in Compile <+= (sourceDirectory in Compile, scalaBinaryVersion) {
+                              (s, v) => s / ("scala_" + v)
+                            }
+                          )
+}
+
 object Debop4sBuild extends Build {
 
-  import Dependencies._
+  import BuildSettings._
 
   lazy val debop4s = Project("debop4s", file("."))
                      .settings(commonSettings)
@@ -74,7 +118,9 @@ object Debop4sBuild extends Build {
                             .dependsOn(debop4s_config)
 
   val debop4s_data_slick2 = Project("debop4s-data-slick", file("debop4s-data-slick"))
-                            .settings(commonSettings ++ Seq(libraryDependencies ++= slick2All ++ databaseDriverAllTest))
+                            .settings(commonSettings ++ Seq(libraryDependencies ++= slick2All ++ databaseDriverAllTest,
+                                                             libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _), // for slick
+                                                             scalacOptions ++= Seq("-nowarn")))
                             .dependsOn(debop4s_config, debop4s_core, debop4s_timeperiod, debop4s_data_common)
 
   val debop4s_data_slick2_northwind =
@@ -86,6 +132,7 @@ object Debop4sBuild extends Build {
                             .settings(commonSettings ++
                                       Seq(libraryDependencies ++= slick3All ++ databaseDriverAllTest,
                                            libraryDependencies <++= scalaBinaryVersion(sv => shapeless(sv)),
+                                           libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _), // for slick
                                            scalacOptions ++= Seq("-nowarn")))
                             .dependsOn(debop4s_config, debop4s_core, debop4s_timeperiod, debop4s_data_common)
 
@@ -133,33 +180,4 @@ object Debop4sBuild extends Build {
                                     Seq(libraryDependencies ++= Seq(scalaAsync, miniboxing, scalaxy_stream, fst, kryo),
                                          libraryDependencies <++= scalaBinaryVersion(sv => scalaBlitz(sv))))
                           .dependsOn(debop4s_core)
-
-
-  /** Common Setting */
-  val scalaBuildOptions = Seq("-unchecked", "-deprecation", "-feature", "-explaintypes", "-Dfile.encinding=UTF-8",
-                               "-language:implicitConversions", "-language:postfixOps", "-language:dynamics", "-language:higherKinds",
-                               "-language:reflectiveCalls",
-                               "-Yconst-opt", "-Ydead-code", "-Yclosure-elim", "-Yinline", "-Yinline-warnings")
-
-
-  def commonSettings: Seq[Def.Setting[_]] =
-    Defaults.coreDefaultSettings ++ Seq(
-                                         organization := "debop4s",
-                                         version := "0.4.0-SNAPSHOT",
-                                         scalaVersion := "2.11.6",
-                                         ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) },
-                                         libraryDependencies ++= commonDependencies,
-                                         javacOptions ++= Seq("-source", jdkVersion, "-target", jdkVersion),
-                                         scalacOptions ++= scalaBuildOptions,
-                                         resolvers ++= CustomResolvers.customResolvers,
-                                         publishMavenStyle := true,
-                                         publishArtifact in Test := false,
-                                         pomIncludeRepository := { x => false },
-                                         compileOrder := CompileOrder.Mixed,
-                                         parallelExecution in Test := true,
-                                         crossScalaVersions := Seq("2.10.5", "2.11.6"),
-                                         unmanagedSourceDirectories in Compile <+= (sourceDirectory in Compile, scalaBinaryVersion) {
-                                           (s, v) => s / ("scala_" + v)
-                                         }
-                                       )
 }

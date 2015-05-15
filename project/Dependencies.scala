@@ -74,7 +74,10 @@ object Dependencies {
   val javaxMail = "javax.mail" % "mail" % "1.4.7"
 
   val httpcore        = "org.apache.httpcomponents" % "httpcore" % "4.4.1"
-  val httpclient      = "org.apache.httpcomponents" % "httpclient" % "4.3.6"
+  val httpclient = "org.apache.httpcomponents" % "httpclient" % "4.3.6" excludeAll(
+    ExclusionRule("commons-logging", "commons-logging"),
+    ExclusionRule("org.apache.httpcomponents", "httpcore")
+    )
   val httpcoreNIO     = "org.apache.httpcomponents" % "httpcore-nio" % "4.4.1"
   val httpasyncclient = "org.apache.httpcomponents" % "httpasyncclient" % "4.1"
 
@@ -82,7 +85,7 @@ object Dependencies {
 
   val asyncHttpClient = "com.ning" % "async-http-client" % "1.9.22"
 
-  val javassist = "org.javassist" % "javassist" % "3.18.2-GA"
+  val javassist = "org.javassist" % "javassist" % "3.19.0-GA"
 
   val javaxInject     = "javax.inject" % "javax.inject" % "1"
   val jta             = "javax.transaction" % "jta" % "1.1"
@@ -128,7 +131,7 @@ object Dependencies {
   val modelmapper = "org.modelmapper" % "modelmapper" % "0.7.4"
 
   // Http Component for scala
-  val dispatch = "net.databinder.dispatch" %% "dispatch-core" % "0.11.2"
+  val dispatch = "net.databinder.dispatch" %% "dispatch-core" % "0.11.2" exclude("org.scala-lang.modules", "scala-xml")
 
   // 암호화
   val jasypt = "org.jasypt" % "jasypt" % "1.9.2"
@@ -145,9 +148,9 @@ object Dependencies {
   val joddProps   = "org.jodd" % "jodd-props" % joddVersion
   val joddAll     = Seq(joddCore, joddBean, joddProps)
 
-  val logback = "ch.qos.logback" % "logback-classic" % "1.1.2"
+  val logback = "ch.qos.logback" % "logback-classic" % "1.1.3"
 
-  val slf4jVersion = "1.7.7"
+  val slf4jVersion = "1.7.12"
   val slf4j        = "org.slf4j" % "slf4j-api" % slf4jVersion
   val slf4jLog4j   = "org.slf4j" % "slf4j-log4j12" % slf4jVersion
   val slf4jJcl     = "org.slf4j" % "jcl-over-slf4j" % slf4jVersion
@@ -179,7 +182,12 @@ object Dependencies {
   val springWebMvc = "org.springframework" % "spring-webmvc" % springFrameworkVersion
 
   // Spring Data
-  val springDataJpa     = "org.springframework.data" % "spring-data-jpa" % "1.8.0.RELEASE"
+  val springDataJpa = "org.springframework.data" % "spring-data-jpa" % "1.8.0.RELEASE" excludeAll(
+    ExclusionRule("org.springframework", "spring-orm"),
+    ExclusionRule("org.springframework", "spring-context"),
+    ExclusionRule("org.springframework", "spring-tx"),
+    ExclusionRule("org.springframework", "spring-aop")
+    )
   val springDataMongodb = "org.springframework.data" % "spring-data-mongodb" % "1.7.0.RELEASE"
 
   // Spring Security
@@ -197,8 +205,8 @@ object Dependencies {
   val hibernateCore          = "org.hibernate" % "hibernate-core" % hibernateVersion
   val hibernateEntityManager = "org.hibernate" % "hibernate-entitymanager" % hibernateVersion
   val hibernateTesting       = "org.hibernate" % "hibernate-testing" % hibernateVersion % "test"
-
-  val hibernateAll = Seq(hibernateCore, hibernateEntityManager, hibernateTesting)
+  val hibernateJpa21Api = "org.hibernate.javax.persistence" % "hibernate-jpa-2.1-api" % "1.0.0.Final"
+  val hibernateAll      = Seq(hibernateCore, hibernateEntityManager, hibernateTesting, hibernateJpa21Api)
 
   val hibernateValidatorVersion = "5.1.3.Final"
 

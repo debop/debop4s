@@ -1,24 +1,25 @@
 language: scala
 script:
-  - mvn clean install -DskipTests=true
+  - sbt ++$TRAVIS_SCALA_VERSION "package"
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
-  - mysql -e 'create database hibernate'
+  - mysql -e 'create database hibernate4s'
   - mysql -e 'create database slick'
 
 scala:
-  - 2.10.4
+  - "2.11.6"
 
 jdk:
   - oraclejdk7
+  - openjdk7
 
 services:
   - redis
   - mongodb
 
 env:
-  - MAVEN_OPTS="-ea -server -Xmx8G -XX:PermSize=256M -XX:MaxPermSize=512M -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
+  - SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
 
 # whitelist
 branches:
