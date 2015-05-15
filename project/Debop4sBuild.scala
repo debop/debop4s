@@ -1,4 +1,3 @@
-import codetroopers.QueryDSLPlugin
 import sbt.Keys._
 import sbt._
 
@@ -13,7 +12,8 @@ trait BuildSettings {self: Build with Dependencies =>
 
   def libraryOverrides = Set(slf4j, commonsLang3, commonsCodec, javassist, guava, httpcore, httpclient, mongoJavaDriver,
                               "xml-apis" % "xml-apis" % "1.3.04",
-                              "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3")
+                              "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3") ++
+                         springFrameworkAll
 
   val scala210 = "2.10.5"
   val scala211 = "2.11.6"
