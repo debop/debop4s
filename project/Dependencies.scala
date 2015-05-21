@@ -73,7 +73,7 @@ trait Dependencies {self: Build =>
   val commonsLang3       = "org.apache.commons" % "commons-lang3" % "3.4"
   val commonsCodec       = "commons-codec" % "commons-codec" % "1.10"
   val commonsCollections = "commons-collections" % "commons-collections" % "3.2.1"
-  val commonsIO          = "commons-io" % "commons-IO" % "2.4"
+  val commonsIO          = "commons-io" % "commons-io" % "2.4"
   val commonsValidator   = "commons-validator" % "commons-validator" % "1.4.0"
 
   val apacheCommons = Seq(commonsCompress, commonsPool2, commonsCollections, commonsLang3, commonsIO, commonsValidator)
