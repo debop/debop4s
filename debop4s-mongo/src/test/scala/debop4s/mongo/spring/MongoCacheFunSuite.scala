@@ -54,35 +54,22 @@ class MongoCacheFunSuite extends AbstractMongoFunSuite {
     var user2: User = null
     var user3: User = null
 
-    try {
-      val stopwatch: ClosableStopwatch = new ClosableStopwatch("initial user")
-      try {
-        user1 = userRepo.getUser(userId, 100)
-      } finally {
-        if (stopwatch != null) stopwatch.close()
-      }
+
+    using(new ClosableStopwatch("initial user")) { stopwatch =>
+      user1 = userRepo.getUser(userId, 100)
     }
 
-    try {
-      val stopwatch: ClosableStopwatch = new ClosableStopwatch("from cache")
-      try {
-        user2 = userRepo.getUser(userId, 200)
-      } finally {
-        if (stopwatch != null) stopwatch.close()
-      }
+    using(new ClosableStopwatch("from cache")) { stopwatch =>
+      user2 = userRepo.getUser(userId, 200)
     }
 
     // evict user1
     userRepo.updateUser(user1)
 
-    try {
-      val stopwatch: ClosableStopwatch = new ClosableStopwatch("after evict")
-      try {
-        user3 = userRepo.getUser(userId, 200)
-      } finally {
-        if (stopwatch != null) stopwatch.close()
-      }
+    using(new ClosableStopwatch("after evict")) { stopwatch =>
+      user3 = userRepo.getUser(userId, 200)
     }
+
     user1 shouldEqual user2
     user1.favoriteMovies.size shouldEqual user2.favoriteMovies.size
     user1.favoriteMovies.size should not equal user3.favoriteMovies.size
