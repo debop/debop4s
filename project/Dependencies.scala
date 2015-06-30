@@ -103,7 +103,7 @@ trait Dependencies {self: Build =>
   val snappy = "org.xerial.snappy" % "snappy-java" % "1.1.1.7"
   val lz4    = "net.jpountz.lz4" % "lz4" % "1.3.0"
 
-  val fst = "de.ruedigermoeller" % "fst" % "2.27"
+  val fst = "de.ruedigermoeller" % "fst" % "2.29"
 
   val kryo                    = "com.esotericsoftware.kryo" % "kryo" % "2.24.0"
   val akka_kryo_serialization = "com.github.romix.akka" %% "akka-kryo-serialization" % "0.3.2"
@@ -141,7 +141,7 @@ trait Dependencies {self: Build =>
   // 암호화
   val jasypt = "org.jasypt" % "jasypt" % "1.9.2"
 
-  val jodaTime    = "joda-time" % "joda-time" % "2.7"
+  val jodaTime    = "joda-time" % "joda-time" % "2.8"
   val jodaMoney   = "joda-money" % "joda-money" % "0.10.0"
   val jodaConvert = "org.joda" % "joda-convert" % "1.7"
 
@@ -206,7 +206,7 @@ trait Dependencies {self: Build =>
   val aspectjweaver = "org.aspectj" % "aspectjweaver" % "1.8.1"
 
   // Hibernate 4
-  val hibernateVersion       = "4.3.9.Final"
+  val hibernateVersion       = "4.3.10.Final"
   val hibernateCore          = "org.hibernate" % "hibernate-core" % hibernateVersion
   val hibernateEntityManager = "org.hibernate" % "hibernate-entitymanager" % hibernateVersion
   val hibernateTesting       = "org.hibernate" % "hibernate-testing" % hibernateVersion % "test"

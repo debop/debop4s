@@ -1,5 +1,6 @@
 *.class
 *.log
+*.hprof
 
 # sbt specific
 dist/*

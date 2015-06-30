@@ -16,7 +16,7 @@ import scala.concurrent.Future
 abstract class AbstractSlickFunSuite
   extends FunSuite with Matchers with OptionValues with BeforeAndAfter with BeforeAndAfterAll {
 
-  protected lazy val log = LoggerFactory.getLogger(getClass)
+  protected lazy val log = org.slf4j.LoggerFactory.getLogger(getClass)
 
   implicit val executionContext = scala.concurrent.ExecutionContext.global
 
