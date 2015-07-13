@@ -12,12 +12,11 @@ object CustomResolvers {
 
   /** CustomResolvers */
   val customResolvers = Seq(
-    kestiNexus,
-    localNexus,
+    // kestiNexus,
+    // localNexus,
     Resolver.mavenLocal,
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots"),
     typeSafeRels,
     rediscalRepo
   )
-}
