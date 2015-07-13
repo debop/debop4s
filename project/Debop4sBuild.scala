@@ -68,7 +68,7 @@ trait BuildSettings {
   )
 
   def getMavenRepository(v: String): Some[MavenRepository] = {
-    val nexus = "http://127.0.0.1:8081/nexus/"
+    val nexus = "http://nexus.kesti.co.kr/"
     if (v.trim.endsWith("SNAPSHOT"))
       Some("Local Snapshots" at nexus + "content/repositories/snapshots/")
     else

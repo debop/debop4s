@@ -2,7 +2,7 @@ import sbt._
 
 object CustomResolvers {
 
-  val kestiNexus = "Kesti Nexus" at "nexus.kesti.co.kr/content/groups/public"
+  val kestiNexus = "Kesti Nexus" at "http://nexus.kesti.co.kr/content/groups/public"
   val localNexus = "Local Nexus" at "http://127.0.0.1:8081/nexus/content/groups/public"
   val sonatypeSTArch = "scalaTools Archive" at "https://oss.sonatype.org/content/groups/scala-tools"
   val mavenOrgRepo = "Maven.Org Repository" at "http://repo1.maven.org/maven2/org"
@@ -20,3 +20,4 @@ object CustomResolvers {
     typeSafeRels,
     rediscalRepo
   )
+}
