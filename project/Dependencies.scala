@@ -281,7 +281,7 @@ trait Dependencies {self: Build =>
 
 
   // Testing for Java
-  val junit           = "junit" % "junit" % "4.11" % "test"
+  val junit           = "junit" % "junit" % "4.12" % "test"
   val junitBenchmarks = "com.carrotsearch" % "junit-benchmarks" % "0.7.2" % "test"
   val festAssert      = "org.easytesting" % "fest-assert" % "1.4" % "test"
   val mockito         = "org.mockito" % "mockito-all" % "1.10.19" % "test"
@@ -289,7 +289,7 @@ trait Dependencies {self: Build =>
   val testingJavaSeq = Seq(junit, junitBenchmarks, festAssert, mockito)
 
   // Testing for Scala
-  val scalatest  = "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+  val scalatest  = "org.scalatest" %% "scalatest" % "2.2.5" % "test"
   val spec2      = "org.specs2" %% "specs2" % "3.3.1" % "test"
   val scalameter = "com.storm-enroute" %% "scalameter" % "0.6" % "test"
 
