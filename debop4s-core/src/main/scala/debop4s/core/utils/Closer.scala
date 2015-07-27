@@ -3,6 +3,7 @@ package debop4s.core.utils
 import org.slf4j.LoggerFactory
 
 import scala.util.control.NonFatal
+import scala.util.{Failure, Success, Try}
 
 /**
  * `close` 메소드가 있는 객체에 대한 작업을 수행 한 후, `close` 메소드를 호출하도록 해주는 closer 입니다.
@@ -25,6 +26,23 @@ object Closer {
       } catch {
         case NonFatal(e) => log.warn("close 메소드에서 예외가 발생했습니다.", e)
       }
+    }
+  }
+
+  def usingSilence[A <: {def close() : Unit}, B](closable: A)(func: A => B): B = {
+    require(closable != null)
+    require(func != null)
+
+    Try {
+      func(closable)
+    } match {
+      case Success(result) =>
+        Try(closable.close()) match {
+          case Failure(e) =>
+            if (NonFatal(e))
+              log.warn("close 메소드에서 예외가 발생했습니다.", e)
+        }
+        result
     }
   }
 }

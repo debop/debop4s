@@ -57,7 +57,7 @@ object Graphs {
    * @param source 시작 노드
    * @param getAdjacent 노드의 근처 노드들 (다음으로 탐색할 노드들)
    */
-  def breathFirstScanAsync[@miniboxed T](source: T, getAdjacent: T => JIterable[T]): Future[JIterable[T]] =
+  def breadthFirstScanAsync[@miniboxed T](source: T, getAdjacent: T => JIterable[T]): Future[JIterable[T]] =
     Future {
       breadthFirstScan(source, getAdjacent)
     }
