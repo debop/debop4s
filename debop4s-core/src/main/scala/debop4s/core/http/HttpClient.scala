@@ -17,7 +17,7 @@ import org.apache.http.util.EntityUtils
 import org.slf4j.LoggerFactory
 
 import scala.annotation.varargs
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util.Try
 import scala.util.control.NonFatal
 
@@ -91,7 +91,7 @@ class HttpClient extends AutoCloseable {
       val httppost = new HttpPost(uri)
 
       if (nvps != null)
-        httppost.setEntity(new UrlEncodedFormEntity(nvps, cs))
+        httppost.setEntity(new UrlEncodedFormEntity(nvps.asJava, cs))
 
       if (headers != null)
         headers.foreach(httppost.addHeader)
