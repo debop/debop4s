@@ -2,7 +2,7 @@ package debop4s.core.parallels;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import debop4s.core.Guard;
+import com.google.common.collect.Maps;
 import debop4s.core.JAction1;
 import debop4s.core.JFunction1;
 import debop4s.core.collections.NumberRange;
@@ -10,8 +10,12 @@ import debop4s.core.concurrent.JAsyncs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
+
+import static debop4s.core.Guard.shouldNotBeNull;
 
 /**
  * JParallels
@@ -59,8 +63,9 @@ public final class JParallels {
     }
 
     /**
-     * 지정한 작업을 병렬로 수행합니다.  @param count the count
-     *
+     * 지정한 작업을 병렬로 수행합니다.
+
+     * @param count the count
      * @param runnable the runnable
      */
     public static void run(final int count,
@@ -94,15 +99,13 @@ public final class JParallels {
                            final int toExclude,
                            final int step,
                            final Runnable runnable) {
-        Guard.shouldNotBeNull(runnable, "runnable");
-        log.debug("병렬로 작업을 수행합니다... fromInclude=[{}], toExclude=[{}], step=[{}], workerCount=[{}]",
-                  fromInclude, toExclude, step, workerCount);
+        shouldNotBeNull(runnable, "runnable");
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        ExecutorService executor = createExecutorService();
 
         try {
             List<NumberRange.IntRange> partitions = NumberRange.partition(fromInclude, toExclude, step, workerCount);
-            List<Callable<Void>> tasks = new LinkedList<>();
+            List<Callable<Void>> tasks = Lists.newLinkedList();
 
             for (final NumberRange.IntRange partition : partitions) {
                 Callable<Void> task =
@@ -168,15 +171,15 @@ public final class JParallels {
                            final int toExclude,
                            final int step,
                            final JAction1<Integer> action) {
-        Guard.shouldNotBeNull(action, "function");
+        shouldNotBeNull(action, "action");
         log.trace("병렬로 작업을 수행합니다... fromInclude=[{}], toExclude=[{}], step=[{}], workerCount=[{}]",
                   fromInclude, toExclude, step, workerCount);
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        ExecutorService executor = createExecutorService();
 
         try {
             List<NumberRange.IntRange> partitions = NumberRange.partition(fromInclude, toExclude, step, workerCount);
-            List<Callable<Void>> tasks = new LinkedList<>();
+            List<Callable<Void>> tasks = Lists.newLinkedList();
 
             for (final NumberRange.IntRange partition : partitions) {
                 Callable<Void> task =
@@ -243,20 +246,20 @@ public final class JParallels {
                                   final int toExclude,
                                   final int step,
                                   final Callable<V> callable) {
-        Guard.shouldNotBeNull(callable, "func");
+        shouldNotBeNull(callable, "func");
         log.trace("병렬로 작업을 수행합니다... fromInclude=[{}], toExclude=[{}], step=[{}], workerCount=[{}]",
                   fromInclude, toExclude, step, workerCount);
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        ExecutorService executor = createExecutorService();
 
         try {
             List<NumberRange.IntRange> partitions = NumberRange.partition(fromInclude, toExclude, step, workerCount);
             final Map<Integer, List<V>> localResults = new LinkedHashMap<>();
-            List<Callable<List<V>>> tasks = new LinkedList<>(); // False Sharing을 방지하기 위해
+            List<Callable<List<V>>> tasks = Lists.newLinkedList(); // False Sharing을 방지하기 위해
 
             for (int p = 0; p < partitions.size(); p++) {
                 final NumberRange.IntRange partition = partitions.get(p);
-                final List<V> localResult = new ArrayList<>(partition.size());
+                final List<V> localResult = Lists.newArrayListWithCapacity(partition.size());
                 localResults.put(p, localResult);
 
                 Callable<List<V>> task = new Callable<List<V>>() {
@@ -328,22 +331,18 @@ public final class JParallels {
                                   final int toExclude,
                                   final int step,
                                   final JFunction1<Integer, V> function) {
-        Guard.shouldNotBeNull(function, "function");
-        log.trace("병렬로 작업을 수행합니다... fromInclude=[{}], toExclude=[{}], step=[{}], workerCount=[{}]",
-                  fromInclude, toExclude, step, workerCount);
+        shouldNotBeNull(function, "function");
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
-
+        ExecutorService executor = createExecutorService();
         try {
             List<NumberRange.IntRange> partitions = NumberRange.partition(fromInclude, toExclude, step, workerCount);
-            final Map<Integer, List<V>> localResults = new LinkedHashMap<>();
-            List<Callable<List<V>>> tasks = new LinkedList<>(); // False Sharing을 방지하기 위해
+            final Map<Integer, List<V>> localResults = Maps.newLinkedHashMap();
+            List<Callable<List<V>>> tasks = Lists.newLinkedList(); // False Sharing을 방지하기 위해
 
             for (int p = 0; p < partitions.size(); p++) {
                 final NumberRange.IntRange partition = partitions.get(p);
-                final List<V> localResult = new ArrayList<>(partition.size());
+                final List<V> localResult = Lists.newArrayListWithCapacity(partition.size());
                 localResults.put(p, localResult);
-
                 Callable<List<V>> task = new Callable<List<V>>() {
                     @Override
                     public List<V> call() throws Exception {
@@ -357,7 +356,7 @@ public final class JParallels {
 
             executor.invokeAll(tasks);
 
-            List<V> results = new ArrayList<>(partitions.size());
+            List<V> results = Lists.newArrayListWithCapacity(partitions.size());
             for (int i = 0; i < partitions.size(); i++) {
                 results.addAll(localResults.get(i));
             }
@@ -380,17 +379,17 @@ public final class JParallels {
      */
     public static <T> void runEach(final Iterable<T> elements,
                                    final JAction1<T> action) {
-        Guard.shouldNotBeNull(elements, "elements");
-        Guard.shouldNotBeNull(action, "function");
+        shouldNotBeNull(elements, "elements");
+        shouldNotBeNull(action, "function");
         log.trace("병렬로 작업을 수행합니다... workerCount=[{}]", workerCount);
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        ExecutorService executor = createExecutorService();
 
         try {
             List<T> elemList = Lists.newArrayList(elements);
             int partitionSize = getPartitionSize(elemList.size(), workerCount);
             Iterable<List<T>> partitions = Iterables.partition(elemList, partitionSize);
-            List<Callable<Void>> tasks = new LinkedList<>();
+            List<Callable<Void>> tasks = Lists.newLinkedList();
 
             for (final List<T> partition : partitions) {
                 Callable<Void> task =
@@ -425,23 +424,22 @@ public final class JParallels {
      */
     public static <T, V> List<V> runEach(final Iterable<T> elements,
                                          final JFunction1<T, V> function) {
-        Guard.shouldNotBeNull(elements, "elements");
-        Guard.shouldNotBeNull(function, "function");
+        shouldNotBeNull(elements, "elements");
+        shouldNotBeNull(function, "function");
         log.trace("병렬로 작업을 수행합니다... workerCount=[{}]", workerCount);
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        ExecutorService executor = createExecutorService();
 
         try {
             List<T> elemList = Lists.newArrayList(elements);
             int partitionSize = getPartitionSize(elemList.size(), workerCount);
             List<List<T>> partitions = Lists.partition(elemList, partitionSize);
-            final Map<Integer, List<V>> localResults = new LinkedHashMap<>();
-
-            List<Callable<List<V>>> tasks = new LinkedList<>(); // False Sharing을 방지하기 위해
+            final Map<Integer, List<V>> localResults = Maps.newLinkedHashMap();
+            List<Callable<List<V>>> tasks = Lists.newLinkedList(); // False Sharing을 방지하기 위해
 
             for (int p = 0; p < partitions.size(); p++) {
                 final List<T> partition = partitions.get(p);
-                final List<V> localResult = new ArrayList<>(partition.size());
+                final List<V> localResult = Lists.newArrayListWithCapacity(partition.size());
                 localResults.put(p, localResult);
 
                 Callable<List<V>> task = new Callable<List<V>>() {
@@ -457,14 +455,12 @@ public final class JParallels {
 
             executor.invokeAll(tasks);
 
-            List<V> results = new ArrayList<>(elemList.size());
+            List<V> results = Lists.newArrayListWithCapacity(elemList.size());
 
             for (int i = 0; i < partitions.size(); i++) {
                 results.addAll(localResults.get(i));
             }
-
             log.debug("모든 작업을 병렬로 완료했습니다. workerCount=[{}]", workerCount);
-
             return results;
 
         } catch (Exception e) {
@@ -512,26 +508,23 @@ public final class JParallels {
                                      final int toExclude,
                                      final int step,
                                      final JAction1<List<Integer>> action) {
-        Guard.shouldNotBeNull(action, "function");
-        log.trace("병렬로 작업을 수행합니다... fromInclude=[{}], toExclude=[{}], step=[{}], workerCount=[{}]",
-                  fromInclude, toExclude, step, workerCount);
+        shouldNotBeNull(action, "action");
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        ExecutorService executor = createExecutorService();
 
         try {
             List<NumberRange.IntRange> partitions = NumberRange.partition(fromInclude, toExclude, step, workerCount);
-            List<Callable<Void>> tasks = new LinkedList<>();
+            List<Callable<Void>> tasks = Lists.newLinkedList();
 
             for (NumberRange.IntRange partition : partitions) {
                 final List<Integer> inputs = Lists.newArrayList(partition.iterator());
-                Callable<Void> task =
-                        new Callable<Void>() {
-                            @Override
-                            public Void call() throws Exception {
-                                action.perform(inputs);
-                                return null;
-                            }
-                        };
+                Callable<Void> task = new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        action.perform(inputs);
+                        return null;
+                    }
+                };
                 tasks.add(task);
             }
             List<Future<Void>> results = executor.invokeAll(tasks);
@@ -585,15 +578,12 @@ public final class JParallels {
                                             int toExclude,
                                             int step,
                                             final JFunction1<List<Integer>, List<V>> function) {
-        Guard.shouldNotBeNull(function, "function");
-        log.trace("병렬로 작업을 수행합니다... fromInclude=[{}], toExclude=[{}], step=[{}], workerCount=[{}]",
-                  fromInclude, toExclude, step, workerCount);
+        shouldNotBeNull(function, "function");
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
-
+        ExecutorService executor = createExecutorService();
         try {
             List<NumberRange.IntRange> partitions = NumberRange.partition(fromInclude, toExclude, step, workerCount);
-            List<Callable<List<V>>> tasks = new LinkedList<>(); // False Sharing을 방지하기 위해
+            List<Callable<List<V>>> tasks = Lists.newLinkedList(); // False Sharing을 방지하기 위해
 
             for (final NumberRange.IntRange partition : partitions) {
                 final List<Integer> inputs = Lists.newArrayList(partition.iterator());
@@ -608,15 +598,12 @@ public final class JParallels {
             // 작업 시작
             List<Future<List<V>>> outputs = executor.invokeAll(tasks);
 
-            List<V> results = new ArrayList<>();
+            List<V> results = Lists.newArrayList();
             for (Future<List<V>> output : outputs) {
                 results.addAll(output.get());
             }
-
             log.debug("모든 작업을 병렬로 완료했습니다. workerCount=[{}]", workerCount);
-
             return results;
-
         } catch (Exception e) {
             log.error("데이터에 대한 병렬 작업 중 예외가 발생했습니다.", e);
             throw new RuntimeException(e);
@@ -633,17 +620,17 @@ public final class JParallels {
      */
     public static <T> void runPartitions(final Iterable<T> elements,
                                          final JAction1<List<T>> action) {
-        Guard.shouldNotBeNull(elements, "elements");
-        Guard.shouldNotBeNull(action, "function");
+        shouldNotBeNull(elements, "elements");
+        shouldNotBeNull(action, "function");
         log.trace("병렬로 작업을 수행합니다... workerCount=[{}]", workerCount);
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        ExecutorService executor = createExecutorService();
 
         try {
             List<T> elemList = Lists.newArrayList(elements);
             int partitionSize = getPartitionSize(elemList.size(), workerCount);
             Iterable<List<T>> partitions = Iterables.partition(elemList, partitionSize);
-            List<Callable<Void>> tasks = new LinkedList<>();
+            List<Callable<Void>> tasks = Lists.newLinkedList();
 
             for (final List<T> partition : partitions) {
                 Callable<Void> task = new Callable<Void>() {
@@ -676,11 +663,11 @@ public final class JParallels {
      */
     public static <T, V> List<V> runPartitions(final Iterable<T> elements,
                                                final JFunction1<List<T>, List<V>> function) {
-        Guard.shouldNotBeNull(elements, "elements");
-        Guard.shouldNotBeNull(function, "function");
+        shouldNotBeNull(elements, "elements");
+        shouldNotBeNull(function, "function");
         log.trace("병렬로 작업을 수행합니다... workerCount=[{}]", workerCount);
 
-        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        ExecutorService executor = createExecutorService();
 
         try {
             List<T> elemList = Lists.newArrayList(elements);
@@ -688,7 +675,7 @@ public final class JParallels {
             List<List<T>> partitions = Lists.partition(elemList, partitionSize);
             //final Map<Integer, List<V>> localResults = new LinkedHashMap<>();
 
-            List<Callable<List<V>>> tasks = new LinkedList<>(); // False Sharing을 방지하기 위해
+            List<Callable<List<V>>> tasks = Lists.newLinkedList(); // False Sharing을 방지하기 위해
 
             for (final List<T> partition : partitions) {
                 Callable<List<V>> task = new Callable<List<V>>() {
@@ -702,7 +689,7 @@ public final class JParallels {
             // 작업 시작
             List<Future<List<V>>> futures = executor.invokeAll(tasks);
 
-            List<V> results = new ArrayList<>(elemList.size());
+            List<V> results = Lists.newArrayListWithCapacity(elemList.size());
             for (Future<List<V>> future : futures)
                 results.addAll(future.get());
 

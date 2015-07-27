@@ -6,11 +6,11 @@ import org.joda.time.{DateTime, Duration, Period}
 
 class JodaRichLong(val self: Long) extends AnyVal {
 
-  def toDateTime: DateTime = new DateTime(self.toInt)
+  def toDateTime: DateTime = new DateTime(self)
 
-  def toDuration: Duration = new Duration(self.toInt)
+  def toDuration: Duration = new Duration(self)
 
-  def toTimestamp: Timestamp = new Timestamp(self.toInt)
+  def toTimestamp: Timestamp = new Timestamp(self)
 
   def milli: DurationBuilder = millis
   def millis: DurationBuilder = new DurationBuilder(Period.millis(self.toInt))
