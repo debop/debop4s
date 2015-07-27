@@ -2,7 +2,7 @@ package debop4s.core.parallels
 
 import java.util.concurrent.{Callable, ThreadLocalRandom}
 
-import debop4s.core.JAction1
+import debop4s.core.{JAction1, JFunction}
 
 import scala.collection.Seq
 
@@ -21,14 +21,14 @@ object Parallels {
 
   def mapAsOrdered[@miniboxed T <: Ordered[T], @miniboxed V](items: Iterable[T], mapper: T => V): Seq[V] = {
     items.par
-    .map(x => (x, mapper(x)))
-    .toList
-    .sortBy(_._1)
-    .map(_._2)
+      .map(x => (x, mapper(x)))
+      .toList
+      .sortBy(_._1)
+      .map(_._2)
   }
 
   def mapAsParallel[@miniboxed T, @miniboxed V](items: Iterable[T], mapper: T => V): Iterable[V] =
-    items.par.map(item => mapper(item)).toList
+    items.par.map(item => mapper(item)).seq.toList
 
 
   def run(count: Int)(r: Runnable): Unit = {
@@ -83,6 +83,7 @@ object Parallels {
       action1.perform(i)
     }
   }
+
   def runAction1(start: Int, end: Int, step: Int, action1: JAction1[java.lang.Integer]): Unit = {
     runAction1(Range(start, end, step)) { i =>
       action1.perform(i)
@@ -113,6 +114,7 @@ object Parallels {
     require(callable != null)
     call[V](Range(0, count))(callable)
   }
+
   def call[@miniboxed V](start: Int, end: Int, step: Int)(callable: Callable[V]): Seq[V] = {
     require(callable != null)
     call[V](Range(start, end, step))(callable)
@@ -121,6 +123,21 @@ object Parallels {
   def call[@miniboxed V](range: Seq[Int])(callable: Callable[V]): Seq[V] = {
     require(range != null)
     range.par.map(_ => callable.call()).seq
+  }
+
+  def call[@miniboxed V](count: Int, func: JFunction[V]): Seq[V] = {
+    require(func != null)
+    call[V](Range(0, count), func)
+  }
+
+  def call[@miniboxed V](start: Int, end: Int, step: Int, func: JFunction[V]): Seq[V] = {
+    require(func != null)
+    call[V](Range(start, end, step), func)
+  }
+
+  def call[@miniboxed V](range: Seq[Int], func: JFunction[V]): Seq[V] = {
+    require(range != null)
+    range.par.map(_ => func.execute()).seq
   }
 
   def callFunction[@miniboxed V](count: Int)(func: () => V): Seq[V] = {
