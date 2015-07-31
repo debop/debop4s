@@ -1,10 +1,11 @@
 import sbt.Keys._
 import sbt._
 
-trait Dependencies {self: Build =>
+trait Dependencies {
+  self: Build =>
   val jdkVersion = "1.7"
 
-  val akkaVersion = "2.3.9"
+  val akkaVersion = "2.3.12"
   val akkaActor   = "com.typesafe.akka" %% "akka-actor" % akkaVersion
   val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
 
@@ -22,9 +23,9 @@ trait Dependencies {self: Build =>
 
   val slick2All = Seq(slick2, slick2CodeGen, slick2Testkit)
 
-  val typesafeConfig = "com.typesafe" % "config" % "1.2.1"
+  val typesafeConfig = "com.typesafe" % "config" % "1.3.0"
   // 1.3.0은 JDK 8용이다.
-  val scalaAsync     = "org.scala-lang.modules" %% "scala-async" % "0.9.3"
+  val scalaAsync     = "org.scala-lang.modules" %% "scala-async" % "0.9.5"
   val scalaPickling  = "org.scala-lang" %% "scala-pickling" % "0.9.1"
 
   def scalaBlitz(scalaVersion: String) = scalaVersion match {
@@ -33,8 +34,8 @@ trait Dependencies {self: Build =>
   }
   //val scalaBlitz     = "com.github.scala-blitz" %% "scala-blitz" % "1.2"
 
-  val scalactic      = "org.scalactic" %% "scalactic" % "2.2.4"
-  val miniboxing     = "org.scala-miniboxing.plugins" %% "miniboxing-runtime" % "0.4-M2"
+  val scalactic      = "org.scalactic" %% "scalactic" % "2.2.5"
+  val miniboxing     = "org.scala-miniboxing.plugins" %% "miniboxing-runtime" % "0.4-M4"
   val scalaxy_stream = "com.nativelibs4java" % "scalaxy-streams_2.11" % "0.3.4"
 
   // scala version 에 따라 다른 dependency를 준다.
@@ -46,11 +47,11 @@ trait Dependencies {self: Build =>
 
       case Some((2, 10)) =>
         Seq("com.chuusai" % "shapeless_2.10.5" % "2.1.0",
-             compilerPlugin("org.scalamacros" % "paradise_2.10.5" % "2.0.1"))
+          compilerPlugin("org.scalamacros" % "paradise_2.10.5" % "2.0.1"))
     }
     )
 
-  val rxScala = "io.reactivex" %% "rxscala" % "0.24.1"
+  val rxScala = "io.reactivex" %% "rxscala" % "0.25.0"
 
   val scalatraVersion   = "2.3.1"
   val scalatra          = "org.scalatra" %% "scalatra" % scalatraVersion
@@ -78,7 +79,20 @@ trait Dependencies {self: Build =>
 
   val apacheCommons = Seq(commonsCompress, commonsPool2, commonsCollections, commonsLang3, commonsIO, commonsValidator)
 
-  val javaxMail = "javax.mail" % "mail" % "1.4.7"
+  val gsCollectionsVersion   = "6.2.0"
+  val gsCollections          = "com.goldmansachs" % "gs-collections" % gsCollectionsVersion
+  val gsCollectionsApi       = "com.goldmansachs" % "gs-collections-api" % gsCollectionsVersion
+  val gsCollectionsTestutils = "com.goldmansachs" % "gs-collections-testutils" % gsCollectionsVersion % "test"
+  val gsCollectionsForkjoin  = "com.goldmansachs" % "gs-collections-forkjoin" % gsCollectionsVersion
+
+  val gsCollectionsAll = Seq(
+    gsCollections,
+    gsCollectionsApi,
+    gsCollectionsForkjoin,
+    gsCollectionsTestutils
+  )
+
+  val javaxMail = "javax.mail" % "javax.mail-api" % "1.5.4"
 
   val apacheHttpVersion = "4.4.1"
   val httpcore          = "org.apache.httpcomponents" % "httpcore" % apacheHttpVersion
@@ -95,7 +109,8 @@ trait Dependencies {self: Build =>
   val javaxInject     = "javax.inject" % "javax.inject" % "1"
   val jta             = "javax.transaction" % "jta" % "1.1"
   val javaxValidation = "javax.validation" % "validation-api" % "1.1.0.Final"
-  val jsr305          = "com.google.code.findbugs" % "jsr" % "2.0.3"
+  val jsr305          = "com.google.code.findbugs" % "jsr305" % "3.0.+"
+  val jcipAnnotations = "net.jcip" % "jcip-annotations" % "1.0"
 
   val guava = "com.google.guava" % "guava" % "18.0"
   val guice = "com.google.inject" % "guice" % "4.0"
@@ -108,9 +123,9 @@ trait Dependencies {self: Build =>
   val kryo                    = "com.esotericsoftware.kryo" % "kryo" % "2.24.0"
   val akka_kryo_serialization = "com.github.romix.akka" %% "akka-kryo-serialization" % "0.3.2"
 
-  val gson = "com.google.code.gson" % "gson" % "2.3"
+  val gson = "com.google.code.gson" % "gson" % "2.3.1"
 
-  val jacksonVersion = "2.5.3"
+  val jacksonVersion = "2.6.0"
 
   val jacksonCore        = "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion
   val jacksonAnnotations = "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion
@@ -167,7 +182,7 @@ trait Dependencies {self: Build =>
   val lombok = "org.projectlombok" % "lombok" % "1.16.4"
 
   // Spring Framework
-  val springFrameworkVersion = "4.1.6.RELEASE"
+  val springFrameworkVersion = "4.2.0.RELEASE"
   val springCore             = "org.springframework" % "spring-core" % springFrameworkVersion
   val springAop              = "org.springframework" % "spring-aop" % springFrameworkVersion
   val springBeans            = "org.springframework" % "spring-beans" % springFrameworkVersion
@@ -187,7 +202,7 @@ trait Dependencies {self: Build =>
   val springWebMvc = "org.springframework" % "spring-webmvc" % springFrameworkVersion
 
   // Spring Data
-  val springDataJpa = "org.springframework.data" % "spring-data-jpa" % "1.8.0.RELEASE" excludeAll(
+  val springDataJpa     = "org.springframework.data" % "spring-data-jpa" % "1.8.0.RELEASE" excludeAll(
     ExclusionRule("org.springframework", "spring-orm"),
     ExclusionRule("org.springframework", "spring-context"),
     ExclusionRule("org.springframework", "spring-tx"),
@@ -210,8 +225,8 @@ trait Dependencies {self: Build =>
   val hibernateCore          = "org.hibernate" % "hibernate-core" % hibernateVersion
   val hibernateEntityManager = "org.hibernate" % "hibernate-entitymanager" % hibernateVersion
   val hibernateTesting       = "org.hibernate" % "hibernate-testing" % hibernateVersion % "test"
-  val hibernateJpa21Api = "org.hibernate.javax.persistence" % "hibernate-jpa-2.1-api" % "1.0.0.Final"
-  val hibernateAll      = Seq(hibernateCore, hibernateEntityManager, hibernateTesting, hibernateJpa21Api)
+  val hibernateJpa21Api      = "org.hibernate.javax.persistence" % "hibernate-jpa-2.1-api" % "1.0.0.Final"
+  val hibernateAll           = Seq(hibernateCore, hibernateEntityManager, hibernateTesting, hibernateJpa21Api)
 
   val hibernateValidatorVersion = "5.1.3.Final"
 
@@ -245,7 +260,7 @@ trait Dependencies {self: Build =>
   val h2         = "com.h2database" % "h2" % "1.4.187"
   val mysql      = "mysql" % "mysql-connector-java" % "5.1.35"
   val postgresql = "org.postgresql" % "postgresql" % "9.4-1201-jdbc41"
-  val mariadb = "org.mariadb.jdbc" % "mariadb-java-client" % "1.1.8"
+  val mariadb    = "org.mariadb.jdbc" % "mariadb-java-client" % "1.1.8"
 
   val databaseDriverAll     = Seq(hsqldb, h2, mysql, postgresql, mariadb)
   val databaseDriverAllTest = Seq(hsqldb % "test", h2 % "test", mysql % "test", postgresql % "test", mariadb % "test")
@@ -314,7 +329,8 @@ trait Dependencies {self: Build =>
                          jacksonDatatypeAll ++
                          jacksonModuleAll ++
                          Seq(akkaActor, scalaPickling, scalaAsync, scalactic, springContext, springTest,
-                              javaxMail, guava, jasypt, jodaTime, jodaConvert, javaTuples,
-                              snappy, lz4, fst, gson,
-                              modelmapper, dispatch, httpclient, asyncHttpClient, ow2Asm)
+                           javaxMail, guava, jasypt, jodaTime, jodaConvert, javaTuples,
+                           snappy, lz4, fst, gson,
+                           modelmapper, dispatch, httpclient, asyncHttpClient,
+                           ow2Asm, jsr305, jcipAnnotations, jta, javaxInject)
 }
