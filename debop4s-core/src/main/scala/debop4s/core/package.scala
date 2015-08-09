@@ -6,7 +6,6 @@ import java.util.concurrent.Callable
 
 import debop4s.core.utils.Strings
 import org.joda.time.{DateTime, Duration => JDuration}
-import org.slf4j.LoggerFactory
 
 import scala.util.Try
 import scala.util.control.NonFatal
@@ -281,8 +280,8 @@ package object core {
     def asString: String =
       x match {
         case Some(a: Any) => a.toString
-        case None => ""
-        case null => ""
+        case None => None.toString
+        case null => Strings.NULL_STR
         case _ => x.toString
       }
 

@@ -9,7 +9,7 @@ import debop4s.core.utils.Streams
  */
 class CompressorsFunSuite extends AbstractCoreFunSuite {
 
-  var compressors = Seq(new GZipCompressor, new DeflateCompressor, new SnappyCompressor, new LZ4Compressor)
+  val compressors = Seq(new GZipCompressor, new DeflateCompressor, new SnappyCompressor, new LZ4Compressor)
   val text = "동해물과 백두산이 마르고 닳도록 Hello World! " * 100
 
   test("compress ByteString") {
