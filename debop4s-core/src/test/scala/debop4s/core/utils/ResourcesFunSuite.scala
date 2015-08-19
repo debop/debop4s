@@ -16,14 +16,6 @@ class ResourcesFunSuite extends AbstractCoreFunSuite {
       is should not be null
       println(Streams.toString(is))
     }
-    //    var is = None: Option[InputStream]
-    //    try {
-    //      is = Some(Resources.getClassPathResourceStream("globalization.xml"))
-    //      is shouldBe defined
-    //      println(Streams.toString(is.get))
-    //    } finally {
-    //      if (is.isDefined) is.get.close()
-    //    }
   }
 
   test("load resources by classLoader") {
@@ -31,14 +23,6 @@ class ResourcesFunSuite extends AbstractCoreFunSuite {
       is should not be null
       println(Streams.toString(is))
     }
-    //    var is = None: Option[InputStream]
-    //    try {
-    //      is = Some(Resources.getClassPathResourceStream("globalization.xml", getClass.getClassLoader))
-    //      is shouldBe defined
-    //      println(Streams.toString(is.get))
-    //    } finally {
-    //      if (is.isDefined) is.get.close()
-    //    }
   }
 
 }
