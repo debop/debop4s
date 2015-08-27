@@ -1,8 +1,8 @@
 package debop4s.timeperiod.utils
 
-import java.lang.{ Iterable => JIterable }
+import java.lang.{Iterable => JIterable}
 import java.util
-import java.util.{ Calendar, Date, List => JList, Set => JSet }
+import java.util.{Calendar, Date, List => JList, Set => JSet}
 
 import debop4s.core._
 import debop4s.core.conversions.jodatime._
@@ -10,7 +10,7 @@ import debop4s.core.utils.Strings
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
 import debop4s.timeperiod.timerange._
-import org.joda.time.{ DateTime, DateTimeZone, Duration }
+import org.joda.time.{DateTime, DateTimeZone, Duration}
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
@@ -27,7 +27,7 @@ object Times {
   private[this] lazy val log = LoggerFactory.getLogger(getClass)
 
   lazy val NullString = "<null>"
-  lazy val UnixEpoch = new DateTime(0, DateTimeZone.UTC)
+  lazy val UnixEpoch  = new DateTime(0, DateTimeZone.UTC)
 
   def now: DateTime = DateTime.now()
 
@@ -711,8 +711,8 @@ object Times {
       case PeriodUnit.Minute => minuteRanges(moment, periodCount, calendar)
       case PeriodUnit.Second =>
         CalendarTimeRange(trimToMillis(moment),
-                           trimToMillis(moment).plusSeconds(periodCount),
-                           calendar)
+          trimToMillis(moment).plusSeconds(periodCount),
+          calendar)
 
       case _ => throw new NotSupportedException(s"지원하지 않는 Period 종류입니다. unit=[$unit]")
     }
@@ -849,9 +849,9 @@ object Times {
   }
 
   lazy val NotOverlapedRelations = Array(PeriodRelation.After,
-                                          PeriodRelation.StartTouching,
-                                          PeriodRelation.EndTouching,
-                                          PeriodRelation.Before)
+    PeriodRelation.StartTouching,
+    PeriodRelation.EndTouching,
+    PeriodRelation.Before)
 
 
   def overlapsWith(period: ITimePeriod, target: ITimePeriod): Boolean = {
@@ -1507,13 +1507,13 @@ object Times {
 
     assertHasPeriod(period)
 
-    val endMin = period.end
-    val current = trimToMinute(period.start, period.start.getMinuteOfHour + 1)
-    val maxMin = endMin - 1.minutes
-
     if (isSameMinute(period.start, period.end)) {
       return TimeRange(period) #:: Stream.empty[ITimePeriod]
     }
+
+    val endMin = period.end
+    val current = trimToMinute(period.start, period.start.getMinuteOfHour + 1)
+    val maxMin = endMin - 1.minutes
 
     val head = TimeRange(period.start, endTimeOfMinute(period.start))
 
@@ -1603,8 +1603,8 @@ object Times {
   def minusDate(moment: DateTime, unit: PeriodUnit, dates: Int): DateTime = {
     unit match {
       case PeriodUnit.Year => moment.minusYears(dates)
-      case PeriodUnit.Halfyear => moment.minusMonths(MonthsPerHalfyear)
-      case PeriodUnit.Quarter => moment.minusMonths(MonthsPerQuarter)
+      case PeriodUnit.Halfyear => moment.minusMonths(MonthsPerHalfyear * dates)
+      case PeriodUnit.Quarter => moment.minusMonths(MonthsPerQuarter * dates)
       case PeriodUnit.Month => moment.minusMonths(dates)
       case PeriodUnit.Week => moment.minusWeeks(dates)
       case PeriodUnit.Day => moment.minusDays(dates)
@@ -1621,8 +1621,8 @@ object Times {
   def plusDate(moment: DateTime, unit: PeriodUnit, dates: Int): DateTime = {
     unit match {
       case PeriodUnit.Year => moment.plusYears(dates)
-      case PeriodUnit.Halfyear => moment.plusMonths(MonthsPerHalfyear)
-      case PeriodUnit.Quarter => moment.plusMonths(MonthsPerQuarter)
+      case PeriodUnit.Halfyear => moment.plusMonths(MonthsPerHalfyear * dates)
+      case PeriodUnit.Quarter => moment.plusMonths(MonthsPerQuarter * dates)
       case PeriodUnit.Month => moment.plusMonths(dates)
       case PeriodUnit.Week => moment.plusWeeks(dates)
       case PeriodUnit.Day => moment.plusDays(dates)
