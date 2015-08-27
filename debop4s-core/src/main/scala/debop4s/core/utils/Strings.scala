@@ -512,7 +512,7 @@ object Strings {
     while (index >= 0 && index <= maxLength) {
       index = targetStr.indexOf(searchWord, index)
 
-      if (index > 0) {
+      if (index >= 0) {
         count += 1
         index += wordLength
       }
@@ -530,7 +530,7 @@ object Strings {
 
     val index = str.indexOf(lineSeparator)
 
-    if (index > 0) str.substring(0, index - 1)
+    if (index > 0) str.substring(0, index)
     else str
   }
 
@@ -540,20 +540,20 @@ object Strings {
 
     var startIndex = 0
     if (isNotEmpty(start)) {
-      val index = text.indexOf(start)
+      val index = text.indexOf(start, startIndex)
       if (index > -1)
         startIndex = index + start.length
     }
 
     var endIndex = text.length - 1
     if (isNotEmpty(end)) {
-      val index = text.lastIndexOf(end)
+      val index = text.lastIndexOf(start)
       if (index > -1)
-        endIndex = index - 1
+        endIndex = index
     }
 
-    if (endIndex > startIndex)
-      text.substring(startIndex, endIndex)
+    if (endIndex >= startIndex)
+      text.substring(startIndex, endIndex + 1)
     else
       EMPTY_STR
   }

@@ -15,7 +15,8 @@ import scala.collection.JavaConverters._
  *
  * @author Sunghyouk Bae
  */
-class HikariDataSourceFactory extends AbstractDataSourceFactory {
+class
+HikariDataSourceFactory extends AbstractDataSourceFactory {
 
   /**
    * HikariCP DataSource를 생성합니다.

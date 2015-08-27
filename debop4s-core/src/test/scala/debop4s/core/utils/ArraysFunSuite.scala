@@ -26,7 +26,7 @@ class ArraysFunSuite extends AbstractCoreFunSuite {
     arr shouldEqual Seq("a", "b", "c")
 
     val arr2 = set.toArray
-    arr shouldBe Array("a", "b", "c")
+    arr2 shouldBe Array("a", "b", "c")
   }
 
 }

@@ -6,8 +6,8 @@ class StringsFunSuite extends AbstractCoreFunSuite {
 
   test("Strings.isNull") {
     Strings.isNull(null) shouldBe true
-    !Strings.isNull("") shouldBe true
-    !Strings.isNotNull(null) shouldBe true
+    Strings.isNull("") shouldBe false
+    Strings.isNotNull(null) shouldBe false
     Strings.isNotNull("") shouldBe true
   }
 
