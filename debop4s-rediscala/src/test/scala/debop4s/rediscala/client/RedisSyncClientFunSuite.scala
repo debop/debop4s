@@ -4,7 +4,6 @@ import java.util
 
 import akka.util.ByteString
 import com.google.common.collect.Sets
-import debop4s.core._
 import debop4s.core.concurrent._
 import debop4s.rediscala.MemberScore
 import debop4s.rediscala.config.RedisConfiguration
@@ -165,7 +164,7 @@ class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
   test("pexpire") {
     syncRedis.set("pexpireKey", "value") shouldEqual true
     syncRedis.pexpire("pexpireKey", 1100) shouldEqual true
-    syncRedis.pexpire("pexpireKeyExisting", 1100) shouldEqual false
+    syncRedis.pexpire("pexpireKeyNotExisting", 1100) shouldEqual false
 
     syncRedis.get[String]("pexpireKey") shouldEqual Some("value")
 

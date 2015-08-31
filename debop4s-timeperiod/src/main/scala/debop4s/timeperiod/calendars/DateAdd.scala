@@ -1,6 +1,5 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.core.Logging
 import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
@@ -165,6 +164,8 @@ class DateAdd {
         val gap = availablePeriods(i)
         val gapRemaining = new Duration(gap.start, seekMoment)
 
+        log.debug(s"gap=$gap, gapRemaining=$gapRemaining")
+
         val isTargetPeriod =
           if (seekBoundary == SeekBoundaryMode.Fill) gapRemaining >= remaining
           else gapRemaining > remaining
@@ -226,7 +227,7 @@ object DateAdd {
     var moment = start
     var difference = MaxDuration
 
-    log.trace(s"find previous period. start=$start")
+    log.trace(s"find previous period. start=$start, periods=$periods")
 
     periods
     .filter(p => p.start <= start)
