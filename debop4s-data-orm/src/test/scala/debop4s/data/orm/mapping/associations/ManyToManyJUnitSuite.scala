@@ -70,7 +70,7 @@ class ManyToManyJUnitSuite extends AbstractJpaJUnitSuite {
     owner3.bankAccounts.asScala.foreach { x => log.debug(s"BankAccount=$x") }
 
     val barclays2 = owner3.bankAccounts.asScala.head
-    barclays.owners.clear()
+    barclays2.owners.clear()
     owner3.bankAccounts.clear()
 
     em.persist(owner3)
@@ -121,7 +121,7 @@ class AccountOwner extends HibernateEntityBase[java.lang.Long] {
 class BankAccount extends HibernateEntityBase[java.lang.Long] {
 
   // NOTE: LongEntity를 사용하고 싶지만, BankAccounts 에 association 되는 컬럼을 찾지 못하는 버그가 있다.
-  // NOTE: 어쩔 수 없이 id의 컬럼명을 정의하기 위해 (ownerId) 아래와 같이 정의하였다.
+  // NOTE: 어쩔 수 없이 id의 컬럼명을 정의하기 위해 (accountId) 아래와 같이 정의하였다.
   @Id
   @GeneratedValue
   @Column(name = "accountId")
