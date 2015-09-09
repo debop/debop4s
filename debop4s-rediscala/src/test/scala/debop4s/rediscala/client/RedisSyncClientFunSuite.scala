@@ -164,7 +164,7 @@ class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
   test("pexpire") {
     syncRedis.set("pexpireKey", "value") shouldEqual true
     syncRedis.pexpire("pexpireKey", 1100) shouldEqual true
-    syncRedis.pexpire("pexpireKeyExisting", 1100) shouldEqual false
+    syncRedis.pexpire("pexpireKeyNotExisting", 1100) shouldEqual false
 
     syncRedis.get[String]("pexpireKey") shouldEqual Some("value")
 

@@ -9,7 +9,7 @@ trait Dependencies {
   val akkaActor   = "com.typesafe.akka" %% "akka-actor" % akkaVersion
   val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
 
-  val slick3Version = "3.0.0"
+  val slick3Version = "3.0.2"
   val slick3        = "com.typesafe.slick" %% "slick" % slick3Version
   val slick3CodeGen = "com.typesafe.slick" %% "slick-codegen" % slick3Version
   val slick3Testkit = "com.typesafe.slick" %% "slick-testkit" % slick3Version % "test"
@@ -221,7 +221,7 @@ trait Dependencies {
   val aspectjweaver = "org.aspectj" % "aspectjweaver" % "1.8.1"
 
   // Hibernate 4
-  val hibernateVersion       = "4.3.10.Final"
+  val hibernateVersion       = "4.3.11.Final"
   val hibernateCore          = "org.hibernate" % "hibernate-core" % hibernateVersion
   val hibernateEntityManager = "org.hibernate" % "hibernate-entitymanager" % hibernateVersion
   val hibernateTesting       = "org.hibernate" % "hibernate-testing" % hibernateVersion % "test"
@@ -231,7 +231,7 @@ trait Dependencies {
   val hibernateValidatorVersion = "5.1.3.Final"
 
   // QueryDSL
-  val queryslVersion      = "3.6.3"
+  val queryslVersion      = "3.6.5"
   val querydslCollections = "com.mysema.querydsl" % "querydsl-collections" % queryslVersion
   val querydslapt         = "com.mysema.querydsl" % "querydsl-apt" % queryslVersion
   val querydslJpa         = "com.mysema.querydsl" % "querydsl-jpa" % queryslVersion

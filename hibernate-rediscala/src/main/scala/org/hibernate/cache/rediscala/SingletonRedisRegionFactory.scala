@@ -42,7 +42,7 @@ class SingletonRedisRegionFactory(private[this] val _props: Properties) extends 
     if (this.cache == null)
       return
 
-    if (referenceCount.decrementAndGet() == 1) {
+    if (referenceCount.decrementAndGet() == 0) {
       log.trace("RedisRegionFactory를 중지합니다...")
       try {
         if (expirationThread != null) {

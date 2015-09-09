@@ -262,13 +262,13 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
   }
 
   protected def isMatchingDay(dr: DayRange, context: C): Boolean = {
-    if (filter.years.size > 0 && !filter.years.contains(dr.year))
+    if (filter.years.nonEmpty && !filter.years.contains(dr.year))
       false
-    else if (filter.monthOfYears.size > 0 && !filter.monthOfYears.contains(dr.monthOfYear))
+    else if (filter.monthOfYears.nonEmpty && !filter.monthOfYears.contains(dr.monthOfYear))
       false
-    else if (filter.dayOfMonths.size > 0 && !filter.dayOfMonths.contains(dr.dayOfMonth))
+    else if (filter.dayOfMonths.nonEmpty && !filter.dayOfMonths.contains(dr.dayOfMonth))
       false
-    else if (filter.weekDays.size > 0 && !filter.weekDays.contains(dr.dayOfWeek))
+    else if (filter.weekDays.nonEmpty && !filter.weekDays.contains(dr.dayOfWeek))
       false
     else
       checkExcludePeriods(dr)

@@ -180,9 +180,9 @@ class ProductItem extends HibernateEntityBase[lang.Long] {
 
   def getId = id
 
-  var name: String = _
-  var description: String = _
-  var initalPrice: java.math.BigDecimal = _
+  var name        : String               = _
+  var description : String               = _
+  var initialPrice: java.math.BigDecimal = _
   var reservePrice: java.math.BigDecimal = _
 
   @Temporal(TemporalType.DATE)

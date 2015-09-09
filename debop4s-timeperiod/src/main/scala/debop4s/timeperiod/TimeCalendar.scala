@@ -4,7 +4,7 @@ import java.util.Locale
 
 import debop4s.core.ValueObject
 import debop4s.core.conversions.jodatime._
-import debop4s.core.utils.{Hashs, Options}
+import debop4s.core.utils.Hashs
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod.utils.Times
 import org.joda.time.{DateTime, Duration}
@@ -88,10 +88,9 @@ class TimeCalendar(val cfg: TimeCalendarConfig) extends ValueObject with ITimeCa
            endOffset: Duration = DefaultEndOffset) =
     this(TimeCalendarConfig(locale, startOffset, endOffset))
 
-
   require(cfg != null)
   require(cfg.startOffset != null && cfg.startOffset.millis >= 0, "startOffset must be greater than or equal zero.")
-  require(cfg.endOffset != null && cfg.startOffset.millis <= 0, "startOffset must be less than or equal zero.")
+  require(cfg.endOffset != null && cfg.endOffset.millis <= 0, "endOffset must be less than or equal zero.")
 
   val locale: Locale = Option(cfg.locale).getOrElse(Locale.getDefault)
   val _startOffset: Duration = Option(cfg.startOffset).getOrElse(DefaultStartOffset)
