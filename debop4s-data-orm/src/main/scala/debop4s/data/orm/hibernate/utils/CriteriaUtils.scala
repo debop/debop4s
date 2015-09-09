@@ -176,7 +176,7 @@ object CriteriaUtils {
   def getInsensitiveLikeIncludeNull(propertyName: String,
                                     value: String,
                                     matchMode: MatchMode): Criterion = {
-    if (Strings.isWhitespace(propertyName)) {
+    if (Strings.isWhitespace(value)) {
       Restrictions.isEmpty(propertyName)
     } else {
       Restrictions.disjunction
@@ -255,11 +255,11 @@ object CriteriaUtils {
   def addIdEq(criteria: Criteria, idValue: Any): Criteria =
     criteria.add(Restrictions.idEq(idValue))
 
-  def addIn(criteria: Criteria, propertyName: String, ids: JCollection[_]): Criteria =
-    criteria.add(Restrictions.in(propertyName, ids))
+  def addIn(criteria: Criteria, propertyName: String, values: JCollection[_]): Criteria =
+    criteria.add(Restrictions.in(propertyName, values))
 
-  def addIn(criteria: Criteria, propertyName: String, ids: Array[AnyRef]): Criteria =
-    criteria.add(Restrictions.in(propertyName, ids))
+  def addIn(criteria: Criteria, propertyName: String, values: Array[AnyRef]): Criteria =
+    criteria.add(Restrictions.in(propertyName, values))
 
   /**
    * 속성명이 상하한 값 사이에 있는지 검사흐는 질의를 추가합니다. SQL의 BETWEEN과 같다.

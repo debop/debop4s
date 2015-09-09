@@ -1,6 +1,5 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.core.Logging
 import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
@@ -134,7 +133,7 @@ abstract class CalendarVisitor[F <: ICalendarVisitorFilter, C <: ICalendarVisito
     var current = year
     while (lastVisited == null && current.start > minStart && current.end < maxEnd) {
       if (!onVisitYear(current, context)) {
-        lastVisited = year
+        lastVisited = current
       } else {
         current = current.addYears(offset)
       }

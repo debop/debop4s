@@ -76,7 +76,7 @@ class HibernateRedisCacheFunSuite extends AbstractHibernateRedisFunSuite {
 
       _ <- client.delete(REGION, "deleteKey")
       v2 <- client.get(REGION, "deleteKey")
-      exists2 <- client.get(REGION, "deleteKey")
+      exists2 <- client.exists(REGION, "deleteKey")
     } yield {
         v should equal("value")
         exists should equal(true)

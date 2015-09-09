@@ -39,6 +39,7 @@ class ApplicationConfigurationFunSuite extends AbstractMongoFunSuite {
 
     val address = new Address("성북구 정릉1동", "서울", "대한민국")
     val debop = new Customer("성혁", "배")
+    debop.emailAddress = new EmailAddress("sunghyouk.bae@gmail.com")
     debop.add(address)
     customerRepo.save(debop)
 

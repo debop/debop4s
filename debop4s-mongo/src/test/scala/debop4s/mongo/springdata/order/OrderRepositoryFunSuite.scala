@@ -13,8 +13,12 @@ class OrderRepositoryFunSuite extends ApplicationConfigurationFunSuite {
     setup()
   }
 
-  test("create order") {
-    val debop = customerRepo.findByEmailAddress(new EmailAddress("debop@hconnect.co.kr"))
+  test("find orders by customer") {
+    val customer = customerRepo.findByEmailAddress(new EmailAddress("sunghyouk.bae@gmail.com"))
+    customer should not be null
+
+    val orders = orderRepo.findByCustomer(customer)
+    orders.size() should be > 0
   }
 
 }

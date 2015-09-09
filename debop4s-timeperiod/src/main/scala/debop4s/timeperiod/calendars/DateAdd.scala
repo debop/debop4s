@@ -1,6 +1,5 @@
 package debop4s.timeperiod.calendars
 
-import debop4s.core.Logging
 import debop4s.core.conversions.jodatime._
 import debop4s.timeperiod.TimeSpec._
 import debop4s.timeperiod._
@@ -203,12 +202,10 @@ object DateAdd {
     log.trace(s"find next period. start=$start")
 
     periods
-    .filter(period => period.end >= start)
+    .filter(period => period.end >= moment)
     .foreach { period =>
-      if (period.hasInside(start)) {
-        nearest = period
-        moment = start
-        return (nearest, moment)
+      if (period.hasInside(moment)) {
+        return (period, moment)
       }
       val periodToMoment = new Duration(start, period.start)
       if (periodToMoment < difference) {
@@ -229,17 +226,15 @@ object DateAdd {
     log.trace(s"find previous period. start=$start")
 
     periods
-    .filter(p => p.start <= start)
+    .filter(p => p.start <= moment)
     .foreach { period =>
-      if (period.hasInside(start)) {
+      if (period.hasInside(moment)) {
         // start가 기간에 속한다면...
-        nearest = period
-        moment = start
-        return (nearest, moment)
+        return (period, moment)
       }
 
       // 근처 값이 아니라면 포기
-      val periodToMoment = new Duration(start, period.end)
+      val periodToMoment = new Duration(moment, period.end)
       if (periodToMoment < difference) {
         difference = periodToMoment
         nearest = period

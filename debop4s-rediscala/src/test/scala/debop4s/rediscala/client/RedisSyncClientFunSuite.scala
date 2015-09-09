@@ -4,7 +4,6 @@ import java.util
 
 import akka.util.ByteString
 import com.google.common.collect.Sets
-import debop4s.core._
 import debop4s.core.concurrent._
 import debop4s.rediscala.MemberScore
 import debop4s.rediscala.config.RedisConfiguration
@@ -277,7 +276,7 @@ class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
     syncRedis.del("ttlKey")
   }
 
-  test("kind") {
+  test("type") {
     syncRedis.set("typeKey", "value")
     syncRedis.`type`("typeKey") shouldEqual "string"
     syncRedis.`type`("typeKeyNotExisting") shouldEqual "none"
@@ -303,8 +302,10 @@ class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
   }
 
   test("hdel") {
+    syncRedis.del("hdelKey")
     syncRedis.hset("hdelKey", "field", "value")
     syncRedis.hdel("hdelKey", "field", "fieldNotExisting") shouldEqual 1L
+    syncRedis.del("hdelKey")
   }
 
   test("hexists") {
@@ -354,9 +355,12 @@ class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
   }
 
   test("hlen") {
+    syncRedis.del("hlenKey")
+
     syncRedis.hset("hlenKey", "field", "value")
     syncRedis.hlen("hlenKey") shouldEqual 1L
-    syncRedis.del("hlen")
+
+    syncRedis.del("hlenKey")
   }
 
   test("hmget") {
@@ -983,10 +987,10 @@ class RedisSyncClientFunSuite extends FunSuite with Matchers with OptionValues {
     ziw shouldEqual 3
 
     syncRedis.zrangeWithScores("zunionstoreKey", 0, -1) shouldEqual
-    Seq(new MemberScore("one", 2.0), new MemberScore("three", 3.0), new MemberScore("two", 4.0))
+      Seq(new MemberScore("one", 2.0), new MemberScore("three", 3.0), new MemberScore("two", 4.0))
 
     syncRedis.zrangeWithScores("zunionstoreKeyOutWeighted", 0, -1) shouldEqual
-    Seq(new MemberScore("one", 5.0), new MemberScore("three", 9.0), new MemberScore("two", 10.0))
+      Seq(new MemberScore("one", 5.0), new MemberScore("three", 9.0), new MemberScore("two", 10.0))
 
     syncRedis.del("zunionstoreKey", "zunionstoreKeyOutWeighted", "zunionstoreKey1", "zunionstoreKey2")
   }

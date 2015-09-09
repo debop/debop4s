@@ -2,7 +2,7 @@ package debop4s.data.orm.jpa.repository
 
 import java.lang.{Iterable => JIterable}
 import java.util.{Collection => JCollection, Collections, List => JList}
-import javax.persistence.criteria.{CriteriaBuilder, CriteriaQuery, Predicate, Root}
+import javax.persistence.criteria._
 import javax.persistence.{EntityManager, EntityManagerFactory, PersistenceContext}
 
 import debop4s.core.{JFunction, JFunction1}

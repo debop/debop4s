@@ -48,6 +48,10 @@ class TimestampAndTimeZone extends UserType {
     val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
 
     log.trace(s"load timestamp and timezone. timestamp=$timestamp, timezone=$timezone")
+
+    if (timestamp == null)
+      return null.asInstanceOf[DateTime]
+
     try {
       if (Strings.isEmpty(timezone))
         new DateTime(timestamp)
@@ -56,7 +60,7 @@ class TimestampAndTimeZone extends UserType {
     } catch {
       case NonFatal(e) =>
         log.warn(s"datetime을 생성하는데 실패했습니다. timestamp=$timestamp, timezone=$timezone", e)
-        null
+        null.asInstanceOf[DateTime]
     }
   }
 

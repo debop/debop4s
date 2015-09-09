@@ -78,7 +78,7 @@ class HibernateDao(val sessionFactory: SessionFactory) {
   def findAll(clazz: Class[_], orders: Order*): JList[_] = {
     val criteria = session.createCriteria(clazz)
 
-    if (Arrays.isEmpty(orders)) {
+    if (!Arrays.isEmpty(orders)) {
       HibernateUtils.addOrders(criteria, orders: _*)
     }
     criteria.list
