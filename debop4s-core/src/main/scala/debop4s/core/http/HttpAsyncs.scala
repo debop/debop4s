@@ -4,7 +4,7 @@ import java.net.URI
 import java.nio.charset.Charset
 import java.util.{List => JList}
 
-import debop4s.core.json.{JsonSerializer, JacksonSerializer}
+import debop4s.core.json.{JacksonSerializer, JsonSerializer}
 import debop4s.core.utils.Charsets
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.{HttpDelete, HttpGet, HttpPost, HttpUriRequest}
@@ -114,7 +114,7 @@ object HttpAsyncs {
     if (entity != null) {
       val text = serializer.serializeToText(entity)
       httppost.setEntity(new StringEntity(text, cs))
-      httppost.addHeader("content-kind", "application/json")
+      httppost.addHeader("Content-Type", "application/json")
     }
 
     headers.foreach(httppost.addHeader)

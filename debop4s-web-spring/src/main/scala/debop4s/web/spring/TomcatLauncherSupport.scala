@@ -16,7 +16,7 @@ import scala.util.control.NonFatal
  * Tomcat Server 를 Embedded 방식으로 실행할 수 있도록 지원합니다.
  *
  * {{{
- *   object JettyLauncher extends TomcatLauncherSupport {
+ *   object TomcatLauncher extends TomcatLauncherSupport {
  *    override def port:Int = 8080
  *   }
  * }}}

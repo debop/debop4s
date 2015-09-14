@@ -116,7 +116,7 @@ class HttpClient extends AutoCloseable {
       if (entity != null) {
         val text = serializer.serializeToText(entity)
         httppost.setEntity(new StringEntity(text, cs))
-        httppost.addHeader("content-kind", "application/json")
+        httppost.addHeader("content-type", "application/json")
       }
       if (headers != null)
         headers.foreach(httppost.addHeader)
