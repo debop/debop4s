@@ -95,7 +95,7 @@ object Debop4sBuild extends Build with BuildSettings with Dependencies {
                        debop4s_data_slick2_northwind,
                        debop4s_data_slick3,
                        debop4s_data_slick3_northwind,
-                       debop4s_data_orm,
+                       //debop4s_data_orm,
                        debop4s_shiro,
                        debop4s_web_spring,
                        debop4s_web_scalatra,

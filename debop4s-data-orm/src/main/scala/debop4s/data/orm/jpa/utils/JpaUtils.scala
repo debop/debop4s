@@ -146,7 +146,8 @@ object JpaUtils {
       entity
     }
   }
-  /** transient object 이면 save 하고, detached 된 entity 면 merge 한다. */
+
+  /** persistent object 이면 삭제합니다. */
   def delete[T <: HibernateEntity[_]](em: EntityManager, entity: T): Unit = {
     if (entity.isPersisted) {
       if (!em.contains(entity)) {

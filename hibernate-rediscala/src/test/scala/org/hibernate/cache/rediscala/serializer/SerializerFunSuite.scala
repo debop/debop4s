@@ -37,7 +37,7 @@ class SerializerFunSuite extends AbstractHibernateRedisFunSuite {
       val event = new Event()
       event.title = s"이벤트 타이틀 $x" * 100
       event.date = new Date()
-      largePerson.events.add(event)
+      event.addParticipant(largePerson);
     }
   }
 

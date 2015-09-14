@@ -35,19 +35,24 @@ class TimestampAndTimeZone extends UserType {
 
   protected lazy val log = LoggerFactory.getLogger(getClass)
 
-  def sqlTypes() = Array(StandardBasicTypes.TIMESTAMP.sqlType(), StandardBasicTypes.STRING.sqlType())
+  def sqlTypes(): Array[Int] =
+    Array(StandardBasicTypes.TIMESTAMP.sqlType(), StandardBasicTypes.STRING.sqlType())
 
-  def returnedClass() = classOf[DateTime]
+  def returnedClass(): Class[DateTime] = classOf[DateTime]
 
   def equals(x: Any, y: Any) = Objects.equals(x, y)
 
   def hashCode(x: Any) = Objects.hashCode(x)
 
-  def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any) = {
+  override def nullSafeGet(rs: ResultSet, names: Array[String], session: SessionImplementor, owner: Any): AnyRef = {
     val timestamp = StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names(0), session, owner).asInstanceOf[Timestamp]
     val timezone = StandardBasicTypes.STRING.nullSafeGet(rs, names(1), session, owner).asInstanceOf[String]
 
     log.trace(s"load timestamp and timezone. timestamp=$timestamp, timezone=$timezone")
+
+    if (timestamp == null)
+      return null.asInstanceOf[DateTime]
+
     try {
       if (Strings.isEmpty(timezone))
         new DateTime(timestamp)
@@ -56,11 +61,11 @@ class TimestampAndTimeZone extends UserType {
     } catch {
       case NonFatal(e) =>
         log.warn(s"datetime을 생성하는데 실패했습니다. timestamp=$timestamp, timezone=$timezone", e)
-        null
+        null.asInstanceOf[DateTime]
     }
   }
 
-  def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor) = {
+  def nullSafeSet(st: PreparedStatement, value: Any, index: Int, session: SessionImplementor): Unit = {
     val time = value.asInstanceOf[DateTime]
     if (time == null) {
       StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session)

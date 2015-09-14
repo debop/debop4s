@@ -1,7 +1,7 @@
 package debop4s.data.orm.config
 
 import com.typesafe.config.ConfigFactory
-import debop4s.data.orm.config.servers.JpaMySqlConfiguration
+import debop4s.data.orm.config.servers.JpaH2Configuration
 import org.springframework.context.annotation._
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.transaction.annotation.EnableTransactionManagement
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
 @EnableAsync
-@Import(Array(classOf[JpaMySqlConfiguration]))
+@Import(Array(classOf[JpaH2Configuration]))
 class DataConfiguration {
 
   def environment: String = {
@@ -20,6 +20,6 @@ class DataConfiguration {
   @Bean
   def dataConfig: DataConfig = {
     val config = ConfigFactory.load(s"config/$environment")
-    DataConfig(config.getConfig("healthon"))
+    DataConfig(config.getConfig("debop4s"))
   }
 }

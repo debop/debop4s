@@ -41,7 +41,7 @@ class TimeRangeAsMillisAndTimeZone extends CompositeUserType {
   override def getPropertyTypes: Array[Type] = Array(LongType.INSTANCE, StringType.INSTANCE,
     LongType.INSTANCE, StringType.INSTANCE)
 
-  override def getPropertyNames: Array[String] = Array("startTimestamps", "startTimeZone",
+  override def getPropertyNames: Array[String] = Array("startTimestamp", "startTimeZone",
     "endTimestamp", "endTimeZone")
 
   override def returnedClass(): Class[_] = classOf[TimeRange]

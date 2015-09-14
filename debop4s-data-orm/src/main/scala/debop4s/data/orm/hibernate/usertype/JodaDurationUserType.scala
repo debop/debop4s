@@ -6,7 +6,7 @@ import java.sql.{PreparedStatement, ResultSet}
 import org.hibernate.`type`.StandardBasicTypes
 import org.hibernate.engine.spi.SessionImplementor
 import org.hibernate.usertype.UserType
-import org.joda.time.{Duration, LocalDateTime}
+import org.joda.time.Duration
 
 /**
  * Joda-Time의 [[Duration]] 을 Timestamp 값으로 저장하고, 로드 시에는 LocalDateTime으로 변환하는 UserType입니다.
@@ -26,7 +26,7 @@ class JodaDurationUserType extends UserType {
 
   override def sqlTypes(): Array[Int] = Array(StandardBasicTypes.LONG.sqlType())
 
-  override def returnedClass(): Class[_] = classOf[LocalDateTime]
+  override def returnedClass(): Class[_] = classOf[Duration]
 
   override def hashCode(x: Any): Int = if (x != null) x.hashCode() else 0
 
