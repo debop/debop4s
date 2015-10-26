@@ -1,19 +1,17 @@
 package debop4s.data.slick3.tests
 
 import debop4s.core.concurrent._
-
 import debop4s.data.slick3.AbstractSlickFunSuite
 import debop4s.data.slick3.TestDatabase._
 import debop4s.data.slick3.TestDatabase.driver.api._
-import slick.jdbc.{StaticQuery => Q, SQLActionBuilder, GetResult}
-import slick.profile.{SqlAction, SqlStreamingAction}
+import slick.jdbc.GetResult
 
 import scala.collection.mutable
 
 /**
- * PlainSQLFunSuite
- * @author sunghyouk.bae@gmail.com
- */
+  * PlainSQLFunSuite
+  * @author sunghyouk.bae@gmail.com
+  */
 class PlainSQLFunSuite extends AbstractSlickFunSuite {
 
   case class User(id: Int, name: String)
@@ -23,7 +21,7 @@ class PlainSQLFunSuite extends AbstractSlickFunSuite {
   test("plain sql") {
     def getUsers(id: Option[Int]) = {
       if (id.isDefined)
-        sql"select id, name from plainsql_users where id=${ id.get }".as[User]
+        sql"select id, name from plainsql_users where id=${id.get}".as[User]
       else
         sql"select id, name from plainsql_users".as[User]
     }
@@ -41,10 +39,12 @@ class PlainSQLFunSuite extends AbstractSlickFunSuite {
 
     commit {
       sqlu"drop table plainsql_users".asTry >>
-      createTable.map(_ shouldEqual 0)
+        createTable.map(_ shouldEqual 0)
     }
 
-    commit { DBIO.seq(populateUsers: _*) }
+    commit {
+      DBIO.seq(populateUsers: _*)
+    }
 
     readonly(allIDs) foreach { id => log.debug(s"id=$id") }
     readonly(allIDs).toSet shouldEqual Set(0, 1, 2, 3)
@@ -52,8 +52,12 @@ class PlainSQLFunSuite extends AbstractSlickFunSuite {
     readonly(userForID(2)).head shouldEqual User(2, "guest")
     readonly(userForID(2)) shouldEqual Seq(User(2, "guest"))
 
-    readonly { getUsers(Some(2)) } shouldEqual Seq(User(2, "guest"))
-    readonly { getUsers(None) }.toSet shouldEqual Set(User(0, "admin"), User(1, "szeiger"), User(2, "guest"), User(3, "foo"))
+    readonly {
+      getUsers(Some(2))
+    } shouldEqual Seq(User(2, "guest"))
+    readonly {
+      getUsers(None)
+    }.toSet shouldEqual Set(User(0, "admin"), User(1, "szeiger"), User(2, "guest"), User(3, "foo"))
 
     val s5 = mutable.Set[User]()
     foreach(db.stream(getUsers(None))) { user =>
@@ -62,7 +66,9 @@ class PlainSQLFunSuite extends AbstractSlickFunSuite {
 
     s5 shouldEqual Set(User(0, "admin"), User(1, "szeiger"), User(2, "guest"), User(3, "foo"))
 
-    commit { sqlu"drop table plainsql_users" }
+    commit {
+      sqlu"drop table plainsql_users"
+    }
   }
 
   test("interpolation") {
@@ -70,8 +76,8 @@ class PlainSQLFunSuite extends AbstractSlickFunSuite {
     def userForIdAndName(id: Int, name: String) = sql"select id, name from USERS where id=$id and name=$name".as[User]
 
     val foo = "foo"
-    val s1 = sql"select id from USERS where name = ${ "szeiger" }".as[Int]
-    val s2 = sql"select id from USERS where name = '#${ "guest" }'".as[Int]
+    val s1 = sql"select id from USERS where name = ${"szeiger"}".as[Int]
+    val s2 = sql"select id from USERS where name = '#${"guest"}'".as[Int]
     val s3 = sql"select id from USERS where name = $foo".as[Int]
     val s4 = sql"select id from USERS where name = '#$foo'".as[Int]
 

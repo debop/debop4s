@@ -9,7 +9,7 @@ trait Dependencies {
   val akkaActor   = "com.typesafe.akka" %% "akka-actor" % akkaVersion
   val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
 
-  val slick3Version = "3.0.2"
+  val slick3Version = "3.0.3"
   val slick3        = "com.typesafe.slick" %% "slick" % slick3Version
   val slick3CodeGen = "com.typesafe.slick" %% "slick-codegen" % slick3Version
   val slick3Testkit = "com.typesafe.slick" %% "slick-testkit" % slick3Version % "test"
@@ -23,8 +23,9 @@ trait Dependencies {
 
   val slick2All = Seq(slick2, slick2CodeGen, slick2Testkit)
 
-  val typesafeConfig = "com.typesafe" % "config" % "1.3.0"
-  // 1.3.0은 JDK 8용이다.
+  // typesafe config 1.3.0은 JDK 8용이다.
+  val typesafeConfig = "com.typesafe" % "config" % "1.2.1"
+
   val scalaAsync     = "org.scala-lang.modules" %% "scala-async" % "0.9.5"
   val scalaPickling  = "org.scala-lang" %% "scala-pickling" % "0.9.1"
 

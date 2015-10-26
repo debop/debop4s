@@ -64,11 +64,11 @@ package object slick3 {
       DBIO.seq(actions: _*).transactionally.exec(db)
     }
 
-    def withTransaction[@miniboxed R](block: Session => R) = {
-      using(db.createSession()) { s =>
-        s.withTransaction { block(s) }
-      }
-    }
+//    def withTransaction[@miniboxed R](block: Session => R) = {
+//      using(db.createSession()) { s =>
+//        s.withTransaction { block(s) }
+//      }
+//    }
 
     /**
      * `Seq[ DBIO[R] ]` 를 `DBIO[ Seq[R] ]` 로 변환하여 db에서 실행한 후 Seq[R] 을 반환합니다.
