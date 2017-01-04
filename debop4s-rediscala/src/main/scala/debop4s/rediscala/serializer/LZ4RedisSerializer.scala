@@ -42,9 +42,6 @@ class LZ4RedisSerializer[@miniboxed T](val inner: RedisSerializer[T] = new FstRe
    * @return 원본 객체
    */
   override def deserialize(bytes: Array[Byte]): T = {
-    // TODO: LZ4에서는 decompress 시에 압축률을 알 수 없으므로, 충분히 큰 값을 지정해 줘야 한다. 이 부분은 이해가 안된다.
-    val length = bytes.take(8).toSeq.toArray
-
-    inner.deserialize(decompressor.decompress(bytes, bytes.length * 1000)).asInstanceOf[T]
+    inner.deserialize(decompressor.decompress(bytes, bytes.length * 255)).asInstanceOf[T]
   }
 }

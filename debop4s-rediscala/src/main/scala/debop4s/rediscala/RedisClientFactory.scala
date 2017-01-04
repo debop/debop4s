@@ -42,7 +42,7 @@ object RedisClientFactory {
    * `RedisClient` 를 생성합니다.
    */
   def createClient(element: RedisElement): RedisClient = {
-    log.info(s"Create RedisClient. redisElement=$element")
+    log.info(s"Create RedisClient. redisElement={}", element)
 
     RedisClient(element.host, element.port, db = Some(element.database))
   }
@@ -67,7 +67,7 @@ object RedisClientFactory {
 
     // slave 서버가 정의가 안된 경우 읽기 성능향상을 위해 master를 추가하도록 한다.
     val slaveServers =
-      if (slaves == null || slaves.size == 0) {
+      if (slaves == null || slaves.isEmpty) {
         Seq(masterServer.copy())
       } else {
         slaves.map { slave =>

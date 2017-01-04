@@ -26,7 +26,7 @@ trait Dependencies {
   // typesafe config 1.3.0은 JDK 8용이다.
   val typesafeConfig = "com.typesafe" % "config" % "1.2.1"
 
-  val scalaAsync     = "org.scala-lang.modules" %% "scala-async" % "0.9.5"
+  val scalaAsync = "org.scala-lang.modules" %% "scala-async" % "0.9.6"
   val scalaPickling  = "org.scala-lang" %% "scala-pickling" % "0.9.1"
 
   def scalaBlitz(scalaVersion: String) = scalaVersion match {
@@ -36,7 +36,7 @@ trait Dependencies {
   //val scalaBlitz     = "com.github.scala-blitz" %% "scala-blitz" % "1.2"
 
   val scalactic      = "org.scalactic" %% "scalactic" % "2.2.5"
-  val miniboxing     = "org.scala-miniboxing.plugins" %% "miniboxing-runtime" % "0.4-M4"
+  val miniboxing = "org.scala-miniboxing.plugins" %% "miniboxing-runtime" % "0.4-M8"
   val scalaxy_stream = "com.nativelibs4java" % "scalaxy-streams_2.11" % "0.3.4"
 
   // scala version 에 따라 다른 dependency를 준다.
@@ -169,7 +169,7 @@ trait Dependencies {
   val joddProps   = "org.jodd" % "jodd-props" % joddVersion
   val joddAll     = Seq(joddCore, joddBean, joddProps)
 
-  val logback = "ch.qos.logback" % "logback-classic" % "1.1.3"
+  val logback = "ch.qos.logback" % "logback-classic" % "1.1.8"
 
   val slf4jVersion = "1.7.12"
   val slf4j        = "org.slf4j" % "slf4j-api" % slf4jVersion
