@@ -92,7 +92,7 @@ class TimeLineMomentCollection extends ITimeLineMomentCollection {
   }
 
   def find(moment: DateTime): ITimeLineMoment =
-    _moments.find(x => x.moment.equals(moment)).getOrElse(null)
+    _moments.find(x => x.moment.equals(moment)).orNull
 
 
   def contains(moment: DateTime): Boolean =

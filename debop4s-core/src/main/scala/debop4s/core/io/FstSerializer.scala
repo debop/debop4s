@@ -40,7 +40,7 @@ class FstSerializer(val conf: FSTConfiguration) extends Serializer {
           oos.flush()
           bos.toByteArray
         case Failure(e) =>
-          log.error(s"Fail to serialize graph. $graph", e)
+          log.error("Fail to serialize graph. {}", graph, e)
           Array.emptyByteArray
       }
     }
@@ -60,7 +60,7 @@ class FstSerializer(val conf: FSTConfiguration) extends Serializer {
         case Success(ois) =>
           ois.readObject.asInstanceOf[T]
         case Failure(e) =>
-          log.error(s"Fail to deserialize data.", e)
+          log.error("Fail to deserialize data.", e)
           null.asInstanceOf[T]
       }
     }

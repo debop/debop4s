@@ -1,7 +1,7 @@
 package debop4s.redis.serializer
 
 import java.io
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 import org.nustaq.serialization.FSTConfiguration
 
@@ -9,7 +9,7 @@ import org.nustaq.serialization.FSTConfiguration
  * FstRedisSerializer
  * Created by debop on 2014. 3. 20.
  */
-class FstRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
+class FstRedisSerializer[T] extends RedisSerializer[T] {
 
   lazy val conf = FSTConfiguration.createDefaultConfiguration()
 

@@ -12,7 +12,7 @@ class JodaRichDuration(val self: Duration) extends AnyVal with Ordered[Duration]
 
   def seconds: Long = self.getStandardSeconds
 
-  def millis = self.getMillis
+  def millis: Long = self.getMillis
 
   def -(amount: Long): Duration = self.minus(amount)
 

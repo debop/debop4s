@@ -14,16 +14,16 @@ import scala.beans.BeanProperty
 @SerialVersionUID(1431014486199195378L)
 class LogDocument extends ValueObjectBase {
 
-  @BeanProperty var serverName: String = null
-  @BeanProperty var applicationName: String = null
-  @BeanProperty var logger: String = null
+  @BeanProperty var serverName: String = _
+  @BeanProperty var applicationName: String = _
+  @BeanProperty var logger: String = _
   @BeanProperty var levelInt: Int = 0
-  @BeanProperty var levelStr: String = null
-  @BeanProperty var threadName: String = null
-  @BeanProperty var message: String = null
-  @BeanProperty var timestamp: DateTime = null
-  @BeanProperty var marker: String = null
-  @BeanProperty var exception: String = null
+  @BeanProperty var levelStr: String = _
+  @BeanProperty var threadName: String = _
+  @BeanProperty var message: String = _
+  @BeanProperty var timestamp: DateTime = _
+  @BeanProperty var marker: String = _
+  @BeanProperty var exception: String = _
   @BeanProperty var stacktrace: util.List[String] = new util.ArrayList[String]()
 
   override def toString: String =

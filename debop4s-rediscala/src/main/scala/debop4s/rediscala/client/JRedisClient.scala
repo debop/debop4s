@@ -4,7 +4,7 @@ import java.lang.{Double => JDouble, Iterable => JIterable, Long => JLong}
 import java.util.{List => JList, Map => JMap, Set => JSet}
 
 import debop4s.rediscala._
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 import redis._
 import redis.commands.Transactions
 
@@ -34,7 +34,7 @@ class JRedisClient(private[this] val _redis: RedisClient) extends JRedisSupport 
 
   require(_redis != null)
 
-  protected lazy val log = LoggerFactory.getLogger(getClass)
+  protected lazy val log: Logger = LoggerFactory.getLogger(getClass)
 
   override val redis: RedisCommands = {
     _redis

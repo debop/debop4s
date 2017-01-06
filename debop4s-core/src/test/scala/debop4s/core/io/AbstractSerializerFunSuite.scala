@@ -12,7 +12,7 @@ abstract class AbstractSerializerFunSuite extends AbstractCoreFunSuite {
   def serializer: Serializer
 
   test("serialize/deserialize") {
-    val yearWeek = new YearWeek(2000, 1)
+    val yearWeek = YearWeek(2000, 1)
     val copied = serializer.deserialize[YearWeek](serializer.serialize(yearWeek), classOf[YearWeek])
 
     assert(copied != null)

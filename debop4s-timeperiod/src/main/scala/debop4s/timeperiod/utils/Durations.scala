@@ -2,10 +2,8 @@ package debop4s.timeperiod.utils
 
 import java.util.Locale
 
-import debop4s.core.Logging
 import debop4s.timeperiod._
 import org.joda.time.{DateTime, Duration}
-import org.slf4j.LoggerFactory
 
 /**
  * Joda Time의 [[Duration]] 을 위한 Helper Class 입니다.
@@ -17,9 +15,9 @@ object Durations {
 
   val Zero = Duration.ZERO
 
-  def currentLocale = Locale.getDefault
+  def currentLocale: Locale = Locale.getDefault
 
-  def negate(duration: Duration) = Duration.millis(-duration.getMillis)
+  def negate(duration: Duration): Duration = Duration.millis(-duration.getMillis)
 
   def create(start: DateTime, end: DateTime) = new Duration(start, end)
 

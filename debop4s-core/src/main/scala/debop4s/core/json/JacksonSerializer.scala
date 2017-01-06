@@ -14,9 +14,9 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
  * JacksonSerializer
  * Created by debop on 2014. 2. 22.
  */
-class JacksonSerializer(val mapper: ObjectMapper) extends AbstractJsonSerializer {
+class JacksonSerializer(val mapper: ObjectMapper = JacksonSerializer.defaultObjectMapper) extends AbstractJsonSerializer {
 
-  def this() = this(JacksonSerializer.defaultObjectMapper)
+  //  def this() = this(JacksonSerializer.defaultObjectMapper)
 
   override def serialize[@miniboxed T](graph: T): Array[Byte] =
     mapper.writeValueAsBytes(graph)
@@ -63,7 +63,7 @@ object JacksonSerializer {
   }
 
   private[json] def typeReference[@miniboxed T: Manifest] = new TypeReference[T] {
-    override def getType = typeFromManifest(manifest[T])
+    override def getType: Type = typeFromManifest(manifest[T])
   }
 
   private[json] def typeFromManifest(m: Manifest[_]): Type = {
@@ -71,9 +71,11 @@ object JacksonSerializer {
       m.runtimeClass
     }
     else new ParameterizedType {
-      def getRawType = m.runtimeClass
-      def getActualTypeArguments = m.typeArguments.map(typeFromManifest).toArray
-      def getOwnerType = null
+      def getRawType: Class[_] = m.runtimeClass
+
+      def getActualTypeArguments: Array[Type] = m.typeArguments.map(typeFromManifest).toArray
+
+      def getOwnerType: Class[_] = null
     }
   }
 }

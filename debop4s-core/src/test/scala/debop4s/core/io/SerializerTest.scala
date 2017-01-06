@@ -56,9 +56,9 @@ class SerializerTest extends AbstractCoreFunSuite {
     val encryptors = Array[SymmetricEncryptorSupport](new RC2Encryptor(), new DESEncryptor(), new TripleDESEncryptor())
 
     encryptors.foreach { encryptor =>
-      serializers.foreach { serializer =>
+      serializers foreach { serializer =>
         val es = new EncryptableSerializer(serializer, encryptor)
-        log.debug(s"encryptor=[${ encryptor.getClass }], serializer=[${ serializer.getClass }]")
+        log.debug(s"encryptor=[${encryptor.getClass}], serializer=[${serializer.getClass}]")
 
         val bytes = es.serialize(company)
         val deserialized = es.deserialize(bytes, classOf[Company])

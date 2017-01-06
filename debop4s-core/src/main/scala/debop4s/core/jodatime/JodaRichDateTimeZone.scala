@@ -16,11 +16,11 @@ class JodaRichDateTimeZone(val self: DateTimeZone) extends AnyVal {
 
   def offset(instant: ReadableInstant): Int = self.getOffset(instant)
 
-  def offsetFromLocal(instantLocal: Long) = self.getOffsetFromLocal(instantLocal)
+  def offsetFromLocal(instantLocal: Long): Int = self.getOffsetFromLocal(instantLocal)
 
   def standardOffset(instant: Long): Int = self.getStandardOffset(instant)
 
-  def isStandardOffset(instant: Long) = self.isStandardOffset(instant)
+  def isStandardOffset(instant: Long): Boolean = self.isStandardOffset(instant)
 
   def nameKey(instant: Long): String = self.getNameKey(instant)
 
