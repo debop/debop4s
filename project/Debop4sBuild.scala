@@ -17,7 +17,7 @@ trait BuildSettings {
     springFrameworkAll
 
   val scala210 = "2.10.5"
-  val scala211 = "2.11.7"
+  val scala211 = "2.11.8"
 
   def commonSettings = Seq(
     organization := "debop4s",

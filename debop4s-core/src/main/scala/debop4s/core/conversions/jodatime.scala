@@ -10,9 +10,10 @@ import org.joda.time.format.DateTimeFormatter
 import org.joda.time.{Duration => JDuration, _}
 
 /**
- * Joda Time 에 대한 변환 작업을 수행하는 implicit methods
- * @author Sunghyouk Bae
- */
+  * Joda Time 에 대한 변환 작업을 수행하는 implicit methods
+  *
+  * @author Sunghyouk Bae
+  */
 object jodatime {
 
   implicit def forcePeriod(builder: DurationBuilder): Period = builder.underlying
@@ -96,6 +97,13 @@ object jodatime {
     Ordering.by[A, B](ev)
 
 
+  /**
+    * convert tuple to Joda DateTime
+    * val date = (2016, 10, 14).tuple2Time()
+    *
+    * @param t tuple (year, month, day)
+    * @return DateTime instance
+    */
   implicit def tuple2Time(t: (Int, Int, Int)): DateTime = {
     val (year, month, day) = t
     new DateTime(year, month, day, 0, 0, 0, 0)
@@ -124,33 +132,36 @@ object jodatime {
   /** joda-time Duration 객체에 대한 extensions class 입니다. */
   implicit class JDurationExtensions(self: JDuration) {
     /**
-     * Duration 값의 절대값을 반환합니다.
-     */
+      * Duration 값의 절대값을 반환합니다.
+      */
     def abs: JDuration = if (self < JDuration.ZERO) new JDuration(-self.getMillis) else self
 
     /**
-     * 현재 시각 (`Time.now`) 이후의 값을 반환합니다.
-     */
+      * 현재 시각 (`Time.now`) 이후의 값을 반환합니다.
+      */
     def fromNow: DateTime = DateTime.now() + self
+
     /**
-     * 현재 시각 (`Time.now`) 이전의 값을 반환합니다.
-     */
+      * 현재 시각 (`Time.now`) 이전의 값을 반환합니다.
+      */
     def ago: DateTime = DateTime.now() - self
+
     /**
-     * Unix Epoch 이후의 값을 반환합니다.
-     */
+      * Unix Epoch 이후의 값을 반환합니다.
+      */
     def afterEpoch: DateTime = new DateTime(0) + self
 
     /**
-     * `self` 와 지정된 `that`의 차이를 반환합니다.
-     */
+      * `self` 와 지정된 `that`의 차이를 반환합니다.
+      */
     def diff(that: JDuration): JDuration = self - that
   }
 
   /**
-   * Joda DateTime 에 대한 Extension Class 입니다.
-   * @param self `DateTime` 인스턴스
-   */
+    * Joda DateTime 에 대한 Extension Class 입니다.
+    *
+    * @param self `DateTime` 인스턴스
+    */
   implicit class JodaDateTimeExtensions(self: DateTime) {
 
     /** `DateTime` 정보를 UTC TimeZone 기준으로 변환합니다. */
@@ -171,4 +182,5 @@ object jodatime {
     /** `DateTime` 을 이용하여 `TimestampZoneText` 객체를 빌드합니다 */
     def asTimestampZoneText: TimestampZoneText = new TimestampZoneText(self)
   }
+
 }

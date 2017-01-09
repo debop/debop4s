@@ -124,9 +124,9 @@ trait Dependencies {
   val kryo                    = "com.esotericsoftware.kryo" % "kryo" % "2.24.0"
   val akka_kryo_serialization = "com.github.romix.akka" %% "akka-kryo-serialization" % "0.3.2"
 
-  val gson = "com.google.code.gson" % "gson" % "2.3.1"
+  val gson = "com.google.code.gson" % "gson" % "2.8.0"
 
-  val jacksonVersion = "2.6.0"
+  val jacksonVersion = "2.8.5"
 
   val jacksonCore        = "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion
   val jacksonAnnotations = "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion
@@ -135,7 +135,7 @@ trait Dependencies {
   val jacksonDatatypeJoda       = "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % jacksonVersion
   val jacksonDatatypeHibernate4 = "com.fasterxml.jackson.datatype" % "jackson-datatype-hibernate4" % jacksonVersion
 
-  val jacksonModuleScala       = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.5.2"
+  val jacksonModuleScala = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.4"
   val jacksonModuleAfterburner = "com.fasterxml.jackson.module" % "jackson-module-afterburner" % jacksonVersion
 
   val jacksonCoreAll     = Seq(jacksonCore, jacksonAnnotations, jacksonDatabind)
