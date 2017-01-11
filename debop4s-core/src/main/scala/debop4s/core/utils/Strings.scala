@@ -53,7 +53,7 @@ object Strings {
 
   def isEmpty(cs: String): Boolean = isEmpty(cs, doTrim = true)
 
-  def isEmpty(cs: String, doTrim: Boolean = true): Boolean = {
+  def isEmpty(cs: String, doTrim: Boolean): Boolean = {
     if (cs == null)
       return true
 

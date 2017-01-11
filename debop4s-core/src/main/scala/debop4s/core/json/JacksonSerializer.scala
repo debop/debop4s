@@ -11,9 +11,9 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 
 
 /**
- * JacksonSerializer
- * Created by debop on 2014. 2. 22.
- */
+  * JacksonSerializer
+  * Created by debop on 2014. 2. 22.
+  */
 class JacksonSerializer(val mapper: ObjectMapper = JacksonSerializer.defaultObjectMapper) extends AbstractJsonSerializer {
 
   //  def this() = this(JacksonSerializer.defaultObjectMapper)

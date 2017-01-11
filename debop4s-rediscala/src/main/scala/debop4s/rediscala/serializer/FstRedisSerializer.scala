@@ -11,7 +11,7 @@ import org.nustaq.serialization.FSTConfiguration
  */
 class FstRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
 
-  lazy val conf = FSTConfiguration.createDefaultConfiguration()
+  lazy val conf: FSTConfiguration = FSTConfiguration.createDefaultConfiguration()
 
   override def serialize(graph: T): Array[Byte] = {
     if (graph == null)
@@ -35,5 +35,4 @@ class FstRedisSerializer[@miniboxed T] extends RedisSerializer[T] {
       ois.readObject().asInstanceOf[T]
     }
   }
-
 }

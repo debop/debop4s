@@ -12,7 +12,7 @@ import scala.concurrent.Future
  * @author sunghyouk.bae@gmail.com
  */
 trait RedisTransactionalSupport {
-  this: RedisSynchronizedSupport =>
+  self: RedisSynchronizedSupport =>
 
   def redisTx: Transactions
 

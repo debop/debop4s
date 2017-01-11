@@ -429,7 +429,7 @@ trait JRedisSupport {
     redis.sunionstore(destKey, key, keys: _*).map(x => x)
 
   def zadd(key: String, score: Double, member: String): Future[JLong] =
-    redis.zadd(key, (score, member)).map(x => x)
+    redis.zadd[String](key, (score, member)).map(x => x)
 
   @varargs
   def zaddAll(key: String, memberScores: MemberScore*): Future[JLong] =
