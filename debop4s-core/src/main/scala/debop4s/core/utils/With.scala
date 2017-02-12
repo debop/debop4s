@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 
 /**
  * debop4s.core.tools.With
- *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 13. 오전 9:33
  */
